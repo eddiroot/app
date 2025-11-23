@@ -14,9 +14,7 @@
 	let { config, onConfigUpdate, response, onResponseUpdate, viewMode }: MatchingBlockProps =
 		$props();
 
-	let mouseOverElement = $state<string>('');
 	let draggedItemIndex = $state<number | null>(null);
-
 
 	function addPair() {
 		const newConfig = { ...config, pairs: [...config.pairs, { left: '', right: '' }] };
@@ -154,7 +152,7 @@
 		</Card.Content>
 	</Card.Root>
 {:else if viewMode === ViewMode.ANSWER}
-	<!-- Answer Mode with Drag & Drop -->
+	<!-- Answer Mode -->
 	<Card.Root class="p-6">
 		<Card.Header>
 			<Card.Title class="text-lg font-semibold">Matching Exercise</Card.Title>
@@ -168,9 +166,9 @@
 			{#if response.matches.length > 0 && response.matches.some((pair) => pair.left.trim())}
 				<div class="space-y-4">
 					{#each response.matches.filter((pair) => pair.left.trim()) as pair, pairIndex}
-						<!-- Pair Container -->
 						<div class="rounded-lg border-2 border-muted p-3">
 							<div class="grid grid-cols-1 items-center gap-4 md:grid-cols-[1fr_auto_1fr] md:gap-8">
+								
 								<!-- Left Item -->
 								<div class="bg-muted/20 flex min-h-12 items-center rounded-lg border p-3">
 									<div class="flex items-center gap-3">
@@ -200,45 +198,33 @@
 											}
 										}}
 									>
-										<div
-											class="group"
-											role="group"
-											onmouseover={() => (mouseOverElement = `matching-item-${pairIndex}`)}
-											onfocus={() => (mouseOverElement = `matching-item-${pairIndex}`)}
-											onmouseleave={() => (mouseOverElement = '')}
-											onblur={() => (mouseOverElement = '')}
-										>
-											<div class="flex items-center gap-2">
-												{#if mouseOverElement === `matching-item-${pairIndex}` || draggedItemIndex === pairIndex}
-													<div
-														use:draggable={{
-															container: 'matching-items',
-															dragData: response.matches[pairIndex].right,
-															callbacks: {
-																onDragStart: () => {
-																	draggedItemIndex = pairIndex;
-																},
-																onDragEnd: () => {
-																	draggedItemIndex = null;
-																}
-															}
-														}}
-														class="hover:bg-muted flex h-6 w-6 cursor-grab items-center justify-center rounded transition-colors active:cursor-grabbing"
+										<!-- Show drag handle -->
+										<div class="flex items-center gap-2">
+											<div
+												use:draggable={{
+													container: 'matching-items',
+													dragData: response.matches[pairIndex].right,
+													callbacks: {
+														onDragStart: () => {
+															draggedItemIndex = pairIndex;
+														},
+														onDragEnd: () => {
+															draggedItemIndex = null;
+														}
+													}
+												}}
+												class="hover:bg-muted flex h-6 w-6 cursor-grab items-center justify-center rounded transition-colors active:cursor-grabbing"
+											>
+												<GripVerticalIcon class="text-muted-foreground h-4 w-4" />
+											</div>
+											<div
+												class="bg-secondary/50 flex min-h-12 flex-1 items-center rounded-lg border p-3"
+											>
+												<div class="flex items-center gap-3">
+													<span class="text-muted-foreground w-6 text-sm font-medium"
+														>{pairIndex + 1}.</span
 													>
-														<GripVerticalIcon class="text-muted-foreground h-4 w-4" />
-													</div>
-												{:else}
-													<div class="w-6"></div>
-												{/if}
-												<div
-													class="bg-secondary/50 flex min-h-12 flex-1 items-center rounded-lg border p-3"
-												>
-													<div class="flex items-center gap-3">
-														<span class="text-muted-foreground w-6 text-sm font-medium"
-															>{pairIndex + 1}.</span
-														>
-														<span class="font-medium">{response.matches[pairIndex].right}</span>
-													</div>
+													<span class="font-medium">{response.matches[pairIndex].right}</span>
 												</div>
 											</div>
 										</div>
