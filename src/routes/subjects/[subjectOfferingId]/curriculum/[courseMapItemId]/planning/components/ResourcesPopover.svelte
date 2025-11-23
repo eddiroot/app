@@ -1,10 +1,10 @@
 <script lang="ts">
-	import { ResourceCard } from '$lib/components/resource-card';
+	import ResourceCard from '$lib/components/resource-card.svelte';
 	import { Button } from '$lib/components/ui/button';
 	import { Popover, PopoverContent, PopoverTrigger } from '$lib/components/ui/popover';
 	import { ScrollArea } from '$lib/components/ui/scroll-area';
 	import type { Resource } from '$lib/server/db/schema';
-	// Icons
+// Icons
 	import File from '@lucide/svelte/icons/file';
 	import Plus from '@lucide/svelte/icons/plus';
 

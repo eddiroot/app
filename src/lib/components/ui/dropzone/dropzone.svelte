@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { ResourceCard } from '$lib/components/resource-card';
+	import ResourceCard from '$lib/components/resource-card.svelte';
 	import { cn } from '$lib/utils';
 	import CloudUploadIcon from '@lucide/svelte/icons/cloud-upload';
 

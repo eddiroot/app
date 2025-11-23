@@ -6,11 +6,17 @@
 	import { Textarea } from '$lib/components/ui/textarea';
 	import { ViewMode, type MatchingBlockProps } from '$lib/schema/task';
 	import ArrowRightIcon from '@lucide/svelte/icons/arrow-right';
+	import GripVerticalIcon from '@lucide/svelte/icons/grip-vertical';
 	import PlusIcon from '@lucide/svelte/icons/plus';
 	import TrashIcon from '@lucide/svelte/icons/trash-2';
+	import { dndState, draggable, droppable, type DragDropState } from '@thisux/sveltednd';
 
 	let { config, onConfigUpdate, response, onResponseUpdate, viewMode }: MatchingBlockProps =
 		$props();
+
+	let mouseOverElement = $state<string>('');
+	let draggedItemIndex = $state<number | null>(null);
+
 
 	function addPair() {
 		const newConfig = { ...config, pairs: [...config.pairs, { left: '', right: '' }] };
@@ -30,6 +36,37 @@
 		updatedPairs[index] = { ...updatedPairs[index], [field]: value };
 		newConfig.pairs = updatedPairs;
 		onConfigUpdate(newConfig);
+	}	
+
+	$effect(() => {
+		if (!response || !response.matches || response.matches.length === 0) {
+			const rightItems = config.pairs.map((pair) => pair.right).sort(() => Math.random() - 0.5);
+			onResponseUpdate({ 
+				matches: config.pairs.map((pair, index) => ({ 
+					left: pair.left, 
+					right: rightItems[index] 
+				}))
+			});
+		}
+	});
+
+	function handleDrop(state: DragDropState<string>) {
+		const { draggedItem, targetContainer } = state;
+		if (!targetContainer || !targetContainer.startsWith('matching-')) return;
+
+		const targetIndex = parseInt(targetContainer.split('-')[1]);
+		const sourceIndex = response.matches.findIndex(
+			(match) => match.right === draggedItem
+		);
+
+		const newMatches = [...response.matches];
+		const temp = newMatches[sourceIndex].right;
+		newMatches[sourceIndex] = { ...newMatches[sourceIndex], right: newMatches[targetIndex].right };
+		newMatches[targetIndex] = { ...newMatches[targetIndex], right: temp };
+
+		if (onResponseUpdate) {
+			onResponseUpdate({ matches: newMatches });
+		}
 	}
 </script>
 
@@ -117,7 +154,7 @@
 		</Card.Content>
 	</Card.Root>
 {:else if viewMode === ViewMode.ANSWER}
-	<!-- Preview Mode -->
+	<!-- Answer Mode with Drag & Drop -->
 	<Card.Root class="p-6">
 		<Card.Header>
 			<Card.Title class="text-lg font-semibold">Matching Exercise</Card.Title>
@@ -128,53 +165,94 @@
 			{/if}
 		</Card.Header>
 		<Card.Content class="space-y-6">
-			{#if config.pairs.length > 0 && config.pairs.some((pair) => pair.left.trim() && pair.right.trim())}
-				<div class="grid grid-cols-1 items-start gap-4 md:grid-cols-[1fr_auto_1fr] md:gap-8">
-					<!-- Left Items (Fixed Order) -->
-					<div class="space-y-3">
-						<h3 class="text-muted-foreground text-sm font-medium">Items to match:</h3>
-						<div class="min-h-[200px] space-y-2">
-							{#each config.pairs.filter((pair) => pair.left.trim() && pair.right.trim()) as pair, index}
-								<div
-									class="bg-muted/20 flex min-h-12 items-center justify-between rounded-lg border p-3"
-								>
+			{#if config.pairs.length > 0 && config.pairs.some((pair) => pair.left.trim())}
+				<div class="space-y-4">
+					{#each config.pairs.filter((pair) => pair.left.trim()) as pair, pairIndex}
+						<!-- Pair Container with Grey Outline -->
+						<div class="rounded-lg border-2 border-muted p-4">
+							<div class="grid grid-cols-1 items-center gap-4 md:grid-cols-[1fr_auto_1fr] md:gap-8">
+								<!-- Left Item -->
+								<div class="bg-muted/20 flex min-h-12 items-center rounded-lg border p-3">
 									<div class="flex items-center gap-3">
-										<span class="text-muted-foreground w-6 text-sm font-medium">{index + 1}.</span>
+										<span class="text-muted-foreground w-6 text-sm font-medium"
+											>{pairIndex + 1}.</span
+										>
 										<span class="font-medium">{pair.left}</span>
 									</div>
 								</div>
-							{/each}
-						</div>
-					</div>
 
-					<!-- Arrow Column (hidden on mobile) -->
-					<div class="hidden min-h-[200px] flex-col items-center justify-center px-2 md:flex">
-						<div class="text-muted-foreground">
-							<ArrowRightIcon class="h-6 w-6" />
-						</div>
-						<div class="text-muted-foreground writing-mode-vertical mt-2 text-center text-xs">
-							Match order
-						</div>
-					</div>
-
-					<!-- Right Items -->
-					<div class="space-y-3">
-						<h3 class="text-muted-foreground text-sm font-medium">Matching answers:</h3>
-						<div class="min-h-[200px] space-y-2">
-							{#each config.pairs.filter((pair) => pair.left.trim() && pair.right.trim()) as pair, index}
-								<div
-									class="bg-secondary/50 flex min-h-12 items-center justify-between rounded-lg border p-3"
-								>
-									<div class="flex items-center gap-3">
-										<span class="text-muted-foreground w-6 text-sm font-medium">{index + 1}.</span>
-										<span class="font-medium">{pair.right}</span>
-									</div>
+								<!-- Arrow -->
+								<div class="flex items-center justify-center">
+									<ArrowRightIcon class="text-muted-foreground h-5 w-5" />
 								</div>
-							{/each}
+
+								<!-- Right Item -->
+								{#if response?.matches?.[pairIndex]?.right}
+									<div
+										class="rounded-md p-2 transition-colors {dndState.targetContainer ===
+										`matching-${pairIndex}` && draggedItemIndex !== pairIndex
+											? 'border-2 border-dashed border-accent-foreground bg-accent/10'
+											: 'border-2 border-transparent'}"
+										use:droppable={{
+											container: `matching-${pairIndex}`,
+											callbacks: {
+												onDrop: handleDrop
+											}
+										}}
+									>
+										<div
+											class="group"
+											role="group"
+											onmouseover={() => (mouseOverElement = `matching-item-${pairIndex}`)}
+											onfocus={() => (mouseOverElement = `matching-item-${pairIndex}`)}
+											onmouseleave={() => {
+												if (draggedItemIndex === null) mouseOverElement = '';
+											}}
+											onblur={() => {
+												if (draggedItemIndex === null) mouseOverElement = '';
+											}}
+										>
+											<div class="flex items-center gap-2">
+												{#if mouseOverElement === `matching-item-${pairIndex}` || draggedItemIndex === pairIndex}
+													<div
+														use:draggable={{
+															container: 'matching-items',
+															dragData: response.matches[pairIndex].right,
+															callbacks: {
+																onDragStart: () => {
+																	draggedItemIndex = pairIndex;
+																},
+																onDragEnd: () => {
+																	draggedItemIndex = null;
+																}
+															}
+														}}
+														class="hover:bg-muted flex h-6 w-6 cursor-grab items-center justify-center rounded transition-colors active:cursor-grabbing"
+													>
+														<GripVerticalIcon class="text-muted-foreground h-4 w-4" />
+													</div>
+												{:else}
+													<div class="w-6"></div>
+												{/if}
+												<div
+													class="bg-secondary/50 flex min-h-12 flex-1 items-center rounded-lg border p-3"
+												>
+													<div class="flex items-center gap-3">
+														<span class="text-muted-foreground w-6 text-sm font-medium"
+															>{pairIndex + 1}.</span
+														>
+														<span class="font-medium">{response.matches[pairIndex].right}</span>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								{/if}
+							</div>
 						</div>
-					</div>
+					{/each}
 				</div>
-			{:else}
+				{:else}
 				<p class="text-muted-foreground">
 					No matching pairs configured. Switch to edit mode to add pairs.
 				</p>
