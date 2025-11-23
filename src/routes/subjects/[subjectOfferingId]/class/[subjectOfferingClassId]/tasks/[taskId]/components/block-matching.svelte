@@ -165,11 +165,11 @@
 			{/if}
 		</Card.Header>
 		<Card.Content class="space-y-6">
-			{#if config.pairs.length > 0 && config.pairs.some((pair) => pair.left.trim())}
+			{#if response.matches.length > 0 && response.matches.some((pair) => pair.left.trim())}
 				<div class="space-y-4">
-					{#each config.pairs.filter((pair) => pair.left.trim()) as pair, pairIndex}
-						<!-- Pair Container with Grey Outline -->
-						<div class="rounded-lg border-2 border-muted p-4">
+					{#each response.matches.filter((pair) => pair.left.trim()) as pair, pairIndex}
+						<!-- Pair Container -->
+						<div class="rounded-lg border-2 border-muted p-3">
 							<div class="grid grid-cols-1 items-center gap-4 md:grid-cols-[1fr_auto_1fr] md:gap-8">
 								<!-- Left Item -->
 								<div class="bg-muted/20 flex min-h-12 items-center rounded-lg border p-3">
@@ -189,7 +189,7 @@
 								<!-- Right Item -->
 								{#if response?.matches?.[pairIndex]?.right}
 									<div
-										class="rounded-md p-2 transition-colors {dndState.targetContainer ===
+										class="rounded-md p-1 transition-colors {dndState.targetContainer ===
 										`matching-${pairIndex}` && draggedItemIndex !== pairIndex
 											? 'border-2 border-dashed border-accent-foreground bg-accent/10'
 											: 'border-2 border-transparent'}"
@@ -205,12 +205,8 @@
 											role="group"
 											onmouseover={() => (mouseOverElement = `matching-item-${pairIndex}`)}
 											onfocus={() => (mouseOverElement = `matching-item-${pairIndex}`)}
-											onmouseleave={() => {
-												if (draggedItemIndex === null) mouseOverElement = '';
-											}}
-											onblur={() => {
-												if (draggedItemIndex === null) mouseOverElement = '';
-											}}
+											onmouseleave={() => (mouseOverElement = '')}
+											onblur={() => (mouseOverElement = '')}
 										>
 											<div class="flex items-center gap-2">
 												{#if mouseOverElement === `matching-item-${pairIndex}` || draggedItemIndex === pairIndex}
