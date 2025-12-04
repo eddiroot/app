@@ -27,6 +27,11 @@ export enum schoolSpaceTypeEnum {
 	auditorium = 'auditorium'
 }
 
+export enum subjectClassAllocationAttendanceStatus {
+	present = 'present',
+	absent = 'absent'
+}
+
 export enum subjectThreadTypeEnum {
 	discussion = 'discussion',
 	question = 'question',

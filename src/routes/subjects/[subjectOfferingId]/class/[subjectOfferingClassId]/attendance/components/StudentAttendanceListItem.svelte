@@ -1,69 +1,91 @@
 <script lang="ts">
 	import { page } from '$app/state';
-	import { Badge } from '$lib/components/ui/badge/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import * as Dialog from '$lib/components/ui/dialog/index.js';
 	import * as Form from '$lib/components/ui/form/index.js';
+	import * as Select from '$lib/components/ui/select/index.js';
 	import { Textarea } from '$lib/components/ui/textarea/index.js';
 	import {
+		type BehaviourQuickAction,
 		type SubjectClassAllocation,
 		type SubjectClassAllocationAttendance,
 		type User
 	} from '$lib/server/db/schema';
 	import { convertToFullName } from '$lib/utils';
-	import Check from '@lucide/svelte/icons/check';
-	import Clock from '@lucide/svelte/icons/clock';
 	import History from '@lucide/svelte/icons/history';
 	import MessageCircleWarning from '@lucide/svelte/icons/message-circle-warning';
 	import NotebookPen from '@lucide/svelte/icons/notebook-pen';
-	import PenIcon from '@lucide/svelte/icons/pen';
-	import X from '@lucide/svelte/icons/x';
+	import NotepadText from '@lucide/svelte/icons/notepad-text';
+	import { tick } from 'svelte';
 	import { fade } from 'svelte/transition';
-	import type { SuperForm } from 'sveltekit-superforms';
+	import { superForm } from 'sveltekit-superforms';
+	import { zod4Client } from 'sveltekit-superforms/adapters';
+	import { attendanceSchema } from '../schema';
 
 	type AttendanceRecord = {
 		user: Pick<User, 'id' | 'firstName' | 'middleName' | 'lastName'>;
 		attendance?: Pick<
 			SubjectClassAllocationAttendance,
-			'didAttend' | 'wasAbsent' | 'attendanceNote' | 'behaviourNote'
+			'status' | 'attendanceNote' | 'note'
 		> | null;
 		subjectClassAllocation: Pick<SubjectClassAllocation, 'id'>;
+		behaviourQuickActionIds?: number[];
 	};
 
 	let {
 		attendanceRecord,
-		form,
-		enhance,
+		behaviourQuickActions = [],
 		type = 'unmarked'
 	}: {
 		attendanceRecord: AttendanceRecord;
-		form: SuperForm<any>;
-		enhance: any;
+		behaviourQuickActions?: BehaviourQuickAction[];
 		type?: 'unmarked' | 'marked';
 	} = $props();
+
+	const form = superForm(
+		{
+			subjectClassAllocationId: attendanceRecord.subjectClassAllocation.id,
+			userId: attendanceRecord.user.id,
+			status: attendanceRecord.attendance?.status || '',
+			note: attendanceRecord.attendance?.note || '',
+			behaviourQuickActionIds: (attendanceRecord.behaviourQuickActionIds ?? []).map(String)
+		},
+		{
+			validators: zod4Client(attendanceSchema),
+			invalidateAll: 'force',
+			resetForm: false
+		}
+	);
+
+	const { form: formData, enhance: formEnhance } = form;
 
 	const user = $derived(attendanceRecord.user);
 	const attendance = $derived(attendanceRecord.attendance);
 	const subjectClassAllocation = $derived(attendanceRecord.subjectClassAllocation);
 	const fullName = $derived(convertToFullName(user.firstName, user.middleName, user.lastName));
-
-	const wasAbsent = $derived(attendance?.wasAbsent || false);
-	const isPresent = $derived(attendance?.didAttend === true);
-	const isNotPresent = $derived(attendance?.didAttend === false);
-
-	function getAttendanceStatus(attendance: any): {
-		status: string;
-		variant: 'success' | 'destructive' | 'outline';
-	} {
-		if (!attendance) return { status: 'Unrecorded', variant: 'outline' };
-		if (attendance.wasAbsent) return { status: 'Away', variant: 'destructive' };
-		if (attendance.didAttend === true) return { status: 'Present', variant: 'success' };
-		return { status: 'Absent', variant: 'destructive' };
-	}
-
-	const statusInfo = $derived(getAttendanceStatus(attendance));
-
 	let dialogOpen = $state(false);
+
+	const statusOptions = [
+		{ value: 'present', label: 'Present' },
+		{ value: 'absent', label: 'Absent' }
+	];
+
+	const selectedStatusLabel = $derived(
+		statusOptions.find((option) => option.value === $formData.status)?.label || 'Status'
+	);
+
+	const selectedBehavioursLabel = $derived(
+		$formData.behaviourQuickActionIds.length === 0
+			? 'Behaviours'
+			: `${$formData.behaviourQuickActionIds.length} selected`
+	);
+
+	const behaviourOptions = $derived(
+		behaviourQuickActions.map((behaviour) => ({
+			value: behaviour.id.toString(),
+			label: behaviour.name
+		}))
+	);
 </script>
 
 <div class="border-border border-b transition-all last:border-b-0" in:fade={{ duration: 200 }}>
@@ -78,76 +100,88 @@
 			<div class="flex flex-col">
 				<h3 class="truncate font-medium">{fullName}</h3>
 				<div class="flex items-center gap-2">
-					<Badge variant={statusInfo.variant} class="text-xs">
-						{statusInfo.status}
-					</Badge>
-					<div class="flex items-center gap-2">
-						{#if attendance?.behaviourNote}
-							<NotebookPen class="size-4" />
-						{/if}
+					{#if attendance?.note}
+						<NotebookPen class="size-4" />
+					{/if}
 
-						{#if attendance?.attendanceNote}
-							<MessageCircleWarning class="text-destructive size-4" />
-						{/if}
-					</div>
+					{#if attendance?.attendanceNote}
+						<MessageCircleWarning class="text-destructive size-4" />
+					{/if}
 				</div>
 			</div>
 		</div>
 
 		<!-- Action buttons -->
 		<div class="flex items-center gap-2">
-			<Button variant="outline" size="sm" href={`${page.url.pathname}/${user.id}`}>
-				<History />
-				View History
+			<form
+				method="POST"
+				action="?/updateAttendance"
+				use:formEnhance
+				class="flex items-center gap-2"
+			>
+				<input type="hidden" name="userId" value={user.id} />
+				<input type="hidden" name="subjectClassAllocationId" value={subjectClassAllocation.id} />
+
+				<Form.Field {form} name="behaviourQuickActionIds" class="space-y-0">
+					<Form.Control>
+						{#snippet children({ props })}
+							<Select.Root
+								type="multiple"
+								{...props}
+								bind:value={$formData.behaviourQuickActionIds}
+								onValueChange={async () => {
+									await tick();
+									form.submit();
+								}}
+							>
+								<Select.Trigger class="w-[140px]">
+									{selectedBehavioursLabel}
+								</Select.Trigger>
+								<Select.Content>
+									{#each behaviourOptions as option}
+										<Select.Item value={option.value}>
+											{option.label}
+										</Select.Item>
+									{/each}
+								</Select.Content>
+							</Select.Root>
+						{/snippet}
+					</Form.Control>
+				</Form.Field>
+
+				<Form.Field {form} name="status" class="space-y-0">
+					<Form.Control>
+						{#snippet children({ props })}
+							<Select.Root
+								type="single"
+								bind:value={$formData.status}
+								name={props.name}
+								onValueChange={async () => {
+									await tick();
+									form.submit();
+								}}
+							>
+								<Select.Trigger {...props} class="w-[120px]">
+									{selectedStatusLabel}
+								</Select.Trigger>
+								<Select.Content>
+									{#each statusOptions as option}
+										<Select.Item value={option.value} label={option.label} />
+									{/each}
+								</Select.Content>
+							</Select.Root>
+						{/snippet}
+					</Form.Control>
+				</Form.Field>
+			</form>
+
+			<Button variant="outline" onclick={() => (dialogOpen = true)} disabled={type === 'unmarked'}>
+				<NotepadText />
 			</Button>
 
-			{#if type === 'marked' && isNotPresent && !wasAbsent}
-				<form method="POST" action="?/updateAttendance" use:enhance>
-					<input type="hidden" name="didAttend" value="true" />
-					<input type="hidden" name="userId" value={user.id} />
-					<input type="hidden" name="subjectClassAllocationId" value={subjectClassAllocation.id} />
-					<input type="hidden" name="behaviourNote" value="Amended from absent - arrived late" />
-					<Button variant="destructive" size="sm" type="submit">
-						<Clock />
-						Amend as Late
-					</Button>
-				</form>
-			{/if}
-
-			{#if type === 'unmarked' || isPresent}
-				<form method="POST" action="?/updateAttendance" use:enhance>
-					<input type="hidden" name="didAttend" value="false" />
-					<input type="hidden" name="userId" value={user.id} />
-					<input type="hidden" name="subjectClassAllocationId" value={subjectClassAllocation.id} />
-					<Button variant="destructive" size="sm" type="submit" disabled={wasAbsent}>
-						<X />
-						Absent
-					</Button>
-				</form>
-			{/if}
-
-			{#if isPresent}
-				<Button size="sm" onclick={() => (dialogOpen = true)} disabled={type === 'unmarked'}>
-					<PenIcon />
-					Notes
-				</Button>
-			{/if}
-
-			{#if !attendance?.attendanceNote && (type === 'unmarked' || isNotPresent)}
-				<form method="POST" action="?/updateAttendance" use:enhance>
-					<input type="hidden" name="didAttend" value="true" />
-					<input type="hidden" name="userId" value={user.id} />
-					<input type="hidden" name="subjectClassAllocationId" value={subjectClassAllocation.id} />
-					<Button size="sm" type="submit" disabled={wasAbsent} variant="success">
-						<Check />
-						Present
-					</Button>
-				</form>
-			{/if}
-
-			{#if attendance?.attendanceNote}
-				<p class="text-muted-foreground text-sm">{attendance?.attendanceNote}</p>
-			{/if}
+			<Button variant="outline" href={`${page.url.pathname}/${user.id}`}>
+				<History />
+			</Button>
 		</div>
 	</div>
 </div>
@@ -155,44 +189,33 @@
 <!-- Modal Dialog -->
 <Dialog.Root bind:open={dialogOpen}>
 	<Dialog.Content class="max-w-md">
-		<form method="POST" action="?/updateAttendance" use:enhance>
+		<form method="POST" action="?/updateAttendance" use:formEnhance>
 			<Dialog.Header>
 				<Dialog.Title>{fullName}</Dialog.Title>
 			</Dialog.Header>
 			<div class="space-y-4 py-4">
-				{#if type === 'marked' && isPresent && !wasAbsent}
-					<div class="space-y-2">
-						<input type="hidden" name="didAttend" value="true" />
-						<input type="hidden" name="userId" value={user.id} />
-						<input
-							type="hidden"
-							name="subjectClassAllocationId"
-							value={subjectClassAllocation.id}
-						/>
+				<input type="hidden" name="userId" value={user.id} />
+				<input type="hidden" name="subjectClassAllocationId" value={subjectClassAllocation.id} />
 
-						<Form.Field {form} name="behaviourNote">
-							<Form.Control>
-								{#snippet children({ props })}
-									<Form.Label class="text-sm font-medium">Behaviour</Form.Label>
-									<Textarea
-										{...props}
-										name="behaviourNote"
-										placeholder="Add behavioural observations..."
-										class="min-h-20 resize-none"
-										value={attendance?.behaviourNote || ''}
-									/>
-								{/snippet}
-							</Form.Control>
-						</Form.Field>
-					</div>
-				{/if}
+				<Form.Field {form} name="note">
+					<Form.Control>
+						{#snippet children({ props })}
+							<Form.Label class="text-sm font-medium">Additional Notes</Form.Label>
+							<Textarea
+								{...props}
+								bind:value={$formData.note}
+								placeholder="Add additional notes (optional)..."
+								class="min-h-20 resize-none"
+							/>
+						{/snippet}
+					</Form.Control>
+					<Form.FieldErrors />
+				</Form.Field>
 			</div>
 
 			<Dialog.Footer>
-				<Dialog.Close>
-					<Button variant="outline">Close</Button>
-					<Button variant="default" type="submit">Save</Button>
-				</Dialog.Close>
+				<Button variant="outline" type="button" onclick={() => (dialogOpen = false)}>Close</Button>
+				<Button variant="default" type="submit">Save</Button>
 			</Dialog.Footer>
 		</form>
 	</Dialog.Content>
