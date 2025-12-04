@@ -1,4 +1,5 @@
 import {
+	subjectClassAllocationAttendanceStatus,
 	subjectThreadResponseTypeEnum,
 	subjectThreadTypeEnum,
 	taskTypeEnum,
@@ -655,33 +656,51 @@ export async function getAssessmentsBySubjectOfferingClassId(subjectOfferingClas
 export async function upsertSubjectClassAllocationAttendance(
 	subjectClassAllocationId: number,
 	userId: string,
-	didAttend: boolean,
+	status: subjectClassAllocationAttendanceStatus,
 	attendanceNote?: string | null,
-	behaviourNote?: string | null
+	note?: string | null,
+	behaviourQuickActionIds?: number[]
 ) {
-	const [attendance] = await db
-		.insert(table.subjectClassAllocationAttendance)
-		.values({
-			subjectClassAllocationId,
-			userId,
-			didAttend,
-			attendanceNote,
-			behaviourNote
-		})
-		.onConflictDoUpdate({
-			target: [
-				table.subjectClassAllocationAttendance.subjectClassAllocationId,
-				table.subjectClassAllocationAttendance.userId
-			],
-			set: {
-				didAttend,
+	return await db.transaction(async (tx) => {
+		const [attendance] = await tx
+			.insert(table.subjectClassAllocationAttendance)
+			.values({
+				subjectClassAllocationId,
+				userId,
+				status,
 				attendanceNote,
-				behaviourNote
-			}
-		})
-		.returning();
+				note
+			})
+			.onConflictDoUpdate({
+				target: [
+					table.subjectClassAllocationAttendance.subjectClassAllocationId,
+					table.subjectClassAllocationAttendance.userId
+				],
+				set: {
+					status,
+					attendanceNote,
+					note
+				}
+			})
+			.returning();
 
-	return attendance;
+		if (behaviourQuickActionIds !== undefined) {
+			await tx
+				.delete(table.attendanceBehaviourQuickAction)
+				.where(eq(table.attendanceBehaviourQuickAction.attendanceId, attendance.id));
+
+			if (behaviourQuickActionIds.length > 0) {
+				await tx.insert(table.attendanceBehaviourQuickAction).values(
+					behaviourQuickActionIds.map((behaviourQuickActionId) => ({
+						attendanceId: attendance.id,
+						behaviourQuickActionId
+					}))
+				);
+			}
+		}
+
+		return attendance;
+	});
 }
 
 export async function getSubjectYearLevelBySubjectOfferingId(subjectOfferingId: number) {
@@ -983,4 +1002,94 @@ export async function deleteSubjectSelectionConstraint(constraintId: number) {
 	await db
 		.delete(table.subjectSelectionConstraint)
 		.where(eq(table.subjectSelectionConstraint.id, constraintId));
+}
+
+/**
+ * Get all behaviour quick actions for a school
+ */
+export async function getBehaviourQuickActionsBySchoolId(schoolId: number) {
+	const behaviourQuickActions = await db
+		.select()
+		.from(table.behaviourQuickAction)
+		.where(
+			and(
+				eq(table.behaviourQuickAction.schoolId, schoolId),
+				eq(table.behaviourQuickAction.isArchived, false)
+			)
+		)
+		.orderBy(asc(table.behaviourQuickAction.name));
+
+	return behaviourQuickActions;
+}
+
+/**
+ * Create a new behaviour quick action
+ */
+export async function createBehaviourQuickAction(
+	schoolId: number,
+	name: string,
+	description?: string | null
+) {
+	const [behaviourQuickAction] = await db
+		.insert(table.behaviourQuickAction)
+		.values({
+			schoolId,
+			name,
+			description: description || null
+		})
+		.returning();
+
+	return behaviourQuickAction;
+}
+
+/**
+ * Update a behaviour quick action
+ */
+export async function updateBehaviourQuickAction(
+	id: number,
+	name: string,
+	description?: string | null
+) {
+	const [behaviourQuickAction] = await db
+		.update(table.behaviourQuickAction)
+		.set({
+			name,
+			description: description || null,
+			updatedAt: new Date()
+		})
+		.where(eq(table.behaviourQuickAction.id, id))
+		.returning();
+
+	return behaviourQuickAction;
+}
+
+/**
+ * Delete (archive) a behaviour quick action
+ */
+export async function deleteBehaviourQuickAction(id: number) {
+	await db
+		.update(table.behaviourQuickAction)
+		.set({
+			isArchived: true,
+			updatedAt: new Date()
+		})
+		.where(eq(table.behaviourQuickAction.id, id));
+}
+
+/**
+ * Get behaviour quick actions for an attendance record
+ */
+export async function getBehaviourQuickActionsByAttendanceId(attendanceId: number) {
+	const behaviourQuickActions = await db
+		.select({
+			behaviourQuickAction: table.behaviourQuickAction
+		})
+		.from(table.attendanceBehaviourQuickAction)
+		.innerJoin(
+			table.behaviourQuickAction,
+			eq(table.attendanceBehaviourQuickAction.behaviourQuickActionId, table.behaviourQuickAction.id)
+		)
+		.where(eq(table.attendanceBehaviourQuickAction.attendanceId, attendanceId));
+
+	return behaviourQuickActions.map((row) => row.behaviourQuickAction);
 }

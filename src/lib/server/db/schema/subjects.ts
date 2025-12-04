@@ -12,7 +12,11 @@ import {
 	type AnyPgColumn
 } from 'drizzle-orm/pg-core';
 import { sql } from 'drizzle-orm/sql';
-import { subjectThreadResponseTypeEnum, subjectThreadTypeEnum } from '../../../enums';
+import {
+	subjectClassAllocationAttendanceStatus,
+	subjectThreadResponseTypeEnum,
+	subjectThreadTypeEnum
+} from '../../../enums';
 import { courseMapItem } from './coursemap';
 import { curriculumSubject, yearLevelEnumPg } from './curriculum';
 import { resource } from './resource';
@@ -124,6 +128,11 @@ export const subjectClassAllocation = pgTable('sub_off_cls_allo', {
 
 export type SubjectClassAllocation = typeof subjectClassAllocation.$inferSelect;
 
+export const subjectClassAllocationAttendanceStatusEnumPg = pgEnum('enum_sub_cls_allo_att_stat', [
+	subjectClassAllocationAttendanceStatus.present,
+	subjectClassAllocationAttendanceStatus.absent
+]);
+
 export const subjectClassAllocationAttendance = pgTable(
 	'sub_off_cls_allo_att',
 	{
@@ -134,10 +143,9 @@ export const subjectClassAllocationAttendance = pgTable(
 		userId: uuid('user_id')
 			.notNull()
 			.references(() => user.id, { onDelete: 'cascade' }),
-		wasAbsent: boolean('was_absent').notNull().default(false),
-		didAttend: boolean('did_attend').notNull().default(false),
+		status: subjectClassAllocationAttendanceStatusEnumPg().notNull(),
 		attendanceNote: text('attendance_note'),
-		behaviourNote: text('behaviour_note'),
+		note: text('note'),
 		isArchived: boolean('is_archived').notNull().default(false),
 		...timestamps
 	},
@@ -145,6 +153,40 @@ export const subjectClassAllocationAttendance = pgTable(
 );
 
 export type SubjectClassAllocationAttendance = typeof subjectClassAllocationAttendance.$inferSelect;
+
+export const behaviourQuickAction = pgTable(
+	'behaviour_quick_action',
+	{
+		id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
+		schoolId: integer('sch_id')
+			.notNull()
+			.references(() => school.id, { onDelete: 'cascade' }),
+		name: text('name').notNull(),
+		description: text('description'),
+		isArchived: boolean('is_archived').notNull().default(false),
+		...timestamps
+	},
+	(self) => [unique().on(self.schoolId, self.name)]
+);
+
+export type BehaviourQuickAction = typeof behaviourQuickAction.$inferSelect;
+
+export const attendanceBehaviourQuickAction = pgTable(
+	'att_behaviour_quick_action',
+	{
+		id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
+		attendanceId: integer('att_id')
+			.notNull()
+			.references(() => subjectClassAllocationAttendance.id, { onDelete: 'cascade' }),
+		behaviourQuickActionId: integer('behaviour_quick_action_id')
+			.notNull()
+			.references(() => behaviourQuickAction.id, { onDelete: 'cascade' }),
+		...timestamps
+	},
+	(self) => [unique().on(self.attendanceId, self.behaviourQuickActionId)]
+);
+
+export type AttendanceBehaviourQuickAction = typeof attendanceBehaviourQuickAction.$inferSelect;
 
 export const subjectThreadTypeEnumPg = pgEnum('enum_sub_thread_type', [
 	subjectThreadTypeEnum.discussion,
@@ -252,4 +294,5 @@ export const subjectSelectionConstraintSubject = pgTable('constraint_subject', {
 	...timestamps
 });
 
-export type SubjectSelectionConstraintSubject = typeof subjectSelectionConstraintSubject.$inferSelect;
+export type SubjectSelectionConstraintSubject =
+	typeof subjectSelectionConstraintSubject.$inferSelect;

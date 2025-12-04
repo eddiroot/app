@@ -1,4 +1,7 @@
+import { subjectClassAllocationAttendanceStatus } from '$lib/enums';
 import {
+	getBehaviourQuickActionsByAttendanceId,
+	getBehaviourQuickActionsBySchoolId,
 	getGuardiansForStudent,
 	getSubjectClassAllocationAndStudentAttendancesByClassIdForToday,
 	getSubjectOfferingClassByAllocationId,
@@ -6,15 +9,15 @@ import {
 } from '$lib/server/db/service';
 import { sendAbsenceEmail } from '$lib/server/email.js';
 import { convertToFullName } from '$lib/utils.js';
-import { redirect, fail } from '@sveltejs/kit';
+import { fail, redirect } from '@sveltejs/kit';
 import { superValidate } from 'sveltekit-superforms';
 import { zod4 } from 'sveltekit-superforms/adapters';
 import { attendanceSchema } from './schema.js';
 
 export const load = async ({ locals: { security }, params: { subjectOfferingClassId } }) => {
-	security.isAuthenticated();
+	const user = security.isAuthenticated().getUser();
 
-	let subjectOfferingClassIdInt = parseInt(subjectOfferingClassId, 10);
+	const subjectOfferingClassIdInt = parseInt(subjectOfferingClassId, 10);
 	if (isNaN(subjectOfferingClassIdInt)) {
 		throw redirect(302, '/dashboard');
 	}
@@ -24,9 +27,25 @@ export const load = async ({ locals: { security }, params: { subjectOfferingClas
 			subjectOfferingClassIdInt
 		);
 
-	const form = await superValidate(zod4(attendanceSchema));
+	const behaviourQuickActions = await getBehaviourQuickActionsBySchoolId(user.schoolId);
 
-	return { attendances, form };
+	const attendancesWithBehaviours = await Promise.all(
+		attendances.map(async (attendance) => {
+			if (attendance.attendance?.id) {
+				const behaviours = await getBehaviourQuickActionsByAttendanceId(attendance.attendance.id);
+				return {
+					...attendance,
+					behaviourQuickActionIds: behaviours.map((b) => b.id)
+				};
+			}
+			return {
+				...attendance,
+				behaviourQuickActionIds: []
+			};
+		})
+	);
+
+	return { attendances: attendancesWithBehaviours, behaviourQuickActions };
 };
 
 export const actions = {
@@ -44,12 +63,13 @@ export const actions = {
 			await upsertSubjectClassAllocationAttendance(
 				form.data.subjectClassAllocationId,
 				form.data.userId,
-				form.data.didAttend,
+				form.data.status,
 				form.data.attendanceNote,
-				form.data.behaviourNote
+				form.data.note,
+				form.data.behaviourQuickActionIds?.map((id) => parseInt(id, 10)) || []
 			);
 
-			if (!form.data.didAttend) {
+			if (form.data.status === subjectClassAllocationAttendanceStatus.absent) {
 				const classDetails = await getSubjectOfferingClassByAllocationId(
 					form.data.subjectClassAllocationId
 				);

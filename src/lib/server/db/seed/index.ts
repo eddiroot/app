@@ -120,6 +120,53 @@ async function seed() {
 			})
 			.returning();
 
+		// Create behaviour quick actions for the school
+		await db
+			.insert(schema.behaviourQuickAction)
+			.values([
+				{
+					schoolId: schoolRecord.id,
+					name: 'Out of uniform',
+					description: 'Student not wearing correct school uniform'
+				},
+				{
+					schoolId: schoolRecord.id,
+					name: 'Distracting other students',
+					description: 'Student disrupting the learning of others'
+				},
+				{
+					schoolId: schoolRecord.id,
+					name: 'Late to class',
+					description: 'Student arrived late without valid reason'
+				},
+				{
+					schoolId: schoolRecord.id,
+					name: 'Excellent participation',
+					description: 'Student showed outstanding engagement and contribution'
+				},
+				{
+					schoolId: schoolRecord.id,
+					name: 'Helping others',
+					description: 'Student assisted classmates with their learning'
+				},
+				{
+					schoolId: schoolRecord.id,
+					name: 'Incomplete homework',
+					description: 'Student did not complete assigned homework'
+				},
+				{
+					schoolId: schoolRecord.id,
+					name: 'Forgot materials',
+					description: 'Student came to class without required materials or equipment'
+				},
+				{
+					schoolId: schoolRecord.id,
+					name: 'Outstanding effort',
+					description: 'Student demonstrated exceptional effort and dedication'
+				}
+			])
+			.returning();
+
 		const [campusRecord] = await db
 			.insert(schema.campus)
 			.values({

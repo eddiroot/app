@@ -3,20 +3,14 @@
 	import { Input } from '$lib/components/ui/input/index.js';
 	import { convertToFullName } from '$lib/utils';
 	import { flip } from 'svelte/animate';
-	import { superForm } from 'sveltekit-superforms';
-	import { zod4 } from 'sveltekit-superforms/adapters';
+
 	import StudentAttendanceListItem from './components/StudentAttendanceListItem.svelte';
-	import { attendanceSchema } from './schema.js';
 
 	const { data } = $props();
 	const attendances = $derived(data.attendances || []);
+	const behaviourQuickActions = $derived(data.behaviourQuickActions || []);
 
 	let searchTerm = $state('');
-
-	const form = superForm(data.form!, {
-		validators: zod4(attendanceSchema)
-	});
-	const { enhance } = form;
 
 	const filteredAttendances = $derived(
 		attendances.filter((attendance) => {
@@ -32,12 +26,8 @@
 	const unmarkedAttendances = $derived(
 		filteredAttendances
 			.filter((attendance) => {
-				// Include if no attendance record or didAttend is null/undefined, and not absent
-				const hasAttendance =
-					attendance.attendance &&
-					(attendance.attendance.didAttend === true || attendance.attendance.didAttend === false);
-				const wasAbsent = attendance.attendance?.wasAbsent || false;
-				return !hasAttendance && !wasAbsent;
+				// Include if no attendance record
+				return !attendance.attendance;
 			})
 			.sort((a, b) => {
 				const aName = convertToFullName(a.user.firstName, a.user.middleName, a.user.lastName);
@@ -49,12 +39,8 @@
 	const markedAttendances = $derived(
 		filteredAttendances
 			.filter((attendance) => {
-				// Include if attendance is marked (present/absent) or student was absent
-				const hasAttendance =
-					attendance.attendance &&
-					(attendance.attendance.didAttend === true || attendance.attendance.didAttend === false);
-				const wasAbsent = attendance.attendance?.wasAbsent || false;
-				return hasAttendance || wasAbsent;
+				// Include if attendance record
+				return !!attendance.attendance;
 			})
 			.sort((a, b) => {
 				const aName = convertToFullName(a.user.firstName, a.user.middleName, a.user.lastName);
@@ -86,7 +72,7 @@
 			<div class="bg-card border-border overflow-hidden rounded-lg border">
 				{#each unmarkedAttendances as attendanceRecord (attendanceRecord.user.id)}
 					<div animate:flip={{ duration: 400 }}>
-						<StudentAttendanceListItem {attendanceRecord} {form} {enhance} type="unmarked" />
+						<StudentAttendanceListItem {attendanceRecord} {behaviourQuickActions} type="unmarked" />
 					</div>
 				{/each}
 			</div>
@@ -96,22 +82,13 @@
 	<!-- Marked Attendance Section -->
 	{#if markedAttendances.length > 0}
 		<div class="space-y-4">
-			<div class="flex items-center justify-between">
-				<h2 class="text-foreground text-xl font-semibold">
-					Recorded ({markedAttendances.length})
-				</h2>
-				<div class="text-muted-foreground text-sm">
-					{markedAttendances.filter((a) => a.attendance?.didAttend === true).length} present,
-					{markedAttendances.filter(
-						(a) => a.attendance?.didAttend === false && !a.attendance?.wasAbsent
-					).length} absent,
-					{markedAttendances.filter((a) => a.attendance?.wasAbsent).length} away today
-				</div>
-			</div>
+			<h2 class="text-foreground text-xl font-semibold">
+				Recorded ({markedAttendances.length})
+			</h2>
 			<div class="bg-card border-border overflow-hidden rounded-lg border">
 				{#each markedAttendances as attendanceRecord (attendanceRecord.user.id)}
 					<div animate:flip={{ duration: 400 }}>
-						<StudentAttendanceListItem {attendanceRecord} {form} {enhance} type="marked" />
+						<StudentAttendanceListItem {attendanceRecord} {behaviourQuickActions} type="marked" />
 					</div>
 				{/each}
 			</div>

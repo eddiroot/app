@@ -96,7 +96,7 @@
 						<Breadcrumb.List>
 							{#if generateBreadcrumbItems(page.url.pathname).length == 0 && !data?.school?.name}
 								<Breadcrumb.Item>
-									<Breadcrumb.Page class="font-bold">eddi</Breadcrumb.Page>
+									<Breadcrumb.Page class="ml-2 text-lg font-bold">eddi</Breadcrumb.Page>
 								</Breadcrumb.Item>
 							{/if}
 							{#each generateBreadcrumbItems(page.url.pathname) as item (item.href)}
@@ -114,7 +114,7 @@
 						</Breadcrumb.List>
 					</Breadcrumb.Root>
 				</div>
-				<div class="flex items-center gap-x-1">
+				<div class="flex items-center gap-x-2">
 					{#if !user() && page.url.pathname !== '/login'}
 						<Button href="/login">Login</Button>
 					{/if}
@@ -155,7 +155,9 @@
 				</Resizable.Pane>
 
 				{#if user()}
-					<Resizable.Handle withHandle class="hidden md:flex" />
+					{#if aiSidebarPane && aiSidebarPane.getSize() > 0}
+						<Resizable.Handle withHandle class="hidden md:flex" />
+					{/if}
 					<Resizable.Pane defaultSize={0} collapsible={true} bind:this={aiSidebarPane}>
 						<AiSidebar pathname={page.url.pathname} />
 					</Resizable.Pane>
