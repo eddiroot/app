@@ -1,6 +1,5 @@
 import {
 	createBehaviourQuickAction,
-	deleteBehaviourQuickAction,
 	getBehaviourQuickActionsBySchoolId,
 	updateBehaviourQuickAction
 } from '$lib/server/db/service';
@@ -58,24 +57,6 @@ export const actions = {
 		} catch (error) {
 			console.error('Error updating behaviour quick action:', error);
 			return fail(500, { form, error: 'Failed to update behaviour quick action' });
-		}
-	},
-
-	delete: async ({ request, locals: { security } }) => {
-		security.isAuthenticated();
-		const formData = await request.formData();
-		const id = Number(formData.get('id'));
-
-		if (!id) {
-			return fail(400, { error: 'Invalid ID' });
-		}
-
-		try {
-			await deleteBehaviourQuickAction(id);
-			return { success: true };
-		} catch (error) {
-			console.error('Error deleting behaviour quick action:', error);
-			return fail(500, { error: 'Failed to delete behaviour quick action' });
 		}
 	}
 };

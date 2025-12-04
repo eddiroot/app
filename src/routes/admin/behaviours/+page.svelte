@@ -7,7 +7,6 @@
 	import { Textarea } from '$lib/components/ui/textarea/index.js';
 	import Pencil from '@lucide/svelte/icons/pencil';
 	import Plus from '@lucide/svelte/icons/plus';
-	import Trash2 from '@lucide/svelte/icons/trash-2';
 	import { superForm } from 'sveltekit-superforms';
 	import { zod4Client } from 'sveltekit-superforms/adapters';
 	import { z } from 'zod';
@@ -51,22 +50,6 @@
 		};
 		dialogOpen = true;
 	}
-
-	async function handleDelete(id: number) {
-		if (!confirm('Are you sure you want to delete this behaviour quick action?')) {
-			return;
-		}
-
-		const formData = new FormData();
-		formData.append('id', id.toString());
-
-		await fetch('?/delete', {
-			method: 'POST',
-			body: formData
-		});
-
-		window.location.reload();
-	}
 </script>
 
 <div class="container mx-auto space-y-6 p-8">
@@ -89,19 +72,9 @@
 				<Card.Header>
 					<Card.Title class="flex items-center justify-between">
 						<span>{behaviour.name}</span>
-						<div class="flex gap-2">
-							<Button variant="ghost" size="icon" onclick={() => openEditDialog(behaviour)}>
-								<Pencil />
-							</Button>
-							<Button
-								variant="ghost"
-								size="icon"
-								onclick={() => handleDelete(behaviour.id)}
-								class="text-destructive"
-							>
-								<Trash2 />
-							</Button>
-						</div>
+						<Button variant="ghost" size="icon" onclick={() => openEditDialog(behaviour)}>
+							<Pencil />
+						</Button>
 					</Card.Title>
 					{#if behaviour.description}
 						<Card.Description>{behaviour.description}</Card.Description>
