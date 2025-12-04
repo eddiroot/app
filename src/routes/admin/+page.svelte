@@ -8,6 +8,7 @@
 	import ContactIcon from '@lucide/svelte/icons/contact';
 	import DoorOpenIcon from '@lucide/svelte/icons/door-open';
 	import GraduationCapIcon from '@lucide/svelte/icons/graduation-cap';
+	import LecternIcon from '@lucide/svelte/icons/lectern';
 	import MapPinIcon from '@lucide/svelte/icons/map-pin';
 	import MessageSquareIcon from '@lucide/svelte/icons/message-square';
 	import SchoolIcon from '@lucide/svelte/icons/school';
@@ -82,6 +83,12 @@
 			description: 'Configure and manage parent-teacher interview sessions',
 			icon: MessageSquareIcon,
 			href: '/admin/interviews'
+		},
+		{
+			title: 'Behaviours',
+			description: 'Configure student behaviours that teachers can quickly log',
+			icon: LecternIcon,
+			href: '/admin/behaviours'
 		}
 	];
 
