@@ -28,7 +28,7 @@
 			return [];
 		}
 
-		const items: Array<{ label: string; href: string; isLast: boolean }> = [];
+		const items: Array<{ label: string; href: string; isFirst: boolean; isLast: boolean }> = [];
 		let currentPath = '';
 
 		for (let i = 0; i < segments.length; i++) {
@@ -71,6 +71,7 @@
 			items.push({
 				label,
 				href,
+				isFirst: i === 0,
 				isLast: i === segments.length - 1
 			});
 		}
@@ -100,7 +101,7 @@
 								</Breadcrumb.Item>
 							{/if}
 							{#each generateBreadcrumbItems(page.url.pathname) as item (item.href)}
-								<Breadcrumb.Item>
+								<Breadcrumb.Item class={item.isFirst ? 'ml-2' : ''}>
 									{#if item.isLast}
 										<Breadcrumb.Page>{item.label}</Breadcrumb.Page>
 									{:else}
