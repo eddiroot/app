@@ -184,7 +184,7 @@
 								{/if}
 							</Table.Cell>
 							<Table.Cell>
-								<Badge variant={status.variant} class="flex items-center gap-1">
+								<Badge variant={status.variant} class="flex w-32 items-center gap-1">
 									<status.icon class="h-3 w-3" />
 									{status.status}
 								</Badge>
