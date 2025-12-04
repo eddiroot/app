@@ -60,13 +60,18 @@ export const actions = {
 		}
 
 		try {
+			const behaviourIds = (form.data.behaviourQuickActionIds ?? [])
+				.filter((id) => id !== '')
+				.map((id) => parseInt(id, 10))
+				.filter((id) => !isNaN(id));
+
 			await upsertSubjectClassAllocationAttendance(
 				form.data.subjectClassAllocationId,
 				form.data.userId,
 				form.data.status,
-				form.data.attendanceNote,
-				form.data.note,
-				form.data.behaviourQuickActionIds?.map((id) => parseInt(id, 10)) || []
+				undefined,
+				form.data.noteTeacher,
+				behaviourIds
 			);
 
 			if (form.data.status === subjectClassAllocationAttendanceStatus.absent) {

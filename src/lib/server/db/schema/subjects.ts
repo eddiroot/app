@@ -144,8 +144,8 @@ export const subjectClassAllocationAttendance = pgTable(
 			.notNull()
 			.references(() => user.id, { onDelete: 'cascade' }),
 		status: subjectClassAllocationAttendanceStatusEnumPg().notNull(),
-		attendanceNote: text('attendance_note'),
-		note: text('note'),
+		noteGuardian: text('note_guardian'),
+		noteTeacher: text('note_teacher'),
 		isArchived: boolean('is_archived').notNull().default(false),
 		...timestamps
 	},

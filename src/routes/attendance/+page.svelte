@@ -48,7 +48,7 @@
 	function openAbsenceDialog(studentId: string): void {
 		$formData.studentId = studentId;
 		$formData.date = selectedDate.toDate(getLocalTimeZone());
-		$formData.attendanceNote = '';
+		$formData.noteGuardian = '';
 		showAbsenceDialog = true;
 	}
 
@@ -177,7 +177,7 @@
 		<form method="POST" action="?/markAbsence" use:enhance class="space-y-4">
 			<input type="hidden" name="studentId" bind:value={$formData.studentId} />
 			<input type="hidden" name="date" bind:value={$formData.date} />
-			<Form.Field {form} name="attendanceNote">
+			<Form.Field {form} name="noteGuardian">
 				<Form.Control>
 					{#snippet children({ props })}
 						<Form.Label>Note</Form.Label>
@@ -185,7 +185,7 @@
 							{...props}
 							placeholder="Reason for absence..."
 							class="min-h-[80px]"
-							bind:value={$formData.attendanceNote}
+							bind:value={$formData.noteGuardian}
 						/>
 					{/snippet}
 				</Form.Control>

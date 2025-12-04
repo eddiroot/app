@@ -190,18 +190,18 @@
 								</Badge>
 							</Table.Cell>
 							<Table.Cell>
-								{#if record.attendance?.attendanceNote || record.attendance?.note}
+								{#if record.attendance?.noteGuardian || record.attendance?.noteTeacher}
 									<div class="flex flex-col gap-1">
-										{#if record.attendance.attendanceNote}
+										{#if record.attendance.noteGuardian}
 											<div class="flex items-center gap-1 text-sm">
 												<FileText class="text-muted-foreground h-3 w-3" />
-												{record.attendance.attendanceNote}
+												{record.attendance.noteGuardian}
 											</div>
 										{/if}
-										{#if record.attendance.note}
+										{#if record.attendance.noteTeacher}
 											<div class="text-muted-foreground flex items-center gap-1 text-sm">
 												<FileText class="text-muted-foreground h-3 w-3" />
-												{record.attendance.note}
+												{record.attendance.noteTeacher}
 											</div>
 										{/if}
 									</div>
