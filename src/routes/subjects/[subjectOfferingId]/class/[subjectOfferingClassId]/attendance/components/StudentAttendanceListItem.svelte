@@ -24,10 +24,7 @@
 
 	type AttendanceRecord = {
 		user: Pick<User, 'id' | 'firstName' | 'middleName' | 'lastName'>;
-		attendance?: Pick<
-			SubjectClassAllocationAttendance,
-			'status' | 'attendanceNote' | 'note'
-		> | null;
+		attendance?: SubjectClassAllocationAttendance | null;
 		subjectClassAllocation: Pick<SubjectClassAllocation, 'id'>;
 		behaviourQuickActionIds?: number[];
 	};
@@ -47,13 +44,18 @@
 			subjectClassAllocationId: attendanceRecord.subjectClassAllocation.id,
 			userId: attendanceRecord.user.id,
 			status: attendanceRecord.attendance?.status || '',
-			note: attendanceRecord.attendance?.note || '',
+			noteTeacher: attendanceRecord.attendance?.noteTeacher || '',
 			behaviourQuickActionIds: (attendanceRecord.behaviourQuickActionIds ?? []).map(String)
 		},
 		{
 			validators: zod4Client(attendanceSchema),
 			invalidateAll: 'force',
-			resetForm: false
+			resetForm: false,
+			onResult({ result }) {
+				if (result.type === 'success') {
+					dialogOpen = false;
+				}
+			}
 		}
 	);
 
@@ -61,7 +63,6 @@
 
 	const user = $derived(attendanceRecord.user);
 	const attendance = $derived(attendanceRecord.attendance);
-	const subjectClassAllocation = $derived(attendanceRecord.subjectClassAllocation);
 	const fullName = $derived(convertToFullName(user.firstName, user.middleName, user.lastName));
 	let dialogOpen = $state(false);
 
@@ -100,18 +101,17 @@
 			<div class="flex flex-col">
 				<h3 class="truncate font-medium">{fullName}</h3>
 				<div class="flex items-center gap-2">
-					{#if attendance?.note}
+					{#if attendance?.noteTeacher}
 						<NotebookPen class="size-4" />
 					{/if}
 
-					{#if attendance?.attendanceNote}
+					{#if attendance?.noteGuardian}
 						<MessageCircleWarning class="text-destructive size-4" />
 					{/if}
 				</div>
 			</div>
 		</div>
 
-		<!-- Action buttons -->
 		<div class="flex items-center gap-2">
 			<form
 				method="POST"
@@ -120,7 +120,11 @@
 				class="flex items-center gap-2"
 			>
 				<input type="hidden" name="userId" value={user.id} />
-				<input type="hidden" name="subjectClassAllocationId" value={subjectClassAllocation.id} />
+				<input
+					type="hidden"
+					name="subjectClassAllocationId"
+					value={attendanceRecord.subjectClassAllocation.id}
+				/>
 
 				<Form.Field {form} name="behaviourQuickActionIds" class="space-y-0">
 					<Form.Control>
@@ -193,18 +197,20 @@
 			<Dialog.Header>
 				<Dialog.Title>{fullName}</Dialog.Title>
 			</Dialog.Header>
-			<div class="space-y-4 py-4">
-				<input type="hidden" name="userId" value={user.id} />
-				<input type="hidden" name="subjectClassAllocationId" value={subjectClassAllocation.id} />
-
-				<Form.Field {form} name="note">
+			<input type="hidden" name="userId" value={user.id} />
+			<input
+				type="hidden"
+				name="subjectClassAllocationId"
+				value={attendanceRecord.subjectClassAllocation.id}
+			/>
+			<div class="py-4">
+				<Form.Field {form} name="noteTeacher">
 					<Form.Control>
 						{#snippet children({ props })}
 							<Form.Label class="text-sm font-medium">Additional Notes</Form.Label>
 							<Textarea
 								{...props}
-								bind:value={$formData.note}
-								placeholder="Add additional notes (optional)..."
+								bind:value={$formData.noteTeacher}
 								class="min-h-20 resize-none"
 							/>
 						{/snippet}
@@ -212,7 +218,6 @@
 					<Form.FieldErrors />
 				</Form.Field>
 			</div>
-
 			<Dialog.Footer>
 				<Button variant="outline" type="button" onclick={() => (dialogOpen = false)}>Close</Button>
 				<Button variant="default" type="submit">Save</Button>

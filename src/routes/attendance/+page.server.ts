@@ -1,9 +1,10 @@
-import type {
-	Subject,
-	SubjectClassAllocation,
-	SubjectClassAllocationAttendance,
-	SubjectOfferingClass,
-	User
+import { subjectClassAllocationAttendanceStatus } from '$lib/enums.js';
+import {
+	type Subject,
+	type SubjectClassAllocation,
+	type SubjectClassAllocationAttendance,
+	type SubjectOfferingClass,
+	type User
 } from '$lib/server/db/schema';
 import { getGuardiansChildrensScheduleWithAttendanceByUserId } from '$lib/server/db/service';
 import {
@@ -58,7 +59,7 @@ async function markStudentAbsent(studentId: string, date: Date, note: string): P
 		await upsertSubjectClassAllocationAttendance(
 			allocation.classAllocation.id,
 			studentId,
-			false, // Always mark as absent
+			subjectClassAllocationAttendanceStatus.absent,
 			note || 'Marked absent by guardian'
 		);
 	}
@@ -92,7 +93,7 @@ export const actions = {
 			return fail(400, { form });
 		}
 
-		const { studentId, date, attendanceNote } = form.data;
+		const { studentId, date, noteGuardian } = form.data;
 
 		const dateValidation = validateAttendanceDate(date);
 		if (!dateValidation.isValid) {
@@ -103,7 +104,7 @@ export const actions = {
 			const classCount = await markStudentAbsent(
 				studentId,
 				dateValidation.date!,
-				attendanceNote || ''
+				noteGuardian || ''
 			);
 
 			return {

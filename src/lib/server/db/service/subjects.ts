@@ -657,8 +657,8 @@ export async function upsertSubjectClassAllocationAttendance(
 	subjectClassAllocationId: number,
 	userId: string,
 	status: subjectClassAllocationAttendanceStatus,
-	attendanceNote?: string | null,
-	note?: string | null,
+	noteGuardian?: string | undefined | null,
+	noteTeacher?: string | undefined | null,
 	behaviourQuickActionIds?: number[]
 ) {
 	return await db.transaction(async (tx) => {
@@ -668,8 +668,8 @@ export async function upsertSubjectClassAllocationAttendance(
 				subjectClassAllocationId,
 				userId,
 				status,
-				attendanceNote,
-				note
+				noteGuardian,
+				noteTeacher
 			})
 			.onConflictDoUpdate({
 				target: [
@@ -678,8 +678,8 @@ export async function upsertSubjectClassAllocationAttendance(
 				],
 				set: {
 					status,
-					attendanceNote,
-					note
+					noteGuardian,
+					noteTeacher
 				}
 			})
 			.returning();
