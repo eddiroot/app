@@ -84,7 +84,7 @@
 			<Button
 				variant="ghost"
 				size="sm"
-				href="/subjects/${classDetails.subjectOffering.id}/class/${classDetails.subjectOfferingClass
+				href="/subjects/{classDetails.subjectOffering.id}/class/{classDetails.subjectOfferingClass
 					.id}/attendance"
 			>
 				<ArrowLeft />
