@@ -1,5 +1,4 @@
 import * as fabric from 'fabric';
-import { configureObjectControls } from './object-controls';
 import type { LayerAction } from './types';
 
 /**
@@ -91,8 +90,8 @@ async function handleLoadMessage(
 		canvas.clear();
 
 		objects.forEach((obj: unknown) => {
-			const fabricObj = obj as fabric.FabricObject & { id: string };
-			configureObjectControls(fabricObj);
+			const fabricObj = obj as fabric.FabricObject & { id: string; hasControls: boolean };
+			fabricObj.hasControls = false; // Disable controls on load
 			canvas.add(fabricObj);
 		});
 
@@ -111,8 +110,6 @@ async function handleAddMessage(
 		const objects = await fabric.util.enlivenObjects([messageData.object]);
 		const obj = objects[0] as fabric.FabricObject & { id?: string };
 		obj.id = messageData.object.id;
-
-		configureObjectControls(obj);
 		canvas.add(obj);
 		canvas.renderAll();
 	}

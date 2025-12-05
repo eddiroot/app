@@ -1,15 +1,8 @@
 import * as fabric from 'fabric';
 import { v4 as uuidv4 } from 'uuid';
 import { ZOOM_LIMITS } from './constants';
-import { configurePathControls, recalculateArrowControlPositions } from './object-controls';
 import * as Shapes from './shapes';
-import type {
-	DrawOptions,
-	LineArrowOptions,
-	ShapeOptions,
-	TextOptions,
-	WhiteboardTool
-} from './types';
+import type { DrawOptions, LineOptions, ShapeOptions, TextOptions, WhiteboardTool } from './types';
 
 /**
  * Context object containing all state and callbacks needed by event handlers
@@ -30,8 +23,6 @@ export interface CanvasEventContext {
 	setCurrentZoom: (zoom: number) => void;
 	getIsDrawingLine: () => boolean;
 	setIsDrawingLine: (value: boolean) => void;
-	getIsDrawingArrow: () => boolean;
-	setIsDrawingArrow: (value: boolean) => void;
 	getIsDrawingShape: () => boolean;
 	setIsDrawingShape: (value: boolean) => void;
 	getIsDrawingText: () => boolean;
@@ -61,7 +52,7 @@ export interface CanvasEventContext {
 	getCurrentTextOptions: () => TextOptions;
 	getCurrentShapeOptions: () => ShapeOptions;
 	getCurrentDrawOptions: () => DrawOptions;
-	getCurrentLineArrowOptions: () => LineArrowOptions;
+	getCurrentLineOptions: () => LineOptions;
 
 	// Callbacks
 	sendCanvasUpdate: (data: Record<string, unknown>) => void;
@@ -74,7 +65,7 @@ export interface CanvasEventContext {
 	floatingMenuRef?: {
 		updateTextOptions?: (options: Partial<TextOptions>) => void;
 		updateShapeOptions?: (options: Partial<ShapeOptions>) => void;
-		updateLineArrowOptions?: (options: Partial<LineArrowOptions>) => void;
+		updateLineOptions?: (options: Partial<LineOptions>) => void;
 		updateDrawOptions?: (options: Partial<DrawOptions>) => void;
 		closeExpandedColors?: () => void;
 		setActiveMenuPanel?: (panel: WhiteboardTool) => void;
@@ -297,23 +288,15 @@ export const createMouseUpHandler = (canvas: fabric.Canvas, ctx: CanvasEventCont
 			ctx.setTempShape(null);
 		}
 
-		// Handle line and arrow completion
+		// Handle line completion
 		const tempLine = ctx.getTempLine();
-		if ((ctx.getIsDrawingLine() || ctx.getIsDrawingArrow()) && tempLine) {
-			const wasDrawingArrow = ctx.getIsDrawingArrow();
-
+		if (ctx.getIsDrawingLine() && tempLine) {
 			// Set the object as selectable and finish the drawing
 			tempLine.set({ selectable: true });
-
-			// Recalculate control positions now that drawing is complete
-			if (tempLine.type === 'group') {
-				recalculateArrowControlPositions(tempLine as fabric.Group);
-			}
-
 			canvas.setActiveObject(tempLine);
 			canvas.renderAll();
 
-			// Send the completed line/arrow to other users
+			// Send the completed line to other users
 			// @ts-expect-error - toObject method exists on both Line and Group
 			const objData = tempLine.toObject();
 			// @ts-expect-error - custom id property
@@ -330,11 +313,10 @@ export const createMouseUpHandler = (canvas: fabric.Canvas, ctx: CanvasEventCont
 			canvas.defaultCursor = 'default';
 			canvas.hoverCursor = 'move';
 
-			// Show line/arrow options in floating menu
-			// Use setTimeout to ensure state updates happen after the object is properly selected
+			// Show line options in floating menu
 			setTimeout(() => {
 				ctx.setShowFloatingMenu(true);
-				ctx.floatingMenuRef?.setActiveMenuPanel?.(wasDrawingArrow ? 'arrow' : 'line');
+				ctx.floatingMenuRef?.setActiveMenuPanel?.('line');
 
 				// Get stroke properties - for arrow groups, get from the line part
 				let strokeWidth = 2;
@@ -359,7 +341,7 @@ export const createMouseUpHandler = (canvas: fabric.Canvas, ctx: CanvasEventCont
 					}
 				}
 
-				ctx.floatingMenuRef?.updateLineArrowOptions?.({
+				ctx.floatingMenuRef?.updateLineOptions?.({
 					strokeWidth,
 					strokeColour,
 					strokeDashArray,
@@ -369,7 +351,6 @@ export const createMouseUpHandler = (canvas: fabric.Canvas, ctx: CanvasEventCont
 
 			// Reset drawing state
 			ctx.setIsDrawingLine(false);
-			ctx.setIsDrawingArrow(false);
 			ctx.setTempLine(null);
 		}
 
@@ -414,9 +395,6 @@ export const createPathCreatedHandler = (ctx: CanvasEventContext) => {
 	return ({ path }: { path: fabric.Path }) => {
 		// @ts-expect-error - custom id property
 		path.id = uuidv4();
-
-		// Configure path-specific controls
-		configurePathControls(path);
 
 		const objData = path.toObject();
 		// @ts-expect-error - custom id property
@@ -533,7 +511,7 @@ export const createSelectionCreatedHandler = (ctx: CanvasEventContext) => {
 				// Show line options panel
 				ctx.floatingMenuRef?.setActiveMenuPanel?.('line');
 				// Sync line properties to menu
-				ctx.floatingMenuRef?.updateLineArrowOptions?.({
+				ctx.floatingMenuRef?.updateLineOptions?.({
 					strokeWidth: obj.strokeWidth || 2,
 					strokeColour: obj.stroke?.toString() || '#4A5568',
 					strokeDashArray: obj.strokeDashArray || [],
@@ -546,7 +524,7 @@ export const createSelectionCreatedHandler = (ctx: CanvasEventContext) => {
 				const groupObj = obj as fabric.Group;
 				const lineObj = groupObj.getObjects().find((o) => o.type === 'polyline');
 				if (lineObj) {
-					ctx.floatingMenuRef?.updateLineArrowOptions?.({
+					ctx.floatingMenuRef?.updateLineOptions?.({
 						strokeWidth: lineObj.strokeWidth || 2,
 						strokeColour: lineObj.stroke?.toString() || '#4A5568',
 						strokeDashArray: lineObj.strokeDashArray || [],
@@ -618,7 +596,7 @@ export const createSelectionUpdatedHandler = (ctx: CanvasEventContext) => {
 				// Show line options panel
 				ctx.floatingMenuRef?.setActiveMenuPanel?.('line');
 				// Sync line properties to menu
-				ctx.floatingMenuRef?.updateLineArrowOptions?.({
+				ctx.floatingMenuRef?.updateLineOptions?.({
 					strokeWidth: obj.strokeWidth || 2,
 					strokeColour: obj.stroke?.toString() || '#4A5568',
 					strokeDashArray: obj.strokeDashArray || [],
@@ -631,7 +609,7 @@ export const createSelectionUpdatedHandler = (ctx: CanvasEventContext) => {
 				const groupObj = obj as fabric.Group;
 				const lineObj = groupObj.getObjects().find((o) => o.type === 'polyline');
 				if (lineObj) {
-					ctx.floatingMenuRef?.updateLineArrowOptions?.({
+					ctx.floatingMenuRef?.updateLineOptions?.({
 						strokeWidth: lineObj.strokeWidth || 2,
 						strokeColour: lineObj.stroke?.toString() || '#4A5568',
 						strokeDashArray: lineObj.strokeDashArray || [],
@@ -810,42 +788,26 @@ export const createMouseDownHandler = (canvas: fabric.Canvas, ctx: CanvasEventCo
 				opt.e.preventDefault();
 				opt.e.stopPropagation();
 			}
-		} else if (selectedTool === 'line' || selectedTool === 'arrow') {
+		} else if (selectedTool === 'line') {
 			// Don't start drawing if we're clicking on an existing object
 			const target = canvas.findTarget(opt.e);
-			if (!target && !ctx.getIsDrawingLine() && !ctx.getIsDrawingArrow()) {
+			if (!target && !ctx.getIsDrawingLine()) {
 				const pointer = canvas.getScenePoint(opt.e);
 				const startPoint = { x: pointer.x, y: pointer.y };
 				ctx.setStartPoint(startPoint);
+				ctx.setIsDrawingLine(true);
+				const tempLine = Shapes.createLine(
+					startPoint.x,
+					startPoint.y,
+					startPoint.x,
+					startPoint.y,
+					ctx.getCurrentLineOptions()
+				);
+				ctx.setTempShape(tempLine);
+				ctx.setTempLine(tempLine);
 
-				if (selectedTool === 'line') {
-					ctx.setIsDrawingLine(true);
-					const tempLine = Shapes.createLine(
-						startPoint.x,
-						startPoint.y,
-						startPoint.x,
-						startPoint.y,
-						ctx.getCurrentLineArrowOptions()
-					);
-					ctx.setTempShape(tempLine);
-					ctx.setTempLine(tempLine);
-				} else {
-					ctx.setIsDrawingArrow(true);
-					const tempLine = Shapes.createArrow(
-						startPoint.x,
-						startPoint.y,
-						startPoint.x,
-						startPoint.y,
-						ctx.getCurrentLineArrowOptions()
-					);
-					ctx.setTempLine(tempLine);
-				}
-
-				const tempLine = ctx.getTempLine();
-				if (tempLine) {
-					canvas.add(tempLine);
-					canvas.renderAll();
-				}
+				canvas.add(tempLine);
+				canvas.renderAll();
 
 				opt.e.preventDefault();
 				opt.e.stopPropagation();
@@ -946,7 +908,7 @@ export const createMouseMoveHandler = (canvas: fabric.Canvas, ctx: CanvasEventCo
 				canvas.renderAll();
 			}
 			ctx.setTempText(tempText);
-		} else if ((ctx.getIsDrawingLine() || ctx.getIsDrawingArrow()) && ctx.getTempLine()) {
+		} else if (ctx.getIsDrawingLine() && ctx.getTempLine()) {
 			// Update the temporary line/arrow while dragging
 			const pointer = canvas.getScenePoint(opt.e);
 			const startPoint = ctx.getStartPoint();
@@ -957,22 +919,13 @@ export const createMouseMoveHandler = (canvas: fabric.Canvas, ctx: CanvasEventCo
 				canvas.remove(oldTempLine);
 			}
 
-			// Create new line or arrow with updated coordinates
-			const tempLine = ctx.getIsDrawingLine()
-				? Shapes.createLine(
-						startPoint.x,
-						startPoint.y,
-						pointer.x,
-						pointer.y,
-						ctx.getCurrentLineArrowOptions()
-					)
-				: Shapes.createArrow(
-						startPoint.x,
-						startPoint.y,
-						pointer.x,
-						pointer.y,
-						ctx.getCurrentLineArrowOptions()
-					);
+			const tempLine = Shapes.createLine(
+				startPoint.x,
+				startPoint.y,
+				pointer.x,
+				pointer.y,
+				ctx.getCurrentLineOptions()
+			);
 
 			if (tempLine) {
 				canvas.add(tempLine);
