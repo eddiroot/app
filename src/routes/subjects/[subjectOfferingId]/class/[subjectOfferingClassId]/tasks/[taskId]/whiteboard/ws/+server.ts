@@ -1,4 +1,3 @@
-import { whiteboardObjectTypeEnum } from '$lib/enums.js';
 import {
 	clearWhiteboard,
 	deleteWhiteboardObject,
@@ -8,25 +7,6 @@ import {
 	updateWhiteboardObject
 } from '$lib/server/db/service';
 import type { Socket } from './$types.js';
-
-// Map Fabric.js object types to our enum values
-function mapFabricTypeToEnum(fabricType: string): whiteboardObjectTypeEnum {
-	switch (fabricType.toLowerCase()) {
-		case 'rect':
-			return whiteboardObjectTypeEnum.rect;
-		case 'circle':
-			return whiteboardObjectTypeEnum.circle;
-		case 'path':
-			return whiteboardObjectTypeEnum.path;
-		case 'textbox':
-			return whiteboardObjectTypeEnum.textbox;
-		case 'image':
-			return whiteboardObjectTypeEnum.image;
-		default:
-			console.warn(`Unknown fabric type: ${fabricType}, defaulting to path`);
-			return whiteboardObjectTypeEnum.path;
-	}
-}
 
 // Store peer subscriptions with their whiteboardId
 const peerWhiteboards = new Map<object, number>();
@@ -135,7 +115,7 @@ export const socket: Socket = {
 						console.error('Failed to load whiteboard from database:', error);
 					}
 				}
-				return; // Don't process further for init messages
+				return;
 			} else if (parsedMessage.type === 'clear') {
 				await clearWhiteboard(whiteboardId);
 				peer.publish(
@@ -150,7 +130,6 @@ export const socket: Socket = {
 
 				await saveWhiteboardObject({
 					objectId: newObject.id,
-					objectType: mapFabricTypeToEnum(newObject.type || 'path'),
 					objectData: newObject,
 					whiteboardId
 				});
@@ -207,6 +186,24 @@ export const socket: Socket = {
 					JSON.stringify({
 						type: 'modify',
 						object: updatedObject,
+						whiteboardId
+					})
+				);
+			} else if (parsedMessage.type === 'layer') {
+				// Handle layering changes
+				const layeredObject = parsedMessage.object;
+				const action = parsedMessage.action;
+
+				// Update the object in the database to reflect the new z-index
+				await updateWhiteboardObject(layeredObject.id, layeredObject, whiteboardId);
+
+				// Broadcast the layering change to other clients
+				peer.publish(
+					`whiteboard-${whiteboardId}`,
+					JSON.stringify({
+						type: 'layer',
+						object: layeredObject,
+						action: action,
 						whiteboardId
 					})
 				);

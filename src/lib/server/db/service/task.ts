@@ -4,8 +4,7 @@ import {
 	taskBlockTypeEnum,
 	taskStatusEnum,
 	taskTypeEnum,
-	userTypeEnum,
-	whiteboardObjectTypeEnum
+	userTypeEnum
 } from '$lib/enums.js';
 import { db } from '$lib/server/db';
 import * as table from '$lib/server/db/schema';
@@ -379,7 +378,6 @@ export async function getWhiteboardObjects(whiteboardId: number = 1) {
 
 export async function saveWhiteboardObject(data: {
 	objectId: string;
-	objectType: whiteboardObjectTypeEnum;
 	objectData: Record<string, unknown>;
 	whiteboardId?: number;
 }) {

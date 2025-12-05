@@ -30,6 +30,34 @@ declare module "sst" {
       "taskDefinition": string
       "type": "sst.aws.Task"
     }
+    "GeminiApiKey": {
+      "type": "sst.sst.Secret"
+      "value": string
+    }
+    "GeminiDefaultModel": {
+      "type": "sst.sst.Secret"
+      "value": string
+    }
+    "GoogleClientId": {
+      "type": "sst.sst.Secret"
+      "value": string
+    }
+    "GoogleClientSecret": {
+      "type": "sst.sst.Secret"
+      "value": string
+    }
+    "MicrosoftClientId": {
+      "type": "sst.sst.Secret"
+      "value": string
+    }
+    "MicrosoftClientSecret": {
+      "type": "sst.sst.Secret"
+      "value": string
+    }
+    "MicrosoftTenantId": {
+      "type": "sst.sst.Secret"
+      "value": string
+    }
     "VPC": {
       "bastion": string
       "type": "sst.aws.Vpc"

@@ -46,6 +46,15 @@ export default $config({
 
 		const bucket = new sst.aws.Bucket('BucketSchools');
 
+		const geminiApiKey = new sst.Secret('GeminiApiKey');
+		const geminiDefaultModel = new sst.Secret('GeminiDefaultModel');
+
+		const googleClientId = new sst.Secret('GoogleClientId');
+		const googleClientSecret = new sst.Secret('GoogleClientSecret');
+		const microsoftClientId = new sst.Secret('MicrosoftClientId');
+		const microsoftClientSecret = new sst.Secret('MicrosoftClientSecret');
+		const microsoftTenantId = new sst.Secret('MicrosoftTenantId');
+
 		const cluster = new sst.aws.Cluster('Cluster', {
 			vpc
 		});
@@ -65,7 +74,18 @@ export default $config({
 
 		const app = new sst.aws.SvelteKit('EddiApp', {
 			vpc,
-			link: [bucket, fet, database], // + email
+			link: [
+				bucket,
+				fet,
+				database,
+				geminiApiKey,
+				geminiDefaultModel,
+				googleClientId,
+				googleClientSecret,
+				microsoftClientId,
+				microsoftClientSecret,
+				microsoftTenantId
+			], // + email
 			domain: {
 				name: 'eddi.com.au',
 				redirects: ['www.eddi.com.au', 'eddi.au', 'www.eddi.au'],

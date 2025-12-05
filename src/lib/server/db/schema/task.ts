@@ -16,8 +16,7 @@ import {
 	quizModeEnum,
 	taskBlockTypeEnum,
 	taskStatusEnum,
-	taskTypeEnum,
-	whiteboardObjectTypeEnum
+	taskTypeEnum
 } from '../../../enums';
 import { courseMapItem } from './coursemap';
 import { learningAreaStandard } from './curriculum';
@@ -293,21 +292,12 @@ export const whiteboard = pgTable('whiteboard', {
 
 export type Whiteboard = typeof whiteboard.$inferSelect;
 
-export const whiteboardObjectTypeEnumPg = pgEnum('enum_whiteboard_object_type', [
-	whiteboardObjectTypeEnum.rect,
-	whiteboardObjectTypeEnum.circle,
-	whiteboardObjectTypeEnum.path,
-	whiteboardObjectTypeEnum.textbox,
-	whiteboardObjectTypeEnum.image
-]);
-
 export const whiteboardObject = pgTable('whiteboard_object', {
 	id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
 	whiteboardId: integer('whiteboard_id')
 		.notNull()
 		.references(() => whiteboard.id, { onDelete: 'cascade' }),
 	objectId: text('object_id').notNull().unique(),
-	objectType: whiteboardObjectTypeEnumPg().notNull(),
 	objectData: jsonb('object_data').notNull(),
 	...timestamps
 });

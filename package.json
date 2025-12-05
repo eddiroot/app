@@ -85,7 +85,7 @@
     "date-fns": "^4.1.0",
     "date-holidays": "^3.26.5",
     "drizzle-orm": "^0.44.2",
-    "fabric": "^6.7.0",
+    "fabric": "^6.9.0",
     "fast-xml-parser": "^5.2.5",
     "jsdom": "^26.1.0",
     "mathjs": "^14.7.0",
