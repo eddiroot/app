@@ -25,7 +25,8 @@ export const createLine = (
 			strokeDashArray: options.strokeDashArray,
 			opacity: options.opacity,
 			selectable: true,
-			hasControls: false
+			hasControls: false,
+			hasBorders: false
 		}
 	);
 
@@ -63,7 +64,8 @@ export const createShapeFromPoints = (
 				opacity: options.opacity,
 				left: left,
 				top: top,
-				hasControls: false
+				hasControls: false,
+				hasBorders: true
 			});
 			return circle;
 		}
@@ -79,7 +81,8 @@ export const createShapeFromPoints = (
 				opacity: options.opacity,
 				left: left,
 				top: top,
-				hasControls: false
+				hasControls: false,
+				hasBorders: false
 			});
 			return rect;
 		}
@@ -95,7 +98,8 @@ export const createShapeFromPoints = (
 				opacity: options.opacity,
 				left: left,
 				top: top,
-				hasControls: false
+				hasControls: false,
+				hasBorders: false
 			});
 			return triangle;
 		}

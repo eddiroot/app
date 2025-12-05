@@ -70,6 +70,12 @@ export interface CanvasEventContext {
 		closeExpandedColors?: () => void;
 		setActiveMenuPanel?: (panel: WhiteboardTool) => void;
 	};
+
+	// Control point management for lines
+	addControlPointsForLine?: (lineId: string, line: fabric.Polyline) => void;
+	removeControlPointsForLine?: (lineId: string) => void;
+	updateLineFromControlPoint?: (controlPointId: string, newX: number, newY: number) => void;
+	updateControlPointsFromLine?: (lineId: string, line: fabric.Polyline) => void;
 }
 
 /**
@@ -77,6 +83,21 @@ export interface CanvasEventContext {
  */
 export const createObjectMovingHandler = (ctx: CanvasEventContext) => {
 	return ({ target }: { target: fabric.Object }) => {
+		// @ts-expect-error - custom property for control points
+		if (target.isControlPoint && ctx.updateLineFromControlPoint) {
+			// This is a control point circle, update the associated line
+			const center = target.getCenterPoint();
+			// @ts-expect-error - custom id property
+			ctx.updateLineFromControlPoint(target.id, center.x, center.y);
+			return;
+		}
+
+		// If moving a polyline, update its control points
+		if (target.type === 'polyline' && ctx.updateControlPointsFromLine) {
+			// @ts-expect-error - custom id property
+			ctx.updateControlPointsFromLine(target.id, target as fabric.Polyline);
+		}
+
 		const objData = target.type === 'textbox' ? target.toObject(['text']) : target.toObject();
 		// @ts-expect-error - custom id property
 		objData.id = target.id;
@@ -348,6 +369,12 @@ export const createMouseUpHandler = (canvas: fabric.Canvas, ctx: CanvasEventCont
 					opacity
 				});
 			}, 0);
+
+			// Add control points for the line
+			if (tempLine.type === 'polyline' && ctx.addControlPointsForLine) {
+				// @ts-expect-error - custom id property
+				ctx.addControlPointsForLine(tempLine.id, tempLine as fabric.Polyline);
+			}
 
 			// Reset drawing state
 			ctx.setIsDrawingLine(false);
