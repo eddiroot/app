@@ -1,0 +1,484 @@
+{
+  "id": 27000,
+  "curriculumId": 27000,
+  "name": "Health and Human Development Units 3 and 4",
+  "isArchived": false,
+  "learningAreas": [
+    {
+      "id": 27000,
+      "curriculumSubjectId": 27000,
+      "name": "Understanding health and wellbeing",
+      "abbreviation": "U3AOS1",
+      "description": "In this area of study, students explore health and wellbeing, and illness as complex, dynamic and subjective concepts. They reflect on both the universality of public health goals and the increasing influence of global conditions on Australians. Students develop their understanding of the indicators used to measure and evaluate health status, and the factors that contribute to variations in health status between different groups. On completion of this unit, the student should be able to explain the complex, dynamic and global nature of health and wellbeing, interpret and apply Australia’s health status data, and analyse variations in health status. To achieve this outcome, the student will draw on the key knowledge and key skills outlined in Area of Study 1. concepts of health and wellbeing (physical, social, emotional, mental and spiritual dimensions), illness, and the dynamic and subjective nature of these concepts benefits of optimal health and wellbeing and its importance as a resource individually, nationally and globally"
+    },
+    {
+      "id": 27001,
+      "curriculumSubjectId": 27000,
+      "name": "Promoting health in Australia",
+      "abbreviation": "U3AOS2",
+      "description": "In this area of study, students look at different approaches to public health over time, with an emphasis on changes and strategies that have succeeded in improving health outcomes. They examine the progression of public health in Australia since 1900, noting global changes and influences such as the Ottawa Charter for Health Promotion, and the general transition of focus from the health and wellbeing of individuals to that of population groups including Aboriginal and Torres Strait Islander Peoples. Students investigate the Australian health system and its role in promoting health and wellbeing. They apply their understanding of successful health promotion campaigns, programs and case studies to evaluate the ability of initiatives to identify priorities and improve health outcomes in Australia. On completion of this unit, the student should be able to explain changes to public health approaches, analyse improvements in population health over time and evaluate health promotion strategies and initiatives. To achieve this outcome, the student will draw on the key knowledge and key skills outlined in Area of Study 2. reasons for improvements in Australia’s health status since 1900, focusing on: ‘old’ public health, the biomedical approach to health and improvements in medical technology, the concept of the social model of health and the Ottawa Charter for Health Promotion (not including the principles of the social model of health) the role of health promotion in improving population health"
+    },
+    {
+      "id": 27002,
+      "curriculumSubjectId": 27000,
+      "name": "Global health and human development",
+      "abbreviation": "U4AOS1",
+      "description": "In this area of study, students explore similarities and differences in health status and human development in low-, middle- and high-income countries, including Australia. They investigate a range of factors that contribute to health inequalities and study the concepts of sustainability and the Human Development Index to further their understanding of health and human development in a global context. Students inquire into the effects of global trends on health and human development. On completion of this unit, the student should be able to analyse similarities and differences in health status and human development globally and analyse the factors that contribute to these differences. To achieve this outcome, the student will draw on the key knowledge and key skills outlined in Area of Study 1. the concept of human development advantages and limitations of the Human Development Index"
+    },
+    {
+      "id": 27003,
+      "curriculumSubjectId": 27000,
+      "name": "Health and the Sustainable Development Goals",
+      "abbreviation": "U4AOS2",
+      "description": "In this area of study, students look at action for promoting health globally. They consider the importance of and relationships between the UN’s SDGs, focusing on their promotion of health and human development. Students investigate the goal and objectives of the WHO and evaluate Australia’s aid program and the role of non-government organisations. They reflect on meaningful and achievable individual and social actions that could contribute to the work of national and international organisations that promote health and wellbeing. On completion of this unit, the student should be able to analyse the relationships between the SDGs and their role in the promotion of health and human development and evaluate the effectiveness of global aid programs. To achieve this outcome, the student will draw on the key knowledge and key skills outlined in Area of Study 2. the importance of the UN’s SDGs for health and human development in a global context key features of SDG 3 (‘Ensure healthy lives and promote wellbeing for all at all ages’)"
+    }
+  ],
+  "outcomes": [
+    {
+      "id": 27000,
+      "curriculumSubjectId": 27000,
+      "number": 1,
+      "description": "On completion of this unit, the student should be able to explain the complex, dynamic and global nature of health and wellbeing, interpret and apply Australia’s health status data, and analyse variations in health status.",
+      "keyKnowledge": [
+        {
+          "id": 27000,
+          "description": "concepts of health and wellbeing (physical, social, emotional, mental and spiritual dimensions), illness, and the dynamic and subjective nature of these concepts",
+          "outcomeId": 27000
+        },
+        {
+          "id": 27001,
+          "description": "benefits of optimal health and wellbeing and its importance as a resource individually, nationally and globally",
+          "outcomeId": 27000
+        },
+        {
+          "id": 27002,
+          "description": "indicators used to measure and understand health status: incidence, prevalence, morbidity, burden of disease, disability-adjusted life year (DALY), years of life lost (YLL), years lived with disability (YLD), life expectancy, health-adjusted life expectancy (HALE), mortality (maternal, infant and under five), self-assessed health status",
+          "outcomeId": 27000
+        },
+        {
+          "id": 27003,
+          "description": "biological, sociocultural and environmental factors that contribute to variations in health status between population groups",
+          "outcomeId": 27000
+        },
+        {
+          "id": 27004,
+          "description": "the contribution to Australia’s health status of: smoking and vaping, alcohol, overweight and obesity, nutritional imbalance (under-consumption of fruit and vegetables, and dairy foods; high intake of fat, salt and sugar; low intake of fibre).",
+          "outcomeId": 27000
+        }
+      ],
+      "keySkills": [
+        {
+          "id": 27000,
+          "description": "explain the dynamic and subjective nature of the concepts of health and wellbeing and illness",
+          "outcomeId": 27000
+        },
+        {
+          "id": 27001,
+          "description": "describe the relationship between dimensions of health and wellbeing",
+          "outcomeId": 27000
+        },
+        {
+          "id": 27002,
+          "description": "explain the individual, national and global importance of health and wellbeing as a resource",
+          "outcomeId": 27000
+        },
+        {
+          "id": 27003,
+          "description": "interpret and apply indicators used to measure health status",
+          "outcomeId": 27000
+        },
+        {
+          "id": 27004,
+          "description": "use data to evaluate the health status of Australians",
+          "outcomeId": 27000
+        },
+        {
+          "id": 27005,
+          "description": "describe how examples of biological, sociocultural and environmental factors can influence health outcomes",
+          "outcomeId": 27000
+        },
+        {
+          "id": 27006,
+          "description": "analyse health information to explain how factors can contribute to variations in health status between population groups.",
+          "outcomeId": 27000
+        }
+      ]
+    },
+    {
+      "id": 27001,
+      "curriculumSubjectId": 27000,
+      "number": 2,
+      "description": "On completion of this unit, the student should be able to explain changes to public health approaches, analyse improvements in population health over time and evaluate health promotion strategies and initiatives.",
+      "keyKnowledge": [
+        {
+          "id": 27005,
+          "description": "reasons for improvements in Australia’s health status since 1900, focusing on: ‘old’ public health, the biomedical approach to health and improvements in medical technology, the concept of the social model of health and the Ottawa Charter for Health Promotion (not including the principles of the social model of health)",
+          "outcomeId": 27001
+        },
+        {
+          "id": 27006,
+          "description": "the role of health promotion in improving population health",
+          "outcomeId": 27001
+        },
+        {
+          "id": 27007,
+          "description": "programs to improve Aboriginal and Torres Strait Islander Peoples’ health, including how they promote social justice",
+          "outcomeId": 27001
+        },
+        {
+          "id": 27008,
+          "description": "initiatives to promote healthy eating in Australia, including the Australian Dietary Guidelines, the Australian Guide to Healthy Eating and the Aboriginal and Torres Strait Islander Guide to Healthy Eating",
+          "outcomeId": 27001
+        },
+        {
+          "id": 27009,
+          "description": "challenges in bringing about nutritional change, including sociocultural, environmental and commercial factors",
+          "outcomeId": 27001
+        },
+        {
+          "id": 27010,
+          "description": "Australia’s health system, including Medicare, private health insurance, the Pharmaceutical Benefits Scheme (PBS) and the National Disability Insurance Scheme (NDIS), and its role in promoting health in terms of funding, sustainability, access and equity.",
+          "outcomeId": 27001
+        }
+      ],
+      "keySkills": [
+        {
+          "id": 27007,
+          "description": "analyse data that shows improvements in health over time and draw conclusions about reasons for improvements",
+          "outcomeId": 27001
+        },
+        {
+          "id": 27008,
+          "description": "explain how initiatives of ‘old’ public health and the social model of health, including those reflecting action areas of the Ottawa Charter for Health Promotion, could lead to improved health outcomes",
+          "outcomeId": 27001
+        },
+        {
+          "id": 27009,
+          "description": "describe the relationship between biomedical and social models of health, including the strengths and limitations of each",
+          "outcomeId": 27001
+        },
+        {
+          "id": 27010,
+          "description": "analyse a range of data, case studies and examples of health promotion programs in relation to the use of action areas of the Ottawa Charter for Health Promotion and how they can lead to improved health outcomes",
+          "outcomeId": 27001
+        },
+        {
+          "id": 27011,
+          "description": "analyse initiatives introduced to improve Aboriginal and Torres Strait Islander Peoples’ health and wellbeing in Australia, and how they reflect the action areas of the Ottawa Charter for Health Promotion and social justice",
+          "outcomeId": 27001
+        },
+        {
+          "id": 27012,
+          "description": "evaluate initiatives in terms of their capacity to improve health outcomes of Aboriginal and Torres Strait Islander Peoples and promote social justice",
+          "outcomeId": 27001
+        },
+        {
+          "id": 27013,
+          "description": "evaluate the impact of initiatives to promote healthy eating in Australia and their ability to improve health outcomes",
+          "outcomeId": 27001
+        },
+        {
+          "id": 27014,
+          "description": "draw conclusions as to why nutritional improvements are difficult to achieve in Australia",
+          "outcomeId": 27001
+        },
+        {
+          "id": 27015,
+          "description": "analyse the role of Medicare, private health insurance, the PBS and the NDIS in promoting Australia’s health.",
+          "outcomeId": 27001
+        }
+      ]
+    },
+    {
+      "id": 27002,
+      "curriculumSubjectId": 27000,
+      "number": 1,
+      "description": "On completion of this unit, the student should be able to analyse similarities and differences in health status and human development globally and analyse the factors that contribute to these differences.",
+      "keyKnowledge": [
+        {
+          "id": 27011,
+          "description": "the concept of human development",
+          "outcomeId": 27002
+        },
+        {
+          "id": 27012,
+          "description": "advantages and limitations of the Human Development Index",
+          "outcomeId": 27002
+        },
+        {
+          "id": 27013,
+          "description": "characteristics of low-, middle- and high-income countries",
+          "outcomeId": 27002
+        },
+        {
+          "id": 27014,
+          "description": "similarities and differences in health status and human development in low-, middle- and high-income countries, including Australia",
+          "outcomeId": 27002
+        },
+        {
+          "id": 27015,
+          "description": "factors that contribute to similarities and differences in health status and human development:",
+          "outcomeId": 27002
+        },
+        {
+          "id": 27016,
+          "description": "access to safe water",
+          "outcomeId": 27002
+        },
+        {
+          "id": 27017,
+          "description": "sanitation",
+          "outcomeId": 27002
+        },
+        {
+          "id": 27018,
+          "description": "poverty",
+          "outcomeId": 27002
+        },
+        {
+          "id": 27019,
+          "description": "discrimination (race, religion, sex, sexual orientation and gender identity)",
+          "outcomeId": 27002
+        },
+        {
+          "id": 27020,
+          "description": "the concept and dimensions of sustainability (environmental, social and economic) and its role in the promotion of health and human development",
+          "outcomeId": 27002
+        },
+        {
+          "id": 27021,
+          "description": "implications for health and human development of global trends including:",
+          "outcomeId": 27002
+        },
+        {
+          "id": 27022,
+          "description": "climate change (rising sea levels, changing weather patterns and increasing number of extreme weather events)",
+          "outcomeId": 27002
+        },
+        {
+          "id": 27023,
+          "description": "conflict",
+          "outcomeId": 27002
+        },
+        {
+          "id": 27024,
+          "description": "mass migration",
+          "outcomeId": 27002
+        },
+        {
+          "id": 27025,
+          "description": "increased world trade (global distribution and marketing of tobacco products, e-cigarette products and processed foods)",
+          "outcomeId": 27002
+        },
+        {
+          "id": 27026,
+          "description": "tourism",
+          "outcomeId": 27002
+        },
+        {
+          "id": 27027,
+          "description": "digital technologies.",
+          "outcomeId": 27002
+        }
+      ],
+      "keySkills": [
+        {
+          "id": 27016,
+          "description": "explain the concept of human development",
+          "outcomeId": 27002
+        },
+        {
+          "id": 27017,
+          "description": "explain the Human Development Index and evaluate its usefulness in measuring human development in different countries",
+          "outcomeId": 27002
+        },
+        {
+          "id": 27018,
+          "description": "describe characteristics of low-, middle- and high-income countries",
+          "outcomeId": 27002
+        },
+        {
+          "id": 27019,
+          "description": "evaluate data to analyse similarities and differences between countries in relation to health status and human development",
+          "outcomeId": 27002
+        },
+        {
+          "id": 27020,
+          "description": "analyse factors that contribute to health status and human development in different countries",
+          "outcomeId": 27002
+        },
+        {
+          "id": 27021,
+          "description": "compare health data and other information to analyse reasons for health inequalities within and between countries",
+          "outcomeId": 27002
+        },
+        {
+          "id": 27022,
+          "description": "explain sustainability (environmental, social and economic) and its importance in the promotion of health and human development in a global context",
+          "outcomeId": 27002
+        },
+        {
+          "id": 27023,
+          "description": "analyse the implications for health and human development of particular global trends.",
+          "outcomeId": 27002
+        }
+      ]
+    },
+    {
+      "id": 27003,
+      "curriculumSubjectId": 27000,
+      "number": 2,
+      "description": "On completion of this unit, the student should be able to analyse the relationships between the SDGs and their role in the promotion of health and human development and evaluate the effectiveness of global aid programs.",
+      "keyKnowledge": [
+        {
+          "id": 27028,
+          "description": "the importance of the UN’s SDGs for health and human development in a global context",
+          "outcomeId": 27003
+        },
+        {
+          "id": 27029,
+          "description": "key features of SDG 3 (‘Ensure healthy lives and promote wellbeing for all at all ages’)",
+          "outcomeId": 27003
+        },
+        {
+          "id": 27030,
+          "description": "relationships between SDG 3 and SDGs 1, 2, 4, 5, 6 and 12",
+          "outcomeId": 27003
+        },
+        {
+          "id": 27031,
+          "description": "goal and objectives of the WHO",
+          "outcomeId": 27003
+        },
+        {
+          "id": 27032,
+          "description": "the purpose and characteristics of different types of aid, including bilateral, multilateral and aid provided by non-government organisations providing humanitarian assistance, reducing poverty, improving human development and promoting health)",
+          "outcomeId": 27003
+        },
+        {
+          "id": 27033,
+          "description": "the role of Australia’s aid program in supporting the achievement of the SDGs and the partnerships involved",
+          "outcomeId": 27003
+        },
+        {
+          "id": 27034,
+          "description": "features of effective aid programs",
+          "outcomeId": 27003
+        },
+        {
+          "id": 27035,
+          "description": "ways in which individuals can engage with communities and/or national and international organisations to take individual and social action that promotes health and human development.",
+          "outcomeId": 27003
+        }
+      ],
+      "keySkills": [
+        {
+          "id": 27024,
+          "description": "discuss the importance of the UN’s SDGs for global health and human development",
+          "outcomeId": 27003
+        },
+        {
+          "id": 27025,
+          "description": "describe the key features of SDG 3",
+          "outcomeId": 27003
+        },
+        {
+          "id": 27026,
+          "description": "analyse the relationships between SDG 3 and other SDGs in promoting health and human development globally",
+          "outcomeId": 27003
+        },
+        {
+          "id": 27027,
+          "description": "explain the goal and objectives of the WHO",
+          "outcomeId": 27003
+        },
+        {
+          "id": 27028,
+          "description": "analyse how the WHO goal and objectives are reflected in different scenarios",
+          "outcomeId": 27003
+        },
+        {
+          "id": 27029,
+          "description": "evaluate different types of aid and their effectiveness in providing humanitarian assistance, reducing poverty and improving human development and promoting health",
+          "outcomeId": 27003
+        },
+        {
+          "id": 27030,
+          "description": "discuss how Australia’s aid program supports the achievement of the SDGs",
+          "outcomeId": 27003
+        },
+        {
+          "id": 27031,
+          "description": "justify why Australia’s aid program is delivered through partnerships",
+          "outcomeId": 27003
+        },
+        {
+          "id": 27032,
+          "description": "evaluate the effectiveness of aid programs in promoting health and human development",
+          "outcomeId": 27003
+        },
+        {
+          "id": 27033,
+          "description": "discuss ways of taking individual and social action to promote health and human development.",
+          "outcomeId": 27003
+        }
+      ]
+    }
+  ],
+  "extraContents": [
+    {
+      "id": 27000,
+      "description": "Health and wellbeing: The concept of health and wellbeing is embedded across all units of VCE Health and Human Development. For the purposes of this study, the term ‘health’ is a broad, overarching term that includes the concepts of health and wellbeing, health status and associated health outcomes. Students need to develop an understanding of the multidimensional, dynamic and subjective nature of the concept of health and wellbeing. Throughout the study design, health and wellbeing is portrayed as having 5 dimensions: physical, social, emotional, mental and spiritual. It is important to acknowledge that the 5 dimensions are not discrete but are interrelated and influence one another. Within this study, students consider wellbeing to be an implicit element of health. Wellbeing is a complex combination of all dimensions of health, characterised by state of equilibrium in which the individual feels happy, healthy, capable and engaged.",
+      "curriculumSubjectId": 27000,
+      "extraContentType": "definition"
+    },
+    {
+      "id": 27001,
+      "description": "Social justice: VCE Health and Human Development recognises that social justice is a prerequisite for health and wellbeing. The study uses a social justice lens to explore the variations in health between population groups, as well as within and between countries. Social justice relates to fairness within society. A socially just society is necessary for health and wellbeing and cannot be achieved without the principles of: human rights, where society protects, respects and promotes everyone’s rights and freedoms, access, where everyone in society has access to equal opportunities and the resources they need to thrive, including the prerequisites for health and wellbeing such as food, income and education, participation, where everyone in society is encouraged to participate in their community and have their voice represented, equity, which addresses the factors that cause inequality and provides strategies to ensure fairness. Equity is not about treating everyone equally but rather about providing what individuals or groups require for health and wellbeing.",
+      "curriculumSubjectId": 27000,
+      "extraContentType": "definition"
+    },
+    {
+      "id": 27002,
+      "description": "Factors that influence health and wellbeing: Across all units, students should develop an understanding of the factors that influence health and wellbeing, and health status. Within the study, these factors are classified as biological, sociocultural and environmental. Some examples include: biological factors, including genetics, body weight, blood pressure, hormones and cholesterol levels, sociocultural factors, including socioeconomic status, level of education, employment status, cultural background, social networks (for example, family and peer group), social expectations and attitudes (for example, gender expectations), cultural traditions, and a subset of sociocultural factors: commercial factors, that is, conditions, actions and policies of corporate organisations that impact health and wellbeing, either positively or negatively; commercial factors include supply chains, product design, packaging and labelling, distribution and affordability, lobbying, marketing strategies and the use of media, environmental factors, including geographic location, quality of air and water, safe workplaces, housing environment, community safety, access to physical resources within a community (for example, transportation, recreation facilities and health services).",
+      "curriculumSubjectId": 27000,
+      "extraContentType": "definition"
+    },
+    {
+      "id": 27003,
+      "description": "Sustainability: Sustainability addresses the ongoing capacity of the planet to maintain all life. Sustainable patterns of living seek to meet the needs of the present generation without compromising the ability of future generations to meet their needs. Sustainability is presented throughout this study as a complex, holistic concept comprising 3 dimensions: environmental, economic and social. The environmental dimension focuses on ensuring that the resources of the planet are available for future generations and includes addressing water quality, air quality and food security, as well as reducing environmental stressors such as greenhouse gases. Human health depends greatly on the quality of a person's environment, inextricably linking health and wellbeing to the state of the environment. The economic dimension is about using resources efficiently so that economic growth continues over time; economic growth includes opportunities for employment and job security as well as financial security for individuals, families, communities and nations. The economic dimension of sustainability contributes to the eradication of poverty and ensures that individuals, families, communities and nations have the resources necessary to promote health and wellbeing, now and into the future. The social dimension is about ensuring that people have access to social resources both today and in the future. It includes access to human rights, education, health care, political empowerment and connection to community. Social sustainability builds skills and capacities, improves the quality of lives and increases equity, inclusion and resilience, and is therefore essential for the health and wellbeing of individuals as well as local, national and global communities. VCE Health and Human Development focuses on sustainability by considering the relationship between health and wellbeing, and the health of the planet, ensuring that the study is future-orientated. The study encourages students to reflect on how they interpret and engage with the world. It is designed to raise student awareness to create a more environmentally, economically and socially just world. ",
+      "curriculumSubjectId": 27000,
+      "extraContentType": "definition"
+    },
+    {
+      "id": 27004,
+      "description": "Data analysis: Embedded within all units of VCE Health and Human Development are the analysis and interpretation of health data. Data analysis is a tool that allows students to develop health literacy and informs the critical inquiry approach. Students should have opportunities to analyse and interpret a wide range of data types, such as tables, graphs (for example, bar, line and pie graphs), infographics, quotations and case studies. Students should also develop familiarity with a range of data measures such as percentages and ratios. Some points of key knowledge require students to collect data. This does not need to be on a large scale and could include: surveying students within the class group or their peer group, interviewing family members or other students, making direct observations, conducting an audit of health services in their local community, using secondary data from a range of sources. Before asking students to collect data, teachers should discuss with them the ethical principles of conducting research. These include the concepts of: obtaining informed consent doing no harm to the participants, researcher or community, respecting the individual’s right to privacy. Teachers must ensure that students use data collection methods that do not require them to disclose personal information about their health status or health behaviours. Data collection practices must be consistent with school policies. ",
+      "curriculumSubjectId": 27000,
+      "extraContentType": "definition"
+    },
+    {
+      "id": 27005,
+      "description": "Aboriginal and Torres Strait Islander Peoples’ knowledge, culture and perspectives on health and wellbeing: Aboriginal and Torres Strait Islander Peoples are the first Australians, and the oldest continuous living cultures in human history. They have diverse cultures and social and kinship structures, and unique, complex knowledge systems. VCE Health and Human Development provides opportunities for students to develop their understanding of Aboriginal and Torres Strait Islander perspectives on health and wellbeing, as well as of the factors that impact their health status.Teachers are encouraged to include Aboriginal and Torres Strait Islander knowledge and perspectives in the design and delivery of teaching and learning programs related to VCE Health and Human Development. Many local Aboriginal and Torres Strait Islander communities have protocols that they have developed in relation to education. The Victorian Koorie community-preferred education model enables teachers to focus inclusively on supporting students to consider Victorian Koorie education matters, and systematically support students to learn about local, regional, state and national Aboriginal and Torres Strait Islander Peoples’ perspectives. VCE studies involve a focused extension of this model and include a broader application of national and international perspectives. Protocols for Koorie education in Victorian schools, and other resources relating to the inclusion of Aboriginal and Torres Strait Island Peoples’ knowledge and perspectives, may be accessed at VAEAI.",
+      "curriculumSubjectId": 27000,
+      "extraContentType": "definition"
+    },
+    {
+      "id": 27006,
+      "description": "Strengths-based approach: The VCE Health and Human Development study adopts a strengths-based approach that affirms that all individuals and their communities have strengths and resources that can be nurtured to improve their own and others’ health and wellbeing. This approach attempts to avoid deficit models of health that are individualising and stigmatising. This shift can be challenging because risk is a key concept in the study of the health of population groups. While it is important to examine population health, the study of at-risk groups has the potential to cause harm. Ideally, students apply the social and environmental determinants of health to understand the complex factors that contribute to ongoing health inequality at the population level and to learn about population health and at-risk groups.",
+      "curriculumSubjectId": 27000,
+      "extraContentType": "definition"
+    },
+    {
+      "id": 27007,
+      "description": "Health Literacy: Health literacy relates to the extent to which people are able to access, critique, understand and use health information and services in ways that promote and maintain health and wellbeing. A high level of health literacy is strongly linked to improved health outcomes. VCE Health and Human Development focuses on developing knowledge and skills related to the following components: Individual health literacy refers to the skills, knowledge, motivation and capacity of a person to access, understand, appraise and apply information to make effective decisions about health and health care, and take appropriate action. Individual health literacy has 3 dimensions: The functional dimension refers to the basic skills to research and apply health information, acquire knowledge and utilise health services to respond to a health-related question. The interactive dimension includes more advanced knowledge, understanding and skills to engage with a health issue actively and independently, and to apply new health information to their set of circumstances. The interactive dimension enables students to interact with information providers such as healthcare professionals with greater confidence. The critical dimension is the ability to access and critically analyse health information from a variety of sources, which might include scientific information, health brochures or messages in the media, in order to take action to promote personal health and wellbeing or that of others. The critical dimension enables students to evaluate the validity of health information from a variety of sources to exert greater control over life events and situations. The health literacy environment refers to the infrastructure, policies, processes, materials, people and relationships that make up the health system and have an impact on the way people access, understand, appraise and apply health-related information and services. An individual’s health literacy is impacted by the health literacy environment. Through studying VCE Health and Human Development, students’ individual health literacy will develop along with their capacity to critically analyse the broader health literacy environment in their local community, Australia and on a global scale.",
+      "curriculumSubjectId": 27000,
+      "extraContentType": "definition"
+    },
+    {
+      "id": 27008,
+      "description": "Critical Inquiry: VCE Health and Human Development engages students in critical inquiry processes that develop their ability to research, analyse, apply and appraise knowledge. This approach enables them to critically evaluate factors that influence health and wellbeing and explore how aspects of social justice can contribute to improvements in health and wellbeing, and health status. VCE Health and Human Development recognises that values, behaviours, priorities and actions related to health and wellbeing reflect varying contextual factors that influence the ways people live. Through the study design, students develop an understanding that the interpretations and interests that individuals and social groups have in relation to health and wellbeing are diverse and therefore require different approaches and strategies.",
+      "curriculumSubjectId": 27000,
+      "extraContentType": "definition"
+    }
+  ]
+}
