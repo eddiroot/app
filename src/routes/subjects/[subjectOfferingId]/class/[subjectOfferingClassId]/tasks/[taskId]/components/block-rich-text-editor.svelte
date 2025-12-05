@@ -34,7 +34,7 @@
 				},
 				editorProps: {
 					attributes: {
-						class: 'p-6 prose dark:prose-invert focus:outline-none min-h-32'
+						class: 'p-6 prose dark:prose-invert focus:outline-none min-h-32 max-w-none break-words'
 					}
 				}
 			})
