@@ -2,6 +2,7 @@ import type { yearLevelEnum } from '$lib/enums.js';
 import { db } from '$lib/server/db';
 import * as table from '$lib/server/db/schema';
 import { and, asc, eq, inArray, max } from 'drizzle-orm';
+import type { EmbeddingMetadataFilter } from '.';
 
 export async function getLatestVersionForCourseMapItemBySubjectOfferingId(
 	subjectOfferingId: number
@@ -804,4 +805,86 @@ export async function getLearningAreaStandardsByCourseMapItemId(
 		);
 
 	return standards.map((row) => row.learningAreaStandard);
+}
+
+// ============================================================================
+// EMBEDDING METADATA EXTRACTION METHODS
+// ============================================================================
+
+/**
+ * Extract metadata for CourseMapItemAssessmentPlan by joining through courseMapItem → subjectOffering → subject
+ */
+export async function getAssessmentPlanMetadataByCourseMapItemId(
+	courseMapItemId: number
+): Promise<EmbeddingMetadataFilter> {
+	try {
+		const result = await db
+			.select({
+				subjectId: table.subject.id,
+				curriculumSubjectId: table.coreSubject.curriculumSubjectId,
+				yearLevel: table.subject.yearLevel
+			})
+			.from(table.courseMapItem)
+			.innerJoin(
+				table.subjectOffering,
+				eq(table.courseMapItem.subjectOfferingId, table.subjectOffering.id)
+			)
+			.innerJoin(table.subject, eq(table.subjectOffering.subjectId, table.subject.id))
+			.leftJoin(table.coreSubject, eq(table.subject.coreSubjectId, table.coreSubject.id))
+			.where(eq(table.courseMapItem.id, courseMapItemId))
+			.limit(1);
+
+		if (result.length === 0) {
+			return { courseMapItemId };
+		}
+
+		return {
+			subjectId: result[0].subjectId,
+			curriculumSubjectId: result[0].curriculumSubjectId ?? undefined,
+			yearLevel: result[0].yearLevel,
+			courseMapItemId
+		};
+	} catch (error) {
+		console.error('Error extracting assessment plan metadata:', error);
+		return { courseMapItemId };
+	}
+}
+
+/**
+ * Extract metadata for CourseMapItemLessonPlan by joining through courseMapItem → subjectOffering → subject
+ */
+export async function getLessonPlanMetadataByCourseMapItemId(
+	courseMapItemId: number
+): Promise<EmbeddingMetadataFilter> {
+	try {
+		const result = await db
+			.select({
+				subjectId: table.subject.id,
+				curriculumSubjectId: table.coreSubject.curriculumSubjectId,
+				yearLevel: table.subject.yearLevel
+			})
+			.from(table.courseMapItem)
+			.innerJoin(
+				table.subjectOffering,
+				eq(table.courseMapItem.subjectOfferingId, table.subjectOffering.id)
+			)
+			.innerJoin(table.subject, eq(table.subjectOffering.subjectId, table.subject.id))
+			.leftJoin(table.coreSubject, eq(table.subject.coreSubjectId, table.coreSubject.id))
+			.where(eq(table.courseMapItem.id, courseMapItemId))
+			.limit(1);
+
+		if (result.length === 0) {
+			return { courseMapItemId };
+		}
+
+		return {
+			subjectId: result[0].subjectId,
+			curriculumSubjectId: result[0].curriculumSubjectId ?? undefined,
+			yearLevel: result[0].yearLevel,
+			courseMapItemId
+		};
+	} catch (error) {
+		console.error('Error extracting lesson plan metadata:', error);
+		return { courseMapItemId };
+	}
 }

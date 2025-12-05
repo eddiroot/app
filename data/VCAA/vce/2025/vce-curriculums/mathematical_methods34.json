@@ -1,0 +1,654 @@
+[
+  {
+    "id": 15000,
+    "curriculumId": 15000,
+    "name": "Methods Mathematics Units 3 and 4",
+    "isArchived": false,
+    "learningAreas": [
+      {
+        "id": 15000,
+        "curriculumSubjectId": 15000,
+        "name": "Functions, relations and graphs",
+        "abbreviation": "AOS1",
+        "description": "In this area of study students cover transformations of the plane and the behaviour of some elementary functions of a single real variable, including key features of their graphs such as axis intercepts, stationary points, points of inflection, domain (including maximal, implied or natural domain), co-domain and range, asymptotic behaviour and symmetry. The behaviour of functions and their graphs is to be explored in a variety of modelling contexts and theoretical investigations.",
+        "content": [
+          {
+            "id": 15100,
+            "learningAreaId": 15000,
+            "description": "graphs of polynomial functions and their key features"
+          },
+          {
+            "id": 15101,
+            "learningAreaId": 15000,
+            "description": "graphs of the following functions: power functions, ; exponential functions, , in particular ; logarithmic functions, and ; and circular functions, and and their key features"
+          },
+          {
+            "id": 15102,
+            "learningAreaId": 15000,
+            "description": "transformation from to , where and , , and is one of the functions specified above, and the inverse transformation"
+          },
+          {
+            "id": 15103,
+            "learningAreaId": 15000,
+            "description": "the relation between the graph of an original function and the graph of a corresponding transformed function (including families of transformed functions for a single transformation parameter)"
+          },
+          {
+            "id": 15104,
+            "learningAreaId": 15000,
+            "description": "graphs of sum, difference, product and composite functions involving functions of the types specified above (not including composite functions that result in reciprocal or quotient functions)"
+          },
+          {
+            "id": 15105,
+            "learningAreaId": 15000,
+            "description": "modelling of practical situations using polynomial, power, circular, exponential and logarithmic functions, simple transformation and combinations of these functions, including simple piecewise (hybrid) functions."
+          }
+        ]
+      },
+      {
+        "id": 15001,
+        "curriculumSubjectId": 15000,
+        "name": "Algebra, number and structure",
+        "abbreviation": "AOS2",
+        "description": "In this area of study students cover the algebra of functions, including composition of functions, inverse functions and the solution of equations. They also study the identification of appropriate solution processes for solving equations, and systems of simultaneous equations, presented in various forms. Students also cover recognition of equations and systems of equations that are solvable using inverse operations or factorisation, and the use of graphical and numerical approaches for problems involving equations where exact value solutions are not required, or which are not solvable by other methods. This content is to be incorporated as applicable to the other areas of study.",
+        "content": [
+          {
+            "id": 15101,
+            "learningAreaId": 15001,
+            "description": "solution of polynomial equations with real coefficients of degree having up to real solutions, including numerical solutions"
+          },
+          {
+            "id": 15102,
+            "learningAreaId": 15001,
+            "description": "functions and their inverses, including conditions for the existence of an inverse function, and use of inverse functions to solve equations involving exponential, logarithmic, circular and power functions"
+          },
+          {
+            "id": 15103,
+            "learningAreaId": 15001,
+            "description": "composition of functions, where composite , is defined by given"
+          },
+          {
+            "id": 15104,
+            "learningAreaId": 15001,
+            "description": "solution of equations of the form over a specified interval, where and are functions of the type specified in the ‘Functions, relations and graphs’ area of study, by graphical, numerical and algebraic methods, as applicable"
+          },
+          {
+            "id": 15105,
+            "learningAreaId": 15001,
+            "description": "solution of literal equations and general solution of equations involving a single parameter"
+          },
+          {
+            "id": 15106,
+            "learningAreaId": 15001,
+            "description": "solution of simple systems of simultaneous linear equations, including consideration of cases where no solution or an infinite number of possible solutions exist (geometric interpretation only required for two equations in two variables)."
+          }
+        ]
+      },
+      {
+        "id": 15002,
+        "curriculumSubjectId": 15000,
+        "name": "Calculus",
+        "abbreviation": "AOS3",
+        "description": "In this area of study students cover graphical treatment of limits, continuity and differentiability of functions of a single real variable, and differentiation, anti-differentiation and integration of these functions. This material is to be linked to applications in practical situations.",
+        "content": [
+          {
+            "id": 15102,
+            "learningAreaId": 15002,
+            "description": "deducing the graph of the derivative function from the graph of a given function and deducing the graph of an anti-derivative function from the graph of a given function"
+          },
+          {
+            "id": 15103,
+            "learningAreaId": 15002,
+            "description": "derivatives of for , , , , and"
+          },
+          {
+            "id": 15104,
+            "learningAreaId": 15002,
+            "description": "derivatives of , , and where and are polynomial functions exponential, circular, logarithmic or power functions and transformations or simple combinations of these functions"
+          },
+          {
+            "id": 15105,
+            "learningAreaId": 15002,
+            "description": "application of differentiation to graph sketching and identification of key features of graphs, including stationary points and points of inflection, and intervals over which a function is strictly increasing or strictly decreasing"
+          },
+          {
+            "id": 15106,
+            "learningAreaId": 15002,
+            "description": "identification of local maximum/minimum values over an interval and application to solving optimisation problems in context, including identification of interval endpoint maximum and minimum values"
+          },
+          {
+            "id": 15107,
+            "learningAreaId": 15002,
+            "description": "anti-derivatives of polynomial functions and functions of the form where is , for , , , and linear combinations of these"
+          },
+          {
+            "id": 15108,
+            "learningAreaId": 15002,
+            "description": "informal consideration of the definite integral as a limiting value of a sum involving quantities such as area under a curve and approximation of definite integrals using the trapezium rule"
+          },
+          {
+            "id": 15109,
+            "learningAreaId": 15002,
+            "description": "anti-differentiation by recognition that implies and informal treatment of the fundamental theorem of calculus,"
+          },
+          {
+            "id": 15110,
+            "learningAreaId": 15002,
+            "description": "properties of anti-derivatives and definite integrals"
+          },
+          {
+            "id": 15111,
+            "learningAreaId": 15002,
+            "description": "application of integration to problems involving finding a function from a known rate of change given a boundary condition, calculation of the area of a region under a curve and simple cases of areas between curves, average value of a function and other situations."
+          }
+        ]
+      },
+      {
+        "id": 15003,
+        "curriculumSubjectId": 15000,
+        "name": "Data analysis, probability and statistics",
+        "abbreviation": "AOS4",
+        "description": "In this area of study students cover discrete and continuous random variables, their representation using tables, probability functions (specified by rule and defining parameters as appropriate); the calculation and interpretation of central measures and measures of spread; and statistical inference for sample proportions. The focus is on understanding the notion of a random variable, related parameters, properties and application and interpretation in context for a given probability distribution.",
+        "content": [
+          {
+            "id": 15103,
+            "learningAreaId": 15003,
+            "description": "random variables, including the concept of a random variable as a real function defined on a sample space and examples of discrete and continuous random variables"
+          },
+          {
+            "id": 15104,
+            "learningAreaId": 15003,
+            "description": "discrete random variables:"
+          },
+          {
+            "id": 15105,
+            "learningAreaId": 15003,
+            "description": "specification of probability distributions for discrete random variables using graphs, tables and probability mass functions"
+          },
+          {
+            "id": 15106,
+            "learningAreaId": 15003,
+            "description": "calculation and interpretation of mean, , variance, and standard deviation of a discrete random variable and their use"
+          },
+          {
+            "id": 15107,
+            "learningAreaId": 15003,
+            "description": "Bernoulli trials and the binomial distribution, , as an example of a probability distribution for a discrete random variable"
+          },
+          {
+            "id": 15108,
+            "learningAreaId": 15003,
+            "description": "effect of variation in the value(s) of defining parameters on the graph of a given probability mass function for a discrete random variable"
+          },
+          {
+            "id": 15109,
+            "learningAreaId": 15003,
+            "description": "calculation of probabilities for specific values of a random variable and intervals defined in terms of a random variable, including conditional probability"
+          },
+          {
+            "id": 15110,
+            "learningAreaId": 15003,
+            "description": "continuous random variables:"
+          },
+          {
+            "id": 15111,
+            "learningAreaId": 15003,
+            "description": "construction of probability density functions from non-negative functions of a real variable"
+          },
+          {
+            "id": 15112,
+            "learningAreaId": 15003,
+            "description": "specification of probability distributions for continuous random variables using probability density functions"
+          },
+          {
+            "id": 15113,
+            "learningAreaId": 15003,
+            "description": "calculation and interpretation of mean, , variance, and standard deviation of a continuous random variable and their use"
+          },
+          {
+            "id": 15114,
+            "learningAreaId": 15003,
+            "description": "standard normal distribution, , and transformed normal distributions, , as examples of a probability distribution for a continuous random variable"
+          },
+          {
+            "id": 15115,
+            "learningAreaId": 15003,
+            "description": "effect of variation in the value(s) of defining parameters on the graph of a given probability density function for a continuous random variable"
+          },
+          {
+            "id": 15116,
+            "learningAreaId": 15003,
+            "description": "calculation of probabilities for intervals defined in terms of a random variable, including conditional probability (the cumulative distribution function may be used but is not required)"
+          },
+          {
+            "id": 15117,
+            "learningAreaId": 15003,
+            "description": "statistical inference, including definition and distribution of sample proportions, simulations and confidence intervals:"
+          },
+          {
+            "id": 15118,
+            "learningAreaId": 15003,
+            "description": "distinction between a population parameter and a sample statistic and the use of the sample statistic to estimate the population parameter"
+          },
+          {
+            "id": 15119,
+            "learningAreaId": 15003,
+            "description": "simulation of random sampling, for a variety of values of and a range of sample sizes, to illustrate the distribution of and variations in confidence intervals between samples"
+          },
+          {
+            "id": 15120,
+            "learningAreaId": 15003,
+            "description": "concept of the sample proportion as a random variable whose value varies between samples,"
+          },
+          {
+            "id": 15121,
+            "learningAreaId": 15003,
+            "description": "where is a binomial random variable which is associated with the number of items that have a particular characteristic and is the sample size"
+          },
+          {
+            "id": 15122,
+            "learningAreaId": 15003,
+            "description": "approximate normality of the distribution of for large samples and, for such a situation, the mean"
+          },
+          {
+            "id": 15123,
+            "learningAreaId": 15003,
+            "description": "(the population proportion) and standard deviation,"
+          },
+          {
+            "id": 15124,
+            "learningAreaId": 15003,
+            "description": "determination and interpretation of, from a large sample, an approximate confidence interval , for a population proportion where is the appropriate quantile for the standard normal distribution, in particular the 95% confidence interval as an example of such an interval where (the term standard error may be used but is not required)."
+          },
+          {
+            "id": 15125,
+            "learningAreaId": 15003,
+            "description": "For each unit the student is required to demonstrate achievement of three outcomes. As a set these outcomes encompass all of the areas of study for each unit. For each of Unit 3 and Unit 4 the outcomes as a set apply to the content from the areas of study covered in that unit."
+          }
+        ]
+      }
+    ],
+    "outcomes": [
+      {
+        "id": 15000,
+        "curriculumSubjectId": 15000,
+        "number": 1,
+        "description": "On completion of this unit the student should be able to define and explain key concepts as specified in the content from the areas of study and apply a range of related mathematical routines and procedures.",
+        "keyKnowledge": [
+          {
+            "id": 1500000,
+            "outcomeId": 15000,
+            "description": "the key features and properties of a function or relation and its graph and of families of functions and relations and their graphs"
+          },
+          {
+            "id": 1500001,
+            "outcomeId": 15000,
+            "description": "the effect of transformations on the graphs of a function or relation"
+          },
+          {
+            "id": 1500002,
+            "outcomeId": 15000,
+            "description": "representations of points and transformations of the plane"
+          },
+          {
+            "id": 1500003,
+            "outcomeId": 15000,
+            "description": "the concepts of domain, maximal domain, range and asymptotic behaviour of functions"
+          },
+          {
+            "id": 1500004,
+            "outcomeId": 15000,
+            "description": "the concept of an inverse function, connection between domain and range of the original function and its inverse relation and the conditions for existence of an inverse function, including the form of the graph of the inverse function for specified functions"
+          },
+          {
+            "id": 1500005,
+            "outcomeId": 15000,
+            "description": "the concept of combined functions, and the connection between domain and range of the functions involved and the domain and range of the combined functions"
+          },
+          {
+            "id": 1500006,
+            "outcomeId": 15000,
+            "description": "the features which enable the recognition of general forms of possible models for data presented in graphical or tabular form"
+          },
+          {
+            "id": 1500007,
+            "outcomeId": 15000,
+            "description": "exponent laws and logarithm laws"
+          },
+          {
+            "id": 1500008,
+            "outcomeId": 15000,
+            "description": "analytical, graphical and numerical approaches to solving equations and the nature of corresponding solutions (real, exact or approximate) and the effect of domain restrictions"
+          },
+          {
+            "id": 1500009,
+            "outcomeId": 15000,
+            "description": "features which link the graph of a function to the graph of the corresponding gradient function or its numerical values, the tangent to a curve at a given point and how the sign and magnitude of the derivative of a function can be used to describe key features of the function and its derivative function"
+          },
+          {
+            "id": 1500010,
+            "outcomeId": 15000,
+            "description": "the sum, difference, chain, product and quotient rules for differentiation"
+          },
+          {
+            "id": 1500011,
+            "outcomeId": 15000,
+            "description": "the properties of anti-derivatives and definite integrals"
+          },
+          {
+            "id": 1500012,
+            "outcomeId": 15000,
+            "description": "the concept of approximation to the area under a curve using the trapezium rule, the ideas underlying the fundamental theorem of calculus and the relationship between the definite integral and area"
+          },
+          {
+            "id": 1500013,
+            "outcomeId": 15000,
+            "description": "the concepts of a random variable (discrete and continuous), Bernoulli trials and probability distributions, the parameters used to define a distribution and properties of probability distributions and their graphs"
+          },
+          {
+            "id": 1500014,
+            "outcomeId": 15000,
+            "description": "the conditions under which a Bernoulli trial or a probability distribution may be selected to suitably model various situations"
+          },
+          {
+            "id": 1500015,
+            "outcomeId": 15000,
+            "description": "the definition of sample proportion as a random variable and key features of the distribution of sample proportions"
+          },
+          {
+            "id": 1500016,
+            "outcomeId": 15000,
+            "description": "the concept of confidence intervals for proportions, variation in confidence intervals between samples and confidence intervals for estimates"
+          }
+        ],
+        "keySkills": [
+          {
+            "id": 1500100,
+            "outcomeId": 15000,
+            "description": "identify key features and properties of the graph of a function or relation and draw the graphs of specified functions and relations, clearly identifying their key features and properties, including any vertical or horizontal asymptotes"
+          },
+          {
+            "id": 1500101,
+            "outcomeId": 15000,
+            "description": "describe the effect of transformations on the graphs of a function or relation"
+          },
+          {
+            "id": 1500102,
+            "outcomeId": 15000,
+            "description": "find the rule of an inverse function and give its domain and range"
+          },
+          {
+            "id": 1500103,
+            "outcomeId": 15000,
+            "description": "find the rule of a composite function and give its domain and range"
+          },
+          {
+            "id": 1500104,
+            "outcomeId": 15000,
+            "description": "sketch by hand graphs of polynomial functions up to degree 4; simple power functions, where , , (using key points , and ); ; ; and simple transformations of these"
+          },
+          {
+            "id": 1500105,
+            "outcomeId": 15000,
+            "description": "apply a range of analytical, graphical and numerical processes (including the algorithm for Newton’s method), as appropriate, to obtain general and specific solutions (exact or approximate) to equations (including literal equations) over a given domain and be able to verify solutions to a particular equation or equations over a given domain"
+          },
+          {
+            "id": 1500106,
+            "outcomeId": 15000,
+            "description": "solve by hand equations of the form , and with exact value solutions over a given interval"
+          },
+          {
+            "id": 1500107,
+            "outcomeId": 15000,
+            "description": "apply algebraic, logarithmic and circular function properties to the simplification of expressions and the solution of equations"
+          },
+          {
+            "id": 1500108,
+            "outcomeId": 15000,
+            "description": "evaluate derivatives of basic, transformed and combined functions and apply differentiation to curve sketching and related optimisation problems"
+          },
+          {
+            "id": 1500109,
+            "outcomeId": 15000,
+            "description": "find derivatives of polynomial functions and power functions, functions of the form where is , for , sine, cosine; tangent, , or and simple linear combinations of these, using pattern recognition, or by hand"
+          },
+          {
+            "id": 1500110,
+            "outcomeId": 15000,
+            "description": "apply the product, chain and quotient rules for differentiation to simple combinations of functions by hand"
+          },
+          {
+            "id": 1500111,
+            "outcomeId": 15000,
+            "description": "find derivatives of basic and more complicated functions and apply differentiation to curve sketching and optimisation problems"
+          },
+          {
+            "id": 1500112,
+            "outcomeId": 15000,
+            "description": "find anti-derivatives of polynomial functions and power functions, functions of the form where is , for , , sine or cosine, and simple linear combinations of these, using pattern recognition, or by hand"
+          },
+          {
+            "id": 1500113,
+            "outcomeId": 15000,
+            "description": "evaluate approximations to the area under a curve using the trapezium rule, find and verify anti-derivatives of specified functions and evaluate definite integrals"
+          },
+          {
+            "id": 1500114,
+            "outcomeId": 15000,
+            "description": "apply definite integrals to the evaluation of the area under a curve and between curves over a specified interval"
+          },
+          {
+            "id": 1500115,
+            "outcomeId": 15000,
+            "description": "analyse a probability mass function or probability density function and the shape of its graph in terms of the defining parameters for the probability distribution and the mean and variance of the probability distribution"
+          },
+          {
+            "id": 1500116,
+            "outcomeId": 15000,
+            "description": "calculate and interpret the probabilities of various events associated with a given probability distribution, by hand in cases where simple arithmetic computations can be carried out"
+          },
+          {
+            "id": 1500117,
+            "outcomeId": 15000,
+            "description": "apply probability distributions to modelling and solving related problems"
+          },
+          {
+            "id": 1500118,
+            "outcomeId": 15000,
+            "description": "simulate repeated random sampling and interpret the results, for a variety of population proportions and a range of sample sizes, to illustrate the distribution of sample proportions and variations in confidence intervals"
+          },
+          {
+            "id": 1500119,
+            "outcomeId": 15000,
+            "description": "calculate sample proportions and approximate confidence intervals for population proportions"
+          }
+        ]
+      },
+      {
+        "id": 15001,
+        "curriculumSubjectId": 15000,
+        "number": 2,
+        "description": "On completion of this unit the student should be able to apply mathematical processes in non-routine contexts, including situations with some open-ended aspects requiring investigative, modelling or problem-solving techniques or approaches, and analyse and discuss these applications of mathematics.",
+        "keyKnowledge": [
+          {
+            "id": 1500100,
+            "outcomeId": 15001,
+            "description": "key mathematical content from one or more areas of study related to a given context"
+          },
+          {
+            "id": 1500101,
+            "outcomeId": 15001,
+            "description": "specific and general formulations of concepts used to derive results for analysis within a given context"
+          },
+          {
+            "id": 1500102,
+            "outcomeId": 15001,
+            "description": "the role of examples, counter-examples and general cases in working mathematically"
+          },
+          {
+            "id": 1500103,
+            "outcomeId": 15001,
+            "description": "key elements of algorithm design, including sequencing, decision-making and repetition, and representations of the ordered steps for an algorithm including through the use of pseudocode"
+          },
+          {
+            "id": 1500104,
+            "outcomeId": 15001,
+            "description": "inferences from analysis and their use to draw valid conclusions related to a given context"
+          }
+        ],
+        "keySkills": [
+          {
+            "id": 1500200,
+            "outcomeId": 15001,
+            "description": "specify the relevance of key mathematical content from one or more areas of study to the investigation of various questions in a given context"
+          },
+          {
+            "id": 1500201,
+            "outcomeId": 15001,
+            "description": "identify important information, variables, constraints and other key features to the investigation of various questions in a given context"
+          },
+          {
+            "id": 1500202,
+            "outcomeId": 15001,
+            "description": "develop mathematical formulations of specific and general cases used to derive results for analysis within a given context"
+          },
+          {
+            "id": 1500203,
+            "outcomeId": 15001,
+            "description": "use algorithms, patterns, models and simulation to solve problems related to a given context"
+          },
+          {
+            "id": 1500204,
+            "outcomeId": 15001,
+            "description": "use a variety of techniques to verify results"
+          },
+          {
+            "id": 1500205,
+            "outcomeId": 15001,
+            "description": "make inferences from analysis and use these to draw valid conclusions related to a given context"
+          },
+          {
+            "id": 1500206,
+            "outcomeId": 15001,
+            "description": "communicate results and conclusions using both mathematical expression and everyday language, in particular, the interpretation of mathematics with respect to the context"
+          }
+        ]
+      },
+      {
+        "id": 15002,
+        "curriculumSubjectId": 15000,
+        "number": 3,
+        "description": "On completion of this unit the student should be able to apply computational thinking and use numerical, graphical, symbolic and statistical functionalities of technology to develop mathematical ideas, produce results and carry out analysis in situations requiring investigative, modelling or problem-solving techniques or approaches.",
+        "keyKnowledge": [
+          {
+            "id": 1500200,
+            "outcomeId": 15002,
+            "description": "the role of computational thinking (abstraction, decomposition, pattern and algorithm) in problem-solving, and its application to mathematical investigation"
+          },
+          {
+            "id": 1500201,
+            "outcomeId": 15002,
+            "description": "exact and approximate specification of mathematical information such as numerical data, graphical forms and general or specific forms of solutions of equations produced by use of technology"
+          },
+          {
+            "id": 1500202,
+            "outcomeId": 15002,
+            "description": "domain and range requirements for specification of graphs of functions and relations when using technology"
+          },
+          {
+            "id": 1500203,
+            "outcomeId": 15002,
+            "description": "the role of parameters in specifying general forms of functions and equations"
+          },
+          {
+            "id": 1500204,
+            "outcomeId": 15002,
+            "description": "the relation between numerical, graphical and symbolic forms of information about functions and equations and the corresponding features of those functions and equations"
+          },
+          {
+            "id": 1500205,
+            "outcomeId": 15002,
+            "description": "the similarities and differences between formal mathematical expressions and their representation by technology"
+          },
+          {
+            "id": 1500206,
+            "outcomeId": 15002,
+            "description": "the purpose and effect of sequencing, decision-making and repetition statements on relevant functionalities of technology, and their role in the design of algorithms and simulations"
+          },
+          {
+            "id": 1500207,
+            "outcomeId": 15002,
+            "description": "the appropriate functionality of technology for a variety of mathematical contexts"
+          }
+        ],
+        "keySkills": [
+          {
+            "id": 1500300,
+            "outcomeId": 15002,
+            "description": "use computational thinking, algorithms, models and simulations to solve problems related to a given context"
+          },
+          {
+            "id": 1500301,
+            "outcomeId": 15002,
+            "description": "distinguish between exact and approximate presentations of mathematical results produced by technology, and interpret these results to a specified degree of accuracy"
+          },
+          {
+            "id": 1500302,
+            "outcomeId": 15002,
+            "description": "use technology to carry out numerical, graphical and symbolic computation as applicable"
+          },
+          {
+            "id": 1500303,
+            "outcomeId": 15002,
+            "description": "produce results, using technology, which identify examples or counter-examples for propositions"
+          },
+          {
+            "id": 1500304,
+            "outcomeId": 15002,
+            "description": "produce tables of values, families of graphs and collections of other results using technology, which support general analysis in investigative, modelling and problem-solving contexts"
+          },
+          {
+            "id": 1500305,
+            "outcomeId": 15002,
+            "description": "use appropriate domain and range specifications to illustrate key features of graphs of functions and relations"
+          },
+          {
+            "id": 1500306,
+            "outcomeId": 15002,
+            "description": "identify the relation between numerical, graphical and symbolic forms of information about functions and equations, and the corresponding features of those functions and equations"
+          },
+          {
+            "id": 1500307,
+            "outcomeId": 15002,
+            "description": "specify the similarities and differences between formal mathematical expressions and their representation by technology, in particular, equivalent forms of symbolic expressions"
+          },
+          {
+            "id": 1500308,
+            "outcomeId": 15002,
+            "description": "select an appropriate functionality of technology in a variety of mathematical contexts and provide a rationale for these selections"
+          },
+          {
+            "id": 1500309,
+            "outcomeId": 15002,
+            "description": "design and implement simulations and algorithms using appropriate functionalities of technology"
+          },
+          {
+            "id": 1500310,
+            "outcomeId": 15002,
+            "description": "apply suitable constraints and conditions, as applicable, to carry out required computations"
+          },
+          {
+            "id": 1500311,
+            "outcomeId": 15002,
+            "description": "relate the results from a particular technology application to the nature of a particular mathematical task (investigative, modelling, or problem-solving) and verify these results"
+          },
+          {
+            "id": 1500312,
+            "outcomeId": 15002,
+            "description": "specify the process used to develop a solution to a problem using technology and communicate the key stages of mathematical reasoning (formulation, solution, interpretation) used in this process"
+          }
+        ]
+      }
+    ],
+    "extraContents": []
+  }
+]
