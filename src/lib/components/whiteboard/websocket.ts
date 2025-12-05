@@ -32,12 +32,20 @@ interface SerializedObject {
 }
 
 /**
+ * WebSocket setup options
+ */
+interface WebSocketOptions {
+	onLoad?: (objects: fabric.FabricObject[]) => void;
+}
+
+/**
  * Creates a WebSocket connection and sets up message handlers for whiteboard synchronization
  */
 export function setupWebSocket(
 	url: string,
 	canvas: fabric.Canvas,
-	whiteboardId: number
+	whiteboardId: number,
+	options?: WebSocketOptions
 ): WebSocket {
 	const socket = new WebSocket(url);
 
@@ -58,7 +66,7 @@ export function setupWebSocket(
 			if (messageData.whiteboardId !== whiteboardId) return;
 
 			if (messageData.type === 'load') {
-				await handleLoadMessage(canvas, messageData);
+				await handleLoadMessage(canvas, messageData, options?.onLoad);
 			} else if (messageData.type === 'add') {
 				await handleAddMessage(canvas, messageData);
 			} else if (messageData.type === 'modify' || messageData.type === 'update') {
@@ -83,19 +91,27 @@ export function setupWebSocket(
  */
 async function handleLoadMessage(
 	canvas: fabric.Canvas,
-	messageData: WebSocketMessage
+	messageData: WebSocketMessage,
+	onLoad?: (objects: fabric.FabricObject[]) => void
 ): Promise<void> {
 	if (messageData.whiteboard && messageData.whiteboard.objects.length > 0) {
 		const objects = await fabric.util.enlivenObjects(messageData.whiteboard.objects);
 		canvas.clear();
 
+		const fabricObjects: fabric.FabricObject[] = [];
 		objects.forEach((obj: unknown) => {
 			const fabricObj = obj as fabric.FabricObject & { id: string; hasControls: boolean };
 			fabricObj.hasControls = false; // Disable controls on load
 			canvas.add(fabricObj);
+			fabricObjects.push(fabricObj);
 		});
 
 		canvas.renderAll();
+
+		// Call the onLoad callback if provided
+		if (onLoad) {
+			onLoad(fabricObjects);
+		}
 	}
 }
 
