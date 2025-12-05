@@ -1,0 +1,728 @@
+{
+  "id": 17000,
+  "curriculumId": 17000,
+  "name": "Specialist Mathematics Units 3 and 4",
+  "isArchived": false,
+  "learningAreas": [
+    {
+      "id": 17100,
+      "curriculumSubjectId": 17000,
+      "name": "Discrete mathematics",
+      "abbreviation": "AOS1",
+      "description": "In this area of study students cover the development of mathematical argument and proof. This includes conjectures, connectives, quantifiers, examples and counter-examples, and proof techniques including mathematical induction. Proofs will involve concepts from topics such as: divisibility, inequalities, graph theory, combinatorics, sequences and series including partial sums and partial products and related notations, complex numbers, matrices, vectors and calculus. The concepts, skills and processes from this area of study are to be applied in the other areas of study.",
+      "content": [
+        {
+          "id": 17200,
+          "learningAreaId": 17100,
+          "description": "conjecture – making a statement to be proved or disproved",
+          "topic": "Logic and proof"
+        },
+        {
+          "id": 17201,
+          "learningAreaId": 17100,
+          "description": "implications, equivalences and if and only if statements (necessary and sufficient conditions)",
+          "topic": "Logic and proof"
+        },
+        {
+          "id": 17202,
+          "learningAreaId": 17100,
+          "description": "natural deduction and proof techniques: direct proofs using a sequence of direct implications, proof by cases, proof by contradiction, and proof by contrapositive",
+          "topic": "Logic and proof"
+        },
+        {
+          "id": 17203,
+          "learningAreaId": 17100,
+          "description": "quantifiers ‘for all’ and ‘there exists’, examples and counter-examples",
+          "topic": "Logic and proof"
+        },
+        {
+          "id": 17204,
+          "learningAreaId": 17100,
+          "description": "proof by mathematical induction.",
+          "topic": "Logic and proof"
+        }
+      ]
+    },
+    {
+      "id": 17101,
+      "curriculumSubjectId": 17000,
+      "name": "Functions, relations and graphs",
+      "abbreviation": "AOS2",
+      "description": "In this area of study students cover rational functions and other simple quotient functions, curve sketching of these functions and relations, and the analysis of key features of their graphs including intercepts, asymptotic behaviour and the nature and location of stationary points and points of inflection and symmetry.",
+      "content": [
+        {
+          "id": 17250,
+          "learningAreaId": 17101,
+          "description": "rational functions and the expression of rational functions of low degree as sums of partial fractions",
+          "topic": "Function, relations and graphs"
+        },
+        {
+          "id": 17251,
+          "learningAreaId": 17101,
+          "description": "graphs of rational functions of low degree, their asymptotic behaviour, and the nature and location of stationary points and points of inflection",
+          "topic": "Function, relations and graphs"
+        },
+        {
+          "id": 17252,
+          "learningAreaId": 17101,
+          "description": "graphs of simple quotient functions, their asymptotic behaviour, and the nature and location of stationary points and points of inflection.",
+          "topic": "Functions, relations and graphs"
+        }
+      ]
+    },
+    {
+      "id": 17102,
+      "curriculumSubjectId": 17000,
+      "name": "Algebra, number and structure",
+      "abbreviation": "AOS3",
+      "description": "In this area of study students cover the algebra of complex numbers, including polar form, factorisation of polynomial functions over the complex field and an informal treatment of the fundamental theorem of algebra.",
+      "content": [
+        {
+          "id": 17300,
+          "learningAreaId": 17102,
+          "description": "De Moivre’s theorem, proof for integral powers, powers and roots of complex numbers in polar form, and their geometric representation and interpretation",
+          "topic": "Complex numbers"
+        },
+        {
+          "id": 17301,
+          "learningAreaId": 17102,
+          "description": "the roots of unity and other complex numbers and their location in the complex plane",
+          "topic": "Complex numbers"
+        },
+        {
+          "id": 17302,
+          "learningAreaId": 17102,
+          "description": "factors over C, of polynomials; and introduction to the fundamental theorem of algebra, including its application to factorisation of polynomial functions of a single variable over C, for example, or",
+          "topic": "Complex numbers"
+        },
+        {
+          "id": 17303,
+          "learningAreaId": 17102,
+          "description": "solution over C of polynomial equations by completing the square, use of the quadratic factorisation and the conjugate root theorem.",
+          "topic": "Complex numbers"
+        }
+      ]
+    },
+    {
+      "id": 17103,
+      "curriculumSubjectId": 17000,
+      "name": "Area of Study 4",
+      "abbreviation": "AOS4",
+      "description": "In this area of study students cover the advanced calculus techniques for analytical and numerical differentiation and integration of a broad range of functions, and combinations of functions; and their application in a variety of theoretical and practical situations, including curve sketching, evaluation of arc length, area and volume, differential equations and kinematics, and modelling with differential equations drawing from a variety of fields such as biology, economics and science.",
+      "content": [
+        {
+          "id": 17350,
+          "learningAreaId": 17103,
+          "description": "the relationship between the graph of a function and the graphs of its anti-derivative functions",
+          "topic": "Differential calculus and integral calculus"
+        },
+        {
+          "id": 17351,
+          "learningAreaId": 17103,
+          "description": "derivatives of inverse circular functions",
+          "topic": "Differential calculus and integral calculus"
+        },
+        {
+          "id": 17352,
+          "learningAreaId": 17103,
+          "description": "second derivatives, use of notations and , and their application to the analysis of graphs of",
+          "topic": "Differential calculus and integral calculus"
+        },
+        {
+          "id": 17353,
+          "learningAreaId": 17103,
+          "description": "functions, including points of inflection and concavity",
+          "topic": "Differential calculus and integral calculus"
+        },
+        {
+          "id": 17354,
+          "learningAreaId": 17103,
+          "description": "applications of chain rule to related rates of change and implicit differentiation; for example, implicit differentiation of the relations and",
+          "topic": "Differential calculus and integral calculus"
+        },
+        {
+          "id": 17355,
+          "learningAreaId": 17103,
+          "description": "techniques of anti-differentiation and for the evaluation of definite integrals: anti-differentation techniquesm using partial fractions or rational functions, integration by parts",
+          "topic": "Differential calculus and integral calculus"
+        },
+        {
+          "id": 17363,
+          "learningAreaId": 17103,
+          "description": "numerical and symbolic integration using technology",
+          "topic": "Differential calculus and integral calculus"
+        },
+        {
+          "id": 17364,
+          "learningAreaId": 17103,
+          "description": "application of integration, areas of regions bounded by curves, arc lengths for parametrically determined curves, surface area of solids of revolution, volumes of solids of revolution of a region about either coordinate axis.",
+          "topic": "Differential calculus and integral calculus"
+        },
+        {
+          "id": 17365,
+          "learningAreaId": 17103,
+          "description": "formulation of differential equations from contexts in, for example, chemistry, biology and economics, in situations where rates are involved (including some differential equations whose analytic solutions are not required, but can be solved numerically using technology)",
+          "topic": "Differential equations"
+        },
+        {
+          "id": 17366,
+          "learningAreaId": 17103,
+          "description": "the logistic differential equation",
+          "topic": "Differential equations"
+        },
+        {
+          "id": 17367,
+          "learningAreaId": 17103,
+          "description": "verification of solutions of differential equations and their representation using direction (slope) fields",
+          "topic": "Differential equations"
+        },
+        {
+          "id": 17368,
+          "learningAreaId": 17103,
+          "description": "solution of simple differential equations of the form and in general differential equations of the form using separation of variables and differential equations of the form",
+          "topic": "Differential equations"
+        },
+        {
+          "id": 17369,
+          "learningAreaId": 17103,
+          "description": "numerical solution by Euler’s method (first order approximation).",
+          "topic": "Differential equations"
+        },
+        {
+          "id": 17371,
+          "learningAreaId": 17103,
+          "description": "use of velocity–time graphs to describe and analyse rectilinear motion",
+          "topic": "Kinematics: rectilinear motion"
+        },
+        {
+          "id": 17372,
+          "learningAreaId": 17103,
+          "description": "application of differentiation, anti-differentiation and solution of differential equations to rectilinear motion of a single particle, including the different derivative forms for acceleration .",
+          "topic": "Kinematics: rectilinear motion"
+        }
+      ]
+    },
+    {
+      "id": 17104,
+      "curriculumSubjectId": 17000,
+      "name": "Space and measurement",
+      "abbreviation": "AOS5",
+      "description": "In this area of study students cover the arithmetic and algebra of vectors; linear dependence and independence of a set of vectors; proof of geometric results using vectors; vector representation of curves in the plane and their parametric and Cartesian equations; vector kinematics in one, two and three dimensions; vector, parametric and Cartesian equations of lines and planes.",
+      "content": [
+        {
+          "id": 17400,
+          "learningAreaId": 17104,
+          "description": "addition and subtraction of vectors and their multiplication by a scalar, position vectors",
+          "topic": "Vectors"
+        },
+        {
+          "id": 17401,
+          "learningAreaId": 17104,
+          "description": "linear dependence and independence of a set of vectors and geometric interpretation",
+          "topic": "Vectors"
+        },
+        {
+          "id": 17402,
+          "learningAreaId": 17104,
+          "description": "magnitude of a vector, unit vector, the orthogonal unit vectors",
+          "topic": "Vectors"
+        },
+        {
+          "id": 17403,
+          "learningAreaId": 17104,
+          "description": "resolution of a vector into rectangular components",
+          "topic": "Vectors"
+        },
+        {
+          "id": 17404,
+          "learningAreaId": 17104,
+          "description": "scalar (dot) product of two vectors, deduction of dot product for the vector system and its use to find scalar resolute and vector resolute",
+          "topic": "Vectors"
+        },
+        {
+          "id": 17405,
+          "learningAreaId": 17104,
+          "description": "vector (cross) product of two vectors in three dimensions, including the determinant form",
+          "topic": "Vectors"
+        },
+        {
+          "id": 17406,
+          "learningAreaId": 17104,
+          "description": "parallel and perpendicular vectors",
+          "topic": "Vectors"
+        },
+        {
+          "id": 17407,
+          "learningAreaId": 17104,
+          "description": "vector proofs of simple geometric results, such as ‘the diagonals of a rhombus are perpendicular’, ‘the medians of a triangle are concurrent’ and ‘the angle subtended by a diameter in a circle is a right angle’.",
+          "topic": "Vectors"
+        },
+        {
+          "id": 17408,
+          "learningAreaId": 17104,
+          "description": "vector equations and parametric equations of curves in two or three dimensions involving a parameter (and the corresponding Cartesian equation in the two-dimensional case)",
+          "topic": "Vector and Cartesian equations"
+        },
+        {
+          "id": 17409,
+          "learningAreaId": 17104,
+          "description": "vector equation of a straight line, given the position of two points, or equivalent information, in both two and three dimensions",
+          "topic": "Vector and Cartesian equations"
+        },
+        {
+          "id": 17409,
+          "learningAreaId": 17104,
+          "description": "vector cross product, normal to a plane and vector, parametric and Cartesian equations of a plane",
+          "topic": "Vector and Cartesian equations"
+        },
+        {
+          "id": 17410,
+          "learningAreaId": 17104,
+          "description": "position vector as a function of time and sketching the corresponding path given the function, including circles, ellipses and hyperbolas in Cartesian or parametric forms",
+          "topic": "Vector calculus"
+        },
+        {
+          "id": 17411,
+          "learningAreaId": 17104,
+          "description": "the positions of two particles each described as a vector function of time, and whether their paths cross or if the particles meet",
+          "topic": "Vector calculus"
+        },
+        {
+          "id": 17412,
+          "learningAreaId": 17104,
+          "description": "differentiation and anti-differentiation of a vector function with respect to time and applying vector calculus to motion in a plane and in three dimensions.",
+          "topic": "Vector calculus"
+        }
+      ]
+    },
+    {
+      "id": 17105,
+      "curriculumSubjectId": 17000,
+      "name": "Data analysis, probability and statistics",
+      "abbreviation": "AOS6",
+      "description": "In this area of study students cover the study of linear combinations of random variables and introductory statistical inference with respect to the mean of a single population, the determination of confidence intervals, and hypothesis testing for the mean using the distribution of sample means.",
+      "content": [
+        {
+          "id": 17450,
+          "learningAreaId": 17105,
+          "description": "for n independent identically distributed random variables X_1,X_2  …X_n each with mean μ and variance σ^2: 〖E(X〗_1+ X_2+⋯〖+ X〗_n)=nμ and 〖Var(X〗_1+ X_2+⋯〖+ X〗_n)=nσ^2.",
+          "topic": "Distribution of linear combinations of random variables"
+        },
+        {
+          "id": 17451,
+          "learningAreaId": 17105,
+          "description": "for n independent random variables  X_1,X_2  …X_nand real numbers a_1,a_2… a_n: E(〖a_1 X〗_1+ 〖a_2 X〗_2+⋯〖+ a_n X〗_n  )=〖a_1 E(X〗_(1))+ 〖a_2 E(X〗_2)+⋯〖+ a_n E(X〗_n) and Var(〖a_1 X〗_1+ 〖a_2 X〗_2+⋯〖+ a_n X〗_n  )=〖〖a_1〗^2 Var(X〗_1)+ 〖〖a_2〗^2 Var(X〗_2)+⋯〖+ 〖a_n〗^2 Var(X〗_n)",
+          "topic": "Distribution of linear combinations of random variables"
+        },
+        {
+          "id": 17452,
+          "learningAreaId": 17105,
+          "description": "for n normally distributed independent random variables X_1,X_2  …X_n  and real numbers a_1,a_2… a_n the random variable 〖a_1 X〗_1+ 〖a_2 X〗_2+⋯〖+ a_n X〗_n is also normally distributed",
+          "topic": "Distribution of linear combinations of random variables"
+        },
+        {
+          "id": 17453,
+          "learningAreaId": 17105,
+          "description": "the concept of the sample mean X ̅ as a random variable whose value varies between samples where X is a random variable with mean μ and the standard deviation σ",
+          "topic": "Distribution of the sample mean"
+        },
+        {
+          "id": 17454,
+          "learningAreaId": 17105,
+          "description": "simulation of repeated random sampling, from a variety of distributions and a range of sample sizes, to illustrate properties of the distribution of X ̅  across samples of a fixed size n including its mean μ its standard deviation σ/√n (where μ and σ are the mean and standard deviation of X respectively) and its approximate normality if n is large.",
+          "topic": "Distribution of the sample mean"
+        },
+        {
+          "id": 17456,
+          "learningAreaId": 17105,
+          "description": "determination of confidence intervals for means and the use of simulation to illustrate variations in confidence intervals between samples and to show that the likelihood of a confidence interval containing μ depends on the level of confidence chosen in the determination of the interval",
+          "topic": "Confidence intervals for the population mean"
+        },
+        {
+          "id": 17457,
+          "learningAreaId": 17105,
+          "description": "construction of an approximate confidence interval, (x ̅-z σ/√n,x ̅+z σ/√n) where σ is the population standard deviation and z is the appropriate quantile for the standard normal distribution or construction of an approximate confidence interval (x ̅-z s/√n,x ̅+z s/√n) where s is the sample standard deviation and z is the appropriate quantile for the standard normal distribution, and n is large (n ≥ 30 in many practical contexts).",
+          "topic": "Confidence intervals for the population mean"
+        },
+        {
+          "id": 17458,
+          "learningAreaId": 17105,
+          "description": "concepts of null hypothesis, H_0, and alternative hypotheses, H_1, test statistic",
+          "topic": "Hypothesis testing for a population mean with a sample drawn from a normal distribution of known variance, or for a large sample"
+        },
+        {
+          "id": 17459,
+          "learningAreaId": 17105,
+          "description": "level of significance and p-value",
+          "topic": "Hypothesis testing for a population mean with a sample drawn from a normal distribution of known variance, or for a large sample"
+        },
+        {
+          "id": 17460,
+          "learningAreaId": 17105,
+          "description": "formulation of hypotheses and making a decision concerning a population mean based on: a random sample from a normal population of known variance and a large random sample from any population",
+          "topic": "Hypothesis testing for a population mean with a sample drawn from a normal distribution of known variance, or for a large sample"
+        },
+        {
+          "id": 17461,
+          "learningAreaId": 17105,
+          "description": "1-tail and 2-tail tests",
+          "topic": "Hypothesis testing for a population mean with a sample drawn from a normal distribution of known variance, or for a large sample"
+        },
+        {
+          "id": 17462,
+          "learningAreaId": 17105,
+          "description": "interpretation of the results of a hypothesis test in the context of the problem",
+          "topic": "Hypothesis testing for a population mean with a sample drawn from a normal distribution of known variance, or for a large sample"
+        },
+        {
+          "id": 17463,
+          "learningAreaId": 17105,
+          "description": "hypothesis test, relating the formulation, conduct, errors and results in terms of conditional probability.",
+          "topic": "Hypothesis testing for a population mean with a sample drawn from a normal distribution of known variance, or for a large sample"
+        }
+      ]
+    }
+  ],
+  "outcomes": [
+    {
+      "id": 17006,
+      "curriculumSubjectId": 17000,
+      "number": 1,
+      "description": "On completion of this unit the student should be able to define and explain key concepts as specified in the content from the areas of study and apply a range of related mathematical routines and procedures.",
+      "keyKnowledge": [
+        {
+          "id": 17060,
+          "description": "principles of proof and deduction techniques",
+          "outcomeId": 17006
+        },
+        {
+          "id": 17061,
+          "description": "the proof scheme and method for mathematical induction",
+          "outcomeId": 17006
+        },
+        {
+          "id": 17062,
+          "description": "functions and relations, the form of their sketch graphs and their key features, including linear asymptotes",
+          "outcomeId": 17006
+        },
+        {
+          "id": 17063,
+          "description": "complex numbers, Cartesian and polar forms, operations and properties and representation in the complex plane",
+          "outcomeId": 17006
+        },
+        {
+          "id": 17064,
+          "description": "geometric interpretation of vectors in the plane and of complex numbers in the complex plane",
+          "outcomeId": 17006
+        },
+        {
+          "id": 17065,
+          "description": "differentiation techniques and the meaning of first and second derivatives of a function",
+          "outcomeId": 17006
+        },
+        {
+          "id": 17066,
+          "description": "anti-differentiation techniques, the relationship between the graph of a function and the graph of its anti-derivative functions, and graphical interpretation of definite integrals",
+          "outcomeId": 17006
+        },
+        {
+          "id": 17067,
+          "description": "analytical, graphical and numerical techniques for setting up and solving equations involving functions and relations",
+          "outcomeId": 17006
+        },
+        {
+          "id": 17068,
+          "description": "modelling contexts for formulation of differential equations and associated solution techniques, including numerical approaches",
+          "outcomeId": 17006
+        },
+        {
+          "id": 17069,
+          "description": "definition and properties of vectors, vector operations, the geometric representation of vectors and the geometric interpretation of linear dependence and independence of a set of vectors",
+          "outcomeId": 17006
+        },
+        {
+          "id": 17070,
+          "description": "standard contexts for the application of vectors to the motion of a particle and to geometric problems",
+          "outcomeId": 17006
+        },
+        {
+          "id": 17071,
+          "description": "techniques for solving kinematics problems in one, two and three dimensions",
+          "outcomeId": 17006
+        },
+        {
+          "id": 17072,
+          "description": "the vector product and methods determining vector equations of lines and planes",
+          "outcomeId": 17006
+        },
+        {
+          "id": 17073,
+          "description": "systems of equations with two and three variables and their geometric interpretation",
+          "outcomeId": 17006
+        },
+        {
+          "id": 17074,
+          "description": "the distribution of sample means",
+          "outcomeId": 17006
+        }
+      ],
+      "keySkills": [
+        {
+          "id": 17122,
+          "description": "apply deductive reasoning and language, including mathematical induction, to mathematical arguments and proofs involving concepts and contexts from the areas of study",
+          "outcomeId": 17006
+        },
+        {
+          "id": 17123,
+          "description": "sketch by hand and describe behaviour of the graphs of specified functions and relations, and identify their key features, including the use of the first and second derivative",
+          "outcomeId": 17006
+        },
+        {
+          "id": 17124,
+          "description": "perform operations on complex numbers expressed in Cartesian form or polar form and interpret them geometrically",
+          "outcomeId": 17006
+        },
+        {
+          "id": 17125,
+          "description": "Interpret and apply algorithms in a variety of contexts including the use of pseudocode for representation",
+          "outcomeId": 17006
+        },
+        {
+          "id": 17126,
+          "description": "represent regions of an Argand diagram using complex relations",
+          "outcomeId": 17006
+        },
+        {
+          "id": 17127,
+          "description": "apply implicit differentiation, by hand in simple cases",
+          "outcomeId": 17006
+        },
+        {
+          "id": 17128,
+          "description": "use analytic techniques to find derivatives and anti-derivatives by pattern recognition, and apply anti-differentiation to evaluate definite integrals",
+          "outcomeId": 17006
+        },
+        {
+          "id": 17129,
+          "description": "set up and evaluate definite integrals to calculate areas, volumes, curve lengths (where described parametrically) and surface areas",
+          "outcomeId": 17006
+        },
+        {
+          "id": 17130,
+          "description": "set up and solve differential equations of specified forms",
+          "outcomeId": 17006
+        },
+        {
+          "id": 17131,
+          "description": "perform operations on vectors and interpret them geometrically",
+          "outcomeId": 17006
+        },
+        {
+          "id": 17132,
+          "description": "apply vectors to motion of a particle and to geometric problems",
+          "outcomeId": 17006
+        },
+        {
+          "id": 17133,
+          "description": "solve kinematics problems using a variety of techniques",
+          "outcomeId": 17006
+        },
+        {
+          "id": 17134,
+          "description": "formulate problems which require solutions with systems of linear equations",
+          "outcomeId": 17006
+        },
+        {
+          "id": 17135,
+          "description": "apply a range of analytical, graphical and numerical processes to obtain solutions (exact or approximate) to equations",
+          "outcomeId": 17006
+        },
+        {
+          "id": 17136,
+          "description": "set up and solve problems involving the distribution of sample means",
+          "outcomeId": 17006
+        },
+        {
+          "id": 17137,
+          "description": "construct confidence intervals, and approximate confidence intervals, for sample means",
+          "outcomeId": 17006
+        }
+      ]
+    },
+    {
+      "id": 17007,
+      "curriculumSubjectId": 17000,
+      "number": 2,
+      "description": "On completion of this unit the student should be able to apply mathematical processes in non-routine contexts, including situations with some open-ended aspects requiring investigative, modelling or problem-solving techniques or approaches, and analyse and discuss these applications of mathematics.",
+      "keyKnowledge": [
+        {
+          "id": 17091,
+          "description": "key mathematical content from one or more areas of study related to a given context",
+          "outcomeId": 17007
+        },
+        {
+          "id": 17092,
+          "description": "specific and general formulations of concepts used to derive results for analysis within a given context",
+          "outcomeId": 17007
+        },
+        {
+          "id": 17093,
+          "description": "the role of examples, counter-examples and general cases in working mathematically",
+          "outcomeId": 17007
+        },
+        {
+          "id": 17094,
+          "description": "the role of proof in establishing a general result",
+          "outcomeId": 17007
+        },
+        {
+          "id": 17095,
+          "description": "key elements of algorithm design, including sequencing, decision-making and repetition, and representations of the ordered steps for an algorithm including the use of pseudocode",
+          "outcomeId": 17007
+        },
+        {
+          "id": 17096,
+          "description": "inferences from analysis and their use to draw valid conclusions related to a given context",
+          "outcomeId": 17007
+        }
+      ],
+      "keySkills": [
+        {
+          "id": 17097,
+          "description": "specify the relevance of key mathematical content from one or more areas of study to the investigation of various questions in a given context",
+          "outcomeId": 17007
+        },
+        {
+          "id": 17098,
+          "description": "identify important information, variables, constraints and other key features to the investigation of various questions in a given context",
+          "outcomeId": 17007
+        },
+        {
+          "id": 17099,
+          "description": "develop mathematical formulations of specific and general cases used to derive results for analysis within a given context and establish proofs for general case results",
+          "outcomeId": 17007
+        },
+        {
+          "id": 17100,
+          "description": "use algorithms, patterns, models and simulation to solve problems related to a given context",
+          "outcomeId": 17007
+        },
+        {
+          "id": 17101,
+          "description": "use a variety of techniques to verify results",
+          "outcomeId": 17007
+        },
+        {
+          "id": 17102,
+          "description": "make inferences from analysis and use these to draw valid conclusions related to a given context",
+          "outcomeId": 17007
+        },
+        {
+          "id": 17103,
+          "description": "communicate results and conclusions using both mathematical expression and everyday language, in particular, the interpretation of mathematics with respect to the context",
+          "outcomeId": 17007
+        }
+      ]
+    },
+    {
+      "id": 17008,
+      "curriculumSubjectId": 17000,
+      "number": 3,
+      "description": "On completion of this unit the student should be able to apply computational thinking and use numerical, graphical, symbolic and statistical functionalities of technology to develop mathematical ideas, produce results and carry out analysis in situations requiring investigative, modelling or problem-solving techniques or approaches.",
+      "keyKnowledge": [
+        {
+          "id": 17104,
+          "description": "the role of computational thinking (abstraction, decomposition, pattern and algorithm) in problem-solving, and its application to mathematical investigation",
+          "outcomeId": 17008
+        },
+        {
+          "id": 17105,
+          "description": "exact and approximate specification of mathematical information such as numerical data, graphical forms and general or specific forms of solutions of equations produced by technology",
+          "outcomeId": 17008
+        },
+        {
+          "id": 17106,
+          "description": "domain and range requirements for specification of graphs of functions and relations, when using technology",
+          "outcomeId": 17008
+        },
+        {
+          "id": 17107,
+          "description": "the role of parameters in specifying general forms of functions and equations",
+          "outcomeId": 17008
+        },
+        {
+          "id": 17108,
+          "description": "the relation between numerical, graphical and symbolic forms of information about functions and equations, and the corresponding features of those functions and equations",
+          "outcomeId": 17008
+        },
+        {
+          "id": 17109,
+          "description": "the similarities and differences between formal mathematical expressions and their representation by technology",
+          "outcomeId": 17008
+        },
+        {
+          "id": 17110,
+          "description": "the appropriate functionality of technology for a variety of mathematical contexts",
+          "outcomeId": 17008
+        }
+      ],
+      "keySkills": [
+        {
+          "id": 17111,
+          "description": "use computational thinking, algorithms, models and simulations to solve problems related to a given context",
+          "outcomeId": 17008
+        },
+        {
+          "id": 17112,
+          "description": "distinguish between exact and approximate presentations of mathematical results produced by technology, and interpret these results to a specified degree of accuracy",
+          "outcomeId": 17008
+        },
+        {
+          "id": 17113,
+          "description": "produce results, using a technology, which identify examples or counter-examples for propositions",
+          "outcomeId": 17008
+        },
+        {
+          "id": 17114,
+          "description": "produce tables of values, symbolic expressions, families of graphs or collections of other results using technology, which support general analysis in investigative, modelling or problem-solving contexts",
+          "outcomeId": 17008
+        },
+        {
+          "id": 17115,
+          "description": "use appropriate domain and range specifications to illustrate key features of graphs of functions and relations",
+          "outcomeId": 17008
+        },
+        {
+          "id": 17116,
+          "description": "identify the relation between numerical, graphical and symbolic forms of information about functions and equations, and the corresponding features of those functions and equations",
+          "outcomeId": 17008
+        },
+        {
+          "id": 17117,
+          "description": "select an appropriate functionality of technology in a variety of mathematical contexts and provide a rationale for these selections",
+          "outcomeId": 17008
+        },
+        {
+          "id": 17118,
+          "description": "design and implement simulations and algorithms using appropriate functionalities of technology",
+          "outcomeId": 17008
+        },
+        {
+          "id": 17119,
+          "description": "apply suitable constraints and conditions, as applicable, to carry out required computations",
+          "outcomeId": 17008
+        },
+        {
+          "id": 17120,
+          "description": "relate the results from a particular technology application to the nature of a particular mathematical task (investigative, modelling or problem-solving) and verify these results",
+          "outcomeId": 17008
+        },
+        {
+          "id": 17121,
+          "description": "specify the process used to develop a solution to a problem using technology and communicate the key stages of mathematical reasoning (formulation, solution, interpretation) used in this process",
+          "outcomeId": 17008
+        }
+      ]
+    }
+  ]
+}
