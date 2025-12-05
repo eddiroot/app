@@ -49,10 +49,21 @@ export interface Point {
     y: number;
 }
 
+export type LayerAction = 'sendToBack' | 'moveBackward' | 'bringToFront' | 'moveForward';
+
 export interface CanvasUpdateData {
-    type: 'add' | 'modify' | 'delete' | 'clear' | 'load' | 'update' | 'remove';
+    type: 'add' | 'modify' | 'delete' | 'clear' | 'load' | 'update' | 'remove' | 'layer';
     whiteboardId?: number;
     object?: Record<string, unknown>;
     objects?: Record<string, unknown>[];
     live?: boolean;
+    action?: LayerAction;
+}
+
+export interface HistoryAction {
+    type: 'add' | 'modify' | 'delete';
+    objectId: string;
+    objectData?: Record<string, unknown>; // Current state for modify, or object data for add
+    previousData?: Record<string, unknown>; // Previous state for modify
+    timestamp: number;
 }

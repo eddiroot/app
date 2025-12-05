@@ -5,14 +5,20 @@
 	import * as Select from '$lib/components/ui/select/index.js';
 	import { Separator } from '$lib/components/ui/separator/index.js';
 	import { Slider } from '$lib/components/ui/slider/index.js';
+	import ArrowDownIcon from '@lucide/svelte/icons/arrow-down';
+	import ArrowDownToLineIcon from '@lucide/svelte/icons/arrow-down-to-line';
+	import ArrowUpIcon from '@lucide/svelte/icons/arrow-up';
+	import ArrowUpToLineIcon from '@lucide/svelte/icons/arrow-up-to-line';
 	import Heading1Icon from '@lucide/svelte/icons/heading-1';
 	import Heading2Icon from '@lucide/svelte/icons/heading-2';
 	import Heading3Icon from '@lucide/svelte/icons/heading-3';
 	import Heading4Icon from '@lucide/svelte/icons/heading-4';
+	import LayersIcon from '@lucide/svelte/icons/layers';
 	import MinusIcon from '@lucide/svelte/icons/minus';
 	import PaletteIcon from '@lucide/svelte/icons/palette';
 	import SlidersIcon from '@lucide/svelte/icons/sliders';
 	import TypeIcon from '@lucide/svelte/icons/type';
+	import WhiteboardLayeringControls from './whiteboard-layering-controls.svelte';
 
 	interface Props {
 		selectedTool: string;
@@ -22,6 +28,10 @@
 		onDrawOptionsChange?: (options: DrawOptions) => void;
 		onLineArrowOptionsChange?: (options: LineArrowOptions) => void;
 		onCanvasInteraction?: () => void;
+		onBringToFront?: () => void;
+		onSendToBack?: () => void;
+		onMoveForward?: () => void;
+		onMoveBackward?: () => void;
 	}
 
 	interface TextOptions {
@@ -63,7 +73,11 @@
 		onShapeOptionsChange,
 		onDrawOptionsChange,
 		onLineArrowOptionsChange,
-		onCanvasInteraction
+		onCanvasInteraction,
+		onBringToFront,
+		onSendToBack,
+		onMoveForward,
+		onMoveBackward
 	}: Props = $props();
 
 	// Track which menu panel to show (independent of selectedTool for editing existing objects)
@@ -339,6 +353,7 @@
 				activeMenuPanel === 'eraser' ||
 				activeMenuPanel === 'line' ||
 				activeMenuPanel === 'arrow' ||
+				activeMenuPanel === 'select' ||
 				activeMenuPanel === 'image')
 	);
 </script>
@@ -489,8 +504,19 @@
 							>
 						</div>
 					</div>
-				</Card.Content>
-			{:else if activeMenuPanel === 'shapes'}
+				
+
+				<Separator />
+
+				<!-- Layering Controls -->
+				<WhiteboardLayeringControls
+					{onBringToFront}
+					{onSendToBack}
+					{onMoveForward}
+					{onMoveBackward}
+				/>
+			</Card.Content>
+		{:else if activeMenuPanel === 'shapes'}
 				<Card.Header class="pb-3">
 					<Card.Title class="flex items-center gap-2 text-sm">
 						<SlidersIcon />
@@ -709,8 +735,19 @@
 							>
 						</div>
 					</div>
-				</Card.Content>
-			{:else if activeMenuPanel === 'draw' || activeMenuPanel === 'eraser'}
+				
+
+				<Separator />
+
+				<!-- Layering Controls -->
+				<WhiteboardLayeringControls
+					{onBringToFront}
+					{onSendToBack}
+					{onMoveForward}
+					{onMoveBackward}
+				/>
+			</Card.Content>
+		{:else if activeMenuPanel === 'draw' || activeMenuPanel === 'eraser'}
 				<Card.Header class="pb-3">
 					<Card.Title class="flex items-center gap-2 text-sm">
 						<PaletteIcon />
@@ -815,8 +852,19 @@
 							>
 						</div>
 					</div>
-				</Card.Content>
-			{:else if activeMenuPanel === 'line' || activeMenuPanel === 'arrow'}
+				
+
+				<Separator />
+
+				<!-- Layering Controls -->
+				<WhiteboardLayeringControls
+					{onBringToFront}
+					{onSendToBack}
+					{onMoveForward}
+					{onMoveBackward}
+				/>
+			</Card.Content>
+		{:else if activeMenuPanel === 'line' || activeMenuPanel === 'arrow'}
 				<Card.Header class="pb-3">
 					<Card.Title class="flex items-center gap-2 text-sm">
 						{#if activeMenuPanel === 'line'}
@@ -966,8 +1014,19 @@
 							>
 						</div>
 					</div>
-				</Card.Content>
-			{:else if activeMenuPanel === 'image'}
+				
+
+				<Separator />
+
+				<!-- Layering Controls -->
+				<WhiteboardLayeringControls
+					{onBringToFront}
+					{onSendToBack}
+					{onMoveForward}
+					{onMoveBackward}
+				/>
+			</Card.Content>
+		{:else if activeMenuPanel === 'image'}
 				<Card.Header class="pb-3">
 					<Card.Title class="flex items-center gap-2 text-sm">
 						<SlidersIcon />
@@ -990,6 +1049,110 @@
 							<span class="text-muted-foreground w-12 text-right text-xs"
 								>{Math.round(shapeOpacityValue * 100)}%</span
 							>
+						</div>
+					</div>
+
+					<Separator />
+
+					<!-- Layering Controls -->
+					<div class="space-y-2">
+						<Label class="text-xs font-medium">Layering</Label>
+						<div class="grid grid-cols-2 gap-2">
+							<Button
+								variant="outline"
+								size="sm"
+								onclick={onBringToFront}
+								class="flex items-center justify-center gap-2"
+								disabled={!onBringToFront}
+							>
+								<ArrowUpToLineIcon class="h-4 w-4" />
+								<span>To Front</span>
+							</Button>
+							<Button
+								variant="outline"
+								size="sm"
+								onclick={onSendToBack}
+								class="flex items-center justify-center gap-2"
+								disabled={!onSendToBack}
+							>
+								<ArrowDownToLineIcon class="h-4 w-4" />
+								<span>To Back</span>
+							</Button>
+							<Button
+								variant="outline"
+								size="sm"
+								onclick={onMoveForward}
+								class="flex items-center justify-center gap-2"
+								disabled={!onMoveForward}
+							>
+								<ArrowUpIcon class="h-4 w-4" />
+								<span>Forward</span>
+							</Button>
+							<Button
+								variant="outline"
+								size="sm"
+								onclick={onMoveBackward}
+								class="flex items-center justify-center gap-2"
+								disabled={!onMoveBackward}
+							>
+								<ArrowDownIcon class="h-4 w-4" />
+								<span>Backward</span>
+							</Button>
+						</div>
+					</div>
+				</Card.Content>
+			{:else if activeMenuPanel === 'select'}
+				<Card.Header class="pb-3">
+					<Card.Title class="flex items-center gap-2 text-sm">
+						<LayersIcon />
+						Object Options
+					</Card.Title>
+				</Card.Header>
+				<Card.Content class="space-y-4">
+					<!-- Layering Controls -->
+					<div class="space-y-2">
+						<Label class="text-xs font-medium">Layering</Label>
+						<div class="grid grid-cols-2 gap-2">
+							<Button
+								variant="outline"
+								size="sm"
+								onclick={onBringToFront}
+								class="flex items-center justify-center gap-2"
+								disabled={!onBringToFront}
+							>
+								<ArrowUpToLineIcon class="h-4 w-4" />
+								<span>To Front</span>
+							</Button>
+							<Button
+								variant="outline"
+								size="sm"
+								onclick={onSendToBack}
+								class="flex items-center justify-center gap-2"
+								disabled={!onSendToBack}
+							>
+								<ArrowDownToLineIcon class="h-4 w-4" />
+								<span>To Back</span>
+							</Button>
+							<Button
+								variant="outline"
+								size="sm"
+								onclick={onMoveForward}
+								class="flex items-center justify-center gap-2"
+								disabled={!onMoveForward}
+							>
+								<ArrowUpIcon class="h-4 w-4" />
+								<span>Forward</span>
+							</Button>
+							<Button
+								variant="outline"
+								size="sm"
+								onclick={onMoveBackward}
+								class="flex items-center justify-center gap-2"
+								disabled={!onMoveBackward}
+							>
+								<ArrowDownIcon class="h-4 w-4" />
+								<span>Backward</span>
+							</Button>
 						</div>
 					</div>
 				</Card.Content>

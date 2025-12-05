@@ -1,11 +1,10 @@
 <script lang="ts">
+	import { browser } from '$app/environment';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import * as Tooltip from '$lib/components/ui/tooltip/index.js';
-	import * as CanvasActions from '$lib/components/whiteboard/canvas-actions';
 	import type { CanvasEventContext } from '$lib/components/whiteboard/canvas-events';
-	import * as CanvasEvents from '$lib/components/whiteboard/canvas-events';
 	import {
 		DEFAULT_DRAW_OPTIONS,
 		DEFAULT_LINE_ARROW_OPTIONS,
@@ -15,7 +14,6 @@
 		ZOOM_LIMITS
 	} from '$lib/components/whiteboard/constants';
 	import type { ToolState } from '$lib/components/whiteboard/tools';
-	import * as Tools from '$lib/components/whiteboard/tools';
 	import type {
 		DrawOptions,
 		LineArrowOptions,
@@ -24,18 +22,26 @@
 		WhiteboardTool
 	} from '$lib/components/whiteboard/types';
 	import { hexToRgba } from '$lib/components/whiteboard/utils';
-	import * as WebSocketHandler from '$lib/components/whiteboard/websocket';
+	import WhiteboardZoomControls from '$lib/components/whiteboard/whiteboard-controls.svelte';
 	import WhiteboardFloatingMenu from '$lib/components/whiteboard/whiteboard-floating-menu.svelte';
 	import WhiteboardToolbar from '$lib/components/whiteboard/whiteboard-toolbar.svelte';
-	import WhiteboardZoomControls from '$lib/components/whiteboard/whiteboard-zoom-controls.svelte';
 	import ArrowLeftIcon from '@lucide/svelte/icons/arrow-left';
-	import * as fabric from 'fabric';
 	import { onDestroy, onMount } from 'svelte';
+
+	// Dynamic imports for browser-only modules
+	let fabric: typeof import('fabric');
+	let CanvasActions: typeof import('$lib/components/whiteboard/canvas-actions');
+	let CanvasEvents: typeof import('$lib/components/whiteboard/canvas-events');
+	let CanvasHistory: typeof import('$lib/components/whiteboard/canvas-history').CanvasHistory;
+	let applyRedo: typeof import('$lib/components/whiteboard/canvas-history').applyRedo;
+	let applyUndo: typeof import('$lib/components/whiteboard/canvas-history').applyUndo;
+	let Tools: typeof import('$lib/components/whiteboard/tools');
+	let WebSocketHandler: typeof import('$lib/components/whiteboard/websocket');
 
 	let { data } = $props();
 
 	let socket = $state() as WebSocket;
-	let canvas: fabric.Canvas;
+	let canvas: any; // Will be fabric.Canvas once loaded
 	let selectedTool = $state<WhiteboardTool>('select');
 	let whiteboardCanvas = $state<HTMLCanvasElement>();
 	let isPanMode = false;
@@ -49,15 +55,21 @@
 	let isDrawingText = $state(false);
 	let currentShapeType = $state<string>('');
 	let isErasing = $state(false);
-	let eraserTrail = $state<fabric.Object[]>([]);
+	let eraserTrail = $state<any[]>([]);
 	let lastEraserPoint = $state<{ x: number; y: number } | null>(null);
-	let hoveredObjectsForDeletion = $state<fabric.Object[]>([]);
-	let originalOpacities = $state<Map<fabric.Object, number>>(new Map());
+	let hoveredObjectsForDeletion = $state<any[]>([]);
+	let originalOpacities = $state<Map<any, number>>(new Map());
 	let startPoint = $state({ x: 0, y: 0 });
-	let tempLine: fabric.Line | null = null;
-	let tempShape: fabric.Object | null = null;
-	let tempText: fabric.Textbox | null = null;
+	let tempLine: any = null;
+	let tempShape: any = null;
+	let tempText: any = null;
 	let floatingMenuRef: WhiteboardFloatingMenu;
+
+	// History management for undo/redo
+	let history: any; // Will be CanvasHistory instance once loaded
+	let canUndo = $state(false);
+	let canRedo = $state(false);
+	let isApplyingHistory = false; // Flag to prevent recording history during undo/redo
 
 	// Current tool options - updated when menu changes
 	let currentTextOptions = $state<TextOptions>({ ...DEFAULT_TEXT_OPTIONS });
@@ -360,15 +372,13 @@
 			});
 			canvas.renderAll();
 			const objData = activeObject.toObject();
-			// @ts-expect-error
-			objData.id = activeObject.id;
+			(objData as any).id = (activeObject as any).id;
 			sendCanvasUpdate({
 				type: 'modify',
 				object: objData
 			});
 		}
 	};
-
 	const handleShapeOptionsChange = (options: any) => {
 		// Update current options for new objects
 		currentShapeOptions = { ...options };
@@ -398,7 +408,6 @@
 			}
 			canvas.renderAll();
 			const objData = activeObject.toObject();
-			// @ts-expect-error
 			objData.id = activeObject.id;
 			sendCanvasUpdate({
 				type: 'modify',
@@ -423,7 +432,6 @@
 			});
 			canvas.renderAll();
 			const objData = activeObject.toObject();
-			// @ts-expect-error
 			objData.id = activeObject.id;
 			sendCanvasUpdate({
 				type: 'modify',
@@ -470,7 +478,7 @@
 				});
 			} else if (activeObject.type === 'group') {
 				// Handle arrow group - update all objects in the group
-				(activeObject as fabric.Group).forEachObject((obj: any) => {
+				(activeObject as any).forEachObject((obj: any) => {
 					if (obj.type === 'line') {
 						obj.set({
 							strokeWidth: options.strokeWidth,
@@ -483,13 +491,64 @@
 			}
 			canvas.renderAll();
 			const objData = activeObject.toObject();
-			// @ts-expect-error
 			objData.id = activeObject.id;
 			sendCanvasUpdate({
 				type: 'modify',
 				object: objData
 			});
 		}
+	};
+
+	// Layering handlers
+	const handleBringToFront = () => {
+		if (!canvas) return;
+		CanvasActions.bringToFront({ canvas, sendCanvasUpdate });
+	};
+
+	const handleSendToBack = () => {
+		if (!canvas) return;
+		CanvasActions.sendToBack({ canvas, sendCanvasUpdate });
+	};
+
+	const handleMoveForward = () => {
+		if (!canvas) return;
+		CanvasActions.moveForward({ canvas, sendCanvasUpdate });
+	};
+
+	const handleMoveBackward = () => {
+		if (!canvas) return;
+		CanvasActions.moveBackward({ canvas, sendCanvasUpdate });
+	};
+
+	// Undo/Redo handlers
+	const handleUndo = async () => {
+		if (!canvas || !history.canUndo()) return;
+
+		isApplyingHistory = true;
+		const action = history.undo();
+		if (action) {
+			await applyUndo(canvas, action, sendCanvasUpdate);
+		}
+
+		// Update button states
+		canUndo = history.canUndo();
+		canRedo = history.canRedo();
+		isApplyingHistory = false;
+	};
+
+	const handleRedo = async () => {
+		if (!canvas || !history.canRedo()) return;
+
+		isApplyingHistory = true;
+		const action = history.redo();
+		if (action) {
+			await applyRedo(canvas, action, sendCanvasUpdate);
+		}
+
+		// Update button states
+		canUndo = history.canUndo();
+		canRedo = history.canRedo();
+		isApplyingHistory = false;
 	};
 
 	const handleKeyDown = (event: KeyboardEvent) => {
@@ -499,7 +558,6 @@
 		if (event.key === 'Escape') {
 			const activeObject = canvas.getActiveObject();
 			// Don't switch to select if editing text
-			// @ts-expect-error
 			if (!activeObject || !activeObject.isType('textbox') || !activeObject.isEditing) {
 				event.preventDefault();
 				setSelectTool();
@@ -508,7 +566,6 @@
 
 		if (event.key === 'Backspace' || event.key === 'Delete') {
 			const activeObject = canvas.getActiveObject();
-			// @ts-expect-error
 			if (activeObject && (!activeObject.isType('textbox') || !activeObject.isEditing)) {
 				event.preventDefault();
 				deleteSelected();
@@ -519,220 +576,328 @@
 	onMount(() => {
 		if (!whiteboardCanvas) return;
 
-		document.body.style.overflow = 'hidden';
+		let resizeCanvas: (() => void) | undefined;
 
-		canvas = new fabric.Canvas(whiteboardCanvas);
+		// Async initialization
+		(async () => {
+			// Dynamically import browser-only modules
+			fabric = await import('fabric');
+			CanvasActions = await import('$lib/components/whiteboard/canvas-actions');
+			CanvasEvents = await import('$lib/components/whiteboard/canvas-events');
+			const HistoryModule = await import('$lib/components/whiteboard/canvas-history');
+			CanvasHistory = HistoryModule.CanvasHistory;
+			applyRedo = HistoryModule.applyRedo;
+			applyUndo = HistoryModule.applyUndo;
+			Tools = await import('$lib/components/whiteboard/tools');
+			WebSocketHandler = await import('$lib/components/whiteboard/websocket');
 
-		const resizeCanvas = () => {
-			if (!whiteboardCanvas || !canvas) return;
-			const whiteContainer = whiteboardCanvas.closest('.rounded-lg.border-2.bg-white');
-			if (whiteContainer) {
-				const rect = whiteContainer.getBoundingClientRect();
-				const width = rect.width - 4;
-				const height = rect.height - 4;
+			// Initialize history
+			history = new CanvasHistory();
 
-				whiteboardCanvas.width = width;
-				whiteboardCanvas.height = height;
+			document.body.style.overflow = 'hidden';
 
-				canvas.setDimensions({
-					width: width,
-					height: height
-				});
-				canvas.renderAll();
-			}
-		};
+			canvas = new fabric.Canvas(whiteboardCanvas, {
+				preserveObjectStacking: true,
+				perPixelTargetFind: true,
+				targetFindTolerance: 5
+			});
 
-		resizeCanvas();
-		window.addEventListener('resize', resizeCanvas);
+			resizeCanvas = () => {
+				if (!whiteboardCanvas || !canvas) return;
+				const whiteContainer = whiteboardCanvas.closest('.rounded-lg.border-2.bg-white');
+				if (whiteContainer) {
+					const rect = whiteContainer.getBoundingClientRect();
+					const width = rect.width - 4;
+					const height = rect.height - 4;
 
-		canvas.freeDrawingBrush = new fabric.PencilBrush(canvas);
-		canvas.freeDrawingBrush.width = 2;
-		canvas.freeDrawingBrush.color = '#000000';
+					whiteboardCanvas.width = width;
+					whiteboardCanvas.height = height;
 
-		setSelectTool();
-
-		// Setup WebSocket connection for real-time collaboration
-		socket = WebSocketHandler.setupWebSocket(
-			`/subjects/${subjectOfferingId}/class/${subjectOfferingClassId}/tasks/${taskId}/whiteboard/ws`,
-			canvas,
-			whiteboardIdNum
-		);
-
-		// Setup all canvas event handlers using the extracted module
-		const canvasEventContext: CanvasEventContext = {
-			// State getters
-			getSelectedTool: () => selectedTool,
-			getShowFloatingMenu: () => showFloatingMenu,
-			getIsPanMode: () => isPanMode,
-			getIsDrawingText: () => isDrawingText,
-			getIsDrawingShape: () => isDrawingShape,
-			getIsDrawingLine: () => isDrawingLine,
-			getIsDrawingArrow: () => isDrawingArrow,
-			getIsErasing: () => isErasing,
-			getIsMovingImage: () => isMovingImage,
-			getTempText: () => tempText,
-			getTempShape: () => tempShape,
-			getTempLine: () => tempLine,
-			getStartPoint: () => startPoint,
-			getPanStartPos: () => panStartPos,
-			getLastEraserPoint: () => lastEraserPoint,
-			getHoveredObjectsForDeletion: () => hoveredObjectsForDeletion,
-			getEraserTrail: () => eraserTrail,
-			getOriginalOpacities: () => originalOpacities,
-			getCurrentShapeType: () => currentShapeType,
-			getCurrentZoom: () => currentZoom,
-
-			// State setters
-			setSelectedTool: (value) => {
-				selectedTool = value;
-			},
-			setShowFloatingMenu: (value) => {
-				showFloatingMenu = value;
-			},
-			setIsPanMode: (value) => {
-				isPanMode = value;
-			},
-			setIsDrawingText: (value) => {
-				isDrawingText = value;
-			},
-			setIsDrawingShape: (value) => {
-				isDrawingShape = value;
-			},
-			setIsDrawingLine: (value) => {
-				isDrawingLine = value;
-			},
-			setIsDrawingArrow: (value) => {
-				isDrawingArrow = value;
-			},
-			setIsErasing: (value) => {
-				isErasing = value;
-			},
-			setIsMovingImage: (value) => {
-				isMovingImage = value;
-			},
-			setTempText: (value) => {
-				tempText = value;
-			},
-			setTempShape: (value) => {
-				tempShape = value;
-			},
-			setTempLine: (value) => {
-				tempLine = value as fabric.Line | null;
-			},
-			setStartPoint: (value) => {
-				startPoint = value;
-			},
-			setPanStartPos: (value) => {
-				panStartPos = value;
-			},
-			setLastEraserPoint: (value) => {
-				lastEraserPoint = value;
-			},
-			setHoveredObjectsForDeletion: (value) => {
-				hoveredObjectsForDeletion = value;
-			},
-			setEraserTrail: (value) => {
-				eraserTrail = value;
-			},
-			setOriginalOpacities: (value) => {
-				originalOpacities = value;
-			},
-			setCurrentShapeType: (value) => {
-				currentShapeType = value;
-			},
-			setCurrentZoom: (value) => {
-				currentZoom = value;
-			},
-
-			// Options getters
-			getCurrentTextOptions: () => currentTextOptions,
-			getCurrentShapeOptions: () => currentShapeOptions,
-			getCurrentDrawOptions: () => currentDrawOptions,
-			getCurrentLineArrowOptions: () => currentLineArrowOptions,
-
-			// Callbacks
-			sendCanvasUpdate,
-			sendImageUpdate,
-			clearEraserState,
-
-			// Refs
-			floatingMenuRef: floatingMenuRef || undefined
-		};
-
-		CanvasEvents.setupCanvasEvents(canvas, canvasEventContext);
-
-		window.addEventListener('keydown', handleKeyDown);
-
-		// Add pinch-to-zoom for touch devices
-		let initialPinchDistance = 0;
-		let initialZoom = 1;
-
-		whiteboardCanvas.addEventListener('touchstart', (e) => {
-			if (e.touches.length === 2) {
-				// Two finger touch - setup for pinch zoom
-				const touch1 = e.touches[0];
-				const touch2 = e.touches[1];
-
-				const dx = touch1.clientX - touch2.clientX;
-				const dy = touch1.clientY - touch2.clientY;
-				initialPinchDistance = Math.sqrt(dx * dx + dy * dy);
-				initialZoom = canvas.getZoom();
-
-				e.preventDefault();
-			}
-		});
-
-		whiteboardCanvas.addEventListener('touchmove', (e) => {
-			if (e.touches.length === 2 && initialPinchDistance > 0) {
-				// Two finger move - pinch to zoom
-				const touch1 = e.touches[0];
-				const touch2 = e.touches[1];
-
-				const dx = touch1.clientX - touch2.clientX;
-				const dy = touch1.clientY - touch2.clientY;
-				const currentDistance = Math.sqrt(dx * dx + dy * dy);
-
-				const scale = currentDistance / initialPinchDistance;
-				const newZoom = initialZoom * scale;
-				const constrainedZoom = Math.max(0.1, Math.min(10, newZoom));
-
-				// Zoom at center of pinch gesture
-				const centerX = (touch1.clientX + touch2.clientX) / 2;
-				const centerY = (touch1.clientY + touch2.clientY) / 2;
-
-				if (whiteboardCanvas) {
-					const rect = whiteboardCanvas.getBoundingClientRect();
-					const point = new fabric.Point(centerX - rect.left, centerY - rect.top);
-					canvas.zoomToPoint(point, constrainedZoom);
-					currentZoom = constrainedZoom; // Update zoom state
+					canvas.setDimensions({
+						width: width,
+						height: height
+					});
+					canvas.renderAll();
 				}
+			};
 
-				e.preventDefault();
-			}
-		});
+			resizeCanvas();
+			window.addEventListener('resize', resizeCanvas);
 
-		whiteboardCanvas.addEventListener('touchend', (e) => {
-			if (e.touches.length < 2) {
-				initialPinchDistance = 0;
-			}
-		});
+			canvas.freeDrawingBrush = new fabric.PencilBrush(canvas);
+			canvas.freeDrawingBrush.width = 2;
+			canvas.freeDrawingBrush.color = '#000000';
 
+			setSelectTool();
+
+			// Setup WebSocket connection for real-time collaboration
+			socket = WebSocketHandler.setupWebSocket(
+				`/subjects/${subjectOfferingId}/class/${subjectOfferingClassId}/tasks/${taskId}/whiteboard/ws`,
+				canvas,
+				whiteboardIdNum
+			);
+
+			// Setup all canvas event handlers using the extracted module
+			const canvasEventContext: CanvasEventContext = {
+				// State getters
+				getSelectedTool: () => selectedTool,
+				getShowFloatingMenu: () => showFloatingMenu,
+				getIsPanMode: () => isPanMode,
+				getIsDrawingText: () => isDrawingText,
+				getIsDrawingShape: () => isDrawingShape,
+				getIsDrawingLine: () => isDrawingLine,
+				getIsDrawingArrow: () => isDrawingArrow,
+				getIsErasing: () => isErasing,
+				getIsMovingImage: () => isMovingImage,
+				getTempText: () => tempText,
+				getTempShape: () => tempShape,
+				getTempLine: () => tempLine,
+				getStartPoint: () => startPoint,
+				getPanStartPos: () => panStartPos,
+				getLastEraserPoint: () => lastEraserPoint,
+				getHoveredObjectsForDeletion: () => hoveredObjectsForDeletion,
+				getEraserTrail: () => eraserTrail,
+				getOriginalOpacities: () => originalOpacities,
+				getCurrentShapeType: () => currentShapeType,
+				getCurrentZoom: () => currentZoom,
+
+				// State setters
+				setSelectedTool: (value) => {
+					selectedTool = value;
+				},
+				setShowFloatingMenu: (value) => {
+					showFloatingMenu = value;
+				},
+				setIsPanMode: (value) => {
+					isPanMode = value;
+				},
+				setIsDrawingText: (value) => {
+					isDrawingText = value;
+				},
+				setIsDrawingShape: (value) => {
+					isDrawingShape = value;
+				},
+				setIsDrawingLine: (value) => {
+					isDrawingLine = value;
+				},
+				setIsDrawingArrow: (value) => {
+					isDrawingArrow = value;
+				},
+				setIsErasing: (value) => {
+					isErasing = value;
+				},
+				setIsMovingImage: (value) => {
+					isMovingImage = value;
+				},
+				setTempText: (value) => {
+					tempText = value;
+				},
+				setTempShape: (value) => {
+					tempShape = value;
+				},
+				setTempLine: (value) => {
+					tempLine = value;
+				},
+				setStartPoint: (value) => {
+					startPoint = value;
+				},
+				setPanStartPos: (value) => {
+					panStartPos = value;
+				},
+				setLastEraserPoint: (value) => {
+					lastEraserPoint = value;
+				},
+				setHoveredObjectsForDeletion: (value) => {
+					hoveredObjectsForDeletion = value;
+				},
+				setEraserTrail: (value) => {
+					eraserTrail = value;
+				},
+				setOriginalOpacities: (value) => {
+					originalOpacities = value;
+				},
+				setCurrentShapeType: (value) => {
+					currentShapeType = value;
+				},
+				setCurrentZoom: (value) => {
+					currentZoom = value;
+				},
+
+				// Options getters
+				getCurrentTextOptions: () => currentTextOptions,
+				getCurrentShapeOptions: () => currentShapeOptions,
+				getCurrentDrawOptions: () => currentDrawOptions,
+				getCurrentLineArrowOptions: () => currentLineArrowOptions,
+
+				// Callbacks
+				sendCanvasUpdate,
+				sendImageUpdate,
+				clearEraserState,
+
+				// Refs
+				floatingMenuRef: floatingMenuRef || undefined
+			};
+
+			CanvasEvents.setupCanvasEvents(canvas, canvasEventContext);
+
+			// Setup history tracking
+			// Track object additions
+			canvas.on('object:added', (e: any) => {
+				if (isApplyingHistory || !e.target) return;
+				const objectId = e.target.id;
+				if (objectId) {
+					const objectData = e.target.toObject();
+					objectData.id = objectId;
+					history.recordAdd(objectId, objectData);
+					canUndo = history.canUndo();
+					canRedo = history.canRedo();
+				}
+			});
+
+			// Track object modifications (store previous state before modification)
+			const objectStates = new Map<string, Record<string, unknown>>();
+			canvas.on('object:modified', (e: any) => {
+				if (isApplyingHistory || !e.target) return;
+				const objectId = e.target.id;
+				if (objectId) {
+					const previousData = objectStates.get(objectId);
+					const newData = e.target.toObject();
+					newData.id = objectId;
+
+					if (previousData) {
+						history.recordModify(objectId, previousData, newData);
+						objectStates.delete(objectId);
+					}
+					canUndo = history.canUndo();
+					canRedo = history.canRedo();
+				}
+			});
+
+			// Store state before modification starts
+			canvas.on('object:moving', (e: any) => {
+				if (isApplyingHistory || !e.target) return;
+				const objectId = e.target.id;
+				if (objectId && !objectStates.has(objectId)) {
+					const state = e.target.toObject();
+					state.id = objectId;
+					objectStates.set(objectId, state);
+				}
+			});
+
+			canvas.on('object:scaling', (e: any) => {
+				if (isApplyingHistory || !e.target) return;
+				const objectId = e.target.id;
+				if (objectId && !objectStates.has(objectId)) {
+					const state = e.target.toObject();
+					state.id = objectId;
+					objectStates.set(objectId, state);
+				}
+			});
+
+			canvas.on('object:rotating', (e: any) => {
+				if (isApplyingHistory || !e.target) return;
+				const objectId = e.target.id;
+				if (objectId && !objectStates.has(objectId)) {
+					const state = e.target.toObject();
+					state.id = objectId;
+					objectStates.set(objectId, state);
+				}
+			});
+
+			// Track object removals
+			canvas.on('object:removed', (e: any) => {
+				if (isApplyingHistory || !e.target) return;
+				const objectId = e.target.id;
+				if (objectId) {
+					const objectData = e.target.toObject();
+					objectData.id = objectId;
+					history.recordDelete(objectId, objectData);
+					canUndo = history.canUndo();
+					canRedo = history.canRedo();
+				}
+			});
+
+			window.addEventListener('keydown', handleKeyDown);
+
+			// Add pinch-to-zoom for touch devices
+			let initialPinchDistance = 0;
+			let initialZoom = 1;
+
+			whiteboardCanvas.addEventListener('touchstart', (e) => {
+				if (e.touches.length === 2) {
+					// Two finger touch - setup for pinch zoom
+					const touch1 = e.touches[0];
+					const touch2 = e.touches[1];
+
+					const dx = touch1.clientX - touch2.clientX;
+					const dy = touch1.clientY - touch2.clientY;
+					initialPinchDistance = Math.sqrt(dx * dx + dy * dy);
+					initialZoom = canvas.getZoom();
+
+					e.preventDefault();
+				}
+			});
+
+			whiteboardCanvas.addEventListener('touchmove', (e) => {
+				if (e.touches.length === 2 && initialPinchDistance > 0) {
+					// Two finger move - pinch to zoom
+					const touch1 = e.touches[0];
+					const touch2 = e.touches[1];
+
+					const dx = touch1.clientX - touch2.clientX;
+					const dy = touch1.clientY - touch2.clientY;
+					const currentDistance = Math.sqrt(dx * dx + dy * dy);
+
+					const scale = currentDistance / initialPinchDistance;
+					const newZoom = initialZoom * scale;
+					const constrainedZoom = Math.max(0.1, Math.min(10, newZoom));
+
+					// Zoom at center of pinch gesture
+					const centerX = (touch1.clientX + touch2.clientX) / 2;
+					const centerY = (touch1.clientY + touch2.clientY) / 2;
+
+					if (whiteboardCanvas) {
+						const rect = whiteboardCanvas.getBoundingClientRect();
+						const point = new fabric.Point(centerX - rect.left, centerY - rect.top);
+						canvas.zoomToPoint(point, constrainedZoom);
+						currentZoom = constrainedZoom; // Update zoom state
+					}
+
+					e.preventDefault();
+				}
+			});
+
+			whiteboardCanvas.addEventListener('touchend', (e) => {
+				if (e.touches.length < 2) {
+					initialPinchDistance = 0;
+				}
+			});
+		})(); // Close async IIFE
+
+		// Cleanup function
 		return () => {
-			window.removeEventListener('keydown', handleKeyDown);
-			window.removeEventListener('resize', resizeCanvas);
+			if (resizeCanvas) {
+				window.removeEventListener('resize', resizeCanvas);
+			}
 		};
 	});
 
 	onDestroy(() => {
+		if (!browser) return;
+
 		// Restore body scrolling when leaving whiteboard
-		document.body.style.overflow = '';
+		if (document?.body) {
+			document.body.style.overflow = '';
+		}
 
 		// Clear any pending image throttle timeouts
 		if (imageThrottleTimeout !== null) {
 			clearTimeout(imageThrottleTimeout);
 		}
 
-		WebSocketHandler.closeWebSocket(socket);
+		if (WebSocketHandler && socket) {
+			WebSocketHandler.closeWebSocket(socket);
+		}
 		if (canvas) {
 			canvas.dispose();
 		}
@@ -743,7 +908,7 @@
 	<div class="bg-background flex h-full w-full flex-col">
 		<!-- Header with back button and title -->
 		<header
-			class="bg-background/95 supports-[backdrop-filter]:bg-background/60 border-b backdrop-blur"
+			class="bg-background/95 supports-backdrop-filter:bg-background/60 border-b backdrop-blur"
 		>
 			<div class="flex h-14 items-center px-4">
 				<Button variant="ghost" size="sm" onclick={goBack} class="mr-4">
@@ -800,8 +965,11 @@
 				onShapeOptionsChange={handleShapeOptionsChange}
 				onDrawOptionsChange={handleDrawOptionsChange}
 				onLineArrowOptionsChange={handleLineArrowOptionsChange}
+				onBringToFront={handleBringToFront}
+				onSendToBack={handleSendToBack}
+				onMoveForward={handleMoveForward}
+				onMoveBackward={handleMoveBackward}
 			/>
-
 			<!-- Zoom Controls -->
 			<WhiteboardZoomControls
 				{currentZoom}
@@ -809,6 +977,10 @@
 				onZoomOut={zoomOut}
 				onResetZoom={resetZoom}
 				onRecenterView={recenterView}
+				onUndo={handleUndo}
+				onRedo={handleRedo}
+				{canUndo}
+				{canRedo}
 			/>
 		</main>
 	</div>
