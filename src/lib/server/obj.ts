@@ -9,13 +9,20 @@ import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { Resource } from 'sst';
 
 const client = new S3Client({});
-const bucketName = Resource.BucketSchools.name;
+
+let _bucketName: string | null = null;
+function getBucketName(): string {
+	if (!_bucketName) {
+		_bucketName = Resource.BucketSchools.name;
+	}
+	return _bucketName;
+}
 
 async function uploadBuffer(objectName: string, buffer: Buffer, contentType?: string) {
 	try {
 		const res = await client.send(
 			new PutObjectCommand({
-				Bucket: bucketName,
+				Bucket: getBucketName(),
 				Key: objectName,
 				Body: buffer,
 				ContentType: contentType
@@ -34,14 +41,14 @@ export async function uploadBufferHelper(
 	contentType?: string
 ): Promise<string> {
 	await uploadBuffer(objectName, buffer, contentType);
-	return `https://${bucketName}.s3.amazonaws.com/${objectName}`;
+	return `https://${getBucketName()}.s3.amazonaws.com/${objectName}`;
 }
 
 export async function deleteFile(objectName: string): Promise<void> {
 	try {
 		await client.send(
 			new DeleteObjectCommand({
-				Bucket: bucketName,
+				Bucket: getBucketName(),
 				Key: objectName
 			})
 		);
@@ -59,7 +66,7 @@ export async function listFiles(prefix?: string): Promise<string[]> {
 		do {
 			const response = await client.send(
 				new ListObjectsV2Command({
-					Bucket: bucketName,
+					Bucket: getBucketName(),
 					Prefix: prefix,
 					ContinuationToken: continuationToken
 				})
@@ -92,7 +99,7 @@ export async function getPresignedUrl(
 
 	try {
 		const command = new GetObjectCommand({
-			Bucket: bucketName,
+			Bucket: getBucketName(),
 			Key: fullObjectName
 		});
 		const url = await getSignedUrl(client, command, { expiresIn: expiry });
@@ -120,7 +127,7 @@ export async function getFileFromStorage(
 	try {
 		const response = await client.send(
 			new GetObjectCommand({
-				Bucket: bucketName,
+				Bucket: getBucketName(),
 				Key: fullObjectName
 			})
 		);

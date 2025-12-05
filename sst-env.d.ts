@@ -17,18 +17,42 @@ declare module "sst" {
       "type": "sst.aws.Postgres"
       "username": string
     }
-    "EddiApp": {
-      "type": "sst.aws.SvelteKit"
+    "DomainRedirects": {
+      "type": "sst.aws.Router"
       "url": string
     }
-    "FET": {
-      "assignPublicIp": boolean
-      "cluster": string
-      "containers": any
-      "securityGroups": any
-      "subnets": any
-      "taskDefinition": string
-      "type": "sst.aws.Task"
+    "EddiApp": {
+      "service": string
+      "type": "sst.aws.Service"
+      "url": string
+    }
+    "GeminiAPIKey": {
+      "type": "sst.sst.Secret"
+      "value": string
+    }
+    "GoogleClientID": {
+      "type": "sst.sst.Secret"
+      "value": string
+    }
+    "GoogleClientSecret": {
+      "type": "sst.sst.Secret"
+      "value": string
+    }
+    "MicrosoftClientID": {
+      "type": "sst.sst.Secret"
+      "value": string
+    }
+    "MicrosoftClientSecret": {
+      "type": "sst.sst.Secret"
+      "value": string
+    }
+    "MicrosoftTenantID": {
+      "type": "sst.sst.Secret"
+      "value": string
+    }
+    "NomicAPIKey": {
+      "type": "sst.sst.Secret"
+      "value": string
     }
     "VPC": {
       "bastion": string

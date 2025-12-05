@@ -50,31 +50,78 @@ export default $config({
 			vpc
 		});
 
-		const fet = new sst.aws.Task('FET', {
-			cluster,
-			link: [database, bucket],
-			image: {
-				context: './infra/fet',
-				dockerfile: 'Dockerfile'
-			}
-		});
+		// const fet = new sst.aws.Task('FET', {
+		// 	cluster,
+		// 	link: [database, bucket],
+		// 	image: {
+		// 		context: './infra/fet',
+		// 		dockerfile: 'Dockerfile'
+		// 	}
+		// });
 
 		// const email = new sst.aws.Email('Email', {
 		// 	sender: 'no-reply@eddi.com.au'
 		// });
 
-		const app = new sst.aws.SvelteKit('EddiApp', {
-			vpc,
-			link: [bucket, fet, database], // + email
+		const googleClientId = new sst.Secret('GoogleClientID', 'use-sst-secret-store');
+		const googleClientSecret = new sst.Secret('GoogleClientSecret', 'use-sst-secret-store');
+		const microsoftTenantId = new sst.Secret('MicrosoftTenantID', 'use-sst-secret-store');
+		const microsoftClientId = new sst.Secret('MicrosoftClientID', 'use-sst-secret-store');
+		const microsoftClientSecret = new sst.Secret('MicrosoftClientSecret', 'use-sst-secret-store');
+		const geminiApiKey = new sst.Secret('GeminiAPIKey', 'use-sst-secret-store');
+		const nomicApiKey = new sst.Secret('NomicAPIKey', 'use-sst-secret-store');
+
+		const GEMINI_DEFAULT_MODEL = 'gemini-2.5-flash';
+		const GEMINI_DEFAULT_IMAGE_MODEL = 'gemini-2.5-flash-image-generation';
+
+		const app = new sst.aws.Service('EddiApp', {
+			cluster,
+			link: [
+				bucket,
+				database,
+				googleClientId,
+				googleClientSecret,
+				microsoftTenantId,
+				microsoftClientId,
+				microsoftClientSecret,
+				geminiApiKey,
+				nomicApiKey
+			], // + fet + email
+			environment: {
+				GEMINI_DEFAULT_MODEL,
+				GEMINI_DEFAULT_IMAGE_MODEL
+			},
+			image: {
+				context: '.',
+				dockerfile: 'infra/Dockerfile'
+			},
+			loadBalancer: {
+				domain: {
+					name: 'eddi.com.au',
+					aliases: ['*.eddi.com.au']
+				},
+				rules: [
+					{ listen: '80/http', redirect: '443/https' },
+					{ listen: '443/https', forward: '3000/http' }
+				]
+			},
+			dev: {
+				command: 'npm run dev'
+			}
+		});
+
+		new sst.aws.Router('DomainRedirects', {
+			routes: {
+				'/*': app.url
+			},
 			domain: {
-				name: 'eddi.com.au',
-				redirects: ['www.eddi.com.au', 'eddi.au', 'www.eddi.au'],
-				aliases: ['*.eddi.com.au']
+				name: 'www.eddi.com.au',
+				aliases: ['eddi.au', 'www.eddi.au']
 			}
 		});
 
 		return {
-			resources: { vpc, database, bucket, cluster, fet, app }
+			resources: { vpc, database, bucket, cluster, app } // + fet + email
 		};
 	}
 });

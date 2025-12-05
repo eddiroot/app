@@ -26,8 +26,8 @@
     "@eslint/js": "^9.18.0",
     "@internationalized/date": "^3.8.2",
     "@lucide/svelte": "^0.544.0",
-    "@sveltejs/adapter-node": "https://pkg.pr.new/sveltejs/kit/@sveltejs/adapter-node@12973",
-    "@sveltejs/kit": "https://pkg.pr.new/sveltejs/kit/@sveltejs/kit@12973",
+    "@sveltejs/adapter-node": "^5.4.0",
+    "@sveltejs/kit": "^2.49.0",
     "@sveltejs/vite-plugin-svelte": "^5.1.0",
     "@tailwindcss/forms": "^0.5.9",
     "@tailwindcss/typography": "^0.5.16",
@@ -96,7 +96,6 @@
     "pg": "^8.16.3",
     "plotly.js-dist-min": "^3.1.0",
     "sst": "3.17.23",
-    "svelte-kit-sst": "2.43.5",
     "uuid": "^11.1.0",
     "zod": "^4.1.12"
   },

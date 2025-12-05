@@ -1,21 +1,40 @@
-import {
-	GOOGLE_CLIENT_ID,
-	GOOGLE_CLIENT_SECRET,
-	MICROSOFT_CLIENT_ID,
-	MICROSOFT_CLIENT_SECRET,
-	MICROSOFT_TENANT_ID
-} from '$env/static/private';
 import { Google, MicrosoftEntraId } from 'arctic';
+import { Resource } from 'sst';
 
-export const google = new Google(
-	GOOGLE_CLIENT_ID,
-	GOOGLE_CLIENT_SECRET,
-	'http://localhost:5173/login/google/callback'
-);
+let _google: Google | null = null;
+export function getGoogle(): Google {
+	if (!_google) {
+		_google = new Google(
+			Resource.GoogleClientID.value,
+			Resource.GoogleClientSecret.value,
+			'http://localhost:5173/login/google/callback'
+		);
+	}
+	return _google;
+}
 
-export const microsoft = new MicrosoftEntraId(
-	MICROSOFT_TENANT_ID,
-	MICROSOFT_CLIENT_ID,
-	MICROSOFT_CLIENT_SECRET,
-	'http://localhost:5173/login/microsoft/callback'
-);
+let _microsoft: MicrosoftEntraId | null = null;
+export function getMicrosoft(): MicrosoftEntraId {
+	if (!_microsoft) {
+		_microsoft = new MicrosoftEntraId(
+			Resource.MicrosoftTenantID.value,
+			Resource.MicrosoftClientID.value,
+			Resource.MicrosoftClientSecret.value,
+			'http://localhost:5173/login/microsoft/callback'
+		);
+	}
+	return _microsoft;
+}
+
+// Keep backwards-compatible exports using getters
+export const google = new Proxy({} as Google, {
+	get(_, prop) {
+		return Reflect.get(getGoogle(), prop);
+	}
+});
+
+export const microsoft = new Proxy({} as MicrosoftEntraId, {
+	get(_, prop) {
+		return Reflect.get(getMicrosoft(), prop);
+	}
+});

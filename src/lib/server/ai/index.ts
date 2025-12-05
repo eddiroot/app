@@ -1,13 +1,15 @@
-import { env } from '$env/dynamic/private';
 import { getMimeType } from '$lib/server/ai/utils';
 import { GoogleGenAI, type Part } from '@google/genai';
 import fs from 'fs';
+import { Resource } from 'sst';
 
-if (!env.GEMINI_API_KEY) throw new Error('GEMINI_API_KEY is not set');
-if (!env.GEMINI_DEFAULT_MODEL) throw new Error('GEMINI_DEFAULT_MODEL is not set');
-if (!env.GEMINI_DEFAULT_IMAGE_MODEL) throw new Error('GEMINI_DEFAULT_IMAGE_MODEL is not set');
-
-const ai = new GoogleGenAI({ apiKey: env.GEMINI_API_KEY });
+let _ai: GoogleGenAI | null = null;
+function getAI(): GoogleGenAI {
+	if (!_ai) {
+		_ai = new GoogleGenAI({ apiKey: Resource.GeminiAPIKey.value });
+	}
+	return _ai;
+}
 
 export async function geminiCompletion(
 	prompt: string,
@@ -46,8 +48,8 @@ export async function geminiCompletion(
 			config.responseSchema = responseSchema;
 		}
 
-		const { text } = await ai.models.generateContent({
-			model: env.GEMINI_DEFAULT_MODEL,
+		const { text } = await getAI().models.generateContent({
+			model: process.env.GEMINI_DEFAULT_MODEL!,
 			contents: [
 				{
 					role: 'user',
@@ -86,8 +88,8 @@ export async function geminiConversation(
 			config.systemInstruction = systemInstruction;
 		}
 
-		const { text } = await ai.models.generateContent({
-			model: env.GEMINI_DEFAULT_MODEL,
+		const { text } = await getAI().models.generateContent({
+			model: process.env.GEMINI_DEFAULT_MODEL!,
 			contents,
 			config
 		});
@@ -105,7 +107,7 @@ export async function geminiConversation(
 
 export async function geminiImageGeneration(prompt: string) {
 	try {
-		const response = await ai.models.generateContent({
+		const response = await getAI().models.generateContent({
 			model: 'gemini-2.0-flash-preview-image-generation',
 			contents: [
 				{
