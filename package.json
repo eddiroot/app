@@ -9,6 +9,7 @@
     "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
     "curriculum:update": "npx tsx ./src/lib/server/db/seed/data/generate-curriculum-data.ts",
     "db": "sst shell drizzle-kit",
+    "db:generate": "sst shell drizzle-kit generate",
     "db:migrate": "sst shell drizzle-kit migrate",
     "db:push": "sst shell drizzle-kit push",
     "db:seed": "sst shell tsx src/lib/server/db/seed",
