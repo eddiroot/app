@@ -48,6 +48,17 @@ If you need to clear all local branches except main:
 git branch | grep -v "main" | xargs git branch -D
 ```
 
+## Breaking Changes
+
+Run the following commands one-by-one
+
+```bash
+docker compose down --volumes
+docker compose up -d
+npm run db:push
+npm run db:seed
+```
+
 ## UI
 
 To add new [shadcn-svelte components](https://www.shadcn-svelte.com/docs/components), use this command:

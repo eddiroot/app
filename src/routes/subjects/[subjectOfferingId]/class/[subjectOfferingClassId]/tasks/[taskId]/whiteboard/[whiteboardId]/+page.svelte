@@ -7,7 +7,7 @@
 	import type { CanvasEventContext } from '$lib/components/whiteboard/canvas-events';
 	import {
 		DEFAULT_DRAW_OPTIONS,
-		DEFAULT_LINE_ARROW_OPTIONS,
+		DEFAULT_LINE_OPTIONS,
 		DEFAULT_SHAPE_OPTIONS,
 		DEFAULT_TEXT_OPTIONS,
 		IMAGE_THROTTLE_MS,
@@ -16,7 +16,7 @@
 	import type { ToolState } from '$lib/components/whiteboard/tools';
 	import type {
 		DrawOptions,
-		LineArrowOptions,
+		LineOptions,
 		ShapeOptions,
 		TextOptions,
 		WhiteboardTool
@@ -50,7 +50,6 @@
 	let showFloatingMenu = $state(false);
 	let imageInput = $state<HTMLInputElement>();
 	let isDrawingLine = $state(false);
-	let isDrawingArrow = $state(false);
 	let isDrawingShape = $state(false);
 	let isDrawingText = $state(false);
 	let currentShapeType = $state<string>('');
@@ -65,6 +64,14 @@
 	let tempText: any = null;
 	let floatingMenuRef: WhiteboardFloatingMenu;
 
+	interface ObjectControlPoint {
+		objectId: string;
+		coordinate: { x: number; y: number }[];
+		customProperties?: Record<string, any>;
+	}
+
+	let objectControlPoints = $state([]);
+
 	// History management for undo/redo
 	let history: any; // Will be CanvasHistory instance once loaded
 	let canUndo = $state(false);
@@ -75,7 +82,7 @@
 	let currentTextOptions = $state<TextOptions>({ ...DEFAULT_TEXT_OPTIONS });
 	let currentShapeOptions = $state<ShapeOptions>({ ...DEFAULT_SHAPE_OPTIONS });
 	let currentDrawOptions = $state<DrawOptions>({ ...DEFAULT_DRAW_OPTIONS });
-	let currentLineArrowOptions = $state<LineArrowOptions>({ ...DEFAULT_LINE_ARROW_OPTIONS });
+	let currentLineOptions = $state<LineOptions>({ ...DEFAULT_LINE_OPTIONS });
 
 	const { whiteboardId, taskId, subjectOfferingId, subjectOfferingClassId } = $derived(page.params);
 	const whiteboardIdNum = $derived(parseInt(whiteboardId ?? '0'));
@@ -237,18 +244,6 @@
 	const setLineTool = () => {
 		const state = getToolState();
 		Tools.setLineTool(
-			canvas,
-			state,
-			clearEraserState,
-			clearShapeDrawingState,
-			clearTextDrawingState
-		);
-		applyToolState(state);
-	};
-
-	const setArrowTool = () => {
-		const state = getToolState();
-		Tools.setArrowTool(
 			canvas,
 			state,
 			clearEraserState,
@@ -462,9 +457,9 @@
 		}
 	};
 
-	const handleLineArrowOptionsChange = (options: any) => {
+	const handleLineOptionsChange = (options: any) => {
 		// Update current options for new objects
-		currentLineArrowOptions = { ...options };
+		currentLineOptions = { ...options };
 
 		if (!canvas) return;
 		const activeObject = canvas.getActiveObject();
@@ -646,7 +641,6 @@
 				getIsDrawingText: () => isDrawingText,
 				getIsDrawingShape: () => isDrawingShape,
 				getIsDrawingLine: () => isDrawingLine,
-				getIsDrawingArrow: () => isDrawingArrow,
 				getIsErasing: () => isErasing,
 				getIsMovingImage: () => isMovingImage,
 				getTempText: () => tempText,
@@ -679,9 +673,6 @@
 				},
 				setIsDrawingLine: (value) => {
 					isDrawingLine = value;
-				},
-				setIsDrawingArrow: (value) => {
-					isDrawingArrow = value;
 				},
 				setIsErasing: (value) => {
 					isErasing = value;
@@ -727,7 +718,7 @@
 				getCurrentTextOptions: () => currentTextOptions,
 				getCurrentShapeOptions: () => currentShapeOptions,
 				getCurrentDrawOptions: () => currentDrawOptions,
-				getCurrentLineArrowOptions: () => currentLineArrowOptions,
+				getCurrentLineOptions: () => currentLineOptions,
 
 				// Callbacks
 				sendCanvasUpdate,
@@ -935,7 +926,6 @@
 				onPanTool={setPanTool}
 				onDrawTool={setDrawTool}
 				onLineTool={setLineTool}
-				onArrowTool={setArrowTool}
 				onAddShape={addShape}
 				onAddText={addText}
 				onAddImage={addImage}
@@ -964,12 +954,13 @@
 				onTextOptionsChange={handleTextOptionsChange}
 				onShapeOptionsChange={handleShapeOptionsChange}
 				onDrawOptionsChange={handleDrawOptionsChange}
-				onLineArrowOptionsChange={handleLineArrowOptionsChange}
+				onLineOptionsChange={handleLineOptionsChange}
 				onBringToFront={handleBringToFront}
 				onSendToBack={handleSendToBack}
 				onMoveForward={handleMoveForward}
 				onMoveBackward={handleMoveBackward}
 			/>
+
 			<!-- Zoom Controls -->
 			<WhiteboardZoomControls
 				{currentZoom}

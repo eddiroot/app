@@ -26,7 +26,7 @@
 		onTextOptionsChange?: (options: TextOptions) => void;
 		onShapeOptionsChange?: (options: ShapeOptions) => void;
 		onDrawOptionsChange?: (options: DrawOptions) => void;
-		onLineArrowOptionsChange?: (options: LineArrowOptions) => void;
+		onLineOptionsChange?: (options: LineOptions) => void;
 		onCanvasInteraction?: () => void;
 		onBringToFront?: () => void;
 		onSendToBack?: () => void;
@@ -59,7 +59,7 @@
 		opacity: number;
 	}
 
-	interface LineArrowOptions {
+	interface LineOptions {
 		strokeWidth: number;
 		strokeColour: string;
 		strokeDashArray: number[];
@@ -72,7 +72,7 @@
 		onTextOptionsChange,
 		onShapeOptionsChange,
 		onDrawOptionsChange,
-		onLineArrowOptionsChange,
+		onLineOptionsChange,
 		onCanvasInteraction,
 		onBringToFront,
 		onSendToBack,
@@ -114,7 +114,7 @@
 		opacity: 1
 	});
 
-	let lineArrowOptions = $state<LineArrowOptions>({
+	let lineArrowOptions = $state<LineOptions>({
 		strokeWidth: 2,
 		strokeColour: '#1E1E1E',
 		strokeDashArray: [],
@@ -298,7 +298,7 @@
 		setTimeout(() => (isSyncingFromObject = false), 0);
 	}
 
-	export function updateLineArrowOptions(options: Partial<LineArrowOptions>) {
+	export function updateLineOptions(options: Partial<LineOptions>) {
 		isSyncingFromObject = true;
 		lineArrowOptions = { ...lineArrowOptions, ...options };
 		if (options.strokeWidth !== undefined) lineArrowStrokeWidthValue = options.strokeWidth;
@@ -338,9 +338,9 @@
 		if (
 			!isSyncingFromObject &&
 			(activeMenuPanel === 'line' || activeMenuPanel === 'arrow') &&
-			onLineArrowOptionsChange
+			onLineOptionsChange
 		) {
-			onLineArrowOptionsChange(lineArrowOptions);
+			onLineOptionsChange(lineArrowOptions);
 		}
 	});
 
@@ -352,7 +352,6 @@
 				activeMenuPanel === 'draw' ||
 				activeMenuPanel === 'eraser' ||
 				activeMenuPanel === 'line' ||
-				activeMenuPanel === 'arrow' ||
 				activeMenuPanel === 'select' ||
 				activeMenuPanel === 'image')
 	);
@@ -504,19 +503,18 @@
 							>
 						</div>
 					</div>
-				
 
-				<Separator />
+					<Separator />
 
-				<!-- Layering Controls -->
-				<WhiteboardLayeringControls
-					{onBringToFront}
-					{onSendToBack}
-					{onMoveForward}
-					{onMoveBackward}
-				/>
-			</Card.Content>
-		{:else if activeMenuPanel === 'shapes'}
+					<!-- Layering Controls -->
+					<WhiteboardLayeringControls
+						{onBringToFront}
+						{onSendToBack}
+						{onMoveForward}
+						{onMoveBackward}
+					/>
+				</Card.Content>
+			{:else if activeMenuPanel === 'shapes'}
 				<Card.Header class="pb-3">
 					<Card.Title class="flex items-center gap-2 text-sm">
 						<SlidersIcon />
@@ -735,19 +733,18 @@
 							>
 						</div>
 					</div>
-				
 
-				<Separator />
+					<Separator />
 
-				<!-- Layering Controls -->
-				<WhiteboardLayeringControls
-					{onBringToFront}
-					{onSendToBack}
-					{onMoveForward}
-					{onMoveBackward}
-				/>
-			</Card.Content>
-		{:else if activeMenuPanel === 'draw' || activeMenuPanel === 'eraser'}
+					<!-- Layering Controls -->
+					<WhiteboardLayeringControls
+						{onBringToFront}
+						{onSendToBack}
+						{onMoveForward}
+						{onMoveBackward}
+					/>
+				</Card.Content>
+			{:else if activeMenuPanel === 'draw' || activeMenuPanel === 'eraser'}
 				<Card.Header class="pb-3">
 					<Card.Title class="flex items-center gap-2 text-sm">
 						<PaletteIcon />
@@ -852,19 +849,18 @@
 							>
 						</div>
 					</div>
-				
 
-				<Separator />
+					<Separator />
 
-				<!-- Layering Controls -->
-				<WhiteboardLayeringControls
-					{onBringToFront}
-					{onSendToBack}
-					{onMoveForward}
-					{onMoveBackward}
-				/>
-			</Card.Content>
-		{:else if activeMenuPanel === 'line' || activeMenuPanel === 'arrow'}
+					<!-- Layering Controls -->
+					<WhiteboardLayeringControls
+						{onBringToFront}
+						{onSendToBack}
+						{onMoveForward}
+						{onMoveBackward}
+					/>
+				</Card.Content>
+			{:else if activeMenuPanel === 'line' || activeMenuPanel === 'arrow'}
 				<Card.Header class="pb-3">
 					<Card.Title class="flex items-center gap-2 text-sm">
 						{#if activeMenuPanel === 'line'}
@@ -1014,19 +1010,18 @@
 							>
 						</div>
 					</div>
-				
 
-				<Separator />
+					<Separator />
 
-				<!-- Layering Controls -->
-				<WhiteboardLayeringControls
-					{onBringToFront}
-					{onSendToBack}
-					{onMoveForward}
-					{onMoveBackward}
-				/>
-			</Card.Content>
-		{:else if activeMenuPanel === 'image'}
+					<!-- Layering Controls -->
+					<WhiteboardLayeringControls
+						{onBringToFront}
+						{onSendToBack}
+						{onMoveForward}
+						{onMoveBackward}
+					/>
+				</Card.Content>
+			{:else if activeMenuPanel === 'image'}
 				<Card.Header class="pb-3">
 					<Card.Title class="flex items-center gap-2 text-sm">
 						<SlidersIcon />

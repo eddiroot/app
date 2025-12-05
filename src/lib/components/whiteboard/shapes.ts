@@ -1,41 +1,7 @@
 import * as fabric from 'fabric';
 import { v4 as uuidv4 } from 'uuid';
 import { MIN_TEXT_WIDTH } from './constants';
-import {
-	configureArrowControls,
-	configureCircleControls,
-	configureRectangleControls,
-	configureTextControls,
-	configureTriangleControls
-} from './object-controls';
-import type { LineArrowOptions, ShapeOptions, TextOptions } from './types';
-
-/**
- * Calculate arrowhead points for a line
- */
-export const createArrowHead = (
-	x1: number,
-	y1: number,
-	x2: number,
-	y2: number,
-	arrowLength = 15,
-	arrowAngle = Math.PI / 6
-) => {
-	const angle = Math.atan2(y2 - y1, x2 - x1);
-
-	// Calculate the two points of the arrowhead
-	const arrowPoint1 = {
-		x: x2 - arrowLength * Math.cos(angle - arrowAngle),
-		y: y2 - arrowLength * Math.sin(angle - arrowAngle)
-	};
-
-	const arrowPoint2 = {
-		x: x2 - arrowLength * Math.cos(angle + arrowAngle),
-		y: y2 - arrowLength * Math.sin(angle + arrowAngle)
-	};
-
-	return [arrowPoint1, arrowPoint2];
-};
+import type { LineOptions, ShapeOptions, TextOptions } from './types';
 
 /**
  * Create a line object with the given options
@@ -45,7 +11,7 @@ export const createLine = (
 	y1: number,
 	x2: number,
 	y2: number,
-	options: LineArrowOptions
+	options: LineOptions
 ) => {
 	const line = new fabric.Polyline(
 		[
@@ -64,65 +30,6 @@ export const createLine = (
 	);
 
 	return line;
-};
-
-/**
- * Create an arrow object (line with arrowhead) with the given options
- */
-export const createArrow = (
-	x1: number,
-	y1: number,
-	x2: number,
-	y2: number,
-	options: LineArrowOptions
-) => {
-	const line = createLine(x1, y1, x2, y2, options);
-	const arrowHeadPoints = createArrowHead(x1, y1, x2, y2);
-
-	// Create arrowhead lines using Polyline for consistency
-	const arrowHead1 = new fabric.Polyline(
-		[
-			{ x: x2, y: y2 },
-			{ x: arrowHeadPoints[0].x, y: arrowHeadPoints[0].y }
-		],
-		{
-			stroke: options.strokeColour,
-			strokeWidth: options.strokeWidth,
-			strokeDashArray: options.strokeDashArray,
-			opacity: options.opacity,
-			selectable: false,
-			fill: 'transparent'
-		}
-	);
-
-	const arrowHead2 = new fabric.Polyline(
-		[
-			{ x: x2, y: y2 },
-			{ x: arrowHeadPoints[1].x, y: arrowHeadPoints[1].y }
-		],
-		{
-			stroke: options.strokeColour,
-			strokeWidth: options.strokeWidth,
-			strokeDashArray: options.strokeDashArray,
-			opacity: options.opacity,
-			selectable: false,
-			fill: 'transparent'
-		}
-	);
-
-	// Group the line and arrowhead together
-	const arrowGroup = new fabric.Group([line, arrowHead1, arrowHead2], {
-		selectable: true
-	});
-
-	// Assign ID to the group
-	// @ts-expect-error - Custom id property
-	arrowGroup.id = uuidv4();
-
-	// Configure arrow-specific controls
-	configureArrowControls(arrowGroup);
-
-	return arrowGroup;
 };
 
 /**
@@ -155,9 +62,9 @@ export const createShapeFromPoints = (
 				strokeDashArray: options.strokeDashArray,
 				opacity: options.opacity,
 				left: left,
-				top: top
+				top: top,
+				hasControls: false
 			});
-			configureCircleControls(circle);
 			return circle;
 		}
 		case 'rectangle': {
@@ -171,9 +78,9 @@ export const createShapeFromPoints = (
 				strokeDashArray: options.strokeDashArray,
 				opacity: options.opacity,
 				left: left,
-				top: top
+				top: top,
+				hasControls: false
 			});
-			configureRectangleControls(rect);
 			return rect;
 		}
 		case 'triangle': {
@@ -187,9 +94,9 @@ export const createShapeFromPoints = (
 				strokeDashArray: options.strokeDashArray,
 				opacity: options.opacity,
 				left: left,
-				top: top
+				top: top,
+				hasControls: false
 			});
-			configureTriangleControls(triangle);
 			return triangle;
 		}
 		default:
@@ -226,11 +133,9 @@ export const createTextFromPoints = (
 		splitByGrapheme: false, // Split by words, not characters
 		// Fixed height behavior - let text wrap and expand vertically naturally
 		// but constrain width
-		textAlign: options.textAlign
+		textAlign: options.textAlign,
+		hasControls: false
 	});
-
-	// Configure text-specific controls
-	configureTextControls(text);
 
 	return text;
 };

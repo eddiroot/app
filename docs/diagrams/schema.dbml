@@ -162,14 +162,6 @@ enum enum_user_type {
   schoolAdmin
 }
 
-enum enum_whiteboard_object_type {
-  Rect
-  Circle
-  Path
-  Textbox
-  Image
-}
-
 enum enum_year_level {
   N
   F
@@ -665,6 +657,25 @@ table lrn_a_cont {
     embedding [name: 'lrn_a_cont_embedding_idx']
     embedding_metadata [name: 'lrn_a_cont_metadata_idx']
   }
+}
+
+table lrn_a_outcome {
+  id integer [pk, not null]
+  lrn_a_id integer [not null]
+  out_id integer [not null]
+  is_archived boolean [not null, default: false]
+  createdAt timestamp [not null, default: `now()`]
+  updatedAt timestamp [not null, default: `now()`]
+}
+
+table lrn_a_cont {
+  id integer [pk, not null]
+  lrn_a_id integer [not null]
+  description text [not null]
+  number integer [not null]
+  is_archived boolean [not null, default: false]
+  createdAt timestamp [not null, default: `now()`]
+  updatedAt timestamp [not null, default: `now()`]
 }
 
 table lrn_a_outcome {
@@ -1520,7 +1531,6 @@ table whiteboard_object {
   id integer [pk, not null]
   whiteboard_id integer [not null]
   object_id text [not null, unique]
-  objectType enum_whiteboard_object_type [not null]
   object_data jsonb [not null]
   createdAt timestamp [not null, default: `now()`]
   updatedAt timestamp [not null, default: `now()`]

@@ -2,7 +2,6 @@
 	import Button from '$lib/components/ui/button/button.svelte';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
 	import * as Tooltip from '$lib/components/ui/tooltip/index.js';
-	import ArrowRightIcon from '@lucide/svelte/icons/arrow-right';
 	import CircleIcon from '@lucide/svelte/icons/circle';
 	import EraseIcon from '@lucide/svelte/icons/eraser';
 	import HandIcon from '@lucide/svelte/icons/hand';
@@ -21,7 +20,6 @@
 		onPanTool: () => void;
 		onDrawTool: () => void;
 		onLineTool: () => void;
-		onArrowTool: () => void;
 		onAddShape: (shapeType: string) => void;
 		onAddText: () => void;
 		onAddImage: () => void;
@@ -35,7 +33,6 @@
 		onPanTool,
 		onDrawTool,
 		onLineTool,
-		onArrowTool,
 		onAddShape,
 		onAddText,
 		onAddImage,
@@ -107,21 +104,6 @@
 					</Button>
 				</Tooltip.Trigger>
 				<Tooltip.Content>Draw Line</Tooltip.Content>
-			</Tooltip.Root>
-
-			<!-- Arrow Tool -->
-			<Tooltip.Root>
-				<Tooltip.Trigger>
-					<Button
-						variant={selectedTool === 'arrow' ? 'default' : 'ghost'}
-						size="icon"
-						onclick={onArrowTool}
-						class="h-9 w-9"
-					>
-						<ArrowRightIcon />
-					</Button>
-				</Tooltip.Trigger>
-				<Tooltip.Content>Draw Arrow</Tooltip.Content>
 			</Tooltip.Root>
 
 			<!-- Shapes Dropdown -->
