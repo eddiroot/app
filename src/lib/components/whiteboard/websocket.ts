@@ -1,5 +1,5 @@
 import * as fabric from 'fabric';
-import { configureObjectControls, recalculateLineControlPositions } from './object-controls';
+import { configureObjectControls } from './object-controls';
 import type { LayerAction } from './types';
 
 /**
@@ -92,15 +92,7 @@ async function handleLoadMessage(
 
 		objects.forEach((obj: unknown) => {
 			const fabricObj = obj as fabric.FabricObject & { id: string };
-
 			configureObjectControls(fabricObj);
-
-			if (fabricObj.isType('polyline')) {
-				const line = fabricObj as unknown as fabric.Polyline;
-				recalculateLineControlPositions(line);
-				line.setCoords();
-			}
-
 			canvas.add(fabricObj);
 		});
 
@@ -121,13 +113,6 @@ async function handleAddMessage(
 		obj.id = messageData.object.id;
 
 		configureObjectControls(obj);
-
-		if (obj.isType('polyline')) {
-			const line = obj as unknown as fabric.Polyline;
-			recalculateLineControlPositions(line);
-			line.setCoords();
-		}
-
 		canvas.add(obj);
 		canvas.renderAll();
 	}
