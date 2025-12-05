@@ -4,6 +4,7 @@
 	import Input from '$lib/components/ui/input/input.svelte';
 	import Label from '$lib/components/ui/label/label.svelte';
 	import Textarea from '$lib/components/ui/textarea/textarea.svelte';
+	import { subjectPreferredRoomsSchema } from '$lib/schemas/constraints';
 	import type { EnhancedConstraintFormProps } from '$lib/types/constraint-form-types';
 	import PlusIcon from '@lucide/svelte/icons/plus';
 	import TrashIcon from '@lucide/svelte/icons/trash';
@@ -50,16 +51,28 @@
 			Active: true,
 			Comments: comments || null
 		};
-		onSubmit(values);
+
+		// Validate with Zod
+		const result = subjectPreferredRoomsSchema.safeParse(values);
+		if (result.success) {
+			onSubmit(result.data);
+		}
 	}
 
-	// Validation
-	let isValid = $derived(
-		subjectId !== '' &&
-			preferredRoomIds.some((roomId) => roomId !== '') &&
-			weightPercentage >= 1 &&
-			weightPercentage <= 100
-	);
+	// Validation with Zod
+	let validationErrors = $derived.by(() => {
+		const result = subjectPreferredRoomsSchema.safeParse({
+			Weight_Percentage: weightPercentage,
+			Subject: subjectId,
+			Number_of_Preferred_Rooms: numberOfRooms,
+			Preferred_Room: preferredRoomIds.filter((roomId) => roomId !== ''),
+			Active: true,
+			Comments: comments || null
+		});
+		return result.success ? null : result.error.flatten().fieldErrors;
+	});
+
+	let isValid = $derived(validationErrors === null);
 </script>
 
 <div class="space-y-6">
@@ -75,6 +88,9 @@
 				bind:value={weightPercentage}
 				placeholder="100"
 			/>
+			{#if validationErrors?.Weight_Percentage}
+				<p class="text-destructive text-sm">{validationErrors.Weight_Percentage[0]}</p>
+			{/if}
 		</div>
 
 		<!-- Subject -->
@@ -87,6 +103,9 @@
 				searchPlaceholder="Search subjects..."
 				emptyText="No subjects found."
 			/>
+			{#if validationErrors?.Subject}
+				<p class="text-destructive text-sm">{validationErrors.Subject[0]}</p>
+			{/if}
 		</div>
 
 		<!-- Preferred Rooms -->
@@ -116,6 +135,9 @@
 					Add Room
 				</Button>
 			</div>
+			{#if validationErrors?.Preferred_Room}
+				<p class="text-destructive text-sm">{validationErrors.Preferred_Room[0]}</p>
+			{/if}
 			<p class="text-muted-foreground text-sm">
 				Add multiple rooms that can be used for this subject. The system will prefer these rooms
 				when scheduling.

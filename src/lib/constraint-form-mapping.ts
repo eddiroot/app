@@ -63,7 +63,7 @@ export function hasCustomForm(FETName: string): boolean {
 export function requiresEnhancedProps(FETName: string): boolean {
 	return [
 		'ConstraintSubjectPreferredRooms',
-		'ConstraintMinDaysBetweenActivities', 
+		'ConstraintMinDaysBetweenActivities',
 		'ConstraintRoomNotAvailableTimes'
 	].includes(FETName);
 }

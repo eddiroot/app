@@ -259,3 +259,44 @@ export async function getTeacherSpecializationsByTeacherId(teacherId: string) {
 
 	return specializations;
 }
+
+export async function getAllStudentsBySchoolId(schoolId: number) {
+	const students = await db
+		.select({
+			id: table.user.id,
+			email: table.user.email,
+			firstName: table.user.firstName,
+			middleName: table.user.middleName,
+			lastName: table.user.lastName,
+			yearLevel: table.user.yearLevel
+		})
+		.from(table.user)
+		.where(and(eq(table.user.schoolId, schoolId), eq(table.user.type, userTypeEnum.student)));
+
+	return students;
+}
+
+// Group students by year level
+export async function getAllStudentsWithYearLevelsBySchoolId(schoolId: number) {
+	const students = await getAllStudentsBySchoolId(schoolId);
+
+	type StudentInfo = Pick<
+		Awaited<ReturnType<typeof getAllStudentsBySchoolId>>[0],
+		'id' | 'email' | 'firstName' | 'middleName' | 'lastName' | 'yearLevel'
+	>;
+
+	// Group students by year level
+	const studentsByYearLevel: Record<yearLevelEnum, StudentInfo[]> = {} as Record<
+		yearLevelEnum,
+		StudentInfo[]
+	>;
+
+	for (const student of students) {
+		if (!studentsByYearLevel[student.yearLevel]) {
+			studentsByYearLevel[student.yearLevel] = [];
+		}
+		studentsByYearLevel[student.yearLevel].push(student);
+	}
+
+	return studentsByYearLevel;
+}

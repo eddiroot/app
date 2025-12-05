@@ -439,6 +439,21 @@ export async function getSubjectsBySchoolIdAndYearLevel(
 	return subjects;
 }
 
+export async function getSemestersBySchoolId(schoolId: number, includeArchived: boolean = false) {
+	const semesters = await db
+		.select()
+		.from(table.schoolSemester)
+		.where(
+			and(
+				eq(table.schoolSemester.schoolId, schoolId),
+				includeArchived ? undefined : eq(table.schoolSemester.isArchived, false)
+			)
+		)
+		.orderBy(asc(table.schoolSemester.schoolYear), asc(table.schoolSemester.semNumber));
+
+	return semesters;
+}
+
 export async function getSemestersWithTermsBySchoolIdForYear(
 	schoolId: number,
 	year: number,
@@ -454,7 +469,7 @@ export async function getSemestersWithTermsBySchoolIdForYear(
 				includeArchived ? undefined : eq(table.schoolSemester.isArchived, false)
 			)
 		)
-		.orderBy(asc(table.schoolSemester.schoolYear), asc(table.schoolSemester.startDate));
+		.orderBy(asc(table.schoolSemester.schoolYear), asc(table.schoolSemester.semNumber));
 
 	const semesterIds = semesters.map((semester) => semester.id);
 
@@ -481,7 +496,7 @@ export async function getSemestersWithTermsBySchoolIdForYear(
 
 export async function createSchoolTerm(
 	semesterId: number,
-	name: string,
+	termNumber: number,
 	startDate: Date,
 	endDate: Date
 ) {
@@ -489,7 +504,7 @@ export async function createSchoolTerm(
 		.insert(table.schoolTerm)
 		.values({
 			schoolSemesterId: semesterId,
-			name,
+			termNumber: termNumber,
 			startDate,
 			endDate,
 			isArchived: false
@@ -502,7 +517,6 @@ export async function createSchoolTerm(
 export async function updateSchoolTerm(
 	termId: number,
 	updates: {
-		name?: string;
 		startDate?: Date;
 		endDate?: Date;
 	}
@@ -533,4 +547,14 @@ export async function getSchoolTermById(termId: number) {
 		.limit(1);
 
 	return terms.length > 0 ? terms[0] : null;
+}
+
+export async function getSchoolSemesterById(semesterId: number) {
+	const semesters = await db
+		.select()
+		.from(table.schoolSemester)
+		.where(eq(table.schoolSemester.id, semesterId))
+		.limit(1);
+
+	return semesters.length > 0 ? semesters[0] : null;
 }

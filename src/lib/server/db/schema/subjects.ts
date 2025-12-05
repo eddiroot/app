@@ -1,12 +1,13 @@
 import {
 	boolean,
 	check,
+	date,
 	foreignKey,
 	integer,
 	pgEnum,
 	pgTable,
 	text,
-	timestamp,
+	time,
 	unique,
 	uuid,
 	type AnyPgColumn
@@ -21,6 +22,7 @@ import { courseMapItem } from './coursemap';
 import { curriculumSubject, yearLevelEnumPg } from './curriculum';
 import { resource } from './resource';
 import { campus, school, schoolSpace } from './schools';
+import { timetableDraft } from './timetables';
 import { user } from './user';
 import { timestamps } from './utils';
 
@@ -101,6 +103,9 @@ export const subjectOfferingClass = pgTable(
 	{
 		id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
 		name: text('name').notNull(),
+		timetableDraftId: integer('tt_draft_id').references(() => timetableDraft.id, {
+			onDelete: 'cascade'
+		}),
 		subOfferingId: integer('sub_off_id')
 			.notNull()
 			.references(() => subjectOffering.id, { onDelete: 'cascade' }),
@@ -120,8 +125,9 @@ export const subjectClassAllocation = pgTable('sub_off_cls_allo', {
 	schoolSpaceId: integer('sch_spa_id')
 		.notNull()
 		.references(() => schoolSpace.id, { onDelete: 'set null' }),
-	startTimestamp: timestamp('start_ts').notNull(),
-	endTimestamp: timestamp('end_ts').notNull(),
+	date: date('date').notNull(),
+	startTime: time('start_time').notNull(),
+	endTime: time('end_time').notNull(),
 	isArchived: boolean('is_archived').notNull().default(false),
 	...timestamps
 });

@@ -1,5 +1,7 @@
+import { SQL, sql } from 'drizzle-orm';
 import {
 	boolean,
+	check,
 	integer,
 	pgEnum,
 	pgTable,
@@ -81,29 +83,43 @@ export const schoolSpace = pgTable(
 
 export type SchoolSpace = typeof schoolSpace.$inferSelect;
 
-export const schoolSemester = pgTable('sch_sem', {
-	id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
-	schoolId: integer('sch_id').notNull(),
-	schoolYear: integer('sch_year_id').notNull(),
-	name: text('name').notNull(),
-	startDate: text('start_date').notNull(),
-	endDate: text('end_date').notNull(),
-	isArchived: boolean('is_archived').notNull().default(false),
-	...timestamps
-});
+export const schoolSemester = pgTable(
+	'sch_sem',
+	{
+		id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
+		schoolId: integer('sch_id').notNull(),
+		schoolYear: integer('sch_year_id').notNull(),
+		semNumber: integer('sem_number').notNull(),
+		name: text('name').generatedAlwaysAs((): SQL => sql`'Semester ' || sem_number`),
+		isArchived: boolean('is_archived').notNull().default(false),
+		...timestamps
+	},
+	(self) => [
+		check('valid_sem_number', sql`${self.semNumber} IN (1, 2)`),
+		unique().on(self.schoolId, self.schoolYear, self.semNumber)
+	]
+);
 
 export type SchoolSemester = typeof schoolSemester.$inferSelect;
 
-export const schoolTerm = pgTable('sch_term', {
-	id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
-	schoolSemesterId: integer('sch_sem_id')
-		.notNull()
-		.references(() => schoolSemester.id, { onDelete: 'cascade' }),
-	name: text('name').notNull(),
-	startDate: timestamp('sch_term_start_date', { withTimezone: true, mode: 'date' }).notNull(),
-	endDate: timestamp('sch_term_end_date', { withTimezone: true, mode: 'date' }).notNull(),
-	isArchived: boolean('is_archived').notNull().default(false),
-	...timestamps
-});
+export const schoolTerm = pgTable(
+	'sch_term',
+	{
+		id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
+		schoolSemesterId: integer('sch_sem_id')
+			.notNull()
+			.references(() => schoolSemester.id, { onDelete: 'cascade' }),
+		termNumber: integer('term_number').notNull(),
+		name: text('name').generatedAlwaysAs((): SQL => sql`'Term ' || term_number`),
+		startDate: timestamp('sch_term_start_date', { withTimezone: true, mode: 'date' }).notNull(),
+		endDate: timestamp('sch_term_end_date', { withTimezone: true, mode: 'date' }).notNull(),
+		isArchived: boolean('is_archived').notNull().default(false),
+		...timestamps
+	},
+	(self) => [
+		check('valid_term_number', sql`${self.termNumber} IN (1, 2, 3, 4)`),
+		unique().on(self.schoolSemesterId, self.termNumber)
+	]
+);
 
 export type SchoolTerm = typeof schoolTerm.$inferSelect;

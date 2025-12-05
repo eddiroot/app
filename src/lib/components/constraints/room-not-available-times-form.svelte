@@ -4,6 +4,7 @@
 	import Input from '$lib/components/ui/input/input.svelte';
 	import Label from '$lib/components/ui/label/label.svelte';
 	import Textarea from '$lib/components/ui/textarea/textarea.svelte';
+	import { roomNotAvailableTimesSchema } from '$lib/schemas/constraints';
 	import type { EnhancedConstraintFormProps } from '$lib/types/constraint-form-types';
 	import PlusIcon from '@lucide/svelte/icons/plus';
 	import TrashIcon from '@lucide/svelte/icons/trash';
@@ -25,36 +26,6 @@
 		selectedRoomId = initialValues.Room as string | number;
 	}
 
-	// Validation for duplicate day/period combinations
-	let duplicateTimeError = $derived.by(() => {
-		const timeSlots = new Set();
-
-		for (const time of notAvailableTimes) {
-			if (time.Day && time.Period) {
-				const timeKey = `${time.Day}-${time.Period}`;
-				if (timeSlots.has(timeKey)) {
-					return `Duplicate time detected`;
-				}
-				timeSlots.add(timeKey);
-			}
-		}
-
-		return null;
-	}); // Check if all time slots have valid selections
-	let allTimeSlotsValid = $derived.by(() => {
-		return notAvailableTimes.every((time) => time.Day !== 0 && time.Period !== 0);
-	});
-
-	// Enhanced validation
-	let isValid = $derived(
-		selectedRoomId !== '' &&
-			notAvailableTimes.length > 0 &&
-			weightPercentage >= 1 &&
-			weightPercentage <= 100 &&
-			duplicateTimeError === null &&
-			allTimeSlotsValid
-	);
-
 	function addNotAvailableTime() {
 		notAvailableTimes = [...notAvailableTimes, { Day: 0, Period: 0 }];
 	}
@@ -72,8 +43,28 @@
 			Active: true,
 			Comments: comments || null
 		};
-		onSubmit(values);
+
+		// Validate with Zod
+		const result = roomNotAvailableTimesSchema.safeParse(values);
+		if (result.success) {
+			onSubmit(result.data);
+		}
 	}
+
+	// Validation with Zod
+	let validationErrors = $derived.by(() => {
+		const result = roomNotAvailableTimesSchema.safeParse({
+			Weight_Percentage: weightPercentage,
+			Room: selectedRoomId,
+			Number_of_Not_Available_Times: notAvailableTimes.length,
+			Not_Available_Time: notAvailableTimes,
+			Active: true,
+			Comments: comments || null
+		});
+		return result.success ? null : result.error.flatten().fieldErrors;
+	});
+
+	let isValid = $derived(validationErrors === null);
 </script>
 
 <div class="space-y-6">
@@ -89,6 +80,9 @@
 				bind:value={weightPercentage}
 				placeholder="100"
 			/>
+			{#if validationErrors?.Weight_Percentage}
+				<p class="text-destructive text-sm">{validationErrors.Weight_Percentage[0]}</p>
+			{/if}
 		</div>
 
 		<!-- Room -->
@@ -99,6 +93,9 @@
 				placeholder="Select a room..."
 				bind:value={selectedRoomId}
 			/>
+			{#if validationErrors?.Room}
+				<p class="text-destructive text-sm">{validationErrors.Room[0]}</p>
+			{/if}
 			{#if formData?.spaces.length === 0}
 				<p class="text-destructive text-sm">All rooms already have this constraint applied.</p>
 			{/if}
@@ -107,15 +104,8 @@
 		<!-- Not Available Times -->
 		<div class="space-y-2">
 			<Label>Not Available Times *</Label>
-			{#if duplicateTimeError !== null}
-				<p class="text-destructive text-sm">
-					{duplicateTimeError}
-				</p>
-			{/if}
-			{#if notAvailableTimes.length > 0 && !allTimeSlotsValid}
-				<p class="text-destructive text-sm">
-					All time slots must have both day and period selected.
-				</p>
+			{#if validationErrors?.Not_Available_Time}
+				<p class="text-destructive text-sm">{validationErrors.Not_Available_Time[0]}</p>
 			{/if}
 			<div class="space-y-3">
 				<div class="flex gap-2">

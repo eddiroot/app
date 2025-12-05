@@ -3,6 +3,7 @@
 	import Input from '$lib/components/ui/input/input.svelte';
 	import Label from '$lib/components/ui/label/label.svelte';
 	import Textarea from '$lib/components/ui/textarea/textarea.svelte';
+	import { basicCompulsoryTimeSchema } from '$lib/schemas/constraints';
 
 	interface Props {
 		onSubmit: (values: Record<string, any>) => void;
@@ -22,11 +23,25 @@
 			Active: true,
 			Comments: comments || null
 		};
-		onSubmit(values);
+
+		// Validate with Zod
+		const result = basicCompulsoryTimeSchema.safeParse(values);
+		if (result.success) {
+			onSubmit(result.data);
+		}
 	}
 
-	// Validation
-	let isValid = $derived(weightPercentage >= 1 && weightPercentage <= 100);
+	// Validation with Zod
+	let validationErrors = $derived.by(() => {
+		const result = basicCompulsoryTimeSchema.safeParse({
+			Weight_Percentage: weightPercentage,
+			Active: true,
+			Comments: comments || null
+		});
+		return result.success ? null : result.error.flatten().fieldErrors;
+	});
+
+	let isValid = $derived(validationErrors === null);
 </script>
 
 <div class="space-y-6">
@@ -50,6 +65,9 @@
 				bind:value={weightPercentage}
 				placeholder="100"
 			/>
+			{#if validationErrors?.Weight_Percentage}
+				<p class="text-destructive text-sm">{validationErrors.Weight_Percentage[0]}</p>
+			{/if}
 			<p class="text-muted-foreground text-sm">
 				For mandatory constraints, this should typically be set to 100%.
 			</p>

@@ -6,6 +6,7 @@
 	import Label from '$lib/components/ui/label/label.svelte';
 	import Textarea from '$lib/components/ui/textarea/textarea.svelte';
 	import type { AutocompleteOption } from '$lib/constraint-data-fetchers';
+	import { minDaysBetweenActivitiesSchema } from '$lib/schemas/constraints';
 	import type { EnhancedConstraintFormProps } from '$lib/types/constraint-form-types';
 	import TrashIcon from '@lucide/svelte/icons/trash';
 
@@ -43,17 +44,30 @@
 			Active: true,
 			Comments: comments || null
 		};
-		onSubmit(values);
+
+		// Validate with Zod
+		const result = minDaysBetweenActivitiesSchema.safeParse(values);
+		if (result.success) {
+			onSubmit(result.data);
+		}
 	}
 
-	// Validation
-	let isValid = $derived(
-		selectedActivities.length >= 2 &&
-			minDays >= 1 &&
-			minDays <= 6 &&
-			weightPercentage >= 1 &&
-			weightPercentage <= 100
-	);
+	// Validation with Zod
+	let validationErrors = $derived.by(() => {
+		const activityIds = selectedActivities.map((activity) => activity.value);
+		const result = minDaysBetweenActivitiesSchema.safeParse({
+			Weight_Percentage: weightPercentage,
+			Consecutive_If_Same_Day: consecutiveIfSameDay,
+			MinDays: minDays,
+			Number_of_Activities: activityIds.length,
+			Activity_Id: activityIds,
+			Active: true,
+			Comments: comments || null
+		});
+		return result.success ? null : result.error.flatten().fieldErrors;
+	});
+
+	let isValid = $derived(validationErrors === null);
 </script>
 
 <div class="space-y-6">
@@ -69,12 +83,18 @@
 				bind:value={weightPercentage}
 				placeholder="95"
 			/>
+			{#if validationErrors?.Weight_Percentage}
+				<p class="text-destructive text-sm">{validationErrors.Weight_Percentage[0]}</p>
+			{/if}
 		</div>
 
 		<!-- Minimum Days -->
 		<div class="space-y-2">
 			<Label for="minDays">Minimum Days Between Activities (1-6)</Label>
 			<Input id="minDays" type="number" min="1" max="6" bind:value={minDays} placeholder="1" />
+			{#if validationErrors?.MinDays}
+				<p class="text-destructive text-sm">{validationErrors.MinDays[0]}</p>
+			{/if}
 			<p class="text-muted-foreground text-sm">
 				Minimum number of days that must pass between the specified activities.
 			</p>
@@ -127,6 +147,9 @@
 					/>
 				</div>
 			</div>
+			{#if validationErrors?.Activity_Id}
+				<p class="text-destructive text-sm">{validationErrors.Activity_Id[0]}</p>
+			{/if}
 			<p class="text-muted-foreground text-sm">
 				Specify the activities that should be spaced apart. You need at least 2 activities for this
 				constraint to work.

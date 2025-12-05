@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { Button } from '$lib/components/ui/button/index.js';
+	import MessageCircle from '@lucide/svelte/icons/message-circle';
 	import PanelLeftIcon from '@lucide/svelte/icons/panel-left';
 	import type { ComponentProps } from 'svelte';
 	import { useSidebar } from './context.svelte.js';
-	import BrainIcon from '@lucide/svelte/icons/brain';
 
 	let {
 		ref = $bindable(null),
@@ -37,7 +37,7 @@
 	{...restProps}
 >
 	{#if name == 'right'}
-		<BrainIcon />
+		<MessageCircle />
 	{:else}
 		<PanelLeftIcon />
 	{/if}

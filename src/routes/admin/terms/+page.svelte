@@ -5,7 +5,7 @@
 	import * as Select from '$lib/components/ui/select';
 	import type { SchoolTerm } from '$lib/server/db/schema/schools';
 	import { formatDate } from '$lib/utils';
-	import { Pencil, Plus, Trash2 } from '@lucide/svelte';
+	import { Pencil } from '@lucide/svelte';
 	import TermDialog from './term-dialog.svelte';
 
 	let { data, form } = $props();
@@ -38,8 +38,8 @@
 		}))
 	);
 
-	const semester1 = $derived(semestersWithTerms.find((s) => s.name.includes('1')));
-	const semester2 = $derived(semestersWithTerms.find((s) => s.name.includes('2')));
+	const semester1 = $derived(semestersWithTerms.find((s) => s.name?.includes('1')));
+	const semester2 = $derived(semestersWithTerms.find((s) => s.name?.includes('2')));
 
 	// Trigger form submission when year changes
 	function handleYearChange(newYearValue: string) {
@@ -193,21 +193,13 @@
 								Semester 1:
 								{#if semester1}
 									<span class="text-muted-foreground text-sm font-normal">
-										{formatDate(semester1.startDate)} - {formatDate(semester1.endDate)}
+										{formatDate(semester1.terms[0].startDate.toString())} - {formatDate(
+											semester1.terms[1].endDate.toString()
+										)}
 									</span>
 								{/if}
 							</Card.Title>
 						</div>
-						{#if semester1}
-							<Button
-								size="sm"
-								variant="outline"
-								onclick={() => openCreateDialog(semester1.id, 'Semester 1')}
-							>
-								<Plus />
-								Add Term
-							</Button>
-						{/if}
 					</div>
 				</Card.Header>
 				<Card.Content class="space-y-6">
@@ -225,14 +217,14 @@
 										>
 											<Pencil class="h-4 w-4" />
 										</Button>
-										<Button
+										<!-- <Button
 											size="icon"
 											variant="ghost"
 											class="h-8 w-8"
 											onclick={() => handleDeleteTerm(term.id)}
 										>
 											<Trash2 class="h-4 w-4" />
-										</Button>
+										</Button> -->
 									</div>
 								</div>
 								<div class="space-y-1 text-sm">
@@ -269,21 +261,13 @@
 								Semester 2:
 								{#if semester2}
 									<span class="text-muted-foreground text-sm font-normal">
-										{formatDate(semester2.startDate)} - {formatDate(semester2.endDate)}
+										{formatDate(semester2.terms[0].startDate.toString())} - {formatDate(
+											semester2.terms[1].endDate.toString()
+										)}
 									</span>
 								{/if}
 							</Card.Title>
 						</div>
-						{#if semester2}
-							<Button
-								size="sm"
-								variant="outline"
-								onclick={() => openCreateDialog(semester2.id, 'Semester 2')}
-							>
-								<Plus />
-								Add Term
-							</Button>
-						{/if}
 					</div>
 				</Card.Header>
 				<Card.Content class="space-y-6">
@@ -301,14 +285,14 @@
 										>
 											<Pencil class="h-4 w-4" />
 										</Button>
-										<Button
+										<!-- <Button
 											size="icon"
 											variant="ghost"
 											class="h-8 w-8"
 											onclick={() => handleDeleteTerm(term.id)}
 										>
 											<Trash2 class="h-4 w-4" />
-										</Button>
+										</Button> -->
 									</div>
 								</div>
 								<div class="space-y-1 text-sm">
