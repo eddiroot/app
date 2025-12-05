@@ -60,16 +60,15 @@ All
 
 Lachie
 
-- [ ] Rework attendance with Rowan's feedback
-- [ ] UI fixes / code cleanup
+- [ ] Fix task bug where block placement hover persists after deleting block
 
 Bella
 
 - [ ] Refine task block UI/UX
-- [ ] Fix task bug where block placement hover persists after deleting block
 - [ ] Fix task bug where state is saved for first block despite deletion (chat to Lachie for context)
+- [ ] Rich text editing on discussions for new posts
 
-Jack & Raph
+Jack
 
 - [ ] Refactoring Task Blocks to lang
 - [ ] Improved lesson generation

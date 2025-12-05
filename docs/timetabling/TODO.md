@@ -23,7 +23,10 @@
 
 ## UI Uplifts
 
-- [ ] showcase when timetable cannot be created due to unique constraint
+- [ ] Showcase when timetable cannot be created due to unique constraint
+- [ ] Change the number of weeks per cycle to be part of the timetable level.
+- [ ] Each draft should be responsible for days in that cycle
+- [ ] Should showcase what days a timetable is published/drafted
 
 ## BUGS
 
@@ -33,9 +36,3 @@
 - [ ] Error message shown as part of the timetable generation is the same for all attempted generations:
   - [ ] linked to the timetable draft rather than the timetable queue row
 - [ ]
-
-UPLIFT:
-
-- [ ] change the number of weeks per cycle to be apart of the timetable level.
-- [ ] Each draft should be responsible for days in that cycle
-- [ ] should showcase what days a timetable is published/drafted
