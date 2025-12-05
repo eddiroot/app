@@ -31,139 +31,6 @@ export function applyControlStyles(obj: fabric.Object): void {
 }
 
 /**
- * Configure controls for line objects
- * Lines have two endpoint controls that can be freely moved to resize and rotate
- */
-export function configureLineControls(line: fabric.Polyline): void {
-	applyControlStyles(line);
-
-	// Only show the two endpoint controls
-	line.setControlsVisibility({
-		mt: false,
-		mb: false,
-		ml: false,
-		mr: false,
-		tl: true, // start point
-		tr: false,
-		bl: false,
-		br: true, // end point
-		mtr: false // no rotation control point
-	});
-
-	// Hide the border box, show only endpoint controls
-	line.set({
-		hasBorders: false,
-		hasRotatingPoint: false,
-		lockScalingX: false,
-		lockScalingY: false,
-		lockRotation: false,
-		lockMovementX: false,
-		lockMovementY: false
-	});
-
-	// Customize the controls to act as moveable endpoints
-	// For Polyline, we update the points array
-	const createLineEndpointAction = (isStart: boolean) => {
-		// actionHandler signature: (eventData, transform, x, y)
-		return (_eventData: unknown, transform: unknown, x: number, y: number) => {
-			const t = transform as unknown as { target: fabric.Polyline };
-			const target = t.target as fabric.Polyline;
-
-			// Prevent other endpoint from taking over while dragging this one
-			const side = isStart ? 'start' : 'end';
-			const targetWithFlag = target as unknown as { __draggingEndpoint?: string };
-			const currentDragging = targetWithFlag.__draggingEndpoint;
-			if (currentDragging && currentDragging !== side) return false;
-			// Mark this endpoint as being dragged
-			if (!currentDragging) targetWithFlag.__draggingEndpoint = side;
-
-			// Use the x, y parameters provided by Fabric - they're already in the object's coordinate space
-			const local = new fabric.Point(x, y);
-
-			const newPoints = [...target.points];
-			if (isStart) {
-				newPoints[0] = { x: local.x, y: local.y };
-			} else {
-				newPoints[1] = { x: local.x, y: local.y };
-			}
-			target.set({ points: newPoints });
-
-			target.setCoords();
-			target.canvas?.requestRenderAll();
-			return true;
-		};
-	};
-
-	if (line.controls) {
-		// Top-left control (start point of line)
-		line.controls.tl = new fabric.Control({
-			x: -0.5,
-			y: -0.5,
-			actionHandler: createLineEndpointAction(true),
-			cursorStyle: 'pointer',
-			actionName: 'modifyLineStart',
-			mouseUpHandler: (_eventData: unknown, transform: unknown) => {
-				const t = transform as unknown as { target: fabric.Line };
-				if (t?.target) {
-					const obj = t.target as unknown as { __draggingEndpoint?: string };
-					obj.__draggingEndpoint = undefined;
-				}
-				return true;
-			}
-		});
-
-		// Bottom-right control (end point of line)
-		line.controls.br = new fabric.Control({
-			x: 0.5,
-			y: 0.5,
-			actionHandler: createLineEndpointAction(false),
-			cursorStyle: 'pointer',
-			actionName: 'modifyLineEnd',
-			mouseUpHandler: (_eventData: unknown, transform: unknown) => {
-				const t = transform as unknown as { target: fabric.Line };
-				if (t?.target) {
-					const obj = t.target as unknown as { __draggingEndpoint?: string };
-					obj.__draggingEndpoint = undefined;
-				}
-				return true;
-			}
-		});
-	}
-
-	// Initialise control positions to match actual line endpoints
-	recalculateLineControlPositions(line);
-}
-
-/**
- * Recalculate line control positions based on current endpoint coordinates
- * Call this after line creation or when endpoints change
- */
-export function recalculateLineControlPositions(line: fabric.Polyline): void {
-	try {
-		const x1 = line.points[0].x as number;
-		const y1 = line.points[0].y as number;
-		const x2 = line.points[1].x as number;
-		const y2 = line.points[1].y as number;
-
-		const width = Math.abs(x2 - x1) || 1;
-		const height = Math.abs(y2 - y1) || 1;
-		const centerX = (x1 + x2) / 2;
-		const centerY = (y1 + y2) / 2;
-
-		if (line.controls && line.controls.tl) {
-			line.controls.tl.x = (x1 - centerX) / width;
-			line.controls.tl.y = (y1 - centerY) / height;
-		}
-		if (line.controls && line.controls.br) {
-			line.controls.br.x = (x2 - centerX) / width;
-			line.controls.br.y = (y2 - centerY) / height;
-		}
-	} catch {
-		// ignore
-	}
-}
-
-/**
  * Configure controls for circle objects
  * Circles should maintain aspect ratio (uniform scaling only)
  */
@@ -477,7 +344,7 @@ export function recalculateArrowControlPositions(group: fabric.Group): void {
  */
 export function configureObjectControls(obj: fabric.Object): void {
 	if (obj instanceof fabric.Polyline) {
-		configureLineControls(obj);
+		// Setup our own controls
 	} else if (obj instanceof fabric.Circle) {
 		configureCircleControls(obj);
 	} else if (obj instanceof fabric.Rect) {

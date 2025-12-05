@@ -4,7 +4,6 @@ import { MIN_TEXT_WIDTH } from './constants';
 import {
 	configureArrowControls,
 	configureCircleControls,
-	configureLineControls,
 	configureRectangleControls,
 	configureTextControls,
 	configureTriangleControls
@@ -59,11 +58,10 @@ export const createLine = (
 			strokeWidth: options.strokeWidth,
 			strokeDashArray: options.strokeDashArray,
 			opacity: options.opacity,
-			selectable: true
+			selectable: true,
+			hasControls: false
 		}
 	);
-
-	configureLineControls(line);
 
 	return line;
 };
