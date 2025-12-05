@@ -56,7 +56,7 @@ export const task = pgTable(
 		rubricId: integer('rubric_id').references(() => rubric.id, { onDelete: 'set null' }),
 		originalId: integer('original_id'),
 		version: integer('version').notNull().default(1),
-		subjectOfferingId: integer('subject_offering_id')
+		subjectOfferingId: integer('sub_off_id')
 			.notNull()
 			.references(() => subjectOffering.id, { onDelete: 'cascade' }),
 		aiTutorEnabled: boolean('ai_tutor_enabled').notNull().default(true),

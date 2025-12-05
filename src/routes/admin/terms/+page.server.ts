@@ -1,5 +1,4 @@
 import {
-	createSchoolTerm,
 	deleteSchoolTerm,
 	getSchoolById,
 	getSemestersWithTermsBySchoolIdForYear,
@@ -8,7 +7,7 @@ import {
 import Holidays from 'date-holidays';
 import { fail, superValidate } from 'sveltekit-superforms';
 import { zod4 } from 'sveltekit-superforms/adapters';
-import { changeYearSchema, createTermSchema, deleteTermSchema, updateTermSchema } from './schema';
+import { changeYearSchema, deleteTermSchema, updateTermSchema } from './schema';
 
 export const load = async ({ locals: { security } }) => {
 	security.isAuthenticated().isSchoolAdmin();
@@ -75,53 +74,6 @@ export const actions = {
 		};
 	},
 
-	createTerm: async ({ locals: { security }, request }) => {
-		security.isAuthenticated().isSchoolAdmin();
-
-		const form = await superValidate(request, zod4(createTermSchema));
-
-		if (!form.valid) {
-			return fail(400, { form });
-		}
-
-		const { semesterId, name, startDate, endDate, currentYear } = form.data as {
-			semesterId: number;
-			name: string;
-			startDate: Date;
-			endDate: Date;
-			currentYear: number;
-		};
-
-		try {
-			await createSchoolTerm(semesterId, name, startDate, endDate);
-
-			// Refetch data
-			const semestersWithTerms = await getSemestersWithTermsBySchoolIdForYear(
-				security.getUser().schoolId,
-				currentYear
-			);
-
-			const school = await getSchoolById(security.getUser().schoolId);
-			const hd = new Holidays(school?.countryCode || 'AU', school?.stateCode || 'VIC');
-			const holidays = hd.getHolidays(currentYear);
-			const publicHolidays = holidays.map((holiday) => ({
-				date: holiday.date,
-				name: holiday.name,
-				type: holiday.type
-			}));
-
-			return {
-				success: true,
-				semestersWithTerms: semestersWithTerms || [],
-				publicHolidays: publicHolidays || [],
-				currentYear
-			};
-		} catch (error) {
-			console.error('Failed to create term:', error);
-			return fail(500, { error: 'Failed to create term' });
-		}
-	},
-
 	updateTerm: async ({ locals: { security }, request }) => {
 		security.isAuthenticated().isSchoolAdmin();
 
@@ -131,7 +83,7 @@ export const actions = {
 			return fail(400, { form });
 		}
 
-		const { termId, name, startDate, endDate, currentYear } = form.data as {
+		const { termId, startDate, endDate, currentYear } = form.data as {
 			termId: number;
 			name: string;
 			startDate: Date;
@@ -140,7 +92,7 @@ export const actions = {
 		};
 
 		try {
-			await updateSchoolTerm(termId, { name, startDate, endDate });
+			await updateSchoolTerm(termId, { startDate, endDate });
 
 			// Refetch data
 			const semestersWithTerms = await getSemestersWithTermsBySchoolIdForYear(

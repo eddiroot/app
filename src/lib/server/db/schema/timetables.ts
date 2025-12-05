@@ -1,5 +1,7 @@
+import { SQL, sql } from 'drizzle-orm';
 import {
 	boolean,
+	foreignKey,
 	integer,
 	jsonb,
 	pgEnum,
@@ -13,7 +15,7 @@ import {
 import { constraintTypeEnum, queueStatusEnum } from '../../../enums';
 import { yearLevelEnumPg } from './curriculum';
 import { school, schoolSemester, schoolSpace } from './schools';
-import { subject } from './subjects';
+import { subjectOffering } from './subjects';
 import { user } from './user';
 import { timestamps } from './utils';
 
@@ -37,18 +39,21 @@ export const timetable = pgTable(
 
 export type Timetable = typeof timetable.$inferSelect;
 
-export const timetableIteration = pgTable('tt_iteration', {
+export const timetableDraft = pgTable('tt_draft', {
 	id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
+	name: text('name').notNull(),
 	timetableId: integer('tt_id')
 		.notNull()
 		.references(() => timetable.id, { onDelete: 'cascade' }),
+	cycleWeekRepeats: integer('cycle_week_repeats').notNull().default(1),
 	fetResponse: text('fet_response'),
 	errorMessage: text('error_message'), // null if successful, stores raw error
 	translatedErrorMessage: text('translated_error_message'), // null if successful or not yet translated
+	isArchived: boolean('is_archived').notNull().default(false),
 	...timestamps
 });
 
-export type TimetableIteration = typeof timetableIteration.$inferSelect;
+export type TimetableDraft = typeof timetableDraft.$inferSelect;
 
 export const timetableQueueStatusEnumPg = pgEnum('enum_tt_queue_status', [
 	queueStatusEnum.queued,
@@ -62,9 +67,9 @@ export const timetableQueue = pgTable('tt_queue', {
 	timetableId: integer('tt_id')
 		.notNull()
 		.references(() => timetable.id, { onDelete: 'cascade' }),
-	iterationId: integer('tt_iteration_id')
+	timetableDraftId: integer('tt_draft_id')
 		.notNull()
-		.references(() => timetableIteration.id, { onDelete: 'cascade' }),
+		.references(() => timetableDraft.id, { onDelete: 'cascade' }),
 	userId: uuid('user_id')
 		.notNull()
 		.references(() => user.id, { onDelete: 'cascade' }),
@@ -77,32 +82,46 @@ export type TimetableQueue = typeof timetableQueue.$inferSelect;
 
 export const timetableDay = pgTable('tt_day', {
 	id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
-	timetableId: integer('tt_id')
+	timetableDraftId: integer('tt_draft_id')
 		.notNull()
-		.references(() => timetable.id, { onDelete: 'cascade' }),
+		.references(() => timetableDraft.id, { onDelete: 'cascade' }),
 	day: integer('day').notNull(), // numbers align with $lib/utils
 	...timestamps
 });
 
 export type TimetableDay = typeof timetableDay.$inferSelect;
 
-export const timetablePeriod = pgTable('tt_period', {
-	id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
-	timetableId: integer('tt_id')
-		.notNull()
-		.references(() => timetable.id, { onDelete: 'cascade' }),
-	startTime: time('start_time').notNull(),
-	endTime: time('end_time').notNull(),
-	...timestamps
-});
+export const timetablePeriod = pgTable(
+	'tt_period',
+	{
+		id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
+		timetableDraftId: integer('tt_draft_id')
+			.notNull()
+			.references(() => timetableDraft.id, { onDelete: 'cascade' }),
+		startTime: time('start_time').notNull(),
+		endTime: time('end_time').notNull(),
+		duration: integer('duration').generatedAlwaysAs(
+			(): SQL => sql`EXTRACT(EPOCH FROM (end_time - start_time)) / 60`
+		),
+		nextPeriodId: integer('next_period_id'),
+		...timestamps
+	},
+	(table) => ({
+		nextPeriodFk: foreignKey({
+			columns: [table.nextPeriodId],
+			foreignColumns: [table.id],
+			name: 'tt_period_next_period_fk'
+		}).onDelete('set null')
+	})
+);
 
 export type TimetablePeriod = typeof timetablePeriod.$inferSelect;
 
 export const timetableGroup = pgTable('tt_group', {
 	id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
-	timetableId: integer('tt_id')
+	timetableDraftId: integer('tt_draft_id')
 		.notNull()
-		.references(() => timetable.id, { onDelete: 'cascade' }),
+		.references(() => timetableDraft.id, { onDelete: 'cascade' }),
 	yearLevel: yearLevelEnumPg().notNull(),
 	name: text('name').notNull(),
 	...timestamps
@@ -129,12 +148,12 @@ export type TimetableGroupMember = typeof timetableGroupMember.$inferSelect;
 
 export const timetableActivity = pgTable('tt_activity', {
 	id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
-	timetableId: integer('tt_id')
+	timetableDraftId: integer('tt_draft_id')
 		.notNull()
-		.references(() => timetable.id, { onDelete: 'cascade' }),
-	subjectId: integer('subject_id')
+		.references(() => timetableDraft.id, { onDelete: 'cascade' }),
+	subjectOfferingId: integer('sub_off_id')
 		.notNull()
-		.references(() => subject.id, { onDelete: 'cascade' }),
+		.references(() => subjectOffering.id, { onDelete: 'cascade' }),
 	periodsPerInstance: integer('periods_per_instance').notNull().default(1),
 	totalPeriods: integer('total_periods').notNull(),
 	...timestamps
@@ -219,7 +238,7 @@ export const timetableActivityAssignedGroup = pgTable(
 		timetableActivityId: integer('tt_activity_id')
 			.references(() => timetableActivity.id, { onDelete: 'cascade' })
 			.notNull(),
-		ttGroupId: integer('tt_group_id')
+		timetableGroupId: integer('tt_group_id')
 			.references(() => timetableGroup.id, { onDelete: 'cascade' })
 			.notNull(),
 		...timestamps
@@ -228,7 +247,7 @@ export const timetableActivityAssignedGroup = pgTable(
 		return {
 			pk: primaryKey({
 				name: 'tt_activity_assign_grp_pkey',
-				columns: [table.timetableActivityId, table.ttGroupId]
+				columns: [table.timetableActivityId, table.timetableGroupId]
 			})
 		};
 	}
@@ -257,55 +276,12 @@ export const timetableActivityAssignedYear = pgTable(
 
 export type TimetableActivityAssignedYear = typeof timetableActivityAssignedYear.$inferSelect;
 
-export const fetActivity = pgTable('fet_activity', {
+export const timetableDraftConstraint = pgTable('tt_draft_con', {
 	id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
-	timetableId: integer('tt_id')
+	timetableDraftId: integer('tt_draft_id')
 		.notNull()
-		.references(() => timetable.id, { onDelete: 'cascade' }),
-	iterationId: integer('tt_iteration_id')
-		.notNull()
-		.references(() => timetableIteration.id, { onDelete: 'cascade' }),
-	subjectId: integer('subject_id')
-		.notNull()
-		.references(() => subject.id, { onDelete: 'cascade' }),
-	spaceId: integer('space_id').notNull(),
-	day: integer('tt_day_id').notNull(),
-	period: integer('tt_period_id').notNull(),
-	duration: integer('duration').notNull(),
-	...timestamps
-});
-
-export type FETDBActivity = typeof fetActivity.$inferSelect;
-
-export const userFetActivity = pgTable(
-	'fet_activity_user',
-	{
-		fetActivityId: integer('tt_activity_id')
-			.notNull()
-			.references(() => fetActivity.id, { onDelete: 'cascade' }),
-		userId: uuid('user_id')
-			.notNull()
-			.references(() => user.id, { onDelete: 'cascade' }),
-		...timestamps
-	},
-	(table) => {
-		return {
-			pk: primaryKey({
-				name: 'user_feet_activity_pkey',
-				columns: [table.fetActivityId, table.userId]
-			})
-		};
-	}
-);
-
-export type UserFETActivity = typeof userFetActivity.$inferSelect;
-
-export const timetableConstraint = pgTable('tt_constraint', {
-	id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
-	timetableId: integer('tt_id')
-		.notNull()
-		.references(() => timetable.id, { onDelete: 'cascade' }),
-	constraintId: integer('constraint_id')
+		.references(() => timetableDraft.id, { onDelete: 'cascade' }),
+	constraintId: integer('con_id')
 		.notNull() // unique identifier for the constraint
 		.references(() => constraint.id, { onDelete: 'cascade' }),
 	active: boolean('active').notNull().default(true),
@@ -314,16 +290,16 @@ export const timetableConstraint = pgTable('tt_constraint', {
 	...timestamps
 });
 
-export type TimetableConstraint = typeof timetableConstraint.$inferSelect;
+export type TimetableDraftConstraint = typeof timetableDraftConstraint.$inferSelect;
 
 export const constraintTypeEnumPg = pgEnum('enum_constraint_type', [
 	constraintTypeEnum.time,
 	constraintTypeEnum.space
 ]);
 
-export const constraint = pgTable('constraint', {
+export const constraint = pgTable('con', {
 	id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }), // unique identifier for the constraint
-	FETName: text('name').notNull(),
+	FETName: text('fet_name').notNull(),
 	friendlyName: text('friendly_name').notNull(),
 	description: text('description').notNull(),
 	type: constraintTypeEnumPg().notNull(), // e.g., 'time', 'space'
@@ -333,3 +309,58 @@ export const constraint = pgTable('constraint', {
 });
 
 export type Constraint = typeof constraint.$inferSelect;
+
+export const fetSubjectOfferingClass = pgTable('fet_sub_off_cls', {
+	id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
+	timetableDraftId: integer('tt_draft_id')
+		.notNull()
+		.references(() => timetableDraft.id, { onDelete: 'cascade' }),
+	subjectOfferingId: integer('sub_off_id')
+		.notNull()
+		.references(() => subjectOffering.id, { onDelete: 'cascade' }),
+	isArchived: boolean('is_archived').notNull().default(false),
+	...timestamps
+});
+
+export type FetSubjectOfferingClass = typeof fetSubjectOfferingClass.$inferSelect;
+
+export const fetSubjectClassAllocation = pgTable('fet_sub_off_cls_allo', {
+	id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
+	fetSubjectOfferingClassId: integer('fet_sub_off_cls_id')
+		.notNull()
+		.references(() => fetSubjectOfferingClass.id, { onDelete: 'cascade' }),
+	schoolSpaceId: integer('sch_space_id')
+		.notNull()
+		.references(() => schoolSpace.id, { onDelete: 'set null' }),
+	dayId: integer('day_id')
+		.notNull()
+		.references(() => timetableDay.id, { onDelete: 'set null' }),
+	startPeriodId: integer('start_period_id')
+		.notNull()
+		.references(() => timetablePeriod.id, { onDelete: 'set null' }),
+	endPeriodId: integer('end_period_id')
+		.notNull()
+		.references(() => timetablePeriod.id, { onDelete: 'set null' }),
+	isArchived: boolean('is_archived').notNull().default(false),
+	...timestamps
+});
+
+export type FetSubjectClassAllocation = typeof fetSubjectClassAllocation.$inferSelect;
+
+export const fetSubjectOfferingClassUser = pgTable(
+	'fet_sub_off_cls_user',
+	{
+		id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
+		userId: uuid('user_id')
+			.notNull()
+			.references(() => user.id, { onDelete: 'cascade' }),
+		fetSubOffClassId: integer('fet_sub_off_class_id')
+			.notNull()
+			.references(() => fetSubjectOfferingClass.id, { onDelete: 'cascade' }),
+		isArchived: boolean('is_archived').notNull().default(false),
+		...timestamps
+	},
+	(self) => [unique().on(self.userId, self.fetSubOffClassId)]
+);
+
+export type FetUserSubjectOfferingClass = typeof fetSubjectOfferingClassUser.$inferSelect;

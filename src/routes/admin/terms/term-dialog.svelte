@@ -92,11 +92,6 @@
 
 			<div class="grid gap-4 py-4">
 				<div class="grid gap-2">
-					<Label for="name">Term Name</Label>
-					<Input id="name" name="name" bind:value={termName} required disabled={isSubmitting} />
-				</div>
-
-				<div class="grid gap-2">
 					<Label for="startDate">Start Date</Label>
 					<Input
 						id="startDate"

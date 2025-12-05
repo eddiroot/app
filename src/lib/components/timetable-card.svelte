@@ -1,6 +1,5 @@
 <script lang="ts">
 	import * as Card from '$lib/components/ui/card';
-	import { formatTimestampAsTime } from '$lib/utils';
 	import { generateSubjectColors } from '../../routes/calendar/utils.js';
 
 	interface Props {
@@ -38,9 +37,7 @@
 			{#if showTime || showRoom}
 				<Card.Description class="overflow-hidden text-xs text-ellipsis whitespace-nowrap">
 					{#if showTime}
-						{formatTimestampAsTime(cls.classAllocation.startTimestamp)} - {formatTimestampAsTime(
-							cls.classAllocation.endTimestamp
-						)}
+						{cls.classAllocation.startTime} - {cls.classAllocation.endTime}
 					{/if}
 					{#if showTime && showRoom}
 						{' '}

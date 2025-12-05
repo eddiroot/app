@@ -20,7 +20,6 @@ export const createTermSchema = z
 export const updateTermSchema = z
 	.object({
 		termId: z.coerce.number().int().positive(),
-		name: z.string().min(1, 'Term name is required'),
 		startDate: z.coerce.date(),
 		endDate: z.coerce.date(),
 		currentYear: z.coerce.number().int().positive()

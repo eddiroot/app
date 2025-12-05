@@ -1,4 +1,5 @@
 <script lang="ts">
+	import Autocomplete from '$lib/components/autocomplete.svelte';
 	import { Badge } from '$lib/components/ui/badge/index.js';
 	import { Button, buttonVariants } from '$lib/components/ui/button/index.js';
 	import * as Card from '$lib/components/ui/card/index.js';
@@ -19,12 +20,25 @@
 
 	const form = superForm(data.createTimetableForm, {
 		validators: zod4(createTimetableSchema),
-		onResult: () => {
-			dialogOpen = false;
+		onUpdated: ({ form }) => {
+			if (form.valid) {
+				dialogOpen = false;
+			}
 		}
 	});
 
 	const { form: formData, enhance, constraints } = form;
+
+	// Filtered semesters based on selected school year
+	const filteredSemesters = $derived(() => {
+		if (!$formData.schoolYear) return [];
+		return data.semesters
+			.filter((semester) => semester.schoolYear === $formData.schoolYear)
+			.map((semester) => ({
+				value: semester.id,
+				label: semester.name ?? 'Unnamed Semester'
+			}));
+	});
 </script>
 
 <div class="mb-6 flex items-center justify-between">
@@ -69,6 +83,32 @@
 						</Form.Control>
 						<Form.FieldErrors />
 					</Form.Field>
+
+					{#if $formData.schoolYear && filteredSemesters().length > 0}
+						<Form.Field {form} name="schoolSemester">
+							<Form.Control>
+								{#snippet children({ props })}
+									<Form.Label>School Semester</Form.Label>
+									<div {...props}>
+										<Autocomplete
+											options={filteredSemesters()}
+											bind:value={$formData.schoolSemester}
+											placeholder="Select a semester..."
+											searchPlaceholder="Search semesters..."
+											emptyText="No semesters found for this year."
+										/>
+									</div>
+									<!-- Hidden input to ensure form serialization -->
+									<input
+										type="hidden"
+										name="schoolSemester"
+										value={$formData.schoolSemester || ''}
+									/>
+								{/snippet}
+							</Form.Control>
+							<Form.FieldErrors />
+						</Form.Field>
+					{/if}
 				</div>
 				<Dialog.Footer>
 					<Button type="button" variant="outline" onclick={() => (dialogOpen = false)}>
@@ -84,7 +124,7 @@
 	</Dialog.Root>
 </div>
 
-{#if data.timetables.length === 0}
+{#if data.timetablesAndSemesters.length === 0}
 	<Card.Root class="p-8 text-center">
 		<Card.Content class="pt-6">
 			<CalendarIcon class="text-muted-foreground mx-auto mb-4 h-12 w-12" />
@@ -96,8 +136,8 @@
 	</Card.Root>
 {:else}
 	<div class="grid gap-4">
-		{#each data.timetables as timetable}
-			<a href={`/admin/timetables/${timetable.id}/times`}>
+		{#each data.timetablesAndSemesters as ttAndSem}
+			<a href={`/admin/timetables/${ttAndSem.tt.id}`}>
 				<Card.Root>
 					<Card.Header class="flex items-center justify-between">
 						<div class="flex items-center gap-4">
@@ -105,12 +145,15 @@
 								<CalendarIcon class="text-primary h-6 w-6" />
 							</div>
 							<div class="flex flex-col">
-								<Card.Title class="text-lg font-semibold">{timetable.name}</Card.Title>
+								<Card.Title class="text-lg font-semibold">{ttAndSem.tt.name}</Card.Title>
 								<div class="mt-1 flex items-center gap-2">
 									<Badge variant="secondary" class="text-xs">
-										{timetable.schoolYear}
+										{ttAndSem.tt.schoolYear}
 									</Badge>
-									{#if timetable.isArchived}
+									<Badge variant="secondary" class="text-xs">
+										{ttAndSem.sch_sem.name}
+									</Badge>
+									{#if ttAndSem.tt.isArchived}
 										<Badge variant="outline" class="gap-1 text-xs">
 											<ArchiveIcon class="h-3 w-3" />
 											Archived

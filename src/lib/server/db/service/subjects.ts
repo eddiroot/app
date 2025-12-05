@@ -139,6 +139,146 @@ export async function getSubjectOfferingsBySubjectId(subjectId: number) {
 	return subjectOfferings; // Returns both subjectOffering and subject data
 }
 
+export async function getSubjectOfferingsByForTimetableByTimetableId(timetableId: number) {
+	// First, get the timetable details
+	const [timetableData] = await db
+		.select({
+			schoolId: table.timetable.schoolId,
+			schoolYear: table.timetable.schoolYear,
+			schoolSemesterId: table.timetable.schoolSemesterId
+		})
+		.from(table.timetable)
+		.where(eq(table.timetable.id, timetableId))
+		.limit(1);
+
+	if (!timetableData) {
+		return [];
+	}
+
+	// Get the semester number if schoolSemesterId is provided
+	let semesterNumber: number | null = null;
+	if (timetableData.schoolSemesterId) {
+		const [semesterData] = await db
+			.select({
+				semNumber: table.schoolSemester.semNumber
+			})
+			.from(table.schoolSemester)
+			.where(eq(table.schoolSemester.id, timetableData.schoolSemesterId))
+			.limit(1);
+
+		if (semesterData) {
+			semesterNumber = semesterData.semNumber;
+		}
+	}
+
+	// Build the query conditions
+	const conditions = [
+		eq(table.subject.schoolId, timetableData.schoolId),
+		eq(table.subjectOffering.year, timetableData.schoolYear),
+		eq(table.subjectOffering.isArchived, false),
+		eq(table.subject.isArchived, false)
+	];
+
+	// Add semester condition if available
+	if (semesterNumber !== null) {
+		conditions.push(eq(table.subjectOffering.semester, semesterNumber));
+	}
+
+	// Get all subject offerings matching the timetable's school, year, and semester
+	const subjectOfferings = await db
+		.select({
+			subjectOffering: table.subjectOffering,
+			subject: table.subject
+		})
+		.from(table.subjectOffering)
+		.innerJoin(table.subject, eq(table.subjectOffering.subjectId, table.subject.id))
+		.where(and(...conditions))
+		.orderBy(asc(table.subject.yearLevel), asc(table.subject.name));
+
+	return subjectOfferings;
+}
+
+/**
+ * Gets subject offerings for a specific year level (e.g., Year 8, Year 9) within a timetable's context.
+ *
+ * This function retrieves subject offerings where:
+ * - The subject's yearLevel matches the specified yearLevel parameter (e.g., Year 8, Year 9)
+ * - The offering's year matches the timetable's school year (e.g., 2025, 2026)
+ * - The offering's semester matches the timetable's semester (if applicable)
+ * - The offerings are for the timetable's school
+ *
+ * Note: "yearLevel" refers to the student grade level (Year 8, Year 9, etc.),
+ * while the timetable's "schoolYear" refers to the calendar year (2025, 2026, etc.)
+ *
+ * @param timetableId - The ID of the timetable to scope the query to
+ * @param yearLevel - The student year level (e.g., yearLevelEnum.year8, yearLevelEnum.year9)
+ * @returns Subject offerings with their related subject data, filtered by year level
+ */
+export async function getSubjectOfferingsByYearLevelForTimetableByTimetableId(
+	timetableId: number,
+	yearLevel: yearLevelEnum
+) {
+	// First, get the timetable details
+	const [timetableData] = await db
+		.select({
+			schoolId: table.timetable.schoolId,
+			schoolYear: table.timetable.schoolYear,
+			schoolSemesterId: table.timetable.schoolSemesterId
+		})
+		.from(table.timetable)
+		.where(eq(table.timetable.id, timetableId))
+		.limit(1);
+
+	if (!timetableData) {
+		return [];
+	}
+
+	// Get the semester number if schoolSemesterId is provided
+	let semesterNumber: number | null = null;
+	if (timetableData.schoolSemesterId) {
+		const [semesterData] = await db
+			.select({
+				semNumber: table.schoolSemester.semNumber
+			})
+			.from(table.schoolSemester)
+			.where(eq(table.schoolSemester.id, timetableData.schoolSemesterId))
+			.limit(1);
+
+		if (semesterData) {
+			semesterNumber = semesterData.semNumber;
+		}
+	}
+
+	// Build the query conditions
+	// Note: subject.yearLevel = student grade level (Year 8, 9, etc.)
+	//       subjectOffering.year = calendar year (2025, 2026, etc.)
+	const conditions = [
+		eq(table.subject.schoolId, timetableData.schoolId),
+		eq(table.subject.yearLevel, yearLevel), // Filter by student grade level
+		eq(table.subjectOffering.year, timetableData.schoolYear), // Filter by calendar year
+		eq(table.subjectOffering.isArchived, false),
+		eq(table.subject.isArchived, false)
+	];
+
+	// Add semester condition if available
+	if (semesterNumber !== null) {
+		conditions.push(eq(table.subjectOffering.semester, semesterNumber));
+	}
+
+	// Get all subject offerings matching the timetable's school, year, semester, and year level
+	const subjectOfferings = await db
+		.select({
+			subjectOffering: table.subjectOffering,
+			subject: table.subject
+		})
+		.from(table.subjectOffering)
+		.innerJoin(table.subject, eq(table.subjectOffering.subjectId, table.subject.id))
+		.where(and(...conditions))
+		.orderBy(asc(table.subject.name));
+
+	return subjectOfferings;
+}
+
 export async function getSubjectThreadsMinimalBySubjectId(subjectOfferingId: number) {
 	const threads = await db
 		.select({
@@ -717,8 +857,8 @@ export async function getSubjectYearLevelBySubjectOfferingId(subjectOfferingId: 
 }
 
 export async function getSubjectClassAllocationsByUserIdForDate(userId: string, date: Date) {
-	const startOfDay = new Date(date.getFullYear(), date.getMonth(), date.getDate());
-	const endOfDay = new Date(date.getFullYear(), date.getMonth(), date.getDate() + 1);
+	// Format date as YYYY-MM-DD for comparison
+	const dateStr = date.toISOString().split('T')[0];
 
 	const classAllocations = await db
 		.select({
@@ -761,11 +901,10 @@ export async function getSubjectClassAllocationsByUserIdForDate(userId: string, 
 		.where(
 			and(
 				eq(table.userSubjectOfferingClass.userId, userId),
-				gte(table.subjectClassAllocation.startTimestamp, startOfDay),
-				lt(table.subjectClassAllocation.startTimestamp, endOfDay)
+				eq(table.subjectClassAllocation.date, dateStr)
 			)
 		)
-		.orderBy(table.subjectClassAllocation.startTimestamp);
+		.orderBy(table.subjectClassAllocation.startTime);
 
 	return classAllocations;
 }
@@ -785,6 +924,10 @@ export async function getSubjectClassAllocationsByUserIdForWeek(
 	weekEnd.setDate(weekStart.getDate() + 7); // Next Monday
 	weekEnd.setHours(0, 0, 0, 0);
 
+	// Format dates as YYYY-MM-DD for comparison
+	const weekStartStr = weekStart.toISOString().split('T')[0];
+	const weekEndStr = weekEnd.toISOString().split('T')[0];
+
 	const classAllocations = await db
 		.select({
 			classAllocation: table.subjectClassAllocation,
@@ -826,11 +969,11 @@ export async function getSubjectClassAllocationsByUserIdForWeek(
 		.where(
 			and(
 				eq(table.userSubjectOfferingClass.userId, userId),
-				gte(table.subjectClassAllocation.startTimestamp, weekStart),
-				lt(table.subjectClassAllocation.startTimestamp, weekEnd)
+				gte(table.subjectClassAllocation.date, weekStartStr),
+				lt(table.subjectClassAllocation.date, weekEndStr)
 			)
 		)
-		.orderBy(table.subjectClassAllocation.startTimestamp);
+		.orderBy(table.subjectClassAllocation.date, table.subjectClassAllocation.startTime);
 
 	return classAllocations;
 }

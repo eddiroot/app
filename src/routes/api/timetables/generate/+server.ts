@@ -1,8 +1,5 @@
-import {
-	createTimetableIteration,
-	createTimetableQueueEntry
-} from '$lib/server/db/service/timetables.js';
-import { FETDockerService } from '$lib/server/fet.js';
+import { createTimetableQueueEntry } from '$lib/server/db/service/timetables.js';
+import { FETDockerService } from '$lib/server/fet';
 import { uploadBufferHelper } from '$lib/server/obj.js';
 import { error, json, type RequestHandler } from '@sveltejs/kit';
 import { processTimetableQueue } from '../../../../scripts/process/timetable.js';
@@ -15,7 +12,7 @@ export const POST: RequestHandler = async ({ locals: { security }, request }) =>
 
 		const user = security.getUser();
 		const requestData = await request.json();
-		const { timetableId, fetXmlContent } = requestData;
+		const { timetableId, draft, fetXmlContent } = requestData;
 
 		// Validate inputs
 		if (!timetableId) {
@@ -32,32 +29,13 @@ export const POST: RequestHandler = async ({ locals: { security }, request }) =>
 			});
 		}
 
-		// Check if FET Docker container is running
-		const fetService = new FETDockerService();
-		const isRunning = await fetService.isContainerRunning();
-
-		if (!isRunning) {
-			return error(503, {
-				message: 'FET service is not available. Please contact your system administrator.'
-			});
-		}
-
-		// Create a new timetable iteration
-		const iteration = await createTimetableIteration(timetableId);
-		console.log(
-			`✅ [TIMETABLE PROCESSOR] Created iteration ${iteration.id} for timetable ${timetableId}`
-		);
-
-		const uniqueFileName = `tt_id${timetableId}.fet`;
-
-		// Updated path: school_id/timetable_id/iteration_id/input/filename
-		const objectKey = `${user.schoolId}/${timetableId}/${iteration.id}/input/${uniqueFileName}`;
+		const uniqueFileName = `ID_${draft.id}_CreatedAt_${draft.createdAt}.fet`;
+		const objectKey = `${user.schoolId}/${timetableId}/${draft.id}/input/${uniqueFileName}`;
 
 		await uploadBufferHelper(Buffer.from(fetXmlContent, 'utf-8'), objectKey, 'application/xml');
 		console.log(`✅ [TIMETABLE PROCESSOR] Input file stored: ${objectKey}`);
-		console.log('FET XML uploaded to object storage:', objectKey);
 
-		await createTimetableQueueEntry(timetableId, user.id, uniqueFileName, iteration.id);
+		await createTimetableQueueEntry(timetableId, draft.id, user.id, uniqueFileName);
 
 		// Trigger processing (this will run asynchronously)
 		processTimetableQueue().catch((err: Error) => {
@@ -67,7 +45,7 @@ export const POST: RequestHandler = async ({ locals: { security }, request }) =>
 		return json({
 			success: true,
 			message: 'Timetable generation has been queued successfully',
-			iterationId: iteration.id,
+			timetableDraftId: draft.id,
 			queuedAt: new Date().toISOString()
 		});
 	} catch (err) {

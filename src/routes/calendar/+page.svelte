@@ -228,14 +228,15 @@
 
 				<!-- Classes for this day -->
 				{#each (classAllocation ?? []).filter((c) => {
-					const dayOfWeek = c.classAllocation.startTimestamp.getDay();
+					const classDate = new Date(c.classAllocation.date);
+					const dayOfWeek = classDate.getDay();
 					const dayIndex = dayOfWeek === 0 ? -1 : dayOfWeek - 1;
 					return dayIndex >= 0 && dayIndex < days.length && days[dayIndex].value === day.value;
 				}) as cls}
 					{@const position = getClassPosition(
 						8,
-						cls.classAllocation.startTimestamp,
-						cls.classAllocation.endTimestamp,
+						cls.classAllocation.startTime,
+						cls.classAllocation.endTime,
 						60
 					)}
 					<div
@@ -244,7 +245,6 @@
 						<TimetableCard {cls} href="/subjects/{cls.subjectOffering.id}" />
 					</div>
 				{/each}
-
 				<!-- Events for this day -->
 				{#each getEventsForDay(day.value) as event, eventIndex}
 					{@const position = getEventPosition(

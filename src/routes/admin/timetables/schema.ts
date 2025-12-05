@@ -11,7 +11,12 @@ export const createTimetableSchema = z.object({
 		.number()
 		.int()
 		.min(currentYear, `Year must be ${currentYear} or later`)
-		.default(currentYear)
+		.default(currentYear),
+	schoolSemester: z
+		.number()
+		.int('Please select a semester')
+		.positive('Please select a valid semester')
+		.refine((val) => val > 0, 'Please select a semester')
 });
 
 export type CreateTimetableSchema = typeof createTimetableSchema;

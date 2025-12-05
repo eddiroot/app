@@ -1,146 +1,200 @@
-import { exec } from 'child_process';
-import { randomUUID } from 'crypto';
-import { unlink, writeFile } from 'fs/promises';
-import { join } from 'path';
+import { exec, spawn } from 'child_process';
 import { promisify } from 'util';
 
 const execAsync = promisify(exec);
 
 interface FETExecutionResult {
 	success: boolean;
+	stdout?: string;
 	outputFiles?: string[];
 	error?: string;
 	executionTime: number;
 }
 
+interface FETProcessingParams {
+	htmllevel?: number;
+	writetimetableconflicts?: boolean;
+	writetimetablesstatistics?: boolean;
+	writetimetablesxml?: boolean;
+	writetimetablesdayshorizontal?: boolean;
+	writetimetablesdaysvertical?: boolean;
+	writetimetablestimehorizontal?: boolean;
+	writetimetablestimevertical?: boolean;
+	writetimetablessubgroups?: boolean;
+	writetimetablesgroups?: boolean;
+	writetimetablesyears?: boolean;
+	writetimetablesteachers?: boolean;
+	writetimetablesteachersfreeperiods?: boolean;
+	writetimetablesrooms?: boolean;
+	writetimetablessubjects?: boolean;
+	writetimetablesactivitytags?: boolean;
+	writetimetablesactivities?: boolean;
+	exportcsv?: boolean;
+}
+
 export class FETDockerService {
-	private containerName = 'eddi-fet-1'; // Based on your docker-compose service name
+	private containerName = 'eddi-fet-1';
 
 	/**
-	 * Execute FET timetabling in Docker container
+	 * Stream file buffer directly to Docker container without using local filesystem
 	 */
-	async executeFET(fetXmlContent: string): Promise<FETExecutionResult> {
+	async streamFileToContainer(targetPath: string, data: Buffer): Promise<void> {
+		return new Promise((resolve, reject) => {
+			// Properly escape the path for shell
+			const escapedPath = targetPath.replace(/'/g, "'\\''");
+
+			const dockerProcess = spawn('docker', [
+				'exec',
+				'-i',
+				this.containerName,
+				'sh',
+				'-c',
+				`cat > '${escapedPath}'`
+			]);
+
+			let stderr = '';
+			let stdout = '';
+
+			dockerProcess.stderr.on('data', (chunk) => {
+				stderr += chunk.toString();
+			});
+
+			dockerProcess.stdout.on('data', (chunk) => {
+				stdout += chunk.toString();
+			});
+
+			dockerProcess.on('error', (error) => {
+				reject(new Error(`Failed to spawn docker process: ${error.message}`));
+			});
+
+			dockerProcess.on('close', (code) => {
+				if (code === 0) {
+					resolve();
+				} else {
+					reject(
+						new Error(
+							`Docker process exited with code ${code}. Path: ${targetPath}, stderr: ${stderr}, stdout: ${stdout}`
+						)
+					);
+				}
+			});
+
+			dockerProcess.stdin.write(data);
+			dockerProcess.stdin.end();
+		});
+	}
+
+	/**
+	 * Create directory in container
+	 */
+	async createDirectory(dirPath: string): Promise<void> {
+		await execAsync(`docker exec ${this.containerName} mkdir -p ${dirPath}`, {
+			timeout: 60000
+		});
+	}
+
+	/**
+	 * Execute FET command in container with custom parameters
+	 */
+	async executeFET(
+		inputFilePath: string,
+		outputDir: string,
+		params: FETProcessingParams = {}
+	): Promise<FETExecutionResult> {
 		const startTime = Date.now();
-		const jobId = randomUUID();
-		const inputFileName = `input_${jobId}.fet`;
-		const outputDir = `output_${jobId}`;
 
-		console.log(`Starting FET job ${jobId}`);
+		const defaultParams = {
+			htmllevel: 7,
+			writetimetableconflicts: true,
+			writetimetablesstatistics: true,
+			writetimetablesxml: true,
+			writetimetablesdayshorizontal: true,
+			writetimetablesdaysvertical: true,
+			writetimetablestimehorizontal: true,
+			writetimetablestimevertical: true,
+			writetimetablessubgroups: true,
+			writetimetablesgroups: true,
+			writetimetablesyears: true,
+			writetimetablesteachers: true,
+			writetimetablesteachersfreeperiods: true,
+			writetimetablesrooms: true,
+			writetimetablessubjects: true,
+			writetimetablesactivitytags: true,
+			writetimetablesactivities: true,
+			exportcsv: true,
+			...params
+		};
+
+		const cmdStr = Object.entries(defaultParams)
+			.map(([key, value]) => `--${key}=${value}`)
+			.join(' ');
+
+		const command = `docker exec ${this.containerName} fet-cl --inputfile="${inputFilePath}" --outputdir="${outputDir}" ${cmdStr}`;
+
 		try {
-			// Write input file to container
-			await this.writeFileToContainer(inputFileName, fetXmlContent);
-
-			// Create output directory in container
-			await this.createDirectoryInContainer(outputDir);
-
-			const params = {
-				htmllevel: 7,
-				writetimetableconflicts: true,
-				writetimetablesstatistics: true,
-				writetimetablesxml: true,
-				writetimetablesdayshorizontal: true,
-				writetimetablesdaysvertical: true,
-				writetimetablestimehorizontal: true,
-				writetimetablestimevertical: true,
-				writetimetablessubgroups: true,
-				writetimetablesgroups: true,
-				writetimetablesyears: true,
-				writetimetablesteachers: true,
-				writetimetablesteachersfreeperiods: true,
-				writetimetablesrooms: true,
-				writetimetablessubjects: true,
-				writetimetablesactivitytags: true,
-				writetimetablesactivities: true,
-				exportcsv: true
-			};
-
-			// Execute FET command in container
-			const fetCommand = `fet-cl 
-				--inputfile="/timetables/${inputFileName}" 
-				--outputdir="/output/${outputDir}" 
-				--htmllevel=${params.htmllevel}
-				--writetimetableconflicts=${params.writetimetableconflicts}
-				--writetimetablesstatistics=${params.writetimetablesstatistics}
-				--writetimetablesxml=${params.writetimetablesxml}
-				--writetimetablesdayshorizontal=${params.writetimetablesxml}
-				--writetimetablesdaysvertical=${params.writetimetablesdaysvertical}
-				--writetimetablestimehorizontal=${params.writetimetablesdaysvertical}
-				--writetimetablestimevertical=${params.writetimetablesdaysvertical}
-				--writetimetablessubgroups=${params.writetimetablesdaysvertical}
-				--writetimetablesgroups=${params.writetimetablesdaysvertical}
-				--writetimetablesyears=${params.writetimetablesdaysvertical}
-				--writetimetablesteachers=${params.writetimetablesdaysvertical}
-				--writetimetablesteachersfreeperiods=${params.writetimetablesdaysvertical}
-				--writetimetablesrooms=${params.writetimetablesdaysvertical}
-				--writetimetablessubjects=${params.writetimetablesdaysvertical}
-				--writetimetablesactivitytags=${params.writetimetablesdaysvertical}
-				--writetimetablesactivities=${params.writetimetablesdaysvertical}
-				--exportcsv=${params.exportcsv}`;
-
-			console.log(`Executing FET command: ${fetCommand}`);
-
-			const { stdout, stderr } = await execAsync(
-				`docker exec ${this.containerName} ${fetCommand}`,
-				{ timeout: 20 * 60 * 1000 } // 20 minutes timeout
-			);
-
-			console.log('FET stdout:', stdout);
-			if (stderr) {
-				console.warn('FET stderr:', stderr);
-			}
-
-			// List output files
-			const outputFiles = await this.listOutputFiles(outputDir);
-
-			// Clean up input file
-			await this.removeFileFromContainer(`/timetables/${inputFileName}`);
+			const { stdout } = await execAsync(command, {
+				timeout: 20 * 60 * 1000 // 20 minutes
+			});
 
 			return {
 				success: true,
-				outputFiles,
+				stdout,
 				executionTime: Date.now() - startTime
 			};
 		} catch (error) {
-			console.error('FET execution error:', error);
-
-			// Clean up on error
-			try {
-				await this.removeFileFromContainer(`/timetables/${inputFileName}`);
-				await this.removeDirectoryFromContainer(`/output/${outputDir}`);
-			} catch (cleanupError) {
-				console.warn('Cleanup error:', cleanupError);
-			}
-
+			const execError = error as { stdout?: string; message?: string };
 			return {
 				success: false,
-				error: error instanceof Error ? error.message : 'Unknown error',
+				error: execError?.stdout || 'Unknown error',
 				executionTime: Date.now() - startTime
 			};
 		}
 	}
 
 	/**
-	 * Get output file content from container
+	 * List all files in a directory in the container
 	 */
-	async getOutputFileContent(outputDir: string, fileName: string): Promise<string> {
+	async listFiles(dirPath: string): Promise<string[]> {
+		const { stdout } = await execAsync(
+			`docker exec ${this.containerName} find ${dirPath} -type f`,
+			{ timeout: 60000 }
+		);
+		return stdout.trim().split('\n').filter(Boolean);
+	}
+
+	/**
+	 * Read file content from container
+	 */
+	async readFile(filePath: string): Promise<string> {
+		const { stdout } = await execAsync(`docker exec ${this.containerName} cat "${filePath}"`, {
+			timeout: 2 * 60 * 1000
+		});
+		return stdout;
+	}
+
+	/**
+	 * Remove file from container
+	 */
+	async removeFile(filePath: string): Promise<void> {
 		try {
-			const { stdout } = await execAsync(
-				`docker exec ${this.containerName} cat /output/${outputDir}/${fileName}`
-			);
-			return stdout;
+			await execAsync(`docker exec ${this.containerName} rm -f ${filePath}`, {
+				timeout: 60000
+			});
 		} catch (error) {
-			throw new Error(`Failed to read output file: ${error}`);
+			console.warn(`⚠️  Failed to remove file ${filePath}:`, error);
 		}
 	}
 
 	/**
-	 * Clean up output directory in container
+	 * Remove directory from container
 	 */
-	async cleanupOutputDirectory(outputDir: string): Promise<void> {
+	async removeDirectory(dirPath: string): Promise<void> {
 		try {
-			await this.removeDirectoryFromContainer(`/output/${outputDir}`);
+			await execAsync(`docker exec ${this.containerName} rm -rf ${dirPath}`, {
+				timeout: 60000
+			});
 		} catch (error) {
-			console.warn(`Failed to cleanup output directory ${outputDir}:`, error);
+			console.warn(`⚠️  Failed to remove directory ${dirPath}:`, error);
 		}
 	}
 
@@ -159,47 +213,16 @@ export class FETDockerService {
 		}
 	}
 
-	// Private helper methods
-
-	private async writeFileToContainer(fileName: string, content: string): Promise<void> {
-		// Create a temporary file on the host
-		const tempFilePath = join('/tmp', fileName);
-		await writeFile(tempFilePath, content);
-
+	/**
+	 * Clean up all timetable working directories
+	 */
+	async cleanupTimetableWorkspace(): Promise<void> {
 		try {
-			// Copy file to container
-			await execAsync(`docker cp "${tempFilePath}" ${this.containerName}:/timetables/`);
-		} finally {
-			// Clean up temporary file
-			await unlink(tempFilePath);
-		}
-	}
-
-	private async createDirectoryInContainer(dirName: string): Promise<void> {
-		await execAsync(`docker exec ${this.containerName} mkdir -p /output/${dirName}`);
-	}
-
-	private async removeFileFromContainer(filePath: string): Promise<void> {
-		await execAsync(`docker exec ${this.containerName} rm -f "${filePath}"`);
-	}
-
-	private async removeDirectoryFromContainer(dirPath: string): Promise<void> {
-		await execAsync(`docker exec ${this.containerName} rm -rf "${dirPath}"`);
-	}
-
-	private async listOutputFiles(outputDir: string): Promise<string[]> {
-		try {
-			const { stdout } = await execAsync(
-				`docker exec ${this.containerName} find /output/${outputDir} -type f -name "*" | head -20`
-			);
-
-			return stdout
-				.split('\n')
-				.filter((line) => line.trim())
-				.map((line) => line.replace(`/output/${outputDir}/`, ''));
-		} catch {
-			console.warn('Failed to list output files');
-			return [];
+			await execAsync(`docker exec ${this.containerName} rm -rf /app/timetables/*`, {
+				timeout: 60000
+			});
+		} catch (error) {
+			console.warn(`⚠️  Failed to cleanup timetable workspace:`, error);
 		}
 	}
 }

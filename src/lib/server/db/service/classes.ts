@@ -1,7 +1,7 @@
 import { userTypeEnum } from '$lib/enums';
 import { db } from '$lib/server/db';
 import * as table from '$lib/server/db/schema';
-import { and, asc, desc, eq, gte, lt } from 'drizzle-orm';
+import { and, asc, desc, eq, lte } from 'drizzle-orm';
 
 export async function getSubjectOfferingClassDetailsById(subjectOfferingClassId: number) {
 	const subjectOfferingClass = await db
@@ -66,13 +66,14 @@ export async function getSubjectClassAllocationsByUserId(userId: string) {
 			)
 		)
 		.where(eq(table.userSubjectOfferingClass.userId, userId))
-		.orderBy(desc(table.subjectClassAllocation.startTimestamp));
+		.orderBy(desc(table.subjectClassAllocation.date), asc(table.subjectClassAllocation.startTime));
 
 	return classAllocations;
 }
 
 export async function getSubjectClassAllocationsByUserIdForToday(userId: string) {
 	const today = new Date();
+	const todayStr = today.toISOString().split('T')[0];
 	const classAllocation = await db
 		.select({
 			classAllocation: table.subjectClassAllocation,
@@ -114,17 +115,10 @@ export async function getSubjectClassAllocationsByUserIdForToday(userId: string)
 		.where(
 			and(
 				eq(table.userSubjectOfferingClass.userId, userId),
-				gte(
-					table.subjectClassAllocation.startTimestamp,
-					new Date(today.getFullYear(), today.getMonth(), today.getDate())
-				),
-				lt(
-					table.subjectClassAllocation.startTimestamp,
-					new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1)
-				)
+				eq(table.subjectClassAllocation.date, todayStr)
 			)
 		)
-		.orderBy(table.subjectClassAllocation.startTimestamp); // Order by start time (earliest first) for today's schedule
+		.orderBy(table.subjectClassAllocation.startTime); // Order by start time (earliest first) for today's schedule
 
 	return classAllocation;
 }
@@ -133,6 +127,7 @@ export async function getSubjectClassAllocationAndStudentAttendancesByClassIdFor
 	subjectOfferingClassId: number
 ) {
 	const today = new Date();
+	const todayStr = today.toISOString().split('T')[0];
 
 	const attendances = await db
 		.select({
@@ -170,14 +165,7 @@ export async function getSubjectClassAllocationAndStudentAttendancesByClassIdFor
 		.where(
 			and(
 				eq(table.userSubjectOfferingClass.subOffClassId, subjectOfferingClassId),
-				gte(
-					table.subjectClassAllocation.startTimestamp,
-					new Date(today.getFullYear(), today.getMonth(), today.getDate())
-				),
-				lt(
-					table.subjectClassAllocation.startTimestamp,
-					new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1)
-				),
+				eq(table.subjectClassAllocation.date, todayStr),
 				eq(table.user.type, userTypeEnum.student)
 			)
 		)
@@ -214,7 +202,7 @@ export async function getClassesForUserInSubjectOffering(
 				eq(table.subjectOfferingClass.subOfferingId, subjectOfferingId)
 			)
 		)
-		.orderBy(desc(table.subjectClassAllocation.startTimestamp));
+		.orderBy(desc(table.subjectClassAllocation.date), desc(table.subjectClassAllocation.startTime));
 
 	return classes;
 }
@@ -231,8 +219,9 @@ export async function getGuardiansChildrensScheduleWithAttendanceByUserId(userId
 			},
 			subjectClassAllocation: {
 				id: table.subjectClassAllocation.id,
-				startTimestamp: table.subjectClassAllocation.startTimestamp,
-				endTimestamp: table.subjectClassAllocation.endTimestamp
+				date: table.subjectClassAllocation.date,
+				startTime: table.subjectClassAllocation.startTime,
+				endTime: table.subjectClassAllocation.endTime
 			},
 			subjectOfferingClass: {
 				id: table.subjectOfferingClass.id,
@@ -276,7 +265,7 @@ export async function getGuardiansChildrensScheduleWithAttendanceByUserId(userId
 			)
 		)
 		.where(eq(table.userRelationship.relatedUserId, userId))
-		.orderBy(table.subjectClassAllocation.startTimestamp);
+		.orderBy(table.subjectClassAllocation.date, table.subjectClassAllocation.startTime);
 
 	return scheduleWithAttendance;
 }
@@ -417,17 +406,17 @@ export async function getStudentAttendanceHistoryForClass(
 	studentId: string,
 	subjectOfferingClassId: number
 ) {
-	const tomorrow = new Date();
-	tomorrow.setDate(tomorrow.getDate() + 1);
-	tomorrow.setHours(0, 0, 0, 0);
+	const today = new Date();
+	const todayStr = today.toISOString().split('T')[0];
 
 	const attendanceHistory = await db
 		.select({
 			attendance: table.subjectClassAllocationAttendance,
 			subjectClassAllocation: {
 				id: table.subjectClassAllocation.id,
-				startTimestamp: table.subjectClassAllocation.startTimestamp,
-				endTimestamp: table.subjectClassAllocation.endTimestamp
+				date: table.subjectClassAllocation.date,
+				startTime: table.subjectClassAllocation.startTime,
+				endTime: table.subjectClassAllocation.endTime
 			},
 			schoolSpace: {
 				name: table.schoolSpace.name
@@ -451,10 +440,10 @@ export async function getStudentAttendanceHistoryForClass(
 		.where(
 			and(
 				eq(table.subjectClassAllocation.subjectOfferingClassId, subjectOfferingClassId),
-				lt(table.subjectClassAllocation.startTimestamp, tomorrow)
+				lte(table.subjectClassAllocation.date, todayStr)
 			)
 		)
-		.orderBy(desc(table.subjectClassAllocation.startTimestamp));
+		.orderBy(desc(table.subjectClassAllocation.date), desc(table.subjectClassAllocation.startTime));
 
 	return attendanceHistory;
 }

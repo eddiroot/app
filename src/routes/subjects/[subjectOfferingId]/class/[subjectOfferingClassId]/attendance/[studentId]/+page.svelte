@@ -4,7 +4,7 @@
 	import { Button } from '$lib/components/ui/button/index.js';
 	import * as Card from '$lib/components/ui/card/index.js';
 	import * as Table from '$lib/components/ui/table/index.js';
-	import { convertToFullName, formatTimestampAsDate, formatTimestampAsTime } from '$lib/utils';
+	import { convertToFullName } from '$lib/utils';
 	import ArrowLeft from '@lucide/svelte/icons/arrow-left';
 	import Calendar from '@lucide/svelte/icons/calendar';
 	import Check from '@lucide/svelte/icons/check';
@@ -164,13 +164,13 @@
 						{@const status = getAttendanceStatus(record.attendance)}
 						<Table.Row>
 							<Table.Cell class="font-medium">
-								{formatTimestampAsDate(record.subjectClassAllocation.startTimestamp)}
+								{record.subjectClassAllocation.startTime}
 							</Table.Cell>
 							<Table.Cell>
 								<div class="flex items-center gap-1">
 									<Clock class="text-muted-foreground h-4 w-4" />
-									{formatTimestampAsTime(record.subjectClassAllocation.startTimestamp)} -
-									{formatTimestampAsTime(record.subjectClassAllocation.endTimestamp)}
+									{record.subjectClassAllocation.startTime} -
+									{record.subjectClassAllocation.endTime}
 								</div>
 							</Table.Cell>
 							<Table.Cell>

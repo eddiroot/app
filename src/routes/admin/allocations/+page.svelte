@@ -27,7 +27,7 @@
 		}
 	});
 
-	const { form: createFormData, enhance: createEnhance } = createForm;
+	const { form: createFormData, enhance: createEnhance, errors: createFormErrors } = createForm;
 
 	let createDialogOpen = $state(false);
 

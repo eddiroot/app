@@ -318,6 +318,19 @@ export function parseCSVRow(row: string): string[] {
 	return values;
 }
 
+/**
+ * Calculates duration in minutes between two time strings (HH:MM:SS format)
+ */
+export function calculateDurationMinutes(startTime: string, endTime: string): number {
+	const [startHour, startMin] = startTime.split(':').map(Number);
+	const [endHour, endMin] = endTime.split(':').map(Number);
+
+	const startTotalMin = startHour * 60 + startMin;
+	const endTotalMin = endHour * 60 + endMin;
+
+	return endTotalMin - startTotalMin;
+}
+
 export function parseCSVData(csvText: string): Array<Record<string, string>> {
 	const lines = csvText.split('\n').filter((line) => line.trim());
 	if (lines.length <= 1) return [];

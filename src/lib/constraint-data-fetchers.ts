@@ -3,10 +3,10 @@ import {
 	getBuildingsBySchoolId,
 	getSpacesBySchoolId,
 	getSubjectsBySchoolId,
-	getTimetableActivitiesByTimetableId,
-	getTimetableDays,
-	getTimetablePeriods,
-	getTimetableStudentGroupsWithCountsByTimetableId,
+	getTimetableDraftActivitiesByTimetableDraftId,
+	getTimetableDraftDaysByTimetableDraftId,
+	getTimetableDraftPeriodsByTimetableDraftId,
+	getTimetableDraftStudentGroupsWithCountsByTimetableDraftId,
 	getUsersBySchoolIdAndType
 } from '$lib/server/db/service';
 import type { ConstraintFormData } from '$lib/types/constraint-form-types';
@@ -19,8 +19,10 @@ export interface AutocompleteOption {
 /**
  * Fetch timetable days for autocomplete
  */
-export async function getTimetableDaysOptions(timetableId: number): Promise<AutocompleteOption[]> {
-	const days = await getTimetableDays(timetableId);
+export async function getTimetableDraftDaysOptions(
+	timetableId: number
+): Promise<AutocompleteOption[]> {
+	const days = await getTimetableDraftDaysByTimetableDraftId(timetableId);
 	return days.map((day) => ({
 		value: day.id,
 		label: `Day ${day.day}` // Assuming day number maps to day name
@@ -30,10 +32,10 @@ export async function getTimetableDaysOptions(timetableId: number): Promise<Auto
 /**
  * Fetch timetable periods for autocomplete
  */
-export async function getTimetablePeriodsOptions(
+export async function getTimetableDraftPeriodsOptions(
 	timetableId: number
 ): Promise<AutocompleteOption[]> {
-	const periods = await getTimetablePeriods(timetableId);
+	const periods = await getTimetableDraftPeriodsByTimetableDraftId(timetableId);
 	return periods.map((period) => ({
 		value: period.id,
 		label: `${period.startTime} - ${period.endTime}`
@@ -76,10 +78,10 @@ export async function getStudentsOptions(schoolId: number): Promise<Autocomplete
 /**
  * Fetch timetable groups for autocomplete
  */
-export async function getTimetableGroupsOptions(
+export async function getTimetableDraftGroupsOptions(
 	timetableId: number
 ): Promise<AutocompleteOption[]> {
-	const groups = await getTimetableStudentGroupsWithCountsByTimetableId(timetableId);
+	const groups = await getTimetableDraftStudentGroupsWithCountsByTimetableDraftId(timetableId);
 	return groups.map((group) => ({
 		value: group.id,
 		label: `${group.name} (${group.yearLevel}) - ${group.count} students`
@@ -111,10 +113,10 @@ export async function getSpacesOptions(schoolId: number): Promise<AutocompleteOp
 /**
  * Fetch timetable activities for autocomplete
  */
-export async function getTimetableActivitiesOptions(
+export async function getTimetableDraftActivitiesOptions(
 	timetableId: number
 ): Promise<AutocompleteOption[]> {
-	const activities = await getTimetableActivitiesByTimetableId(timetableId);
+	const activities = await getTimetableDraftActivitiesByTimetableDraftId(timetableId);
 	return activities.map((activity) => ({
 		value: activity.id,
 		label: `${activity.id}`
@@ -125,7 +127,7 @@ export async function getTimetableActivitiesOptions(
  * Build complete constraint form data for autocomplete components
  */
 export async function buildConstraintFormData(
-	timetableId: number,
+	timetableDraftId: number,
 	schoolId: number
 ): Promise<ConstraintFormData> {
 	// In a real implementation, these IDs would come from the current user session/context
@@ -143,12 +145,12 @@ export async function buildConstraintFormData(
 		getSubjectsOptions(schoolId),
 		getTeachersOptions(schoolId),
 		getStudentsOptions(schoolId),
-		getTimetableGroupsOptions(timetableId),
+		getTimetableDraftGroupsOptions(timetableDraftId),
 		getBuildingsOptions(schoolId),
 		getSpacesOptions(schoolId),
-		getTimetableDaysOptions(timetableId),
-		getTimetablePeriodsOptions(timetableId),
-		getTimetableActivitiesOptions(timetableId)
+		getTimetableDraftDaysOptions(timetableDraftId),
+		getTimetableDraftPeriodsOptions(timetableDraftId),
+		getTimetableDraftActivitiesOptions(timetableDraftId)
 	]);
 
 	return {

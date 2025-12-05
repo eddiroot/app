@@ -6,11 +6,9 @@ RUN apt update && \
     apt clean && \
     rm -rf /var/lib/apt/lists/*
 
-# Set working directories
-WORKDIR /timetables
-
-# Create output directory
-RUN mkdir -p /output
+# Create working directory structure for timetable processing
+WORKDIR /app
+RUN mkdir -p /app/timetables
 
 # Default command - keep container running
 CMD ["tail", "-f", "/dev/null"]

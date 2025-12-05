@@ -9,16 +9,21 @@ export function generateTimeslots(dayStartHour: number, dayEndHour: number): str
 
 export function getClassPosition(
 	dayStartHour: number = 8,
-	startTimestamp: Date,
-	endTimestamp: Date,
+	startTime: string,
+	endTime: string,
 	slotHeightPx: number
 ) {
-	const startMinutes = startTimestamp.getHours() * 60 + startTimestamp.getMinutes();
+	// Parse time strings (HH:MM:SS format)
+	const [startHour, startMinute] = startTime.split(':').map(Number);
+	const [endHour, endMinute] = endTime.split(':').map(Number);
+	
+	const startMinutes = startHour * 60 + startMinute;
+	const endMinutes = endHour * 60 + endMinute;
 	const startOfDay = dayStartHour * 60;
 
 	const slotIndex = (startMinutes - startOfDay) / 30;
 	const topPosition = slotIndex * slotHeightPx;
-	const durationInMinutes = (endTimestamp.getTime() - startTimestamp.getTime()) / 60000;
+	const durationInMinutes = endMinutes - startMinutes;
 	const durationInSlots = durationInMinutes / 30;
 	const height = durationInSlots * slotHeightPx;
 
@@ -35,7 +40,11 @@ export function getEventPosition(
 	columnOffset: number = 0,
 	slotHeightPx: number
 ) {
-	const position = getClassPosition(dayStartHour, startTimestamp, endTimestamp, slotHeightPx);
+	// Extract time from timestamps for events (they still use timestamps)
+	const startTime = `${startTimestamp.getHours().toString().padStart(2, '0')}:${startTimestamp.getMinutes().toString().padStart(2, '0')}:00`;
+	const endTime = `${endTimestamp.getHours().toString().padStart(2, '0')}:${endTimestamp.getMinutes().toString().padStart(2, '0')}:00`;
+	
+	const position = getClassPosition(dayStartHour, startTime, endTime, slotHeightPx);
 
 	// Events take up the left 40% of the column, classes take the right 60%
 	const leftOffset = columnOffset * 40; // 0 for first event, 40% for second, etc.
