@@ -856,15 +856,16 @@ if (isMainModule) {
 	// Create a standalone database connection for VCAA seeding only
 	const { drizzle } = await import('drizzle-orm/node-postgres');
 	const { Pool } = await import('pg');
+	const { Resource } = await import('sst');
 	const schema = await import('../../schema/index.js');
 
-	const databaseUrl = process.env.DATABASE_URL;
-	if (!databaseUrl) {
-		console.error('DATABASE_URL is not set in environment variables');
-		process.exit(1);
-	}
-
-	const pool = new Pool({ connectionString: databaseUrl });
+	const pool = new Pool({
+		host: Resource.Database.host,
+		port: Resource.Database.port,
+		user: Resource.Database.username,
+		password: Resource.Database.password,
+		database: Resource.Database.database
+	});
 	const standaloneDb = drizzle(pool, { schema });
 
 	seedVCAA(standaloneDb)
