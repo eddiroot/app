@@ -104,7 +104,7 @@
 					</div>
 					{#if $errors.file}
 						<div class="bg-destructive/10 text-destructive flex items-center gap-2 rounded-md p-3">
-							<XIcon class="size-4 flex-shrink-0" />
+							<XIcon class="size-4 shrink-0" />
 							<span class="text-sm">{$errors.file}</span>
 						</div>
 					{/if}

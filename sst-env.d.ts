@@ -17,10 +17,6 @@ declare module "sst" {
       "type": "sst.aws.Postgres"
       "username": string
     }
-    "DomainRedirects": {
-      "type": "sst.aws.Router"
-      "url": string
-    }
     "EddiApp": {
       "service": string
       "type": "sst.aws.Service"
@@ -57,6 +53,10 @@ declare module "sst" {
     "VPC": {
       "bastion": string
       "type": "sst.aws.Vpc"
+    }
+    "WebhookNotificationsOnboarding": {
+      "type": "sst.sst.Secret"
+      "value": string
     }
   }
 }

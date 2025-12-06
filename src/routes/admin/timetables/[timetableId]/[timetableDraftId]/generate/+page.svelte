@@ -221,7 +221,7 @@
 			<Card.Content class="space-y-6">
 				<div class="space-y-4">
 					<div class="bg-muted/80 flex items-start gap-3 rounded-lg p-6">
-						<Calendar class="text-primary mt-0.5 h-5 w-5 flex-shrink-0" />
+						<Calendar class="text-primary mt-0.5 h-5 w-5 shrink-0" />
 						<div class="space-y-1">
 							<p class="font-medium">Timetable Generation</p>
 							<p class="text-muted-foreground text-sm">
@@ -232,7 +232,7 @@
 					</div>
 
 					<div class="bg-muted/80 flex items-start gap-3 rounded-lg p-6">
-						<Lock class="text-destructive mt-0.5 h-5 w-5 flex-shrink-0" />
+						<Lock class="text-destructive mt-0.5 h-5 w-5 shrink-0" />
 						<div class="space-y-1">
 							<p class="font-medium">Important Notice</p>
 							<p class="text-muted-foreground text-sm">

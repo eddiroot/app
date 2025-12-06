@@ -30,7 +30,7 @@
 </script>
 
 <div class="flex h-full flex-col gap-8">
-	<div class="flex flex-shrink-0 flex-row items-center gap-8">
+	<div class="flex shrink-0 flex-row items-center gap-8">
 		<Button
 			href={currentStep.previous ? buildStepUrl(currentStep.previous) : '#'}
 			variant="link"

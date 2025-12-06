@@ -130,7 +130,7 @@
 	type="button"
 >
 	<!-- Resource Icon -->
-	<div class="flex-shrink-0">
+	<div class="shrink-0">
 		<div class="bg-muted flex h-10 w-10 items-center justify-center rounded-lg">
 			<IconComponent class="h-5 w-5 {iconClasses[variant]}" />
 		</div>
@@ -150,7 +150,7 @@
 
 	<!-- Remove Button -->
 	{#if showRemoveButton && onRemove}
-		<div class="flex-shrink-0">
+		<div class="shrink-0">
 			<Button
 				type="button"
 				variant="ghost"

@@ -1,12 +1,5 @@
-import { userTypeEnum, yearLevelEnum } from '$lib/enums';
-import {
-	checkSchoolExistence,
-	checkUserExistence,
-	createSchool,
-	createUser
-} from '$lib/server/db/service';
-import { sendEmailVerification } from '$lib/server/email';
-import { redirect } from '@sveltejs/kit';
+import { checkSchoolExistence, checkUserExistence } from '$lib/server/db/service';
+import { Resource } from 'sst';
 import { fail, setError, superValidate } from 'sveltekit-superforms';
 import { zod4 } from 'sveltekit-superforms/adapters';
 import { formSchema } from './schema';
@@ -18,7 +11,7 @@ export const load = async () => {
 };
 
 export const actions = {
-	default: async ({ request, cookies }) => {
+	default: async ({ request }) => {
 		const form = await superValidate(request, zod4(formSchema));
 
 		if (!form.valid) {
@@ -45,33 +38,25 @@ export const actions = {
 			);
 		}
 
-		const school = await createSchool(
-			form.data.schoolName,
-			form.data.countryCode,
-			form.data.stateCode
-		);
+		const embed = {
+			title: 'New Onboarding Request',
+			fields: [
+				{ name: 'Name', value: `${form.data.firstName} ${form.data.lastName}`, inline: true },
+				{ name: 'Email', value: form.data.email, inline: true },
+				{ name: 'School', value: form.data.schoolName, inline: false }
+			],
+			color: 0x00ff00,
+			timestamp: new Date().toISOString()
+		};
 
-		const { user, verificationCode } = await createUser({
-			email: form.data.email,
-			password: form.data.password,
-			schoolId: school.id,
-			type: userTypeEnum.schoolAdmin,
-			yearLevel: yearLevelEnum.none,
-			firstName: form.data.firstName,
-			lastName: form.data.lastName,
-			middleName: form.data.middleName
-		});
-
-		sendEmailVerification(user.email, verificationCode);
-
-		cookies.set('verify_user_id', user.id, {
-			path: '/',
-			httpOnly: true,
-			sameSite: 'lax',
-			secure: process.env.NODE_ENV === 'production',
-			maxAge: 10 * 60 // 10 minutes
-		});
-
-		redirect(303, '/onboarding/validate-email');
+		try {
+			await fetch(Resource.WebhookNotificationsOnboarding.value, {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ embeds: [embed] })
+			});
+		} catch (webhookError) {
+			console.error('Failed to send webhook:', webhookError);
+		}
 	}
 };

@@ -19,6 +19,7 @@ export default $config({
 		};
 	},
 	async run() {
+		const isProd = ['production'].includes($app.stage);
 		const vpc = new sst.aws.Vpc('VPC', { bastion: true });
 
 		// pgvector is built in
@@ -70,6 +71,10 @@ export default $config({
 		const microsoftClientSecret = new sst.Secret('MicrosoftClientSecret', 'use-sst-secret-store');
 		const geminiApiKey = new sst.Secret('GeminiAPIKey', 'use-sst-secret-store');
 		const nomicApiKey = new sst.Secret('NomicAPIKey', 'use-sst-secret-store');
+		const webhookNotificationsOnboarding = new sst.Secret(
+			'WebhookNotificationsOnboarding',
+			'use-sst-secret-store'
+		);
 
 		const GEMINI_DEFAULT_MODEL = 'gemini-2.5-flash';
 		const GEMINI_DEFAULT_IMAGE_MODEL = 'gemini-2.5-flash-image-generation';
@@ -85,7 +90,8 @@ export default $config({
 				microsoftClientId,
 				microsoftClientSecret,
 				geminiApiKey,
-				nomicApiKey
+				nomicApiKey,
+				webhookNotificationsOnboarding
 			], // + fet + email
 			environment: {
 				GEMINI_DEFAULT_MODEL,
@@ -110,18 +116,20 @@ export default $config({
 			}
 		});
 
-		new sst.aws.Router('DomainRedirects', {
-			routes: {
-				'/*': app.url
-			},
-			domain: {
-				name: 'www.eddi.com.au',
-				aliases: ['eddi.au', 'www.eddi.au']
-			}
-		});
+		const router = isProd
+			? new sst.aws.Router('DomainRedirects', {
+					routes: {
+						'/*': app.url
+					},
+					domain: {
+						name: 'www.eddi.com.au',
+						aliases: ['eddi.au', 'www.eddi.au']
+					}
+				})
+			: null;
 
 		return {
-			resources: { vpc, database, bucket, cluster, app } // + fet + email
+			resources: { vpc, database, bucket, cluster, app, router } // + fet + email
 		};
 	}
 });

@@ -40,7 +40,7 @@
 				</div>
 
 				<!-- Status icon -->
-				<div class="flex-shrink-0">
+				<div class="shrink-0">
 					{#if hasAttendance}
 						{#if isPresent}
 							<CheckIcon class="text-success h-4 w-4" />
