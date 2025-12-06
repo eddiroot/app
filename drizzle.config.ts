@@ -4,7 +4,7 @@ import { Resource } from 'sst';
 export default defineConfig({
 	dialect: 'postgresql',
 	schema: './src/lib/server/db/schema',
-	out: './migrations',
+	out: './drizzle',
 	dbCredentials: {
 		// @ts-expect-error - SST Resource types not available in drizzle-kit context
 		host: Resource.Database.host,
