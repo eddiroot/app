@@ -2,6 +2,7 @@ import { newsStatusEnum, newsVisibilityEnum } from '$lib/enums.js';
 import { db } from '$lib/server/db';
 import * as table from '$lib/server/db/schema';
 import { and, asc, count, desc, eq, gte, isNull, lte, or, sql } from 'drizzle-orm';
+import type { EmbeddingMetadataFilter } from '.';
 
 // News CRUD operations
 export async function createNews(
@@ -497,4 +498,30 @@ export async function deleteNews(newsId: number) {
 	const [deletedNews] = await db.delete(table.news).where(eq(table.news.id, newsId)).returning();
 
 	return deletedNews;
+}
+
+// ============================================================================
+// EMBEDDING METADATA EXTRACTION METHODS
+// ============================================================================
+
+/**
+ * Extract metadata for News - includes schoolId, campusId, categoryId, authorId, and status info
+ */
+export async function getNewsMetadataBySchoolId(
+	schoolId: number,
+	campusId?: number | null,
+	categoryId?: number | null,
+	authorId?: string
+): Promise<EmbeddingMetadataFilter> {
+	try {
+		return {
+			schoolId,
+			campusId: campusId ?? undefined,
+			categoryId: categoryId ?? undefined,
+			authorId
+		};
+	} catch (error) {
+		console.error('Error extracting news metadata:', error);
+		return { schoolId };
+	}
 }

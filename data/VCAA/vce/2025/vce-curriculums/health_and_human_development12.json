@@ -1,0 +1,441 @@
+{
+  "id": 26000,
+  "curriculumId": 26000,
+  "name": "Health and Human Development Units 1 and 2",
+  "isArchived": false,
+  "learningAreas": [
+    {
+      "id": 26000,
+      "curriculumSubjectId": 26000,
+      "name": "Concepts of health",
+      "abbreviation": "U1AOS1",
+      "description": "In this area of study, students take a broad, multidimensional approach to health and wellbeing. Such an approach acknowledges that defining and measuring concepts of health are complicated by a diversity of social and cultural contexts. Students consider the measurable indicators of population health and look at data reflecting the health status of young Australians. Focusing on youth, students inquire into the reasons for variations and inequalities in health status, including the sociocultural factors that contribute to variations in health outcomes. On completion of this unit, the student should be able to explain multiple dimensions of health and wellbeing, explain indicators used to measure health status and analyse sociocultural factors that contribute to variations in the health status of youth. To achieve this outcome, the student will draw on the key knowledge and key skills outlined in Area of Study 1. various definitions of health and wellbeing: physical, social, emotional, mental and spiritual dimensions prerequisites for health, as determined by the WHO: peace, shelter, education, food, income, social justice, equity, stable ecosystem and sustainable resources"
+    },
+    {
+      "id": 26001,
+      "curriculumSubjectId": 26000,
+      "name": "Youth health and wellbeing",
+      "abbreviation": "U1AOS2",
+      "description": "In this area of study, students apply the broad concepts of health and wellbeing from Area of Study 1 to their study of Australia’s youth. They identify major health inequalities impacting Australia’s youth and reflect on the causes. Students inquire into how governments and organisations develop and implement youth health programs and consider factors that influence the implementation of and access to these programs. Students conduct a research investigation and apply research skills to find out what young people are most focused on and concerned about regarding health outcomes. The focus for this research could include key areas such as mental health and wellbeing, smoking and vaping, alcohol and other drugs, gambling, relationships and sexuality, and safety (for example, on the road, in the water and the sun, and online). Students select a particular focus area and conduct research, interpret data and draw conclusions on how the health of Australia’s youth can be promoted and improved. On completion of this unit, the student should be able to interpret data to identify key areas for improving youth health and wellbeing, and analyse one youth health area in detail. To achieve this outcome, the student will draw on the key knowledge and key skills outlined in Area of Study 2."
+    },
+    {
+      "id": 26002,
+      "curriculumSubjectId": 26000,
+      "name": "Health and nutrition",
+      "abbreviation": "U1AOS3",
+      "description": "In this area of study, students explore food and nutrition as foundations for good health. They investigate the roles and sources of major nutrients and the use of food selection models and other initiatives to promote healthy eating. Students explore the health consequences of nutritional imbalance, especially for youth, and consider the sociocultural and commercial factors that influence the food practices of, and food choices made, by youth. They develop strategies for building health literacy and evaluating nutrition information from various sources, including advertisements and social media. On completion of this unit, the student should be able to apply nutrition information, food selection models and initiatives to evaluate nutrition information. To achieve this outcome, the student will draw on the key knowledge and key skills outlined in Area of Study 3. the function and food sources of major nutrients important for health outcomes, such as carbohydrates (including fibre), fats, proteins, water, vitamin C, vitamin D, iron, calcium, sodium and folate the use of food selection models and other initiatives to promote healthy eating among youth, such as the Australian Guide to Healthy Eating, the Healthy Eating Pyramid and the Health Star Rating system"
+    },
+    {
+      "id": 26003,
+      "curriculumSubjectId": 26000,
+      "name": "Developmental transitions",
+      "abbreviation": "U2AOS1",
+      "description": "In this area of study, students examine the developmental transitions from youth to adulthood, with a focus on expected changes, significant decisions, and protective factors including behaviours. They consider perceptions of what it means to be a youth and an adult and investigate the expected physical and social changes. They inquire into factors that influence both the transition from youth to adulthood and later health status. They consider the characteristics of respectful, healthy relationships. Students examine parenthood as a transition in life. With a focus on the influence of parents or carers, and families, they investigate factors that contribute to development, and health and wellbeing during the prenatal, infancy and early childhood stages of the human lifespan. Health and wellbeing is considered as an intergenerational concept; that is, the health and wellbeing of one generation affects the next. On completion of this unit, the student should be able to explain developmental changes in the transition from youth to adulthood, analyse factors that contribute to healthy development during the prenatal and early childhood stages of the human lifespan and explain health and wellbeing as an intergenerational concept. To achieve this outcome, the student will draw on the key knowledge and key skills outlined in Area of Study 1. overview of the human lifespan perceptions of youth and adulthood as stages of the human lifespan"
+    },
+    {
+      "id": 26004,
+      "curriculumSubjectId": 26000,
+      "name": "Youth health literacy",
+      "abbreviation": "U2AOS2",
+      "description": "In this area of study, students investigate the health system in Australia from the perspective of youth and their rights and responsibilities. They examine the functions of various entities that play a role in our health system. Students inquire into equity of access to health services, as well as the rights and responsibilities of youth receiving health care. They research the range of health services in their communities and suggest ways of improving the health literacy and health outcomes of youth. On completion of this unit, the student should be able to explain factors affecting access to Australia’s health system that contribute to health literacy and promote the health and wellbeing of youth. To achieve this outcome, the student will draw on the key knowledge and key skills outlined in Area of Study 2. key aspects of Australia’s health system used by youth, such as general practitioners (GPs), allied health services, alternative health services, Medicare, the Pharmaceutical Benefits Scheme (PBS) and the National Disability Insurance Scheme (NDIS) the range of services available in the local community to support the physical, social, emotional, mental and spiritual dimensions of youth health and wellbeing"
+    }
+  ],
+  "outcomes": [
+    {
+      "id": 26000,
+      "curriculumSubjectId": 26000,
+      "number": 1,
+      "description": "On completion of this unit, the student should be able to explain multiple dimensions of health and wellbeing, explain indicators used to measure health status and analyse sociocultural factors that contribute to variations in the health status of youth.",
+      "keyKnowledge": [
+        {
+          "id": 26000,
+          "description": "various definitions of health and wellbeing: physical, social, emotional, mental and spiritual dimensions",
+          "outcomeId": 26000
+        },
+        {
+          "id": 26001,
+          "description": "prerequisites for health, as determined by the WHO: peace, shelter, education, food, income, social justice, equity, stable ecosystem and sustainable resources",
+          "outcomeId": 26000
+        },
+        {
+          "id": 26002,
+          "description": "youth and Aboriginal and Torres Strait Islander perspectives on health and wellbeing",
+          "outcomeId": 26000
+        },
+        {
+          "id": 26003,
+          "description": "indicators used to measure health status, such as incidence and prevalence of health conditions, morbidity, rates of hospitalisation, burden of disease, mortality, life expectancy, core activity limitation, psychological distress and self-assessed health status",
+          "outcomeId": 26000
+        },
+        {
+          "id": 26004,
+          "description": "the health status of Australia’s youth",
+          "outcomeId": 26000
+        },
+        {
+          "id": 26005,
+          "description": "sociocultural factors that contribute to variations in health outcomes for youth, such as peer group, family, education, income and health literacy.",
+          "outcomeId": 26000
+        }
+      ],
+      "keySkills": [
+        {
+          "id": 26000,
+          "description": "describe and analyse various perspectives, definitions and interpretations of health and wellbeing",
+          "outcomeId": 26000
+        },
+        {
+          "id": 26001,
+          "description": "explain different dimensions of health and wellbeing",
+          "outcomeId": 26000
+        },
+        {
+          "id": 26002,
+          "description": "discuss how access to prerequisites for health can promote positive health outcomes",
+          "outcomeId": 26000
+        },
+        {
+          "id": 26003,
+          "description": "describe the subjective nature of health and wellbeing",
+          "outcomeId": 26000
+        },
+        {
+          "id": 26004,
+          "description": "discuss various perspectives on health and wellbeing, including those of youth and Aboriginal and Torres Strait Islander Peoples",
+          "outcomeId": 26000
+        },
+        {
+          "id": 26005,
+          "description": "draw conclusions from health data about the health status of youth in Australia",
+          "outcomeId": 26000
+        },
+        {
+          "id": 26006,
+          "description": "explain and analyse a range of sociocultural factors that contribute to variations in the health outcomes of Australia’s youth.",
+          "outcomeId": 26000
+        }
+      ]
+    },
+    {
+      "id": 26001,
+      "curriculumSubjectId": 26000,
+      "number": 2,
+      "description": "On completion of this unit, the student should be able to interpret data to identify key areas for improving youth health and wellbeing, and analyse one youth health area in detail.",
+      "keyKnowledge": [
+        {
+          "id": 26006,
+          "description": "key areas of youth health requiring health action, as indicated by health data",
+          "outcomeId": 26001
+        },
+        {
+          "id": 26007,
+          "description": "government and non-government programs relating to youth health and wellbeing",
+          "outcomeId": 26001
+        },
+        {
+          "id": 26008,
+          "description": "the following features of one health focus relating to Australia’s youth: impact on different dimensions of health and wellbeing, data such as incidence, prevalence and trends, risk and protective factors, healthcare services and support, government and community programs and personal strategies to reduce negative impact, direct, indirect and intangible costs to individuals and/or communities, opportunities for youth advocacy and action on a personal and community level to improve outcomes in terms of health and equity.",
+          "outcomeId": 26001
+        }
+      ],
+      "keySkills": [
+        {
+          "id": 26007,
+          "description": "identify key areas for action and improvement in youth health and wellbeing using research to interpret data",
+          "outcomeId": 26001
+        },
+        {
+          "id": 26008,
+          "description": "analyse factors that contribute to inequalities in the health status of Australia’s youth",
+          "outcomeId": 26001
+        },
+        {
+          "id": 26009,
+          "description": "analyse factors that influence the creation and implementation of, and access to, programs that target youth health such as equity, social justice, community values and funding",
+          "outcomeId": 26001
+        },
+        {
+          "id": 26010,
+          "description": "research, collect and analyse data on one health focus relating to youth, examining its impact, management, advocacy and costs.",
+          "outcomeId": 26001
+        }
+      ]
+    },
+    {
+      "id": 26002,
+      "curriculumSubjectId": 26000,
+      "number": 3,
+      "description": "On completion of this unit, the student should be able to apply nutrition information, food selection models and initiatives to evaluate nutrition information.",
+      "keyKnowledge": [
+        {
+          "id": 26009,
+          "description": "the function and food sources of major nutrients important for health outcomes, such as carbohydrates (including fibre), fats, proteins, water, vitamin C, vitamin D, iron, calcium, sodium and folate",
+          "outcomeId": 26002
+        },
+        {
+          "id": 26010,
+          "description": "the use of food selection models and other initiatives to promote healthy eating among youth, such as the Australian Guide to Healthy Eating, the Healthy Eating Pyramid and the Health Star Rating system",
+          "outcomeId": 26002
+        },
+        {
+          "id": 26011,
+          "description": "sources of nutrition information and methods to evaluate its validity",
+          "outcomeId": 26002
+        },
+        {
+          "id": 26012,
+          "description": "sociocultural factors, including commercial factors, that act as enablers of or barriers to healthy eating among youth, with a focus on the tactics used in the marketing and promotion of food to youth.",
+          "outcomeId": 26002
+        }
+      ],
+      "keySkills": [
+        {
+          "id": 26011,
+          "description": "explain the role of major nutrients in health outcomes",
+          "outcomeId": 26002
+        },
+        {
+          "id": 26012,
+          "description": "describe the possible consequences of nutritional imbalance on short and long-term health outcomes for youth",
+          "outcomeId": 26002
+        },
+        {
+          "id": 26013,
+          "description": "evaluate the effectiveness of food selection models and other initiatives in the promotion of healthy eating among youth",
+          "outcomeId": 26002
+        },
+        {
+          "id": 26014,
+          "description": "evaluate the validity of food and nutrition information from a variety of sources",
+          "outcomeId": 26002
+        },
+        {
+          "id": 26015,
+          "description": "analyse sociocultural factors that contribute to healthy eating among youth and their potential impact on health behaviours and health outcomes.",
+          "outcomeId": 26002
+        }
+      ]
+    },
+    {
+      "id": 26003,
+      "curriculumSubjectId": 26000,
+      "number": 1,
+      "description": "On completion of this unit, the student should be able to explain developmental changes in the transition from youth to adulthood, analyse factors that contribute to healthy development during the prenatal and early childhood stages of the human lifespan and explain health and wellbeing as an intergenerational concept.",
+      "keyKnowledge": [
+        {
+          "id": 26013,
+          "description": "overview of the human lifespan",
+          "outcomeId": 26003
+        },
+        {
+          "id": 26014,
+          "description": "perceptions of youth and adulthood as stages of the human lifespan",
+          "outcomeId": 26003
+        },
+        {
+          "id": 26015,
+          "description": "characteristics of development, including physical, social, emotional and intellectual",
+          "outcomeId": 26003
+        },
+        {
+          "id": 26016,
+          "description": "developmental transitions from youth to adulthood",
+          "outcomeId": 26003
+        },
+        {
+          "id": 26017,
+          "description": "key characteristics of healthy and respectful relationships and their impact on health and wellbeing, and on development",
+          "outcomeId": 26003
+        },
+        {
+          "id": 26018,
+          "description": "considerations associated with becoming a parent, such as changes in responsibilities and relationships, and additional stressors",
+          "outcomeId": 26003
+        },
+        {
+          "id": 26019,
+          "description": "the availability of social and emotional support and resources for parents",
+          "outcomeId": 26003
+        },
+        {
+          "id": 26020,
+          "description": "the role of parents, carers and the family environment in determining the optimal development of children, by developing students’ understanding of: fertilisation and the stages of prenatal development, risk and protective factors related to prenatal development, such as maternal diet and the effects of smoking and alcohol during pregnancy, physical, social, emotional and intellectual development in infancy and early childhood, the impact of early life experiences on future health and development",
+          "outcomeId": 26003
+        },
+        {
+          "id": 26021,
+          "description": "the intergenerational nature of health and wellbeing.",
+          "outcomeId": 26003
+        }
+      ],
+      "keySkills": [
+        {
+          "id": 26016,
+          "description": "describe the stages of the human lifespan",
+          "outcomeId": 26003
+        },
+        {
+          "id": 26017,
+          "description": "collect and analyse information to draw conclusions on perceptions of youth and adulthood",
+          "outcomeId": 26003
+        },
+        {
+          "id": 26018,
+          "description": "describe the characteristics of physical, social, emotional and intellectual development",
+          "outcomeId": 26003
+        },
+        {
+          "id": 26019,
+          "description": "explain the developmental changes that characterise the transition from youth to adulthood",
+          "outcomeId": 26003
+        },
+        {
+          "id": 26020,
+          "description": "analyse the role of healthy and respectful relationships in the achievement of optimal health and wellbeing",
+          "outcomeId": 26003
+        },
+        {
+          "id": 26021,
+          "description": "analyse factors to be considered and resources required for the transition to parenthood",
+          "outcomeId": 26003
+        },
+        {
+          "id": 26022,
+          "description": "analyse factors that influence development during the prenatal and early childhood stages of the human lifespan",
+          "outcomeId": 26003
+        },
+        {
+          "id": 26023,
+          "description": "explain health and wellbeing as an intergenerational concept.",
+          "outcomeId": 26003
+        }
+      ]
+    },
+    {
+      "id": 26004,
+      "curriculumSubjectId": 26000,
+      "number": 2,
+      "description": "On completion of this unit, the student should be able to explain factors affecting access to Australia’s health system that contribute to health literacy and promote the health and wellbeing of youth.",
+      "keyKnowledge": [
+        {
+          "id": 26022,
+          "description": "key aspects of Australia’s health system used by youth, such as general practitioners (GPs), allied health services, alternative health services, Medicare, the Pharmaceutical Benefits Scheme (PBS) and the National Disability Insurance Scheme (NDIS)",
+          "outcomeId": 26004
+        },
+        {
+          "id": 26023,
+          "description": "the range of services available in the local community to support the physical, social, emotional, mental and spiritual dimensions of youth health and wellbeing",
+          "outcomeId": 26004
+        },
+        {
+          "id": 26024,
+          "description": "factors affecting youth’s access to health services and information",
+          "outcomeId": 26004
+        },
+        {
+          "id": 26025,
+          "description": "rights and responsibilities associated with accessing health services, such as privacy and confidentiality relating to the storage, use and sharing of personal health information and data",
+          "outcomeId": 26004
+        },
+        {
+          "id": 26026,
+          "description": "opportunities and challenges presented by digital media in the provision of youth health and wellbeing information, for example websites, online practitioners and digital health apps",
+          "outcomeId": 26004
+        },
+        {
+          "id": 26027,
+          "description": "options for consumer complaint and redress within the health system.",
+          "outcomeId": 26004
+        }
+      ],
+      "keySkills": [
+        {
+          "id": 26024,
+          "description": "describe key aspects of the health system and their impact on youth health literacy and health outcomes",
+          "outcomeId": 26004
+        },
+        {
+          "id": 26025,
+          "description": "research youth health services in the local community and explain which dimension(s) of health each one supports",
+          "outcomeId": 26004
+        },
+        {
+          "id": 26026,
+          "description": "identify and explain factors that affect the ability of youth to access health services and information",
+          "outcomeId": 26004
+        },
+        {
+          "id": 26027,
+          "description": "critique sources of health information and health services",
+          "outcomeId": 26004
+        },
+        {
+          "id": 26028,
+          "description": "discuss rights and responsibilities of access to health services",
+          "outcomeId": 26004
+        },
+        {
+          "id": 26029,
+          "description": "explain the options for consumer complaint and redress within the health system.",
+          "outcomeId": 26004
+        }
+      ]
+    }
+  ],
+  "extraContents": [
+    {
+      "id": 26000,
+      "description": "Health and wellbeing: The concept of health and wellbeing is embedded across all units of VCE Health and Human Development. For the purposes of this study, the term ‘health’ is a broad, overarching term that includes the concepts of health and wellbeing, health status and associated health outcomes. Students need to develop an understanding of the multidimensional, dynamic and subjective nature of the concept of health and wellbeing. Throughout the study design, health and wellbeing is portrayed as having 5 dimensions: physical, social, emotional, mental and spiritual. It is important to acknowledge that the 5 dimensions are not discrete but are interrelated and influence one another. Within this study, students consider wellbeing to be an implicit element of health. Wellbeing is a complex combination of all dimensions of health, characterised by state of equilibrium in which the individual feels happy, healthy, capable and engaged.",
+      "curriculumSubjectId": 26000,
+      "extraContentType": "definition"
+    },
+    {
+      "id": 26001,
+      "description": "Social justice: VCE Health and Human Development recognises that social justice is a prerequisite for health and wellbeing. The study uses a social justice lens to explore the variations in health between population groups, as well as within and between countries. Social justice relates to fairness within society. A socially just society is necessary for health and wellbeing and cannot be achieved without the principles of: human rights, where society protects, respects and promotes everyone’s rights and freedoms, access, where everyone in society has access to equal opportunities and the resources they need to thrive, including the prerequisites for health and wellbeing such as food, income and education, participation, where everyone in society is encouraged to participate in their community and have their voice represented, equity, which addresses the factors that cause inequality and provides strategies to ensure fairness. Equity is not about treating everyone equally but rather about providing what individuals or groups require for health and wellbeing.",
+      "curriculumSubjectId": 26000,
+      "extraContentType": "definition"
+    },
+    {
+      "id": 26002,
+      "description": "Factors that influence health and wellbeing: Across all units, students should develop an understanding of the factors that influence health and wellbeing, and health status. Within the study, these factors are classified as biological, sociocultural and environmental. Some examples include: biological factors, including genetics, body weight, blood pressure, hormones and cholesterol levels, sociocultural factors, including socioeconomic status, level of education, employment status, cultural background, social networks (for example, family and peer group), social expectations and attitudes (for example, gender expectations), cultural traditions, and a subset of sociocultural factors: commercial factors, that is, conditions, actions and policies of corporate organisations that impact health and wellbeing, either positively or negatively; commercial factors include supply chains, product design, packaging and labelling, distribution and affordability, lobbying, marketing strategies and the use of media, environmental factors, including geographic location, quality of air and water, safe workplaces, housing environment, community safety, access to physical resources within a community (for example, transportation, recreation facilities and health services).",
+      "curriculumSubjectId": 26000,
+      "extraContentType": "definition"
+    },
+    {
+      "id": 26003,
+      "description": "Sustainability: Sustainability addresses the ongoing capacity of the planet to maintain all life. Sustainable patterns of living seek to meet the needs of the present generation without compromising the ability of future generations to meet their needs. Sustainability is presented throughout this study as a complex, holistic concept comprising 3 dimensions: environmental, economic and social. The environmental dimension focuses on ensuring that the resources of the planet are available for future generations and includes addressing water quality, air quality and food security, as well as reducing environmental stressors such as greenhouse gases. Human health depends greatly on the quality of a person's environment, inextricably linking health and wellbeing to the state of the environment. The economic dimension is about using resources efficiently so that economic growth continues over time; economic growth includes opportunities for employment and job security as well as financial security for individuals, families, communities and nations. The economic dimension of sustainability contributes to the eradication of poverty and ensures that individuals, families, communities and nations have the resources necessary to promote health and wellbeing, now and into the future. The social dimension is about ensuring that people have access to social resources both today and in the future. It includes access to human rights, education, health care, political empowerment and connection to community. Social sustainability builds skills and capacities, improves the quality of lives and increases equity, inclusion and resilience, and is therefore essential for the health and wellbeing of individuals as well as local, national and global communities. VCE Health and Human Development focuses on sustainability by considering the relationship between health and wellbeing, and the health of the planet, ensuring that the study is future-orientated. The study encourages students to reflect on how they interpret and engage with the world. It is designed to raise student awareness to create a more environmentally, economically and socially just world. ",
+      "curriculumSubjectId": 26000,
+      "extraContentType": "definition"
+    },
+    {
+      "id": 26004,
+      "description": "Data analysis: Embedded within all units of VCE Health and Human Development are the analysis and interpretation of health data. Data analysis is a tool that allows students to develop health literacy and informs the critical inquiry approach. Students should have opportunities to analyse and interpret a wide range of data types, such as tables, graphs (for example, bar, line and pie graphs), infographics, quotations and case studies. Students should also develop familiarity with a range of data measures such as percentages and ratios. Some points of key knowledge require students to collect data. This does not need to be on a large scale and could include: surveying students within the class group or their peer group, interviewing family members or other students, making direct observations, conducting an audit of health services in their local community, using secondary data from a range of sources. Before asking students to collect data, teachers should discuss with them the ethical principles of conducting research. These include the concepts of: obtaining informed consent doing no harm to the participants, researcher or community, respecting the individual’s right to privacy. Teachers must ensure that students use data collection methods that do not require them to disclose personal information about their health status or health behaviours. Data collection practices must be consistent with school policies. ",
+      "curriculumSubjectId": 26000,
+      "extraContentType": "definition"
+    },
+    {
+      "id": 26005,
+      "description": "Aboriginal and Torres Strait Islander Peoples’ knowledge, culture and perspectives on health and wellbeing: Aboriginal and Torres Strait Islander Peoples are the first Australians, and the oldest continuous living cultures in human history. They have diverse cultures and social and kinship structures, and unique, complex knowledge systems. VCE Health and Human Development provides opportunities for students to develop their understanding of Aboriginal and Torres Strait Islander perspectives on health and wellbeing, as well as of the factors that impact their health status.Teachers are encouraged to include Aboriginal and Torres Strait Islander knowledge and perspectives in the design and delivery of teaching and learning programs related to VCE Health and Human Development. Many local Aboriginal and Torres Strait Islander communities have protocols that they have developed in relation to education. The Victorian Koorie community-preferred education model enables teachers to focus inclusively on supporting students to consider Victorian Koorie education matters, and systematically support students to learn about local, regional, state and national Aboriginal and Torres Strait Islander Peoples’ perspectives. VCE studies involve a focused extension of this model and include a broader application of national and international perspectives. Protocols for Koorie education in Victorian schools, and other resources relating to the inclusion of Aboriginal and Torres Strait Island Peoples’ knowledge and perspectives, may be accessed at VAEAI.",
+      "curriculumSubjectId": 26000,
+      "extraContentType": "definition"
+    },
+    {
+      "id": 26006,
+      "description": "Strengths-based approach: The VCE Health and Human Development study adopts a strengths-based approach that affirms that all individuals and their communities have strengths and resources that can be nurtured to improve their own and others’ health and wellbeing. This approach attempts to avoid deficit models of health that are individualising and stigmatising. This shift can be challenging because risk is a key concept in the study of the health of population groups. While it is important to examine population health, the study of at-risk groups has the potential to cause harm. Ideally, students apply the social and environmental determinants of health to understand the complex factors that contribute to ongoing health inequality at the population level and to learn about population health and at-risk groups.",
+      "curriculumSubjectId": 26000,
+      "extraContentType": "definition"
+    },
+    {
+      "id": 26007,
+      "description": "Health Literacy: Health literacy relates to the extent to which people are able to access, critique, understand and use health information and services in ways that promote and maintain health and wellbeing. A high level of health literacy is strongly linked to improved health outcomes. VCE Health and Human Development focuses on developing knowledge and skills related to the following components: Individual health literacy refers to the skills, knowledge, motivation and capacity of a person to access, understand, appraise and apply information to make effective decisions about health and health care, and take appropriate action. Individual health literacy has 3 dimensions: The functional dimension refers to the basic skills to research and apply health information, acquire knowledge and utilise health services to respond to a health-related question. The interactive dimension includes more advanced knowledge, understanding and skills to engage with a health issue actively and independently, and to apply new health information to their set of circumstances. The interactive dimension enables students to interact with information providers such as healthcare professionals with greater confidence. The critical dimension is the ability to access and critically analyse health information from a variety of sources, which might include scientific information, health brochures or messages in the media, in order to take action to promote personal health and wellbeing or that of others. The critical dimension enables students to evaluate the validity of health information from a variety of sources to exert greater control over life events and situations. The health literacy environment refers to the infrastructure, policies, processes, materials, people and relationships that make up the health system and have an impact on the way people access, understand, appraise and apply health-related information and services. An individual’s health literacy is impacted by the health literacy environment. Through studying VCE Health and Human Development, students’ individual health literacy will develop along with their capacity to critically analyse the broader health literacy environment in their local community, Australia and on a global scale.",
+      "curriculumSubjectId": 26000,
+      "extraContentType": "definition"
+    },
+    {
+      "id": 26008,
+      "description": "Critical Inquiry: VCE Health and Human Development engages students in critical inquiry processes that develop their ability to research, analyse, apply and appraise knowledge. This approach enables them to critically evaluate factors that influence health and wellbeing and explore how aspects of social justice can contribute to improvements in health and wellbeing, and health status. VCE Health and Human Development recognises that values, behaviours, priorities and actions related to health and wellbeing reflect varying contextual factors that influence the ways people live. Through the study design, students develop an understanding that the interpretations and interests that individuals and social groups have in relation to health and wellbeing are diverse and therefore require different approaches and strategies.",
+      "curriculumSubjectId": 26000,
+      "extraContentType": "definition"
+    }
+  ]
+}

@@ -1,5 +1,6 @@
 import {
 	boolean,
+	index,
 	integer,
 	jsonb,
 	pgEnum,
@@ -13,7 +14,7 @@ import { newsPriorityEnum, newsStatusEnum, newsVisibilityEnum } from '../../../e
 import { resource } from './resource';
 import { campus, school } from './schools';
 import { user } from './user';
-import { timestamps } from './utils';
+import { embeddings, timestamps } from './utils';
 
 export const newsPriorityEnumPg = pgEnum('news_priority', [
 	newsPriorityEnum.low,
@@ -71,10 +72,13 @@ export const news = pgTable(
 		isPinned: boolean('is_pinned').notNull().default(false),
 		viewCount: integer('view_count').notNull().default(0),
 		isArchived: boolean('is_archived').notNull().default(false),
-		...timestamps
+		...timestamps,
+		...embeddings
 	},
 	(self) => [
-		unique().on(self.schoolId, self.title) // Unique title per school
+		unique().on(self.schoolId, self.title), // Unique title per school
+		index('news_embedding_idx').using('hnsw', self.embedding.op('vector_cosine_ops')),
+		index('news_metadata_idx').using('gin', self.embeddingMetadata),
 	]
 );
 

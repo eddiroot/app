@@ -21,6 +21,7 @@ We currently don't expect contributions from members outside of the core team. T
 2. Run the following commands one-by-one
 
 ```bash
+docker compose down --volumes
 docker compose up -d
 npm install
 npm run sso
@@ -32,7 +33,9 @@ npx sst dev
 ```bash
 sst secret set SecretName secret-value
 # repeat for each secret in sst.config.ts
+npm run db:migrate
 npm run db:push
+npm run db:restore -- snapshots/eddi_vcaa.sql.gz
 npm run db:seed
 ```
 

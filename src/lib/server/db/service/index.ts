@@ -33,3 +33,6 @@ export * from './module.js';
 
 // Curriculum
 export * from './curriculum.js';
+
+// Vector
+export * from './vector.js';

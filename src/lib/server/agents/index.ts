@@ -43,7 +43,7 @@ export interface AgentMemory {
 
 export interface StudentResponse {
   questionId: number;
-  response: any; // create a zod4 for responses based on task blcoks 
+  response: any; // create a zod for responses based on task blcoks 
   isCorrect: boolean;
   timestamp: Date;
   timeSpent: number;
