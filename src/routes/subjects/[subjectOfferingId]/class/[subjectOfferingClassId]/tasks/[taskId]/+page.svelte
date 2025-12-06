@@ -235,9 +235,19 @@
 	const draggedOverClasses = 'border-accent-foreground';
 	const notDraggedOverClasses = 'border-bg';
 
+	function resetDndState() {
+		dndState.isDragging = false;
+		dndState.draggedItem = null;
+		dndState.sourceContainer = '';
+		dndState.targetContainer = null;
+	}
+
 	async function handleDrop(state: DragDropState<TaskBlock>) {
 		const { draggedItem, sourceContainer, targetContainer } = state;
-		if (!targetContainer) return;
+		if (!targetContainer) {
+			resetDndState();
+			return;
+		}
 
 		if (sourceContainer === 'blockPalette' && targetContainer.startsWith('task')) {
 			const index = blocks.findIndex((b) => b.id.toString() === targetContainer.split('-')[1]);
@@ -251,6 +261,7 @@
 
 			if (!block) {
 				alert('Failed to create block. Please try again.');
+				resetDndState();
 				return;
 			}
 
@@ -260,6 +271,7 @@
 				blocks = [...blocks.slice(0, index), block, ...blocks.slice(index)];
 			} else {
 				alert('Failed to insert block at the correct position. Please try again.');
+				resetDndState();
 				return;
 			}
 		}
@@ -277,6 +289,7 @@
 
 			if (!block) {
 				alert('Failed to create block. Please try again.');
+				resetDndState();
 				return;
 			}
 
@@ -286,6 +299,7 @@
 				blocks = [...blocks.slice(0, index), block, ...blocks.slice(index)];
 			} else {
 				alert('Failed to insert block at the correct position. Please try again.');
+				resetDndState();
 				return;
 			}
 		}
@@ -298,10 +312,12 @@
 
 			if (targetIndex === -1 || sourceIndex === -1) {
 				alert('Failed to find block for drag and drop. Please try again.');
+				resetDndState();
 				return;
 			}
 
 			if (sourceIndex === targetIndex) {
+				resetDndState();
 				return;
 			}
 
@@ -337,6 +353,7 @@
 			const { success } = await deleteBlock(draggedItem.id);
 			if (!success) {
 				alert('Failed to delete block. Please try again.');
+				resetDndState();
 				return;
 			}
 			blocks = blocks.filter((block) => block.id !== draggedItem.id);
@@ -347,10 +364,13 @@
 			const { success } = await deleteBlock(draggedItem.id);
 			if (!success) {
 				alert('Failed to move block to column. Please try again.');
+				resetDndState();
 				return;
 			}
 			blocks = blocks.filter((block) => block.id !== draggedItem.id);
 		}
+
+		resetDndState();
 	}
 </script>
 

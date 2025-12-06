@@ -34,7 +34,7 @@
 				},
 				editorProps: {
 					attributes: {
-						class: 'p-6 prose dark:prose-invert focus:outline-none min-h-32'
+						class: 'p-6 prose dark:prose-invert focus:outline-none min-h-32 max-w-none break-words'
 					}
 				}
 			})
@@ -58,7 +58,7 @@
 	});
 </script>
 
-<div class="rounded-md border">
+<div class="w-full rounded-md border">
 	{#if editorBox?.current && isEditable}
 		<div class="flex items-center gap-x-1 border-b px-6 py-4">
 			<Button

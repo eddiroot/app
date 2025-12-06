@@ -5,15 +5,21 @@
 	import { Checkbox } from '$lib/components/ui/checkbox/index.js';
 	import * as Form from '$lib/components/ui/form/index.js';
 	import { Input } from '$lib/components/ui/input/index.js';
-	import * as Select from '$lib/components/ui/select';
+	import { toast } from 'svelte-sonner';
 	import { type Infer, superForm, type SuperValidated } from 'sveltekit-superforms';
 	import { zod4 } from 'sveltekit-superforms/adapters';
-	import { COUNTRYANDSTATECODES, formSchema, type FormSchema } from './schema';
+	import { formSchema, type FormSchema } from './schema';
 
 	let { data }: { data: { form: SuperValidated<Infer<FormSchema>> } } = $props();
 
+	// svelte-ignore state_referenced_locally
 	const form = superForm(data.form, {
-		validators: zod4(formSchema)
+		validators: zod4(formSchema),
+		onResult: async (result) => {
+			if (result.result.type === 'success') {
+				toast.success('Thanks, we have your details and will be in touch soon!');
+			}
+		}
 	});
 
 	const { form: formData, enhance } = form;
@@ -23,8 +29,10 @@
 	<div class="w-full max-w-lg">
 		<Card class="border-none shadow-none">
 			<CardHeader>
-				<CardTitle class="text-2xl">Create Your Account</CardTitle>
-				<CardDescription>Let's start by setting up your admin account</CardDescription>
+				<CardTitle class="text-2xl">Get Started</CardTitle>
+				<CardDescription
+					>We need some details from you before we can get the ball rolling.</CardDescription
+				>
 			</CardHeader>
 			<CardContent>
 				<form method="POST" class="space-y-4" use:enhance>
@@ -33,16 +41,6 @@
 							{#snippet children({ props })}
 								<Form.Label>First Name</Form.Label>
 								<Input {...props} bind:value={$formData.firstName} placeholder="John" />
-							{/snippet}
-						</Form.Control>
-						<Form.FieldErrors />
-					</Form.Field>
-
-					<Form.Field {form} name="middleName">
-						<Form.Control>
-							{#snippet children({ props })}
-								<Form.Label>Middle Name (if applicable)</Form.Label>
-								<Input {...props} bind:value={$formData.middleName} placeholder="Appleseed" />
 							{/snippet}
 						</Form.Control>
 						<Form.FieldErrors />
@@ -66,7 +64,7 @@
 									{...props}
 									type="email"
 									bind:value={$formData.email}
-									placeholder="john.doe@school.edu"
+									placeholder="john.doe@school.edu.au"
 								/>
 							{/snippet}
 						</Form.Control>
@@ -78,85 +76,6 @@
 							{#snippet children({ props })}
 								<Form.Label>School Name</Form.Label>
 								<Input {...props} bind:value={$formData.schoolName} placeholder="School of eddi" />
-							{/snippet}
-						</Form.Control>
-						<Form.FieldErrors />
-					</Form.Field>
-					<div class="flex gap-4">
-						<Form.Field {form} name="countryCode" class="flex-1">
-							<Form.Control>
-								{#snippet children({ props })}
-									<Form.Label>Schools Country Code</Form.Label>
-									<Select.Root type="single" bind:value={$formData.countryCode}>
-										<Select.Trigger {...props} class="mt-1 w-full">
-											{#if $formData.countryCode}
-												{$formData.countryCode}
-											{:else}
-												AU
-											{/if}
-										</Select.Trigger>
-										<Select.Content>
-											{#each Object.keys(COUNTRYANDSTATECODES) as code}
-												<Select.Item value={code}>{code}</Select.Item>
-											{/each}
-										</Select.Content>
-									</Select.Root>
-								{/snippet}
-							</Form.Control>
-							<Form.FieldErrors />
-						</Form.Field>
-						<Form.Field {form} name="stateCode" class="flex-1">
-							<Form.Control>
-								{#snippet children({ props })}
-									<Form.Label>Schools State Code</Form.Label>
-									<Select.Root type="single" bind:value={$formData.stateCode}>
-										<Select.Trigger {...props} class="mt-1 w-full">
-											{#if $formData.stateCode}
-												{$formData.stateCode}
-											{:else}
-												Select a state
-											{/if}
-										</Select.Trigger>
-										<Select.Content>
-											{#if $formData.countryCode && COUNTRYANDSTATECODES[$formData.countryCode as keyof typeof COUNTRYANDSTATECODES]}
-												{#each COUNTRYANDSTATECODES[$formData.countryCode as keyof typeof COUNTRYANDSTATECODES] as stateCode}
-													<Select.Item value={stateCode}>{stateCode}</Select.Item>
-												{/each}
-											{:else}
-												<Select.Item value="" disabled>Please select a country first</Select.Item>
-											{/if}
-										</Select.Content>
-									</Select.Root>
-								{/snippet}
-							</Form.Control>
-							<Form.FieldErrors />
-						</Form.Field>
-					</div>
-					<Form.Field {form} name="password">
-						<Form.Control>
-							{#snippet children({ props })}
-								<Form.Label>Password</Form.Label>
-								<Input
-									{...props}
-									type="password"
-									bind:value={$formData.password}
-									placeholder="••••••••"
-								/>
-							{/snippet}
-						</Form.Control>
-						<Form.FieldErrors />
-					</Form.Field>
-
-					<Form.Field {form} name="confirmPassword">
-						<Form.Control>
-							{#snippet children({ props })}
-								<Form.Label>Confirm Password</Form.Label>
-								<Input
-									{...props}
-									type="password"
-									bind:value={$formData.confirmPassword}
-									placeholder="••••••••"
-								/>
 							{/snippet}
 						</Form.Control>
 						<Form.FieldErrors />

@@ -508,7 +508,7 @@
 					<Card.Content class="space-y-2">
 						{#each studentPerformanceInsights() as insight}
 							<div class="flex items-start gap-2">
-								<AlertCircleIcon class="mt-0.5 h-4 w-4 flex-shrink-0 text-amber-500" />
+								<AlertCircleIcon class="mt-0.5 h-4 w-4 shrink-0 text-amber-500" />
 								<p class="text-muted-foreground text-sm">{insight}</p>
 							</div>
 						{/each}
@@ -828,7 +828,7 @@
 					<Card.Content class="space-y-2">
 						{#each taskAnalyticsInsights() as insight}
 							<div class="flex items-start gap-2">
-								<AlertCircleIcon class="text-primary mt-0.5 h-4 w-4 flex-shrink-0" />
+								<AlertCircleIcon class="text-primary mt-0.5 h-4 w-4 shrink-0" />
 								<p class="text-muted-foreground text-sm">{insight}</p>
 							</div>
 						{/each}
@@ -1216,7 +1216,7 @@
 					<Card.Content class="space-y-2">
 						{#each discussionAnalyticsInsights() as insight}
 							<div class="flex items-start gap-2">
-								<MessageSquareIcon class="mt-0.5 h-4 w-4 flex-shrink-0 text-green-500" />
+								<MessageSquareIcon class="mt-0.5 h-4 w-4 shrink-0 text-green-500" />
 								<p class="text-muted-foreground text-sm">{insight}</p>
 							</div>
 						{/each}

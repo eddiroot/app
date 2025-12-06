@@ -55,7 +55,7 @@
 					</Select.Trigger>
 					<Select.Content>
 						<Select.Group>
-							<Select.Label>Heading Size</Select.Label>
+							<Select.Label>Heading Level</Select.Label>
 							{#each ['2', '3', '4', '5', '6'] as size (size)}
 								<Select.Item value={size} label={size}>
 									{size}

@@ -30,6 +30,8 @@ npx sst dev
 3. In a new terminal, run these commands
 
 ```bash
+sst secret set SecretName secret-value
+# repeat for each secret in sst.config.ts
 npm run db:push
 npm run db:seed
 ```
@@ -40,4 +42,21 @@ To add new [shadcn-svelte components](https://www.shadcn-svelte.com/docs/compone
 
 ```bash
 npx shadcn-svelte@latest add component-name-here
+```
+
+# Deploying
+
+## Everything
+
+```bash
+npx sst deploy --stage production
+```
+
+## DB Updates
+
+```bash
+# run the below command in its own terminal
+npx sst tunnel --stage production
+# in a new terminal, run:
+npx sst shell --stage production -- npx drizzle-kit push
 ```

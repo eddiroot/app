@@ -107,7 +107,7 @@
 						</div>
 						<div class="space-y-2 overflow-hidden">
 							<div class="text-muted-foreground flex items-center gap-2 text-sm">
-								<MapPinIcon class="h-4 w-4 flex-shrink-0" />
+								<MapPinIcon class="h-4 w-4 shrink-0" />
 								<span class="truncate">{campus.address}</span>
 							</div>
 							<Card.Description class="line-clamp-3 overflow-hidden">
@@ -146,7 +146,7 @@
 						</div>
 						<div class="space-y-2 overflow-hidden">
 							<div class="text-muted-foreground flex items-center gap-2 text-sm">
-								<MapPinIcon class="h-4 w-4 flex-shrink-0" />
+								<MapPinIcon class="h-4 w-4 shrink-0" />
 								<span class="truncate">{campus.address}</span>
 							</div>
 							<Card.Description class="text-muted-foreground line-clamp-3 overflow-hidden">

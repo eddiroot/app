@@ -1,6 +1,5 @@
-// import adapter from '@sveltejs/adapter-node';
+import adapter from "@sveltejs/adapter-node";
 import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
-import adapter from "svelte-kit-sst";
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
@@ -19,7 +18,6 @@ const config = {
 		// },
 		csrf: {
 			trustedOrigins: [
-				"http://localhost:5173",
 				"https://eddi.com.au",
 				"https://www.eddi.com.au"
 			]

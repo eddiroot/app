@@ -1,19 +1,16 @@
 <script lang="ts">
-	import '../app.css';
-
-	import { ModeWatcher } from 'mode-watcher';
-
 	import { page } from '$app/state';
-
 	import AiSidebar from '$lib/components/ai-sidebar.svelte';
 	import AppSidebar from '$lib/components/app-sidebar.svelte';
 	import ThemeToggle from '$lib/components/theme-toggle.svelte';
 	import * as Breadcrumb from '$lib/components/ui/breadcrumb/index.js';
-	import Button from '$lib/components/ui/button/button.svelte';
 	import * as Resizable from '$lib/components/ui/resizable';
 	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
+	import { Toaster } from '$lib/components/ui/sonner/index.js';
 	import { IsMobile } from '$lib/hooks/is-mobile.svelte.js';
 	import type { Task } from '$lib/server/db/schema';
+	import { ModeWatcher } from 'mode-watcher';
+	import '../app.css';
 
 	let { children, data } = $props();
 
@@ -84,6 +81,8 @@
 	<title>{data?.school?.name || 'eddi'}</title>
 	<!-- <meta name="description" content="" /> -->
 </svelte:head>
+
+<Toaster />
 <ModeWatcher />
 <div class="[--header-height:calc(--spacing(14))]">
 	<Sidebar.Provider class="flex flex-col">
@@ -116,9 +115,6 @@
 					</Breadcrumb.Root>
 				</div>
 				<div class="flex items-center gap-x-2">
-					{#if !user() && page.url.pathname !== '/login'}
-						<Button href="/login">Login</Button>
-					{/if}
 					<ThemeToggle />
 					{#if user()}
 						<Sidebar.Trigger

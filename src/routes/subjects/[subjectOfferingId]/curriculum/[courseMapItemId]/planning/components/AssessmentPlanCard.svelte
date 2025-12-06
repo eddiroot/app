@@ -22,7 +22,7 @@
 				</div>
 
 				<!-- Image container taking up the right third of the card -->
-				<div class="relative h-32 w-32 flex-shrink-0">
+				<div class="relative h-32 w-32 shrink-0">
 					{#if assessmentPlan.imageBase64}
 						<img
 							src={`data:image/png;base64,${assessmentPlan.imageBase64}`}
@@ -50,7 +50,7 @@
 			</div>
 
 			<!-- Image container taking up the right third of the card -->
-			<div class="relative h-32 w-32 flex-shrink-0">
+			<div class="relative h-32 w-32 shrink-0">
 				{#if assessmentPlan.imageBase64}
 					<img
 						src={`data:image/png;base64,${assessmentPlan.imageBase64}`}

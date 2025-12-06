@@ -58,10 +58,6 @@ All
 - [ ] Home pages and feature pages
 - [ ] Shift away from static school id for OAuth (search TODO)
 
-Lachie
-
-- [ ] Fix task bug where block placement hover persists after deleting block
-
 Bella
 
 - [ ] Refine task block UI/UX

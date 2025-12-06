@@ -140,7 +140,7 @@
 					>
 						{event.name}
 					</Card.Title>
-					<Icon class="mt-0.5 h-3 w-3 flex-shrink-0" />
+					<Icon class="mt-0.5 h-3 w-3 shrink-0" />
 				</div>
 
 				<div class="space-y-1">
@@ -188,7 +188,7 @@
 					>
 						{event.name}
 					</Card.Title>
-					<Icon class="mt-0.5 h-3 w-3 flex-shrink-0" />
+					<Icon class="mt-0.5 h-3 w-3 shrink-0" />
 				</div>
 
 				<div class="space-y-1">

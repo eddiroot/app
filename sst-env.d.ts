@@ -18,21 +18,45 @@ declare module "sst" {
       "username": string
     }
     "EddiApp": {
-      "type": "sst.aws.SvelteKit"
+      "service": string
+      "type": "sst.aws.Service"
       "url": string
     }
-    "FET": {
-      "assignPublicIp": boolean
-      "cluster": string
-      "containers": any
-      "securityGroups": any
-      "subnets": any
-      "taskDefinition": string
-      "type": "sst.aws.Task"
+    "GeminiAPIKey": {
+      "type": "sst.sst.Secret"
+      "value": string
+    }
+    "GoogleClientID": {
+      "type": "sst.sst.Secret"
+      "value": string
+    }
+    "GoogleClientSecret": {
+      "type": "sst.sst.Secret"
+      "value": string
+    }
+    "MicrosoftClientID": {
+      "type": "sst.sst.Secret"
+      "value": string
+    }
+    "MicrosoftClientSecret": {
+      "type": "sst.sst.Secret"
+      "value": string
+    }
+    "MicrosoftTenantID": {
+      "type": "sst.sst.Secret"
+      "value": string
+    }
+    "NomicAPIKey": {
+      "type": "sst.sst.Secret"
+      "value": string
     }
     "VPC": {
       "bastion": string
       "type": "sst.aws.Vpc"
+    }
+    "WebhookNotificationsOnboarding": {
+      "type": "sst.sst.Secret"
+      "value": string
     }
   }
 }

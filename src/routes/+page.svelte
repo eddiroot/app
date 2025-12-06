@@ -20,7 +20,7 @@
 </script>
 
 <!-- Main Hero Section -->
-<section class="py-16 md:py-24 lg:py-32">
+<section class="pt-6 pb-12 md:py-24 lg:py-32">
 	<div class="container mx-auto px-4 lg:px-8">
 		<div class="grid gap-8 md:grid-cols-2 md:items-center lg:gap-12 xl:gap-20">
 			<div class="space-y-6">
@@ -59,15 +59,15 @@
 				</p>
 				<ul class="space-y-3 text-lg">
 					<li class="flex items-center">
-						<MessageCircleIcon class="mr-3 h-5 w-5 flex-shrink-0" />
+						<MessageCircleIcon class="mr-3 h-5 w-5 shrink-0" />
 						Threaded discussion format
 					</li>
 					<li class="flex items-center">
-						<ThumbsUpIcon class="mr-3 h-5 w-5 flex-shrink-0" />
+						<ThumbsUpIcon class="mr-3 h-5 w-5 shrink-0" />
 						Upvoting and answer validation
 					</li>
 					<li class="flex items-center">
-						<TagIcon class="mr-3 h-5 w-5 flex-shrink-0" />
+						<TagIcon class="mr-3 h-5 w-5 shrink-0" />
 						Topic tagging and search
 					</li>
 				</ul>
@@ -103,15 +103,15 @@
 				</p>
 				<ul class="space-y-3 text-lg">
 					<li class="flex items-center">
-						<TargetIcon class="mr-3 h-5 w-5 flex-shrink-0" />
+						<TargetIcon class="mr-3 h-5 w-5 shrink-0" />
 						Auto-generate learning objectives
 					</li>
 					<li class="flex items-center">
-						<FileTextIcon class="mr-3 h-5 w-5 flex-shrink-0" />
+						<FileTextIcon class="mr-3 h-5 w-5 shrink-0" />
 						Content suggestions and templates
 					</li>
 					<li class="flex items-center">
-						<RefreshCwIcon class="mr-3 h-5 w-5 flex-shrink-0" />
+						<RefreshCwIcon class="mr-3 h-5 w-5 shrink-0" />
 						Instant content refinement
 					</li>
 				</ul>
@@ -137,15 +137,15 @@
 				</p>
 				<ul class="space-y-3 text-lg">
 					<li class="flex items-center">
-						<MessageSquareIcon class="mr-3 h-5 w-5 flex-shrink-0" />
+						<MessageSquareIcon class="mr-3 h-5 w-5 shrink-0" />
 						Instant answers to your questions
 					</li>
 					<li class="flex items-center">
-						<BookOpenIcon class="mr-3 h-5 w-5 flex-shrink-0" />
+						<BookOpenIcon class="mr-3 h-5 w-5 shrink-0" />
 						Personalised learning recommendations
 					</li>
 					<li class="flex items-center">
-						<TrendingUpIcon class="mr-3 h-5 w-5 flex-shrink-0" />
+						<TrendingUpIcon class="mr-3 h-5 w-5 shrink-0" />
 						Study plan optimisation
 					</li>
 				</ul>
@@ -181,15 +181,15 @@
 				</p>
 				<ul class="space-y-3 text-lg">
 					<li class="flex items-center">
-						<ZapIcon class="mr-3 h-5 w-5 flex-shrink-0" />
+						<ZapIcon class="mr-3 h-5 w-5 shrink-0" />
 						Hands-off generation
 					</li>
 					<li class="flex items-center">
-						<UsersIcon class="mr-3 h-5 w-5 flex-shrink-0" />
+						<UsersIcon class="mr-3 h-5 w-5 shrink-0" />
 						Involve teachers in the process
 					</li>
 					<li class="flex items-center">
-						<CalendarIcon class="mr-3 h-5 w-5 flex-shrink-0" />
+						<CalendarIcon class="mr-3 h-5 w-5 shrink-0" />
 						Instantly publish into student and staff calendars
 					</li>
 				</ul>
@@ -211,15 +211,15 @@
 				</p>
 				<ul class="space-y-3 text-lg">
 					<li class="flex items-center">
-						<CheckIcon class="mr-3 h-5 w-5 flex-shrink-0" />
+						<CheckIcon class="mr-3 h-5 w-5 shrink-0" />
 						Classes from your timetable are automatically added
 					</li>
 					<li class="flex items-center">
-						<PlusIcon class="mr-3 h-5 w-5 flex-shrink-0" />
+						<PlusIcon class="mr-3 h-5 w-5 shrink-0" />
 						Events can be created for classes, subjects, campuses, and whole schools
 					</li>
 					<li class="flex items-center">
-						<LinkIcon class="mr-3 h-5 w-5 flex-shrink-0" />
+						<LinkIcon class="mr-3 h-5 w-5 shrink-0" />
 						Sync with external calendars
 					</li>
 				</ul>
@@ -255,15 +255,15 @@
 				</p>
 				<ul class="space-y-3 text-lg">
 					<li class="flex items-center">
-						<MegaphoneIcon class="mr-3 h-5 w-5 flex-shrink-0" />
+						<MegaphoneIcon class="mr-3 h-5 w-5 shrink-0" />
 						Instant push notifications
 					</li>
 					<li class="flex items-center">
-						<CalendarIcon class="mr-3 h-5 w-5 flex-shrink-0" />
+						<CalendarIcon class="mr-3 h-5 w-5 shrink-0" />
 						Schedule announcements
 					</li>
 					<li class="flex items-center">
-						<TargetIcon class="mr-3 h-5 w-5 flex-shrink-0" />
+						<TargetIcon class="mr-3 h-5 w-5 shrink-0" />
 						Target specific groups
 					</li>
 				</ul>
@@ -286,15 +286,15 @@
 				</p>
 				<ul class="space-y-3 text-lg">
 					<li class="flex items-center">
-						<LinkIcon class="mr-3 h-5 w-5 flex-shrink-0" />
+						<LinkIcon class="mr-3 h-5 w-5 shrink-0" />
 						Syncs with guardian-submitted absences/sick days
 					</li>
 					<li class="flex items-center">
-						<ClockIcon class="mr-3 h-5 w-5 flex-shrink-0" />
+						<ClockIcon class="mr-3 h-5 w-5 shrink-0" />
 						Keeps track of behaviour and attendance records over time
 					</li>
 					<li class="flex items-center">
-						<MegaphoneIcon class="mr-3 h-5 w-5 flex-shrink-0" />
+						<MegaphoneIcon class="mr-3 h-5 w-5 shrink-0" />
 						Notifications for unexplained absences
 					</li>
 				</ul>
