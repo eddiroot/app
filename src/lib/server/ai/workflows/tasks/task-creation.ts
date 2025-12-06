@@ -7,7 +7,6 @@ import { getBaseLLM } from "../../models/base";
 import { createOptimizedSubjectGroupNode } from "../../nodes/analysis/subject";
 import { multiBlockGenerationNode, type OrderedBlock, type TaskBlock } from "../../nodes/generation/task-block";
 import { createOrchestratorNode } from "../../nodes/orchestrator-synthesiser/task";
-import { createPDFProcessorNode } from "../../nodes/resource";
 import { createRAGRetrievalNode } from "../../nodes/retrieval/multi-store";
 import type { ContentSection } from "../../schemas/task";
 import { createTaskTool, type TaskCreationData } from "../../tools/database/task-persistance";
@@ -190,7 +189,7 @@ export function createTaskGenerationGraph() {
     const orchestratorNode = createOrchestratorNode(llm);
     const blockGeneratorNode = multiBlockGenerationNode(llm);
     const subjectGroupNode = createOptimizedSubjectGroupNode(llm);
-    const pdfProcessorNode = createPDFProcessorNode({ embeddings: defaultEmbeddings });
+    
 
     // -------------------------------------------------------------------------
     // Build Graph
@@ -212,31 +211,6 @@ export function createTaskGenerationGraph() {
             return { subjectGroup: result.subjectGroup };
         })
 
-        // Node: Process Uploaded PDFs
-        .addNode("process_uploads", async (state: TaskGenState) => {
-            console.log("[2/6] Process Uploads");
-            if (!state.uploadedFiles || state.uploadedFiles.length === 0) {
-                console.log("  → No files to process");
-                return {};
-            }
-
-            console.log("  → Processing", state.uploadedFiles.length, "file(s)");
-            await Promise.all(
-                state.uploadedFiles.map(filePath =>
-                    pdfProcessorNode({
-                        filePath,
-                        metadata: {
-                            taskType: state.taskType,
-                            yearLevel: state.yearLevel,
-                            curriculumSubjectId: state.curriculumSubjectId
-                        }
-                    })
-                )
-            );
-
-            console.log("  → Done");
-            return {};
-        })
 
         // Node: RAG Retrieval
         .addNode("retrieve_content", async (state: TaskGenState) => {
@@ -356,8 +330,7 @@ export function createTaskGenerationGraph() {
         // Edges
         // -------------------------------------------------------------------------
         .addEdge("__start__", "infer_subject_group")
-        .addEdge("infer_subject_group", "process_uploads")
-        .addEdge("process_uploads", "retrieve_content")
+        .addEdge("infer_subject_group", "retrieve_content")
         .addEdge("retrieve_content", "orchestrate_content")
         
         // Conditional edge: Dispatch workers for each section
