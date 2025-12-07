@@ -1,4 +1,5 @@
 import * as fabric from 'fabric';
+import type { ControlPointManager } from './control-points';
 import type { LayerAction } from './types';
 
 /**
@@ -36,6 +37,7 @@ interface SerializedObject {
  */
 interface WebSocketOptions {
 	onLoad?: (objects: fabric.FabricObject[]) => void;
+	controlPointManager?: ControlPointManager;
 }
 
 /**
@@ -70,7 +72,7 @@ export function setupWebSocket(
 			} else if (messageData.type === 'add') {
 				await handleAddMessage(canvas, messageData);
 			} else if (messageData.type === 'modify' || messageData.type === 'update') {
-				handleModifyMessage(canvas, messageData);
+				handleModifyMessage(canvas, messageData, options?.controlPointManager);
 			} else if (messageData.type === 'delete' || messageData.type === 'remove') {
 				handleDeleteMessage(canvas, messageData);
 			} else if (messageData.type === 'layer') {
@@ -134,7 +136,11 @@ async function handleAddMessage(
 /**
  * Handles 'modify' or 'update' message - updates an existing object
  */
-function handleModifyMessage(canvas: fabric.Canvas, messageData: WebSocketMessage): void {
+function handleModifyMessage(
+	canvas: fabric.Canvas,
+	messageData: WebSocketMessage,
+	controlPointManager?: ControlPointManager
+): void {
 	if (!messageData.object) return;
 
 	const objects = canvas.getObjects();
@@ -198,6 +204,33 @@ function handleModifyMessage(canvas: fabric.Canvas, messageData: WebSocketMessag
 
 		// Recalculate coordinates after update
 		obj.setCoords();
+
+		// For polylines modified via control points, completely replace the object
+		// to avoid transformation/bounding box issues
+		if (obj.type === 'polyline' && controlPointManager && messageData.object.points) {
+			// @ts-expect-error - Custom id property
+			const objId = obj.id;
+			// Remove old control points
+			controlPointManager.removeControlPoints(objId);
+			// Remove the old line
+			canvas.remove(obj);
+			// Create a new polyline with the clean data
+			const newLine = new fabric.Polyline(messageData.object.points as any[], {
+				id: objId,
+				stroke: messageData.object.stroke as string,
+				strokeWidth: messageData.object.strokeWidth as number,
+				strokeDashArray: messageData.object.strokeDashArray as number[],
+				opacity: messageData.object.opacity as number,
+				selectable: true,
+				hasControls: false,
+				hasBorders: false
+			});
+			canvas.add(newLine);
+			// Add new control points
+			controlPointManager.addControlPoints(objId, newLine);
+			canvas.renderAll();
+			return; // Skip the normal update path
+		}
 
 		// Force immediate render
 		canvas.requestRenderAll();

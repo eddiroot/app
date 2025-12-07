@@ -1,6 +1,7 @@
 import * as fabric from 'fabric';
 import { v4 as uuidv4 } from 'uuid';
 import { ZOOM_LIMITS } from './constants';
+import type { ControlPointManager } from './control-points';
 import * as Shapes from './shapes';
 import type { DrawOptions, LineOptions, ShapeOptions, TextOptions, WhiteboardTool } from './types';
 
@@ -71,11 +72,8 @@ export interface CanvasEventContext {
 		setActiveMenuPanel?: (panel: WhiteboardTool) => void;
 	};
 
-	// Control point management for lines
-	addControlPointsForLine?: (lineId: string, line: fabric.Polyline) => void;
-	removeControlPointsForLine?: (lineId: string) => void;
-	updateLineFromControlPoint?: (controlPointId: string, newX: number, newY: number) => void;
-	updateControlPointsFromLine?: (lineId: string, line: fabric.Polyline) => void;
+	// Control point manager
+	controlPointManager?: ControlPointManager;
 }
 
 /**
@@ -83,19 +81,19 @@ export interface CanvasEventContext {
  */
 export const createObjectMovingHandler = (ctx: CanvasEventContext) => {
 	return ({ target }: { target: fabric.Object }) => {
-		// @ts-expect-error - custom property for control points
-		if (target.isControlPoint && ctx.updateLineFromControlPoint) {
+		// Handle control point movement
+		if (ctx.controlPointManager?.isControlPoint(target)) {
 			// This is a control point circle, update the associated line
 			const center = target.getCenterPoint();
 			// @ts-expect-error - custom id property
-			ctx.updateLineFromControlPoint(target.id, center.x, center.y);
+			ctx.controlPointManager.updateObjectFromControlPoint(target.id, center.x, center.y);
 			return;
 		}
 
 		// If moving a polyline, update its control points
-		if (target.type === 'polyline' && ctx.updateControlPointsFromLine) {
+		if (target.type === 'polyline' && ctx.controlPointManager) {
 			// @ts-expect-error - custom id property
-			ctx.updateControlPointsFromLine(target.id, target as fabric.Polyline);
+			ctx.controlPointManager.updateControlPoints(target.id, target);
 		}
 
 		const objData = target.type === 'textbox' ? target.toObject(['text']) : target.toObject();
@@ -371,9 +369,9 @@ export const createMouseUpHandler = (canvas: fabric.Canvas, ctx: CanvasEventCont
 			}, 0);
 
 			// Add control points for the line
-			if (tempLine.type === 'polyline' && ctx.addControlPointsForLine) {
+			if (tempLine.type === 'polyline' && ctx.controlPointManager) {
 				// @ts-expect-error - custom id property
-				ctx.addControlPointsForLine(tempLine.id, tempLine as fabric.Polyline);
+				ctx.controlPointManager.addControlPoints(tempLine.id, tempLine);
 			}
 
 			// Reset drawing state

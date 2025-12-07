@@ -37,6 +37,7 @@
 	let applyUndo: typeof import('$lib/components/whiteboard/canvas-history').applyUndo;
 	let Tools: typeof import('$lib/components/whiteboard/tools');
 	let WebSocketHandler: typeof import('$lib/components/whiteboard/websocket');
+	let ControlPointManager: typeof import('$lib/components/whiteboard/control-points').ControlPointManager;
 
 	let { data } = $props();
 
@@ -64,14 +65,8 @@
 	let tempText: any = null;
 	let floatingMenuRef: WhiteboardFloatingMenu;
 
-	interface ObjectControlPoint {
-		objectId: string;
-		controlPointId: string;
-		pointIndex: number; // 0 for start, 1 for end
-		circle: any; // fabric.Circle
-	}
-
-	let objectControlPoints = $state<ObjectControlPoint[]>([]);
+	// Control point manager instance
+	let controlPointManager: any; // Will be ControlPointManager once loaded
 
 	// History management for undo/redo
 	let history: any; // Will be CanvasHistory instance once loaded
@@ -586,6 +581,8 @@
 			applyUndo = HistoryModule.applyUndo;
 			Tools = await import('$lib/components/whiteboard/tools');
 			WebSocketHandler = await import('$lib/components/whiteboard/websocket');
+			const ControlPointsModule = await import('$lib/components/whiteboard/control-points');
+			ControlPointManager = ControlPointsModule.ControlPointManager;
 
 			// Initialize history
 			history = new CanvasHistory();
@@ -626,70 +623,8 @@
 
 			setSelectTool();
 
-			// Helper function to bring all control points to the front of the canvas
-			const bringControlPointsToFront = () => {
-				objectControlPoints.forEach((cp) => {
-					canvas.bringObjectToFront(cp.circle);
-				});
-			};
-
-			// Control point management functions for lines
-			const addControlPointsForLine = (lineId: string, line: any) => {
-				const points = line.points;
-				if (!points || points.length < 2) return;
-
-				// Get the line's transformation matrix to calculate absolute positions
-				const matrix = line.calcTransformMatrix();
-
-				// Create control points at start and end of line
-				[0, points.length - 1].forEach((pointIndex) => {
-					const point = points[pointIndex];
-					// Transform the point to absolute coordinates
-					const absolutePoint = fabric.util.transformPoint(
-						new fabric.Point(point.x - line.pathOffset.x, point.y - line.pathOffset.y),
-						matrix
-					);
-
-					const controlPointId = `${lineId}-cp-${pointIndex}`;
-					const circle = new fabric.Circle({
-						radius: 6,
-						fill: '#3b82f6',
-						stroke: '#1d4ed8',
-						strokeWidth: 2,
-						left: absolutePoint.x,
-						top: absolutePoint.y,
-						originX: 'center',
-						originY: 'center',
-						selectable: true,
-						hasControls: false,
-						hasBorders: false,
-						hoverCursor: 'move'
-					});
-
-					// Add custom properties to identify this as a control point
-					(circle as any).id = controlPointId;
-					(circle as any).isControlPoint = true;
-					(circle as any).linkedLineId = lineId;
-					(circle as any).pointIndex = pointIndex;
-
-					canvas.add(circle);
-
-					// Store the control point reference
-					objectControlPoints = [
-						...objectControlPoints,
-						{
-							objectId: lineId,
-							controlPointId,
-							pointIndex,
-							circle
-						}
-					];
-				});
-
-				// Ensure all control points are on top
-				bringControlPointsToFront();
-				canvas.renderAll();
-			};
+			// Initialize control point manager
+			controlPointManager = new ControlPointManager(canvas, sendCanvasUpdate);
 
 			// Setup WebSocket connection for real-time collaboration
 			socket = WebSocketHandler.setupWebSocket(
@@ -701,124 +636,13 @@
 						// Add control points for all existing polylines
 						objects.forEach((obj: any) => {
 							if (obj.type === 'polyline' && obj.id) {
-								addControlPointsForLine(obj.id, obj);
+								controlPointManager.addControlPoints(obj.id, obj);
 							}
 						});
-					}
+					},
+					controlPointManager
 				}
 			);
-
-			const removeControlPointsForLine = (lineId: string) => {
-				// Find and remove control points for this line
-				const pointsToRemove = objectControlPoints.filter((cp) => cp.objectId === lineId);
-				pointsToRemove.forEach((cp) => {
-					canvas.remove(cp.circle);
-				});
-				objectControlPoints = objectControlPoints.filter((cp) => cp.objectId !== lineId);
-				canvas.renderAll();
-			};
-
-			const updateLineFromControlPoint = (controlPointId: string, newX: number, newY: number) => {
-				// Find the control point
-				const controlPoint = objectControlPoints.find((cp) => cp.controlPointId === controlPointId);
-				if (!controlPoint) return;
-
-				// Find the line on the canvas
-				const line = canvas
-					.getObjects()
-					.find((obj: any) => obj.id === controlPoint.objectId && obj.type === 'polyline') as any;
-				if (!line || !line.points) return;
-
-				// Get the line's current transformation
-				const matrix = line.calcTransformMatrix();
-				const invertedMatrix = fabric.util.invertTransform(matrix);
-
-				// Transform the new point back to local coordinates
-				const localPoint = fabric.util.transformPoint(new fabric.Point(newX, newY), invertedMatrix);
-
-				// Update the point in the line
-				const points = [...line.points];
-				points[controlPoint.pointIndex] = {
-					x: localPoint.x + line.pathOffset.x,
-					y: localPoint.y + line.pathOffset.y
-				};
-
-				// Remove the old line
-				canvas.remove(line);
-
-				// Create a new line with updated points
-				const newLine = new fabric.Polyline(points, {
-					id: (line as any).id,
-					stroke: line.stroke,
-					strokeWidth: line.strokeWidth,
-					strokeDashArray: line.strokeDashArray,
-					opacity: line.opacity,
-					selectable: true,
-					hasControls: false
-				});
-
-				canvas.add(newLine);
-
-				// Bring control points to front after adding new line
-				bringControlPointsToFront();
-
-				// Update other control point positions
-				const otherControlPoints = objectControlPoints.filter(
-					(cp) => cp.objectId === controlPoint.objectId && cp.controlPointId !== controlPointId
-				);
-
-				const newMatrix = newLine.calcTransformMatrix();
-				otherControlPoints.forEach((cp) => {
-					const point = points[cp.pointIndex];
-					const absolutePoint = fabric.util.transformPoint(
-						new fabric.Point(point.x - newLine.pathOffset.x, point.y - newLine.pathOffset.y),
-						newMatrix
-					);
-					cp.circle.set({
-						left: absolutePoint.x,
-						top: absolutePoint.y
-					});
-					cp.circle.setCoords();
-				});
-
-				canvas.renderAll();
-
-				// Send update to other users
-				const objData = newLine.toObject();
-				(objData as any).id = (newLine as any).id;
-				sendCanvasUpdate({
-					type: 'modify',
-					object: objData
-				});
-			};
-
-			const updateControlPointsFromLine = (lineId: string, line: any) => {
-				// Find control points for this line
-				const controlPoints = objectControlPoints.filter((cp) => cp.objectId === lineId);
-				if (controlPoints.length === 0) return;
-
-				const points = line.points;
-				if (!points || points.length < 2) return;
-
-				// Get the line's transformation matrix to calculate absolute positions
-				const matrix = line.calcTransformMatrix();
-
-				// Update each control point position
-				controlPoints.forEach((cp) => {
-					const point = points[cp.pointIndex];
-					const absolutePoint = fabric.util.transformPoint(
-						new fabric.Point(point.x - line.pathOffset.x, point.y - line.pathOffset.y),
-						matrix
-					);
-					cp.circle.set({
-						left: absolutePoint.x,
-						top: absolutePoint.y
-					});
-					cp.circle.setCoords();
-				});
-
-				canvas.renderAll();
-			};
 
 			// Setup all canvas event handlers using the extracted module
 			const canvasEventContext: CanvasEventContext = {
@@ -916,11 +740,8 @@
 				// Refs
 				floatingMenuRef: floatingMenuRef || undefined,
 
-				// Control point management
-				addControlPointsForLine,
-				removeControlPointsForLine,
-				updateLineFromControlPoint,
-				updateControlPointsFromLine
+				// Control point manager
+				controlPointManager
 			};
 
 			CanvasEvents.setupCanvasEvents(canvas, canvasEventContext);
@@ -931,8 +752,8 @@
 				if (isApplyingHistory || !e.target) return;
 
 				// Bring control points to front when any non-control-point object is added
-				if (!e.target.isControlPoint && objectControlPoints.length > 0) {
-					bringControlPointsToFront();
+				if (!controlPointManager.isControlPoint(e.target)) {
+					controlPointManager.bringAllControlPointsToFront();
 				}
 
 				const objectId = e.target.id;
