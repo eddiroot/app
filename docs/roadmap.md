@@ -58,6 +58,17 @@ All
 - [ ] Home pages and feature pages
 - [ ] Shift away from static school id for OAuth (search TODO)
 
+Lachie
+
+- [ ] Student grades
+  - fix scrollbar gutter
+  - fix filters and sorts
+  - full width, remove fixed-table
+  - remove and fix showFeedback
+- [ ] Teacher Lesson Analytics
+  - fix table width issues
+  - admin grade style option (percentage vs 0-8 scale)
+
 Bella
 
 - [ ] Refine task block UI/UX
@@ -84,14 +95,6 @@ Raph
   - layering options?
   - text with websocket
   - text adding mechanics
-- [ ] Student grades (20/08)
-  - fix scrollbar gutter
-  - fix filters and sorts
-  - full width, remove fixed-table
-  - remove and fix showFeedback
-- [ ] Teacher Lesson Analytics
-  - fix table width issues
-  - admin grade style option (percentage vs 0-8 scale)
 
 ### To Do
 
