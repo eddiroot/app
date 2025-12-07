@@ -25,40 +25,40 @@ import { TaskBlockVectorStore } from "../../vector-store/task/task-block";
 import { TempPoolVectorStore } from "../../vector-store/temp-pool";
 
 /**
- * Revised Plan for more interactive lesson creation More Human in the loop! 
- * 
- * The idea is to break down the task creation into smaller, manageable steps with human feedback at each stage. 
- * This will ensure that the generated content aligns closely with educational goals and standards.
- * 
- * 1. Initial Input and Setup
- *    - Gather basic task details from the user (title, type, description, subject, year level).
- *    - Optionally allow the user to upload relevant documents or resources.
- * 
- * 2. Content Retrieval and Analysis
- *    - Use RAG techniques to retrieve relevant content based on the task details.
- *    - Present the retrieved content to the user for review and selection.
- * 
- * 3.1. Display Generated Task Description and Resources (internal and external) that you feel best fits there desired task.
- *    - Present the generated task description to the user for review.
- *    - Allow the user to add or modify resources as needed.
- * 
- * 3.2. Content Orchestration
- *    - Generate structured Objectives and Content Sections using the orchestrator node.
- *    - Present these sections to the user for feedback and refinemen. Display more (display 2 different options with extra objectives for more insights)
- *    - Allow the user to review and modify these sections before proceeding.
- *    - Potentially say where the content was sourced from (if applicable).
- * 
- * 3. Display the plan on the left side with the generated task description and content sections. (Maybe use time)
- * 
- * 4. Block Selection
- *   - For the task display the potential blocks that could be generated and which ones they would want.
- * 
- * 5. Block Generation
- *   - Generate task blocks for each content section based on user-selected block types.
- * 
- * 6. Review and Finalization
- * 
- */
+New Workflow 
+  
+The rational of this workflow is to break down the task creation process into steps, with continuous teacher involvement. This ensures that the generated content is relevant, accurate and aligned with the teacher's goals. 
+ (*) denotes steps where user input/feedback is required. There is a constant chat interface available (like a tutor) at each step a "ai message" is sent to the user explaining what has to be done as well as interactive elements on the main screen.
+
+1. Initial Input and Setup
+- Gather basic task details from the user (title, type, description, subject, year level, curriculum standards).
+- User can also upload relavent documents or resources. 
+
+2. RAG Content/Context Retrieval 
+- Use RAG techniques to retrieve relevant content based on the task details and curriculum standards.
+- For each retrieved document/resource, provide the title/name and where it was sourced from (e.g. internal table, tavily (youtube, website etc) )
+- Present the retrieved content as widgets/cards to the user for review and selection. (top 4 are pre-selected based on relevance, another 6-10 can be selected and deselected - can view more details if needed) (*)
+   - (AI Message): "Based on your task details, I've retrieved some relevant content that could be useful. Please review and select the ones you find most appropriate for your task. If you have any specific content in mind, feel free to upload or link it. (etc)
+
+3. Proposed learning objectives 
+- Based on the task description and the selected content/resources, generate 2 sets of proposed learning objectsives that align with the task goals. (each set contains 3-5 objectives) 
+- Generate a list of extra learning objectives that could also be relevant to the task whether its an extension or just more depth.
+- Present these objectives to the user for review and selection. (*)
+   - (AI Message): "Here are some proposed learning objectives based on your task description and selected content. Please review them and select the ones that best align with your goals. You can also modify or add new objectives as needed."
+    
+4. Content Creation - Orchestration 
+- Using the selected content/resources and learning objectives, generate structured content sections for the task using the orchestrator node.
+- Generate the task description and display the lesson plan on the left side of the screen, this includes the task title, description and the learning objectives with aproximate time allocations.
+
+5. Block Selection
+- While the orchestrator is still running, display the potential blocks that could be generated for the task as cards. Select the ones they would want to include in the task. (*)
+   - (AI Message): "Based on the content sections, here are some potential interactive blocks that could be included. Please select the ones you would like to incorporate into your task." 
+
+Added things to consider:
+- Ensure that a chain of user requests are used to refine the task generation process.
+- Are there any other ways to break down the task creation process to make it more manageable and interactive for the user?
+- For the development, ensure that each step of the workflow is displayed to the console for easier debugging and tracking where issues may arise and what RAG / TaskBlocks / Content are being generated at each step.
+*/
 
 // =============================================================================
 // Types
