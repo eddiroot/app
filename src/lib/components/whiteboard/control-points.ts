@@ -25,7 +25,7 @@ export abstract class ControlPointHandler {
 	/**
 	 * Add control points for an object
 	 */
-	abstract addControlPoints(objectId: string, obj: fabric.Object): void;
+	abstract addControlPoints(objectId: string, obj: fabric.Object, visible?: boolean): void;
 
 	/**
 	 * Remove control points for an object
@@ -36,6 +36,38 @@ export abstract class ControlPointHandler {
 			this.canvas.remove(cp.circle);
 		});
 		this.controlPoints = this.controlPoints.filter((cp) => cp.objectId !== objectId);
+		this.canvas.renderAll();
+	}
+
+	/**
+	 * Hide control points for an object
+	 */
+	hideControlPoints(objectId: string): void {
+		const points = this.controlPoints.filter((cp) => cp.objectId === objectId);
+		points.forEach((cp) => {
+			cp.circle.set({ visible: false });
+		});
+		this.canvas.renderAll();
+	}
+
+	/**
+	 * Show control points for an object
+	 */
+	showControlPoints(objectId: string): void {
+		const points = this.controlPoints.filter((cp) => cp.objectId === objectId);
+		points.forEach((cp) => {
+			cp.circle.set({ visible: true });
+		});
+		this.canvas.renderAll();
+	}
+
+	/**
+	 * Hide all control points
+	 */
+	hideAllControlPoints(): void {
+		this.controlPoints.forEach((cp) => {
+			cp.circle.set({ visible: false });
+		});
 		this.canvas.renderAll();
 	}
 
@@ -101,7 +133,9 @@ export abstract class ControlPointHandler {
 			selectable: true,
 			hasControls: false,
 			hasBorders: false,
-			hoverCursor: 'move'
+			hoverCursor: 'move',
+			evented: true,
+			excludeFromExport: true // Exclude from canvas serialization
 		});
 
 		// Add custom properties to identify this as a control point
@@ -118,7 +152,7 @@ export abstract class ControlPointHandler {
  * Control point handler for polylines (lines and arrows)
  */
 export class LineControlPoints extends ControlPointHandler {
-	addControlPoints(objectId: string, obj: fabric.Object): void {
+	addControlPoints(objectId: string, obj: fabric.Object, visible: boolean = true): void {
 		const line = obj as fabric.Polyline;
 		const points = line.points;
 		if (!points || points.length < 2) return;
@@ -143,6 +177,9 @@ export class LineControlPoints extends ControlPointHandler {
 				objectId,
 				pointIndex
 			);
+
+			// Set initial visibility
+			circle.set({ visible });
 
 			this.canvas.add(circle);
 
@@ -193,6 +230,13 @@ export class LineControlPoints extends ControlPointHandler {
 		const controlPoint = this.controlPoints.find((cp) => cp.id === controlPointId);
 		if (!controlPoint) return;
 
+		// Update the control point circle position immediately
+		controlPoint.circle.set({
+			left: newX,
+			top: newY
+		});
+		controlPoint.circle.setCoords();
+
 		// Find the line on the canvas
 		const line = this.canvas
 			.getObjects()
@@ -201,19 +245,19 @@ export class LineControlPoints extends ControlPointHandler {
 			| undefined;
 		if (!line || !line.points) return;
 
-		// Get the line's current transformation
+		// Get the line's current transformation matrix
 		const matrix = line.calcTransformMatrix();
-		const invertedMatrix = fabric.util.invertTransform(matrix);
 
-		// Transform the new point back to local coordinates
-		const localPoint = fabric.util.transformPoint(new fabric.Point(newX, newY), invertedMatrix);
+		// Convert all current points to absolute coordinates
+		const absolutePoints = line.points.map((point) => {
+			return fabric.util.transformPoint(
+				new fabric.Point(point.x - line.pathOffset.x, point.y - line.pathOffset.y),
+				matrix
+			);
+		});
 
-		// Update the point in the line
-		const points = [...line.points];
-		points[controlPoint.pointIndex] = {
-			x: localPoint.x + line.pathOffset.x,
-			y: localPoint.y + line.pathOffset.y
-		};
+		// Update the dragged point to the new position
+		absolutePoints[controlPoint.pointIndex] = new fabric.Point(newX, newY);
 
 		// Store line properties before removal
 		const lineId = (line as any).id;
@@ -224,11 +268,11 @@ export class LineControlPoints extends ControlPointHandler {
 			opacity: line.opacity
 		};
 
-		// Remove old line and create new one with updated points
-		// This is necessary to fix the bounding box clipping issue in fabric.js
+		// Remove old line
 		this.canvas.remove(line);
 
-		const newLine = new fabric.Polyline(points, {
+		// Create new line with absolute points (no transformations)
+		const newLine = new fabric.Polyline(absolutePoints, {
 			id: lineId,
 			stroke: lineProps.stroke,
 			strokeWidth: lineProps.strokeWidth,
@@ -236,7 +280,8 @@ export class LineControlPoints extends ControlPointHandler {
 			opacity: lineProps.opacity,
 			selectable: true,
 			hasControls: false,
-			hasBorders: false
+			hasBorders: false,
+			strokeUniform: true
 		});
 
 		this.canvas.add(newLine);
@@ -251,14 +296,10 @@ export class LineControlPoints extends ControlPointHandler {
 
 		const newMatrix = newLine.calcTransformMatrix();
 		otherControlPoints.forEach((cp) => {
-			const point = points[cp.pointIndex];
-			const absolutePoint = fabric.util.transformPoint(
-				new fabric.Point(point.x - newLine.pathOffset.x, point.y - newLine.pathOffset.y),
-				newMatrix
-			);
+			const point = absolutePoints[cp.pointIndex];
 			cp.circle.set({
-				left: absolutePoint.x,
-				top: absolutePoint.y
+				left: point.x,
+				top: point.y
 			});
 			cp.circle.setCoords();
 		});
@@ -305,10 +346,10 @@ export class ControlPointManager {
 	/**
 	 * Add control points for an object based on its type
 	 */
-	addControlPoints(objectId: string, obj: fabric.Object): void {
+	addControlPoints(objectId: string, obj: fabric.Object, visible: boolean = true): void {
 		const handler = this.handlers.get(obj.type || '');
 		if (handler) {
-			handler.addControlPoints(objectId, obj);
+			handler.addControlPoints(objectId, obj, visible);
 		}
 	}
 
@@ -319,6 +360,33 @@ export class ControlPointManager {
 		// Try all handlers since we don't know which one has the control points
 		this.handlers.forEach((handler) => {
 			handler.removeControlPoints(objectId);
+		});
+	}
+
+	/**
+	 * Hide control points for an object
+	 */
+	hideControlPoints(objectId: string): void {
+		this.handlers.forEach((handler) => {
+			handler.hideControlPoints(objectId);
+		});
+	}
+
+	/**
+	 * Show control points for an object
+	 */
+	showControlPoints(objectId: string): void {
+		this.handlers.forEach((handler) => {
+			handler.showControlPoints(objectId);
+		});
+	}
+
+	/**
+	 * Hide all control points across all handlers
+	 */
+	hideAllControlPoints(): void {
+		this.handlers.forEach((handler) => {
+			handler.hideAllControlPoints();
 		});
 	}
 
@@ -363,7 +431,8 @@ export class ControlPointManager {
 								opacity: modifiedObj.opacity,
 								selectable: true,
 								hasControls: false,
-								hasBorders: false
+								hasBorders: false,
+								isControlPointUpdate: true // Mark this as a control point update
 							};
 							this.sendCanvasUpdate({
 								type: 'modify',

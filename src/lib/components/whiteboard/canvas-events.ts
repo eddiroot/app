@@ -81,19 +81,22 @@ export interface CanvasEventContext {
  */
 export const createObjectMovingHandler = (ctx: CanvasEventContext) => {
 	return ({ target }: { target: fabric.Object }) => {
-		// Handle control point movement
+		// Handle control point movement - don't sync the control point itself
 		if (ctx.controlPointManager?.isControlPoint(target)) {
 			// This is a control point circle, update the associated line
 			const center = target.getCenterPoint();
 			// @ts-expect-error - custom id property
 			ctx.controlPointManager.updateObjectFromControlPoint(target.id, center.x, center.y);
-			return;
+			return; // Don't proceed to sync - control points are client-side only
 		}
 
-		// If moving a polyline, update its control points
+		// If moving a polyline, update its control points and keep them visible
 		if (target.type === 'polyline' && ctx.controlPointManager) {
 			// @ts-expect-error - custom id property
-			ctx.controlPointManager.updateControlPoints(target.id, target);
+			const lineId = target.id;
+			ctx.controlPointManager.updateControlPoints(lineId, target);
+			// Ensure control points stay visible during drag
+			ctx.controlPointManager.showControlPoints(lineId);
 		}
 
 		const objData = target.type === 'textbox' ? target.toObject(['text']) : target.toObject();
@@ -168,17 +171,33 @@ export const createObjectRotatingHandler = (ctx: CanvasEventContext) => {
  */
 export const createObjectModifiedHandler = (ctx: CanvasEventContext) => {
 	return ({ target }: { target: fabric.Object }) => {
-		// This handles final modifications - always send immediately for persistence
-		// For textbox objects, include the 'text' property
-		const objData = target.type === 'textbox' ? target.toObject(['text']) : target.toObject();
-		// @ts-expect-error - custom id property
-		objData.id = target.id;
+		// Skip control points - they are client-side only
+		if (ctx.controlPointManager?.isControlPoint(target)) {
+			return;
+		}
 
+		// This handles final modifications - always send immediately for persistence
 		if (target.type === 'image') {
+			const objData = target.toObject();
+			// @ts-expect-error - custom id property
+			objData.id = target.id;
 			// @ts-expect-error - custom id property
 			ctx.sendImageUpdate(target.id, objData, true);
 			ctx.setIsMovingImage(false);
+		} else if (target.type === 'polyline') {
+			// For polylines, send standard fabric.js data
+			const objData = target.toObject();
+			// @ts-expect-error - custom id property
+			objData.id = target.id;
+			ctx.sendCanvasUpdate({
+				type: 'modify',
+				object: objData
+			});
 		} else {
+			// For textbox objects, include the 'text' property
+			const objData = target.type === 'textbox' ? target.toObject(['text']) : target.toObject();
+			// @ts-expect-error - custom id property
+			objData.id = target.id;
 			// Immediate updates for non-image objects
 			ctx.sendCanvasUpdate({
 				type: 'modify',
@@ -368,10 +387,10 @@ export const createMouseUpHandler = (canvas: fabric.Canvas, ctx: CanvasEventCont
 				});
 			}, 0);
 
-			// Add control points for the line
+			// Add control points for the line (visible since we just created it)
 			if (tempLine.type === 'polyline' && ctx.controlPointManager) {
 				// @ts-expect-error - custom id property
-				ctx.controlPointManager.addControlPoints(tempLine.id, tempLine);
+				ctx.controlPointManager.addControlPoints(tempLine.id, tempLine, true);
 			}
 
 			// Reset drawing state
@@ -385,6 +404,11 @@ export const createMouseUpHandler = (canvas: fabric.Canvas, ctx: CanvasEventCont
 
 			// Delete all objects that were marked for deletion
 			ctx.getHoveredObjectsForDeletion().forEach((obj) => {
+				// Remove control points if this is a polyline
+				if (obj.type === 'polyline' && ctx.controlPointManager) {
+					// @ts-expect-error - custom id property
+					ctx.controlPointManager.removeControlPoints(obj.id);
+				}
 				canvas.remove(obj);
 				// Send delete message to other users
 				ctx.sendCanvasUpdate({
@@ -500,6 +524,33 @@ export const createSelectionCreatedHandler = (ctx: CanvasEventContext) => {
 		if (selected && selected.length === 1) {
 			const obj = selected[0];
 
+			// If a control point is selected, don't change anything - keep existing menu
+			if (ctx.controlPointManager?.isControlPoint(obj)) {
+				return; // Don't update menu, don't hide control points
+			}
+
+			// Only hide/show control points if this is not a control point itself
+			if (ctx.controlPointManager) {
+				// Hide all control points first
+				ctx.controlPointManager.hideAllControlPoints();
+
+				// For polylines, create control points if they don't exist, or show if they do
+				if (obj.type === 'polyline') {
+					// @ts-expect-error - custom id property
+					const objId = obj.id;
+					const existingPoints = ctx.controlPointManager
+						.getLineHandler()
+						.getControlPointsForObject(objId);
+					if (existingPoints.length === 0) {
+						// Create control points for this line (visible by default)
+						ctx.controlPointManager.addControlPoints(objId, obj, true);
+					} else {
+						// Show existing control points
+						ctx.controlPointManager.showControlPoints(objId);
+					}
+				}
+			}
+
 			// Show floating menu when an object is selected
 			ctx.setShowFloatingMenu(true);
 
@@ -585,6 +636,33 @@ export const createSelectionUpdatedHandler = (ctx: CanvasEventContext) => {
 		if (selected && selected.length === 1) {
 			const obj = selected[0];
 
+			// If a control point is selected, don't change anything - keep existing menu
+			if (ctx.controlPointManager?.isControlPoint(obj)) {
+				return; // Don't update menu, don't hide control points
+			}
+
+			// Only hide/show control points if this is not a control point itself
+			if (ctx.controlPointManager) {
+				// Hide all control points first
+				ctx.controlPointManager.hideAllControlPoints();
+
+				// For polylines, create control points if they don't exist, or show if they do
+				if (obj.type === 'polyline') {
+					// @ts-expect-error - custom id property
+					const objId = obj.id;
+					const existingPoints = ctx.controlPointManager
+						.getLineHandler()
+						.getControlPointsForObject(objId);
+					if (existingPoints.length === 0) {
+						// Create control points for this line (visible by default)
+						ctx.controlPointManager.addControlPoints(objId, obj, true);
+					} else {
+						// Show existing control points
+						ctx.controlPointManager.showControlPoints(objId);
+					}
+				}
+			}
+
 			// Show floating menu when an object is selected
 			ctx.setShowFloatingMenu(true);
 
@@ -667,6 +745,11 @@ export const createSelectionUpdatedHandler = (ctx: CanvasEventContext) => {
  */
 export const createSelectionClearedHandler = (ctx: CanvasEventContext) => {
 	return () => {
+		// Hide all control points when selection is cleared
+		if (ctx.controlPointManager) {
+			ctx.controlPointManager.hideAllControlPoints();
+		}
+
 		// Close floating menu when clicking on empty space in select mode
 		if (ctx.getSelectedTool() === 'select') {
 			ctx.setShowFloatingMenu(false);
