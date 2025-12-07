@@ -389,13 +389,33 @@
 					opacity: options.opacity
 				});
 			} else {
+				// Get the center point before changing stroke width
+				const centerBefore = activeObject.getCenterPoint();
+
+				// Apply the new properties
 				activeObject.set({
 					strokeWidth: options.strokeWidth,
 					stroke: options.strokeColour,
 					fill: options.fillColour === 'transparent' ? 'transparent' : options.fillColour,
 					strokeDashArray: options.strokeDashArray,
-					opacity: options.opacity
+					opacity: options.opacity,
+					strokeUniform: true // This makes stroke not scale with object
 				});
+
+				// Get the center point after changing stroke width
+				const centerAfter = activeObject.getCenterPoint();
+
+				// Adjust position to maintain the same visual center
+				if (
+					Math.abs(centerBefore.x - centerAfter.x) > 0.01 ||
+					Math.abs(centerBefore.y - centerAfter.y) > 0.01
+				) {
+					activeObject.set({
+						left: activeObject.left! + (centerBefore.x - centerAfter.x),
+						top: activeObject.top! + (centerBefore.y - centerAfter.y)
+					});
+					activeObject.setCoords();
+				}
 			}
 			canvas.renderAll();
 			const objData = activeObject.toObject();
@@ -458,24 +478,67 @@
 		currentLineOptions = { ...options };
 
 		if (!canvas) return;
-		const activeObject = canvas.getActiveObject();
-		if (activeObject && (activeObject.type === 'line' || activeObject.type === 'group')) {
-			if (activeObject.type === 'line') {
+		let activeObject = canvas.getActiveObject();
+
+		// If a control point is selected, find its linked line
+		if (activeObject && controlPointManager?.isControlPoint(activeObject)) {
+			const linkedObjectId = (activeObject as any).linkedObjectId;
+			if (linkedObjectId) {
+				const linkedObj = canvas.getObjects().find((o: any) => o.id === linkedObjectId);
+				if (linkedObj) {
+					activeObject = linkedObj;
+				}
+			}
+		}
+
+		if (
+			activeObject &&
+			(activeObject.type === 'polyline' ||
+				activeObject.type === 'line' ||
+				activeObject.type === 'group')
+		) {
+			if (activeObject.type === 'polyline' || activeObject.type === 'line') {
+				// Get the center point before changing stroke width
+				const centerBefore = activeObject.getCenterPoint();
+
+				// Apply the new properties with strokeUniform
 				activeObject.set({
 					strokeWidth: options.strokeWidth,
 					stroke: options.strokeColour,
 					strokeDashArray: options.strokeDashArray,
-					opacity: options.opacity
+					opacity: options.opacity,
+					strokeUniform: true // This makes stroke not scale with object
 				});
+
+				// Get the center point after changing stroke width
+				const centerAfter = activeObject.getCenterPoint();
+
+				// Adjust position to maintain the same visual center
+				if (
+					Math.abs(centerBefore.x - centerAfter.x) > 0.01 ||
+					Math.abs(centerBefore.y - centerAfter.y) > 0.01
+				) {
+					activeObject.set({
+						left: activeObject.left! + (centerBefore.x - centerAfter.x),
+						top: activeObject.top! + (centerBefore.y - centerAfter.y)
+					});
+					activeObject.setCoords();
+				}
+
+				// Update control points if they exist
+				if (controlPointManager) {
+					controlPointManager.updateControlPoints(activeObject.id, activeObject);
+				}
 			} else if (activeObject.type === 'group') {
 				// Handle arrow group - update all objects in the group
 				(activeObject as any).forEachObject((obj: any) => {
-					if (obj.type === 'line') {
+					if (obj.type === 'polyline' || obj.type === 'line') {
 						obj.set({
 							strokeWidth: options.strokeWidth,
 							stroke: options.strokeColour,
 							strokeDashArray: options.strokeDashArray,
-							opacity: options.opacity
+							opacity: options.opacity,
+							strokeUniform: true
 						});
 					}
 				});
@@ -632,14 +695,6 @@
 				canvas,
 				whiteboardIdNum,
 				{
-					onLoad: (objects) => {
-						// Add control points for all existing polylines
-						objects.forEach((obj: any) => {
-							if (obj.type === 'polyline' && obj.id) {
-								controlPointManager.addControlPoints(obj.id, obj);
-							}
-						});
-					},
 					controlPointManager
 				}
 			);
@@ -751,10 +806,13 @@
 			canvas.on('object:added', (e: any) => {
 				if (isApplyingHistory || !e.target) return;
 
-				// Bring control points to front when any non-control-point object is added
-				if (!controlPointManager.isControlPoint(e.target)) {
-					controlPointManager.bringAllControlPointsToFront();
+				// Skip control points entirely - they are client-side only
+				if (controlPointManager.isControlPoint(e.target)) {
+					return;
 				}
+
+				// Bring control points to front when any non-control-point object is added
+				controlPointManager.bringAllControlPointsToFront();
 
 				const objectId = e.target.id;
 				if (objectId) {
@@ -788,6 +846,8 @@
 			// Store state before modification starts
 			canvas.on('object:moving', (e: any) => {
 				if (isApplyingHistory || !e.target) return;
+				// Skip control points - they are client-side only
+				if (controlPointManager.isControlPoint(e.target)) return;
 				const objectId = e.target.id;
 				if (objectId && !objectStates.has(objectId)) {
 					const state = e.target.toObject();
@@ -798,6 +858,8 @@
 
 			canvas.on('object:scaling', (e: any) => {
 				if (isApplyingHistory || !e.target) return;
+				// Skip control points - they are client-side only
+				if (controlPointManager.isControlPoint(e.target)) return;
 				const objectId = e.target.id;
 				if (objectId && !objectStates.has(objectId)) {
 					const state = e.target.toObject();
@@ -808,6 +870,8 @@
 
 			canvas.on('object:rotating', (e: any) => {
 				if (isApplyingHistory || !e.target) return;
+				// Skip control points - they are client-side only
+				if (controlPointManager.isControlPoint(e.target)) return;
 				const objectId = e.target.id;
 				if (objectId && !objectStates.has(objectId)) {
 					const state = e.target.toObject();

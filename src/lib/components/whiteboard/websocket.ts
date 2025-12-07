@@ -68,13 +68,13 @@ export function setupWebSocket(
 			if (messageData.whiteboardId !== whiteboardId) return;
 
 			if (messageData.type === 'load') {
-				await handleLoadMessage(canvas, messageData, options?.onLoad);
+				await handleLoadMessage(canvas, messageData, options?.onLoad, options?.controlPointManager);
 			} else if (messageData.type === 'add') {
-				await handleAddMessage(canvas, messageData);
+				await handleAddMessage(canvas, messageData, options?.controlPointManager);
 			} else if (messageData.type === 'modify' || messageData.type === 'update') {
 				handleModifyMessage(canvas, messageData, options?.controlPointManager);
 			} else if (messageData.type === 'delete' || messageData.type === 'remove') {
-				handleDeleteMessage(canvas, messageData);
+				handleDeleteMessage(canvas, messageData, options?.controlPointManager);
 			} else if (messageData.type === 'layer') {
 				handleLayerMessage(canvas, messageData);
 			} else if (messageData.type === 'clear') {
@@ -94,7 +94,8 @@ export function setupWebSocket(
 async function handleLoadMessage(
 	canvas: fabric.Canvas,
 	messageData: WebSocketMessage,
-	onLoad?: (objects: fabric.FabricObject[]) => void
+	onLoad?: (objects: fabric.FabricObject[]) => void,
+	controlPointManager?: ControlPointManager
 ): Promise<void> {
 	if (messageData.whiteboard && messageData.whiteboard.objects.length > 0) {
 		const objects = await fabric.util.enlivenObjects(messageData.whiteboard.objects);
@@ -102,10 +103,19 @@ async function handleLoadMessage(
 
 		const fabricObjects: fabric.FabricObject[] = [];
 		objects.forEach((obj: unknown) => {
-			const fabricObj = obj as fabric.FabricObject & { id: string; hasControls: boolean };
+			const fabricObj = obj as fabric.FabricObject & {
+				id: string;
+				hasControls: boolean;
+				hasBorders: boolean;
+			};
 			fabricObj.hasControls = false; // Disable controls on load
+			// For polylines, also disable borders since we use custom control points
+			if (fabricObj.type === 'polyline') {
+				fabricObj.hasBorders = false;
+			}
 			canvas.add(fabricObj);
 			fabricObjects.push(fabricObj);
+			// DO NOT create control points automatically - they'll be created on user selection
 		});
 
 		canvas.renderAll();
@@ -122,13 +132,23 @@ async function handleLoadMessage(
  */
 async function handleAddMessage(
 	canvas: fabric.Canvas,
-	messageData: WebSocketMessage
+	messageData: WebSocketMessage,
+	controlPointManager?: ControlPointManager
 ): Promise<void> {
 	if (messageData.object) {
 		const objects = await fabric.util.enlivenObjects([messageData.object]);
 		const obj = objects[0] as fabric.FabricObject & { id?: string };
 		obj.id = messageData.object.id;
+		// For polylines, disable fabric.js controls since we use custom control points
+		if (obj.type === 'polyline') {
+			obj.set({
+				hasControls: false,
+				hasBorders: false
+			});
+		}
 		canvas.add(obj);
+		// DO NOT create control points automatically - they'll be created on user selection
+
 		canvas.renderAll();
 	}
 }
@@ -205,13 +225,17 @@ function handleModifyMessage(
 		// Recalculate coordinates after update
 		obj.setCoords();
 
-		// For polylines modified via control points, completely replace the object
-		// to avoid transformation/bounding box issues
-		if (obj.type === 'polyline' && controlPointManager && messageData.object.points) {
+		// For polylines with control point updates, completely replace the object
+		// Only do this if specifically marked as a control point update
+		if (obj.type === 'polyline' && controlPointManager && messageData.object.isControlPointUpdate) {
 			// @ts-expect-error - Custom id property
 			const objId = obj.id;
-			// Remove old control points
-			controlPointManager.removeControlPoints(objId);
+			// DON'T create control points - they should only exist if user selected the line
+			// Remove old control points only if they exist
+			const existingPoints = controlPointManager.getLineHandler().getControlPointsForObject(objId);
+			if (existingPoints.length > 0) {
+				controlPointManager.removeControlPoints(objId);
+			}
 			// Remove the old line
 			canvas.remove(obj);
 			// Create a new polyline with the clean data
@@ -226,10 +250,20 @@ function handleModifyMessage(
 				hasBorders: false
 			});
 			canvas.add(newLine);
-			// Add new control points
-			controlPointManager.addControlPoints(objId, newLine);
+			// DON'T recreate control points - user must select the line to see them
 			canvas.renderAll();
 			return; // Skip the normal update path
+		}
+
+		// For polylines being moved normally, ONLY update control points if they already exist
+		if (obj.type === 'polyline' && controlPointManager) {
+			// @ts-expect-error - Custom id property
+			const objId = obj.id;
+			const existingPoints = controlPointManager.getLineHandler().getControlPointsForObject(objId);
+			// Only update if control points already exist (user has selected this line)
+			if (existingPoints.length > 0) {
+				controlPointManager.updateControlPoints(objId, obj);
+			}
 		}
 
 		// Force immediate render
@@ -240,13 +274,22 @@ function handleModifyMessage(
 /**
  * Handles 'delete' or 'remove' message - removes objects from the canvas
  */
-function handleDeleteMessage(canvas: fabric.Canvas, messageData: WebSocketMessage): void {
+function handleDeleteMessage(
+	canvas: fabric.Canvas,
+	messageData: WebSocketMessage,
+	controlPointManager?: ControlPointManager
+): void {
 	const objects = canvas.getObjects();
 	const objectsToRemove = messageData.objects || (messageData.object ? [messageData.object] : []);
 	objectsToRemove.forEach((objData: SerializedObject) => {
 		// @ts-expect-error - Custom id property
 		const obj = objects.find((o) => o.id === objData.id);
 		if (obj) {
+			// Remove control points if this is a polyline
+			if (obj.type === 'polyline' && controlPointManager) {
+				// @ts-expect-error - Custom id property
+				controlPointManager.removeControlPoints(obj.id);
+			}
 			canvas.remove(obj);
 		}
 	});

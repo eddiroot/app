@@ -26,7 +26,8 @@ export const createLine = (
 			opacity: options.opacity,
 			selectable: true,
 			hasControls: false,
-			hasBorders: false
+			hasBorders: false,
+			strokeUniform: true
 		}
 	);
 
@@ -65,7 +66,8 @@ export const createShapeFromPoints = (
 				left: left,
 				top: top,
 				hasControls: false,
-				hasBorders: true
+				hasBorders: true,
+				strokeUniform: true
 			});
 			return circle;
 		}
@@ -82,7 +84,8 @@ export const createShapeFromPoints = (
 				left: left,
 				top: top,
 				hasControls: false,
-				hasBorders: false
+				hasBorders: false,
+				strokeUniform: true
 			});
 			return rect;
 		}
@@ -99,7 +102,8 @@ export const createShapeFromPoints = (
 				left: left,
 				top: top,
 				hasControls: false,
-				hasBorders: false
+				hasBorders: false,
+				strokeUniform: true
 			});
 			return triangle;
 		}
