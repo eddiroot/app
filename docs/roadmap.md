@@ -87,7 +87,7 @@ Jack
 
 Raph
 
-- [ ] Whiteboard (20/07)
+- [ ] Whiteboard
   - undo/redo
   - Fix colour options/view + tooltip, colour options popout instead of in menu?
   - shape border width change issues
