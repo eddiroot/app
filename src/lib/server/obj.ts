@@ -1,3 +1,4 @@
+import { building } from '$app/environment';
 import {
 	DeleteObjectCommand,
 	GetObjectCommand,
@@ -7,22 +8,16 @@ import {
 } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { Resource } from 'sst';
+import { Readable } from 'stream';
 
 const client = new S3Client({});
-
-let _bucketName: string | null = null;
-function getBucketName(): string {
-	if (!_bucketName) {
-		_bucketName = Resource.BucketSchools.name;
-	}
-	return _bucketName;
-}
+const bucketName = building ? '' : Resource.BucketSchools.name;
 
 async function uploadBuffer(objectName: string, buffer: Buffer, contentType?: string) {
 	try {
 		const res = await client.send(
 			new PutObjectCommand({
-				Bucket: getBucketName(),
+				Bucket: bucketName,
 				Key: objectName,
 				Body: buffer,
 				ContentType: contentType
@@ -41,14 +36,14 @@ export async function uploadBufferHelper(
 	contentType?: string
 ): Promise<string> {
 	await uploadBuffer(objectName, buffer, contentType);
-	return `https://${getBucketName()}.s3.amazonaws.com/${objectName}`;
+	return `https://${bucketName}.s3.amazonaws.com/${objectName}`;
 }
 
 export async function deleteFile(objectName: string): Promise<void> {
 	try {
 		await client.send(
 			new DeleteObjectCommand({
-				Bucket: getBucketName(),
+				Bucket: bucketName,
 				Key: objectName
 			})
 		);
@@ -66,7 +61,7 @@ export async function listFiles(prefix?: string): Promise<string[]> {
 		do {
 			const response = await client.send(
 				new ListObjectsV2Command({
-					Bucket: getBucketName(),
+					Bucket: bucketName,
 					Prefix: prefix,
 					ContinuationToken: continuationToken
 				})
@@ -99,7 +94,7 @@ export async function getPresignedUrl(
 
 	try {
 		const command = new GetObjectCommand({
-			Bucket: getBucketName(),
+			Bucket: bucketName,
 			Key: fullObjectName
 		});
 		const url = await getSignedUrl(client, command, { expiresIn: expiry });
@@ -127,18 +122,18 @@ export async function getFileFromStorage(
 	try {
 		const response = await client.send(
 			new GetObjectCommand({
-				Bucket: getBucketName(),
+				Bucket: bucketName,
 				Key: fullObjectName
 			})
 		);
 
-		// Convert stream to buffer
 		if (!response.Body) {
 			throw new Error('No body in response');
 		}
 
+		const stream = response.Body as Readable;
 		const chunks: Uint8Array[] = [];
-		for await (const chunk of response.Body as any) {
+		for await (const chunk of stream) {
 			chunks.push(chunk);
 		}
 		return Buffer.concat(chunks);
