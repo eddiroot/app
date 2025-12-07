@@ -35,7 +35,7 @@ export default $config({
 				host: 'localhost',
 				port: 5432
 			},
-			proxy: true
+			proxy: false
 		});
 
 		new sst.x.DevCommand('Studio', {
@@ -118,14 +118,14 @@ export default $config({
 
 		const router = isProd
 			? new sst.aws.Router('DomainRedirects', {
-					routes: {
-						'/*': app.url
-					},
-					domain: {
-						name: 'www.eddi.com.au',
-						aliases: ['eddi.au', 'www.eddi.au']
-					}
-				})
+				routes: {
+					'/*': app.url
+				},
+				domain: {
+					name: 'www.eddi.com.au',
+					aliases: ['eddi.au', 'www.eddi.au']
+				}
+			})
 			: null;
 
 		return {
