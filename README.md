@@ -30,7 +30,7 @@ npx sst dev
 3. In a new terminal, run these commands
 
 ```bash
-sst secret set SecretName secret-value
+npx sst secret set SecretName secret-value
 # repeat for each secret in sst.config.ts
 npm run db:push
 npm run db:seed
