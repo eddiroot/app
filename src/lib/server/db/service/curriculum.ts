@@ -1,7 +1,8 @@
+import type { yearLevelEnum } from '$lib/enums';
 import { db } from '$lib/server/db';
 import * as table from '$lib/server/db/schema';
 import { and, eq, inArray } from 'drizzle-orm';
-import type { EmbeddingMetadataFilter } from '.';
+import type { EmbeddingMetadata } from './vector';
 
 // ============================================================================
 // CURRICULUM & SUBJECT METHODS
@@ -447,265 +448,126 @@ export async function findSubjectByName(subjectName: string) {
 	}
 }
 
-// ============================================================================
-// EMBEDDING METADATA EXTRACTION METHODS
-// ============================================================================
 
-/**
- * Extract metadata for LearningArea
- */
-export async function getLearningAreaMetadataByCurriculumSubjectId(curriculumSubjectId: number): Promise<EmbeddingMetadataFilter> {
-	try {
-		return {
-			curriculumSubjectId
-		};
-	} catch (error) {
-		console.error('Error extracting learning area metadata:', error);
-		return { curriculumSubjectId };
-	}
+export async function getLearningAreaEmbeddingMetadata(record: Record<string, unknown>): Promise<EmbeddingMetadata> {
+	return {
+		curriculumSubjectId: record.curriculumSubjectId as number
+	};
 }
 
-/**
- * Extract metadata for LearningAreaContent by joining through LearningArea
- */
-export async function getLearningAreaContentMetadataByLearningAreaId(learningAreaId: number): Promise<EmbeddingMetadataFilter> {
-	try {
-		const result = await db
-			.select({
-				curriculumSubjectId: table.learningArea.curriculumSubjectId
-			})
-			.from(table.learningArea)
-			.where(eq(table.learningArea.id, learningAreaId))
-			.limit(1);
+export async function getLearningAreaContentEmbeddingMetadata(record: Record<string, unknown>): Promise<EmbeddingMetadata> {
+	const learningAreaId = record.learningAreaId as number;
 
-		if (result.length === 0) {
-			return {};
-		}
-
-		return {
-			curriculumSubjectId: result[0].curriculumSubjectId,
-			learningAreaId
-		};
-	} catch (error) {
-		console.error('Error extracting learning area content metadata:', error);
-		return { learningAreaId };
-	}
-}
-
-/**
- * Extract metadata for LearningAreaStandard by joining through LearningArea
- */
-export async function getLearningAreaStandardMetadataByLearningAreaId(learningAreaId: number): Promise<EmbeddingMetadataFilter> {
-	try {
-		const result = await db
-			.select({
-				curriculumSubjectId: table.learningArea.curriculumSubjectId
-			})
-			.from(table.learningArea)
-			.where(eq(table.learningArea.id, learningAreaId))
-			.limit(1);
-
-		if (result.length === 0) {
-			return {};
-		}
-
-		return {
-			curriculumSubjectId: result[0].curriculumSubjectId,
-			learningAreaId
-		};
-	} catch (error) {
-		console.error('Error extracting learning area standard metadata:', error);
-		return { learningAreaId };
-	}
-}
-
-/**
- * Extract metadata for StandardElaboration by joining through LearningAreaStandard and LearningArea
- */
-export async function getStandardElaborationMetadataByLearningAreaStandardId(learningAreaStandardId: number): Promise<EmbeddingMetadataFilter> {
-	try {
-		const result = await db
-			.select({
-				curriculumSubjectId: table.learningArea.curriculumSubjectId,
-				learningAreaId: table.learningAreaStandard.learningAreaId
-			})
-			.from(table.learningAreaStandard)
-			.innerJoin(table.learningArea, eq(table.learningAreaStandard.learningAreaId, table.learningArea.id))
-			.where(eq(table.learningAreaStandard.id, learningAreaStandardId))
-			.limit(1);
-
-		if (result.length === 0) {
-			return {};
-		}
-
-		return {
-			curriculumSubjectId: result[0].curriculumSubjectId,
-			learningAreaId: result[0].learningAreaId,
-			learningAreaStandardId
-		};
-	} catch (error) {
-		console.error('Error extracting standard elaboration metadata:', error);
-		return { learningAreaStandardId };
-	}
-}
-
-/**
- * Extract metadata for Outcome
- */
-export async function getOutcomeMetadataByCurriculumSubjectId(curriculumSubjectId: number): Promise<EmbeddingMetadataFilter> {
-	try {
-		return {
-			curriculumSubjectId
-		};
-	} catch (error) {
-		console.error('Error extracting outcome metadata:', error);
-		return { curriculumSubjectId };
-	}
-}
-
-/**
- * Extract metadata for LearningAreaOutcome by joining through both LearningArea and Outcome
- */
-export async function getLearningAreaOutcomeMetadataByIds(learningAreaId: number, outcomeId: number): Promise<EmbeddingMetadataFilter> {
-	try {
-		const result = await db
-			.select({
-				curriculumSubjectId: table.learningArea.curriculumSubjectId
-			})
-			.from(table.learningArea)
-			.where(eq(table.learningArea.id, learningAreaId))
-			.limit(1);
-
-		if (result.length === 0) {
-			return { learningAreaId, outcomeId };
-		}
-
-		return {
-			curriculumSubjectId: result[0].curriculumSubjectId,
-			learningAreaId,
-			outcomeId
-		};
-	} catch (error) {
-		console.error('Error extracting learning area outcome metadata:', error);
-		return { learningAreaId, outcomeId };
-	}
-}
-
-/**
- * Extract metadata for KeySkill
- */
-export async function getKeySkillMetadata(curriculumSubjectId?: number | null, outcomeId?: number | null): Promise<EmbeddingMetadataFilter> {
-	try {
-		const metadata: EmbeddingMetadataFilter = {};
-		
-		if (curriculumSubjectId) {
-			metadata.curriculumSubjectId = curriculumSubjectId;
-		}
-		
-		if (outcomeId) {
-			metadata.outcomeId = outcomeId;
-		}
-		
-		return metadata;
-	} catch (error) {
-		console.error('Error extracting key skill metadata:', error);
+	if (!learningAreaId) {
 		return {};
 	}
+
+	const [result] = await db
+		.select()
+		.from(table.learningArea)
+		.where(eq(table.learningArea.id, learningAreaId))
+		.limit(1);
+	
+
+	return {
+		learningAreaId,
+		curriculumSubjectId: result?.curriculumSubjectId
+
+	};
 }
 
-/**
- * Extract metadata for KeyKnowledge
- */
-export async function getKeyKnowledgeMetadata(curriculumSubjectId?: number | null, outcomeId?: number | null): Promise<EmbeddingMetadataFilter> {
-	try {
-		const metadata: EmbeddingMetadataFilter = {};
-		
-		if (curriculumSubjectId) {
-			metadata.curriculumSubjectId = curriculumSubjectId;
-		}
-		
-		if (outcomeId) {
-			metadata.outcomeId = outcomeId;
-		}
-		
-		return metadata;
-	} catch (error) {
-		console.error('Error extracting key knowledge metadata:', error);
+export async function getLearningAreaStandardEmbeddingMetadata(record: Record<string, unknown>): Promise<EmbeddingMetadata> {
+	const learningAreaId = record.learningAreaId as number;
+	const yearLevel = record.yearLevel as yearLevelEnum; 
+
+	if (!learningAreaId) {
+		return {yearLevel}
+	}
+	
+	    const [result] = await db
+        .select({ curriculumSubjectId: table.learningArea.curriculumSubjectId })
+        .from(table.learningArea)
+        .where(eq(table.learningArea.id, learningAreaId))
+        .limit(1);
+
+    return {
+        learningAreaStandardId: record.id as number,
+        learningAreaId,
+        curriculumSubjectId: result?.curriculumSubjectId,
+        yearLevel
+    };
+}
+
+export async function getStandardElaborationEmbeddingMetadata(record: Record<string, unknown>): Promise<EmbeddingMetadata> {
+	const learningAreaStandardId = record.learningAreaStandardId as number;
+
+	if (!learningAreaStandardId) {
 		return {};
 	}
+
+    const [result] = await db
+        .select({
+            curriculumSubjectId: table.learningArea.curriculumSubjectId,
+            learningAreaId: table.learningAreaStandard.learningAreaId,
+            yearLevel: table.learningAreaStandard.yearLevel
+        })
+        .from(table.learningAreaStandard)
+        .innerJoin(table.learningArea, eq(table.learningAreaStandard.learningAreaId, table.learningArea.id))
+        .where(eq(table.learningAreaStandard.id, learningAreaStandardId))
+        .limit(1);
+
+	return {
+		learningAreaStandardId,
+		learningAreaId: result?.learningAreaId,
+		curriculumSubjectId: result?.curriculumSubjectId,
+		yearLevel: result?.yearLevel
+	};
 }
 
-/**
- * Extract metadata for ExamQuestion
- */
-export async function getExamQuestionMetadataByCurriculumSubjectId(curriculumSubjectId: number): Promise<EmbeddingMetadataFilter> {
-	try {
-		return {
-			curriculumSubjectId
-		};
-	} catch (error) {
-		console.error('Error extracting exam question metadata:', error);
-		return { curriculumSubjectId };
-	}
+export async function getOutcomeEmbeddingMetadata(record: Record<string, unknown>): Promise<EmbeddingMetadata> {
+	return {
+		curriculumSubjectId: record.curriculumSubjectId as number
+	};
 }
 
-/**
- * Extract metadata for LearningActivity
- */
-export async function getLearningActivityMetadataByCurriculumSubjectId(curriculumSubjectId: number): Promise<EmbeddingMetadataFilter> {
-	try {
-		return {
-			curriculumSubjectId
-		};
-	} catch (error) {
-		console.error('Error extracting learning activity metadata:', error);
-		return { curriculumSubjectId };
-	}
+export async function getKeySkillEmbeddingMetadata(record: Record<string, unknown>): Promise<EmbeddingMetadata> {
+    return {
+        curriculumSubjectId: record.curriculumSubjectId as number,
+        outcomeId: record.outcomeId as number
+    };
 }
 
-/**
- * Extract metadata for AssessmentTask
- */
-export async function getAssessmentTaskMetadataByCurriculumSubjectId(curriculumSubjectId: number): Promise<EmbeddingMetadataFilter> {
-	try {
-		const [subjectInfo] = await db
-			.select({
-				curriculumId: table.curriculum.id,
-				curriculumName: table.curriculum.name,
-				subjectName: table.curriculumSubject.name
-			})
-			.from(table.curriculumSubject)
-			.innerJoin(table.curriculum, eq(table.curriculumSubject.curriculumId, table.curriculum.id))
-			.where(eq(table.curriculumSubject.id, curriculumSubjectId))
-			.limit(1);
-
-		return subjectInfo ? { curriculumSubjectId, ...subjectInfo } : { curriculumSubjectId };
-	} catch (error) {
-		console.error('Error extracting assessment task metadata:', error);
-		return { curriculumSubjectId };
-	}
+export async function getKeyKnowledgeEmbeddingMetadata(record: Record<string, unknown>): Promise<EmbeddingMetadata> {
+    return {
+        curriculumSubjectId: record.curriculumSubjectId as number,
+        outcomeId: record.outcomeId as number
+    };
 }
 
-/**
- * Extract metadata for CurriculumSubjectExtraContent
- */
-export async function getCurriculumSubjectExtraContentMetadataByCurriculumSubjectId(curriculumSubjectId: number): Promise<EmbeddingMetadataFilter> {
-	try {
-		const [subjectInfo] = await db
-			.select({
-				curriculumId: table.curriculum.id,
-				curriculumName: table.curriculum.name,
-				subjectName: table.curriculumSubject.name
-			})
-			.from(table.curriculumSubject)
-			.innerJoin(table.curriculum, eq(table.curriculumSubject.curriculumId, table.curriculum.id))
-			.where(eq(table.curriculumSubject.id, curriculumSubjectId))
-			.limit(1);
+export async function getExamQuestionEmbeddingMetadata(record: Record<string, unknown>): Promise<EmbeddingMetadata> {
+    return {
+        curriculumSubjectId: record.curriculumSubjectId as number,
+        yearLevel: record.yearLevel as yearLevelEnum
+    };
+}
 
-		return subjectInfo ? { curriculumSubjectId, ...subjectInfo } : { curriculumSubjectId };
-	} catch (error) {
-		console.error('Error extracting curriculum subject extra content metadata:', error);
-		return { curriculumSubjectId };
-	}
+export async function getLearningActivityEmbeddingMetadata(record: Record<string, unknown>): Promise<EmbeddingMetadata> {
+    return {
+        curriculumSubjectId: record.curriculumSubjectId as number,
+		yearLevel: record.yearLevel as yearLevelEnum
+    };
+}
+
+export async function getAssessmentTaskEmbeddingMetadata(record: Record<string, unknown>): Promise<EmbeddingMetadata> {
+    return {
+        curriculumSubjectId: record.curriculumSubjectId as number,
+		yearLevel: record.yearLevel as yearLevelEnum
+    };
+}
+
+export async function getCurriculumSubjectExtraContentEmbeddingMetadata(record: Record<string, unknown>): Promise<EmbeddingMetadata> {
+    return {
+        curriculumSubjectId: record.curriculumSubjectId as number
+    };
 }
 

@@ -9,7 +9,7 @@ import {
 import { db } from '$lib/server/db';
 import * as table from '$lib/server/db/schema';
 import { and, asc, desc, eq, gte, inArray, lt, or } from 'drizzle-orm';
-import type { EmbeddingMetadataFilter } from '.';
+import type { EmbeddingMetadata } from '.';
 
 export async function getSubjectsByUserId(userId: string) {
 	const subjects = await db
@@ -1276,79 +1276,53 @@ export async function getSubjectOfferingMetadataByOfferingId(
 	};
 }
 
-// ============================================================================
-// EMBEDDING METADATA EXTRACTION METHODS
-// ============================================================================
+export async function getSubjectThreadEmbeddingMetadata(record: Record<string, unknown>): Promise<EmbeddingMetadata> {
+	const [result] = await db
+		.select({
+			subjectOfferingId: table.subjectThread.subjectOfferingId,
+			subjectId: table.subject.id,
+			yearLevel: table.subject.yearLevel
+		})
+		.from(table.subjectThread)
+		.innerJoin(
+			table.subjectOffering,
+			eq(table.subjectThread.subjectOfferingId, table.subjectOffering.id)
+		)
+		.innerJoin(table.subject, eq(table.subjectOffering.subjectId, table.subject.id))
+		.where(eq(table.subjectThread.id, record.id as number))
+		.limit(1);
 
-/**
- * Extract metadata for SubjectThread by joining through subjectOffering → subject
- */
-export async function getSubjectThreadMetadataBySubjectOfferingId(
-	subjectOfferingId: number
-): Promise<EmbeddingMetadataFilter> {
-	try {
-		const result = await db
-			.select({
-				subjectId: table.subject.id,
-				curriculumSubjectId: table.coreSubject.curriculumSubjectId,
-				yearLevel: table.subject.yearLevel
-			})
-			.from(table.subjectOffering)
-			.innerJoin(table.subject, eq(table.subjectOffering.subjectId, table.subject.id))
-			.leftJoin(table.coreSubject, eq(table.subject.coreSubjectId, table.coreSubject.id))
-			.where(eq(table.subjectOffering.id, subjectOfferingId))
-			.limit(1);
-
-		if (result.length === 0) {
-			return { subjectOfferingId };
-		}
-
-		return {
-			subjectId: result[0].subjectId,
-			curriculumSubjectId: result[0].curriculumSubjectId ?? undefined,
-			yearLevel: result[0].yearLevel,
-			subjectOfferingId
-		};
-	} catch (error) {
-		console.error('Error extracting subject thread metadata:', error);
-		return { subjectOfferingId };
-	}
+	return {
+		subjectOfferingId: result.subjectOfferingId,
+		subjectId: result.subjectId,
+		yearLevel: result.yearLevel
+	};
 }
 
-/**
- * Extract metadata for SubjectThreadResponse by joining through subjectThread → subjectOffering → subject
- */
-export async function getSubjectThreadResponseMetadataBySubjectThreadId(
-	subjectThreadId: number
-): Promise<EmbeddingMetadataFilter> {
-	try {
-		const result = await db
-			.select({
-				subjectId: table.subject.id,
-				curriculumSubjectId: table.coreSubject.curriculumSubjectId,
-				yearLevel: table.subject.yearLevel,
-				subjectOfferingId: table.subjectThread.subjectOfferingId
-			})
-			.from(table.subjectThread)
-			.innerJoin(table.subjectOffering, eq(table.subjectThread.subjectOfferingId, table.subjectOffering.id))
-			.innerJoin(table.subject, eq(table.subjectOffering.subjectId, table.subject.id))
-			.leftJoin(table.coreSubject, eq(table.subject.coreSubjectId, table.coreSubject.id))
-			.where(eq(table.subjectThread.id, subjectThreadId))
-			.limit(1);
-
-		if (result.length === 0) {
-			return { subjectThreadId };
-		}
-
-		return {
-			subjectId: result[0].subjectId,
-			curriculumSubjectId: result[0].curriculumSubjectId ?? undefined,
-			yearLevel: result[0].yearLevel,
-			subjectOfferingId: result[0].subjectOfferingId,
-			subjectThreadId
-		};
-	} catch (error) {
-		console.error('Error extracting subject thread response metadata:', error);
-		return { subjectThreadId };
-	}
+export async function getSubjectThreadResponseEmbeddingMetadata(record: Record<string, unknown>): Promise<EmbeddingMetadata> {
+	const [result] = await db
+		.select({
+			subjectOfferingId: table.subjectThread.subjectOfferingId,
+			subjectId: table.subject.id,
+			yearLevel: table.subject.yearLevel
+		})
+		.from(table.subjectThreadResponse)
+		.innerJoin(
+			table.subjectThread,
+			eq(table.subjectThreadResponse.subjectThreadId, table.subjectThread.id)
+		)
+		.innerJoin(
+			table.subjectOffering,
+			eq(table.subjectThread.subjectOfferingId, table.subjectOffering.id)
+		)
+		.innerJoin(table.subject, eq(table.subjectOffering.subjectId, table.subject.id))
+		.where(eq(table.subjectThreadResponse.id, record.id as number))
+		.limit(1);
+		
+	return {
+		subjectOfferingId: result.subjectOfferingId,
+		subjectId: result.subjectId,
+		yearLevel: result.yearLevel
+	};
 }
+

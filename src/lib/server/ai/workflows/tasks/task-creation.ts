@@ -1,4 +1,5 @@
 import { subjectGroupEnum, taskTypeEnum, yearLevelEnum } from "$lib/enums";
+import { assessmentTask, curriculumSubjectExtraContent, examQuestion, keyKnowledge, keySkill, learningActivity, learningArea, learningAreaStandard, outcome, standardElaboration, taskBlock, tempPool } from "$lib/server/db/schema";
 import { getLearningAreaStandardWithElaborationsByIds } from "$lib/server/db/service";
 import { Document } from "@langchain/core/documents";
 import { Annotation, END, Send, StateGraph } from "@langchain/langgraph";
@@ -9,20 +10,8 @@ import { multiBlockGenerationNode, type OrderedBlock, type TaskBlock } from "../
 import { createOrchestratorNode } from "../../nodes/orchestrator-synthesiser/task";
 import { createRAGRetrievalNode } from "../../nodes/retrieval/multi-store";
 import type { ContentSection } from "../../schemas/task";
-import { createTaskTool, type TaskCreationData } from "../../tools/database/task-persistance";
-import type { TableVectorStore } from "../../vector-store/base";
-import { AssessmentTaskVectorStore } from "../../vector-store/curriculum/assessment-task";
-import { CurriculumSubjectExtraContentVectorStore } from "../../vector-store/curriculum/curriculum-subject-extra-content";
-import { ExamQuestionVectorStore } from "../../vector-store/curriculum/exam-question";
-import { KeyKnowledgeVectorStore } from "../../vector-store/curriculum/key-knowledge";
-import { KeySkillVectorStore } from "../../vector-store/curriculum/key-skill";
-import { LearningActivityVectorStore } from "../../vector-store/curriculum/learning-activity";
-import { LearningAreaVectorStore } from "../../vector-store/curriculum/learning-area";
-import { LearningAreaStandardVectorStore } from "../../vector-store/curriculum/learning-area-standard";
-import { OutcomeVectorStore } from "../../vector-store/curriculum/outcome";
-import { StandardElaborationVectorStore } from "../../vector-store/curriculum/standard-elaboration";
-import { TaskBlockVectorStore } from "../../vector-store/task/task-block";
-import { TempPoolVectorStore } from "../../vector-store/temp-pool";
+import { createTaskTool, type TaskCreationData } from "../../tools/database/task-persistence";
+import { TableVectorStore } from "../../vector-store/base";
 
 /**
 New Workflow 
@@ -136,18 +125,18 @@ export function createTaskGenerationGraph() {
     // -------------------------------------------------------------------------
     // Initialise Vector Stores
     // -------------------------------------------------------------------------
-    const learningAreaVectorStore = new LearningAreaVectorStore(defaultEmbeddings);
-    const learningAreaStandardVectorStore = new LearningAreaStandardVectorStore(defaultEmbeddings);
-    const standardElaborationVectorStore = new StandardElaborationVectorStore(defaultEmbeddings);
-    const outcomeVectorStore = new OutcomeVectorStore(defaultEmbeddings);
-    const keySkillVectorStore = new KeySkillVectorStore(defaultEmbeddings);
-    const keyKnowledgeVectorStore = new KeyKnowledgeVectorStore(defaultEmbeddings);
-    const examQuestionVectorStore = new ExamQuestionVectorStore(defaultEmbeddings);
-    const learningActivityVectorStore = new LearningActivityVectorStore(defaultEmbeddings);
-    const assessmentTaskVectorStore = new AssessmentTaskVectorStore(defaultEmbeddings);
-    const curriculumSubjectExtraContentVectorStore = new CurriculumSubjectExtraContentVectorStore(defaultEmbeddings);
-    const taskBlockVectorStore = new TaskBlockVectorStore(defaultEmbeddings);
-    const tempPoolVectorStore = new TempPoolVectorStore(defaultEmbeddings);
+    const learningAreaVectorStore = new TableVectorStore(learningArea, defaultEmbeddings);
+    const learningAreaStandardVectorStore = new TableVectorStore(learningAreaStandard, defaultEmbeddings);
+    const standardElaborationVectorStore = new TableVectorStore(standardElaboration, defaultEmbeddings);
+    const outcomeVectorStore = new TableVectorStore(outcome, defaultEmbeddings);
+    const keySkillVectorStore = new TableVectorStore(keySkill, defaultEmbeddings);
+    const keyKnowledgeVectorStore = new TableVectorStore(keyKnowledge, defaultEmbeddings);
+    const examQuestionVectorStore = new TableVectorStore(examQuestion, defaultEmbeddings);
+    const learningActivityVectorStore = new TableVectorStore(learningActivity, defaultEmbeddings);
+    const assessmentTaskVectorStore = new TableVectorStore(assessmentTask, defaultEmbeddings);
+    const curriculumSubjectExtraContentVectorStore = new TableVectorStore(curriculumSubjectExtraContent, defaultEmbeddings);
+    const taskBlockVectorStore = new TableVectorStore(taskBlock, defaultEmbeddings);
+    const tempPoolVectorStore = new TableVectorStore(tempPool, defaultEmbeddings);
 
     // -------------------------------------------------------------------------
     // Create RAG Nodes

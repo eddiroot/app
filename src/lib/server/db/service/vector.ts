@@ -3,7 +3,7 @@ import { db } from '$lib/server/db';
 import { and, cosineDistance, eq, sql, type SQL } from 'drizzle-orm';
 import type { PgColumn, PgTable } from 'drizzle-orm/pg-core';
 
-export interface EmbeddingMetadataFilter {
+export interface EmbeddingMetadata {
     subjectId?: number;
     curriculumSubjectId?: number;
     yearLevel?: yearLevelEnum;
@@ -14,7 +14,7 @@ export async function createRecordWithEmbedding(
     table: PgTable,
     record: Record<string, unknown>,
     embedding: number[] | number[][],
-    metadata?: EmbeddingMetadataFilter
+    metadata?: EmbeddingMetadata
 ) {
     // Handle both single vector and array of vectors (use first if array)
     const vectorData = Array.isArray(embedding[0]) ? embedding[0] : embedding;
@@ -35,7 +35,7 @@ export async function updateRecordEmbedding(
     table: PgTable & { embedding: PgColumn; id: PgColumn; embeddingMetadata?: PgColumn },
     recordId: number | string,
     embedding: number[] | number[][],
-    metadata?: EmbeddingMetadataFilter
+    metadata?: EmbeddingMetadata
 ) {
     // Handle both single vector and array of vectors (use first if array)
     const vectorData = Array.isArray(embedding[0]) ? embedding[0] : embedding;
@@ -80,7 +80,7 @@ export interface VectorSearchResult<T> {
  */
 function buildMetadataFilters(
     embeddingMetadataColumn: PgColumn,
-    filter: EmbeddingMetadataFilter
+    filter: EmbeddingMetadata
 ): SQL[] {
     const conditions: SQL[] = [];
 
@@ -128,7 +128,7 @@ export async function vectorSimilaritySearch<T>(
     table: PgTable & { embedding: PgColumn; embeddingMetadata: PgColumn },
     queryEmbedding: number[],
     k: number,
-    filter?: EmbeddingMetadataFilter
+    filter?: EmbeddingMetadata
 ): Promise<VectorSearchResult<T>[]> {
     // Calculate cosine distance (lower is more similar)
     const distance = sql<number>`${cosineDistance(table.embedding, JSON.stringify(queryEmbedding))}`;
@@ -159,4 +159,10 @@ export async function vectorSimilaritySearch<T>(
         record: row.record as T,
         distance: row.distance
     }));
+}
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export async function getTempPoolEmbeddingMetadata(_record: Record<string, unknown>): Promise<EmbeddingMetadata> {
+    // return empty metadata for temp pool
+    return {};
 }
