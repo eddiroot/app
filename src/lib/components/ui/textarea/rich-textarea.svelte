@@ -27,6 +27,13 @@
 
 	let element: HTMLDivElement;
 	let editor = $state<Editor>();
+	let editorState = $state(0);
+
+	// Derived function that depends on editorState
+	const isActive = (name: string) => {
+		editorState; // Create dependency
+		return editor?.isActive(name) ?? false;
+	};
 
 	onMount(() => {
 		editor = new Editor({
@@ -41,6 +48,9 @@
 			editable: !disabled,
 			onUpdate: ({ editor }) => {
 							value = editor.isEmpty ? '' : editor.getHTML();
+			},
+			onTransaction: () => {
+				editorState = (editorState + 1) % 1000;
 			},
 			editorProps: {
 				attributes: {
@@ -85,7 +95,7 @@
 			<Button
 				type="button"
 				onmousedown={(e) => { e.preventDefault(); editor?.chain().focus().toggleBold().run(); }}
-				variant={editor.isActive('bold') ? 'default' : 'ghost'}
+				variant={isActive('bold') ? 'default' : 'ghost'}
 				size="sm"
 			>
 				<BoldIcon class="h-4 w-4" />
@@ -93,7 +103,7 @@
 			<Button
 				type="button"
 				onmousedown={(e) => { e.preventDefault(); editor?.chain().focus().toggleItalic().run(); }}
-				variant={editor.isActive('italic') ? 'default' : 'ghost'}
+				variant={isActive('italic') ? 'default' : 'ghost'}
 				size="sm"
 			>
 				<ItalicIcon class="h-4 w-4" />
@@ -101,7 +111,7 @@
 			<Button
 				type="button"
 				onmousedown={(e) => { e.preventDefault(); editor?.chain().focus().toggleCodeBlock().run(); }}
-				variant={editor.isActive('codeBlock') ? 'default' : 'ghost'}
+				variant={isActive('codeBlock') ? 'default' : 'ghost'}
 				size="sm"
 			>
 				<CodeIcon class="h-4 w-4" />
@@ -109,7 +119,7 @@
 			<Button
 				type="button"
 				onmousedown={(e) => { e.preventDefault(); editor?.chain().focus().toggleBlockquote().run(); }}
-				variant={editor.isActive('blockquote') ? 'default' : 'ghost'}
+				variant={isActive('blockquote') ? 'default' : 'ghost'}
 				size="sm"
 			>
 				<QuoteIcon class="h-4 w-4" />
@@ -117,7 +127,7 @@
 			<Button
 				type="button"
 				onmousedown={(e) => { e.preventDefault(); editor?.chain().focus().toggleBulletList().run(); }}
-				variant={editor.isActive('bulletList') ? 'default' : 'ghost'}
+				variant={isActive('bulletList') ? 'default' : 'ghost'}
 				size="sm"
 			>
 				<ListIcon class="h-4 w-4" />
@@ -125,7 +135,7 @@
 			<Button
 				type="button"
 				onmousedown={(e) => { e.preventDefault(); editor?.chain().focus().toggleOrderedList().run(); }}
-				variant={editor.isActive('orderedList') ? 'default' : 'ghost'}
+				variant={isActive('orderedList') ? 'default' : 'ghost'}
 				size="sm"
 			>
 				<ListOrderedIcon class="h-4 w-4" />
