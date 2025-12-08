@@ -17,12 +17,13 @@
 	let {
 		ref = $bindable(null),
 		value = $bindable(),
+		reset = $bindable(false),
 		class: className,
 		"data-slot": dataSlot = "textarea",
 		placeholder,
 		disabled = false,
 		...restProps
-	}: WithoutChildren<WithElementRef<HTMLTextareaAttributes>> = $props();
+	}: WithoutChildren<WithElementRef<HTMLTextareaAttributes>> & { reset?: boolean } = $props();
 
 	let element: HTMLDivElement;
 	let editor = $state<Editor>();
@@ -39,7 +40,7 @@
 			content: (value as string) || '',
 			editable: !disabled,
 			onUpdate: ({ editor }) => {
-				value = editor.isEmpty ? '' : editor.getHTML();
+							value = editor.isEmpty ? '' : editor.getHTML();
 			},
 			editorProps: {
 				attributes: {
@@ -56,6 +57,13 @@
 	$effect(() => {
 		if (editor) {
 			editor.setEditable(!disabled);
+		}
+	});
+
+	$effect(() => {
+		if (reset && editor) {
+			editor.commands.setContent('');
+			reset = false;
 		}
 	});
 </script>

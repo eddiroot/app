@@ -33,19 +33,18 @@
 		validators: zod4(formSchema),
 		resetForm: true,
 		onUpdated: ({ form }) => {
-			if (form.valid && isReply && onSuccess) {
-				onSuccess();
-			}
-		},
-		onResult: ({ result }) => {
-			// Handle successful form submission for replies
-			if (result.type === 'success' && isReply && onSuccess) {
-				onSuccess();
+			if (form.valid) {
+				resetEditor = true;
+				if (isReply && onSuccess) {
+					onSuccess();
+				}
 			}
 		}
 	});
 
 	const { form: formData, enhance } = form;
+	
+	let resetEditor = $state(false);
 </script>
 
 <div class={isReply ? 'mt-4 border-l-2 border-gray-200 pl-4' : 'mt-6 border-t pt-6'}>
@@ -131,6 +130,7 @@
 					<RichTextarea
 						{...props}
 						bind:value={$formData.content}
+						bind:reset={resetEditor}
 						placeholder={`Write your ${$formData.type} here...`}
 						class="min-h-24"
 					/>
