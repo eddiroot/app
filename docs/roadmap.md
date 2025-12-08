@@ -58,24 +58,6 @@ All
 - [ ] Home pages and feature pages
 - [ ] Shift away from static school id for OAuth (search TODO)
 
-Lachie
-
-- [ ] Student grades / analytics
-  - Support for IB grading (0-8) and percentage
-  - View how your class is doing
-  - View how your students are doing
-- [ ] Anonymous discussion posts
-  - Checkbox on posts for students only to mark as anonymous
-  - Loading anonymous post should show anonymous for name and no identifiable information in payload
-  - OP's replies should be anonymous unless marked otherwise
-  - Teacher can see the user's name
-  - Add a note that teacher's can see anonymous' name
-- [ ] Discussion UI should be more compact for easy viewing
-- [ ] Tasks
-  - Criteria/marks
-  - Assessment submission
-  - Task analytics
-
 Bella
 
 - [ ] Refine task block UI/UX
