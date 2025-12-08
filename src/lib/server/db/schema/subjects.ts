@@ -212,6 +212,7 @@ export const subjectThread = pgTable('sub_thread', {
 		.references(() => user.id, { onDelete: 'cascade' }),
 	title: text('title').notNull(),
 	content: text('content').notNull(),
+	isAnonymous: boolean('is_anonymous').notNull(),
 	isArchived: boolean('is_archived').notNull().default(false),
 	...timestamps
 });
@@ -236,6 +237,7 @@ export const subjectThreadResponse = pgTable(
 			.references(() => user.id, { onDelete: 'cascade' }),
 		content: text('content').notNull(),
 		parentResponseId: integer('parent_id').references((): AnyPgColumn => subjectThreadResponse.id),
+		isAnonymous: boolean('is_anonymous').notNull().default(false),
 		isArchived: boolean('is_archived').notNull().default(false),
 		...timestamps
 	},

@@ -1,9 +1,10 @@
 <script lang="ts">
 	import { Button } from '$lib/components/ui/button/index.js';
+	import Checkbox from '$lib/components/ui/checkbox/checkbox.svelte';
 	import * as Form from '$lib/components/ui/form/index.js';
 	import * as Select from '$lib/components/ui/select/index.js';
 	import { Textarea } from '$lib/components/ui/textarea/index.js';
-	import { subjectThreadResponseTypeEnum } from '$lib/enums.js';
+	import { subjectThreadResponseTypeEnum, userTypeEnum } from '$lib/enums.js';
 	import CheckCircle from '@lucide/svelte/icons/check-circle';
 	import MessageSquare from '@lucide/svelte/icons/message-square';
 	import { type Infer, superForm, type SuperValidated } from 'sveltekit-superforms';
@@ -18,7 +19,11 @@
 		parentAuthor = undefined,
 		isReply = false,
 		onSuccess = undefined,
-		onCancel = undefined
+		onCancel = undefined,
+		isOPOnAnonymousThread = false,
+		currentUserId = undefined,
+		threadAuthorId = undefined,
+		currentUserType = undefined
 	}: {
 		data: { form: SuperValidated<Infer<FormSchema>> };
 		threadType: string;
@@ -27,9 +32,14 @@
 		isReply?: boolean;
 		onSuccess?: () => void;
 		onCancel?: () => void;
+		isOPOnAnonymousThread?: boolean;
+		currentUserId?: string;
+		threadAuthorId?: string;
+		currentUserType?: string;
 	} = $props();
 
-	const form = superForm(data.form, {
+	const dataForm = () => data.form;
+	const form = superForm(dataForm(), {
 		validators: zod4(formSchema),
 		resetForm: true,
 		onUpdated: ({ form }) => {
@@ -46,6 +56,8 @@
 	});
 
 	const { form: formData, enhance } = form;
+
+	const isOP = $derived(() => currentUserId === threadAuthorId);
 </script>
 
 <div class={isReply ? 'mt-4 border-l-2 border-gray-200 pl-4' : 'mt-6 border-t pt-6'}>
@@ -138,6 +150,25 @@
 			</Form.Control>
 			<Form.FieldErrors />
 		</Form.Field>
+
+		{#if currentUserType === userTypeEnum.student && isOP() && isOPOnAnonymousThread}
+			<Form.Field {form} name="isAnonymous" class="space-y-0">
+				<Form.Control>
+					{#snippet children({ props })}
+						<Form.Label class="hover:bg-accent/50 items-start gap-3 rounded-lg border p-3">
+							<Checkbox {...props} bind:checked={$formData.isAnonymous} />
+							<div class="grid gap-1.5 font-normal">
+								<p class="text-sm leading-none font-medium">Anonymous Response</p>
+								<p class="text-muted-foreground text-sm">
+									Keep your response anonymous (your thread is anonymous)
+								</p>
+							</div>
+						</Form.Label>
+					{/snippet}
+				</Form.Control>
+				<Form.FieldErrors />
+			</Form.Field>
+		{/if}
 
 		<div class="flex justify-end gap-2">
 			{#if isReply && onCancel}

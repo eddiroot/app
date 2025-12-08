@@ -286,13 +286,16 @@ export async function getSubjectThreadsMinimalBySubjectId(subjectOfferingId: num
 				id: table.subjectThread.id,
 				title: table.subjectThread.title,
 				type: table.subjectThread.type,
+				isAnonymous: table.subjectThread.isAnonymous,
 				createdAt: table.subjectThread.createdAt
 			},
 			user: {
+				id: table.user.id,
 				firstName: table.user.firstName,
 				middleName: table.user.middleName,
 				lastName: table.user.lastName,
-				avatarUrl: table.user.avatarUrl
+				avatarUrl: table.user.avatarUrl,
+				type: table.user.type
 			}
 		})
 		.from(table.subjectThread)
@@ -308,10 +311,12 @@ export async function getSubjectThreadById(threadId: number) {
 		.select({
 			thread: table.subjectThread,
 			user: {
+				id: table.user.id,
 				firstName: table.user.firstName,
 				middleName: table.user.middleName,
 				lastName: table.user.lastName,
-				avatarUrl: table.user.avatarUrl
+				avatarUrl: table.user.avatarUrl,
+				type: table.user.type
 			}
 		})
 		.from(table.subjectThread)
@@ -327,21 +332,23 @@ export async function getSubjectThreadById(threadId: number) {
 }
 
 export async function createSubjectThread(
-	type: subjectThreadTypeEnum,
 	subjectOfferingId: number,
 	userId: string,
 	title: string,
+	type: subjectThreadTypeEnum,
 	content: string,
+	isAnonymous: boolean,
 	isArchived: boolean = false
 ) {
 	const [thread] = await db
 		.insert(table.subjectThread)
 		.values({
-			type,
 			subjectOfferingId,
 			userId,
 			title,
+			type,
 			content,
+			isAnonymous,
 			isArchived
 		})
 		.returning();
@@ -354,10 +361,12 @@ export async function getSubjectThreadResponsesById(threadId: number) {
 		.select({
 			response: table.subjectThreadResponse,
 			user: {
+				id: table.user.id,
 				firstName: table.user.firstName,
 				middleName: table.user.middleName,
 				lastName: table.user.lastName,
-				avatarUrl: table.user.avatarUrl
+				avatarUrl: table.user.avatarUrl,
+				type: table.user.type
 			}
 		})
 		.from(table.subjectThreadResponse)
@@ -374,6 +383,7 @@ export async function createSubjectThreadResponse(
 	userId: string,
 	content: string,
 	parentResponseId?: number | null,
+	isAnonymous: boolean = false,
 	isArchived: boolean = false
 ) {
 	const [response] = await db
@@ -384,6 +394,7 @@ export async function createSubjectThreadResponse(
 			userId,
 			content,
 			parentResponseId: parentResponseId || null,
+			isAnonymous,
 			isArchived
 		})
 		.returning();

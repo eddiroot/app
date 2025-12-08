@@ -11,15 +11,22 @@
 	import User from '@lucide/svelte/icons/user';
 	import ResponseForm from './form.svelte';
 	import ResponseItem from './response-item.svelte';
-	import { getThreadTypeDisplay } from './utils';
+	import { getThreadTypeDisplay, shouldShowUserInfo } from './utils';
 
 	let { data, form } = $props();
 	const thread = $derived(() => data.thread);
 	const responses = $derived(() => data.nestedResponses);
 
+	const showAuthorInfo = $derived(() => {
+		const currentThread = thread();
+		if (!currentThread) return false;
+		return shouldShowUserInfo(currentThread.thread.isAnonymous, data.currentUser.type);
+	});
+
 	const authorFullName = $derived(() => {
 		const currentThread = thread();
 		if (!currentThread || !currentThread.user) return 'Unknown Author';
+		if (!showAuthorInfo()) return 'Anonymous';
 		return convertToFullName(
 			currentThread.user.firstName,
 			currentThread.user.middleName,
@@ -64,15 +71,21 @@
 			<Card.Header class="pb-4">
 				<div class="flex items-start gap-4">
 					<Avatar.Root class="ring-border h-12 w-12 ring-2">
-						<Avatar.Image src={thread()?.user?.avatarUrl || ''} alt={authorFullName()} />
-						<Avatar.Fallback class="bg-primary text-primary-foreground font-semibold">
-							{authorFullName()
-								.split(' ')
-								.map((n) => n[0])
-								.join('')
-								.substring(0, 2)
-								.toUpperCase()}
-						</Avatar.Fallback>
+						{#if showAuthorInfo()}
+							<Avatar.Image src={thread()?.user?.avatarUrl || ''} alt={authorFullName()} />
+							<Avatar.Fallback class="bg-primary text-primary-foreground font-semibold">
+								{authorFullName()
+									.split(' ')
+									.map((n) => n[0])
+									.join('')
+									.substring(0, 2)
+									.toUpperCase()}
+							</Avatar.Fallback>
+						{:else}
+							<Avatar.Fallback class="bg-muted text-muted-foreground">
+								<User />
+							</Avatar.Fallback>
+						{/if}
 					</Avatar.Root>
 					<div class="flex-1 space-y-3">
 						<div class="flex flex-wrap items-center gap-3">
@@ -177,7 +190,14 @@
 
 		<!-- Response Form -->
 		{#if data.form}
-			<ResponseForm data={{ form: data.form }} threadType={thread()!.thread.type} />
+			<ResponseForm
+				data={{ form: data.form }}
+				threadType={thread()!.thread.type}
+				isOPOnAnonymousThread={thread()?.thread.isAnonymous || false}
+				currentUserId={data.currentUser.id}
+				threadAuthorId={thread()?.user.id}
+				currentUserType={data.currentUser.type}
+			/>
 		{/if}
 	</div>
 {:else}

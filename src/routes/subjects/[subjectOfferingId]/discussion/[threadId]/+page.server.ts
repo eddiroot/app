@@ -1,4 +1,4 @@
-import { subjectThreadResponseTypeEnum, subjectThreadTypeEnum } from '$lib/enums.js';
+import { subjectThreadResponseTypeEnum, subjectThreadTypeEnum, userTypeEnum } from '$lib/enums.js';
 import { geminiCompletion } from '$lib/server/ai/index.js';
 import {
 	createSubjectThreadResponse,
@@ -11,11 +11,11 @@ import { formSchema } from './schema.js';
 import { getNestedResponses } from './utils.js';
 
 export const load = async ({ locals: { security }, params: { threadId } }) => {
-	security.isAuthenticated();
+	const currentUser = security.isAuthenticated().getUser();
 
-	let threadIdInt = parseInt(threadId, 10);
+	const threadIdInt = parseInt(threadId, 10);
 	if (isNaN(threadIdInt)) {
-		return { thread: null, responses: [], form: null };
+		return { thread: null, responses: [], form: null, currentUser };
 	}
 
 	const thread = await getSubjectThreadById(threadIdInt);
@@ -25,21 +25,22 @@ export const load = async ({ locals: { security }, params: { threadId } }) => {
 		defaults: {
 			type:
 				thread?.thread?.type == subjectThreadTypeEnum.question ||
-				thread?.thread?.type === subjectThreadTypeEnum.qanda
+					thread?.thread?.type === subjectThreadTypeEnum.qanda
 					? subjectThreadResponseTypeEnum.answer
 					: subjectThreadResponseTypeEnum.comment,
-			content: ''
+			content: '',
+			isAnonymous: false
 		}
 	});
 
-	return { thread, nestedResponses, form };
+	return { thread, nestedResponses, form, currentUser };
 };
 
 export const actions = {
 	addResponse: async ({ request, locals: { security }, params: { threadId } }) => {
 		const user = security.isAuthenticated().getUser();
 
-		let threadIdInt = parseInt(threadId, 10);
+		const threadIdInt = parseInt(threadId, 10);
 		if (isNaN(threadIdInt)) {
 			return fail(400, { message: 'Invalid thread ID' });
 		}
@@ -49,13 +50,18 @@ export const actions = {
 			return fail(400, { form });
 		}
 
+		if (user.type !== userTypeEnum.student && form.data.isAnonymous) {
+			return fail(400, { message: 'Only students can post anonymously' });
+		}
+
 		try {
 			await createSubjectThreadResponse(
 				form.data.type,
 				threadIdInt,
 				user.id,
 				form.data.content,
-				form.data.parentResponseId
+				form.data.parentResponseId,
+				form.data.isAnonymous
 			);
 		} catch (error) {
 			console.error('Error creating response:', error);
