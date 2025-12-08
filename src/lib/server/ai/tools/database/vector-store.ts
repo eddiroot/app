@@ -1,4 +1,4 @@
-import type { EmbeddingMetadataFilter } from "$lib/server/db/service/vector";
+import type { EmbeddingMetadata } from "$lib/server/db/service/vector";
 import type { Document } from "@langchain/core/documents";
 import { tool } from "@langchain/core/tools";
 import { z } from "zod";
@@ -15,6 +15,7 @@ export function createVectorStoreTool<T extends Record<string, unknown>>(
     k?: number 
 ) {
     return tool(
+        // @ts-expect-error - Zod 4 incompatibility with LangChain, see: https://github.com/langchain-ai/langgraphjs/issues/1472
         async ({ query, limit}) => {
             // Perform similarity search and return a list of documents
             return await vectorStore.similaritySearchAsDocuments(
@@ -44,6 +45,7 @@ export function createDynamicVectorStoreTool<T extends Record<string, unknown>>(
     k?: number
 ) {
     return tool(
+        // @ts-expect-error - Zod 4 incompatibility with LangChain, see: https://github.com/langchain-ai/langgraphjs/issues/1472
         async ({ storeName, query, limit }) => {
             const vectorStore = vectorStores[storeName];
             if (!vectorStore) {
@@ -74,10 +76,11 @@ export function createMultiTableVectorStoreTool<T extends Record<string, unknown
     vectorStores: TableVectorStore<T>[],
     name: string,
     description: string,
-    filter?: EmbeddingMetadataFilter,
+    filter?: EmbeddingMetadata,
     k?: number
 ) {
     return tool(
+        // @ts-expect-error - Zod 4 incompatibility with LangChain, see: https://github.com/langchain-ai/langgraphjs/issues/1472
         async ({ query, limit }) => {
             const results: [Document, number][] = [];
             const perStoreLimit = Math.ceil((limit ?? k ?? 5) / vectorStores.length);

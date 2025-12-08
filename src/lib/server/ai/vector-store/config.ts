@@ -1,3 +1,29 @@
+import type { EmbeddingMetadata } from "$lib/server/db/service";
+import {
+    getAssessmentTaskEmbeddingMetadata,
+    getClassTaskBlockResponseEmbeddingMetadata,
+    getClassTaskResponseEmbeddingMetadata,
+    getCourseMapItemAssessmentPlanEmbeddingMetadata,
+    getCourseMapItemLessonPlanEmbeddingMetadata,
+    getCurriculumSubjectExtraContentEmbeddingMetadata,
+    getExamQuestionEmbeddingMetadata,
+    getKeyKnowledgeEmbeddingMetadata,
+    getKeySkillEmbeddingMetadata,
+    getLearningActivityEmbeddingMetadata,
+    getLearningAreaContentEmbeddingMetadata,
+    getLearningAreaEmbeddingMetadata,
+    getLearningAreaStandardEmbeddingMetadata,
+    getNewsEmbeddingMetadata,
+    getOutcomeEmbeddingMetadata,
+    getRubricCellEmbeddingMetadata,
+    getStandardElaborationEmbeddingMetadata,
+    getSubjectThreadEmbeddingMetadata,
+    getSubjectThreadResponseEmbeddingMetadata,
+    getTaskBlockEmbeddingMetadata,
+    getTaskBlockGuidanceEmbeddingMetadata,
+    getTaskBlockMisconceptionEmbeddingMetadata,
+    getTempPoolEmbeddingMetadata,
+} from "../../db/service";
 export const embeddingSourceColumns: Record<string, string[]> = {
     // Curriculum tables
     'crclm_sub_la': ['name', 'abbreviation', 'description'],
@@ -11,7 +37,6 @@ export const embeddingSourceColumns: Record<string, string[]> = {
     'lrn_activity': ['content'],
     'assess_task': ['content'],
     'crclm_sub_cont': ['content'],
-    
     // Task tables
     'task_block': ['type', 'config'],
     'cls_task_block_res': ['response', 'feedback'],
@@ -19,17 +44,47 @@ export const embeddingSourceColumns: Record<string, string[]> = {
     'tb_guidance': ['guidance'],
     'tb_misc': ['misconception'],
     'rubric_cell': ['level', 'description'],
-
     // Course Map tables
     'cm_itm_ass_pln': ['name', 'scope', 'description'],
     'cm_itm_les_pln': ['name', 'scope', 'description'],
-
     // News
     'news': ['title', 'excerpt', 'content'],
-
     // Subject tables
     'sub_thread': ['title', 'content'],
     'sub_thread_resp': ['content']
+};
+
+
+type MetadataExtractor = (record: Record<string, unknown>) => Promise<EmbeddingMetadata>;
+
+const metadataExtractorRegistry: Record<string, MetadataExtractor> = {
+    // Curriculum tables
+    'crclm_sub_la': getLearningAreaEmbeddingMetadata,
+    'lrn_a_cont': getLearningAreaContentEmbeddingMetadata,
+    'lrn_a_std': getLearningAreaStandardEmbeddingMetadata,
+    'lrn_a_std_elab': getStandardElaborationEmbeddingMetadata,
+    'outcome': getOutcomeEmbeddingMetadata,
+    'key_skill': getKeySkillEmbeddingMetadata,
+    'key_knowledge': getKeyKnowledgeEmbeddingMetadata,
+    'exam_question': getExamQuestionEmbeddingMetadata,
+    'lrn_activity': getLearningActivityEmbeddingMetadata,
+    'assess_task': getAssessmentTaskEmbeddingMetadata,
+    'crclm_sub_cont': getCurriculumSubjectExtraContentEmbeddingMetadata,
+    // Task tables
+    'task_block': getTaskBlockEmbeddingMetadata,
+    'cls_task_block_res': getClassTaskBlockResponseEmbeddingMetadata,
+    'cls_task_res': getClassTaskResponseEmbeddingMetadata,
+    'tb_guidance': getTaskBlockGuidanceEmbeddingMetadata,
+    'tb_misc': getTaskBlockMisconceptionEmbeddingMetadata,
+    // Course Map tables
+    'cm_itm_ass_pln': getCourseMapItemAssessmentPlanEmbeddingMetadata,
+    'cm_itm_les_pln': getCourseMapItemLessonPlanEmbeddingMetadata,
+    // Other tables
+    'news': getNewsEmbeddingMetadata,
+    'sub_thread': getSubjectThreadEmbeddingMetadata,
+    'sub_thread_resp': getSubjectThreadResponseEmbeddingMetadata,
+    'rubric_cell': getRubricCellEmbeddingMetadata,
+    'temp_pool': getTempPoolEmbeddingMetadata
 };
 
 /**
@@ -37,6 +92,24 @@ export const embeddingSourceColumns: Record<string, string[]> = {
  */
 export function getEmbeddingColumns(tableName: string): string[] {
     return embeddingSourceColumns[tableName] ?? [];
+}
+
+/**
+ * Get the metadata extractor for a given table
+ */
+export function getMetadataExtractor(tableName: string): MetadataExtractor {
+    return metadataExtractorRegistry[tableName];
+}
+
+/**
+ * Extract metadata for a record from a given table
+ */
+export async function extractMetadata(
+    tableName: string, 
+    record: Record<string, unknown>
+): Promise<EmbeddingMetadata> {
+    const extractor = getMetadataExtractor(tableName);
+    return extractor(record);
 }
 
 /**

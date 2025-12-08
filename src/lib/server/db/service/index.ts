@@ -28,11 +28,13 @@ export * from './resource.js';
 // Events
 export * from './events.js';
 
-// Module
-export * from './module.js';
+
 
 // Curriculum
 export * from './curriculum.js';
 
 // Vector
 export * from './vector.js';
+
+// News 
+export * from './news.js';

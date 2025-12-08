@@ -5,8 +5,8 @@ import { taskCreationSchema, type TaskCreationData } from "../../schemas/task";
 export type { TaskCreationData } from "../../schemas/task";
 
 // TODO make lesson plan and assessment plan just a task plan.
-
 export const createTaskTool = tool(
+    // @ts-expect-error - Zod 4 incompatibility with LangChain, see: https://github.com/langchain-ai/langgraphjs/issues/1472
     async (input: TaskCreationData) => {
         const newTask = await createTask(
             input.title,

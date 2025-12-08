@@ -1,11 +1,11 @@
-import type { EmbeddingMetadataFilter } from "$lib/server/db/service/vector";
+import type { EmbeddingMetadata } from "$lib/server/db/service/vector";
 import type { Document } from "@langchain/core/documents";
 import type { TableVectorStore } from "../../vector-store/base";
 
 export interface RAGRetrievalInput {
     query: string;
     k?: number;
-    filter?: EmbeddingMetadataFilter;
+    filter?: EmbeddingMetadata;
 }
 
 export interface RAGRetrievalNodeConfig {

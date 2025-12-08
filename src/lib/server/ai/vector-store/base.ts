@@ -1,41 +1,40 @@
-import type { yearLevelEnum } from "$lib/enums";
-import { buildEmbeddingText, parseEmbeddingText } from "$lib/server/ai/vector-store/config";
-import { createRecordWithEmbedding, getRecord, updateRecordEmbedding, vectorSimilaritySearch, type EmbeddingMetadataFilter } from "$lib/server/db/service";
+import { buildEmbeddingText, extractMetadata, parseEmbeddingText } from "$lib/server/ai/vector-store/config";
+import { createRecordWithEmbedding, getRecord, updateRecordEmbedding, vectorSimilaritySearch, type EmbeddingMetadata } from "$lib/server/db/service";
 import { Document } from "@langchain/core/documents";
 import type { EmbeddingsInterface } from "@langchain/core/embeddings";
 import { VectorStore } from "@langchain/core/vectorstores";
 import { getTableName } from "drizzle-orm";
 import type { PgColumn, PgTable } from "drizzle-orm/pg-core";
 
-export type ExtractMetadata<T> = (record: Partial<T>) => Promise<EmbeddingMetadataFilter>;
 
-export type BaseEmbeddingMetadata = {
-    subjectId?: number;
-    curriculumSubjectId?: number;
-    yearLevel?: yearLevelEnum;
-    [key: string]: unknown;
+export type EmbeddableTable = PgTable & { 
+    embedding: PgColumn; 
+    id: PgColumn; 
+    embeddingMetadata: PgColumn;
 };
 
-export interface TableVectorStoreConfig<T extends Record<string, unknown>> {
-    table: PgTable & { embedding: PgColumn; id: PgColumn; embeddingMetadata: PgColumn };
-    embeddings: EmbeddingsInterface;
-    extractMetadata?: ExtractMetadata<T>;
-}
-
-export abstract class TableVectorStore<T extends Record<string, unknown>> extends VectorStore {
-    protected table: PgTable & { embedding: PgColumn; id: PgColumn; embeddingMetadata: PgColumn };
+export class TableVectorStore<T extends Record<string, unknown>> extends VectorStore {
+    protected table: EmbeddableTable;
     protected tableName: string;
-    protected config: TableVectorStoreConfig<T>;
 
     _vectorstoreType(): string {
         return "table_vector_store";
     }
 
-    constructor(config: TableVectorStoreConfig<T>) {
-        super(config.embeddings, {});
-        this.table = config.table;
-        this.tableName = getTableName(config.table);
-        this.config = config;
+    constructor(table: EmbeddableTable, embeddings: EmbeddingsInterface) {
+        super(embeddings, {});
+        this.table = table;
+        this.tableName = getTableName(table);
+    }
+
+    /**
+     * Factory method to create a vector store for any table
+     */
+    static for<T extends Record<string, unknown>>(
+        table: PgTable & { embedding: PgColumn; id: PgColumn; embeddingMetadata: PgColumn },
+        embeddings: EmbeddingsInterface
+    ): TableVectorStore<T> {
+        return new TableVectorStore<T>( table, embeddings );
     }
 
     /**
@@ -62,7 +61,7 @@ export abstract class TableVectorStore<T extends Record<string, unknown>> extend
 
         for (let i = 0; i < vectors.length; i++) {
             const record = this.fromDocument(documents[i]);
-            const metadata = await this.config.extractMetadata?.(record) || {};
+            const metadata = await extractMetadata(this.tableName, record);
             await createRecordWithEmbedding(this.table, record, [vectors[i]], metadata);
         }
     }
@@ -70,7 +69,7 @@ export abstract class TableVectorStore<T extends Record<string, unknown>> extend
     async similaritySearchVectorWithScore(
         query: number[],
         k: number,
-        filter?: EmbeddingMetadataFilter
+        filter?: EmbeddingMetadata
     ): Promise<[Document, number][]> {
         const results = await vectorSimilaritySearch(this.table, query, k, filter);
         return results.map(result => [
@@ -86,7 +85,7 @@ export abstract class TableVectorStore<T extends Record<string, unknown>> extend
         await Promise.all(
             docs.map(async (doc, idx) => {
                 const record = this.fromDocument(doc);
-                const metadata = await this.config.extractMetadata?.(record) || {};
+                const metadata = await extractMetadata(this.tableName, record);
                 await createRecordWithEmbedding(this.table, record, [embeddings[idx]], metadata);
             })
         );
@@ -96,17 +95,17 @@ export abstract class TableVectorStore<T extends Record<string, unknown>> extend
         for (const record of records) {
             const text = buildEmbeddingText(this.tableName, record as T);
             const embedding = await this.embeddings.embedDocuments([text]);
-            const metadata = await this.config.extractMetadata?.(record) || {};
+            const metadata = await extractMetadata(this.tableName, record);
             await createRecordWithEmbedding(this.table, record, embedding, metadata);
         }
     }
 
-    async searchWithScores(queryEmbedding: number[], k: number, filter?: EmbeddingMetadataFilter): Promise<[Document, number][]> {
+    async searchWithScores(queryEmbedding: number[], k: number, filter?: EmbeddingMetadata): Promise<[Document, number][]> {
         const results = await vectorSimilaritySearch(this.table, queryEmbedding, k, filter);
         return results.map(result => [this.toDocument(result.record as T), result.distance]);
     }
 
-    async similaritySearchAsDocuments(query: string, k: number, filter?: EmbeddingMetadataFilter): Promise<Document[]> {
+    async similaritySearchAsDocuments(query: string, k: number, filter?: EmbeddingMetadata): Promise<Document[]> {
         const queryEmbedding = await this.embeddings.embedQuery(query);
         const results = await vectorSimilaritySearch(this.table, queryEmbedding, k, filter);
         return results.map(result => this.toDocument(result.record as T));
@@ -122,7 +121,7 @@ export abstract class TableVectorStore<T extends Record<string, unknown>> extend
         const record = await getRecord(this.table, recordId);
         const text = buildEmbeddingText(this.tableName, record as unknown as T);
         const embedding = await this.embeddings.embedDocuments([text]);
-        const metadata = await this.config.extractMetadata?.(record as unknown as Partial<T>) || {};
+        const metadata = await extractMetadata(this.tableName, record as unknown as Partial<T>);
         await updateRecordEmbedding(this.table, recordId, embedding, metadata);
     }
 
@@ -141,7 +140,7 @@ export abstract class TableVectorStore<T extends Record<string, unknown>> extend
 
         const metadataList = await Promise.all(
             records.map(record =>
-                this.config.extractMetadata?.(record as unknown as Partial<T>) || Promise.resolve({})
+                extractMetadata(this.tableName, record as unknown as Partial<T>)
             )
         );
 
