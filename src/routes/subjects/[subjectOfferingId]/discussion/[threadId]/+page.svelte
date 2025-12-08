@@ -123,8 +123,8 @@
 				</Card.Action>
 			</Card.Header>
 			<Card.Content>
-				<div class="leading-relaxed whitespace-pre-wrap">
-					{thread()?.thread.content || 'No content available'}
+				<div class="prose dark:prose-invert max-w-none leading-relaxed">
+					{@html thread()?.thread.content || 'No content available'}
 				</div>
 			</Card.Content>
 		</Card.Root>
