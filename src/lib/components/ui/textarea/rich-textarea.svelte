@@ -53,7 +53,7 @@
 			},
 			editorProps: {
 				attributes: {
-					class: 'p-3 prose dark:prose-invert focus:outline-none min-h-16 max-w-none break-words text-base md:text-sm'
+					class: 'p-3 prose dark:prose-invert max-w-none focus:outline-none min-h-16 text-sm'
 				}
 			}
 		});
@@ -143,3 +143,13 @@
 	{/if}
 	<div bind:this={element}></div>
 </div>
+
+<style>
+	:global(.tiptap p.is-editor-empty:first-child::before) {
+		color: #adb5bd;
+		content: attr(data-placeholder);
+		float: left;
+		height: 0;
+		pointer-events: none;
+	}
+</style>
