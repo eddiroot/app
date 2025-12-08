@@ -67,7 +67,7 @@
 			</div>
 		</Card.Header>
 		<Card.Content>
-			<div class="text-sm leading-relaxed whitespace-pre-wrap">
+			<div class="prose dark:prose-invert max-w-none text-sm">
 				{@html response.response.content || 'No content available'}
 			</div>
 

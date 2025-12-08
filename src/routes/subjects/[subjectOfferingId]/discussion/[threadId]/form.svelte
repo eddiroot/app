@@ -30,6 +30,7 @@
 	} = $props();
 
 	const form = superForm(data.form, {
+		id: isReply ? `reply-form-${parentResponseId}` : 'main-response-form',
 		validators: zod4(formSchema),
 		resetForm: true,
 		onUpdated: ({ form }) => {
@@ -45,6 +46,7 @@
 	const { form: formData, enhance } = form;
 	
 	let resetEditor = $state(false);
+
 </script>
 
 <div class={isReply ? 'mt-4 border-l-2 border-gray-200 pl-4' : 'mt-6 border-t pt-6'}>
