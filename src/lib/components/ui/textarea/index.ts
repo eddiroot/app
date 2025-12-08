@@ -1,7 +1,9 @@
+import RichTextarea from "./rich-textarea.svelte";
 import Root from "./textarea.svelte";
 
 export {
-	Root,
+	RichTextarea, Root,
 	//
-	Root as Textarea,
+	Root as Textarea
 };
+

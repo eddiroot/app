@@ -14,7 +14,7 @@ export const actions = {
 	create: async ({ request, locals: { security }, params: { subjectOfferingId } }) => {
 		const user = security.isAuthenticated().getUser();
 
-		let subjectOfferingIdInt = parseInt(subjectOfferingId, 10);
+		const subjectOfferingIdInt = parseInt(subjectOfferingId, 10);
 		if (isNaN(subjectOfferingIdInt)) {
 			return fail(400, { message: 'Invalid subject ID' });
 		}
