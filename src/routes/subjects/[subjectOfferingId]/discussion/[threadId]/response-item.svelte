@@ -68,7 +68,7 @@
 		</Card.Header>
 		<Card.Content>
 			<div class="text-sm leading-relaxed whitespace-pre-wrap">
-				{response.response.content || 'No content available'}
+				{@html response.response.content || 'No content available'}
 			</div>
 
 			<!-- Reply button -->
