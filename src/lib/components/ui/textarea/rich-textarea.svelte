@@ -29,9 +29,8 @@
 	let editor = $state<Editor>();
 	let editorState = $state(0);
 
-	// Derived function that depends on editorState
 	const isActive = (name: string) => {
-		editorState; // Create dependency
+		editorState;
 		return editor?.isActive(name) ?? false;
 	};
 
