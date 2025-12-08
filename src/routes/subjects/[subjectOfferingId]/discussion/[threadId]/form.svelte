@@ -1,8 +1,8 @@
 <script lang="ts">
+	import RichTextarea from '$lib/components/rich-textarea.svelte';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import * as Form from '$lib/components/ui/form/index.js';
 	import * as Select from '$lib/components/ui/select/index.js';
-	import { RichTextarea } from '$lib/components/ui/textarea/index.js';
 	import { subjectThreadResponseTypeEnum } from '$lib/enums.js';
 	import CheckCircle from '@lucide/svelte/icons/check-circle';
 	import MessageSquare from '@lucide/svelte/icons/message-square';
