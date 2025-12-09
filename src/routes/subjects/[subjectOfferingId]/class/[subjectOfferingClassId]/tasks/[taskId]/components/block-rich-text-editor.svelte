@@ -15,7 +15,7 @@
 
 	let element: HTMLDivElement;
 	let editorBox = $state.raw<{ current: Editor }>();
-	let isEditable = $state(viewMode == ViewMode.CONFIGURE);
+	let isEditable = $derived(viewMode == ViewMode.CONFIGURE);
 
 	onMount(() => {
 		editorBox = {
