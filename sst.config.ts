@@ -35,7 +35,7 @@ export default $config({
 				host: 'localhost',
 				port: 5432
 			},
-			proxy: true
+			proxy: false
 		});
 
 		new sst.x.DevCommand('Studio', {
@@ -81,6 +81,9 @@ export default $config({
 
 		const app = new sst.aws.Service('EddiApp', {
 			cluster,
+			capacity: 'spot',
+			// Fargate Spot allows you to run containers on spare AWS capacity at around 50% discount compared to regular Fargate.
+			// At release, we can evaluate moving to regular Fargate as AWS can technically shutdown Spot instances with little notice.
 			link: [
 				bucket,
 				database,
@@ -111,6 +114,11 @@ export default $config({
 					{ listen: '443/https', forward: '3000/http' }
 				]
 			},
+			// Set to defaults; adjust at rollout
+			scaling: {
+				min: 1,
+				max: 1
+			},
 			dev: {
 				command: 'npm run dev'
 			}
@@ -118,14 +126,14 @@ export default $config({
 
 		const router = isProd
 			? new sst.aws.Router('DomainRedirects', {
-					routes: {
-						'/*': app.url
-					},
-					domain: {
-						name: 'www.eddi.com.au',
-						aliases: ['eddi.au', 'www.eddi.au']
-					}
-				})
+				routes: {
+					'/*': app.url
+				},
+				domain: {
+					name: 'www.eddi.com.au',
+					aliases: ['eddi.au', 'www.eddi.au']
+				}
+			})
 			: null;
 
 		return {

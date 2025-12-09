@@ -9,6 +9,7 @@
 	import ChevronsUpDown from '@lucide/svelte/icons/chevrons-up-down';
 	import PlusIcon from '@lucide/svelte/icons/plus';
 	import type { PaneAPI } from 'paneforge';
+	import { shouldShowUserInfo } from './[threadId]/utils';
 
 	let { children, data } = $props();
 
@@ -16,6 +17,12 @@
 	let isAnnouncementsCollapsed = $state(false);
 
 	const currentThreadId = $derived(() => page.url.pathname.split('/').pop() || '');
+
+	function getThreadAuthorName(thread: any): string {
+		const showInfo = shouldShowUserInfo(thread.thread.isAnonymous, data.currentUser.type);
+		if (!showInfo) return 'Anonymous';
+		return convertToFullName(thread.user.firstName, thread.user.middleName, thread.user.lastName);
+	}
 </script>
 
 <div class="grid h-full grid-cols-[300px_1fr] overflow-y-hidden">
@@ -76,11 +83,7 @@
 												{thread.thread.title}
 											</Card.Title>
 											<Card.Description>
-												by {convertToFullName(
-													thread.user.firstName,
-													thread.user.middleName,
-													thread.user.lastName
-												)}
+												by {getThreadAuthorName(thread)}
 											</Card.Description>
 										</Card.Header>
 										<Card.Footer>
@@ -119,11 +122,7 @@
 												{thread.thread.title}
 											</Card.Title>
 											<Card.Description>
-												by {convertToFullName(
-													thread.user.firstName,
-													thread.user.middleName,
-													thread.user.lastName
-												)}
+												by {getThreadAuthorName(thread)}
 											</Card.Description>
 										</Card.Header>
 										<Card.Footer>

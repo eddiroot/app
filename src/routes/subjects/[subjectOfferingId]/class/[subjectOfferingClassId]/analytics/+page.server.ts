@@ -13,8 +13,7 @@ export const load: PageServerLoad = async ({
 	locals,
 	params: { subjectOfferingId, subjectOfferingClassId }
 }) => {
-	const user = locals.user;
-	if (!user) throw error(401, 'Unauthorized');
+	const user = locals.security.isAuthenticated().getUser();
 	const subjectOfferingIdInt = parseInt(subjectOfferingId, 10);
 	const subjectOfferingClassIdInt = parseInt(subjectOfferingClassId, 10);
 	if (isNaN(subjectOfferingIdInt) || isNaN(subjectOfferingClassIdInt)) {

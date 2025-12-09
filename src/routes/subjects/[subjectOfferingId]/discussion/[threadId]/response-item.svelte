@@ -4,8 +4,10 @@
 	import * as Card from '$lib/components/ui/card';
 	import { convertToFullName, formatTimestamp } from '$lib/utils';
 	import Reply from '@lucide/svelte/icons/reply';
+	import User from '@lucide/svelte/icons/user';
 	import ResponseForm from './form.svelte';
 	import Self from './response-item.svelte';
+	import { shouldShowResponseUserInfo } from './utils';
 
 	let {
 		response,
@@ -22,9 +24,29 @@
 	let showReplyForm = $state(false);
 	const maxDepth = 3; // Maximum nesting depth
 
-	const authorName = $derived(() =>
-		convertToFullName(response.user.firstName, response.user.middleName, response.user.lastName)
-	);
+	const isOPResponse = $derived(() => {
+		return data.thread?.user?.id === response.user.id;
+	});
+
+	const showAuthorInfo = $derived(() => {
+		return shouldShowResponseUserInfo(
+			response.response.isAnonymous,
+			data.thread?.thread?.isAnonymous || false,
+			isOPResponse(),
+			data.currentUser.type
+		);
+	});
+
+	const authorName = $derived(() => {
+		if (!showAuthorInfo()) {
+			return isOPResponse() ? 'OP (Anonymous)' : 'Anonymous';
+		}
+		return convertToFullName(
+			response.user.firstName,
+			response.user.middleName,
+			response.user.lastName
+		);
+	});
 
 	function toggleReplyForm() {
 		showReplyForm = !showReplyForm;
@@ -44,15 +66,21 @@
 		<Card.Header class="pb-3">
 			<div class="flex items-center gap-3">
 				<Avatar.Root class="h-9 w-9">
-					<Avatar.Image src={response.user.avatarUrl || ''} alt={authorName()} />
-					<Avatar.Fallback class="text-xs font-medium">
-						{authorName()
-							.split(' ')
-							.map((n) => n[0])
-							.join('')
-							.substring(0, 2)
-							.toUpperCase()}
-					</Avatar.Fallback>
+					{#if showAuthorInfo()}
+						<Avatar.Image src={response.user.avatarUrl || ''} alt={authorName()} />
+						<Avatar.Fallback class="text-xs font-medium">
+							{authorName()
+								.split(' ')
+								.map((n) => n[0])
+								.join('')
+								.substring(0, 2)
+								.toUpperCase()}
+						</Avatar.Fallback>
+					{:else}
+						<Avatar.Fallback class="bg-muted text-muted-foreground">
+							<User />
+						</Avatar.Fallback>
+					{/if}
 				</Avatar.Root>
 				<div class="flex-1 space-y-1">
 					<div class="flex items-center gap-2">
@@ -98,6 +126,10 @@
 			isReply={true}
 			onSuccess={closeReplyForm}
 			onCancel={closeReplyForm}
+			isOPOnAnonymousThread={data.thread?.thread?.isAnonymous || false}
+			currentUserId={data.currentUser.id}
+			threadAuthorId={data.thread?.user?.id}
+			currentUserType={data.currentUser.type}
 		/>
 	{/if}
 

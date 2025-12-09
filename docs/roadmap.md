@@ -76,7 +76,7 @@ Jack
 
 Raph
 
-- [ ] Whiteboard (20/07)
+- [ ] Whiteboard
   - undo/redo
   - Fix colour options/view + tooltip, colour options popout instead of in menu?
   - shape border width change issues
@@ -84,14 +84,6 @@ Raph
   - layering options?
   - text with websocket
   - text adding mechanics
-- [ ] Student grades (20/08)
-  - fix scrollbar gutter
-  - fix filters and sorts
-  - full width, remove fixed-table
-  - remove and fix showFeedback
-- [ ] Teacher Lesson Analytics
-  - fix table width issues
-  - admin grade style option (percentage vs 0-8 scale)
 
 ### To Do
 
