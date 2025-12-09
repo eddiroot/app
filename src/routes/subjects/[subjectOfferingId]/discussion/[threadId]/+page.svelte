@@ -49,7 +49,7 @@
 </script>
 
 {#if thread()}
-	<div class="mx-auto max-w-4xl space-y-6">
+	<div class="mx-auto max-w-4xl space-y-4">
 		<!-- Show summary if available -->
 		{#if form?.summary}
 			<Card.Root>
@@ -144,12 +144,12 @@
 
 		<!-- Answers Section (for questions) -->
 		{#if (thread()?.thread.type === 'question' || thread()?.thread.type === 'qanda') && answers().length > 0}
-			<div class="space-y-4">
-				<div class="flex items-center gap-2">
+			<div>
+				<div class="mb-3 flex items-center gap-2 px-4">
 					<CheckCircle class="text-primary h-5 w-5" />
-					<h2 class="text-xl font-semibold">Answers ({answers().length})</h2>
+					<h2 class="text-lg font-semibold">Answers ({answers().length})</h2>
 				</div>
-				<div class="space-y-4">
+				<div class="border-t">
 					{#each answers() as response}
 						<ResponseItem {response} threadType={thread()?.thread.type || 'discussion'} {data} />
 					{/each}
@@ -159,15 +159,15 @@
 
 		<!-- Comments Section -->
 		{#if comments().length > 0}
-			<div class="space-y-4">
-				<div class="flex items-center gap-2">
+			<div>
+				<div class="mb-3 flex items-center gap-2 px-4">
 					<MessageSquare class="text-primary h-5 w-5" />
-					<h2 class="text-xl font-semibold">
+					<h2 class="text-lg font-semibold">
 						{responses()?.length === comments().length ? 'Responses' : 'Comments'} ({comments()
 							.length})
 					</h2>
 				</div>
-				<div class="space-y-4">
+				<div class="border-t">
 					{#each comments() as response}
 						<ResponseItem {response} threadType={thread()!.thread.type} {data} />
 					{/each}
