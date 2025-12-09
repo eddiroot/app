@@ -26,16 +26,14 @@
 	}: WithoutChildren<WithElementRef<HTMLTextareaAttributes>> & { reset?: boolean } = $props();
 
 	let element: HTMLDivElement;
-	let editor = $state<Editor>();
-	let editorState = $state(0);
+	let editorBox = $state<{ current: Editor | undefined }>({ current: undefined });
 
 	const isActive = (name: string) => {
-		editorState;
-		return editor?.isActive(name) ?? false;
+		return editorBox.current?.isActive(name) ?? false;
 	};
 
 	onMount(() => {
-		editor = new Editor({
+		editorBox.current = new Editor({
 			element,
 			extensions: [
 				StarterKit,
@@ -46,10 +44,10 @@
 			content: (value as string) || '',
 			editable: !disabled,
 			onUpdate: ({ editor }) => {
-							value = editor.isEmpty ? '' : editor.getHTML();
+				value = editor.isEmpty ? '' : editor.getHTML();
 			},
 			onTransaction: () => {
-				editorState = (editorState + 1) % 1000;
+				editorBox = { current: editorBox.current };
 			},
 			editorProps: {
 				attributes: {
@@ -60,18 +58,18 @@
 	});
 
 	onDestroy(() => {
-		editor?.destroy();
+		editorBox.current?.destroy();
 	});
 
 	$effect(() => {
-		if (editor) {
-			editor.setEditable(!disabled);
+		if (editorBox.current) {
+			editorBox.current.setEditable(!disabled);
 		}
 	});
 
 	$effect(() => {
-		if (reset && editor) {
-			editor.commands.setContent('');
+		if (reset && editorBox.current) {
+			editorBox.current.commands.setContent('');
 			reset = false;
 		}
 	});
@@ -89,11 +87,11 @@
 	{#if restProps.name}
 		<input type="hidden" name={restProps.name} value={value || ''} />
 	{/if}
-	{#if editor && !disabled}
+	{#if editorBox.current && !disabled}
 		<div class="flex items-center gap-x-1 border-b px-3 py-2">
 			<Button
 				type="button"
-				onmousedown={(e) => { e.preventDefault(); editor?.chain().focus().toggleBold().run(); }}
+				onmousedown={(e) => { e.preventDefault(); editorBox.current?.chain().focus().toggleBold().run(); }}
 				variant={isActive('bold') ? 'default' : 'ghost'}
 				size="sm"
 			>
@@ -101,7 +99,7 @@
 			</Button>
 			<Button
 				type="button"
-				onmousedown={(e) => { e.preventDefault(); editor?.chain().focus().toggleItalic().run(); }}
+				onmousedown={(e) => { e.preventDefault(); editorBox.current?.chain().focus().toggleItalic().run(); }}
 				variant={isActive('italic') ? 'default' : 'ghost'}
 				size="sm"
 			>
@@ -109,7 +107,7 @@
 			</Button>
 			<Button
 				type="button"
-				onmousedown={(e) => { e.preventDefault(); editor?.chain().focus().toggleCodeBlock().run(); }}
+				onmousedown={(e) => { e.preventDefault(); editorBox.current?.chain().focus().toggleCodeBlock().run(); }}
 				variant={isActive('codeBlock') ? 'default' : 'ghost'}
 				size="sm"
 			>
@@ -117,7 +115,7 @@
 			</Button>
 			<Button
 				type="button"
-				onmousedown={(e) => { e.preventDefault(); editor?.chain().focus().toggleBlockquote().run(); }}
+				onmousedown={(e) => { e.preventDefault(); editorBox.current?.chain().focus().toggleBlockquote().run(); }}
 				variant={isActive('blockquote') ? 'default' : 'ghost'}
 				size="sm"
 			>
@@ -125,7 +123,7 @@
 			</Button>
 			<Button
 				type="button"
-				onmousedown={(e) => { e.preventDefault(); editor?.chain().focus().toggleBulletList().run(); }}
+				onmousedown={(e) => { e.preventDefault(); editorBox.current?.chain().focus().toggleBulletList().run(); }}
 				variant={isActive('bulletList') ? 'default' : 'ghost'}
 				size="sm"
 			>
@@ -133,7 +131,7 @@
 			</Button>
 			<Button
 				type="button"
-				onmousedown={(e) => { e.preventDefault(); editor?.chain().focus().toggleOrderedList().run(); }}
+				onmousedown={(e) => { e.preventDefault(); editorBox.current?.chain().focus().toggleOrderedList().run(); }}
 				variant={isActive('orderedList') ? 'default' : 'ghost'}
 				size="sm"
 			>
