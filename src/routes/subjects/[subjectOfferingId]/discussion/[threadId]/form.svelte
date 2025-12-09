@@ -38,12 +38,16 @@
 		currentUserType?: string;
 	} = $props();
 
-	const form = superForm(data.form, {
-		id: isReply ? `reply-form-${parentResponseId}` : 'main-response-form',
+	const dataForm = () => data.form;
+	const formId = () => isReply ? `reply-form-${parentResponseId}` : 'main-response-form';
+
+	const form = superForm(dataForm(), {
+		id: formId(),
 		validators: zod4(formSchema),
 		resetForm: true,
 		onUpdated: ({ form }) => {
 			if (form.valid) {
+				resetEditor = true;
 				if (isReply && onSuccess) {
 					onSuccess();
 				}
@@ -53,6 +57,8 @@
 
 	const { form: formData, enhance } = form;
 	const isOP = $derived(() => currentUserId === threadAuthorId);
+	
+	let resetEditor = $state(false);
 </script>
 
 <div class={isReply ? 'mt-4 border-l-2 border-gray-200 pl-4' : 'mt-6 border-t pt-6'}>
@@ -138,6 +144,7 @@
 					<RichTextarea
 						{...props}
 						bind:value={$formData.content}
+						bind:reset={resetEditor}
 						placeholder={`Write your ${$formData.type} here...`}
 						class="min-h-24"
 					/>

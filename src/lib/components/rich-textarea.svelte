@@ -70,6 +70,7 @@
 	$effect(() => {
 		if (reset && editorBox.current) {
 			editorBox.current.commands.setContent('');
+			value = '';
 			reset = false;
 		}
 	});

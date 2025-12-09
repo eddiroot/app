@@ -1,9 +1,9 @@
 <script lang="ts">
+	import RichTextarea from '$lib/components/rich-textarea.svelte';
 	import Checkbox from '$lib/components/ui/checkbox/checkbox.svelte';
 	import * as Form from '$lib/components/ui/form/index.js';
 	import { Input } from '$lib/components/ui/input/index.js';
 	import * as Select from '$lib/components/ui/select/index.js';
-	import RichTextarea from '$lib/components/ui/textarea/textarea.svelte';
 	import { userTypeEnum } from '$lib/enums';
 	import { superForm } from 'sveltekit-superforms';
 	import { zod4 } from 'sveltekit-superforms/adapters';
