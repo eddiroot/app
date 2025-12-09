@@ -70,7 +70,7 @@ export const courseMapItemAssessmentPlan = pgTable(
 			.notNull()
 			.references(() => courseMapItem.id, { onDelete: 'cascade' }),
 		taskId: integer('task_id')
-			.references(() => task.id, { onDelete: 'cascade' }),
+			.references(() => task.id, { onDelete: 'set null' }),
 		name: text('name').notNull(),
 		scope: text('scope').array(),
 		description: text('description'),

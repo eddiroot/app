@@ -30,7 +30,7 @@ npx sst dev
 3. In a new terminal, run these commands
 
 ```bash
-sst secret set SecretName secret-value
+npx sst secret set SecretName secret-value
 # repeat for each secret in sst.config.ts
 npm run db:migrate
 npm run db:push
@@ -39,23 +39,18 @@ npm run db:seed
 ```
 ## Cleaning schema 
 
-1. Paste the profiles into your `~/.aws/config`
 
 2. Run the following commands one-by-one
 
 ```bash
 docker compose down --volumes
 docker compose up -d
-npm install
-npm run sso
 npx sst dev
 ```
 
 3. In a new terminal, run these commands
 
 ```bash
-npx sst secret set SecretName secret-value
-# repeat for each secret in sst.config.ts
 npm run db:migrate
 npm run db:push
 npm run db:restore -- snapshots/eddi_vcaa.sql.gz
