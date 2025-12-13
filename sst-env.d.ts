@@ -30,6 +30,10 @@ declare module "sst" {
       "taskDefinition": string
       "type": "sst.aws.Task"
     }
+    "GeminiAPIKey": {
+      "type": "sst.sst.Secret"
+      "value": string
+    }
     "GeminiApiKey": {
       "type": "sst.sst.Secret"
       "value": string
@@ -38,7 +42,7 @@ declare module "sst" {
       "type": "sst.sst.Secret"
       "value": string
     }
-    "GoogleClientId": {
+    "GoogleClientID": {
       "type": "sst.sst.Secret"
       "value": string
     }
@@ -46,7 +50,7 @@ declare module "sst" {
       "type": "sst.sst.Secret"
       "value": string
     }
-    "MicrosoftClientId": {
+    "MicrosoftClientID": {
       "type": "sst.sst.Secret"
       "value": string
     }
@@ -54,13 +58,21 @@ declare module "sst" {
       "type": "sst.sst.Secret"
       "value": string
     }
-    "MicrosoftTenantId": {
+    "MicrosoftTenantID": {
+      "type": "sst.sst.Secret"
+      "value": string
+    }
+    "NomicAPIKey": {
       "type": "sst.sst.Secret"
       "value": string
     }
     "VPC": {
       "bastion": string
       "type": "sst.aws.Vpc"
+    }
+    "WebhookNotificationsOnboarding": {
+      "type": "sst.sst.Secret"
+      "value": string
     }
   }
 }

@@ -90,13 +90,13 @@ export const createObjectMovingHandler = (ctx: CanvasEventContext) => {
 			return; // Don't proceed to sync - control points are client-side only
 		}
 
-		// If moving a polyline, update its control points and keep them visible
-		if (target.type === 'polyline' && ctx.controlPointManager) {
+		// If moving a polyline or rectangle, update its control points and keep them visible
+		if ((target.type === 'polyline' || target.type === 'rect') && ctx.controlPointManager) {
 			// @ts-expect-error - custom id property
-			const lineId = target.id;
-			ctx.controlPointManager.updateControlPoints(lineId, target);
+			const objId = target.id;
+			ctx.controlPointManager.updateControlPoints(objId, target);
 			// Ensure control points stay visible during drag
-			ctx.controlPointManager.showControlPoints(lineId);
+			ctx.controlPointManager.showControlPoints(objId);
 		}
 
 		const objData = target.type === 'textbox' ? target.toObject(['text']) : target.toObject();
@@ -534,15 +534,17 @@ export const createSelectionCreatedHandler = (ctx: CanvasEventContext) => {
 				// Hide all control points first
 				ctx.controlPointManager.hideAllControlPoints();
 
-				// For polylines, create control points if they don't exist, or show if they do
-				if (obj.type === 'polyline') {
+				// For polylines and rectangles, create control points if they don't exist, or show if they do
+				if (obj.type === 'polyline' || obj.type === 'rect') {
 					// @ts-expect-error - custom id property
 					const objId = obj.id;
-					const existingPoints = ctx.controlPointManager
-						.getLineHandler()
-						.getControlPointsForObject(objId);
+					// Check if control points already exist for this object
+					const handler = obj.type === 'polyline' ? ctx.controlPointManager.getLineHandler() : null;
+					const existingPoints = handler
+						? handler.getControlPointsForObject(objId)
+						: ctx.controlPointManager.getAllControlPoints().filter((cp) => cp.objectId === objId);
 					if (existingPoints.length === 0) {
-						// Create control points for this line (visible by default)
+						// Create control points for this object (visible by default)
 						ctx.controlPointManager.addControlPoints(objId, obj, true);
 					} else {
 						// Show existing control points
@@ -646,15 +648,17 @@ export const createSelectionUpdatedHandler = (ctx: CanvasEventContext) => {
 				// Hide all control points first
 				ctx.controlPointManager.hideAllControlPoints();
 
-				// For polylines, create control points if they don't exist, or show if they do
-				if (obj.type === 'polyline') {
+				// For polylines and rectangles, create control points if they don't exist, or show if they do
+				if (obj.type === 'polyline' || obj.type === 'rect') {
 					// @ts-expect-error - custom id property
 					const objId = obj.id;
-					const existingPoints = ctx.controlPointManager
-						.getLineHandler()
-						.getControlPointsForObject(objId);
+					// Check if control points already exist for this object
+					const handler = obj.type === 'polyline' ? ctx.controlPointManager.getLineHandler() : null;
+					const existingPoints = handler
+						? handler.getControlPointsForObject(objId)
+						: ctx.controlPointManager.getAllControlPoints().filter((cp) => cp.objectId === objId);
 					if (existingPoints.length === 0) {
-						// Create control points for this line (visible by default)
+						// Create control points for this object (visible by default)
 						ctx.controlPointManager.addControlPoints(objId, obj, true);
 					} else {
 						// Show existing control points
