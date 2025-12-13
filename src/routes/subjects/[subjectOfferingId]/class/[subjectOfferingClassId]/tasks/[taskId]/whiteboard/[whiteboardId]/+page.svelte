@@ -375,7 +375,19 @@
 		currentShapeOptions = { ...options };
 
 		if (!canvas) return;
-		const activeObject = canvas.getActiveObject();
+		let activeObject = canvas.getActiveObject();
+
+		// If a control point is selected, find its linked object
+		if (activeObject && controlPointManager?.isControlPoint(activeObject)) {
+			const linkedObjectId = (activeObject as any).linkedObjectId;
+			if (linkedObjectId) {
+				const linkedObj = canvas.getObjects().find((o: any) => o.id === linkedObjectId);
+				if (linkedObj) {
+					activeObject = linkedObj;
+				}
+			}
+		}
+
 		if (
 			activeObject &&
 			(activeObject.type === 'rect' ||

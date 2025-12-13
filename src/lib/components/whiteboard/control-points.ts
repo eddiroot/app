@@ -119,7 +119,8 @@ export abstract class ControlPointHandler {
 		y: number,
 		controlPointId: string,
 		objectId: string,
-		pointIndex: number
+		pointIndex: number,
+		selectable: boolean = true
 	): fabric.Circle {
 		const circle = new fabric.Circle({
 			radius: 6,
@@ -130,7 +131,7 @@ export abstract class ControlPointHandler {
 			top: y,
 			originX: 'center',
 			originY: 'center',
-			selectable: true,
+			selectable: selectable,
 			hasControls: false,
 			hasBorders: false,
 			hoverCursor: 'move',
@@ -326,12 +327,563 @@ export class LineControlPoints extends ControlPointHandler {
 }
 
 /**
+ * Control point handler for rectangles
+ */
+export class RectangleControlPoints extends ControlPointHandler {
+	private edgeLines: Map<string, fabric.Line> = new Map();
+
+	addControlPoints(objectId: string, obj: fabric.Object, visible: boolean = true): void {
+		const rect = obj as fabric.Rect;
+		const left = rect.left || 0;
+		const top = rect.top || 0;
+		const width = rect.width || 0;
+		const height = rect.height || 0;
+
+		// Get transformation matrix for handling rotations/scaling
+		const matrix = rect.calcTransformMatrix();
+
+		// Define the 4 corners in local coordinates
+		const corners = [
+			{ x: -width / 2, y: -height / 2 }, // Top-left
+			{ x: width / 2, y: -height / 2 }, // Top-right
+			{ x: width / 2, y: height / 2 }, // Bottom-right
+			{ x: -width / 2, y: height / 2 } // Bottom-left
+		];
+
+		// Transform corners to absolute coordinates
+		const absoluteCorners = corners.map((corner) =>
+			fabric.util.transformPoint(new fabric.Point(corner.x, corner.y), matrix)
+		);
+
+		// Create control points at corners (selectable to allow dragging)
+		absoluteCorners.forEach((corner, index) => {
+			const controlPointId = `${objectId}-cp-${index}`;
+			const circle = this.createControlPointCircle(
+				corner.x,
+				corner.y,
+				controlPointId,
+				objectId,
+				index,
+				true // Must be selectable for dragging
+			);
+			circle.set({ visible });
+			this.canvas.add(circle);
+			this.controlPoints.push({
+				id: controlPointId,
+				circle,
+				objectId,
+				pointIndex: index
+			});
+		});
+
+		// Create edge midpoint control points
+		const edgeMidpoints = [
+			{
+				x: (absoluteCorners[0].x + absoluteCorners[1].x) / 2,
+				y: (absoluteCorners[0].y + absoluteCorners[1].y) / 2,
+				edgeIndex: 4, // Top edge
+				cursor: 'ns-resize'
+			},
+			{
+				x: (absoluteCorners[1].x + absoluteCorners[2].x) / 2,
+				y: (absoluteCorners[1].y + absoluteCorners[2].y) / 2,
+				edgeIndex: 5, // Right edge
+				cursor: 'ew-resize'
+			},
+			{
+				x: (absoluteCorners[2].x + absoluteCorners[3].x) / 2,
+				y: (absoluteCorners[2].y + absoluteCorners[3].y) / 2,
+				edgeIndex: 6, // Bottom edge
+				cursor: 'ns-resize'
+			},
+			{
+				x: (absoluteCorners[3].x + absoluteCorners[0].x) / 2,
+				y: (absoluteCorners[3].y + absoluteCorners[0].y) / 2,
+				edgeIndex: 7, // Left edge
+				cursor: 'ew-resize'
+			}
+		];
+
+		// Add edge midpoint control points (indices 8-11, selectable for dragging)
+		edgeMidpoints.forEach((midpoint, index) => {
+			const pointIndex = 8 + index; // 8, 9, 10, 11 for top, right, bottom, left
+			const controlPointId = `${objectId}-cp-${pointIndex}`;
+			const circle = this.createControlPointCircle(
+				midpoint.x,
+				midpoint.y,
+				controlPointId,
+				objectId,
+				pointIndex,
+				true // Must be selectable for dragging
+			);
+			circle.set({
+				visible,
+				hoverCursor: midpoint.cursor
+			});
+			// Mark this as an edge midpoint
+			(circle as any).isEdgeMidpoint = true;
+			(circle as any).edgeIndex = midpoint.edgeIndex;
+
+			this.canvas.add(circle);
+			this.controlPoints.push({
+				id: controlPointId,
+				circle,
+				objectId,
+				pointIndex
+			});
+		});
+
+		this.bringControlPointsToFront();
+		this.canvas.renderAll();
+	}
+
+	removeControlPoints(objectId: string): void {
+		// Remove corner control points
+		const pointsToRemove = this.controlPoints.filter((cp) => cp.objectId === objectId);
+		pointsToRemove.forEach((cp) => {
+			this.canvas.remove(cp.circle);
+		});
+		this.controlPoints = this.controlPoints.filter((cp) => cp.objectId !== objectId);
+
+		// Remove edge lines
+		const edgeLinesToRemove: string[] = [];
+		this.edgeLines.forEach((line, id) => {
+			if ((line as any).linkedObjectId === objectId) {
+				this.canvas.remove(line);
+				edgeLinesToRemove.push(id);
+			}
+		});
+		edgeLinesToRemove.forEach((id) => this.edgeLines.delete(id));
+
+		this.canvas.renderAll();
+	}
+
+	hideControlPoints(objectId: string): void {
+		// Hide corner points
+		const points = this.controlPoints.filter((cp) => cp.objectId === objectId);
+		points.forEach((cp) => {
+			cp.circle.set({ visible: false });
+		});
+
+		// Hide edge lines
+		this.edgeLines.forEach((line) => {
+			if ((line as any).linkedObjectId === objectId) {
+				line.set({ visible: false });
+			}
+		});
+
+		this.canvas.renderAll();
+	}
+
+	showControlPoints(objectId: string): void {
+		// Show corner points
+		const points = this.controlPoints.filter((cp) => cp.objectId === objectId);
+		points.forEach((cp) => {
+			cp.circle.set({ visible: true });
+		});
+
+		// Show edge lines
+		this.edgeLines.forEach((line) => {
+			if ((line as any).linkedObjectId === objectId) {
+				line.set({ visible: true });
+			}
+		});
+
+		this.canvas.renderAll();
+	}
+
+	updateControlPoints(objectId: string, obj: fabric.Object): void {
+		const rect = obj as fabric.Rect;
+		const controlPoints = this.getControlPointsForObject(objectId);
+		if (controlPoints.length === 0) return;
+
+		const left = rect.left || 0;
+		const top = rect.top || 0;
+		const width = rect.width || 0;
+		const height = rect.height || 0;
+
+		// Get transformation matrix
+		const matrix = rect.calcTransformMatrix();
+
+		// Define corners in local coordinates
+		const corners = [
+			{ x: -width / 2, y: -height / 2 }, // Top-left
+			{ x: width / 2, y: -height / 2 }, // Top-right
+			{ x: width / 2, y: height / 2 }, // Bottom-right
+			{ x: -width / 2, y: height / 2 } // Bottom-left
+		];
+
+		// Transform to absolute coordinates
+		const absoluteCorners = corners.map((corner) =>
+			fabric.util.transformPoint(new fabric.Point(corner.x, corner.y), matrix)
+		);
+
+		// Update corner control points (indices 0-3)
+		controlPoints.forEach((cp) => {
+			if (cp.pointIndex >= 0 && cp.pointIndex <= 3) {
+				const corner = absoluteCorners[cp.pointIndex];
+				cp.circle.set({
+					left: corner.x,
+					top: corner.y
+				});
+				cp.circle.setCoords();
+			}
+		});
+
+		// Update edge midpoint control points (indices 8-11)
+		const edgeMidpoints = [
+			{
+				x: (absoluteCorners[0].x + absoluteCorners[1].x) / 2,
+				y: (absoluteCorners[0].y + absoluteCorners[1].y) / 2,
+				pointIndex: 8 // Top edge
+			},
+			{
+				x: (absoluteCorners[1].x + absoluteCorners[2].x) / 2,
+				y: (absoluteCorners[1].y + absoluteCorners[2].y) / 2,
+				pointIndex: 9 // Right edge
+			},
+			{
+				x: (absoluteCorners[2].x + absoluteCorners[3].x) / 2,
+				y: (absoluteCorners[2].y + absoluteCorners[3].y) / 2,
+				pointIndex: 10 // Bottom edge
+			},
+			{
+				x: (absoluteCorners[3].x + absoluteCorners[0].x) / 2,
+				y: (absoluteCorners[3].y + absoluteCorners[0].y) / 2,
+				pointIndex: 11 // Left edge
+			}
+		];
+
+		edgeMidpoints.forEach((midpoint) => {
+			const cp = controlPoints.find((cp) => cp.pointIndex === midpoint.pointIndex);
+			if (cp) {
+				cp.circle.set({
+					left: midpoint.x,
+					top: midpoint.y
+				});
+				cp.circle.setCoords();
+			}
+		});
+
+		// Update edge lines
+		const edges = [
+			{ start: 0, end: 1, edgeIndex: 4 }, // Top
+			{ start: 1, end: 2, edgeIndex: 5 }, // Right
+			{ start: 2, end: 3, edgeIndex: 6 }, // Bottom
+			{ start: 3, end: 0, edgeIndex: 7 } // Left
+		];
+
+		edges.forEach(({ start, end, edgeIndex }) => {
+			const edgeId = `${objectId}-edge-${edgeIndex}`;
+			const edgeLine = this.edgeLines.get(edgeId);
+			if (edgeLine) {
+				const startCorner = absoluteCorners[start];
+				const endCorner = absoluteCorners[end];
+				edgeLine.set({
+					x1: startCorner.x,
+					y1: startCorner.y,
+					x2: endCorner.x,
+					y2: endCorner.y
+				});
+				edgeLine.setCoords();
+			}
+		});
+
+		this.canvas.renderAll();
+	}
+
+	updateObjectFromControlPoint(controlPointId: string, newX: number, newY: number): void {
+		// Check if this is a control point (corner or edge midpoint)
+		const controlPoint = this.controlPoints.find((cp) => cp.id === controlPointId);
+
+		if (controlPoint) {
+			// Check if it's a corner control point (0-3) or edge midpoint (8-11)
+			if (controlPoint.pointIndex >= 0 && controlPoint.pointIndex <= 3) {
+				// This is a corner control point
+				this.updateFromCorner(controlPoint, newX, newY);
+				return;
+			} else if (controlPoint.pointIndex >= 8 && controlPoint.pointIndex <= 11) {
+				// This is an edge midpoint control point
+				const edgeIndex = (controlPoint.circle as any).edgeIndex;
+				this.updateFromEdgeMidpoint(controlPoint, edgeIndex, newX, newY);
+				return;
+			}
+		}
+
+		// Check if this is an edge line
+		const edgeLine = this.edgeLines.get(controlPointId);
+		if (edgeLine) {
+			const linkedObjectId = (edgeLine as any).linkedObjectId;
+			const edgeIndex = (edgeLine as any).edgeIndex;
+			this.updateFromEdge(linkedObjectId, edgeIndex, newX, newY);
+		}
+	}
+
+	private updateFromEdgeMidpoint(
+		controlPoint: ControlPoint,
+		edgeIndex: number,
+		newX: number,
+		newY: number
+	): void {
+		// Update the control point position immediately
+		controlPoint.circle.set({
+			left: newX,
+			top: newY
+		});
+		controlPoint.circle.setCoords();
+
+		// Call updateFromEdge with the object ID and edge index
+		this.updateFromEdge(controlPoint.objectId, edgeIndex, newX, newY);
+	}
+
+	private updateFromCorner(controlPoint: ControlPoint, newX: number, newY: number): void {
+		// Update the control point position immediately
+		controlPoint.circle.set({
+			left: newX,
+			top: newY
+		});
+		controlPoint.circle.setCoords();
+
+		// Find the rectangle
+		const rect = this.canvas
+			.getObjects()
+			.find((obj: any) => obj.id === controlPoint.objectId && obj.type === 'rect') as
+			| fabric.Rect
+			| undefined;
+		if (!rect) return;
+
+		const width = rect.width || 0;
+		const height = rect.height || 0;
+
+		// Calculate the four corners in absolute coordinates
+		const matrix = rect.calcTransformMatrix();
+		const corners: fabric.Point[] = [
+			new fabric.Point(-width / 2, -height / 2), // Top-left (0)
+			new fabric.Point(width / 2, -height / 2), // Top-right (1)
+			new fabric.Point(width / 2, height / 2), // Bottom-right (2)
+			new fabric.Point(-width / 2, height / 2) // Bottom-left (3)
+		].map((corner) => fabric.util.transformPoint(corner, matrix));
+
+		// Determine which corner is the opposite/anchor corner
+		const oppositeCornerIndex = (controlPoint.pointIndex + 2) % 4;
+		const anchorCorner = corners[oppositeCornerIndex];
+
+		// Store the anchor corner's CURRENT position (we'll keep it fixed)
+		const anchorCornerCP = this.getControlPointsForObject(controlPoint.objectId).find(
+			(cp) => cp.pointIndex === oppositeCornerIndex
+		);
+		const anchorPosition = anchorCornerCP ? anchorCornerCP.circle.getCenterPoint() : anchorCorner;
+
+		// The new dragged position
+		const draggedCorner = new fabric.Point(newX, newY);
+
+		// Calculate new rectangle bounds
+		const minX = Math.min(draggedCorner.x, anchorPosition.x);
+		const maxX = Math.max(draggedCorner.x, anchorPosition.x);
+		const minY = Math.min(draggedCorner.y, anchorPosition.y);
+		const maxY = Math.max(draggedCorner.y, anchorPosition.y);
+
+		const newWidth = maxX - minX;
+		const newHeight = maxY - minY;
+		const newLeft = minX + newWidth / 2;
+		const newTop = minY + newHeight / 2;
+
+		// Store rectangle properties
+		const rectId = (rect as any).id;
+		const rectProps = {
+			fill: rect.fill,
+			stroke: rect.stroke,
+			strokeWidth: rect.strokeWidth,
+			strokeDashArray: rect.strokeDashArray,
+			opacity: rect.opacity
+		};
+
+		// Remove old rectangle
+		this.canvas.remove(rect);
+
+		// Create new rectangle
+		const newRect = new fabric.Rect({
+			id: rectId,
+			left: newLeft,
+			top: newTop,
+			width: newWidth,
+			height: newHeight,
+			fill: rectProps.fill,
+			stroke: rectProps.stroke,
+			strokeWidth: rectProps.strokeWidth,
+			strokeDashArray: rectProps.strokeDashArray,
+			opacity: rectProps.opacity,
+			selectable: true,
+			hasControls: false,
+			hasBorders: false,
+			strokeUniform: true,
+			originX: 'center',
+			originY: 'center'
+		});
+
+		this.canvas.add(newRect);
+		this.bringControlPointsToFront();
+
+		// Update ALL control points to match new rectangle
+		this.updateControlPoints(controlPoint.objectId, newRect);
+
+		// Restore the dragged corner to mouse position
+		controlPoint.circle.set({
+			left: newX,
+			top: newY
+		});
+		controlPoint.circle.setCoords();
+
+		// Restore the anchor corner to its fixed position
+		if (anchorCornerCP) {
+			anchorCornerCP.circle.set({
+				left: anchorPosition.x,
+				top: anchorPosition.y
+			});
+			anchorCornerCP.circle.setCoords();
+		}
+
+		this.canvas.renderAll();
+	}
+
+	/**
+	 * Update edge lines based on actual corner positions
+	 */
+	private updateEdgeLinesFromCorners(objectId: string, cornerPositions: fabric.Point[]): void {
+		const edges = [
+			{ start: 0, end: 1, edgeIndex: 4 }, // Top
+			{ start: 1, end: 2, edgeIndex: 5 }, // Right
+			{ start: 2, end: 3, edgeIndex: 6 }, // Bottom
+			{ start: 3, end: 0, edgeIndex: 7 } // Left
+		];
+
+		edges.forEach(({ start, end, edgeIndex }) => {
+			const edgeId = `${objectId}-edge-${edgeIndex}`;
+			const edgeLine = this.edgeLines.get(edgeId);
+			if (edgeLine) {
+				const startCorner = cornerPositions[start];
+				const endCorner = cornerPositions[end];
+				edgeLine.set({
+					x1: startCorner.x,
+					y1: startCorner.y,
+					x2: endCorner.x,
+					y2: endCorner.y
+				});
+				edgeLine.setCoords();
+			}
+		});
+	}
+
+	private updateFromEdge(objectId: string, edgeIndex: number, newX: number, newY: number): void {
+		// Find the rectangle
+		const rect = this.canvas
+			.getObjects()
+			.find((obj: any) => obj.id === objectId && obj.type === 'rect') as fabric.Rect | undefined;
+		if (!rect) return;
+
+		const left = rect.left || 0;
+		const top = rect.top || 0;
+		const width = rect.width || 0;
+		const height = rect.height || 0;
+
+		// Get transformation matrix
+		const matrix = rect.calcTransformMatrix();
+
+		// Calculate current corners
+		const corners: fabric.Point[] = [
+			new fabric.Point(-width / 2, -height / 2), // Top-left (0)
+			new fabric.Point(width / 2, -height / 2), // Top-right (1)
+			new fabric.Point(width / 2, height / 2), // Bottom-right (2)
+			new fabric.Point(-width / 2, height / 2) // Bottom-left (3)
+		].map((corner) => fabric.util.transformPoint(corner, matrix));
+
+		// Edge indices: 4=top, 5=right, 6=bottom, 7=left
+		// Move the two corners that define the edge
+		switch (edgeIndex) {
+			case 4: // Top edge - move top-left and top-right
+				corners[0] = new fabric.Point(corners[0].x, newY);
+				corners[1] = new fabric.Point(corners[1].x, newY);
+				break;
+			case 5: // Right edge - move top-right and bottom-right
+				corners[1] = new fabric.Point(newX, corners[1].y);
+				corners[2] = new fabric.Point(newX, corners[2].y);
+				break;
+			case 6: // Bottom edge - move bottom-right and bottom-left
+				corners[2] = new fabric.Point(corners[2].x, newY);
+				corners[3] = new fabric.Point(corners[3].x, newY);
+				break;
+			case 7: // Left edge - move bottom-left and top-left
+				corners[3] = new fabric.Point(newX, corners[3].y);
+				corners[0] = new fabric.Point(newX, corners[0].y);
+				break;
+		}
+
+		// Calculate new rectangle bounds
+		const minX = Math.min(corners[0].x, corners[1].x, corners[2].x, corners[3].x);
+		const maxX = Math.max(corners[0].x, corners[1].x, corners[2].x, corners[3].x);
+		const minY = Math.min(corners[0].y, corners[1].y, corners[2].y, corners[3].y);
+		const maxY = Math.max(corners[0].y, corners[1].y, corners[2].y, corners[3].y);
+
+		let newWidth = maxX - minX;
+		let newHeight = maxY - minY;
+
+		// Ensure minimum size
+		if (newWidth < 10) newWidth = 10;
+		if (newHeight < 10) newHeight = 10;
+
+		const newLeft = minX + newWidth / 2;
+		const newTop = minY + newHeight / 2;
+
+		// Store rectangle properties
+		const rectId = (rect as any).id;
+		const rectProps = {
+			fill: rect.fill,
+			stroke: rect.stroke,
+			strokeWidth: rect.strokeWidth,
+			strokeDashArray: rect.strokeDashArray,
+			opacity: rect.opacity
+		};
+
+		// Remove old rectangle
+		this.canvas.remove(rect);
+
+		// Create new rectangle
+		const newRect = new fabric.Rect({
+			id: rectId,
+			left: newLeft,
+			top: newTop,
+			width: newWidth,
+			height: newHeight,
+			fill: rectProps.fill,
+			stroke: rectProps.stroke,
+			strokeWidth: rectProps.strokeWidth,
+			strokeDashArray: rectProps.strokeDashArray,
+			opacity: rectProps.opacity,
+			selectable: true,
+			hasControls: false,
+			hasBorders: false,
+			strokeUniform: true,
+			originX: 'center',
+			originY: 'center'
+		});
+
+		this.canvas.add(newRect);
+		this.bringControlPointsToFront();
+
+		// Update all control points
+		this.updateControlPoints(objectId, newRect);
+		this.canvas.renderAll();
+	}
+}
+
+/**
  * Central manager for all control points on the canvas
  */
 export class ControlPointManager {
 	private canvas: fabric.Canvas;
 	private handlers: Map<string, ControlPointHandler> = new Map();
 	private lineHandler: LineControlPoints;
+	private rectangleHandler: RectangleControlPoints;
 	private sendCanvasUpdate?: (data: Record<string, unknown>) => void;
 
 	constructor(canvas: fabric.Canvas, sendCanvasUpdate?: (data: Record<string, unknown>) => void) {
@@ -341,6 +893,9 @@ export class ControlPointManager {
 		// Initialize handlers for different object types
 		this.lineHandler = new LineControlPoints(canvas);
 		this.handlers.set('polyline', this.lineHandler);
+
+		this.rectangleHandler = new RectangleControlPoints(canvas);
+		this.handlers.set('rect', this.rectangleHandler);
 	}
 
 	/**
@@ -417,14 +972,14 @@ export class ControlPointManager {
 					if (controlPoint) {
 						const modifiedObj = this.canvas
 							.getObjects()
-							.find((obj: any) => obj.id === controlPoint.objectId) as fabric.Polyline | undefined;
+							.find((obj: any) => obj.id === controlPoint.objectId);
 						if (modifiedObj && modifiedObj.type === 'polyline') {
 							// Create a clean serialization with just the essential data
 							// This avoids transformation issues when reconstructing on remote clients
 							const objData = {
 								id: (modifiedObj as any).id,
 								type: 'polyline',
-								points: modifiedObj.points,
+								points: (modifiedObj as fabric.Polyline).points,
 								stroke: modifiedObj.stroke,
 								strokeWidth: modifiedObj.strokeWidth,
 								strokeDashArray: modifiedObj.strokeDashArray,
@@ -433,6 +988,31 @@ export class ControlPointManager {
 								hasControls: false,
 								hasBorders: false,
 								isControlPointUpdate: true // Mark this as a control point update
+							};
+							this.sendCanvasUpdate({
+								type: 'modify',
+								object: objData
+							});
+						} else if (modifiedObj && modifiedObj.type === 'rect') {
+							// Send rectangle updates
+							const rect = modifiedObj as fabric.Rect;
+							const objData = {
+								id: (rect as any).id,
+								type: 'rect',
+								left: rect.left,
+								top: rect.top,
+								width: rect.width,
+								height: rect.height,
+								fill: rect.fill,
+								stroke: rect.stroke,
+								strokeWidth: rect.strokeWidth,
+								strokeDashArray: rect.strokeDashArray,
+								opacity: rect.opacity,
+								originX: 'center',
+								originY: 'center',
+								selectable: true,
+								hasControls: false,
+								hasBorders: false
 							};
 							this.sendCanvasUpdate({
 								type: 'modify',

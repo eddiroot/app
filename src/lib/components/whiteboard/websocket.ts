@@ -109,8 +109,8 @@ async function handleLoadMessage(
 				hasBorders: boolean;
 			};
 			fabricObj.hasControls = false; // Disable controls on load
-			// For polylines, also disable borders since we use custom control points
-			if (fabricObj.type === 'polyline') {
+			// For polylines and rectangles, also disable borders since we use custom control points
+			if (fabricObj.type === 'polyline' || fabricObj.type === 'rect') {
 				fabricObj.hasBorders = false;
 			}
 			canvas.add(fabricObj);
