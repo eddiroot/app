@@ -32,7 +32,6 @@ export const taskTypeEnumPg = pgEnum('enum_task_type', [
 	taskTypeEnum.homework,
 	taskTypeEnum.test,
 	taskTypeEnum.assignment,
-	taskTypeEnum.module
 ]);
 
 export const quizModeEnumPg = pgEnum('enum_quiz_mode', [
@@ -378,3 +377,53 @@ export const taskblockMisconception = pgTable('tb_misc', {
 );
 
 export type TaskBlockMisconception = typeof taskblockMisconception.$inferSelect;
+
+export const taskPlan = pgTable('task_plan', {
+	id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
+	taskId: integer('task_id')
+		.references(() => task.id, { onDelete: 'cascade' }),
+	courseMapItemId: integer('cm_item_id')
+		.notNull()
+		.references(() => courseMapItem.id, { onDelete: 'cascade' }),
+	type: taskTypeEnumPg().notNull(),
+	name: text('name').notNull(),
+	description: text('description'),
+	learningObjectives: text('learning_objectives').array(),
+	durationMinutes: integer('duration_minutes'),
+	scheduledDate: timestamp('scheduled_date'),
+	...timestamps,
+	...embeddings
+},
+	(self) => [
+		index('task_plan_embedding_idx').using('hnsw', self.embedding.op('vector_cosine_ops')),
+		index('task_plan_metadata_idx').using('gin', self.embeddingMetadata),
+	]
+);
+
+export type TaskPlan = typeof taskPlan.$inferSelect;
+
+export const taskPlanLearningAreaStandard = pgTable('task_plan_lrn_a_std', {
+	id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
+	taskPlanId: integer('task_plan_id')
+		.notNull()
+		.references(() => taskPlan.id, { onDelete: 'cascade' }),
+	learningAreaStandardId: integer('lrn_a_std_id')
+		.notNull()
+		.references(() => learningAreaStandard.id, { onDelete: 'cascade' }),
+	...timestamps
+});
+
+export type TaskPlanLearningAreaStandard = typeof taskPlanLearningAreaStandard.$inferSelect;
+
+export const taskPlanResource = pgTable('task_plan_resource', {
+	id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
+	taskPlanId: integer('task_plan_id')
+		.notNull()
+		.references(() => taskPlan.id, { onDelete: 'cascade' }),
+	resourceId: integer('res_id')
+		.notNull()
+		.references(() => resource.id, { onDelete: 'cascade' }),
+	...timestamps
+});
+
+export type TaskPlanResource = typeof taskPlanResource.$inferSelect;

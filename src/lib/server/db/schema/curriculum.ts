@@ -1,13 +1,20 @@
-import { boolean, index, integer, pgEnum, pgTable, text } from 'drizzle-orm/pg-core';
-import { yearLevelEnum } from '../../../enums';
-import { embeddings, timestamps } from './utils';
+
+import { boolean, doublePrecision, index, integer, pgEnum, pgTable, text, unique, varchar } from 'drizzle-orm/pg-core';
+import { gradeScaleEnum, yearLevelEnum } from '../../../enums';
+import { school } from './schools';
+import { embeddings, publish, timestamps } from './utils';
 
 export const curriculum = pgTable('crclm', {
 	id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
 	name: text('name').notNull(),
 	version: text('version').notNull(),
+	schoolId: integer('school_id')
+		.references(() => school.id, { onDelete: 'cascade' }),
+	countryCode: varchar('country_code', { length: 2 }).notNull(),
+	stateCode: varchar('state_code', { length: 3 }).notNull(),
 	isArchived: boolean('is_archived').notNull().default(false),
-	...timestamps
+	...timestamps,
+	...publish
 });
 
 export type Curriculum = typeof curriculum.$inferSelect;
@@ -30,8 +37,6 @@ export const learningArea = pgTable('crclm_sub_la', {
 		.notNull()
 		.references(() => curriculumSubject.id, { onDelete: 'cascade' }),
 	name: text('name').notNull(),
-	abbreviation: text('abbreviation'),
-	description: text('description'),
 	isArchived: boolean('is_archived').notNull().default(false),
 	...timestamps,
 	...embeddings
@@ -78,21 +83,35 @@ export const yearLevelEnumPg = pgEnum('enum_year_level', [
 	yearLevelEnum.year8,
 	yearLevelEnum.year9,
 	yearLevelEnum.year10,
-	yearLevelEnum.year10A,
 	yearLevelEnum.year11,
 	yearLevelEnum.year12,
-	yearLevelEnum.year13,
-	yearLevelEnum.VCE,
-	yearLevelEnum.VCE12,
-	yearLevelEnum.VCE34
 ]);
+
+export const learningAreaTopic = pgTable('lrn_a_topic', {
+	id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
+	learningAreaId: integer('lrn_a_id')
+		.notNull()
+		.references(() => learningArea.id, { onDelete: 'cascade' }),
+	name: text('name').notNull(),
+	isArchived: boolean('is_archived').notNull().default(false),
+	...timestamps,
+	...embeddings
+	},
+	(self) => [
+		unique().on(self.name),
+	]
+);
+
+export type LearningAreaTopic = typeof learningAreaTopic.$inferSelect;
 
 export const learningAreaStandard = pgTable('lrn_a_std', {
 	id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
 	learningAreaId: integer('lrn_a_id')
 		.notNull()
 		.references(() => learningArea.id, { onDelete: 'cascade' }),
-	name: text('name').notNull(),
+	learningAreaTopicId: integer('lrn_a_topic_id')
+		.references(() => learningAreaTopic.id, { onDelete: 'cascade' }),
+	code: varchar('code', { length: 10 }).notNull(),
 	description: text('description'),
 	yearLevel: yearLevelEnumPg().notNull(),
 	isArchived: boolean('is_archived').notNull().default(false),
@@ -113,7 +132,6 @@ export const standardElaboration = pgTable('lrn_a_std_elab', {
 	learningAreaStandardId: integer('lrn_a_std_id')
 		.notNull()
 		.references(() => learningAreaStandard.id, { onDelete: 'cascade' }),
-	name: text('name').notNull(),
 	standardElaboration: text('std_elab').notNull(),
 	isArchived: boolean('is_archived').notNull().default(false),
 	...timestamps,
@@ -193,7 +211,7 @@ export const keyKnowledge = pgTable('key_knowledge', {
 	topicName: text('topic_name'),
 	curriculumSubjectId: integer('cur_sub_id')
 		.references(() => curriculumSubject.id, { onDelete: 'cascade' }),
-	number: integer('number').notNull(), // e.g. 1/2/3
+	number: integer('number').notNull(),
 	isArchived: boolean('is_archived').notNull().default(false),
 	...timestamps,
 	...embeddings
@@ -279,3 +297,39 @@ export const curriculumSubjectExtraContent = pgTable('crclm_sub_cont', {
 );
 
 export type CurriculumSubjectExtraContent = typeof curriculumSubjectExtraContent.$inferSelect;
+
+export const gradeScaleEnumPg = pgEnum('enum_grade_scale', [
+	gradeScaleEnum.IB_CP,
+	gradeScaleEnum.IB_DP,
+	gradeScaleEnum.IB_MYP,
+	gradeScaleEnum.IB_PYP,
+	gradeScaleEnum.GPA,
+	gradeScaleEnum.percentage,
+	gradeScaleEnum.custom
+]);
+
+export const gradeScale = pgTable('grade_scale', {
+	id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
+	name: text('name').notNull(),
+	gradeScaleType: gradeScaleEnumPg().notNull(),
+	isArchived: boolean('is_archived').notNull().default(false),
+	...timestamps
+});
+
+export type GradeScale = typeof gradeScale.$inferSelect;
+
+export const gradeScaleLevel = pgTable('grade_scale_level', {
+	id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
+	gradeScaleId: integer('grade_scale_id')
+		.notNull()
+		.references(() => gradeScale.id, { onDelete: 'cascade' }),
+	name: text('name').notNull(),
+	color: text('color').notNull(),
+	minimumScore: doublePrecision('minimum_score').notNull(),
+	maximumScore: doublePrecision('maximum_score').notNull(),
+	gradeValue: doublePrecision('grade_value'),
+	isArchived: boolean('is_archived').notNull().default(false),
+	...timestamps
+});
+
+export type GradeScaleLevel = typeof gradeScaleLevel.$inferSelect;

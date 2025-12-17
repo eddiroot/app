@@ -358,6 +358,37 @@ export async function getSpacesBySchoolId(schoolId: number, includeArchived: boo
 	return spaces;
 }
 
+export async function createYearLevelsForSchool(schoolId: number, yearLevels: yearLevelEnum[]) {
+	const insertedYearLevels = [];
+
+	for (const yl of yearLevels) {
+		const [yearLevel] = await db
+			.insert(table.yearLevel)
+			.values({
+				schoolId,
+				yearLevel: yl,
+				isArchived: false
+			})
+			.returning();
+
+		insertedYearLevels.push(yearLevel);
+	}
+
+	return insertedYearLevels;
+}
+
+export async function setYearLevelGradeScale(yearLevelId: number, gradeScaleId: number) {
+	const [updatedYearLevel] = await db
+		.update(table.yearLevel)
+		.set({
+			gradeScaleId
+		})
+		.where(eq(table.yearLevel.id, yearLevelId))
+		.returning();
+
+	return updatedYearLevel;
+}
+
 export async function getSpacesByCampusId(campusId: number, includeArchived: boolean = false) {
 	const spaces = await db
 		.select({
@@ -427,10 +458,11 @@ export async function getSubjectsBySchoolIdAndYearLevel(
 	const subjects = await db
 		.select()
 		.from(table.subject)
+		.innerJoin(table.yearLevel, eq(table.subject.yearLevelId, table.yearLevel.id))
 		.where(
 			and(
 				eq(table.subject.schoolId, schoolId),
-				eq(table.subject.yearLevel, yearLevel),
+				eq(table.yearLevel.yearLevel, yearLevel),
 				eq(table.subject.isArchived, false)
 			)
 		)
