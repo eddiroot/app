@@ -89,6 +89,7 @@
     "@node-rs/argon2": "^2.0.2",
     "@thisux/sveltednd": "^0.0.20",
     "@tiptap/core": "^3.1.0",
+    "@tiptap/extension-placeholder": "^3.13.0",
     "@tiptap/pm": "^3.1.0",
     "@tiptap/starter-kit": "^3.1.0",
     "arctic": "^3.7.0",

@@ -1,9 +1,9 @@
 <script lang="ts">
+	import RichTextarea from '$lib/components/rich-textarea.svelte';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import Checkbox from '$lib/components/ui/checkbox/checkbox.svelte';
 	import * as Form from '$lib/components/ui/form/index.js';
 	import * as Select from '$lib/components/ui/select/index.js';
-	import { Textarea } from '$lib/components/ui/textarea/index.js';
 	import { subjectThreadResponseTypeEnum, userTypeEnum } from '$lib/enums.js';
 	import CheckCircle from '@lucide/svelte/icons/check-circle';
 	import MessageSquare from '@lucide/svelte/icons/message-square';
@@ -39,25 +39,26 @@
 	} = $props();
 
 	const dataForm = () => data.form;
+	const formId = () => isReply ? `reply-form-${parentResponseId}` : 'main-response-form';
+
 	const form = superForm(dataForm(), {
+		id: formId(),
 		validators: zod4(formSchema),
 		resetForm: true,
 		onUpdated: ({ form }) => {
-			if (form.valid && isReply && onSuccess) {
-				onSuccess();
-			}
-		},
-		onResult: ({ result }) => {
-			// Handle successful form submission for replies
-			if (result.type === 'success' && isReply && onSuccess) {
-				onSuccess();
+			if (form.valid) {
+				resetEditor = true;
+				if (isReply && onSuccess) {
+					onSuccess();
+				}
 			}
 		}
 	});
 
 	const { form: formData, enhance } = form;
-
 	const isOP = $derived(() => currentUserId === threadAuthorId);
+	
+	let resetEditor = $state(false);
 </script>
 
 <div class={isReply ? 'border-muted-foreground mt-2 border-l-2 py-2 pl-4' : 'mt-4 border-t pt-4'}>
@@ -140,9 +141,10 @@
 					<Form.Label>
 						{$formData.type === 'answer' ? 'Your Answer' : 'Your Comment'}
 					</Form.Label>
-					<Textarea
+					<RichTextarea
 						{...props}
 						bind:value={$formData.content}
+						bind:reset={resetEditor}
 						placeholder={`Write your ${$formData.type} here...`}
 						class="min-h-24"
 					/>
