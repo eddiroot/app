@@ -1,0 +1,1168 @@
+{
+  "id": 16000,
+  "curriculumId": 16000,
+  "name": "Specialist Mathematics Units 1 and 2",
+  "isArchived": false,
+  "learningAreas": [
+    {
+      "id": 16100,
+      "curriculumSubjectId": 16000,
+      "name": "Algebra, number and structure",
+      "abbreviation": "U1AOS1",
+      "description": "In this area of study students cover the development of formal mathematical notation, definition, reasoning and proof applied to number systems, graph theory, sets, logic, and Boolean algebra, and the development of algorithms to solve problems. number systems for the natural numbers, N, integers, Z, rational numbers, Q, real numbers, R, and complex numbers, C, and their fundamental properties and structure set notation and operations including element, intersection, union, complement sub-set and power set prime numbers, the fundamental theorem of arithmetic, and proof that there are infinitely many prime numbers introduction to principles of proof including propositions and quantifiers, examples and counter-examples, direct proof, proof by contradiction, and proof using the contrapositive and mathematical induction simple proofs involving, for example, divisibility, sequences and series, inequalities and irrationality. vertices and edges for undirected graphs, including multiple edges and loops, and their representation using lists, diagrams and adjacency matrices",
+      "content": [
+        {
+          "id": 16201,
+          "learningAreaId": 16100,
+          "description": "number systems for the natural numbers, N, integers, Z, rational numbers, Q, real numbers, R, and complex numbers, C, and their fundamental properties and structure",
+          "topic": "Proof and number"
+        },
+        {
+          "id": 16202,
+          "learningAreaId": 16100,
+          "description": "set notation and operations including element, intersection, union, complement sub-set and power set",
+          "topic": "Proof and number"
+        },
+        {
+          "id": 16203,
+          "learningAreaId": 16100,
+          "description": "prime numbers, the fundamental theorem of arithmetic, and proof that there are infinitely many prime numbers",
+          "topic": "Proof and number"
+        },
+        {
+          "id": 16200,
+          "learningAreaId": 16100,
+          "description": "conversion between fraction and decimal forms of rational numbers",
+          "topic": "Proof and number"
+        },
+        {
+          "id": 16204,
+          "learningAreaId": 16100,
+          "description": "introduction to principles of proof including propositions and quantifiers, examples and counter-examples, direct proof, proof by contradiction, and proof using the contrapositive and mathematical induction",
+          "topic": "Proof and number"
+        },
+        {
+          "id": 16205,
+          "learningAreaId": 16100,
+          "description": "simple proofs involving, for example, divisibility, sequences and series, inequalities and irrationality.",
+          "topic": "Proof and number"
+        },
+        {
+          "id": 16206,
+          "learningAreaId": 16100,
+          "description": "vertices and edges for undirected graphs, including multiple edges and loops, and their representation using lists, diagrams and adjacency matrices",
+          "topic": "Graph theory"
+        },
+        {
+          "id": 16207,
+          "learningAreaId": 16100,
+          "description": "examples of graphs from a range of contexts such as molecular structure, electrical circuits, social networks, utility connections and their use to discuss types of problems in graph theory including existence problems, construction problems, counting problems and optimisation problems",
+          "topic": "Graph theory"
+        },
+        {
+          "id": 16208,
+          "learningAreaId": 16100,
+          "description": "the degree of a vertex and the result that the sum of all the vertex degrees is equal to twice the number of edges (the handshaking lemma)",
+          "topic": "Graph theory"
+        },
+        {
+          "id": 16209,
+          "learningAreaId": 16100,
+          "description": "simple graphs, isomorphism, subgraphs, connectedness, complete graphs and the complement of a graph",
+          "topic": "Graph theory"
+        },
+        {
+          "id": 16210,
+          "learningAreaId": 16100,
+          "description": "bi-partite graphs, trees, and regular graphs (including the Platonic graphs)",
+          "topic": "Graph Theory"
+        },
+        {
+          "id": 16211,
+          "learningAreaId": 16100,
+          "description": "planar graphs and related proofs and applications ",
+          "topic": "Graph Theory"
+        },
+        {
+          "id": 16411,
+          "learningAreaId": 16100,
+          "description": "equivalent conditions for a simple graph with 𝑛 vertices to be a tree",
+          "topic": "Graph Theory"
+        },
+        {
+          "id": 16212,
+          "learningAreaId": 16100,
+          "description": "trails and circuits, Euler circuits and Euler trails, Hamiltonian cycles and paths, and the Konigsberg bridge problem.",
+          "topic": "Graph Theory"
+        },
+        {
+          "id": 16213,
+          "learningAreaId": 16100,
+          "description": "propositions, connectives, truth values, truth tables and Karnaugh maps",
+          "topic": "Logic and algorithms"
+        },
+        {
+          "id": 16413,
+          "learningAreaId": 16100,
+          "description": "boolean algebras",
+          "topic": "Logic and algorithms"
+        },
+        {
+          "id": 16414,
+          "learningAreaId": 16100,
+          "description": "binary number systems",
+          "topic": "Logic and algorithms"
+        },
+        {
+          "id": 16214,
+          "learningAreaId": 16100,
+          "description": "tautologies, validity and proof patterns and the application of these to proofs in natural language and laws and properties of Boolean algebra, the algebra of sets and propositions",
+          "topic": "Logic and algorithms"
+        },
+        {
+          "id": 16415,
+          "learningAreaId": 16100,
+          "description": "logic gates and circuits, and simplification of circuits",
+          "topic": "Logic and algorithms"
+        },
+        {
+          "id": 16215,
+          "learningAreaId": 16100,
+          "description": "definition of an algorithm and the fundamental constructs needed to describe algorithms: sequence, decision (selection, choice, if … then … blocks) and repetition (iteration and loops)",
+          "topic": "Logic and algorithms"
+        },
+        {
+          "id": 16216,
+          "learningAreaId": 16100,
+          "description": "construction and implementation of basic algorithms incorporating the fundamental constructs using pseudocode.",
+          "topic": "Logic and algorithms"
+        }
+      ]
+    },
+    {
+      "id": 16101,
+      "curriculumSubjectId": 16000,
+      "name": "Discrete mathematics",
+      "abbreviation": "U1AOS2",
+      "description": "In this area of study students cover the study of sequences, series, and first-order linear difference equations, combinatorics, including the pigeon-hole principle, the inclusion-exclusion principle, permutations and combinations, combinatorial identities, and matrices. definitions of sequences and series, arithmetic and geometric sequences and their partial sums the limiting behaviour as of the terms in a geometric sequence and dependence on the value of the common ratio solution of first order linear recurrence relations of the form with constant coefficients and their application to financial problems and population modelling. the pigeon-hole principle and its use in solving problems and proving results the inclusion-exclusion principle for the union of two sets and the union of three sets permutations and combinations and their use in solving problems involving arrangements and selections with or without repeated elements",
+      "content": [
+        {
+          "id": 16251,
+          "learningAreaId": 16101,
+          "description": "definitions of sequences and series, arithmetic and geometric sequences and their partial sums",
+          "topic": "Sequences and series"
+        },
+        {
+          "id": 16252,
+          "learningAreaId": 16101,
+          "description": "the limiting behaviour as of the terms in a geometric sequence and dependence on the value of the common ratio",
+          "topic": "Sequences and series"
+        },
+        {
+          "id": 16252,
+          "learningAreaId": 16101,
+          "description": "sequences generated by recursion",
+          "topic": "Sequences and series"
+        },
+        {
+          "id": 16253,
+          "learningAreaId": 16101,
+          "description": "solution of first order linear recurrence relations of the form with constant coefficients and their application to financial problems and population modelling.",
+          "topic": "Sequences and series"
+        },
+        {
+          "id": 16254,
+          "learningAreaId": 16101,
+          "description": "the pigeon-hole principle and its use in solving problems and proving results",
+          "topic": "Combinatrics"
+        },
+        {
+          "id": 16255,
+          "learningAreaId": 16101,
+          "description": "the inclusion-exclusion principle for the union of two sets and the union of three sets",
+          "topic": "Combinatrics"
+        },
+        {
+          "id": 16256,
+          "learningAreaId": 16101,
+          "description": "permutations and combinations and their use in solving problems involving arrangements and selections with or without repeated elements",
+          "topic": "Combinatrics"
+        },
+        {
+          "id": 16257,
+          "learningAreaId": 16101,
+          "description": "derivation and application of simple combinatorial identities.",
+          "topic": "Combinatrics"
+        },
+        {
+          "id": 16258,
+          "learningAreaId": 16101,
+          "description": "matrix notation, dimension and the use of matrices to represent data",
+          "topic": "Matrices"
+        },
+        {
+          "id": 16259,
+          "learningAreaId": 16101,
+          "description": "matrix operations and algebra",
+          "topic": "Matrices"
+        },
+        {
+          "id": 16260,
+          "learningAreaId": 16101,
+          "description": "determinants and matrix equations, and simple applications",
+          "topic": "Matrices"
+        }
+      ]
+    },
+    {
+      "id": 16102,
+      "curriculumSubjectId": 16000,
+      "name": "Data analysis, probability and statistics",
+      "abbreviation": "U2AOS1",
+      "description": "In this area of study students cover the study of linear combinations of random variables and the distribution of sample means of a population, with the use of technology to explore variability of sample means. the mean, variance and standard deviation of a discrete random variable X the distribution of the sum of identically distributed independent discrete random variables comparison of the distribution of 2X, where X is a discrete random variable and the sum of 2 independent discrete random variables that are each identically distributed as X. random experiments, events and event spaces use of simulation to generate a random sample. the distinction between a population parameter and a sample statistic and the use of a sample statistic (sample mean ) as an estimate of the associated population parameter (mean )",
+      "content": [
+        {
+          "id": 16401,
+          "learningAreaId": 16102,
+          "description": "the mean, variance and standard deviation of a discrete random variable X",
+          "topic": "Distribution of sums of discrete random variables"
+        },
+        {
+          "id": 16402,
+          "learningAreaId": 16102,
+          "description": "the distribution of the sum of n identically distributed independent discrete random variables",
+          "topic": "Distribution of sums of discrete random variables"
+        },
+        {
+          "id": 16403,
+          "learningAreaId": 16102,
+          "description": "comparison of the distribution of 2X, where X is a discrete random variable and the sum of 2 independent discrete random variables that are each identically distributed as X.",
+          "topic": "Distribution of sums of discrete random variables"
+        },
+        {
+          "id": 16404,
+          "learningAreaId": 16102,
+          "description": "random experiments, events and event spaces",
+          "topic": "Simulation"
+        },
+        {
+          "id": 16405,
+          "learningAreaId": 16102,
+          "description": "use of simulation to generate a random sample.",
+          "topic": "Simulation"
+        },
+        {
+          "id": 16406,
+          "learningAreaId": 16102,
+          "description": "the distinction between a population parameter and a sample statistic and the use of a sample statistic",
+          "topic": "Sampling distributions"
+        },
+        {
+          "id": 16407,
+          "learningAreaId": 16102,
+          "description": "(sample mean ) as an estimate of the associated population parameter (mean )",
+          "topic": "Sampling distributions"
+        },
+        {
+          "id": 16408,
+          "learningAreaId": 16102,
+          "description": "the concept of a sampling distribution",
+          "topic": "Sampling distributions"
+        },
+        {
+          "id": 16409,
+          "learningAreaId": 16102,
+          "description": "the distribution of sample means considered empirically including comparing the distributions of different size samples from the same population in terms of centre and spread",
+          "topic": "Sampling distributions"
+        },
+        {
+          "id": 16410,
+          "learningAreaId": 16102,
+          "description": "display of variation in sample means through dot plots and other displays and considering the centre and spread of these distributions",
+          "topic": "Sampling distributions"
+        },
+        {
+          "id": 16411,
+          "learningAreaId": 16102,
+          "description": "consideration of the mean and standard deviation of the distribution of sample means and the effect of taking larger samples.",
+          "topic": "Sampling distributions"
+        }
+      ]
+    },
+    {
+      "id": 16103,
+      "curriculumSubjectId": 16000,
+      "name": "Space and measurement",
+      "abbreviation": "U2AOS2",
+      "description": "In this area of study students cover trigonometry and identities, rotation and reflection transformations of the plane and vectors for working with position, shape, direction and movement in the plane and related applications. radian measure, arc length, sectors and segments the sine rule and cosine rule applied to two and three-dimensional situations, including problems involving angles between planes compound and double angle formulas for sine, cosine and tangent and the identities: and proof and application of identities between and or where is in the first quadrant, the identities for products of sines and cosines expressed as sums and differences, and the identities for addition and differences of sines and cosines expressed as products. points in the plane, coordinates and their representation as 2 × 1 matrices (column vectors) linear transformations of the plane as a map of the plane onto itself, rotations about the origin and reflection in a line through the origin the effect of translation, linear transformations and their inverse transformations, and compositions of these transformations on subsets of the plane such as points, lines, shapes and graphs of functions and relations",
+      "content": [
+        {
+          "id": 16451,
+          "learningAreaId": 16103,
+          "description": "radian measure, arc length, sectors and segments",
+          "topic": "Trigonometry"
+        },
+        {
+          "id": 16452,
+          "learningAreaId": 16103,
+          "description": "the sine rule and cosine rule applied to two and three-dimensional situations, including problems involving angles between planes",
+          "topic": "Trigonometry"
+        },
+        {
+          "id": 16453,
+          "learningAreaId": 16103,
+          "description": "compound and double angle formulas for sine, cosine and tangent and the identities: and",
+          "topic": "Trigonometry"
+        },
+        {
+          "id": 16454,
+          "learningAreaId": 16103,
+          "description": "proof and application of identities between and or where is in the first quadrant, the identities for products of sines and cosines expressed as sums and differences, and the identities for addition and differences of sines and cosines expressed as products.",
+          "topic": "Trigonometry"
+        },
+        {
+          "id": 16455,
+          "learningAreaId": 16103,
+          "description": "points in the plane, coordinates and their representation as 2 × 1 matrices (column vectors)",
+          "topic": "Transformations"
+        },
+        {
+          "id": 16456,
+          "learningAreaId": 16103,
+          "description": "linear transformations of the plane as a map of the plane onto itself, rotations about the origin and reflection in a line through the origin",
+          "topic": "Transformations"
+        },
+        {
+          "id": 16457,
+          "learningAreaId": 16103,
+          "description": "the effect of translation, linear transformations and their inverse transformations, and compositions of these transformations on subsets of the plane such as points, lines, shapes and graphs of functions and relations",
+          "topic": "Transformations"
+        },
+        {
+          "id": 16458,
+          "learningAreaId": 16103,
+          "description": "invariance of properties under transformation, and the relationship between the determinant of a transformation matrix and the effect of the linear transformation on the area of a bounded region of the plane.",
+          "topic": "Transformations"
+        },
+        {
+          "id": 16459,
+          "learningAreaId": 16103,
+          "description": "the representation of plane vectors as directed lines segments, magnitude and direction of a plane vector, and unit vectors",
+          "topic": "Vectors in the plane"
+        },
+        {
+          "id": 16460,
+          "learningAreaId": 16103,
+          "description": "geometric representation of addition, subtraction (triangle and/or parallelogram rules), scalar multiple of a vector and linear combination of plane vectors",
+          "topic": "Vectors in the plane"
+        },
+        {
+          "id": 16461,
+          "learningAreaId": 16103,
+          "description": "the representation of a plane vector as an ordered pair in the form",
+          "topic": "Vectors in the plane"
+        },
+        {
+          "id": 16462,
+          "learningAreaId": 16103,
+          "description": "simple vector algebra (addition, subtraction, multiplication by a scalar, linear combination) using these forms",
+          "topic": "Vectors in the plane"
+        },
+        {
+          "id": 16463,
+          "learningAreaId": 16103,
+          "description": "scalar (dot) product of two plane vectors, perpendicular and parallel vectors, projection of one vector onto another vector, and angle between two vectors",
+          "topic": "Vectors in the plane"
+        },
+        {
+          "id": 16464,
+          "learningAreaId": 16103,
+          "description": "application of vectors to displacement, velocity, resultant velocity, relative velocity, statics and motion under a constant force.",
+          "topic": "geometric proofs with vectors"
+        }
+      ]
+    },
+    {
+      "id": 16104,
+      "curriculumSubjectId": 16000,
+      "name": "Algebra, number and structure",
+      "abbreviation": "U2AOS3",
+      "description": "In this area of study students cover the arithmetic and algebra of complex numbers, including polar form, regions and curves in the complex plane and introduction to factorisation of quadratic functions over the complex field. definition and properties of the complex numbers, C, arithmetic, modulus of a complex number, and the representation of complex numbers on an Argand diagram general solution of quadratic equations (with real coefficients) of a single variable over C, and conjugate roots use of the modulus of a complex number and the argument of a non-zero complex number to prove basic identities multiplication, division, and powers of complex numbers in polar form and their geometric interpretation.",
+      "content": [
+        {
+          "id": 16501,
+          "learningAreaId": 16104,
+          "description": "definition and properties of the complex numbers, C, arithmetic, modulus of a complex number, and the representation of complex numbers on an Argand diagram",
+          "topic": "Complex numbers"
+        },
+        {
+          "id": 16502,
+          "learningAreaId": 16104,
+          "description": "general solution of quadratic equations (with real coefficients) of a single variable over C, and conjugate roots",
+          "topic": "Complex numbers"
+        },
+        {
+          "id": 16503,
+          "learningAreaId": 16104,
+          "description": "lines, rays, circles and ellipses",
+          "topic": "Complex numbers"
+        },
+        {
+          "id": 16500,
+          "learningAreaId": 16104,
+          "description": "regions defined in the complex plane using combinations of the above",
+          "topic": "Complex numbers"
+        },
+        {
+          "id": 16504,
+          "learningAreaId": 16104,
+          "description": "use of the modulus of a complex number and the argument of a non-zero complex number to prove basic identities",
+          "topic": "Complex numbers"
+        },
+        {
+          "id": 16505,
+          "learningAreaId": 16104,
+          "description": "multiplication, division, and powers of complex numbers in polar form and their geometric interpretation.",
+          "topic": "Complex numbers"
+        },
+        {
+          "id": 16506,
+          "learningAreaId": 16104,
+          "description": "conversion between Cartesian and polar form of complex numbers",
+          "topic": "Complex numbers"
+        }
+      ]
+    },
+    {
+      "id": 16105,
+      "curriculumSubjectId": 16000,
+      "name": "Functions, relations and graphs",
+      "abbreviation": "U2AOS4",
+      "description": "In this area of study students cover an introduction to partial fractions; reciprocal and inverse circular functions and their graphs and simple transformations of these graphs; locus definitions of lines, parabolas, circles, ellipses and hyperbolas and the Cartesian, parametric and polar forms of these relations.",
+      "content": [
+        {
+          "id": 16550,
+          "learningAreaId": 16105,
+          "description": "identities from equating coefficients of polynomials, rational functions and their decompositions into partial fractions with denominators expressed as products of linear and irreducible quadratic terms",
+          "topic": "Functions, relations and graphs"
+        },
+        {
+          "id": 16551,
+          "learningAreaId": 16105,
+          "description": "graphs of simple reciprocal functions, including graphs of the reciprocal circular functions cosecant, secant and cotangent, and simple transformations of these",
+          "topic": "Functions, relations and graphs"
+        },
+        {
+          "id": 16552,
+          "learningAreaId": 16105,
+          "description": "graphs of the restricted circular functions of sine, cosine and tangent over principal domains and their respective inverse functions sin–1, cos-1 and tan–1 (students should be familiar with alternative notations, arcsin, arccos and arctan), and simple transformations of these graphs",
+          "topic": "Functions, relations and graphs"
+        },
+        {
+          "id": 16553,
+          "learningAreaId": 16105,
+          "description": "locus definition and construction in the plane of lines, parabolas, circles, ellipses and hyperbolas and their Cartesian, polar and parametric forms and graphs",
+          "topic": "Functions, relations and graphs"
+        },
+        {
+          "id": 16554,
+          "learningAreaId": 16105,
+          "description": "the absolute value function, its graph and simple transformations of its graph.",
+          "topic": "Functions, relations and graphs"
+        }
+      ]
+    }
+  ],
+  "outcomes": [
+    {
+      "id": 16006,
+      "curriculumSubjectId": 16000,
+      "number": 1,
+      "description": "On completion of this unit the student should be able to define and explain key concepts as specified in the content from the areas of study and apply a range of related mathematical routines and procedures.",
+      "keyKnowledge": [
+        {
+          "id": 16060,
+          "description": "sets of numbers: representations of natural numbers, integers, rational numbers and real numbers",
+          "outcomeId": 16006
+        },
+        {
+          "id": 16061,
+          "description": "set notations and operations",
+          "outcomeId": 16006
+        },
+        {
+          "id": 16062,
+          "description": "principles of proof and proof techniques: contradiction, contrapositive and counter-examples, the method of proof by mathematical induction",
+          "outcomeId": 16006
+        },
+        {
+          "id": 16063,
+          "description": "first-order linear recurrence relations and in particular arithmetic and geometric sequences and their partial sums",
+          "outcomeId": 16006
+        },
+        {
+          "id": 16064,
+          "description": "the pigeon-hole principle as a problem-solving technique, techniques of counting such as permutations and combinations, the inclusion-exclusion principle and simple combinatorial identities",
+          "outcomeId": 16006
+        },
+        {
+          "id": 16065,
+          "description": "matrix notation and algebra",
+          "outcomeId": 16006
+        },
+        {
+          "id": 16066,
+          "description": "notation, definitions and representations of graphs, types of graphs and their properties",
+          "outcomeId": 16006
+        },
+        {
+          "id": 16067,
+          "description": "applications of graph theory and constructions and graphs",
+          "outcomeId": 16006
+        },
+        {
+          "id": 16068,
+          "description": "elementary graph theory theorems and their proofs",
+          "outcomeId": 16006
+        },
+        {
+          "id": 16069,
+          "description": "concepts of proposition, truth value, tautology, Karnaugh maps, set and set operations",
+          "outcomeId": 16006
+        },
+        {
+          "id": 16070,
+          "description": "concepts of validity, argument and proof",
+          "outcomeId": 16006
+        },
+        {
+          "id": 16071,
+          "description": "Boolean operators, and axioms of Boolean algebra",
+          "outcomeId": 16006
+        },
+        {
+          "id": 16072,
+          "description": "logic gates and circuit diagrams",
+          "outcomeId": 16006
+        },
+        {
+          "id": 16073,
+          "description": "key elements of algorithm design: sequence, decision and repetition",
+          "outcomeId": 16006
+        },
+        {
+          "id": 16074,
+          "description": "the ordered steps for an algorithm from the related pseudocode",
+          "outcomeId": 16006
+        },
+        {
+          "id": 16075,
+          "description": "algorithms in a variety of contexts as a precise set of instructions that can be specified using pseudocode",
+          "outcomeId": 16006
+        }
+      ],
+      "keySkills": [
+        {
+          "id": 16076,
+          "description": "apply deductive reasoning, including mathematical induction, and use appropriate language, in the construction of mathematical arguments and proofs involving concepts from topics in this area of study",
+          "outcomeId": 16006
+        },
+        {
+          "id": 16077,
+          "description": "identify assumptions, give definitions and provide examples and counter-examples using appropriate mathematical language, diagrams and models",
+          "outcomeId": 16006
+        },
+        {
+          "id": 16078,
+          "description": "define and represent number in various structures and contexts such as integer, rational, real and complex number systems, ordered sets of numbers such as sequences and series",
+          "outcomeId": 16006
+        },
+        {
+          "id": 16079,
+          "description": "solve problems involving first order linear recurrence relations using both recursive and formula-based techniques",
+          "outcomeId": 16006
+        },
+        {
+          "id": 16080,
+          "description": "solve problems which involve techniques of counting",
+          "outcomeId": 16006
+        },
+        {
+          "id": 16081,
+          "description": "use deductive reasoning to solve problems involving counting techniques, the pigeon-hole principle and Pascal’s triangle",
+          "outcomeId": 16006
+        },
+        {
+          "id": 16082,
+          "description": "use matrix algebra including solving matrix equations",
+          "outcomeId": 16006
+        },
+        {
+          "id": 16083,
+          "description": "construct graphs and use them to model situations",
+          "outcomeId": 16006
+        },
+        {
+          "id": 16084,
+          "description": "use algorithms to construct subsets of graphs according to conditions and solve related problems",
+          "outcomeId": 16006
+        },
+        {
+          "id": 16085,
+          "description": "develop and understand results, including planar graphs, trails and circuits",
+          "outcomeId": 16006
+        },
+        {
+          "id": 16086,
+          "description": "solve problems and prove theorems involving graphs",
+          "outcomeId": 16006
+        },
+        {
+          "id": 16087,
+          "description": "represent and test the truth of propositions using truth tables",
+          "outcomeId": 16006
+        },
+        {
+          "id": 16088,
+          "description": "develop proofs of propositions in natural language and mathematics",
+          "outcomeId": 16006
+        },
+        {
+          "id": 16089,
+          "description": "perform exact and approximate computations and apply algorithms including reading and interpreting algorithms described by pseudocode in various structures and contexts",
+          "outcomeId": 16006
+        }
+      ]
+    },
+    {
+      "id": 16007,
+      "curriculumSubjectId": 16000,
+      "number": 2,
+      "description": "On completion of this unit the student should be able to apply mathematical processes in non-routine contexts, including situations with some open-ended aspects requiring investigative, modelling or problem-solving techniques or approaches, and analyse and discuss these applications of mathematics.",
+      "keyKnowledge": [
+        {
+          "id": 16090,
+          "description": "the application of mathematical content from one or more areas of study in a given context for investigation",
+          "outcomeId": 16007
+        },
+        {
+          "id": 16091,
+          "description": "specific and general formulations of concepts used to derive results for analysis within a given context for investigation",
+          "outcomeId": 16007
+        },
+        {
+          "id": 16092,
+          "description": "the role of proof in establishing results",
+          "outcomeId": 16007
+        },
+        {
+          "id": 16093,
+          "description": "the role of examples, counter-examples and general cases in developing mathematical analysis",
+          "outcomeId": 16007
+        },
+        {
+          "id": 16094,
+          "description": "the role of developing algorithms and expressing these through pseudocode to help determine and understand mathematical ideas and results",
+          "outcomeId": 16007
+        },
+        {
+          "id": 16095,
+          "description": "inferences from analysis and their use to draw valid conclusions related to a given context for investigation",
+          "outcomeId": 16007
+        }
+      ],
+      "keySkills": [
+        {
+          "id": 16096,
+          "description": "specify the relevance of key mathematical content from one or more areas of study to the investigation of various questions in a given context",
+          "outcomeId": 16007
+        },
+        {
+          "id": 16097,
+          "description": "develop mathematical formulations of specific and general cases used to derive results for analysis within a given context for investigation",
+          "outcomeId": 16007
+        },
+        {
+          "id": 16098,
+          "description": "use algorithms to solve or help solve problems",
+          "outcomeId": 16007
+        },
+        {
+          "id": 16099,
+          "description": "use proof to establish results rigorously in different contexts",
+          "outcomeId": 16007
+        },
+        {
+          "id": 16100,
+          "description": "make inferences from analysis and use these to draw valid conclusions related to a given context for investigation",
+          "outcomeId": 16007
+        },
+        {
+          "id": 16101,
+          "description": "communicate conclusions using both mathematical expression and everyday language; in particular, the interpretation of mathematics with respect to the context for investigation",
+          "outcomeId": 16007
+        }
+      ]
+    },
+    {
+      "id": 16008,
+      "curriculumSubjectId": 16000,
+      "number": 3,
+      "description": "On completion of this unit the student should be able to apply computational thinking and use numerical, graphical, symbolic and statistical functionalities of technology to develop mathematical ideas, produce results and carry out analysis in situations requiring investigative, modelling or problem-solving techniques or approaches.",
+      "keyKnowledge": [
+        {
+          "id": 16102,
+          "description": "the role of computational thinking (abstraction, decomposition, pattern and algorithm) in problem-solving, and its application to mathematical investigation",
+          "outcomeId": 16008
+        },
+        {
+          "id": 16103,
+          "description": "exact and approximate technological specification of mathematical information such as numerical data, graphical forms and the solutions of equations",
+          "outcomeId": 16008
+        },
+        {
+          "id": 16104,
+          "description": "domain and range requirements for the technological specification of graphs of functions and relations",
+          "outcomeId": 16008
+        },
+        {
+          "id": 16105,
+          "description": "the relation between numerical, graphical and symbolic forms of information about functions and equations, and the corresponding features of those functions and equations",
+          "outcomeId": 16008
+        },
+        {
+          "id": 16106,
+          "description": "the similarities and differences between formal mathematical expressions and their representation in various technology applications",
+          "outcomeId": 16008
+        },
+        {
+          "id": 16107,
+          "description": "the appropriate selection of a technology application for a variety of mathematical contexts",
+          "outcomeId": 16008
+        }
+      ],
+      "keySkills": [
+        {
+          "id": 16108,
+          "description": "use computational thinking, algorithms, models and simulations to solve problems related to a given context",
+          "outcomeId": 16008
+        },
+        {
+          "id": 16109,
+          "description": "distinguish between exact and approximate presentations of mathematical results, and interpret these results to a specified degree of accuracy",
+          "outcomeId": 16008
+        },
+        {
+          "id": 16110,
+          "description": "produce results, using technology, which identify examples or counter-examples for propositions",
+          "outcomeId": 16008
+        },
+        {
+          "id": 16111,
+          "description": "produce tables of values, families of graphs or collections of other results which support general analysis in investigative, modelling or problem-solving contexts",
+          "outcomeId": 16008
+        },
+        {
+          "id": 16112,
+          "description": "carry out analysis in investigative, modelling or problem-solving contexts",
+          "outcomeId": 16008
+        },
+        {
+          "id": 16113,
+          "description": "use appropriate domain and range technological specifications to illustrate key features of graphs of functions and relations",
+          "outcomeId": 16008
+        },
+        {
+          "id": 16114,
+          "description": "design and implement simulations and algorithms using appropriate functionalities of technology",
+          "outcomeId": 16008
+        },
+        {
+          "id": 16115,
+          "description": "identify the relation between numerical, graphical and symbolic forms of information about functions and equations, and the corresponding features of those functions and equations",
+          "outcomeId": 16008
+        },
+        {
+          "id": 16116,
+          "description": "specify the similarities and differences between formal mathematical expressions and their representation in various technology applications",
+          "outcomeId": 16008
+        },
+        {
+          "id": 16117,
+          "description": "make appropriate selections for technology applications in a variety of mathematical contexts, and provide a rationale for these selections",
+          "outcomeId": 16008
+        },
+        {
+          "id": 16118,
+          "description": "relate the results from a particular technology application to the nature of a particular mathematical task (investigative, modelling or problem-solving) and verify these results",
+          "outcomeId": 16008
+        },
+        {
+          "id": 16119,
+          "description": "specify the process used to develop a solution to a problem using technology and communicate the key stages of mathematical reasoning (formulation, solution, interpretation) used in this process",
+          "outcomeId": 16008
+        }
+      ]
+    },
+    {
+      "id": 16009,
+      "curriculumSubjectId": 16000,
+      "number": 1,
+      "description": "On completion of this unit the student should be able to define and explain key concepts as specified in the content from the areas of study and apply a range of related mathematical routines and procedures.",
+      "keyKnowledge": [
+        {
+          "id": 16120,
+          "description": "linear combination of random variables",
+          "outcomeId": 16009
+        },
+        {
+          "id": 16121,
+          "description": "methods of simulation applied to sampling distributions and the effect of taking larger samples from a fixed population",
+          "outcomeId": 16009
+        },
+        {
+          "id": 16122,
+          "description": "arc length of circles, areas of sectors and segments of circles",
+          "outcomeId": 16009
+        },
+        {
+          "id": 16123,
+          "description": "the reciprocal circular functions and their graphs and the restricted circular functions and their graphs",
+          "outcomeId": 16009
+        },
+        {
+          "id": 16124,
+          "description": "trigonometric identities",
+          "outcomeId": 16009
+        },
+        {
+          "id": 16125,
+          "description": "sine and cosine rules applied in two and three dimensions, including angles between planes, and congruence conditions for their application",
+          "outcomeId": 16009
+        },
+        {
+          "id": 16126,
+          "description": "coordinate and matrix representation of points and transformations",
+          "outcomeId": 16009
+        },
+        {
+          "id": 16127,
+          "description": "translations, dilation, rotations and reflections, invariance properties, inverse transformations and composition of transformations",
+          "outcomeId": 16009
+        },
+        {
+          "id": 16128,
+          "description": "locus definitions of curves in the plane",
+          "outcomeId": 16009
+        },
+        {
+          "id": 16129,
+          "description": "Cartesian, polar and parametric coordinate systems and graphs, including exact values for circular functions",
+          "outcomeId": 16009
+        },
+        {
+          "id": 16130,
+          "description": "standard notation and representations for vectors in the plane, including arrows, coordinates and matrices",
+          "outcomeId": 16009
+        },
+        {
+          "id": 16131,
+          "description": "the definition of arithmetic operations for vectors in the plane",
+          "outcomeId": 16009
+        },
+        {
+          "id": 16132,
+          "description": "geometrical representation of vectors and geometric and coordinate definition of the scalar product of two vectors",
+          "outcomeId": 16009
+        },
+        {
+          "id": 16133,
+          "description": "representation of complex numbers and the conventions for arithmetic of complex numbers in Cartesian and polar forms",
+          "outcomeId": 16009
+        },
+        {
+          "id": 16134,
+          "description": "regions of the complex plane",
+          "outcomeId": 16009
+        },
+        {
+          "id": 16135,
+          "description": "reciprocals and their properties",
+          "outcomeId": 16009
+        },
+        {
+          "id": 16136,
+          "description": "representation of relations by Cartesian, parametric and polar equations",
+          "outcomeId": 16009
+        },
+        {
+          "id": 16137,
+          "description": "the absolute value function",
+          "outcomeId": 16009
+        }
+      ],
+      "keySkills": [
+        {
+          "id": 16138,
+          "description": "simulate sampling from a population and display the results of taking multiple samples of the same size from a fixed population",
+          "outcomeId": 16009
+        },
+        {
+          "id": 16139,
+          "description": "consider measures of central tendency and spread of the distribution of sample means",
+          "outcomeId": 16009
+        },
+        {
+          "id": 16140,
+          "description": "prove trigonometric identities and use them to solve problems",
+          "outcomeId": 16009
+        },
+        {
+          "id": 16141,
+          "description": "prove and use the sine and cosine rules and solve problems in both two and three dimensions, including angle between planes problems",
+          "outcomeId": 16009
+        },
+        {
+          "id": 16142,
+          "description": "define and apply transformations to the plane and specify their effect on subsets of the plane",
+          "outcomeId": 16009
+        },
+        {
+          "id": 16143,
+          "description": "identify the set of points that are invariant under a given transformation",
+          "outcomeId": 16009
+        },
+        {
+          "id": 16144,
+          "description": "find and apply inverse transformations and composite transformations, and interpret their effects on subsets of the plane",
+          "outcomeId": 16009
+        },
+        {
+          "id": 16145,
+          "description": "use vectors to model situations involving direction and magnitude",
+          "outcomeId": 16009
+        },
+        {
+          "id": 16146,
+          "description": "apply vector operations of scalar multiples, addition, subtraction and scalar product",
+          "outcomeId": 16009
+        },
+        {
+          "id": 16147,
+          "description": "use vectors to solve problems involving position, displacement, velocity and force",
+          "outcomeId": 16009
+        },
+        {
+          "id": 16148,
+          "description": "use vectors to solve geometric problems and prove theorems",
+          "outcomeId": 16009
+        },
+        {
+          "id": 16149,
+          "description": "construct the graph of a reciprocal function from the graph of the original function",
+          "outcomeId": 16009
+        },
+        {
+          "id": 16150,
+          "description": "use the distance formula and locus definitions to obtain the rule of a relation and draw the corresponding curve in the plane",
+          "outcomeId": 16009
+        },
+        {
+          "id": 16151,
+          "description": "represent complex numbers and the effect of arithmetic of complex numbers in both Cartesian and polar form",
+          "outcomeId": 16009
+        },
+        {
+          "id": 16152,
+          "description": "graph non-linear relations in the plane from their Cartesian, polar and parametric representations, and identify and interpret their key features, including any linear asymptotes",
+          "outcomeId": 16009
+        }
+      ]
+    },
+    {
+      "id": 16010,
+      "curriculumSubjectId": 16000,
+      "number": 2,
+      "description": "On completion of this unit the student should be able to apply mathematical processes in non-routine contexts, including situations with some open-ended aspects requiring investigative, modelling or problem-solving techniques or approaches, and analyse and discuss these applications of mathematics.",
+      "keyKnowledge": [
+        {
+          "id": 16153,
+          "description": "the application of mathematical content from one or more areas of study in a given context for investigation",
+          "outcomeId": 16010
+        },
+        {
+          "id": 16154,
+          "description": "specific and general formulations of concepts used to derive results for analysis within a given context for investigation",
+          "outcomeId": 16010
+        },
+        {
+          "id": 16155,
+          "description": "the role of examples, counter-examples and general cases in developing mathematical analysis",
+          "outcomeId": 16010
+        },
+        {
+          "id": 16156,
+          "description": "the role of proof involving the communication and justification of an argument for a mathematical statement in a clear, concise and precise manner",
+          "outcomeId": 16010
+        },
+        {
+          "id": 16157,
+          "description": "the role of developing algorithms and expressing these through pseudocode to help determine and understand mathematical ideas and results",
+          "outcomeId": 16010
+        },
+        {
+          "id": 16158,
+          "description": "inferences from analysis and their use to draw valid conclusions related to a given context for investigation",
+          "outcomeId": 16010
+        }
+      ],
+      "keySkills": [
+        {
+          "id": 16159,
+          "description": "specify the relevance of key mathematical content from one or more areas of study to the investigation of various questions in a given context",
+          "outcomeId": 16010
+        },
+        {
+          "id": 16160,
+          "description": "develop mathematical formulations of specific and general cases used to derive results for analysis within a given context for investigation",
+          "outcomeId": 16010
+        },
+        {
+          "id": 16161,
+          "description": "use algorithms to solve problems",
+          "outcomeId": 16010
+        },
+        {
+          "id": 16162,
+          "description": "use proof to establish mathematical results",
+          "outcomeId": 16010
+        },
+        {
+          "id": 16163,
+          "description": "make inferences from analysis and use these to draw valid conclusions related to a given context for investigation",
+          "outcomeId": 16010
+        },
+        {
+          "id": 16164,
+          "description": "communicate conclusions using both mathematical expression and everyday language; in particular, the interpretation of mathematics with respect to the context for investigation",
+          "outcomeId": 16010
+        }
+      ]
+    },
+    {
+      "id": 16011,
+      "curriculumSubjectId": 16000,
+      "number": 3,
+      "description": "On completion of this unit the student should be able to apply computational thinking and use numerical, graphical, symbolic and statistical functionalities of technology to develop mathematical ideas, produce results and carry out analysis in situations requiring investigative, modelling or problem-solving techniques or approaches.",
+      "keyKnowledge": [
+        {
+          "id": 16165,
+          "description": "the role of computational thinking (abstraction, decomposition, pattern and algorithm) in problem-solving, and its application to mathematical investigation",
+          "outcomeId": 16011
+        },
+        {
+          "id": 16166,
+          "description": "exact and approximate technological specification of mathematical information such as numerical data, graphical forms and the solutions of equations",
+          "outcomeId": 16011
+        },
+        {
+          "id": 16167,
+          "description": "domain and range requirements for the technological specification of graphs of functions and relations",
+          "outcomeId": 16011
+        },
+        {
+          "id": 16168,
+          "description": "the relation between numerical, graphical and symbolic forms of information about functions and equations, and the corresponding features of those functions and equations",
+          "outcomeId": 16011
+        },
+        {
+          "id": 16169,
+          "description": "the similarities and differences between formal mathematical expressions and their representation in various technology applications",
+          "outcomeId": 16011
+        },
+        {
+          "id": 16170,
+          "description": "the appropriate selection of a technology application for a variety of mathematical contexts",
+          "outcomeId": 16011
+        },
+        {
+          "id": 16171,
+          "description": "For Unit 3 a selection of content would typically include content from the ‘Discrete mathematics’, ‘Functions, relations and graphs’, ‘Algebra, number and structure’, ‘Space and measurement’ and ‘Calculus’ areas of study. In Unit 4 the corresponding selection of content would typically consist of the remaining content from the ‘Discrete mathematics’, ‘Calculus’, and ‘Space and measurement’ areas of study and the content from the ‘Data analysis, probability and statistics’ area of study.",
+          "outcomeId": 16011
+        },
+        {
+          "id": 16172,
+          "description": "In undertaking these units, students are expected to be able to apply techniques, routines and processes involving rational, real and complex arithmetic, sets, lists, tables and vectors, diagrams and geometric constructions, algorithms, algebraic manipulation, equations, graphs, differentiation, anti-differentiation and integration and inference, with and without the use of technology. They should have facility with relevant mental and by-hand approaches to estimation and computation. The use of numerical, graphical, geometric, symbolic and statistical functionality of technology for teaching and learning mathematics, for working mathematically, and in related assessment, is to be incorporated throughout each unit as applicable.",
+          "outcomeId": 16011
+        }
+      ],
+      "keySkills": [
+        {
+          "id": 16173,
+          "description": "use computational thinking, algorithms, models and simulations to solve problems related to a given context",
+          "outcomeId": 16011
+        },
+        {
+          "id": 16174,
+          "description": "distinguish between exact and approximate presentations of mathematical results, and interpret these results to a specified degree of accuracy",
+          "outcomeId": 16011
+        },
+        {
+          "id": 16175,
+          "description": "produce results, using technology, which identify examples or counter-examples for propositions",
+          "outcomeId": 16011
+        },
+        {
+          "id": 16176,
+          "description": "produce tables of values, families of graphs or collections of other results which support general analysis in investigative, modelling or problem-solving contexts",
+          "outcomeId": 16011
+        },
+        {
+          "id": 16177,
+          "description": "use appropriate domain and range technological specifications which illustrate key features of graphs of functions and relations",
+          "outcomeId": 16011
+        },
+        {
+          "id": 16178,
+          "description": "identify the relation between numerical, graphical and symbolic forms of information about functions and equations, and the corresponding features of those functions and equations",
+          "outcomeId": 16011
+        },
+        {
+          "id": 16179,
+          "description": "specify the similarities and differences between formal mathematical expressions and their representation in various technology applications",
+          "outcomeId": 16011
+        },
+        {
+          "id": 16180,
+          "description": "make appropriate selections for technology applications in a variety of mathematical contexts, and provide a rationale for these selections",
+          "outcomeId": 16011
+        },
+        {
+          "id": 16181,
+          "description": "specify the purpose and effect of sequencing, decision-making and iterative statements on applicable functionalities of technology, and their role in the design of algorithms and simulations",
+          "outcomeId": 16011
+        },
+        {
+          "id": 16182,
+          "description": "relate the results from a particular technology application to the nature of a particular mathematical task (investigative, modelling or problem-solving) and verify these results",
+          "outcomeId": 16011
+        },
+        {
+          "id": 16183,
+          "description": "specify the process used to develop a solution to a problem using technology and communicate the key stages of mathematical reasoning (formulation, solution, interpretation) used in this process",
+          "outcomeId": 16011
+        },
+        {
+          "id": 16184,
+          "description": "Units 3 and 4: Specialist Mathematics",
+          "outcomeId": 16011
+        },
+        {
+          "id": 16185,
+          "description": "Specialist Mathematics Units 3 and 4 consist of the areas of study: ‘Algebra, number and structure’, ‘Calculus’, ‘Data analysis, probability and statistics’, ‘Discrete mathematics’, ‘Functions, relations and graphs’, and ‘Space and measurement’. The development of course content should highlight mathematical structure, reasoning and proof and applications across a range of modelling contexts with an appropriate selection of content for each of Unit 3 and Unit 4. The selection of content for Unit 3 and Unit 4 should be constructed so that there is a balanced and progressive development of knowledge and skills with connections among the areas of study being developed as appropriate across Unit 3 and Unit 4.",
+          "outcomeId": 16011
+        }
+      ]
+    }
+  ]
+}

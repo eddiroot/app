@@ -2,6 +2,7 @@ import { newsStatusEnum, newsVisibilityEnum } from '$lib/enums.js';
 import { db } from '$lib/server/db';
 import * as table from '$lib/server/db/schema';
 import { and, asc, count, desc, eq, gte, isNull, lte, or, sql } from 'drizzle-orm';
+import type { EmbeddingMetadata } from './vector';
 
 // News CRUD operations
 export async function createNews(
@@ -497,4 +498,10 @@ export async function deleteNews(newsId: number) {
 	const [deletedNews] = await db.delete(table.news).where(eq(table.news.id, newsId)).returning();
 
 	return deletedNews;
+}
+
+export async function getNewsEmbeddingMetadata(record: Record<string, unknown>): Promise<EmbeddingMetadata> {
+	return {
+		newsId: record.newsId as number
+	};
 }

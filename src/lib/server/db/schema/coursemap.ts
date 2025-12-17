@@ -1,9 +1,9 @@
-import { boolean, foreignKey, integer, pgTable, text, unique } from 'drizzle-orm/pg-core';
+import { boolean, foreignKey, index, integer, pgTable, text, unique } from 'drizzle-orm/pg-core';
 import { learningArea, learningAreaStandard } from './curriculum';
 import { resource } from './resource';
 import { subjectOffering } from './subjects';
-import { rubric } from './task';
-import { timestamps } from './utils';
+import { rubric, task } from './task';
+import { embeddings, timestamps } from './utils';
 
 export const courseMapItem = pgTable(
 	'cm_itm',
@@ -69,6 +69,8 @@ export const courseMapItemAssessmentPlan = pgTable(
 		courseMapItemId: integer('cm_itm_id')
 			.notNull()
 			.references(() => courseMapItem.id, { onDelete: 'cascade' }),
+		taskId: integer('task_id')
+			.references(() => task.id, { onDelete: 'set null' }),
 		name: text('name').notNull(),
 		scope: text('scope').array(),
 		description: text('description'),
@@ -77,14 +79,17 @@ export const courseMapItemAssessmentPlan = pgTable(
 		originalId: integer('original_id'),
 		version: integer('version').notNull().default(1),
 		isArchived: boolean('is_archived').notNull().default(false),
-		...timestamps
+		...timestamps,
+		...embeddings
 	},
 	(self) => [
 		foreignKey({
 			columns: [self.originalId],
 			foreignColumns: [self.id]
 		}).onDelete('cascade'),
-		unique().on(self.originalId, self.version)
+		unique().on(self.originalId, self.version),
+		index('cm_ass_pln_embedding_idx').using('hnsw', self.embedding.op('vector_cosine_ops')),
+		index('cm_ass_pln_metadata_idx').using('gin', self.embeddingMetadata),
 	]
 );
 
@@ -107,6 +112,8 @@ export const courseMapItemLessonPlan = pgTable(
 		courseMapItemId: integer('cm_itm_id')
 			.notNull()
 			.references(() => courseMapItem.id, { onDelete: 'cascade' }),
+		taskId: integer('task_id')
+			.references(() => task.id, { onDelete: 'cascade' }),
 		name: text('name').notNull(),
 		scope: text('scope').array(),
 		description: text('description'),
@@ -114,14 +121,17 @@ export const courseMapItemLessonPlan = pgTable(
 		originalId: integer('original_id'),
 		version: integer('version').notNull().default(1),
 		isArchived: boolean('is_archived').notNull().default(false),
-		...timestamps
+		...timestamps,
+		...embeddings
 	},
 	(self) => [
 		foreignKey({
 			columns: [self.originalId],
 			foreignColumns: [self.id]
 		}).onDelete('cascade'),
-		unique().on(self.originalId, self.version)
+		unique().on(self.originalId, self.version),
+		index('cm_les_pln_embedding_idx').using('hnsw', self.embedding.op('vector_cosine_ops')),
+		index('cm_les_pln_metadata_idx').using('gin', self.embeddingMetadata),
 	]
 );
 

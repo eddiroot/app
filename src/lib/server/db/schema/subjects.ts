@@ -3,6 +3,7 @@ import {
 	check,
 	date,
 	foreignKey,
+	index,
 	integer,
 	pgEnum,
 	pgTable,
@@ -24,7 +25,7 @@ import { resource } from './resource';
 import { campus, school, schoolSpace } from './schools';
 import { timetableDraft } from './timetables';
 import { user } from './user';
-import { timestamps } from './utils';
+import { embeddings, timestamps } from './utils';
 
 export const coreSubject = pgTable('sub_core', {
 	id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
@@ -214,8 +215,14 @@ export const subjectThread = pgTable('sub_thread', {
 	content: text('content').notNull(),
 	isAnonymous: boolean('is_anonymous').notNull(),
 	isArchived: boolean('is_archived').notNull().default(false),
-	...timestamps
-});
+	...timestamps,
+	...embeddings
+},
+	(self) => [
+		index('sub_thread_embedding_idx').using('hnsw', self.embedding.op('vector_cosine_ops')),
+		index('sub_thread_metadata_idx').using('gin', self.embeddingMetadata),
+	]
+);
 
 export type SubjectThread = typeof subjectThread.$inferSelect;
 
@@ -239,13 +246,16 @@ export const subjectThreadResponse = pgTable(
 		parentResponseId: integer('parent_id').references((): AnyPgColumn => subjectThreadResponse.id),
 		isAnonymous: boolean('is_anonymous').notNull().default(false),
 		isArchived: boolean('is_archived').notNull().default(false),
-		...timestamps
+		...timestamps,
+		...embeddings
 	},
 	(self) => [
 		foreignKey({
 			columns: [self.parentResponseId],
 			foreignColumns: [self.id]
-		}).onDelete('cascade')
+		}).onDelete('cascade'),
+		index('sub_thread_resp_embedding_idx').using('hnsw', self.embedding.op('vector_cosine_ops')),
+		index('sub_thread_resp_metadata_idx').using('gin', self.embeddingMetadata),
 	]
 );
 

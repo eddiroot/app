@@ -61,9 +61,9 @@
 	let resetEditor = $state(false);
 </script>
 
-<div class={isReply ? 'mt-4 border-l-2 border-gray-200 pl-4' : 'mt-6 border-t pt-6'}>
-	<div class="mb-4">
-		<h3 class="text-lg font-semibold">
+<div class={isReply ? 'border-muted-foreground mt-2 border-l-2 py-2 pl-4' : 'mt-4 border-t pt-4'}>
+	<div class="mb-3 px-4">
+		<h3 class="text-base font-semibold">
 			{isReply ? `Reply to ${parentAuthor || 'comment'}` : 'Add a Response'}
 		</h3>
 		<p class="text-muted-foreground text-sm">
@@ -74,7 +74,7 @@
 					: 'Share your thoughts on this discussion'}
 		</p>
 	</div>
-	<form method="POST" action="?/addResponse" class="space-y-4" use:enhance>
+	<form method="POST" action="?/addResponse" class="space-y-4 px-4" use:enhance>
 		<input type="hidden" name="parentResponseId" value={parentResponseId || ''} />
 		<input type="hidden" name="type" value={$formData.type} />
 

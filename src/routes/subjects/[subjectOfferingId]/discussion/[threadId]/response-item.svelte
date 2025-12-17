@@ -1,7 +1,6 @@
 <script lang="ts">
 	import * as Avatar from '$lib/components/ui/avatar';
 	import { Button } from '$lib/components/ui/button';
-	import * as Card from '$lib/components/ui/card';
 	import { convertToFullName, formatTimestamp } from '$lib/utils';
 	import Reply from '@lucide/svelte/icons/reply';
 	import User from '@lucide/svelte/icons/user';
@@ -57,64 +56,63 @@
 	}
 </script>
 
-<div class={depth > 0 ? 'border-muted-foreground border-l-2 pl-8' : ''}>
-	<Card.Root
-		class="border-l-4 {response.response.type === 'answer' && depth === 0
-			? 'border-l-primary'
-			: 'border-l-secondary'} shadow-sm"
-	>
-		<Card.Header class="pb-3">
-			<div class="flex items-center gap-3">
-				<Avatar.Root class="h-9 w-9">
-					{#if showAuthorInfo()}
-						<Avatar.Image src={response.user.avatarUrl || ''} alt={authorName()} />
-						<Avatar.Fallback class="text-xs font-medium">
-							{authorName()
-								.split(' ')
-								.map((n) => n[0])
-								.join('')
-								.substring(0, 2)
-								.toUpperCase()}
-						</Avatar.Fallback>
-					{:else}
-						<Avatar.Fallback class="bg-muted text-muted-foreground">
-							<User />
-						</Avatar.Fallback>
-					{/if}
-				</Avatar.Root>
-				<div class="flex-1 space-y-1">
-					<div class="flex items-center gap-2">
-						<span class="text-muted-foreground text-sm">
-							by {authorName()}
-						</span>
-						<span class="text-muted-foreground text-xs">
-							{formatTimestamp(response.response.createdAt)}
-						</span>
-					</div>
-				</div>
+<div
+	class="border-b px-4 py-3 last:border-b-0 {depth > 0
+		? 'border-muted-foreground border-l-2 pl-6'
+		: ''} {response.response.type === 'answer' && depth === 0
+		? 'border-l-primary border-l-4 pl-4'
+		: ''}"
+>
+	<div class="flex items-start gap-3">
+		<Avatar.Root class="h-8 w-8">
+			{#if showAuthorInfo()}
+				<Avatar.Image src={response.user.avatarUrl || ''} alt={authorName()} />
+				<Avatar.Fallback class="text-xs font-medium">
+					{authorName()
+						.split(' ')
+						.map((n) => n[0])
+						.join('')
+						.substring(0, 2)
+						.toUpperCase()}
+				</Avatar.Fallback>
+			{:else}
+				<Avatar.Fallback class="bg-muted text-muted-foreground">
+					<User />
+				</Avatar.Fallback>
+			{/if}
+		</Avatar.Root>
+		<div class="min-w-0 flex-1">
+			<div class="mb-1 flex items-center gap-2">
+				<span class="text-sm font-medium">
+					{authorName()}
+				</span>
+				<span class="text-muted-foreground text-xs">
+					{formatTimestamp(response.response.createdAt)}
+				</span>
+				{#if response.response.type === 'answer' && depth === 0}
+					<span class="text-primary text-xs font-medium">Answer</span>
+				{/if}
 			</div>
-		</Card.Header>
-		<Card.Content>
-			<div class="prose dark:prose-invert max-w-none text-sm">
+			<div class="text-sm leading-relaxed whitespace-pre-wrap">
 				{@html response.response.content || 'No content available'}
 			</div>
 
 			<!-- Reply button -->
 			{#if depth < maxDepth}
-				<div class="mt-3 border-t border-gray-100 pt-3">
+				<div class="mt-2">
 					<Button
 						variant="ghost"
 						size="sm"
 						onclick={toggleReplyForm}
-						class="text-muted-foreground hover:text-foreground text-xs"
+						class="text-muted-foreground hover:text-foreground -ml-2 text-xs"
 					>
 						<Reply class="mr-1 h-3 w-3" />
 						Reply
 					</Button>
 				</div>
 			{/if}
-		</Card.Content>
-	</Card.Root>
+		</div>
+	</div>
 
 	<!-- Reply form -->
 	{#if showReplyForm && depth < maxDepth}
@@ -135,7 +133,7 @@
 
 	<!-- Nested replies -->
 	{#if response.replies && response.replies.length > 0}
-		<div class="mt-4 space-y-4">
+		<div>
 			{#each response.replies as reply}
 				<Self response={reply} {threadType} {data} depth={depth + 1} />
 			{/each}

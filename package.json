@@ -1,30 +1,36 @@
 {
-  "name": "eddi",
-  "private": true,
-  "version": "0.0.1",
-  "type": "module",
-  "scripts": {
+"name": "eddi",
+"private": true,
+"version": "0.0.1",
+"type": "module",
+"scripts": {
+    "dev": "vite dev",
     "build": "vite build",
+    "preview": "vite preview",
+    "prepare": "svelte-kit sync || echo ''",
     "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
     "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
+    "format": "prettier --write .",
+    "lint": "prettier --check . && eslint .",
     "curriculum:update": "npx tsx ./src/lib/server/db/seed/data/generate-curriculum-data.ts",
     "db": "sst shell drizzle-kit",
     "db:generate": "sst shell drizzle-kit generate",
     "db:migrate": "sst shell drizzle-kit migrate",
     "db:push": "sst shell drizzle-kit push",
     "db:seed": "sst shell tsx src/lib/server/db/seed",
+    "db:seed:fresh": "sst shell tsx src/lib/server/db/seed -- --fresh",
+    "db:seed:vcaa": "sst shell tsx src/lib/server/db/seed/VCAA",
+    "db:snapshot": "bash ./scripts/db-snapshot.sh",
+    "db:restore": "bash ./scripts/db-restore.sh",
+    "db:studio": "sst shell drizzle-kit studio",
     "db:diagram": "tsx ./src/lib/server/db/dbml.ts",
-    "dev": "vite dev",
-    "format": "prettier --write .",
-    "lint": "prettier --check . && eslint .",
-    "prepare": "svelte-kit sync || echo ''",
-    "preview": "vite preview",
     "sso": "aws sso login --sso-session=eddi"
-  },
-  "devDependencies": {
+},
+"devDependencies": {
     "@eslint/compat": "^1.2.5",
     "@eslint/js": "^9.18.0",
     "@internationalized/date": "^3.8.2",
+    "@langchain/textsplitters": "^0.1.0",
     "@lucide/svelte": "^0.544.0",
     "@sveltejs/adapter-node": "^5.4.0",
     "@sveltejs/kit": "^2.49.0",
@@ -36,6 +42,7 @@
     "@types/cheerio": "^0.22.35",
     "@types/jsdom": "^21.1.7",
     "@types/node": "^22.15.33",
+    "@types/nodemailer": "^6.4.17",
     "@types/pg": "^8.15.6",
     "@types/plotly.js-dist-min": "^2.3.4",
     "@types/seedrandom": "^3.0.8",
@@ -71,11 +78,14 @@
     "vaul-svelte": "^1.0.0-next.7",
     "vite": "^6.2.6",
     "vite-plugin-devtools-json": "^0.2.0"
-  },
-  "dependencies": {
+},
+"dependencies": {
     "@aws-sdk/client-s3": "^3.936.0",
     "@aws-sdk/s3-request-presigner": "^3.936.0",
     "@google/genai": "^1.5.1",
+    "@langchain/core": "^0.3.40",
+    "@langchain/google-genai": "^0.2.12",
+    "@langchain/langgraph": "^0.2.60",
     "@node-rs/argon2": "^2.0.2",
     "@thisux/sveltednd": "^0.0.20",
     "@tiptap/core": "^3.1.0",
@@ -92,28 +102,30 @@
     "jsdom": "^26.1.0",
     "mathjs": "^14.7.0",
     "mathlive": "^0.107.0",
+    "minio": "^8.0.5",
     "node-cron": "^4.2.1",
+    "nodemailer": "^7.0.5",
     "pdfjs-dist": "^5.3.93",
     "pg": "^8.16.3",
     "plotly.js-dist-min": "^3.1.0",
     "sst": "3.17.23",
     "uuid": "^11.1.0",
     "zod": "^4.1.12"
-  },
-  "description": "`npx shadcn-svelte@latest add component-name-here`",
-  "main": "eslint.config.js",
-  "directories": {
+},
+"description": "`npx shadcn-svelte@latest add component-name-here`",
+"main": "eslint.config.js",
+"directories": {
     "doc": "docs"
-  },
-  "repository": {
+},
+"repository": {
     "type": "git",
     "url": "git+https://github.com/lachlanmacphee/eddi.git"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "bugs": {
+},
+"keywords": [],
+"author": "",
+"license": "ISC",
+"bugs": {
     "url": "https://github.com/lachlanmacphee/eddi/issues"
-  },
-  "homepage": "https://github.com/lachlanmacphee/eddi#readme"
+},
+"homepage": "https://github.com/lachlanmacphee/eddi#readme"
 }

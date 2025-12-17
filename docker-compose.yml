@@ -1,7 +1,7 @@
 name: eddi
 services:
   db:
-    image: postgres:18
+    image: pgvector/pgvector:pg18
     restart: unless-stopped
     ports:
       - 5432:5432

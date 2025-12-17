@@ -9,6 +9,7 @@ import {
 import { db } from '$lib/server/db';
 import * as table from '$lib/server/db/schema';
 import { and, asc, desc, eq, gte, inArray, lt, or } from 'drizzle-orm';
+import type { EmbeddingMetadata } from '.';
 
 export async function getSubjectsByUserId(userId: string) {
 	const subjects = await db
@@ -1246,4 +1247,82 @@ export async function getBehaviourQuickActionsByAttendanceId(attendanceId: numbe
 		.where(eq(table.attendanceBehaviourQuickAction.attendanceId, attendanceId));
 
 	return behaviourQuickActions.map((row) => row.behaviourQuickAction);
+
 }
+export async function getSubjectOfferingMetadataByOfferingId(
+	subjectOfferingId: number
+): Promise<{
+	curriculumSubjectId: number | undefined;
+	yearLevel: yearLevelEnum ;
+}> {
+	const result = await db
+		.select({
+			curriculumSubjectId: table.coreSubject.curriculumSubjectId,
+			yearLevel: table.subject.yearLevel
+		})
+		.from(table.subjectOffering)
+		.innerJoin(table.subject, eq(table.subjectOffering.subjectId, table.subject.id))
+		.leftJoin(table.coreSubject, eq(table.subject.coreSubjectId, table.coreSubject.id))
+		.where(eq(table.subjectOffering.id, subjectOfferingId))
+		.limit(1);
+
+	if (result.length === 0) {
+		return { curriculumSubjectId: undefined, yearLevel: yearLevelEnum.none };
+	}
+	
+	return {
+		curriculumSubjectId: result[0].curriculumSubjectId ?? undefined	,
+		yearLevel: result[0].yearLevel
+	};
+}
+
+export async function getSubjectThreadEmbeddingMetadata(record: Record<string, unknown>): Promise<EmbeddingMetadata> {
+	const [result] = await db
+		.select({
+			subjectOfferingId: table.subjectThread.subjectOfferingId,
+			subjectId: table.subject.id,
+			yearLevel: table.subject.yearLevel
+		})
+		.from(table.subjectThread)
+		.innerJoin(
+			table.subjectOffering,
+			eq(table.subjectThread.subjectOfferingId, table.subjectOffering.id)
+		)
+		.innerJoin(table.subject, eq(table.subjectOffering.subjectId, table.subject.id))
+		.where(eq(table.subjectThread.id, record.id as number))
+		.limit(1);
+
+	return {
+		subjectOfferingId: result.subjectOfferingId,
+		subjectId: result.subjectId,
+		yearLevel: result.yearLevel
+	};
+}
+
+export async function getSubjectThreadResponseEmbeddingMetadata(record: Record<string, unknown>): Promise<EmbeddingMetadata> {
+	const [result] = await db
+		.select({
+			subjectOfferingId: table.subjectThread.subjectOfferingId,
+			subjectId: table.subject.id,
+			yearLevel: table.subject.yearLevel
+		})
+		.from(table.subjectThreadResponse)
+		.innerJoin(
+			table.subjectThread,
+			eq(table.subjectThreadResponse.subjectThreadId, table.subjectThread.id)
+		)
+		.innerJoin(
+			table.subjectOffering,
+			eq(table.subjectThread.subjectOfferingId, table.subjectOffering.id)
+		)
+		.innerJoin(table.subject, eq(table.subjectOffering.subjectId, table.subject.id))
+		.where(eq(table.subjectThreadResponse.id, record.id as number))
+		.limit(1);
+		
+	return {
+		subjectOfferingId: result.subjectOfferingId,
+		subjectId: result.subjectId,
+		yearLevel: result.yearLevel
+	};
+}
+

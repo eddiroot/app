@@ -2,6 +2,7 @@ import type { yearLevelEnum } from '$lib/enums.js';
 import { db } from '$lib/server/db';
 import * as table from '$lib/server/db/schema';
 import { and, asc, eq, inArray, max } from 'drizzle-orm';
+import type { EmbeddingMetadata } from '.';
 
 export async function getLatestVersionForCourseMapItemBySubjectOfferingId(
 	subjectOfferingId: number
@@ -804,4 +805,52 @@ export async function getLearningAreaStandardsByCourseMapItemId(
 		);
 
 	return standards.map((row) => row.learningAreaStandard);
+}
+
+export async function getCourseMapItemAssessmentPlanEmbeddingMetadata(record: Record<string, unknown>): Promise<EmbeddingMetadata> {
+	const courseMapItemId = record.courseMapItemId as number;
+
+	const [result] = await db
+		.select({
+			subjectOfferingId: table.courseMapItem.subjectOfferingId,
+			subjectId: table.subjectOffering.subjectId,
+			yearLevel: table.subject.yearLevel
+		})
+		.from(table.courseMapItem)
+		.innerJoin(
+			table.subjectOffering,
+			eq(table.courseMapItem.subjectOfferingId, table.subjectOffering.id)
+		)
+		.where(eq(table.courseMapItem.id, courseMapItemId))
+		.limit(1);
+
+	return {
+		subjectOfferingId: result?.subjectOfferingId,
+		subjectId: result?.subjectId,
+		yearLevel: result?.yearLevel
+	 };
+}
+
+export async function getCourseMapItemLessonPlanEmbeddingMetadata(record: Record<string, unknown>): Promise<EmbeddingMetadata> {
+	const courseMapItemId = record.courseMapItemId as number;
+
+	const [result] = await db
+		.select({
+			subjectOfferingId: table.courseMapItem.subjectOfferingId,
+			subjectId: table.subjectOffering.subjectId,
+			yearLevel: table.subject.yearLevel
+		})
+		.from(table.courseMapItem)
+		.innerJoin(
+			table.subjectOffering,
+			eq(table.courseMapItem.subjectOfferingId, table.subjectOffering.id)
+		)
+		.where(eq(table.courseMapItem.id, courseMapItemId))
+		.limit(1);
+
+	return {
+		subjectOfferingId: result?.subjectOfferingId,
+		subjectId: result?.subjectId,
+		yearLevel: result?.yearLevel
+	 };
 }

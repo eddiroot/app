@@ -1,6 +1,6 @@
-import { boolean, integer, pgTable, text, uuid } from 'drizzle-orm/pg-core';
+import { boolean, index, integer, pgTable, text, uuid } from 'drizzle-orm/pg-core';
 import { user } from './user';
-import { timestamps } from './utils';
+import { embeddings, timestamps } from './utils';
 
 export const resource = pgTable('res', {
 	id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
@@ -14,7 +14,13 @@ export const resource = pgTable('res', {
 		.notNull()
 		.references(() => user.id, { onDelete: 'cascade' }),
 	isArchived: boolean('is_archived').notNull().default(false),
-	...timestamps
-});
+	...timestamps,
+	...embeddings
+},	// If we want to embed resources for search as well.
+	(self) => [
+		index('res_embedding_idx').using('hnsw', self.embedding.op('vector_cosine_ops')),
+		index('res_metadata_idx').using('gin', self.embeddingMetadata),
+	]
+);
 
 export type Resource = typeof resource.$inferSelect;

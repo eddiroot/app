@@ -7,10 +7,13 @@ import {
 	userTypeEnum,
 	whiteboardObjectTypeEnum
 } from '$lib/enums.js';
+import type { taskBlockSchema } from '$lib/server/ai/schemas/task-block';
 import { db } from '$lib/server/db';
 import * as table from '$lib/server/db/schema';
 import { and, asc, desc, eq, gte, inArray, or, sql } from 'drizzle-orm';
+import { z } from 'zod';
 import { verifyUserAccessToClass } from './user';
+import type { EmbeddingMetadata } from './vector';
 
 export async function addTasksToClass(
 	taskIds: number[],
@@ -190,7 +193,6 @@ export async function getTaskBlocksByTaskId(taskId: number) {
 export async function createTask(
 	title: string,
 	description: string,
-	version: number,
 	type: taskTypeEnum,
 	subjectOfferingId: number,
 	aiTutorEnabled: boolean = true,
@@ -203,7 +205,7 @@ export async function createTask(
 			type,
 			description,
 			originalId: null,
-			version,
+			version: 1,
 			subjectOfferingId,
 			aiTutorEnabled,
 			isArchived
@@ -298,6 +300,21 @@ export async function createTaskBlock(
 		.returning();
 
 	return lessonBlock;
+}
+
+export async function createTaskBlocks(taskId: number, blocks: z.infer<typeof taskBlockSchema>[]) {
+	// Insert all blocks in a single batch operation to avoid deadlocks
+	// Since we're creating fresh, we don't need to shift existing indices
+	if (blocks.length === 0) return;
+	
+	const blockValues = blocks.map((block, idx) => ({
+		taskId,
+		type: block.type,
+		config: block.config,
+		index: idx
+	}));
+	
+	await db.insert(table.taskBlock).values(blockValues);
 }
 
 export async function updateTaskBlock(
@@ -1276,4 +1293,157 @@ export async function addResourcesToClassTaskResponse(
 		.returning();
 
 	return newRelationships;
+}
+
+export async function getTaskBlockEmbeddingMetadata(record: Record<string, unknown>): Promise<EmbeddingMetadata> {
+	const taskId = record.taskId as number;
+
+	if (!taskId) {
+		return { blockType: record.type as taskBlockTypeEnum };
+	}
+
+    const [result] = await db
+        .select({
+            curriculumSubjectId: table.coreSubject.curriculumSubjectId,
+			subjectId: table.subjectOffering.subjectId,
+            yearLevel: table.subject.yearLevel
+        })
+        .from(table.task)
+        .innerJoin(table.subjectOffering, eq(table.task.subjectOfferingId, table.subjectOffering.id))
+		.innerJoin(table.subject, eq(table.subjectOffering.subjectId, table.subject.id))
+		.innerJoin(table.coreSubject, eq(table.subject.coreSubjectId, table.coreSubject.id))
+        .where(eq(table.task.id, taskId))
+        .limit(1);
+
+    return {
+        taskId,
+        blockType: record.type as string,
+        curriculumSubjectId: result?.curriculumSubjectId,
+		subjectId: result?.subjectId,
+        yearLevel: result?.yearLevel
+    };
+}
+
+export async function getClassTaskBlockResponseEmbeddingMetadata(record: Record<string, unknown>): Promise<EmbeddingMetadata> {
+	const taskBlockId = record.taskBlockId as number;
+
+	if (!taskBlockId) {
+		return { classTaskId: record.classTaskId as number,
+			blockType: record.blockType as taskBlockTypeEnum };
+	}
+
+	const [result] = await db
+		.select({
+			curriculumSubjectId: table.coreSubject.curriculumSubjectId,
+			subjectId: table.subjectOffering.subjectId,
+			yearLevel: table.subject.yearLevel,
+			taskId: table.task.id
+		})
+		.from(table.classTaskBlockResponse)
+		.innerJoin(table.taskBlock, eq(table.classTaskBlockResponse.taskBlockId, table.taskBlock.id))
+		.innerJoin(table.task, eq(table.taskBlock.taskId, table.task.id))
+		.innerJoin(table.subjectOffering, eq(table.task.subjectOfferingId, table.subjectOffering.id))
+		.innerJoin(table.subject, eq(table.subjectOffering.subjectId, table.subject.id))
+		.innerJoin(table.coreSubject, eq(table.subject.coreSubjectId, table.coreSubject.id))
+		.where(eq(table.classTaskBlockResponse.id, record.id as number))
+		.limit(1);
+
+	return {
+		classTaskId: record.classTaskId as number,
+		blockType: record.blockType as string,
+		taskId: result?.taskId,
+		curriculumSubjectId: result?.curriculumSubjectId,
+		subjectId: result?.subjectId,
+		yearLevel: result?.yearLevel
+	};
+}
+
+export async function getClassTaskResponseEmbeddingMetadata(record: Record<string, unknown>): Promise<EmbeddingMetadata> {
+	const classTaskId = record.classTaskId as number;
+
+	
+	const [result] = await db
+		.select({
+			curriculumSubjectId: table.coreSubject.curriculumSubjectId,
+			subjectId: table.subjectOffering.subjectId,
+			yearLevel: table.subject.yearLevel,
+			taskId: table.task.id
+		})
+		.from(table.classTaskResponse)
+		.innerJoin(table.subjectOfferingClassTask, eq(table.classTaskResponse.classTaskId, table.subjectOfferingClassTask.id))
+		.innerJoin(table.task, eq(table.subjectOfferingClassTask.taskId, table.task.id))
+		.innerJoin(table.subjectOffering, eq(table.task.subjectOfferingId, table.subjectOffering.id))
+		.innerJoin(table.subject, eq(table.subjectOffering.subjectId, table.subject.id))
+		.innerJoin(table.coreSubject, eq(table.subject.coreSubjectId, table.coreSubject.id))
+		.where(eq(table.classTaskResponse.id, record.id as number))
+		.limit(1);
+
+	return {
+		classTaskId,
+		taskId: result?.taskId,
+		curriculumSubjectId: result?.curriculumSubjectId,
+		subjectId: result?.subjectId,
+		yearLevel: result?.yearLevel
+	};
+}
+
+export async function getTaskBlockGuidanceEmbeddingMetadata(record: Record<string, unknown>): Promise<EmbeddingMetadata> {
+	const taskBlockId = record.taskBlockId as number;
+
+	const [result] = await db
+		.select({
+			curriculumSubjectId: table.coreSubject.curriculumSubjectId,
+			subjectId: table.subjectOffering.subjectId,
+			yearLevel: table.subject.yearLevel,
+			taskBlockId: table.taskBlock.id
+		})
+		.from(table.taskBlock)
+		.innerJoin(table.task, eq(table.taskBlock.taskId, table.task.id))
+		.innerJoin(table.subjectOffering, eq(table.task.subjectOfferingId, table.subjectOffering.id))
+		.innerJoin(table.subject, eq(table.subjectOffering.subjectId, table.subject.id))
+		.innerJoin(table.coreSubject, eq(table.subject.coreSubjectId, table.coreSubject.id))
+		.where(eq(table.taskBlock.id, taskBlockId))
+		.limit(1);
+
+	return {
+		taskBlockId: result?.taskBlockId,
+		blockType: record.blockType as taskBlockTypeEnum,
+		curriculumSubjectId: result?.curriculumSubjectId,
+		subjectId: result?.subjectId,
+		yearLevel: result?.yearLevel
+	};
+}
+
+export async function getTaskBlockMisconceptionEmbeddingMetadata(record: Record<string, unknown>): Promise<EmbeddingMetadata> {
+	const taskBlockId = record.taskBlockId as number;
+
+	const [result] = await db
+		.select({
+			curriculumSubjectId: table.coreSubject.curriculumSubjectId,
+			subjectId: table.subjectOffering.subjectId,
+			yearLevel: table.subject.yearLevel,
+			taskBlockId: table.taskBlock.id
+		})
+		.from(table.taskBlock)
+		.innerJoin(table.task, eq(table.taskBlock.taskId, table.task.id))
+		.innerJoin(table.subjectOffering, eq(table.task.subjectOfferingId, table.subjectOffering.id))
+		.innerJoin(table.subject, eq(table.subjectOffering.subjectId, table.subject.id))
+		.innerJoin(table.coreSubject, eq(table.subject.coreSubjectId, table.coreSubject.id))
+		.where(eq(table.taskBlock.id, taskBlockId))
+		.limit(1);
+
+	return {
+		taskBlockId: result?.taskBlockId,
+		blockType: record.blockType as taskBlockTypeEnum,
+		curriculumSubjectId: result?.curriculumSubjectId,
+		subjectId: result?.subjectId,
+		yearLevel: result?.yearLevel
+	};
+}
+
+export async function getRubricCellEmbeddingMetadata(record: Record<string, unknown>): Promise<EmbeddingMetadata> {
+    return {
+        rubricId: record.rubricId as number,
+        criteriaId: record.criteriaId as number
+    };
 }
