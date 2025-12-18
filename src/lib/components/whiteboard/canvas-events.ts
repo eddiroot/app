@@ -90,8 +90,11 @@ export const createObjectMovingHandler = (ctx: CanvasEventContext) => {
 			return; // Don't proceed to sync - control points are client-side only
 		}
 
-		// If moving a polyline or rectangle, update its control points and keep them visible
-		if ((target.type === 'polyline' || target.type === 'rect') && ctx.controlPointManager) {
+		// If moving a polyline, rectangle, or ellipse, update its control points and keep them visible
+		if (
+			(target.type === 'polyline' || target.type === 'rect' || target.type === 'ellipse') &&
+			ctx.controlPointManager
+		) {
 			// @ts-expect-error - custom id property
 			const objId = target.id;
 			ctx.controlPointManager.updateControlPoints(objId, target);
@@ -534,8 +537,8 @@ export const createSelectionCreatedHandler = (ctx: CanvasEventContext) => {
 				// Hide all control points first
 				ctx.controlPointManager.hideAllControlPoints();
 
-				// For polylines and rectangles, create control points if they don't exist, or show if they do
-				if (obj.type === 'polyline' || obj.type === 'rect') {
+				// For polylines, rectangles, and ellipses, create control points if they don't exist, or show if they do
+				if (obj.type === 'polyline' || obj.type === 'rect' || obj.type === 'ellipse') {
 					// @ts-expect-error - custom id property
 					const objId = obj.id;
 					// Check if control points already exist for this object
@@ -574,7 +577,12 @@ export const createSelectionCreatedHandler = (ctx: CanvasEventContext) => {
 					textAlign: obj.textAlign || 'left',
 					opacity: obj.opacity ?? 1
 				});
-			} else if (obj.type === 'rect' || obj.type === 'circle' || obj.type === 'triangle') {
+			} else if (
+				obj.type === 'rect' ||
+				obj.type === 'circle' ||
+				obj.type === 'triangle' ||
+				obj.type === 'ellipse'
+			) {
 				// Show shape options panel
 				ctx.floatingMenuRef?.setActiveMenuPanel?.('shapes');
 				// Sync shape properties to menu
@@ -648,8 +656,8 @@ export const createSelectionUpdatedHandler = (ctx: CanvasEventContext) => {
 				// Hide all control points first
 				ctx.controlPointManager.hideAllControlPoints();
 
-				// For polylines and rectangles, create control points if they don't exist, or show if they do
-				if (obj.type === 'polyline' || obj.type === 'rect') {
+				// For polylines, rectangles, and ellipses, create control points if they don't exist, or show if they do
+				if (obj.type === 'polyline' || obj.type === 'rect' || obj.type === 'ellipse') {
 					// @ts-expect-error - custom id property
 					const objId = obj.id;
 					// Check if control points already exist for this object
@@ -688,7 +696,12 @@ export const createSelectionUpdatedHandler = (ctx: CanvasEventContext) => {
 					textAlign: obj.textAlign || 'left',
 					opacity: obj.opacity ?? 1
 				});
-			} else if (obj.type === 'rect' || obj.type === 'circle' || obj.type === 'triangle') {
+			} else if (
+				obj.type === 'rect' ||
+				obj.type === 'circle' ||
+				obj.type === 'triangle' ||
+				obj.type === 'ellipse'
+			) {
 				// Show shape options panel
 				ctx.floatingMenuRef?.setActiveMenuPanel?.('shapes');
 				// Sync shape properties to menu

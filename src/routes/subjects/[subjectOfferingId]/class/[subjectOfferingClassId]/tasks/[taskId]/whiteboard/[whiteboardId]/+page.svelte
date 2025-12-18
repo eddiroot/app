@@ -391,7 +391,7 @@
 		if (
 			activeObject &&
 			(activeObject.type === 'rect' ||
-				activeObject.type === 'circle' ||
+				activeObject.type === 'ellipse' ||
 				activeObject.type === 'triangle' ||
 				activeObject.type === 'image')
 		) {

@@ -53,23 +53,25 @@ export const createShapeFromPoints = (
 
 	switch (shapeType) {
 		case 'circle': {
-			// For circles, use the larger dimension as diameter
-			const radius = Math.max(width, height) / 2;
-			const circle = new fabric.Circle({
+			// Create ellipse from corner to corner (like rectangle)
+			const ellipse = new fabric.Ellipse({
 				id: uuidv4(),
-				radius: radius,
+				rx: width / 2,
+				ry: height / 2,
 				fill: options.fillColour,
 				stroke: options.strokeColour,
 				strokeWidth: options.strokeWidth,
 				strokeDashArray: options.strokeDashArray,
 				opacity: options.opacity,
-				left: left,
-				top: top,
+				left: left + width / 2,
+				top: top + height / 2,
+				originX: 'center',
+				originY: 'center',
 				hasControls: false,
-				hasBorders: true,
+				hasBorders: false,
 				strokeUniform: true
 			});
-			return circle;
+			return ellipse;
 		}
 		case 'rectangle': {
 			const rect = new fabric.Rect({
