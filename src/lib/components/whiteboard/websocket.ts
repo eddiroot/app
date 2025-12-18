@@ -109,8 +109,12 @@ async function handleLoadMessage(
 				hasBorders: boolean;
 			};
 			fabricObj.hasControls = false; // Disable controls on load
-			// For polylines and rectangles, also disable borders since we use custom control points
-			if (fabricObj.type === 'polyline' || fabricObj.type === 'rect') {
+			// For polylines, rectangles, and ellipses, also disable borders since we use custom control points
+			if (
+				fabricObj.type === 'polyline' ||
+				fabricObj.type === 'rect' ||
+				fabricObj.type === 'ellipse'
+			) {
 				fabricObj.hasBorders = false;
 			}
 			canvas.add(fabricObj);

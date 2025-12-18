@@ -877,6 +877,599 @@ export class RectangleControlPoints extends ControlPointHandler {
 }
 
 /**
+ * Control point handler for ellipses
+ */
+export class EllipseControlPoints extends ControlPointHandler {
+	protected edgeLines: Map<string, fabric.Line> = new Map();
+	private rotationHandle?: ControlPoint;
+	private rotationConnector?: fabric.Line;
+
+	addControlPoints(objectId: string, obj: fabric.Object, visible: boolean = true): void {
+		const ellipse = obj as fabric.Ellipse;
+		const rx = ellipse.rx || 0;
+		const ry = ellipse.ry || 0;
+
+		// Get transformation matrix for handling rotations/scaling
+		const matrix = ellipse.calcTransformMatrix();
+
+		// Define the 4 corners of the bounding rectangle in local coordinates
+		const corners = [
+			{ x: -rx, y: -ry }, // Top-left
+			{ x: rx, y: -ry }, // Top-right
+			{ x: rx, y: ry }, // Bottom-right
+			{ x: -rx, y: ry } // Bottom-left
+		];
+
+		// Transform corners to absolute coordinates
+		const absoluteCorners = corners.map((corner) =>
+			fabric.util.transformPoint(new fabric.Point(corner.x, corner.y), matrix)
+		);
+
+		// Create control points at corners (indices 0-3)
+		absoluteCorners.forEach((corner, index) => {
+			const controlPointId = `${objectId}-cp-${index}`;
+			const circle = this.createControlPointCircle(
+				corner.x,
+				corner.y,
+				controlPointId,
+				objectId,
+				index,
+				true
+			);
+			circle.set({ visible });
+			this.canvas.add(circle);
+			this.controlPoints.push({
+				id: controlPointId,
+				circle,
+				objectId,
+				pointIndex: index
+			});
+		});
+
+		// Create edge midpoint control points (indices 8-11)
+		const edgeMidpoints = [
+			{
+				x: (absoluteCorners[0].x + absoluteCorners[1].x) / 2,
+				y: (absoluteCorners[0].y + absoluteCorners[1].y) / 2,
+				pointIndex: 8 // Top edge
+			},
+			{
+				x: (absoluteCorners[1].x + absoluteCorners[2].x) / 2,
+				y: (absoluteCorners[1].y + absoluteCorners[2].y) / 2,
+				pointIndex: 9 // Right edge
+			},
+			{
+				x: (absoluteCorners[2].x + absoluteCorners[3].x) / 2,
+				y: (absoluteCorners[2].y + absoluteCorners[3].y) / 2,
+				pointIndex: 10 // Bottom edge
+			},
+			{
+				x: (absoluteCorners[3].x + absoluteCorners[0].x) / 2,
+				y: (absoluteCorners[3].y + absoluteCorners[0].y) / 2,
+				pointIndex: 11 // Left edge
+			}
+		];
+
+		edgeMidpoints.forEach((midpoint) => {
+			const controlPointId = `${objectId}-cp-${midpoint.pointIndex}`;
+			const circle = this.createControlPointCircle(
+				midpoint.x,
+				midpoint.y,
+				controlPointId,
+				objectId,
+				midpoint.pointIndex,
+				true
+			);
+			circle.set({ visible });
+			this.canvas.add(circle);
+			this.controlPoints.push({
+				id: controlPointId,
+				circle,
+				objectId,
+				pointIndex: midpoint.pointIndex
+			});
+		});
+
+		// Create rotation handle (index 12) - floating, 30px above the top edge
+		const topMidpoint = edgeMidpoints[0]; // Top edge midpoint
+		const rotationY = topMidpoint.y - 30;
+		const rotationControlPointId = `${objectId}-cp-12`;
+		const rotationCircle = this.createControlPointCircle(
+			topMidpoint.x,
+			rotationY,
+			rotationControlPointId,
+			objectId,
+			12,
+			true
+		);
+		rotationCircle.set({ visible, hoverCursor: 'crosshair' });
+		this.canvas.add(rotationCircle);
+		this.controlPoints.push({
+			id: rotationControlPointId,
+			circle: rotationCircle,
+			objectId,
+			pointIndex: 12
+		});
+		// No connector line - rotation handle is floating
+
+		// Create light solid border lines (4 edges)
+		const edges = [
+			{ start: 0, end: 1 }, // Top
+			{ start: 1, end: 2 }, // Right
+			{ start: 2, end: 3 }, // Bottom
+			{ start: 3, end: 0 } // Left
+		];
+
+		edges.forEach(({ start, end }, index) => {
+			const edgeId = `${objectId}-edge-${index}`;
+			const startCorner = absoluteCorners[start];
+			const endCorner = absoluteCorners[end];
+			const edgeLine = new fabric.Line([startCorner.x, startCorner.y, endCorner.x, endCorner.y], {
+				stroke: 'oklch(0.8 0.05 39.0427)', // Light orange, reduced saturation
+				strokeWidth: 1.5,
+				selectable: false,
+				evented: false,
+				excludeFromExport: true,
+				visible
+			});
+			(edgeLine as any).id = edgeId;
+			(edgeLine as any).linkedObjectId = objectId;
+			this.canvas.add(edgeLine);
+			this.edgeLines.set(edgeId, edgeLine);
+		});
+
+		this.bringControlPointsToFront();
+		this.canvas.renderAll();
+	}
+
+	removeControlPoints(objectId: string): void {
+		// Remove control points
+		const pointsToRemove = this.controlPoints.filter((cp) => cp.objectId === objectId);
+		pointsToRemove.forEach((cp) => {
+			this.canvas.remove(cp.circle);
+		});
+		this.controlPoints = this.controlPoints.filter((cp) => cp.objectId !== objectId);
+
+		// Remove edge lines
+		const edgeLinesToRemove: string[] = [];
+		this.edgeLines.forEach((line, id) => {
+			if ((line as any).linkedObjectId === objectId) {
+				this.canvas.remove(line);
+				edgeLinesToRemove.push(id);
+			}
+		});
+		edgeLinesToRemove.forEach((id) => this.edgeLines.delete(id));
+
+		// Remove rotation connector
+		if (this.rotationConnector && (this.rotationConnector as any).linkedObjectId === objectId) {
+			this.canvas.remove(this.rotationConnector);
+			this.rotationConnector = undefined;
+		}
+
+		this.canvas.renderAll();
+	}
+
+	hideControlPoints(objectId: string): void {
+		const points = this.controlPoints.filter((cp) => cp.objectId === objectId);
+		points.forEach((cp) => {
+			cp.circle.set({ visible: false });
+		});
+
+		this.edgeLines.forEach((line) => {
+			if ((line as any).linkedObjectId === objectId) {
+				line.set({ visible: false });
+			}
+		});
+
+		if (this.rotationConnector && (this.rotationConnector as any).linkedObjectId === objectId) {
+			this.rotationConnector.set({ visible: false });
+		}
+
+		this.canvas.renderAll();
+	}
+
+	hideAllControlPoints(): void {
+		// Hide all control point circles
+		this.controlPoints.forEach((cp) => {
+			cp.circle.set({ visible: false });
+		});
+
+		// Hide all edge lines
+		this.edgeLines.forEach((line) => {
+			line.set({ visible: false });
+		});
+
+		// Hide rotation connector if it exists
+		if (this.rotationConnector) {
+			this.rotationConnector.set({ visible: false });
+		}
+
+		this.canvas.renderAll();
+	}
+
+	showControlPoints(objectId: string): void {
+		const points = this.controlPoints.filter((cp) => cp.objectId === objectId);
+		points.forEach((cp) => {
+			cp.circle.set({ visible: true });
+		});
+
+		this.edgeLines.forEach((line) => {
+			if ((line as any).linkedObjectId === objectId) {
+				line.set({ visible: true });
+			}
+		});
+
+		if (this.rotationConnector && (this.rotationConnector as any).linkedObjectId === objectId) {
+			this.rotationConnector.set({ visible: true });
+		}
+
+		this.canvas.renderAll();
+	}
+
+	updateControlPoints(objectId: string, obj: fabric.Object): void {
+		const ellipse = obj as fabric.Ellipse;
+		const controlPoints = this.getControlPointsForObject(objectId);
+		if (controlPoints.length === 0) return;
+
+		const rx = ellipse.rx || 0;
+		const ry = ellipse.ry || 0;
+
+		// Get transformation matrix
+		const matrix = ellipse.calcTransformMatrix();
+
+		// Define corners in local coordinates
+		const corners = [
+			{ x: -rx, y: -ry }, // Top-left
+			{ x: rx, y: -ry }, // Top-right
+			{ x: rx, y: ry }, // Bottom-right
+			{ x: -rx, y: ry } // Bottom-left
+		];
+
+		// Transform to absolute coordinates
+		const absoluteCorners = corners.map((corner) =>
+			fabric.util.transformPoint(new fabric.Point(corner.x, corner.y), matrix)
+		);
+
+		// Update corner control points (indices 0-3)
+		controlPoints.forEach((cp) => {
+			if (cp.pointIndex >= 0 && cp.pointIndex <= 3) {
+				const corner = absoluteCorners[cp.pointIndex];
+				cp.circle.set({
+					left: corner.x,
+					top: corner.y
+				});
+				cp.circle.setCoords();
+			}
+		});
+
+		// Update edge midpoint control points (indices 8-11)
+		const edgeMidpoints = [
+			{
+				x: (absoluteCorners[0].x + absoluteCorners[1].x) / 2,
+				y: (absoluteCorners[0].y + absoluteCorners[1].y) / 2,
+				pointIndex: 8 // Top edge
+			},
+			{
+				x: (absoluteCorners[1].x + absoluteCorners[2].x) / 2,
+				y: (absoluteCorners[1].y + absoluteCorners[2].y) / 2,
+				pointIndex: 9 // Right edge
+			},
+			{
+				x: (absoluteCorners[2].x + absoluteCorners[3].x) / 2,
+				y: (absoluteCorners[2].y + absoluteCorners[3].y) / 2,
+				pointIndex: 10 // Bottom edge
+			},
+			{
+				x: (absoluteCorners[3].x + absoluteCorners[0].x) / 2,
+				y: (absoluteCorners[3].y + absoluteCorners[0].y) / 2,
+				pointIndex: 11 // Left edge
+			}
+		];
+
+		edgeMidpoints.forEach((midpoint) => {
+			const cp = controlPoints.find((cp) => cp.pointIndex === midpoint.pointIndex);
+			if (cp) {
+				cp.circle.set({
+					left: midpoint.x,
+					top: midpoint.y
+				});
+				cp.circle.setCoords();
+			}
+		});
+
+		// Update rotation handle (index 12) - maintain 30px distance from top edge
+		const topMidpoint = edgeMidpoints[0];
+		const rotationCp = controlPoints.find((cp) => cp.pointIndex === 12);
+		if (rotationCp) {
+			// Calculate the vector from center to top midpoint
+			const center = ellipse.getCenterPoint();
+			const vectorX = topMidpoint.x - center.x;
+			const vectorY = topMidpoint.y - center.y;
+			const vectorLength = Math.sqrt(vectorX * vectorX + vectorY * vectorY);
+
+			// Normalize and extend by 30px
+			const normalizedX = vectorX / vectorLength;
+			const normalizedY = vectorY / vectorLength;
+			const rotationX = center.x + normalizedX * (vectorLength + 30);
+			const rotationY = center.y + normalizedY * (vectorLength + 30);
+
+			rotationCp.circle.set({
+				left: rotationX,
+				top: rotationY
+			});
+			rotationCp.circle.setCoords();
+		}
+
+		// Update edge lines
+		const edges = [
+			{ start: 0, end: 1 }, // Top
+			{ start: 1, end: 2 }, // Right
+			{ start: 2, end: 3 }, // Bottom
+			{ start: 3, end: 0 } // Left
+		];
+
+		edges.forEach(({ start, end }, index) => {
+			const edgeId = `${objectId}-edge-${index}`;
+			const edgeLine = this.edgeLines.get(edgeId);
+			if (edgeLine) {
+				const startCorner = absoluteCorners[start];
+				const endCorner = absoluteCorners[end];
+				edgeLine.set({
+					x1: startCorner.x,
+					y1: startCorner.y,
+					x2: endCorner.x,
+					y2: endCorner.y
+				});
+				edgeLine.setCoords();
+			}
+		});
+
+		this.canvas.renderAll();
+	}
+
+	updateObjectFromControlPoint(controlPointId: string, newX: number, newY: number): void {
+		const controlPoint = this.controlPoints.find((cp) => cp.id === controlPointId);
+		if (!controlPoint) return;
+
+		// Update the control point position immediately
+		controlPoint.circle.set({
+			left: newX,
+			top: newY
+		});
+		controlPoint.circle.setCoords();
+
+		// Handle different control point types
+		if (controlPoint.pointIndex >= 0 && controlPoint.pointIndex <= 3) {
+			// Corner control point - diagonal scaling
+			this.updateFromCorner(controlPoint, newX, newY);
+		} else if (controlPoint.pointIndex >= 8 && controlPoint.pointIndex <= 11) {
+			// Edge midpoint - stretch
+			this.updateFromEdge(controlPoint, newX, newY);
+		} else if (controlPoint.pointIndex === 12) {
+			// Rotation handle
+			this.updateFromRotation(controlPoint, newX, newY);
+		}
+	}
+
+	private updateFromCorner(controlPoint: ControlPoint, newX: number, newY: number): void {
+		// Works exactly like rectangle - move center, keep opposite corner fixed
+		const ellipse = this.canvas
+			.getObjects()
+			.find((obj: any) => obj.id === controlPoint.objectId && obj.type === 'ellipse') as
+			| fabric.Ellipse
+			| undefined;
+		if (!ellipse) return;
+
+		const rx = ellipse.rx || 0;
+		const ry = ellipse.ry || 0;
+		const currentAngle = ellipse.angle || 0;
+
+		// Calculate the four corners in absolute coordinates
+		const matrix = ellipse.calcTransformMatrix();
+		const corners: fabric.Point[] = [
+			new fabric.Point(-rx, -ry), // Top-left (0)
+			new fabric.Point(rx, -ry), // Top-right (1)
+			new fabric.Point(rx, ry), // Bottom-right (2)
+			new fabric.Point(-rx, ry) // Bottom-left (3)
+		].map((corner) => fabric.util.transformPoint(corner, matrix));
+
+		// Determine which corner is the opposite/anchor corner
+		const oppositeCornerIndex = (controlPoint.pointIndex + 2) % 4;
+		const anchorCorner = corners[oppositeCornerIndex];
+
+		// Get the anchor corner control point's actual position
+		const anchorCornerCP = this.getControlPointsForObject(controlPoint.objectId).find(
+			(cp) => cp.pointIndex === oppositeCornerIndex
+		);
+		const anchorPosition = anchorCornerCP ? anchorCornerCP.circle.getCenterPoint() : anchorCorner;
+
+		// The new dragged position
+		const draggedCorner = new fabric.Point(newX, newY);
+
+		// Calculate new bounding box
+		const minX = Math.min(draggedCorner.x, anchorPosition.x);
+		const maxX = Math.max(draggedCorner.x, anchorPosition.x);
+		const minY = Math.min(draggedCorner.y, anchorPosition.y);
+		const maxY = Math.max(draggedCorner.y, anchorPosition.y);
+
+		// New center and radii (without rotation)
+		const newCenterX = (minX + maxX) / 2;
+		const newCenterY = (minY + maxY) / 2;
+		const newRx = Math.max((maxX - minX) / 2, 10);
+		const newRy = Math.max((maxY - minY) / 2, 10);
+
+		// Store ellipse properties
+		const ellipseId = (ellipse as any).id;
+		const ellipseProps = {
+			fill: ellipse.fill,
+			stroke: ellipse.stroke,
+			strokeWidth: ellipse.strokeWidth,
+			strokeDashArray: ellipse.strokeDashArray,
+			opacity: ellipse.opacity
+		};
+
+		// Remove old ellipse
+		this.canvas.remove(ellipse);
+
+		// Create new ellipse (unrotated for now)
+		const newEllipse = new fabric.Ellipse({
+			id: ellipseId,
+			left: newCenterX,
+			top: newCenterY,
+			rx: newRx,
+			ry: newRy,
+			fill: ellipseProps.fill,
+			stroke: ellipseProps.stroke,
+			strokeWidth: ellipseProps.strokeWidth,
+			strokeDashArray: ellipseProps.strokeDashArray,
+			opacity: ellipseProps.opacity,
+			angle: currentAngle, // Maintain rotation
+			selectable: true,
+			hasControls: false,
+			hasBorders: false,
+			strokeUniform: true,
+			originX: 'center',
+			originY: 'center'
+		});
+
+		this.canvas.add(newEllipse);
+		this.bringControlPointsToFront();
+		this.updateControlPoints(controlPoint.objectId, newEllipse);
+
+		// Restore positions
+		controlPoint.circle.set({ left: newX, top: newY });
+		controlPoint.circle.setCoords();
+		if (anchorCornerCP) {
+			anchorCornerCP.circle.set({ left: anchorPosition.x, top: anchorPosition.y });
+			anchorCornerCP.circle.setCoords();
+		}
+
+		this.canvas.renderAll();
+	}
+
+	private updateFromEdge(controlPoint: ControlPoint, newX: number, newY: number): void {
+		// Works exactly like rectangle - drag edge to resize
+		const ellipse = this.canvas
+			.getObjects()
+			.find((obj: any) => obj.id === controlPoint.objectId && obj.type === 'ellipse') as
+			| fabric.Ellipse
+			| undefined;
+		if (!ellipse) return;
+
+		const rx = ellipse.rx || 0;
+		const ry = ellipse.ry || 0;
+		const currentAngle = ellipse.angle || 0;
+
+		// Get transformation matrix
+		const matrix = ellipse.calcTransformMatrix();
+
+		// Calculate current corners
+		const corners: fabric.Point[] = [
+			new fabric.Point(-rx, -ry), // Top-left (0)
+			new fabric.Point(rx, -ry), // Top-right (1)
+			new fabric.Point(rx, ry), // Bottom-right (2)
+			new fabric.Point(-rx, ry) // Bottom-left (3)
+		].map((corner) => fabric.util.transformPoint(corner, matrix));
+
+		// Edge indices: 8=top, 9=right, 10=bottom, 11=left
+		// Move the two corners that define the edge
+		switch (controlPoint.pointIndex) {
+			case 8: // Top edge - move top-left and top-right
+				corners[0] = new fabric.Point(corners[0].x, newY);
+				corners[1] = new fabric.Point(corners[1].x, newY);
+				break;
+			case 9: // Right edge - move top-right and bottom-right
+				corners[1] = new fabric.Point(newX, corners[1].y);
+				corners[2] = new fabric.Point(newX, corners[2].y);
+				break;
+			case 10: // Bottom edge - move bottom-right and bottom-left
+				corners[2] = new fabric.Point(corners[2].x, newY);
+				corners[3] = new fabric.Point(corners[3].x, newY);
+				break;
+			case 11: // Left edge - move bottom-left and top-left
+				corners[3] = new fabric.Point(newX, corners[3].y);
+				corners[0] = new fabric.Point(newX, corners[0].y);
+				break;
+		}
+
+		// Calculate new bounding box
+		const minX = Math.min(corners[0].x, corners[1].x, corners[2].x, corners[3].x);
+		const maxX = Math.max(corners[0].x, corners[1].x, corners[2].x, corners[3].x);
+		const minY = Math.min(corners[0].y, corners[1].y, corners[2].y, corners[3].y);
+		const maxY = Math.max(corners[0].y, corners[1].y, corners[2].y, corners[3].y);
+
+		const newCenterX = (minX + maxX) / 2;
+		const newCenterY = (minY + maxY) / 2;
+		const newRx = Math.max((maxX - minX) / 2, 10);
+		const newRy = Math.max((maxY - minY) / 2, 10);
+
+		// Store ellipse properties
+		const ellipseId = (ellipse as any).id;
+		const ellipseProps = {
+			fill: ellipse.fill,
+			stroke: ellipse.stroke,
+			strokeWidth: ellipse.strokeWidth,
+			strokeDashArray: ellipse.strokeDashArray,
+			opacity: ellipse.opacity
+		};
+
+		// Remove old ellipse
+		this.canvas.remove(ellipse);
+
+		// Create new ellipse
+		const newEllipse = new fabric.Ellipse({
+			id: ellipseId,
+			left: newCenterX,
+			top: newCenterY,
+			rx: newRx,
+			ry: newRy,
+			fill: ellipseProps.fill,
+			stroke: ellipseProps.stroke,
+			strokeWidth: ellipseProps.strokeWidth,
+			strokeDashArray: ellipseProps.strokeDashArray,
+			opacity: ellipseProps.opacity,
+			angle: currentAngle, // Maintain rotation
+			selectable: true,
+			hasControls: false,
+			hasBorders: false,
+			strokeUniform: true,
+			originX: 'center',
+			originY: 'center'
+		});
+
+		this.canvas.add(newEllipse);
+		this.bringControlPointsToFront();
+		this.updateControlPoints(controlPoint.objectId, newEllipse);
+		this.canvas.renderAll();
+	}
+
+	private updateFromRotation(controlPoint: ControlPoint, newX: number, newY: number): void {
+		const ellipse = this.canvas
+			.getObjects()
+			.find((obj: any) => obj.id === controlPoint.objectId && obj.type === 'ellipse') as
+			| fabric.Ellipse
+			| undefined;
+		if (!ellipse) return;
+
+		const center = ellipse.getCenterPoint();
+
+		// Calculate angle from center to rotation handle
+		const dx = newX - center.x;
+		const dy = newY - center.y;
+		const angleRad = Math.atan2(dy, dx);
+		const angleDeg = (angleRad * 180) / Math.PI + 90; // Add 90 to align with top
+
+		// Update ellipse rotation
+		ellipse.set({ angle: angleDeg });
+		ellipse.setCoords();
+
+		// Update control points
+		this.updateControlPoints(controlPoint.objectId, ellipse);
+		this.canvas.renderAll();
+	}
+}
+
+/**
  * Central manager for all control points on the canvas
  */
 export class ControlPointManager {
@@ -884,6 +1477,7 @@ export class ControlPointManager {
 	private handlers: Map<string, ControlPointHandler> = new Map();
 	private lineHandler: LineControlPoints;
 	private rectangleHandler: RectangleControlPoints;
+	private ellipseHandler: EllipseControlPoints;
 	private sendCanvasUpdate?: (data: Record<string, unknown>) => void;
 
 	constructor(canvas: fabric.Canvas, sendCanvasUpdate?: (data: Record<string, unknown>) => void) {
@@ -896,6 +1490,9 @@ export class ControlPointManager {
 
 		this.rectangleHandler = new RectangleControlPoints(canvas);
 		this.handlers.set('rect', this.rectangleHandler);
+
+		this.ellipseHandler = new EllipseControlPoints(canvas);
+		this.handlers.set('ellipse', this.ellipseHandler);
 	}
 
 	/**
@@ -1008,6 +1605,32 @@ export class ControlPointManager {
 								strokeWidth: rect.strokeWidth,
 								strokeDashArray: rect.strokeDashArray,
 								opacity: rect.opacity,
+								originX: 'center',
+								originY: 'center',
+								selectable: true,
+								hasControls: false,
+								hasBorders: false
+							};
+							this.sendCanvasUpdate({
+								type: 'modify',
+								object: objData
+							});
+						} else if (modifiedObj && modifiedObj.type === 'ellipse') {
+							// Send ellipse updates
+							const ellipse = modifiedObj as fabric.Ellipse;
+							const objData = {
+								id: (ellipse as any).id,
+								type: 'ellipse',
+								left: ellipse.left,
+								top: ellipse.top,
+								rx: ellipse.rx,
+								ry: ellipse.ry,
+								fill: ellipse.fill,
+								stroke: ellipse.stroke,
+								strokeWidth: ellipse.strokeWidth,
+								strokeDashArray: ellipse.strokeDashArray,
+								opacity: ellipse.opacity,
+								angle: ellipse.angle,
 								originX: 'center',
 								originY: 'center',
 								selectable: true,
