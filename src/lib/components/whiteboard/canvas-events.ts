@@ -90,9 +90,12 @@ export const createObjectMovingHandler = (ctx: CanvasEventContext) => {
 			return; // Don't proceed to sync - control points are client-side only
 		}
 
-		// If moving a polyline, rectangle, or ellipse, update its control points and keep them visible
+		// If moving a polyline, rectangle, ellipse, or triangle, update its control points and keep them visible
 		if (
-			(target.type === 'polyline' || target.type === 'rect' || target.type === 'ellipse') &&
+			(target.type === 'polyline' ||
+				target.type === 'rect' ||
+				target.type === 'ellipse' ||
+				target.type === 'triangle') &&
 			ctx.controlPointManager
 		) {
 			// @ts-expect-error - custom id property
@@ -537,8 +540,13 @@ export const createSelectionCreatedHandler = (ctx: CanvasEventContext) => {
 				// Hide all control points first
 				ctx.controlPointManager.hideAllControlPoints();
 
-				// For polylines, rectangles, and ellipses, create control points if they don't exist, or show if they do
-				if (obj.type === 'polyline' || obj.type === 'rect' || obj.type === 'ellipse') {
+				// For polylines, rectangles, ellipses, and triangles, create control points if they don't exist, or show if they do
+				if (
+					obj.type === 'polyline' ||
+					obj.type === 'rect' ||
+					obj.type === 'ellipse' ||
+					obj.type === 'triangle'
+				) {
 					// @ts-expect-error - custom id property
 					const objId = obj.id;
 					// Check if control points already exist for this object
@@ -656,8 +664,13 @@ export const createSelectionUpdatedHandler = (ctx: CanvasEventContext) => {
 				// Hide all control points first
 				ctx.controlPointManager.hideAllControlPoints();
 
-				// For polylines, rectangles, and ellipses, create control points if they don't exist, or show if they do
-				if (obj.type === 'polyline' || obj.type === 'rect' || obj.type === 'ellipse') {
+				// For polylines, rectangles, ellipses, and triangles, create control points if they don't exist, or show if they do
+				if (
+					obj.type === 'polyline' ||
+					obj.type === 'rect' ||
+					obj.type === 'ellipse' ||
+					obj.type === 'triangle'
+				) {
 					// @ts-expect-error - custom id property
 					const objId = obj.id;
 					// Check if control points already exist for this object
