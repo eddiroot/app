@@ -101,8 +101,10 @@ export const createShapeFromPoints = (
 				strokeWidth: options.strokeWidth,
 				strokeDashArray: options.strokeDashArray,
 				opacity: options.opacity,
-				left: left,
-				top: top,
+				left: left + width / 2,
+				top: top + height / 2,
+				originX: 'center',
+				originY: 'center',
 				hasControls: false,
 				hasBorders: false,
 				strokeUniform: true
