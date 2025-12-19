@@ -6,6 +6,7 @@ import {
 	getSubjectOfferingClassTaskByTaskId,
 	getTaskBlocksByTaskId,
 	getTaskById,
+	getWhiteboardByTaskBlockId,
 	startQuizSession,
 	updateSubjectOfferingClassTaskQuizSettings,
 	updateSubjectOfferingClassTaskStatus,
@@ -59,6 +60,17 @@ export const load = async ({
 
 	const blocks = await getTaskBlocksByTaskId(taskIdInt);
 
+	// Load whiteboards for all whiteboard blocks
+	const whiteboardMap = new Map<number, number>(); // blockId -> whiteboardId
+	for (const block of blocks) {
+		if (block.type === 'whiteboard') {
+			const whiteboard = await getWhiteboardByTaskBlockId(block.id);
+			if (whiteboard) {
+				whiteboardMap.set(block.id, whiteboard.id);
+			}
+		}
+	}
+
 	const [statusForm, quizSettingsForm, startQuizForm] = await Promise.all([
 		superValidate({ status: classTask.status }, zod4(statusFormSchema)),
 		superValidate(
@@ -87,6 +99,7 @@ export const load = async ({
 			classTask,
 			blocks,
 			blockResponses,
+			whiteboardMap: Object.fromEntries(whiteboardMap),
 			subjectOfferingId,
 			subjectOfferingClassId,
 			user,
@@ -106,6 +119,7 @@ export const load = async ({
 		blocks,
 		responses,
 		groupedBlockResponses,
+		whiteboardMap: Object.fromEntries(whiteboardMap),
 		subjectOfferingId,
 		subjectOfferingClassId,
 		user,
