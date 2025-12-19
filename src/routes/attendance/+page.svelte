@@ -27,7 +27,8 @@
 	let selectedDate = $state<DateValue>(today(getLocalTimeZone()));
 	let showAbsenceDialog = $state(false);
 
-	const form = superForm(data.form, {
+	const dataForm = () => data.form;
+	const form = superForm(dataForm(), {
 		validators: zod4(markAbsentSchema),
 		onResult: ({ result }) => {
 			if (result.type === 'success') {
@@ -63,13 +64,8 @@
 
 		// For past dates, only enable if they have attendance or schedule records
 		return !records.some((record) => {
-			const recordDate = record.subjectClassAllocation.startTimestamp;
-			const recordDateOnly = new Date(
-				recordDate.getFullYear(),
-				recordDate.getMonth(),
-				recordDate.getDate()
-			);
-			return jsDate.getTime() === recordDateOnly.getTime();
+			const recordDate = new Date(record.subjectClassAllocation.date);
+			return jsDate.getTime() === recordDate.getTime();
 		});
 	}
 
@@ -184,7 +180,7 @@
 						<Textarea
 							{...props}
 							placeholder="Reason for absence..."
-							class="min-h-[80px]"
+							class="min-h-20"
 							bind:value={$formData.noteGuardian}
 						/>
 					{/snippet}

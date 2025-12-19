@@ -108,8 +108,7 @@ export enum userTypeEnum {
 	teacher = 'teacher',
 	guardian = 'guardian',
 	principal = 'principal',
-	schoolAdmin = 'schoolAdmin',
-	systemAdmin = 'systemAdmin'
+	schoolAdmin = 'schoolAdmin'
 }
 
 export enum userHonorificEnum {
@@ -170,7 +169,7 @@ export enum newsVisibilityEnum {
 export enum subjectGroupEnum {
 	mathematics = 'mathematics',
 	science = 'science',
-	english = 'english',
+	english = 'english'
 }
 
 export enum collectionTypeEnum {
@@ -272,5 +271,5 @@ export enum VCAAVCESubjectEnum {
 export enum curriculumSubjectExtraContentTypeEnum {
 	rubric = 'rubric',
 	description = 'description',
-	detailedExample = 'detailed_example',
+	detailedExample = 'detailed_example'
 }

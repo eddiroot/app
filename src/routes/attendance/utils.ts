@@ -1,3 +1,4 @@
+import { subjectClassAllocationAttendanceStatus } from '$lib/enums.js';
 import { CalendarDate, getLocalTimeZone, type DateValue } from '@internationalized/date';
 import type { ScheduleWithAttendanceRecord } from './+page.server.js';
 
@@ -10,7 +11,7 @@ export function getRecordsForDate(
 	if (!selectedDate || !records?.length) return [];
 
 	return records.filter((record) => {
-		const recordDate = dateValueToCalendarDate(record.subjectClassAllocation.startTimestamp);
+		const recordDate = dateValueToCalendarDate(new Date(record.subjectClassAllocation.date));
 		return selectedDate.compare(recordDate) === 0;
 	});
 }
@@ -33,8 +34,12 @@ export function getAttendanceStatusForDay(
 
 	if (!attendanceRecords.length) return 'none';
 
-	const allPresent = attendanceRecords.every((record) => record.attendance!.didAttend);
-	const allAbsent = attendanceRecords.every((record) => !record.attendance!.didAttend);
+	const allPresent = attendanceRecords.every(
+		(record) => record.attendance?.status === subjectClassAllocationAttendanceStatus.present
+	);
+	const allAbsent = attendanceRecords.every(
+		(record) => record.attendance?.status === subjectClassAllocationAttendanceStatus.absent
+	);
 
 	if (allPresent) return 'all-present';
 	if (allAbsent) return 'all-absent';

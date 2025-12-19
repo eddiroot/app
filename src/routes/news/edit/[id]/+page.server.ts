@@ -1,4 +1,4 @@
-import { newsStatusEnum, newsVisibilityEnum } from '$lib/enums';
+import { newsStatusEnum, newsVisibilityEnum, userTypeEnum } from '$lib/enums';
 import {
 	attachResourceToNews,
 	getNewsById,
@@ -35,11 +35,7 @@ export const load: PageServerLoad = async ({ params, locals: { security } }) => 
 	}
 
 	// Check if user owns this news item or has admin permissions
-	if (
-		newsItem.news.authorId !== user.id &&
-		user.type !== 'schoolAdmin' &&
-		user.type !== 'systemAdmin'
-	) {
+	if (newsItem.news.authorId !== user.id && user.type !== userTypeEnum.schoolAdmin) {
 		throw error(403, 'You can only edit your own news articles');
 	}
 
@@ -109,9 +105,9 @@ export const actions: Actions = {
 			// Parse tags from comma-separated string to array
 			const tagsArray = tags
 				? tags
-						.split(',')
-						.map((tag) => tag.trim())
-						.filter((tag) => tag.length > 0)
+					.split(',')
+					.map((tag) => tag.trim())
+					.filter((tag) => tag.length > 0)
 				: undefined;
 
 			// Convert plain text content to structured format (same as create)

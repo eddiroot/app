@@ -19,8 +19,7 @@ export const load = async ({ params, locals: { security } }) => {
 
 	// Anyone can view any profile, but only owner/admin can change password
 	const isOwnProfile = currentUser.id === targetUserId;
-	const isAdmin =
-		currentUser.type === userTypeEnum.systemAdmin || currentUser.type === userTypeEnum.schoolAdmin;
+	const isAdmin = currentUser.type === userTypeEnum.schoolAdmin;
 
 	return {
 		profile,
@@ -36,9 +35,7 @@ export const actions = {
 
 		// Check permissions: user can change their own password or admin can change any password
 		const isOwnProfile = currentUser.id === targetUserId;
-		const isAdmin =
-			currentUser.type === userTypeEnum.systemAdmin ||
-			currentUser.type === userTypeEnum.schoolAdmin;
+		const isAdmin = currentUser.type === userTypeEnum.schoolAdmin;
 
 		if (!isOwnProfile && !isAdmin) {
 			return fail(403, {

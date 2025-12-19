@@ -37,8 +37,8 @@ npm run db:push
 npm run db:restore -- snapshots/eddi_vcaa.sql.gz
 npm run db:seed
 ```
-## Cleaning schema 
 
+## Cleaning schema
 
 2. Run the following commands one-by-one
 
@@ -56,6 +56,7 @@ npm run db:push
 npm run db:restore -- snapshots/eddi_vcaa.sql.gz
 npm run db:seed
 ```
+
 ## UI
 
 To add new [shadcn-svelte components](https://www.shadcn-svelte.com/docs/components), use this command:
