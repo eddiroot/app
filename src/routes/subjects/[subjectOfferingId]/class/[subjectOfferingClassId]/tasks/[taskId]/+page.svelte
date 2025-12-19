@@ -623,6 +623,7 @@
 									/>
 								{:else if block.type === taskBlockTypeEnum.whiteboard}
 									<BlockWhiteboard
+										blockId={block.id}
 										config={block.config as BlockWhiteboardConfig}
 										onConfigUpdate={async (config) => await handleConfigUpdate(block, config)}
 										{viewMode}

@@ -787,7 +787,7 @@ export type BalancingEquationsBlockProps = BlockProps<
 >;
 export type MatchingBlockProps = BlockProps<BlockMatchingConfig, BlockMatchingResponse>;
 export type ShortAnswerBlockProps = BlockProps<BlockShortAnswerConfig, BlockShortAnswerResponse>;
-export type WhiteboardBlockProps = BlockProps<BlockWhiteboardConfig>;
+export type WhiteboardBlockProps = BlockProps<BlockWhiteboardConfig> & { blockId: number };
 export type CloseBlockProps = BlockProps<BlockCloseConfig, BlockCloseResponse>;
 export type HighlightTextBlockProps = BlockProps<
 	BlockHighlightTextConfig,

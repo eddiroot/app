@@ -298,6 +298,11 @@ export async function createTaskBlock(
 		})
 		.returning();
 
+	// Auto-create whiteboard for whiteboard blocks
+	if (type === taskBlockTypeEnum.whiteboard) {
+		await createWhiteboard(lessonBlock.id, config.title as string | undefined);
+	}
+
 	return lessonBlock;
 }
 
@@ -337,16 +342,26 @@ export async function deleteTaskBlock(blockId: number) {
 }
 
 // Whiteboard functions
-export async function createWhiteboard(taskId: number, title?: string | null) {
+export async function createWhiteboard(taskBlockId: number, title?: string | null) {
 	const [newWhiteboard] = await db
 		.insert(table.whiteboard)
 		.values({
-			taskId,
+			taskBlockId,
 			title: title && title.trim() ? title.trim() : null
 		})
 		.returning();
 
 	return newWhiteboard;
+}
+
+export async function getWhiteboardByTaskBlockId(taskBlockId: number) {
+	const whiteboards = await db
+		.select()
+		.from(table.whiteboard)
+		.where(eq(table.whiteboard.taskBlockId, taskBlockId))
+		.limit(1);
+
+	return whiteboards[0] || null;
 }
 
 export async function getWhiteboardById(whiteboardId: number) {
@@ -363,13 +378,15 @@ export async function getWhiteboardWithTask(whiteboardId: number, taskId: number
 	const whiteboardData = await db
 		.select({
 			whiteboard: table.whiteboard,
+			taskBlock: table.taskBlock,
 			task: {
 				id: table.task.id,
 				title: table.task.title
 			}
 		})
 		.from(table.whiteboard)
-		.innerJoin(table.task, eq(table.whiteboard.taskId, table.task.id))
+		.innerJoin(table.taskBlock, eq(table.whiteboard.taskBlockId, table.taskBlock.id))
+		.innerJoin(table.task, eq(table.taskBlock.taskId, table.task.id))
 		.where(eq(table.whiteboard.id, whiteboardId))
 		.limit(1);
 
@@ -379,6 +396,7 @@ export async function getWhiteboardWithTask(whiteboardId: number, taskId: number
 
 	return {
 		whiteboard: whiteboardData[0].whiteboard,
+		taskBlock: whiteboardData[0].taskBlock,
 		task: whiteboardData[0].task
 	};
 }

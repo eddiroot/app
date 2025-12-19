@@ -311,9 +311,10 @@ export const whiteboard = taskSchema.table(
 	'whiteboard',
 	{
 		id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
-		taskId: integer('task_id')
+		taskBlockId: integer('task_block_id')
 			.notNull()
-			.references(() => task.id, { onDelete: 'cascade' }),
+			.unique()
+			.references(() => taskBlock.id, { onDelete: 'cascade' }),
 		title: text('title'),
 		...timestamps,
 		...embeddings
@@ -326,7 +327,7 @@ export const whiteboard = taskSchema.table(
 
 export type Whiteboard = typeof whiteboard.$inferSelect;
 
-export const whiteboardObject = pgTable('whiteboard_object', {
+export const whiteboardObject = taskSchema.table('whiteboard_object', {
 	id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
 	whiteboardId: integer('whiteboard_id')
 		.notNull()
