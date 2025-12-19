@@ -24,8 +24,7 @@ export const load: PageServerLoad = async ({ params, locals: { security } }) => 
 
 	// Anyone can view student grades (for now - you might want to add permissions later)
 	const isOwnProfile = currentUser.id === targetUserId;
-	const isAdmin =
-		currentUser.type === userTypeEnum.systemAdmin || currentUser.type === userTypeEnum.schoolAdmin;
+	const isAdmin = currentUser.type === userTypeEnum.schoolAdmin;
 
 	// Load student grades/subjects
 	let studentSubjects = null;

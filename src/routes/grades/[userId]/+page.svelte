@@ -22,7 +22,6 @@
 			case 'teacher':
 				return 'secondary';
 			case 'schoolAdmin':
-			case 'systemAdmin':
 			case 'principal':
 				return 'destructive';
 			default:

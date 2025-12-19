@@ -76,19 +76,6 @@ export function getPermissions(userType: string): string[] {
 				userPermissions.createNews,
 				userPermissions.viewCourseMap
 			];
-		case 'systemAdmin':
-			return [
-				userPermissions.viewAdmin,
-				userPermissions.viewDashboard,
-				userPermissions.viewCalendar,
-				userPermissions.viewAnalytics,
-				userPermissions.manageTeachers,
-				userPermissions.viewLessons,
-				userPermissions.viewClassAttendance,
-				userPermissions.viewNews,
-				userPermissions.createNews,
-				userPermissions.viewCourseMap
-			];
 		default:
 			return [];
 	}

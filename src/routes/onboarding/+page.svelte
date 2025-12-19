@@ -75,7 +75,7 @@
 						<Form.Control>
 							{#snippet children({ props })}
 								<Form.Label>School Name</Form.Label>
-								<Input {...props} bind:value={$formData.schoolName} placeholder="School of eddi" />
+								<Input {...props} bind:value={$formData.schoolName} placeholder="Example College" />
 							{/snippet}
 						</Form.Control>
 						<Form.FieldErrors />

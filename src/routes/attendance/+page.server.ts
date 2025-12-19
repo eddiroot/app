@@ -18,7 +18,7 @@ import { markAbsentSchema } from './schema.js';
 
 export type ScheduleWithAttendanceRecord = {
 	user: Pick<User, 'id' | 'firstName' | 'middleName' | 'lastName' | 'avatarUrl'>;
-	subjectClassAllocation: Pick<SubjectClassAllocation, 'id' | 'startTimestamp' | 'endTimestamp'>;
+	subjectClassAllocation: Pick<SubjectClassAllocation, 'id' | 'date' | 'startTime' | 'endTime'>;
 	subjectOfferingClass: Pick<SubjectOfferingClass, 'id' | 'name'>;
 	subject: Pick<Subject, 'name'>;
 	attendance: SubjectClassAllocationAttendance | null;

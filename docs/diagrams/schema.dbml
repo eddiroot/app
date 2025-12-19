@@ -1,3 +1,55 @@
+enum enum_constraint_type {
+  time
+  space
+}
+
+enum difficulty_level {
+  beginner
+  intermediate
+  advanced
+  expert
+}
+
+enum evaluation_result {
+  accurate
+  mostly_accurate
+  inaccurate
+  critical_error
+}
+
+enum enum_grade_release {
+  instant
+  manual
+  scheduled
+}
+
+enum news_priority {
+  low
+  normal
+  high
+  urgent
+}
+
+enum news_status {
+  draft
+  scheduled
+  published
+  archived
+}
+
+enum news_visibility {
+  public
+  internal
+  staff
+  students
+}
+
+enum enum_quiz_mode {
+  none
+  scheduled
+  manual
+}
+
 enum enum_relationship_type {
   mother
   father
@@ -18,6 +70,16 @@ enum enum_sch_space_type {
   pool
   library
   auditorium
+}
+
+enum session_type {
+  teach
+  train
+}
+
+enum enum_sub_cls_allo_att_stat {
+  present
+  absent
 }
 
 enum enum_sub_thread_res_type {
@@ -44,6 +106,11 @@ enum enum_task_block_type {
   whiteboard
   matching
   short_answer
+  close
+  highlight_text
+  table
+  graph
+  balancing_equations
 }
 
 enum enum_task_status {
@@ -57,8 +124,10 @@ enum enum_task_status {
 
 enum enum_task_type {
   lesson
-  assessment
   homework
+  test
+  assignment
+  module
 }
 
 enum enum_tt_queue_status {
@@ -91,7 +160,6 @@ enum enum_user_type {
   guardian
   principal
   schoolAdmin
-  systemAdmin
 }
 
 enum enum_whiteboard_object_type {
@@ -119,6 +187,9 @@ enum enum_year_level {
   "11"
   "12"
   "13"
+  VCE
+  VCE12
+  VCE34
 }
 
 table cm_ass_pln_la_std {
@@ -134,6 +205,48 @@ table cm_ass_pln_res {
   id integer [pk, not null]
   cm_itm_ass_pln_id integer [not null]
   res_id integer [not null]
+}
+
+table assess_task {
+  id integer [pk, not null]
+  content text [not null]
+  cur_sub_id integer [not null]
+  yearLevel enum_year_level [not null]
+  createdAt timestamp [not null, default: `now()`]
+  updatedAt timestamp [not null, default: `now()`]
+  embedding vector(768)
+  embedding_metadata jsonb
+
+  indexes {
+    embedding [name: 'assessment_task_embedding_idx']
+    embedding_metadata [name: 'assessment_task_metadata_idx']
+  }
+}
+
+table att_behaviour_quick_action {
+  id integer [pk, not null]
+  att_id integer [not null]
+  behaviour_quick_action_id integer [not null]
+  createdAt timestamp [not null, default: `now()`]
+  updatedAt timestamp [not null, default: `now()`]
+
+  indexes {
+    (att_id, behaviour_quick_action_id) [name: 'att_behaviour_quick_action_att_id_behaviour_quick_action_id_unique', unique]
+  }
+}
+
+table behaviour_quick_action {
+  id integer [pk, not null]
+  sch_id integer [not null]
+  name text [not null]
+  description text
+  is_archived boolean [not null, default: false]
+  createdAt timestamp [not null, default: `now()`]
+  updatedAt timestamp [not null, default: `now()`]
+
+  indexes {
+    (sch_id, name) [name: 'behaviour_quick_action_sch_id_name_unique', unique]
+  }
 }
 
 table cmps {
@@ -153,6 +266,7 @@ table cmps_evt {
   name text [not null]
   start_ts timestamp [not null]
   end_ts timestamp [not null]
+  requires_rsvp boolean [not null, default: false]
   is_archived boolean [not null, default: false]
   createdAt timestamp [not null, default: `now()`]
   updatedAt timestamp [not null, default: `now()`]
@@ -184,6 +298,14 @@ table cls_task_block_res {
   marks "double precision"
   createdAt timestamp [not null, default: `now()`]
   updatedAt timestamp [not null, default: `now()`]
+  embedding vector(768)
+  embedding_metadata jsonb
+
+  indexes {
+    (task_block_id, author_id, class_task_id) [name: 'cls_task_block_res_task_block_id_author_id_class_task_id_unique', unique]
+    embedding [name: 'cls_task_block_res_embedding_idx']
+    embedding_metadata [name: 'cls_task_block_res_metadata_idx']
+  }
 }
 
 table cls_task_res {
@@ -194,8 +316,21 @@ table cls_task_res {
   author_id uuid [not null]
   teacher_id uuid
   is_archived boolean [not null, default: false]
+  quizStartedAt timestamp
+  quizEndedAt timestamp
+  quiz_time_remaining_minutes integer
+  is_quiz_submitted boolean [not null, default: false]
+  auto_submitted boolean [not null, default: false]
   createdAt timestamp [not null, default: `now()`]
   updatedAt timestamp [not null, default: `now()`]
+  embedding vector(768)
+  embedding_metadata jsonb
+
+  indexes {
+    (cls_task_id, author_id) [name: 'cls_task_res_cls_task_id_author_id_unique', unique]
+    embedding [name: 'cls_task_res_embedding_idx']
+    embedding_metadata [name: 'cls_task_res_metadata_idx']
+  }
 }
 
 table task_response_resource {
@@ -204,6 +339,18 @@ table task_response_resource {
   res_id integer [not null]
   author_id uuid [not null]
   is_archived boolean [not null, default: false]
+  createdAt timestamp [not null, default: `now()`]
+  updatedAt timestamp [not null, default: `now()`]
+}
+
+table con {
+  id integer [pk, not null]
+  fet_name text [not null]
+  friendly_name text [not null]
+  description text [not null]
+  type enum_constraint_type [not null]
+  optional boolean [not null]
+  repeatable boolean [not null]
   createdAt timestamp [not null, default: `now()`]
   updatedAt timestamp [not null, default: `now()`]
 }
@@ -244,6 +391,7 @@ table cm_itm {
 table cm_itm_ass_pln {
   id integer [pk, not null]
   cm_itm_id integer [not null]
+  task_id integer
   name text [not null]
   scope text[]
   description text
@@ -254,10 +402,14 @@ table cm_itm_ass_pln {
   is_archived boolean [not null, default: false]
   createdAt timestamp [not null, default: `now()`]
   updatedAt timestamp [not null, default: `now()`]
+  embedding vector(768)
+  embedding_metadata jsonb
 
   indexes {
     
     (original_id, version) [name: 'cm_itm_ass_pln_original_id_version_unique', unique]
+    embedding [name: 'cm_ass_pln_embedding_idx']
+    embedding_metadata [name: 'cm_ass_pln_metadata_idx']
   }
 }
 
@@ -280,6 +432,7 @@ table cm_itm_la {
 table cm_itm_les_pln {
   id integer [pk, not null]
   cm_itm_id integer [not null]
+  task_id integer
   name text [not null]
   scope text[]
   description text
@@ -289,10 +442,14 @@ table cm_itm_les_pln {
   is_archived boolean [not null, default: false]
   createdAt timestamp [not null, default: `now()`]
   updatedAt timestamp [not null, default: `now()`]
+  embedding vector(768)
+  embedding_metadata jsonb
 
   indexes {
     
     (original_id, version) [name: 'cm_itm_les_pln_original_id_version_unique', unique]
+    embedding [name: 'cm_les_pln_embedding_idx']
+    embedding_metadata [name: 'cm_les_pln_metadata_idx']
   }
 }
 
@@ -330,6 +487,22 @@ table crclm_sub {
   updatedAt timestamp [not null, default: `now()`]
 }
 
+table crclm_sub_cont {
+  id integer [pk, not null]
+  cur_sub_id integer [not null]
+  content text [not null]
+  is_archived boolean [not null, default: false]
+  createdAt timestamp [not null, default: `now()`]
+  updatedAt timestamp [not null, default: `now()`]
+  embedding vector(768)
+  embedding_metadata jsonb
+
+  indexes {
+    embedding [name: 'crclm_sub_cont_embedding_idx']
+    embedding_metadata [name: 'crclm_sub_cont_metadata_idx']
+  }
+}
+
 table sub_elec {
   id integer [pk, not null]
   name text [not null]
@@ -340,23 +513,164 @@ table sub_elec {
   updatedAt timestamp [not null, default: `now()`]
 }
 
-table fet_activity {
+table event_rsvp {
   id integer [pk, not null]
-  tt_id integer [not null]
-  teacher_id text [not null]
-  subject_id integer [not null]
-  tt_group_id integer [not null]
-  space_id integer [not null]
-  tt_day_id integer [not null]
-  tt_period_id integer [not null]
-  duration integer [not null]
+  user_id uuid [not null]
+  event_type text [not null]
+  event_id integer [not null]
+  will_attend boolean [not null]
+  createdAt timestamp [not null, default: `now()`]
+  updatedAt timestamp [not null, default: `now()`]
+
+  indexes {
+    (user_id, event_type, event_id) [name: 'event_rsvp_user_id_event_type_event_id_unique', unique]
+  }
+}
+
+table exam_question {
+  id integer [pk, not null]
+  question text [not null]
+  answer text [not null]
+  cur_sub_id integer [not null]
+  yearLevel enum_year_level [not null]
+  createdAt timestamp [not null, default: `now()`]
+  updatedAt timestamp [not null, default: `now()`]
+  embedding vector(768)
+  embedding_metadata jsonb
+
+  indexes {
+    embedding [name: 'exam_question_embedding_idx']
+    embedding_metadata [name: 'exam_question_metadata_idx']
+  }
+}
+
+table fet_sub_off_cls_allo {
+  id integer [pk, not null]
+  fet_sub_off_cls_id integer [not null]
+  sch_space_id integer [not null]
+  day_id integer [not null]
+  start_period_id integer [not null]
+  end_period_id integer [not null]
+  is_archived boolean [not null, default: false]
+  createdAt timestamp [not null, default: `now()`]
+  updatedAt timestamp [not null, default: `now()`]
+}
+
+table fet_sub_off_cls {
+  id integer [pk, not null]
+  tt_draft_id integer [not null]
+  sub_off_id integer [not null]
+  is_archived boolean [not null, default: false]
+  createdAt timestamp [not null, default: `now()`]
+  updatedAt timestamp [not null, default: `now()`]
+}
+
+table fet_sub_off_cls_user {
+  id integer [pk, not null]
+  user_id uuid [not null]
+  fet_sub_off_class_id integer [not null]
+  is_archived boolean [not null, default: false]
+  createdAt timestamp [not null, default: `now()`]
+  updatedAt timestamp [not null, default: `now()`]
+
+  indexes {
+    (user_id, fet_sub_off_class_id) [name: 'fet_sub_off_cls_user_user_id_fet_sub_off_class_id_unique', unique]
+  }
+}
+
+table key_knowledge {
+  id integer [pk, not null]
+  description text [not null]
+  out_id integer
+  topic_name text
+  cur_sub_id integer
+  number integer [not null]
+  is_archived boolean [not null, default: false]
+  createdAt timestamp [not null, default: `now()`]
+  updatedAt timestamp [not null, default: `now()`]
+  embedding vector(768)
+  embedding_metadata jsonb
+
+  indexes {
+    embedding [name: 'key_knowledge_embedding_idx']
+    embedding_metadata [name: 'key_knowledge_metadata_idx']
+  }
+}
+
+table key_skill {
+  id integer [pk, not null]
+  description text [not null]
+  out_id integer
+  cur_sub_id integer
+  number integer [not null]
+  topic_name text
+  is_archived boolean [not null, default: false]
+  createdAt timestamp [not null, default: `now()`]
+  updatedAt timestamp [not null, default: `now()`]
+  embedding vector(768)
+  embedding_metadata jsonb
+
+  indexes {
+    embedding [name: 'key_skill_embedding_idx']
+    embedding_metadata [name: 'key_skill_metadata_idx']
+  }
+}
+
+table lrn_activity {
+  id integer [pk, not null]
+  content text [not null]
+  cur_sub_id integer [not null]
+  yearLevel enum_year_level [not null]
+  createdAt timestamp [not null, default: `now()`]
+  updatedAt timestamp [not null, default: `now()`]
+  embedding vector(768)
+  embedding_metadata jsonb
+
+  indexes {
+    embedding [name: 'learning_activity_embedding_idx']
+    embedding_metadata [name: 'learning_activity_metadata_idx']
+  }
 }
 
 table crclm_sub_la {
   id integer [pk, not null]
   cur_sub_id integer [not null]
   name text [not null]
+  abbreviation text
   description text
+  is_archived boolean [not null, default: false]
+  createdAt timestamp [not null, default: `now()`]
+  updatedAt timestamp [not null, default: `now()`]
+  embedding vector(768)
+  embedding_metadata jsonb
+
+  indexes {
+    embedding [name: 'crclm_sub_la_embedding_idx']
+    embedding_metadata [name: 'crclm_sub_la_metadata_idx']
+  }
+}
+
+table lrn_a_cont {
+  id integer [pk, not null]
+  lrn_a_id integer [not null]
+  description text [not null]
+  number integer [not null]
+  is_archived boolean [not null, default: false]
+  createdAt timestamp [not null, default: `now()`]
+  updatedAt timestamp [not null, default: `now()`]
+  embedding vector(768)
+  embedding_metadata jsonb
+
+  indexes {
+    embedding [name: 'lrn_a_cont_embedding_idx']
+    embedding_metadata [name: 'lrn_a_cont_metadata_idx']
+  }
+}
+
+table lrn_a_outcome {
+  id integer [pk, not null]
+  lrn_a_id integer [not null]
+  out_id integer [not null]
   is_archived boolean [not null, default: false]
   createdAt timestamp [not null, default: `now()`]
   updatedAt timestamp [not null, default: `now()`]
@@ -371,6 +685,13 @@ table lrn_a_std {
   is_archived boolean [not null, default: false]
   createdAt timestamp [not null, default: `now()`]
   updatedAt timestamp [not null, default: `now()`]
+  embedding vector(768)
+  embedding_metadata jsonb
+
+  indexes {
+    embedding [name: 'lrn_a_std_embedding_idx']
+    embedding_metadata [name: 'lrn_a_std_metadata_idx']
+  }
 }
 
 table cm_les_pln_la_std {
@@ -388,6 +709,118 @@ table cm_les_pln_res {
   res_id integer [not null]
 }
 
+table module {
+  id integer [pk, not null]
+  subject_id integer [not null]
+  title text [not null]
+  description text
+  objective text
+  order_index integer [not null, default: 0]
+  is_published boolean [default: false]
+  createdAt timestamp [not null, default: `now()`]
+  updatedAt timestamp [not null, default: `now()`]
+}
+
+table module_session {
+  id integer [pk, not null]
+  user_id uuid [not null]
+  module_id integer [not null]
+  session_type session_type [not null, default: 'teach']
+  current_sub_task_id integer
+  current_task_index integer [default: 0]
+  agent_memory jsonb
+  createdAt timestamp [not null, default: `now()`]
+  updatedAt timestamp [not null, default: `now()`]
+}
+
+table module_sub_task {
+  id integer [pk, not null]
+  module_id integer [not null]
+  task_id integer [not null]
+  objective text [not null]
+  concepts text[] [not null, default: `[]`]
+  skills text[] [not null, default: `[]`]
+  order_index integer [not null]
+}
+
+table news {
+  id integer [pk, not null]
+  title text [not null]
+  excerpt text
+  content jsonb [not null]
+  school_id integer [not null]
+  campus_id integer
+  category_id integer
+  author_id uuid [not null]
+  status news_status [not null, default: 'draft']
+  priority news_priority [not null, default: 'normal']
+  visibility news_visibility [not null, default: 'public']
+  published_at timestamp
+  expires_at timestamp
+  tags jsonb
+  is_pinned boolean [not null, default: false]
+  view_count integer [not null, default: 0]
+  is_archived boolean [not null, default: false]
+  createdAt timestamp [not null, default: `now()`]
+  updatedAt timestamp [not null, default: `now()`]
+  embedding vector(768)
+  embedding_metadata jsonb
+
+  indexes {
+    (school_id, title) [name: 'news_school_id_title_unique', unique]
+    embedding [name: 'news_embedding_idx']
+    embedding_metadata [name: 'news_metadata_idx']
+  }
+}
+
+table news_category {
+  id integer [pk, not null]
+  name text [not null, unique]
+  description text
+  color text
+  is_archived boolean [not null, default: false]
+  createdAt timestamp [not null, default: `now()`]
+  updatedAt timestamp [not null, default: `now()`]
+}
+
+table news_resource {
+  id integer [pk, not null]
+  news_id integer [not null]
+  resource_id integer [not null]
+  author_id uuid [not null]
+  display_order integer [not null, default: 0]
+  is_archived boolean [not null, default: false]
+  createdAt timestamp [not null, default: `now()`]
+  updatedAt timestamp [not null, default: `now()`]
+}
+
+table news_view {
+  id integer [pk, not null]
+  news_id integer [not null]
+  viewer_id uuid
+  ip_address text
+  user_agent text
+  createdAt timestamp [not null, default: `now()`]
+  updatedAt timestamp [not null, default: `now()`]
+}
+
+table outcome {
+  id integer [pk, not null]
+  cur_sub_id integer [not null]
+  number integer [not null]
+  description text [not null]
+  is_archived boolean [not null, default: false]
+  createdAt timestamp [not null, default: `now()`]
+  updatedAt timestamp [not null, default: `now()`]
+  embedding vector(768)
+  embedding_metadata jsonb
+
+  indexes {
+    embedding [name: 'outcome_embedding_idx']
+    embedding_metadata [name: 'outcome_metadata_idx']
+  }
+}
+
 table res {
   id integer [pk, not null]
   file_name text [not null]
@@ -400,6 +833,13 @@ table res {
   is_archived boolean [not null, default: false]
   createdAt timestamp [not null, default: `now()`]
   updatedAt timestamp [not null, default: `now()`]
+  embedding vector(768)
+  embedding_metadata jsonb
+
+  indexes {
+    embedding [name: 'res_embedding_idx']
+    embedding_metadata [name: 'res_metadata_idx']
+  }
 }
 
 table rubric {
@@ -417,6 +857,13 @@ table rubric_cell {
   marks "double precision" [not null]
   createdAt timestamp [not null, default: `now()`]
   updatedAt timestamp [not null, default: `now()`]
+  embedding vector(768)
+  embedding_metadata jsonb
+
+  indexes {
+    embedding [name: 'rubric_cell_embedding_idx']
+    embedding_metadata [name: 'rubric_cell_metadata_idx']
+  }
 }
 
 table rubric_feedback {
@@ -441,6 +888,8 @@ table sch {
   id integer [pk, not null]
   name text [not null, unique]
   logo_url text
+  country_code varchar(2) [not null]
+  state_code varchar(3) [not null]
   createdAt timestamp [not null, default: `now()`]
   updatedAt timestamp [not null, default: `now()`]
 }
@@ -465,9 +914,26 @@ table sch_evt {
   name text [not null]
   start_ts timestamp [not null]
   end_ts timestamp [not null]
+  requires_rsvp boolean [not null, default: false]
   is_archived boolean [not null, default: false]
   createdAt timestamp [not null, default: `now()`]
   updatedAt timestamp [not null, default: `now()`]
+}
+
+table sch_sem {
+  id integer [pk, not null]
+  sch_id integer [not null]
+  sch_year_id integer [not null]
+  sem_number integer [not null]
+  name text
+  is_archived boolean [not null, default: false]
+  createdAt timestamp [not null, default: `now()`]
+  updatedAt timestamp [not null, default: `now()`]
+
+  indexes {
+    
+    (sch_id, sch_year_id, sem_number) [name: 'sch_sem_sch_id_sch_year_id_sem_number_unique', unique]
+  }
 }
 
 table sch_space {
@@ -483,6 +949,23 @@ table sch_space {
 
   indexes {
     (sch_bldng_id, name) [name: 'sch_space_sch_bldng_id_name_unique', unique]
+  }
+}
+
+table sch_term {
+  id integer [pk, not null]
+  sch_sem_id integer [not null]
+  term_number integer [not null]
+  name text
+  sch_term_start_date "timestamp with time zone" [not null]
+  sch_term_end_date "timestamp with time zone" [not null]
+  is_archived boolean [not null, default: false]
+  createdAt timestamp [not null, default: `now()`]
+  updatedAt timestamp [not null, default: `now()`]
+
+  indexes {
+    
+    (sch_sem_id, term_number) [name: 'sch_term_sch_sem_id_term_number_unique', unique]
   }
 }
 
@@ -502,6 +985,13 @@ table lrn_a_std_elab {
   is_archived boolean [not null, default: false]
   createdAt timestamp [not null, default: `now()`]
   updatedAt timestamp [not null, default: `now()`]
+  embedding vector(768)
+  embedding_metadata jsonb
+
+  indexes {
+    embedding [name: 'lrn_a_std_elab_embedding_idx']
+    embedding_metadata [name: 'lrn_a_std_elab_metadata_idx']
+  }
 }
 
 table sub {
@@ -525,8 +1015,9 @@ table sub_off_cls_allo {
   id integer [pk, not null]
   sub_off_cls_id integer [not null]
   sch_spa_id integer [not null]
-  start_ts timestamp [not null]
-  end_ts timestamp [not null]
+  date date [not null]
+  start_time time [not null]
+  end_time time [not null]
   is_archived boolean [not null, default: false]
   createdAt timestamp [not null, default: `now()`]
   updatedAt timestamp [not null, default: `now()`]
@@ -536,10 +1027,9 @@ table sub_off_cls_allo_att {
   id integer [pk, not null]
   sub_class_allo_id integer [not null]
   user_id uuid [not null]
-  was_absent boolean [not null, default: false]
-  did_attend boolean [not null, default: false]
-  attendance_note text
-  behaviour_note text
+  status enum_sub_cls_allo_att_stat [not null]
+  note_guardian text
+  note_teacher text
   is_archived boolean [not null, default: false]
   createdAt timestamp [not null, default: `now()`]
   updatedAt timestamp [not null, default: `now()`]
@@ -563,6 +1053,7 @@ table sub_off {
 table sub_off_cls {
   id integer [pk, not null]
   name text [not null]
+  tt_draft_id integer
   sub_off_id integer [not null]
   is_archived boolean [not null, default: false]
   createdAt timestamp [not null, default: `now()`]
@@ -579,6 +1070,7 @@ table sub_off_cls_evt {
   name text [not null]
   start_ts timestamp [not null]
   end_ts timestamp [not null]
+  requires_rsvp boolean [not null, default: false]
   is_archived boolean [not null, default: false]
   createdAt timestamp [not null, default: `now()`]
   updatedAt timestamp [not null, default: `now()`]
@@ -609,6 +1101,11 @@ table sub_off_class_task {
   dueDate timestamp
   is_archived boolean [not null, default: false]
   rubric_id integer
+  quizMode enum_quiz_mode [not null, default: 'none']
+  quizStartTime timestamp
+  quiz_duration_minutes integer
+  gradeRelease enum_grade_release [not null, default: 'instant']
+  gradeReleaseTime timestamp
   createdAt timestamp [not null, default: `now()`]
   updatedAt timestamp [not null, default: `now()`]
 }
@@ -619,7 +1116,29 @@ table sub_off_evt {
   name text [not null]
   start_ts timestamp [not null]
   end_ts timestamp [not null]
+  requires_rsvp boolean [not null, default: false]
   is_archived boolean [not null, default: false]
+  createdAt timestamp [not null, default: `now()`]
+  updatedAt timestamp [not null, default: `now()`]
+}
+
+table sub_sel_constraint {
+  id integer [pk, not null]
+  school_id integer [not null]
+  yearLevel enum_year_level [not null]
+  year integer [not null]
+  name text [not null]
+  description text
+  min integer [not null, default: 0]
+  max integer
+  createdAt timestamp [not null, default: `now()`]
+  updatedAt timestamp [not null, default: `now()`]
+}
+
+table constraint_subject {
+  id integer [pk, not null]
+  constraint_id integer [not null]
+  subject_id integer [not null]
   createdAt timestamp [not null, default: `now()`]
   updatedAt timestamp [not null, default: `now()`]
 }
@@ -631,9 +1150,17 @@ table sub_thread {
   user_id uuid [not null]
   title text [not null]
   content text [not null]
+  is_anonymous boolean [not null]
   is_archived boolean [not null, default: false]
   createdAt timestamp [not null, default: `now()`]
   updatedAt timestamp [not null, default: `now()`]
+  embedding vector(768)
+  embedding_metadata jsonb
+
+  indexes {
+    embedding [name: 'sub_thread_embedding_idx']
+    embedding_metadata [name: 'sub_thread_metadata_idx']
+  }
 }
 
 table sub_thread_resp {
@@ -643,9 +1170,18 @@ table sub_thread_resp {
   user_id uuid [not null]
   content text [not null]
   parent_id integer
+  is_anonymous boolean [not null, default: false]
   is_archived boolean [not null, default: false]
   createdAt timestamp [not null, default: `now()`]
   updatedAt timestamp [not null, default: `now()`]
+  embedding vector(768)
+  embedding_metadata jsonb
+
+  indexes {
+    
+    embedding [name: 'sub_thread_resp_embedding_idx']
+    embedding_metadata [name: 'sub_thread_resp_metadata_idx']
+  }
 }
 
 table task {
@@ -656,7 +1192,7 @@ table task {
   rubric_id integer
   original_id integer
   version integer [not null, default: 1]
-  subject_offering_id integer [not null]
+  sub_off_id integer [not null]
   ai_tutor_enabled boolean [not null, default: true]
   is_archived boolean [not null, default: false]
   createdAt timestamp [not null, default: `now()`]
@@ -673,10 +1209,32 @@ table task_block {
   task_id integer [not null]
   type enum_task_block_type [not null]
   config jsonb [not null]
-  index integer [not null, default: 0]
+  index integer [default: 0]
   available_marks integer
   createdAt timestamp [not null, default: `now()`]
   updatedAt timestamp [not null, default: `now()`]
+  embedding vector(768)
+  embedding_metadata jsonb
+
+  indexes {
+    embedding [name: 'task_block_embedding_idx']
+    embedding_metadata [name: 'task_block_metadata_idx']
+  }
+}
+
+table tb_guidance {
+  id integer [pk, not null]
+  task_block_id integer [not null]
+  guidance text [not null]
+  createdAt timestamp [not null, default: `now()`]
+  updatedAt timestamp [not null, default: `now()`]
+  embedding vector(768)
+  embedding_metadata jsonb
+
+  indexes {
+    embedding [name: 'tb_guidance_embedding_idx']
+    embedding_metadata [name: 'tb_guidance_metadata_idx']
+  }
 }
 
 table task_std {
@@ -685,10 +1243,40 @@ table task_std {
   lrn_a_std_id integer [not null]
 }
 
+table tb_misc {
+  id integer [pk, not null]
+  task_block_id integer [not null]
+  misconception text [not null]
+  createdAt timestamp [not null, default: `now()`]
+  updatedAt timestamp [not null, default: `now()`]
+  embedding vector(768)
+  embedding_metadata jsonb
+
+  indexes {
+    embedding [name: 'tb_misc_embedding_idx']
+    embedding_metadata [name: 'tb_misc_metadata_idx']
+  }
+}
+
+table temp_pool {
+  id integer [pk, not null]
+  content text [not null]
+  embedding vector(768)
+  embedding_metadata jsonb
+  createdAt timestamp [not null, default: `now()`]
+  updatedAt timestamp [not null, default: `now()`]
+
+  indexes {
+    embedding [name: 'temp_pool_embedding_idx']
+    embedding_metadata [name: 'temp_pool_metadata_idx']
+  }
+}
+
 table tt {
   id integer [pk, not null]
   sch_id integer [not null]
   sch_year integer [not null]
+  sch_semester_id integer
   name text [not null]
   is_archived boolean [not null, default: false]
   createdAt timestamp [not null, default: `now()`]
@@ -701,27 +1289,103 @@ table tt {
 
 table tt_activity {
   id integer [pk, not null]
-  tt_id integer [not null]
-  subject_id integer [not null]
-  teacher_id uuid [not null]
-  tt_group_id integer [not null]
+  tt_draft_id integer [not null]
+  sub_off_id integer [not null]
   periods_per_instance integer [not null, default: 1]
   total_periods integer [not null]
   createdAt timestamp [not null, default: `now()`]
   updatedAt timestamp [not null, default: `now()`]
 }
 
+table tt_activity_assign_grp {
+  tt_activity_id integer [not null]
+  tt_group_id integer [not null]
+  createdAt timestamp [not null, default: `now()`]
+  updatedAt timestamp [not null, default: `now()`]
+
+  indexes {
+    (tt_activity_id, tt_group_id) [pk]
+  }
+}
+
+table tt_activity_assign_stu {
+  tt_activity_id integer [not null]
+  user_id uuid [not null]
+  createdAt timestamp [not null, default: `now()`]
+  updatedAt timestamp [not null, default: `now()`]
+
+  indexes {
+    (tt_activity_id, user_id) [pk]
+  }
+}
+
+table tt_activity_assign_yr {
+  tt_activity_id integer [not null]
+  yearlevel enum_year_level [not null]
+  createdAt timestamp [not null, default: `now()`]
+  updatedAt timestamp [not null, default: `now()`]
+
+  indexes {
+    (tt_activity_id, yearlevel) [pk]
+  }
+}
+
+table tt_activity_preferred_space {
+  tt_activity_id integer [not null]
+  sch_space_id integer [not null]
+  createdAt timestamp [not null, default: `now()`]
+  updatedAt timestamp [not null, default: `now()`]
+
+  indexes {
+    (tt_activity_id, sch_space_id) [pk]
+  }
+}
+
+table tt_activity_teacher_pref {
+  tt_activity_id integer [not null]
+  teacher_id uuid [not null]
+  createdAt timestamp [not null, default: `now()`]
+  updatedAt timestamp [not null, default: `now()`]
+
+  indexes {
+    (tt_activity_id, teacher_id) [pk]
+  }
+}
+
 table tt_day {
   id integer [pk, not null]
-  tt_id integer [not null]
+  tt_draft_id integer [not null]
   day integer [not null]
+  createdAt timestamp [not null, default: `now()`]
+  updatedAt timestamp [not null, default: `now()`]
+}
+
+table tt_draft {
+  id integer [pk, not null]
+  name text [not null]
+  tt_id integer [not null]
+  cycle_week_repeats integer [not null, default: 1]
+  fet_response text
+  error_message text
+  translated_error_message text
+  is_archived boolean [not null, default: false]
+  createdAt timestamp [not null, default: `now()`]
+  updatedAt timestamp [not null, default: `now()`]
+}
+
+table tt_draft_con {
+  id integer [pk, not null]
+  tt_draft_id integer [not null]
+  con_id integer [not null]
+  active boolean [not null, default: true]
+  parameters jsonb [not null]
   createdAt timestamp [not null, default: `now()`]
   updatedAt timestamp [not null, default: `now()`]
 }
 
 table tt_group {
   id integer [pk, not null]
-  tt_id integer [not null]
+  tt_draft_id integer [not null]
   yearLevel enum_year_level [not null]
   name text [not null]
   createdAt timestamp [not null, default: `now()`]
@@ -742,9 +1406,11 @@ table tt_group_member {
 
 table tt_period {
   id integer [pk, not null]
-  tt_id integer [not null]
+  tt_draft_id integer [not null]
   start_time time [not null]
   end_time time [not null]
+  duration integer
+  next_period_id integer
   createdAt timestamp [not null, default: `now()`]
   updatedAt timestamp [not null, default: `now()`]
 }
@@ -752,6 +1418,7 @@ table tt_period {
 table tt_queue {
   id integer [pk, not null]
   tt_id integer [not null]
+  tt_draft_id integer [not null]
   user_id uuid [not null]
   file_name text [not null]
   status enum_tt_queue_status [not null, default: 'queued']
@@ -823,12 +1490,30 @@ table sub_off_cls_user {
   }
 }
 
+table user_teacher_specialization {
+  teacher_id uuid [not null]
+  subject_id integer [not null]
+  createdAt timestamp [not null, default: `now()`]
+  updatedAt timestamp [not null, default: `now()`]
+
+  indexes {
+    (teacher_id, subject_id) [pk]
+  }
+}
+
 table whiteboard {
   id integer [pk, not null]
   task_id integer [not null]
   title text
   createdAt timestamp [not null, default: `now()`]
   updatedAt timestamp [not null, default: `now()`]
+  embedding vector(768)
+  embedding_metadata jsonb
+
+  indexes {
+    embedding [name: 'whiteboard_embedding_idx']
+    embedding_metadata [name: 'whiteboard_metadata_idx']
+  }
 }
 
 table whiteboard_object {
@@ -848,6 +1533,14 @@ ref cm_ass_pln_la_std_la_std_id_lrn_a_std_id_fk: cm_ass_pln_la_std.la_std_id > l
 ref cm_ass_pln_res_cm_itm_ass_pln_id_cm_itm_ass_pln_id_fk: cm_ass_pln_res.cm_itm_ass_pln_id > cm_itm_ass_pln.id [delete: cascade, update: no action]
 
 ref cm_ass_pln_res_res_id_res_id_fk: cm_ass_pln_res.res_id > res.id [delete: cascade, update: no action]
+
+ref assess_task_cur_sub_id_crclm_sub_id_fk: assess_task.cur_sub_id > crclm_sub.id [delete: cascade, update: no action]
+
+ref att_behaviour_quick_action_att_id_sub_off_cls_allo_att_id_fk: att_behaviour_quick_action.att_id > sub_off_cls_allo_att.id [delete: cascade, update: no action]
+
+ref att_behaviour_quick_action_behaviour_quick_action_id_behaviour_quick_action_id_fk: att_behaviour_quick_action.behaviour_quick_action_id > behaviour_quick_action.id [delete: cascade, update: no action]
+
+ref behaviour_quick_action_sch_id_sch_id_fk: behaviour_quick_action.sch_id > sch.id [delete: cascade, update: no action]
 
 ref cmps_sch_id_sch_id_fk: cmps.sch_id > sch.id [delete: cascade, update: no action]
 
@@ -887,6 +1580,8 @@ ref cm_itm_original_id_cm_itm_id_fk: cm_itm.original_id > cm_itm.id [delete: cas
 
 ref cm_itm_ass_pln_cm_itm_id_cm_itm_id_fk: cm_itm_ass_pln.cm_itm_id > cm_itm.id [delete: cascade, update: no action]
 
+ref cm_itm_ass_pln_task_id_task_id_fk: cm_itm_ass_pln.task_id > task.id [delete: set null, update: no action]
+
 ref cm_itm_ass_pln_rubric_id_rubric_id_fk: cm_itm_ass_pln.rubric_id > rubric.id [delete: set null, update: no action]
 
 ref cm_itm_ass_pln_original_id_cm_itm_ass_pln_id_fk: cm_itm_ass_pln.original_id > cm_itm_ass_pln.id [delete: cascade, update: no action]
@@ -899,6 +1594,8 @@ ref cm_itm_la_original_id_cm_itm_la_id_fk: cm_itm_la.original_id > cm_itm_la.id 
 
 ref cm_itm_les_pln_cm_itm_id_cm_itm_id_fk: cm_itm_les_pln.cm_itm_id > cm_itm.id [delete: cascade, update: no action]
 
+ref cm_itm_les_pln_task_id_task_id_fk: cm_itm_les_pln.task_id > task.id [delete: cascade, update: no action]
+
 ref cm_itm_les_pln_original_id_cm_itm_les_pln_id_fk: cm_itm_les_pln.original_id > cm_itm_les_pln.id [delete: cascade, update: no action]
 
 ref cm_itm_res_cm_itm_id_cm_itm_id_fk: cm_itm_res.cm_itm_id > cm_itm.id [delete: cascade, update: no action]
@@ -909,11 +1606,49 @@ ref cm_itm_res_original_id_cm_itm_res_id_fk: cm_itm_res.original_id > cm_itm_res
 
 ref crclm_sub_cur_id_crclm_id_fk: crclm_sub.cur_id > crclm.id [delete: cascade, update: no action]
 
+ref crclm_sub_cont_cur_sub_id_crclm_sub_id_fk: crclm_sub_cont.cur_sub_id > crclm_sub.id [delete: cascade, update: no action]
+
 ref sub_elec_sch_id_sch_id_fk: sub_elec.sch_id > sch.id [delete: cascade, update: no action]
 
-ref fet_activity_tt_id_tt_id_fk: fet_activity.tt_id > tt.id [delete: cascade, update: no action]
+ref event_rsvp_user_id_user_id_fk: event_rsvp.user_id > user.id [delete: cascade, update: no action]
+
+ref exam_question_cur_sub_id_crclm_sub_id_fk: exam_question.cur_sub_id > crclm_sub.id [delete: cascade, update: no action]
+
+ref fet_sub_off_cls_allo_fet_sub_off_cls_id_fet_sub_off_cls_id_fk: fet_sub_off_cls_allo.fet_sub_off_cls_id > fet_sub_off_cls.id [delete: cascade, update: no action]
+
+ref fet_sub_off_cls_allo_sch_space_id_sch_space_id_fk: fet_sub_off_cls_allo.sch_space_id > sch_space.id [delete: set null, update: no action]
+
+ref fet_sub_off_cls_allo_day_id_tt_day_id_fk: fet_sub_off_cls_allo.day_id > tt_day.id [delete: set null, update: no action]
+
+ref fet_sub_off_cls_allo_start_period_id_tt_period_id_fk: fet_sub_off_cls_allo.start_period_id > tt_period.id [delete: set null, update: no action]
+
+ref fet_sub_off_cls_allo_end_period_id_tt_period_id_fk: fet_sub_off_cls_allo.end_period_id > tt_period.id [delete: set null, update: no action]
+
+ref fet_sub_off_cls_tt_draft_id_tt_draft_id_fk: fet_sub_off_cls.tt_draft_id > tt_draft.id [delete: cascade, update: no action]
+
+ref fet_sub_off_cls_sub_off_id_sub_off_id_fk: fet_sub_off_cls.sub_off_id > sub_off.id [delete: cascade, update: no action]
+
+ref fet_sub_off_cls_user_user_id_user_id_fk: fet_sub_off_cls_user.user_id > user.id [delete: cascade, update: no action]
+
+ref fet_sub_off_cls_user_fet_sub_off_class_id_fet_sub_off_cls_id_fk: fet_sub_off_cls_user.fet_sub_off_class_id > fet_sub_off_cls.id [delete: cascade, update: no action]
+
+ref key_knowledge_out_id_outcome_id_fk: key_knowledge.out_id > outcome.id [delete: cascade, update: no action]
+
+ref key_knowledge_cur_sub_id_crclm_sub_id_fk: key_knowledge.cur_sub_id > crclm_sub.id [delete: cascade, update: no action]
+
+ref key_skill_out_id_outcome_id_fk: key_skill.out_id > outcome.id [delete: cascade, update: no action]
+
+ref key_skill_cur_sub_id_crclm_sub_id_fk: key_skill.cur_sub_id > crclm_sub.id [delete: cascade, update: no action]
+
+ref lrn_activity_cur_sub_id_crclm_sub_id_fk: lrn_activity.cur_sub_id > crclm_sub.id [delete: cascade, update: no action]
 
 ref crclm_sub_la_cur_sub_id_crclm_sub_id_fk: crclm_sub_la.cur_sub_id > crclm_sub.id [delete: cascade, update: no action]
+
+ref lrn_a_cont_lrn_a_id_crclm_sub_la_id_fk: lrn_a_cont.lrn_a_id > crclm_sub_la.id [delete: cascade, update: no action]
+
+ref lrn_a_outcome_lrn_a_id_crclm_sub_la_id_fk: lrn_a_outcome.lrn_a_id > crclm_sub_la.id [delete: cascade, update: no action]
+
+ref lrn_a_outcome_out_id_outcome_id_fk: lrn_a_outcome.out_id > outcome.id [delete: cascade, update: no action]
 
 ref lrn_a_std_lrn_a_id_crclm_sub_la_id_fk: lrn_a_std.lrn_a_id > crclm_sub_la.id [delete: cascade, update: no action]
 
@@ -924,6 +1659,38 @@ ref cm_les_pln_la_std_la_std_id_lrn_a_std_id_fk: cm_les_pln_la_std.la_std_id > l
 ref cm_les_pln_res_cm_itm_les_pln_id_cm_itm_les_pln_id_fk: cm_les_pln_res.cm_itm_les_pln_id > cm_itm_les_pln.id [delete: cascade, update: no action]
 
 ref cm_les_pln_res_res_id_res_id_fk: cm_les_pln_res.res_id > res.id [delete: cascade, update: no action]
+
+ref module_subject_id_sub_id_fk: module.subject_id > sub.id [delete: no action, update: no action]
+
+ref module_session_user_id_user_id_fk: module_session.user_id > user.id [delete: no action, update: no action]
+
+ref module_session_module_id_module_id_fk: module_session.module_id > module.id [delete: no action, update: no action]
+
+ref module_session_current_sub_task_id_module_sub_task_id_fk: module_session.current_sub_task_id > module_sub_task.id [delete: no action, update: no action]
+
+ref module_sub_task_module_id_module_id_fk: module_sub_task.module_id > module.id [delete: no action, update: no action]
+
+ref module_sub_task_task_id_task_id_fk: module_sub_task.task_id > task.id [delete: no action, update: no action]
+
+ref news_school_id_sch_id_fk: news.school_id > sch.id [delete: cascade, update: no action]
+
+ref news_campus_id_cmps_id_fk: news.campus_id > cmps.id [delete: cascade, update: no action]
+
+ref news_category_id_news_category_id_fk: news.category_id > news_category.id [delete: set null, update: no action]
+
+ref news_author_id_user_id_fk: news.author_id > user.id [delete: cascade, update: no action]
+
+ref news_resource_news_id_news_id_fk: news_resource.news_id > news.id [delete: cascade, update: no action]
+
+ref news_resource_resource_id_res_id_fk: news_resource.resource_id > res.id [delete: cascade, update: no action]
+
+ref news_resource_author_id_user_id_fk: news_resource.author_id > user.id [delete: cascade, update: no action]
+
+ref news_view_news_id_news_id_fk: news_view.news_id > news.id [delete: cascade, update: no action]
+
+ref news_view_viewer_id_user_id_fk: news_view.viewer_id > user.id [delete: cascade, update: no action]
+
+ref outcome_cur_sub_id_crclm_sub_id_fk: outcome.cur_sub_id > crclm_sub.id [delete: cascade, update: no action]
 
 ref res_uploaded_by_user_id_fk: res.uploaded_by > user.id [delete: cascade, update: no action]
 
@@ -942,6 +1709,8 @@ ref sch_bldng_cmps_id_cmps_id_fk: sch_bldng.cmps_id > cmps.id [delete: cascade, 
 ref sch_evt_sch_id_sch_id_fk: sch_evt.sch_id > sch.id [delete: cascade, update: no action]
 
 ref sch_space_sch_bldng_id_sch_bldng_id_fk: sch_space.sch_bldng_id > sch_bldng.id [delete: cascade, update: no action]
+
+ref sch_term_sch_sem_id_sch_sem_id_fk: sch_term.sch_sem_id > sch_sem.id [delete: cascade, update: no action]
 
 ref session_user_id_user_id_fk: session.user_id > user.id [delete: no action, update: no action]
 
@@ -964,6 +1733,8 @@ ref sub_off_cls_allo_att_user_id_user_id_fk: sub_off_cls_allo_att.user_id > user
 ref sub_off_sub_id_sub_id_fk: sub_off.sub_id > sub.id [delete: cascade, update: no action]
 
 ref sub_off_campus_id_cmps_id_fk: sub_off.campus_id > cmps.id [delete: cascade, update: no action]
+
+ref sub_off_cls_tt_draft_id_tt_draft_id_fk: sub_off_cls.tt_draft_id > tt_draft.id [delete: cascade, update: no action]
 
 ref sub_off_cls_sub_off_id_sub_off_id_fk: sub_off_cls.sub_off_id > sub_off.id [delete: cascade, update: no action]
 
@@ -989,6 +1760,12 @@ ref sub_off_class_task_rubric_id_rubric_id_fk: sub_off_class_task.rubric_id > ru
 
 ref sub_off_evt_sub_off_id_sub_off_id_fk: sub_off_evt.sub_off_id > sub_off.id [delete: cascade, update: no action]
 
+ref sub_sel_constraint_school_id_sch_id_fk: sub_sel_constraint.school_id > sch.id [delete: cascade, update: no action]
+
+ref constraint_subject_constraint_id_sub_sel_constraint_id_fk: constraint_subject.constraint_id > sub_sel_constraint.id [delete: cascade, update: no action]
+
+ref constraint_subject_subject_id_sub_id_fk: constraint_subject.subject_id > sub.id [delete: cascade, update: no action]
+
 ref sub_thread_sub_off_id_sub_off_id_fk: sub_thread.sub_off_id > sub_off.id [delete: cascade, update: no action]
 
 ref sub_thread_user_id_user_id_fk: sub_thread.user_id > user.id [delete: cascade, update: no action]
@@ -1003,37 +1780,67 @@ ref sub_thread_resp_parent_id_sub_thread_resp_id_fk: sub_thread_resp.parent_id >
 
 ref task_rubric_id_rubric_id_fk: task.rubric_id > rubric.id [delete: set null, update: no action]
 
-ref task_subject_offering_id_sub_off_id_fk: task.subject_offering_id > sub_off.id [delete: cascade, update: no action]
+ref task_sub_off_id_sub_off_id_fk: task.sub_off_id > sub_off.id [delete: cascade, update: no action]
 
 ref task_original_id_task_id_fk: task.original_id > task.id [delete: cascade, update: no action]
 
 ref task_block_task_id_task_id_fk: task_block.task_id > task.id [delete: cascade, update: no action]
 
+ref tb_guidance_task_block_id_task_block_id_fk: tb_guidance.task_block_id > task_block.id [delete: cascade, update: no action]
+
 ref task_std_task_id_task_id_fk: task_std.task_id > task.id [delete: cascade, update: no action]
 
 ref task_std_lrn_a_std_id_lrn_a_std_id_fk: task_std.lrn_a_std_id > lrn_a_std.id [delete: cascade, update: no action]
 
+ref tb_misc_task_block_id_task_block_id_fk: tb_misc.task_block_id > task_block.id [delete: cascade, update: no action]
+
 ref tt_sch_id_sch_id_fk: tt.sch_id > sch.id [delete: cascade, update: no action]
 
-ref tt_activity_tt_id_tt_id_fk: tt_activity.tt_id > tt.id [delete: cascade, update: no action]
+ref tt_sch_semester_id_sch_sem_id_fk: tt.sch_semester_id > sch_sem.id [delete: set null, update: no action]
 
-ref tt_activity_subject_id_sub_id_fk: tt_activity.subject_id > sub.id [delete: cascade, update: no action]
+ref tt_activity_tt_draft_id_tt_draft_id_fk: tt_activity.tt_draft_id > tt_draft.id [delete: cascade, update: no action]
 
-ref tt_activity_teacher_id_user_id_fk: tt_activity.teacher_id > user.id [delete: cascade, update: no action]
+ref tt_activity_sub_off_id_sub_off_id_fk: tt_activity.sub_off_id > sub_off.id [delete: cascade, update: no action]
 
-ref tt_activity_tt_group_id_tt_group_id_fk: tt_activity.tt_group_id > tt_group.id [delete: cascade, update: no action]
+ref tt_activity_assign_grp_tt_activity_id_tt_activity_id_fk: tt_activity_assign_grp.tt_activity_id > tt_activity.id [delete: cascade, update: no action]
 
-ref tt_day_tt_id_tt_id_fk: tt_day.tt_id > tt.id [delete: cascade, update: no action]
+ref tt_activity_assign_grp_tt_group_id_tt_group_id_fk: tt_activity_assign_grp.tt_group_id > tt_group.id [delete: cascade, update: no action]
 
-ref tt_group_tt_id_tt_id_fk: tt_group.tt_id > tt.id [delete: cascade, update: no action]
+ref tt_activity_assign_stu_tt_activity_id_tt_activity_id_fk: tt_activity_assign_stu.tt_activity_id > tt_activity.id [delete: cascade, update: no action]
+
+ref tt_activity_assign_stu_user_id_user_id_fk: tt_activity_assign_stu.user_id > user.id [delete: cascade, update: no action]
+
+ref tt_activity_assign_yr_tt_activity_id_tt_activity_id_fk: tt_activity_assign_yr.tt_activity_id > tt_activity.id [delete: cascade, update: no action]
+
+ref tt_activity_preferred_space_tt_activity_id_tt_activity_id_fk: tt_activity_preferred_space.tt_activity_id > tt_activity.id [delete: cascade, update: no action]
+
+ref tt_activity_preferred_space_sch_space_id_sch_space_id_fk: tt_activity_preferred_space.sch_space_id > sch_space.id [delete: cascade, update: no action]
+
+ref tt_activity_teacher_pref_tt_activity_id_tt_activity_id_fk: tt_activity_teacher_pref.tt_activity_id > tt_activity.id [delete: cascade, update: no action]
+
+ref tt_activity_teacher_pref_teacher_id_user_id_fk: tt_activity_teacher_pref.teacher_id > user.id [delete: cascade, update: no action]
+
+ref tt_day_tt_draft_id_tt_draft_id_fk: tt_day.tt_draft_id > tt_draft.id [delete: cascade, update: no action]
+
+ref tt_draft_tt_id_tt_id_fk: tt_draft.tt_id > tt.id [delete: cascade, update: no action]
+
+ref tt_draft_con_tt_draft_id_tt_draft_id_fk: tt_draft_con.tt_draft_id > tt_draft.id [delete: cascade, update: no action]
+
+ref tt_draft_con_con_id_con_id_fk: tt_draft_con.con_id > con.id [delete: cascade, update: no action]
+
+ref tt_group_tt_draft_id_tt_draft_id_fk: tt_group.tt_draft_id > tt_draft.id [delete: cascade, update: no action]
 
 ref tt_group_member_tt_group_id_tt_group_id_fk: tt_group_member.tt_group_id > tt_group.id [delete: cascade, update: no action]
 
 ref tt_group_member_user_id_user_id_fk: tt_group_member.user_id > user.id [delete: cascade, update: no action]
 
-ref tt_period_tt_id_tt_id_fk: tt_period.tt_id > tt.id [delete: cascade, update: no action]
+ref tt_period_tt_draft_id_tt_draft_id_fk: tt_period.tt_draft_id > tt_draft.id [delete: cascade, update: no action]
+
+ref tt_period_next_period_fk: tt_period.next_period_id > tt_period.id [delete: set null, update: no action]
 
 ref tt_queue_tt_id_tt_id_fk: tt_queue.tt_id > tt.id [delete: cascade, update: no action]
+
+ref tt_queue_tt_draft_id_tt_draft_id_fk: tt_queue.tt_draft_id > tt_draft.id [delete: cascade, update: no action]
 
 ref tt_queue_user_id_user_id_fk: tt_queue.user_id > user.id [delete: cascade, update: no action]
 
@@ -1054,6 +1861,10 @@ ref user_sub_off_sub_off_id_sub_off_id_fk: user_sub_off.sub_off_id > sub_off.id 
 ref sub_off_cls_user_user_id_user_id_fk: sub_off_cls_user.user_id > user.id [delete: cascade, update: no action]
 
 ref sub_off_cls_user_sub_off_class_id_sub_off_cls_id_fk: sub_off_cls_user.sub_off_class_id > sub_off_cls.id [delete: cascade, update: no action]
+
+ref user_teacher_specialization_teacher_id_user_id_fk: user_teacher_specialization.teacher_id > user.id [delete: cascade, update: no action]
+
+ref user_teacher_specialization_subject_id_sub_id_fk: user_teacher_specialization.subject_id > sub.id [delete: cascade, update: no action]
 
 ref whiteboard_task_id_task_id_fk: whiteboard.task_id > task.id [delete: cascade, update: no action]
 

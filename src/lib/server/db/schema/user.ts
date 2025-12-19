@@ -26,8 +26,7 @@ export const userTypeEnumPg = pgEnum('enum_user_type', [
 	userTypeEnum.teacher,
 	userTypeEnum.guardian,
 	userTypeEnum.principal,
-	userTypeEnum.schoolAdmin,
-	userTypeEnum.systemAdmin
+	userTypeEnum.schoolAdmin
 ]);
 
 export const userHonorificEnumPg = pgEnum('enum_user_honorific', [

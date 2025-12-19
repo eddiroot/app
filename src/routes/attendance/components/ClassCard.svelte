@@ -1,5 +1,6 @@
 <script lang="ts">
 	import * as Card from '$lib/components/ui/card/index.js';
+	import { subjectClassAllocationAttendanceStatus } from '$lib/enums.js';
 	import { formatTimestampAsTime } from '$lib/utils';
 	import CheckIcon from '@lucide/svelte/icons/check';
 	import ClockIcon from '@lucide/svelte/icons/clock';
@@ -9,10 +10,10 @@
 	let { record }: { record: ScheduleWithAttendanceRecord } = $props();
 
 	let hasAttendance = $derived(record.attendance !== null);
-	let isPresent = $derived(record.attendance?.didAttend ?? false);
-	let hasNote = $derived(
-		record.attendance?.attendanceNote && record.attendance.attendanceNote.trim() !== ''
+	let isPresent = $derived(
+		record.attendance?.status === subjectClassAllocationAttendanceStatus.present
 	);
+	let hasNote = $derived(!!record.attendance?.noteGuardian);
 </script>
 
 <Card.Root
@@ -68,7 +69,7 @@
 							? 'Explained Absence'
 							: 'Unexplained Absence'
 					: 'Scheduled'}
-				- {formatTimestampAsTime(record.subjectClassAllocation.startTimestamp)}
+				- {formatTimestampAsTime(new Date(record.subjectClassAllocation.date))}
 			</div>
 		</div>
 	</Card.Content>
