@@ -230,6 +230,7 @@ export type BlockMathInputConfig = {
 	text: string;
 	question: string;
 	answer: string;
+	advancedMathSymbols: boolean;
 };
 
 export type BlockMathInputResponse = {

@@ -98,12 +98,25 @@
 					<Tabs.Root bind:value={activeTab}>
 						<Tabs.List>
 							<Tabs.Trigger value="basic">± × ÷</Tabs.Trigger>
-							<Tabs.Trigger value="functions">sin cos</Tabs.Trigger>
-							<Tabs.Trigger value="greek">π α β</Tabs.Trigger>
-							<Tabs.Trigger value="calculus">∫ d/dx</Tabs.Trigger>
-							<Tabs.Trigger value="advanced">∑ ∞ √</Tabs.Trigger>
-						</Tabs.List>
+							{#if config.advancedMathSymbols}
+								<Tabs.Trigger value="functions">sin cos</Tabs.Trigger>
+								<Tabs.Trigger value="greek">π α β</Tabs.Trigger>
+								<Tabs.Trigger value="calculus">∫ d/dx</Tabs.Trigger>
+								<Tabs.Trigger value="advanced">∑ ∞ √</Tabs.Trigger>
+							{/if}
 
+							<!-- Toggle advanced symbols button aligned with the tab triggers -->
+							<Button
+								type="button"
+								variant="ghost"
+								class="ml-auto"
+								aria-pressed={config.advancedMathSymbols}
+								aria-label="Toggle advanced math symbols"
+								onclick={() => onConfigUpdate({ ...config, advancedMathSymbols: !config.advancedMathSymbols })}
+							>
+								{#if config.advancedMathSymbols}Hide advanced{:else}Show advanced{/if}
+							</Button>
+						</Tabs.List>
 						<Tabs.Content value="basic">
 							<div class="min-h-[80px] rounded-lg border p-3">
 								<div class="flex flex-wrap gap-1">
@@ -164,6 +177,7 @@
 							</div>
 						</Tabs.Content>
 					</Tabs.Root>
+
 					<p class="text-muted-foreground text-xs">
 						Click a symbol to insert it into the focused field.
 					</p>
@@ -227,10 +241,12 @@
 						<Tabs.Root bind:value={studentActiveTab}>
 							<Tabs.List>
 								<Tabs.Trigger value="basic">± × ÷</Tabs.Trigger>
-								<Tabs.Trigger value="functions">sin cos</Tabs.Trigger>
-								<Tabs.Trigger value="greek">π α β</Tabs.Trigger>
-								<Tabs.Trigger value="calculus">∫ d/dx</Tabs.Trigger>
-								<Tabs.Trigger value="advanced">∑ ∞ √</Tabs.Trigger>
+								{#if config.advancedMathSymbols}
+									<Tabs.Trigger value="functions">sin cos</Tabs.Trigger>
+									<Tabs.Trigger value="greek">π α β</Tabs.Trigger>
+									<Tabs.Trigger value="calculus">∫ d/dx</Tabs.Trigger>
+									<Tabs.Trigger value="advanced">∑ ∞ √</Tabs.Trigger>
+								{/if}
 							</Tabs.List>
 
 							{#each [['basic', [['+', '+'], ['-', '−'], ['\\times', '×'], ['\\div', '÷'], ['=', '='], ['\\neq', '≠'], ['\\leq', '≤'], ['\\geq', '≥'], ['<', '<'], ['>', '>'], ['\\pm', '±'], ['\\frac{#0}{#0}', '½'], ['^{#0}', 'x²'], ['_{#0}', 'x₁'], ['\\left(#0\\right)', '( )']]], ['functions', [['\\sin', 'sin'], ['\\cos', 'cos'], ['\\tan', 'tan'], ['\\log', 'log'], ['\\ln', 'ln']]], ['greek', [['\\pi', 'π'], ['\\alpha', 'α'], ['\\beta', 'β'], ['\\gamma', 'γ'], ['\\theta', 'θ']]], ['calculus', [['\\frac{d}{dx}', 'd/dx'], ['\\int', '∫'], ['\\int_{#0}^{#0}', '∫ᵃᵇ'], ['\\lim_{#0}', 'lim']]], ['advanced', [['\\sqrt{#0}', '√'], ['\\sqrt[#0]{#0}', 'ⁿ√'], ['\\infty', '∞'], ['\\sum', 'Σ'], ['\\sum_{#0}^{#0}', 'Σⁿₖ₌₁']]]] as [tabName, symbols]}
