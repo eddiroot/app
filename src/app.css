@@ -1,5 +1,5 @@
 @import 'tailwindcss';
-@plugin "@tailwindcss/typography";
+@plugin '@tailwindcss/typography';
 
 @import 'tw-animate-css';
 
@@ -23,6 +23,8 @@
 	--destructive: oklch(0.1908 0.002 106.5859);
 	--destructive-foreground: oklch(1 0 0);
 	--success: oklch(0.6171 0.1375 142.0427);
+	--success-foreground: oklch(1 0 0);
+	--warning: oklch(80.877% 0.17029 75.348);
 	--success-foreground: oklch(1 0 0);
 	--border: oklch(0.8847 0.0069 97.3627);
 	--input: oklch(0.7621 0.0156 98.3528);
@@ -80,6 +82,8 @@
 	--destructive-foreground: oklch(1 0 0);
 	--success: oklch(0.6724 0.1308 142.7559);
 	--success-foreground: oklch(1 0 0);
+	--warning: oklch(75.911% 0.15957 75.73);
+	--success-foreground: oklch(1 0 0);
 	--border: oklch(0.3618 0.0101 106.8928);
 	--input: oklch(0.4336 0.0113 100.2195);
 	--ring: oklch(0.5937 0.1673 253.063);
@@ -132,6 +136,8 @@
 	--color-accent-foreground: var(--accent-foreground);
 	--color-success: var(--success);
 	--color-success-foreground: var(--success-foreground);
+	--color-warning: var(--warning);
+	--color-warning-foreground: var(--warning-foreground);
 	--color-destructive: var(--destructive);
 	--color-destructive-foreground: var(--destructive-foreground);
 	--color-border: var(--border);
