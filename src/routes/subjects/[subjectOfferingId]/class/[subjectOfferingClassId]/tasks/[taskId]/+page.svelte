@@ -626,6 +626,7 @@
 										blockId={block.id}
 										config={block.config as BlockWhiteboardConfig}
 										onConfigUpdate={async (config) => await handleConfigUpdate(block, config)}
+										whiteboardMap={data.whiteboardMap}
 										{viewMode}
 									/>
 								{:else if block.type === taskBlockTypeEnum.choice}

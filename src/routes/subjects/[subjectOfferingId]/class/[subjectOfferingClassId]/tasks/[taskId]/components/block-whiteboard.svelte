@@ -7,31 +7,20 @@
 	import Label from '$lib/components/ui/label/label.svelte';
 	import { ViewMode, type WhiteboardBlockProps } from '$lib/schema/task';
 	import PresentationIcon from '@lucide/svelte/icons/presentation';
-	import { onMount } from 'svelte';
 
-	let { blockId, config, onConfigUpdate, viewMode }: WhiteboardBlockProps = $props();
+	let {
+		blockId,
+		config,
+		onConfigUpdate,
+		viewMode,
+		whiteboardMap
+	}: WhiteboardBlockProps & { whiteboardMap?: Record<number, number> } = $props();
 
 	const { taskId, subjectOfferingId, subjectOfferingClassId } = $derived(page.params);
 
-	let whiteboardId = $state<number | null>(null);
-	let isLoading = $state(true);
+	const whiteboardId = $derived(whiteboardMap?.[blockId] ?? null);
 
-	onMount(async () => {
-		// Fetch the whiteboard for this task block
-		try {
-			const response = await fetch(`/api/task-blocks/${blockId}/whiteboard`);
-			if (response.ok) {
-				const data = await response.json();
-				whiteboardId = data.whiteboardId;
-			}
-		} catch (error) {
-			console.error('Failed to fetch whiteboard:', error);
-		} finally {
-			isLoading = false;
-		}
-	});
-
-	const openWhiteboard = async () => {
+	const openWhiteboard = () => {
 		if (!whiteboardId) {
 			console.error('No whiteboard ID available');
 			return;
@@ -72,10 +61,6 @@
 				</p>
 			</Card.Content>
 		</Card.Root>
-	{:else if isLoading}
-		<div class="rounded-lg border p-6 text-center">
-			<p class="text-muted-foreground">Loading whiteboard...</p>
-		</div>
 	{:else if whiteboardId}
 		<div class="rounded-lg border p-6 text-center">
 			<PresentationIcon class="text-muted-foreground mx-auto mb-3 h-12 w-12" />
