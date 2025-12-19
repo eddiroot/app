@@ -52,8 +52,8 @@ npx sst dev
 
 ```bash
 npm run db:migrate
-npm run db:push
 npm run db:restore -- snapshots/eddi_vcaa.sql.gz
+npm run db:push
 npm run db:seed
 ```
 
