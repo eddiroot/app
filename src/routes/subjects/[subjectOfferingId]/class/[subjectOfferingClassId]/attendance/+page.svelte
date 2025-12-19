@@ -1,9 +1,9 @@
 <script lang="ts">
-	import { Badge } from '$lib/components/ui/badge/index.js';
 	import { Input } from '$lib/components/ui/input/index.js';
 	import { convertToFullName } from '$lib/utils';
 	import { flip } from 'svelte/animate';
 
+	import { fade } from 'svelte/transition';
 	import StudentAttendanceListItem from './components/StudentAttendanceListItem.svelte';
 
 	const { data } = $props();
@@ -61,17 +61,12 @@
 	<!-- Unmarked Attendance Section -->
 	{#if unmarkedAttendances.length > 0}
 		<div class="space-y-4">
-			<div class="flex items-center justify-between">
-				<h2 class="text-foreground text-xl font-semibold">
-					Unrecorded ({unmarkedAttendances.length})
-				</h2>
-				<Badge variant="secondary" class="text-sm">
-					{unmarkedAttendances.length} remaining
-				</Badge>
-			</div>
-			<div class="bg-card border-border overflow-hidden rounded-lg border">
+			<h2 class="text-foreground text-xl font-semibold">
+				Unrecorded ({unmarkedAttendances.length})
+			</h2>
+			<div class="space-y-3">
 				{#each unmarkedAttendances as attendanceRecord (attendanceRecord.user.id)}
-					<div animate:flip={{ duration: 400 }}>
+					<div animate:flip={{ duration: 400 }} in:fade={{ duration: 200 }}>
 						<StudentAttendanceListItem {attendanceRecord} {behaviourQuickActions} type="unmarked" />
 					</div>
 				{/each}
@@ -85,9 +80,9 @@
 			<h2 class="text-foreground text-xl font-semibold">
 				Recorded ({markedAttendances.length})
 			</h2>
-			<div class="bg-card border-border overflow-hidden rounded-lg border">
+			<div class="space-y-3">
 				{#each markedAttendances as attendanceRecord (attendanceRecord.user.id)}
-					<div animate:flip={{ duration: 400 }}>
+					<div animate:flip={{ duration: 400 }} in:fade={{ duration: 200 }}>
 						<StudentAttendanceListItem {attendanceRecord} {behaviourQuickActions} type="marked" />
 					</div>
 				{/each}

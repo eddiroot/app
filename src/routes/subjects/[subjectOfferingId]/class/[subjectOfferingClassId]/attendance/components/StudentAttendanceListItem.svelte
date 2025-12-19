@@ -1,10 +1,13 @@
 <script lang="ts">
 	import { page } from '$app/state';
+	import * as Avatar from '$lib/components/ui/avatar/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import * as Dialog from '$lib/components/ui/dialog/index.js';
 	import * as Form from '$lib/components/ui/form/index.js';
 	import * as Select from '$lib/components/ui/select/index.js';
+	// import Slider from '$lib/components/ui/slider/slider.svelte';
 	import { Textarea } from '$lib/components/ui/textarea/index.js';
+	import { subjectClassAllocationAttendanceStatus } from '$lib/enums';
 	import {
 		type BehaviourQuickAction,
 		type SubjectClassAllocation,
@@ -13,11 +16,8 @@
 	} from '$lib/server/db/schema';
 	import { convertToFullName } from '$lib/utils';
 	import History from '@lucide/svelte/icons/history';
-	import MessageCircleWarning from '@lucide/svelte/icons/message-circle-warning';
-	import NotebookPen from '@lucide/svelte/icons/notebook-pen';
 	import NotepadText from '@lucide/svelte/icons/notepad-text';
 	import { tick } from 'svelte';
-	import { fade } from 'svelte/transition';
 	import { superForm } from 'sveltekit-superforms';
 	import { zod4Client } from 'sveltekit-superforms/adapters';
 	import { attendanceSchema } from '../schema';
@@ -39,13 +39,15 @@
 		type?: 'unmarked' | 'marked';
 	} = $props();
 
+	const attendanceRecordData = () => attendanceRecord;
 	const form = superForm(
 		{
-			subjectClassAllocationId: attendanceRecord.subjectClassAllocation.id,
-			userId: attendanceRecord.user.id,
-			status: attendanceRecord.attendance?.status || '',
-			noteTeacher: attendanceRecord.attendance?.noteTeacher || '',
-			behaviourQuickActionIds: (attendanceRecord.behaviourQuickActionIds ?? []).map(String)
+			subjectClassAllocationId: attendanceRecordData().subjectClassAllocation.id,
+			userId: attendanceRecordData().user.id,
+			status:
+				attendanceRecordData().attendance?.status || subjectClassAllocationAttendanceStatus.present,
+			noteTeacher: attendanceRecordData().attendance?.noteTeacher || '',
+			behaviourQuickActionIds: (attendanceRecordData().behaviourQuickActionIds ?? []).map(String)
 		},
 		{
 			validators: zod4Client(attendanceSchema),
@@ -66,15 +68,6 @@
 	const fullName = $derived(convertToFullName(user.firstName, user.middleName, user.lastName));
 	let dialogOpen = $state(false);
 
-	const statusOptions = [
-		{ value: 'present', label: 'Present' },
-		{ value: 'absent', label: 'Absent' }
-	];
-
-	const selectedStatusLabel = $derived(
-		statusOptions.find((option) => option.value === $formData.status)?.label || 'Status'
-	);
-
 	const selectedBehavioursLabel = $derived(
 		$formData.behaviourQuickActionIds.length === 0
 			? 'Behaviours'
@@ -89,27 +82,15 @@
 	);
 </script>
 
-<div class="border-border border-b transition-all last:border-b-0" in:fade={{ duration: 200 }}>
-	<div class="flex items-center justify-between p-4">
-		<!-- Student info and status -->
+<div class="space-y-2 rounded-md border p-2 transition-all">
+	<div class="flex items-center justify-between gap-x-4">
 		<div class="flex items-center gap-2">
-			<div class="bg-muted flex h-10 w-10 items-center justify-center rounded-full">
-				<span class="text-sm font-medium">
+			<Avatar.Root class="h-10 w-10">
+				<Avatar.Fallback>
 					{user.firstName.charAt(0)}{user.lastName.charAt(0)}
-				</span>
-			</div>
-			<div class="flex flex-col">
-				<h3 class="truncate font-medium">{fullName}</h3>
-				<div class="flex items-center gap-2">
-					{#if attendance?.noteTeacher}
-						<NotebookPen class="size-4" />
-					{/if}
-
-					{#if attendance?.noteGuardian}
-						<MessageCircleWarning class="text-destructive size-4" />
-					{/if}
-				</div>
-			</div>
+				</Avatar.Fallback>
+			</Avatar.Root>
+			<h3 class="truncate font-medium">{fullName}</h3>
 		</div>
 
 		<div class="flex items-center gap-2">
@@ -125,6 +106,44 @@
 					name="subjectClassAllocationId"
 					value={attendanceRecord.subjectClassAllocation.id}
 				/>
+
+				<Form.Field {form} name="status" class="flex gap-0 space-y-0">
+					<Form.Control>
+						{#snippet children({ props })}
+							<Button
+								class="w-[120px] rounded-r-none border-r-0 {type === 'marked' &&
+								$formData.status === 'present'
+									? 'bg-success! text-success-foreground! disabled:opacity-100'
+									: ''} {type === 'marked' && $formData.status === 'absent'
+									? 'bg-destructive! text-destructive-foreground! disabled:opacity-100'
+									: ''}"
+								onclick={async () => {
+									await tick();
+									form.submit();
+								}}
+								variant="outline"
+								disabled={type === 'marked'}
+							>
+								{$formData.status.slice(0, 1).toUpperCase() + $formData.status.slice(1)}
+							</Button>
+							<Select.Root
+								type="single"
+								bind:value={$formData.status}
+								name={props.name}
+								onValueChange={async () => {
+									await tick();
+									form.submit();
+								}}
+							>
+								<Select.Trigger {...props} class="rounded-l-none" />
+								<Select.Content>
+									<Select.Item value="present" label="Present" />
+									<Select.Item value="absent" label="Absent" />
+								</Select.Content>
+							</Select.Root>
+						{/snippet}
+					</Form.Control>
+				</Form.Field>
 
 				<Form.Field {form} name="behaviourQuickActionIds" class="space-y-0">
 					<Form.Control>
@@ -152,42 +171,24 @@
 						{/snippet}
 					</Form.Control>
 				</Form.Field>
-
-				<Form.Field {form} name="status" class="space-y-0">
-					<Form.Control>
-						{#snippet children({ props })}
-							<Select.Root
-								type="single"
-								bind:value={$formData.status}
-								name={props.name}
-								onValueChange={async () => {
-									await tick();
-									form.submit();
-								}}
-							>
-								<Select.Trigger {...props} class="w-[120px]">
-									{selectedStatusLabel}
-								</Select.Trigger>
-								<Select.Content>
-									{#each statusOptions as option}
-										<Select.Item value={option.value} label={option.label} />
-									{/each}
-								</Select.Content>
-							</Select.Root>
-						{/snippet}
-					</Form.Control>
-				</Form.Field>
 			</form>
-
 			<Button variant="outline" onclick={() => (dialogOpen = true)} disabled={type === 'unmarked'}>
 				<NotepadText />
 			</Button>
-
 			<Button variant="outline" href={`${page.url.pathname}/${user.id}`}>
 				<History />
 			</Button>
 		</div>
 	</div>
+	<div class="bg-muted/50 relative flex h-2 w-full overflow-hidden rounded-full">
+		<div class="bg-destructive/40 h-full transition-all" style="width: 10%"></div>
+		<div class="bg-success/40 h-full transition-all" style="width: 45%"></div>
+		<div class="bg-warning/40 h-full transition-all" style="width: 8%"></div>
+		<div class="bg-success/40 h-full transition-all" style="width: 37%"></div>
+	</div>
+
+	<!-- For future use in a modal to adjust the times -->
+	<!-- <Slider type="multiple" value={[10, 20, 30]} max={100} class="max-w-full"></Slider> -->
 </div>
 
 <!-- Modal Dialog -->
