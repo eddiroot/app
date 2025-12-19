@@ -1,10 +1,13 @@
 import { subjectClassAllocationAttendanceStatus } from '$lib/enums';
 import {
+	getAttendanceComponentsByAttendanceId,
 	getBehaviourQuickActionsByAttendanceId,
 	getBehaviourQuickActionsBySchoolId,
 	getGuardiansForStudent,
 	getSubjectClassAllocationAndStudentAttendancesByClassIdForToday,
 	getSubjectOfferingClassByAllocationId,
+	getUserById,
+	updateAttendanceComponents,
 	upsertSubjectClassAllocationAttendance
 } from '$lib/server/db/service';
 import { sendAbsenceEmail } from '$lib/server/email.js';
@@ -33,14 +36,17 @@ export const load = async ({ locals: { security }, params: { subjectOfferingClas
 		attendances.map(async (attendance) => {
 			if (attendance.attendance?.id) {
 				const behaviours = await getBehaviourQuickActionsByAttendanceId(attendance.attendance.id);
+				const components = await getAttendanceComponentsByAttendanceId(attendance.attendance.id);
 				return {
 					...attendance,
-					behaviourQuickActionIds: behaviours.map((b) => b.id)
+					behaviourQuickActionIds: behaviours.map((b) => b.id),
+					attendanceComponents: components
 				};
 			}
 			return {
 				...attendance,
-				behaviourQuickActionIds: []
+				behaviourQuickActionIds: [],
+				attendanceComponents: []
 			};
 		})
 	);
@@ -49,9 +55,7 @@ export const load = async ({ locals: { security }, params: { subjectOfferingClas
 };
 
 export const actions = {
-	updateAttendance: async ({ request, locals: { security } }) => {
-		const user = security.isAuthenticated().getUser();
-
+	updateAttendance: async ({ request }) => {
 		const formData = await request.formData();
 		const form = await superValidate(formData, zod4(attendanceSchema));
 
@@ -78,10 +82,15 @@ export const actions = {
 				const classDetails = await getSubjectOfferingClassByAllocationId(
 					form.data.subjectClassAllocationId
 				);
+				const student = await getUserById(form.data.userId);
 				const guardians = await getGuardiansForStudent(form.data.userId);
 
-				if (classDetails && guardians.length > 0) {
-					const studentName = convertToFullName(user.firstName, user.middleName, user.lastName);
+				if (classDetails && student && guardians.length > 0) {
+					const studentName = convertToFullName(
+						student.firstName,
+						student.middleName,
+						student.lastName
+					);
 					const className = `${classDetails.subject.name} - ${classDetails.subjectOfferingClass.name}`;
 					const today = new Date();
 
@@ -95,6 +104,25 @@ export const actions = {
 		} catch (err) {
 			console.error('Error updating attendance:', err);
 			return fail(500, { form, error: 'Failed to update attendance' });
+		}
+	},
+
+	updateComponents: async ({ request }) => {
+		const formData = await request.formData();
+		const attendanceId = parseInt(formData.get('attendanceId') as string, 10);
+		const componentsJson = formData.get('components') as string;
+
+		if (isNaN(attendanceId) || !componentsJson) {
+			return fail(400, { error: 'Invalid data' });
+		}
+
+		try {
+			const components = JSON.parse(componentsJson);
+			await updateAttendanceComponents(components);
+			return { success: true };
+		} catch (err) {
+			console.error('Error updating components:', err);
+			return fail(500, { error: 'Failed to update components' });
 		}
 	}
 };

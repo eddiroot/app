@@ -8,6 +8,7 @@
 	// import Slider from '$lib/components/ui/slider/slider.svelte';
 	import { Textarea } from '$lib/components/ui/textarea/index.js';
 	import { subjectClassAllocationAttendanceStatus } from '$lib/enums';
+	import type { SubjectClassAllocationAttendanceComponent } from '$lib/server/db/schema';
 	import {
 		type BehaviourQuickAction,
 		type SubjectClassAllocation,
@@ -21,12 +22,14 @@
 	import { superForm } from 'sveltekit-superforms';
 	import { zod4Client } from 'sveltekit-superforms/adapters';
 	import { attendanceSchema } from '../schema';
+	import AttendanceProgressBar from './AttendanceProgressBar.svelte';
 
 	type AttendanceRecord = {
 		user: Pick<User, 'id' | 'firstName' | 'middleName' | 'lastName'>;
 		attendance?: SubjectClassAllocationAttendance | null;
-		subjectClassAllocation: Pick<SubjectClassAllocation, 'id'>;
+		subjectClassAllocation: Pick<SubjectClassAllocation, 'id' | 'startTime' | 'endTime'>;
 		behaviourQuickActionIds?: number[];
+		attendanceComponents?: SubjectClassAllocationAttendanceComponent[];
 	};
 
 	let {
@@ -64,7 +67,6 @@
 	const { form: formData, enhance: formEnhance } = form;
 
 	const user = $derived(attendanceRecord.user);
-	const attendance = $derived(attendanceRecord.attendance);
 	const fullName = $derived(convertToFullName(user.firstName, user.middleName, user.lastName));
 	let dialogOpen = $state(false);
 
@@ -80,6 +82,60 @@
 			label: behaviour.name
 		}))
 	);
+
+	const classStartTime = $derived(attendanceRecord.subjectClassAllocation.startTime);
+	const classEndTime = $derived(attendanceRecord.subjectClassAllocation.endTime);
+	let showSlider = $state(false);
+
+	// Parse time string to seconds since midnight
+	function parseTimeToSeconds(timeStr: string): number {
+		const parts = timeStr.split(':').map(Number);
+		if (parts.length === 3) {
+			return parts[0] * 3600 + parts[1] * 60 + parts[2];
+		}
+		return parts[0] * 3600 + parts[1] * 60;
+	}
+
+	// Get current time as HH:MM:SS string (with milliseconds for smooth progress)
+	function getCurrentTimeString(): string {
+		const now = new Date();
+		const hours = now.getHours();
+		const minutes = now.getMinutes();
+		const seconds = now.getSeconds() + now.getMilliseconds() / 1000;
+		return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toFixed(3).padStart(6, '0')}`;
+	}
+
+	// Check if current time is within class time
+	function isWithinClassTime(): boolean {
+		const now = new Date();
+		const currentSeconds = now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
+		const startSeconds = parseTimeToSeconds(classStartTime);
+		const endSeconds = parseTimeToSeconds(classEndTime);
+		return currentSeconds >= startSeconds && currentSeconds <= endSeconds;
+	}
+
+	let isClassActive = $state(isWithinClassTime());
+
+	// Track current time for progress display
+	let currentTime = $state(getCurrentTimeString());
+
+	// Update isClassActive and currentTime every second
+	$effect(() => {
+		const interval = setInterval(() => {
+			isClassActive = isWithinClassTime();
+			currentTime = getCurrentTimeString();
+		}, 1000);
+
+		return () => clearInterval(interval);
+	});
+
+	// Initialize components from attendance record
+	let components = $state<SubjectClassAllocationAttendanceComponent[]>([]);
+
+	// Update components when attendanceRecord changes
+	$effect(() => {
+		components = attendanceRecord.attendanceComponents || [];
+	});
 </script>
 
 <div class="transition-all">
@@ -111,18 +167,18 @@
 					<Form.Control>
 						{#snippet children({ props })}
 							<Button
-								class="w-[120px] rounded-r-none border-r-0 {type === 'marked' &&
-								$formData.status === 'present'
-									? 'bg-success! text-success-foreground! disabled:opacity-100'
+								class="border-input w-[120px] rounded-r-none disabled:opacity-100! {type ===
+									'marked' && $formData.status === 'present'
+									? 'bg-success/50! text-success-foreground!'
 									: ''} {type === 'marked' && $formData.status === 'absent'
-									? 'bg-destructive! text-destructive-foreground! disabled:opacity-100'
+									? 'bg-destructive/50! text-destructive-foreground!'
 									: ''}"
 								onclick={async () => {
 									await tick();
 									form.submit();
 								}}
 								variant="outline"
-								disabled={type === 'marked'}
+								disabled={type === 'marked' || !isClassActive}
 							>
 								{$formData.status.slice(0, 1).toUpperCase() + $formData.status.slice(1)}
 							</Button>
@@ -130,12 +186,13 @@
 								type="single"
 								bind:value={$formData.status}
 								name={props.name}
+								disabled={!isClassActive}
 								onValueChange={async () => {
 									await tick();
 									form.submit();
 								}}
 							>
-								<Select.Trigger {...props} class="rounded-l-none" />
+								<Select.Trigger {...props} class="rounded-l-none border-l-0" />
 								<Select.Content>
 									<Select.Item value="present" label="Present" />
 									<Select.Item value="absent" label="Absent" />
@@ -151,6 +208,7 @@
 							<Select.Root
 								type="multiple"
 								{...props}
+								disabled={!isClassActive}
 								bind:value={$formData.behaviourQuickActionIds}
 								onValueChange={async () => {
 									await tick();
@@ -172,7 +230,11 @@
 					</Form.Control>
 				</Form.Field>
 			</form>
-			<Button variant="outline" onclick={() => (dialogOpen = true)} disabled={type === 'unmarked'}>
+			<Button
+				variant="outline"
+				onclick={() => (dialogOpen = true)}
+				disabled={type === 'unmarked' || !isClassActive}
+			>
 				<NotepadText />
 			</Button>
 			<Button variant="outline" href={`${page.url.pathname}/${user.id}`}>
@@ -182,15 +244,15 @@
 	</div>
 
 	<!-- Attendance Progress Bar -->
-	<div class="bg-muted/50 relative flex h-2 w-full overflow-hidden rounded-b-full">
-		<div class="bg-destructive/40 h-full transition-all" style="width: 10%"></div>
-		<div class="bg-success/40 h-full transition-all" style="width: 45%"></div>
-		<div class="bg-warning/40 h-full transition-all" style="width: 8%"></div>
-		<div class="bg-success/40 h-full transition-all" style="width: 37%"></div>
-	</div>
-
-	<!-- For future use in a modal to adjust the times -->
-	<!-- <Slider type="multiple" value={[10, 20, 30]} max={100} class="max-w-full"></Slider> -->
+	<AttendanceProgressBar
+		{classStartTime}
+		{classEndTime}
+		bind:components
+		bind:showSlider
+		{currentTime}
+		attendanceId={attendanceRecord.attendance?.id}
+		disabled={type === 'unmarked' || !isClassActive}
+	/>
 </div>
 
 <!-- Modal Dialog -->

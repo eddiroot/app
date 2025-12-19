@@ -51,10 +51,10 @@
 </script>
 
 <div class="flex h-full flex-col space-y-6 p-8">
-	<div class="flex flex-col space-y-4">
+	<div class="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
 		<h1 class="text-3xl font-bold tracking-tight">Attendance</h1>
 		{#if attendances.length >= 0}
-			<Input placeholder="Search students..." bind:value={searchTerm} class="max-w-sm" />
+			<Input placeholder="Search students..." bind:value={searchTerm} class="w-full max-w-sm" />
 		{/if}
 	</div>
 
