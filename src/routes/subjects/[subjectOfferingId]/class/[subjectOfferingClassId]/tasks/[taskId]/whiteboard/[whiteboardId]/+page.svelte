@@ -73,6 +73,7 @@
 	let canUndo = $state(false);
 	let canRedo = $state(false);
 	let isApplyingHistory = false; // Flag to prevent recording history during undo/redo
+	let isRecordingManually = false; // Flag to prevent double-recording during option changes
 
 	// Current tool options - updated when menu changes
 	let currentTextOptions = $state<TextOptions>({ ...DEFAULT_TEXT_OPTIONS });
@@ -350,9 +351,16 @@
 		// Update current options for new objects
 		currentTextOptions = { ...options };
 
-		if (!canvas) return;
+		if (!canvas || !history) return;
 		const activeObject = canvas.getActiveObject();
-		if (activeObject && activeObject.type === 'textbox') {
+		if (activeObject && activeObject.type === 'textbox' && data.user?.id) {
+			// Store previous state for history
+			const previousData = activeObject.toObject();
+			previousData.id = (activeObject as any).id;
+
+			// Set flag to prevent double-recording in object:modified
+			isRecordingManually = true;
+
 			activeObject.set({
 				fontSize: options.fontSize,
 				fontFamily: options.fontFamily,
@@ -364,10 +372,21 @@
 			canvas.renderAll();
 			const objData = activeObject.toObject();
 			(objData as any).id = (activeObject as any).id;
+
+			// Record history for option change
+			history.recordModify((activeObject as any).id, previousData, objData, data.user.id);
+			canUndo = history.canUndo();
+			canRedo = history.canRedo();
+
 			sendCanvasUpdate({
 				type: 'modify',
 				object: objData
 			});
+
+			// Reset flag after a small delay to ensure object:modified doesn't fire
+			setTimeout(() => {
+				isRecordingManually = false;
+			}, 10);
 		}
 	};
 	const handleShapeOptionsChange = (options: any) => {
@@ -588,7 +607,7 @@
 
 	// Undo/Redo handlers
 	const handleUndo = async () => {
-		if (!canvas || !history.canUndo()) return;
+		if (!canvas || !history || !history.canUndo()) return;
 
 		isApplyingHistory = true;
 		const action = history.undo();
@@ -603,7 +622,7 @@
 	};
 
 	const handleRedo = async () => {
-		if (!canvas || !history.canRedo()) return;
+		if (!canvas || !history || !history.canRedo()) return;
 
 		isApplyingHistory = true;
 		const action = history.redo();
@@ -661,6 +680,14 @@
 
 			// Initialize history
 			history = new CanvasHistory();
+			// Set the current user ID for filtering history operations
+			if (data.user?.id) {
+				history.setCurrentUserId(data.user.id);
+			}
+			// Update initial button states
+			canUndo = history.canUndo();
+			canRedo = history.canRedo();
+			console.log('History initialized for user:', data.user?.id);
 
 			document.body.style.overflow = 'hidden';
 
@@ -816,21 +843,29 @@
 			// Setup history tracking
 			// Track object additions
 			canvas.on('object:added', (e: any) => {
-				if (isApplyingHistory || !e.target) return;
+				if (isApplyingHistory || !e.target || !history) return;
 
 				// Skip control points entirely - they are client-side only
 				if (controlPointManager.isControlPoint(e.target)) {
 					return;
 				}
 
+				// Skip temporary objects that are being drawn (they have selectable: false until finalized)
+				// Only record when selectable is true, meaning the object has been finalized
+				if (e.target.selectable === false) {
+					return;
+				}
+
+				const objectId = e.target.id;
+				if (!objectId) return;
+
 				// Bring control points to front when any non-control-point object is added
 				controlPointManager.bringAllControlPointsToFront();
 
-				const objectId = e.target.id;
-				if (objectId) {
+				if (data.user?.id) {
 					const objectData = e.target.toObject();
 					objectData.id = objectId;
-					history.recordAdd(objectId, objectData);
+					history.recordAdd(objectId, objectData, data.user.id);
 					canUndo = history.canUndo();
 					canRedo = history.canRedo();
 				}
@@ -839,15 +874,15 @@
 			// Track object modifications (store previous state before modification)
 			const objectStates = new Map<string, Record<string, unknown>>();
 			canvas.on('object:modified', (e: any) => {
-				if (isApplyingHistory || !e.target) return;
+				if (isApplyingHistory || isRecordingManually || !e.target || !history) return;
 				const objectId = e.target.id;
-				if (objectId) {
+				if (objectId && data.user?.id) {
 					const previousData = objectStates.get(objectId);
 					const newData = e.target.toObject();
 					newData.id = objectId;
 
 					if (previousData) {
-						history.recordModify(objectId, previousData, newData);
+						history.recordModify(objectId, previousData, newData, data.user.id);
 						objectStates.delete(objectId);
 					}
 					canUndo = history.canUndo();
@@ -894,12 +929,12 @@
 
 			// Track object removals
 			canvas.on('object:removed', (e: any) => {
-				if (isApplyingHistory || !e.target) return;
+				if (isApplyingHistory || !e.target || !history) return;
 				const objectId = e.target.id;
-				if (objectId) {
+				if (objectId && data.user?.id) {
 					const objectData = e.target.toObject();
 					objectData.id = objectId;
-					history.recordDelete(objectId, objectData);
+					history.recordDelete(objectId, objectData, data.user.id);
 					canUndo = history.canUndo();
 					canRedo = history.canRedo();
 				}

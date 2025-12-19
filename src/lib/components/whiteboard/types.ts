@@ -66,4 +66,5 @@ export interface HistoryAction {
 	objectData?: Record<string, unknown>; // Current state for modify, or object data for add
 	previousData?: Record<string, unknown>; // Previous state for modify
 	timestamp: number;
+	userId: string; // Track which user performed this action
 }
