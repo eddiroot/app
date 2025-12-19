@@ -283,9 +283,10 @@ export type RubricCellFeedback = typeof rubricCellFeedback.$inferSelect;
 
 export const whiteboard = pgTable('whiteboard', {
 	id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
-	taskId: integer('task_id')
+	taskBlockId: integer('task_block_id')
 		.notNull()
-		.references(() => task.id, { onDelete: 'cascade' }),
+		.unique()
+		.references(() => taskBlock.id, { onDelete: 'cascade' }),
 	title: text('title'),
 	...timestamps
 });

@@ -13,41 +13,23 @@ const peerWhiteboards = new Map<object, number>();
 
 export const socket: Socket = {
 	async open(peer) {
-		// For now, default to whiteboard 1 if no ID is specified
-		// This will be updated when the client sends a message with whiteboardId
-		const whiteboardId = 1;
-		peerWhiteboards.set(peer, whiteboardId);
-
-		try {
-			const objects = await getWhiteboardObjects(whiteboardId);
-			const whiteboardObjects = objects.map((obj) => ({
-				id: obj.objectId,
-				...(obj.objectData as Record<string, unknown>)
-			}));
-
-			peer.send(
-				JSON.stringify({
-					type: 'load',
-					whiteboardId,
-					whiteboard: { objects: whiteboardObjects }
-				})
-			);
-		} catch (error) {
-			console.error('Failed to load whiteboard from database:', error);
-			peer.send(
-				JSON.stringify({
-					type: 'load',
-					whiteboardId,
-					whiteboard: { objects: [] }
-				})
-			);
-		}
-		peer.subscribe(`whiteboard-${whiteboardId}`);
+		// Wait for client to send init message with whiteboardId
+		// Don't load anything until we know which whiteboard to use
 	},
 
 	async message(peer, message) {
 		const parsedMessage = JSON.parse(String(message));
-		const whiteboardId = parsedMessage.whiteboardId || peerWhiteboards.get(peer) || 1;
+		const whiteboardId = parsedMessage.whiteboardId || peerWhiteboards.get(peer);
+
+		if (!whiteboardId) {
+			peer.send(
+				JSON.stringify({
+					type: 'error',
+					message: 'No whiteboard ID specified'
+				})
+			);
+			return;
+		}
 
 		// Update the peer's whiteboard if a new one is specified
 		if (parsedMessage.whiteboardId && parsedMessage.whiteboardId !== peerWhiteboards.get(peer)) {
