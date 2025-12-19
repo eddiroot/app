@@ -1,4 +1,5 @@
 import {
+	subjectClassAllocationAttendanceComponentType,
 	subjectClassAllocationAttendanceStatus,
 	subjectThreadResponseTypeEnum,
 	subjectThreadTypeEnum,
@@ -814,6 +815,33 @@ export async function upsertSubjectClassAllocationAttendance(
 	behaviourQuickActionIds?: number[]
 ) {
 	return await db.transaction(async (tx) => {
+		// Get class allocation details for time calculation
+		const [classAllocation] = await tx
+			.select({
+				startTime: table.subjectClassAllocation.startTime,
+				endTime: table.subjectClassAllocation.endTime
+			})
+			.from(table.subjectClassAllocation)
+			.where(eq(table.subjectClassAllocation.id, subjectClassAllocationId))
+			.limit(1);
+
+		// Check if attendance already exists
+		const [existingAttendance] = await tx
+			.select()
+			.from(table.subjectClassAllocationAttendance)
+			.where(
+				and(
+					eq(
+						table.subjectClassAllocationAttendance.subjectClassAllocationId,
+						subjectClassAllocationId
+					),
+					eq(table.subjectClassAllocationAttendance.userId, userId)
+				)
+			)
+			.limit(1);
+
+		const isNewAttendance = !existingAttendance;
+
 		const [attendance] = await tx
 			.insert(table.subjectClassAllocationAttendance)
 			.values({
@@ -835,6 +863,56 @@ export async function upsertSubjectClassAllocationAttendance(
 				}
 			})
 			.returning();
+
+		// Handle attendance components
+		if (classAllocation) {
+			// Get current time as HH:MM:SS
+			const now = new Date();
+			const currentTime = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}`;
+
+			// Determine component type based on status
+			const componentType =
+				status === subjectClassAllocationAttendanceStatus.present
+					? subjectClassAllocationAttendanceComponentType.present
+					: subjectClassAllocationAttendanceComponentType.absent;
+
+			if (isNewAttendance) {
+				// Create initial component for entire class duration
+				await tx.insert(table.subjectClassAllocationAttendanceComponent).values({
+					attendanceId: attendance.id,
+					type: componentType,
+					startTime: classAllocation.startTime,
+					endTime: classAllocation.endTime
+				});
+			} else {
+				// Get existing components to check if we need to update them
+				const existingComponents = await tx
+					.select()
+					.from(table.subjectClassAllocationAttendanceComponent)
+					.where(eq(table.subjectClassAllocationAttendanceComponent.attendanceId, attendance.id))
+					.orderBy(table.subjectClassAllocationAttendanceComponent.startTime);
+
+				// Check if the last component has a different type than the new status
+				const lastComponent = existingComponents[existingComponents.length - 1];
+
+				if (lastComponent && lastComponent.type !== componentType) {
+					// Adjust the last component's end time to current time
+					await tx
+						.update(table.subjectClassAllocationAttendanceComponent)
+						.set({ endTime: currentTime })
+						.where(eq(table.subjectClassAllocationAttendanceComponent.id, lastComponent.id));
+
+					// Create a new component with the new status from current time to end of class
+					await tx.insert(table.subjectClassAllocationAttendanceComponent).values({
+						attendanceId: attendance.id,
+						type: componentType,
+						startTime: currentTime,
+						endTime: classAllocation.endTime
+					});
+				}
+				// If type is the same, leave components as-is
+			}
+		}
 
 		if (behaviourQuickActionIds !== undefined) {
 			await tx
@@ -1247,13 +1325,10 @@ export async function getBehaviourQuickActionsByAttendanceId(attendanceId: numbe
 		.where(eq(table.attendanceBehaviourQuickAction.attendanceId, attendanceId));
 
 	return behaviourQuickActions.map((row) => row.behaviourQuickAction);
-
 }
-export async function getSubjectOfferingMetadataByOfferingId(
-	subjectOfferingId: number
-): Promise<{
+export async function getSubjectOfferingMetadataByOfferingId(subjectOfferingId: number): Promise<{
 	curriculumSubjectId: number | undefined;
-	yearLevel: yearLevelEnum ;
+	yearLevel: yearLevelEnum;
 }> {
 	const result = await db
 		.select({
@@ -1269,14 +1344,16 @@ export async function getSubjectOfferingMetadataByOfferingId(
 	if (result.length === 0) {
 		return { curriculumSubjectId: undefined, yearLevel: yearLevelEnum.none };
 	}
-	
+
 	return {
-		curriculumSubjectId: result[0].curriculumSubjectId ?? undefined	,
+		curriculumSubjectId: result[0].curriculumSubjectId ?? undefined,
 		yearLevel: result[0].yearLevel
 	};
 }
 
-export async function getSubjectThreadEmbeddingMetadata(record: Record<string, unknown>): Promise<EmbeddingMetadata> {
+export async function getSubjectThreadEmbeddingMetadata(
+	record: Record<string, unknown>
+): Promise<EmbeddingMetadata> {
 	const [result] = await db
 		.select({
 			subjectOfferingId: table.subjectThread.subjectOfferingId,
@@ -1299,7 +1376,9 @@ export async function getSubjectThreadEmbeddingMetadata(record: Record<string, u
 	};
 }
 
-export async function getSubjectThreadResponseEmbeddingMetadata(record: Record<string, unknown>): Promise<EmbeddingMetadata> {
+export async function getSubjectThreadResponseEmbeddingMetadata(
+	record: Record<string, unknown>
+): Promise<EmbeddingMetadata> {
 	const [result] = await db
 		.select({
 			subjectOfferingId: table.subjectThread.subjectOfferingId,
@@ -1318,11 +1397,10 @@ export async function getSubjectThreadResponseEmbeddingMetadata(record: Record<s
 		.innerJoin(table.subject, eq(table.subjectOffering.subjectId, table.subject.id))
 		.where(eq(table.subjectThreadResponse.id, record.id as number))
 		.limit(1);
-		
+
 	return {
 		subjectOfferingId: result.subjectOfferingId,
 		subjectId: result.subjectId,
 		yearLevel: result.yearLevel
 	};
 }
-

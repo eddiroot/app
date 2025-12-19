@@ -123,6 +123,32 @@ export async function getSubjectClassAllocationsByUserIdForToday(userId: string)
 	return classAllocation;
 }
 
+export async function getAttendanceComponentsByAttendanceId(attendanceId: number) {
+	const components = await db
+		.select()
+		.from(table.subjectClassAllocationAttendanceComponent)
+		.where(eq(table.subjectClassAllocationAttendanceComponent.attendanceId, attendanceId))
+		.orderBy(table.subjectClassAllocationAttendanceComponent.startTime);
+
+	return components;
+}
+
+export async function updateAttendanceComponents(
+	components: Array<{ id: number; startTime: string; endTime: string }>
+) {
+	return await db.transaction(async (tx) => {
+		for (const component of components) {
+			await tx
+				.update(table.subjectClassAllocationAttendanceComponent)
+				.set({
+					startTime: component.startTime,
+					endTime: component.endTime
+				})
+				.where(eq(table.subjectClassAllocationAttendanceComponent.id, component.id));
+		}
+	});
+}
+
 export async function getSubjectClassAllocationAndStudentAttendancesByClassIdForToday(
 	subjectOfferingClassId: number
 ) {
@@ -140,7 +166,9 @@ export async function getSubjectClassAllocationAndStudentAttendancesByClassIdFor
 				avatarUrl: table.user.avatarUrl
 			},
 			subjectClassAllocation: {
-				id: table.subjectClassAllocation.id
+				id: table.subjectClassAllocation.id,
+				startTime: table.subjectClassAllocation.startTime,
+				endTime: table.subjectClassAllocation.endTime
 			}
 		})
 		.from(table.userSubjectOfferingClass)

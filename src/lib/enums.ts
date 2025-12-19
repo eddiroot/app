@@ -34,6 +34,12 @@ export enum subjectClassAllocationAttendanceStatus {
 	absent = 'absent'
 }
 
+export enum subjectClassAllocationAttendanceComponentType {
+	present = 'present',
+	absent = 'absent',
+	classPass = 'class_pass'
+}
+
 export enum subjectThreadTypeEnum {
 	discussion = 'discussion',
 	question = 'question',
