@@ -82,8 +82,8 @@
 	);
 </script>
 
-<div class="space-y-2 rounded-md border p-2 transition-all">
-	<div class="flex items-center justify-between gap-x-4">
+<div class="transition-all">
+	<div class="flex items-center justify-between gap-x-4 rounded-t-md border-x border-t p-3">
 		<div class="flex items-center gap-2">
 			<Avatar.Root class="h-10 w-10">
 				<Avatar.Fallback>
@@ -180,7 +180,9 @@
 			</Button>
 		</div>
 	</div>
-	<div class="bg-muted/50 relative flex h-2 w-full overflow-hidden rounded-full">
+
+	<!-- Attendance Progress Bar -->
+	<div class="bg-muted/50 relative flex h-2 w-full overflow-hidden rounded-b-full">
 		<div class="bg-destructive/40 h-full transition-all" style="width: 10%"></div>
 		<div class="bg-success/40 h-full transition-all" style="width: 45%"></div>
 		<div class="bg-warning/40 h-full transition-all" style="width: 8%"></div>
