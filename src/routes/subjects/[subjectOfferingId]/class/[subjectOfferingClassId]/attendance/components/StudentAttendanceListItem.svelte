@@ -2,10 +2,10 @@
 	import { page } from '$app/state';
 	import * as Avatar from '$lib/components/ui/avatar/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';
+	import { Checkbox } from '$lib/components/ui/checkbox/index.js';
 	import * as Dialog from '$lib/components/ui/dialog/index.js';
 	import * as Form from '$lib/components/ui/form/index.js';
 	import * as Select from '$lib/components/ui/select/index.js';
-	// import Slider from '$lib/components/ui/slider/slider.svelte';
 	import { Textarea } from '$lib/components/ui/textarea/index.js';
 	import { subjectClassAllocationAttendanceStatus } from '$lib/enums';
 	import type { SubjectClassAllocationAttendanceComponent } from '$lib/server/db/schema';
@@ -35,11 +35,19 @@
 	let {
 		attendanceRecord,
 		behaviourQuickActions = [],
-		type = 'unmarked'
+		type = 'unmarked',
+		bulkApplyMode = false,
+		isSelected = false,
+		onToggleSelection,
+		onStartBulkApply
 	}: {
 		attendanceRecord: AttendanceRecord;
 		behaviourQuickActions?: BehaviourQuickAction[];
 		type?: 'unmarked' | 'marked';
+		bulkApplyMode?: boolean;
+		isSelected?: boolean;
+		onToggleSelection?: () => void;
+		onStartBulkApply?: (userId: string, behaviourIds: number[]) => void;
 	} = $props();
 
 	const attendanceRecordData = () => attendanceRecord;
@@ -87,7 +95,6 @@
 	const classEndTime = $derived(attendanceRecord.subjectClassAllocation.endTime);
 	let showSlider = $state(false);
 
-	// Parse time string to seconds since midnight
 	function parseTimeToSeconds(timeStr: string): number {
 		const parts = timeStr.split(':').map(Number);
 		if (parts.length === 3) {
@@ -96,7 +103,6 @@
 		return parts[0] * 3600 + parts[1] * 60;
 	}
 
-	// Get current time as HH:MM:SS string (with milliseconds for smooth progress)
 	function getCurrentTimeString(): string {
 		const now = new Date();
 		const hours = now.getHours();
@@ -105,7 +111,6 @@
 		return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toFixed(3).padStart(6, '0')}`;
 	}
 
-	// Check if current time is within class time
 	function isWithinClassTime(): boolean {
 		const now = new Date();
 		const currentSeconds = now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
@@ -115,11 +120,8 @@
 	}
 
 	let isClassActive = $state(isWithinClassTime());
-
-	// Track current time for progress display
 	let currentTime = $state(getCurrentTimeString());
 
-	// Update isClassActive and currentTime every second
 	$effect(() => {
 		const interval = setInterval(() => {
 			isClassActive = isWithinClassTime();
@@ -129,18 +131,19 @@
 		return () => clearInterval(interval);
 	});
 
-	// Initialize components from attendance record
-	let components = $state<SubjectClassAllocationAttendanceComponent[]>([]);
-
-	// Update components when attendanceRecord changes
-	$effect(() => {
-		components = attendanceRecord.attendanceComponents || [];
-	});
+	let components = $derived(attendanceRecord.attendanceComponents || []);
 </script>
 
 <div class="transition-all">
 	<div class="flex items-center justify-between gap-x-4 rounded-t-md border-x border-t p-3">
 		<div class="flex items-center gap-2">
+			{#if bulkApplyMode}
+				<Checkbox
+					checked={isSelected}
+					onCheckedChange={onToggleSelection}
+					disabled={!isClassActive}
+				/>
+			{/if}
 			<Avatar.Root class="h-10 w-10">
 				<Avatar.Fallback>
 					{user.firstName.charAt(0)}{user.lastName.charAt(0)}
@@ -167,11 +170,11 @@
 					<Form.Control>
 						{#snippet children({ props })}
 							<Button
-								class="border-input w-[120px] rounded-r-none disabled:opacity-100! {type ===
-									'marked' && $formData.status === 'present'
-									? 'bg-success/50! text-success-foreground!'
+								class="border-input w-[120px] rounded-r-none {type === 'marked' &&
+								$formData.status === 'present'
+									? 'bg-success/50! text-success-foreground! disabled:opacity-100!'
 									: ''} {type === 'marked' && $formData.status === 'absent'
-									? 'bg-destructive/50! text-destructive-foreground!'
+									? 'bg-destructive/50! text-destructive-foreground! disabled:opacity-100!'
 									: ''}"
 								onclick={async () => {
 									await tick();
@@ -208,7 +211,7 @@
 							<Select.Root
 								type="multiple"
 								{...props}
-								disabled={!isClassActive}
+								disabled={!isClassActive || bulkApplyMode}
 								bind:value={$formData.behaviourQuickActionIds}
 								onValueChange={async () => {
 									await tick();
@@ -224,6 +227,25 @@
 											{option.label}
 										</Select.Item>
 									{/each}
+									{#if $formData.behaviourQuickActionIds.length > 0 && !bulkApplyMode && isClassActive}
+										<Select.Separator />
+										<div class="p-1">
+											<Button
+												variant="ghost"
+												size="sm"
+												class="w-full justify-start"
+												onclick={(e) => {
+													e.preventDefault();
+													const behaviourIds = $formData.behaviourQuickActionIds
+														.map((id) => parseInt(id, 10))
+														.filter((id) => !isNaN(id));
+													onStartBulkApply?.(user.id, behaviourIds);
+												}}
+											>
+												Apply to other students
+											</Button>
+										</div>
+									{/if}
 								</Select.Content>
 							</Select.Root>
 						{/snippet}
