@@ -15,7 +15,7 @@ import { convertToFullName } from '$lib/utils.js';
 import { fail, redirect } from '@sveltejs/kit';
 import { superValidate } from 'sveltekit-superforms';
 import { zod4 } from 'sveltekit-superforms/adapters';
-import { attendanceSchema } from './schema.js';
+import { attendanceSchema, bulkApplyBehavioursSchema } from './schema.js';
 
 export const load = async ({ locals: { security }, params: { subjectOfferingClassId } }) => {
 	const user = security.isAuthenticated().getUser();
@@ -104,6 +104,49 @@ export const actions = {
 		} catch (err) {
 			console.error('Error updating attendance:', err);
 			return fail(500, { form, error: 'Failed to update attendance' });
+		}
+	},
+
+	bulkApplyBehaviours: async ({ request, params: { subjectOfferingClassId } }) => {
+		const formData = await request.formData();
+		const form = await superValidate(formData, zod4(bulkApplyBehavioursSchema));
+
+		if (!form.valid) {
+			return fail(400, { form });
+		}
+
+		try {
+			const behaviourIds = (form.data.behaviourQuickActionIds ?? [])
+				.filter((id) => id !== '')
+				.map((id) => parseInt(id, 10))
+				.filter((id) => !isNaN(id));
+
+			const subjectOfferingClassIdInt = parseInt(subjectOfferingClassId, 10);
+
+			const attendances =
+				await getSubjectClassAllocationAndStudentAttendancesByClassIdForToday(
+					subjectOfferingClassIdInt
+				);
+
+			for (const userId of form.data.userIds) {
+				const userAttendance = attendances.find((a) => a.user.id === userId);
+
+				if (userAttendance?.attendance) {
+					await upsertSubjectClassAllocationAttendance(
+						form.data.subjectClassAllocationId,
+						userId,
+						userAttendance.attendance.status,
+						userAttendance.attendance.noteGuardian,
+						userAttendance.attendance.noteTeacher,
+						behaviourIds
+					);
+				}
+			}
+
+			return { form, success: true };
+		} catch (err) {
+			console.error('Error bulk applying behaviours:', err);
+			return fail(500, { form, error: 'Failed to apply behaviours' });
 		}
 	},
 
