@@ -131,6 +131,12 @@
 		return () => clearInterval(interval);
 	});
 
+	$effect(() => {
+		$formData.behaviourQuickActionIds = (attendanceRecordData().behaviourQuickActionIds || []).map(
+			String
+		);
+	});
+
 	let components = $derived(attendanceRecord.attendanceComponents || []);
 </script>
 
