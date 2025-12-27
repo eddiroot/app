@@ -5,11 +5,11 @@ import {
 	taskStatusEnum,
 	taskTypeEnum,
 	userTypeEnum
-} from '$lib/enums.js';
-import { db } from '$lib/server/db';
-import * as table from '$lib/server/db/schema';
-import { and, asc, desc, eq, gte, inArray, or, sql } from 'drizzle-orm';
-import { verifyUserAccessToClass } from './user';
+} from '$lib/enums.js'
+import { db } from '$lib/server/db'
+import * as table from '$lib/server/db/schema'
+import { and, asc, desc, eq, gte, inArray, or, sql } from 'drizzle-orm'
+import { verifyUserAccessToClass } from './user'
 
 export async function addTasksToClass(
 	taskIds: number[],
@@ -18,7 +18,7 @@ export async function addTasksToClass(
 	week: number | null = null
 ) {
 	if (taskIds.length === 0) {
-		return [];
+		return []
 	}
 
 	// get the next available index for the class tasks
@@ -27,8 +27,8 @@ export async function addTasksToClass(
 		.from(table.subjectOfferingClassTask)
 		.where(eq(table.subjectOfferingClassTask.subjectOfferingClassId, subjectOfferingClassId))
 		.orderBy(desc(table.subjectOfferingClassTask.index))
-		.limit(1);
-	let nextIndex = (maxIndexResult[0]?.maxIndex ?? -1) + 1;
+		.limit(1)
+	let nextIndex = (maxIndexResult[0]?.maxIndex ?? -1) + 1
 
 	const classTasks = await db
 		.insert(table.subjectOfferingClassTask)
@@ -42,9 +42,9 @@ export async function addTasksToClass(
 			}))
 		)
 		.onConflictDoNothing()
-		.returning();
+		.returning()
 
-	return classTasks;
+	return classTasks
 }
 
 // Remove a task from a class
@@ -57,9 +57,9 @@ export async function removeTaskFromClass(taskId: number, subjectOfferingClassId
 				eq(table.subjectOfferingClassTask.subjectOfferingClassId, subjectOfferingClassId)
 			)
 		)
-		.returning();
+		.returning()
 
-	return deletedClassTask;
+	return deletedClassTask
 }
 
 // Get all tasks assigned to a specific class
@@ -67,10 +67,10 @@ export async function getTasksBySubjectOfferingClassId(
 	userId: string,
 	subjectOfferingClassId: number
 ) {
-	const userAccess = await verifyUserAccessToClass(userId, subjectOfferingClassId);
+	const userAccess = await verifyUserAccessToClass(userId, subjectOfferingClassId)
 
 	if (!userAccess) {
-		return [];
+		return []
 	}
 
 	const classTasks = await db
@@ -86,19 +86,19 @@ export async function getTasksBySubjectOfferingClassId(
 			eq(table.subjectOfferingClassTask.courseMapItemId, table.courseMapItem.id)
 		)
 		.where(eq(table.subjectOfferingClassTask.subjectOfferingClassId, subjectOfferingClassId))
-		.orderBy(asc(table.task.id));
+		.orderBy(asc(table.task.id))
 
-	return classTasks?.length == 0 ? [] : classTasks;
+	return classTasks?.length == 0 ? [] : classTasks
 }
 
 export async function getLessonsAndHomeworkBySubjectOfferingClassId(
 	userId: string,
 	subjectOfferingClassId: number
 ) {
-	const userAccess = await verifyUserAccessToClass(userId, subjectOfferingClassId);
+	const userAccess = await verifyUserAccessToClass(userId, subjectOfferingClassId)
 
 	if (!userAccess) {
-		return [];
+		return []
 	}
 
 	const lessonsAndHomework = await db
@@ -119,9 +119,9 @@ export async function getLessonsAndHomeworkBySubjectOfferingClassId(
 				or(eq(table.task.type, taskTypeEnum.lesson), eq(table.task.type, taskTypeEnum.homework))
 			)
 		)
-		.orderBy(asc(table.task.createdAt));
+		.orderBy(asc(table.task.createdAt))
 
-	return lessonsAndHomework?.length == 0 ? [] : lessonsAndHomework;
+	return lessonsAndHomework?.length == 0 ? [] : lessonsAndHomework
 }
 
 export async function getTopics(subjectOfferingId: number) {
@@ -136,9 +136,9 @@ export async function getTopics(subjectOfferingId: number) {
 			eq(table.courseMapItem.subjectOfferingId, table.subjectOffering.id)
 		)
 		.where(eq(table.subjectOffering.id, subjectOfferingId))
-		.orderBy(asc(table.courseMapItem.startWeek));
+		.orderBy(asc(table.courseMapItem.startWeek))
 
-	return topics;
+	return topics
 }
 
 export async function getClassTasksByTopicId(subjectOfferingClassId: number, topicId: number) {
@@ -157,9 +157,9 @@ export async function getClassTasksByTopicId(subjectOfferingClassId: number, top
 				eq(table.courseMapItem.id, topicId)
 			)
 		)
-		.orderBy(asc(table.subjectOfferingClassTask.index));
+		.orderBy(asc(table.subjectOfferingClassTask.index))
 
-	return tasks.map((row) => row.task);
+	return tasks.map((row) => row.task)
 }
 
 export async function getTaskById(taskId: number) {
@@ -169,9 +169,9 @@ export async function getTaskById(taskId: number) {
 		})
 		.from(table.task)
 		.where(eq(table.task.id, taskId))
-		.limit(1);
+		.limit(1)
 
-	return task?.length ? task[0].task : null;
+	return task?.length ? task[0].task : null
 }
 
 export async function getTaskBlocksByTaskId(taskId: number) {
@@ -181,9 +181,9 @@ export async function getTaskBlocksByTaskId(taskId: number) {
 		})
 		.from(table.taskBlock)
 		.where(eq(table.taskBlock.taskId, taskId))
-		.orderBy(table.taskBlock.index);
+		.orderBy(table.taskBlock.index)
 
-	return taskBlocks.map((row) => row.block);
+	return taskBlocks.map((row) => row.block)
 }
 
 export async function createTask(
@@ -207,16 +207,16 @@ export async function createTask(
 			aiTutorEnabled,
 			isArchived
 		})
-		.returning();
+		.returning()
 
 	// Update the task to set originalId to its own ID
 	const [updatedTask] = await db
 		.update(table.task)
 		.set({ originalId: task.id })
 		.where(eq(table.task.id, task.id))
-		.returning();
+		.returning()
 
-	return updatedTask;
+	return updatedTask
 }
 
 export async function createSubjectOfferingClassTask(
@@ -232,8 +232,8 @@ export async function createSubjectOfferingClassTask(
 		.from(table.subjectOfferingClassTask)
 		.where(eq(table.subjectOfferingClassTask.subjectOfferingClassId, subjectOfferingClassId))
 		.orderBy(desc(table.subjectOfferingClassTask.index))
-		.limit(1);
-	const nextIndex = (maxIndexResult[0]?.maxIndex ?? -1) + 1;
+		.limit(1)
+	const nextIndex = (maxIndexResult[0]?.maxIndex ?? -1) + 1
 
 	const [subjectOfferingClassTask] = await db
 		.insert(table.subjectOfferingClassTask)
@@ -246,9 +246,9 @@ export async function createSubjectOfferingClassTask(
 			week,
 			dueDate
 		})
-		.returning();
+		.returning()
 
-	return subjectOfferingClassTask;
+	return subjectOfferingClassTask
 }
 
 export async function updateTaskTitle(taskId: number, title: string) {
@@ -256,9 +256,9 @@ export async function updateTaskTitle(taskId: number, title: string) {
 		.update(table.task)
 		.set({ title })
 		.where(eq(table.task.id, taskId))
-		.returning();
+		.returning()
 
-	return task;
+	return task
 }
 
 export async function createTaskBlock(
@@ -274,9 +274,9 @@ export async function createTaskBlock(
 			.from(table.taskBlock)
 			.where(eq(table.taskBlock.taskId, taskId))
 			.orderBy(desc(table.taskBlock.index))
-			.limit(1);
+			.limit(1)
 
-		index = (maxIndexResult[0]?.maxIndex ?? -1) + 1;
+		index = (maxIndexResult[0]?.maxIndex ?? -1) + 1
 	}
 
 	await db
@@ -284,7 +284,7 @@ export async function createTaskBlock(
 		.set({
 			index: sql`${table.taskBlock.index} + 1`
 		})
-		.where(and(eq(table.taskBlock.taskId, taskId), gte(table.taskBlock.index, index)));
+		.where(and(eq(table.taskBlock.taskId, taskId), gte(table.taskBlock.index, index)))
 
 	const [lessonBlock] = await db
 		.insert(table.taskBlock)
@@ -294,34 +294,34 @@ export async function createTaskBlock(
 			config,
 			index
 		})
-		.returning();
+		.returning()
 
 	// Auto-create whiteboard for whiteboard blocks
 	if (type === taskBlockTypeEnum.whiteboard) {
-		await createWhiteboard(lessonBlock.id, config.title as string | undefined);
+		await createWhiteboard(lessonBlock.id, config.title as string | undefined)
 	}
 
-	return lessonBlock;
+	return lessonBlock
 }
 
 export async function updateTaskBlock(
 	blockId: number,
 	updates: {
-		config?: Record<string, unknown>;
-		type?: taskBlockTypeEnum;
+		config?: Record<string, unknown>
+		type?: taskBlockTypeEnum
 	}
 ) {
 	const [taskBlock] = await db
 		.update(table.taskBlock)
 		.set({ ...updates })
 		.where(eq(table.taskBlock.id, blockId))
-		.returning();
+		.returning()
 
-	return taskBlock;
+	return taskBlock
 }
 
 export async function deleteTaskBlock(blockId: number) {
-	await db.delete(table.taskBlock).where(eq(table.taskBlock.id, blockId));
+	await db.delete(table.taskBlock).where(eq(table.taskBlock.id, blockId))
 }
 
 // Whiteboard functions
@@ -332,9 +332,9 @@ export async function createWhiteboard(taskBlockId: number, title?: string | nul
 			taskBlockId,
 			title: title && title.trim() ? title.trim() : null
 		})
-		.returning();
+		.returning()
 
-	return newWhiteboard;
+	return newWhiteboard
 }
 
 export async function getWhiteboardByTaskBlockId(taskBlockId: number) {
@@ -342,9 +342,9 @@ export async function getWhiteboardByTaskBlockId(taskBlockId: number) {
 		.select()
 		.from(table.whiteboard)
 		.where(eq(table.whiteboard.taskBlockId, taskBlockId))
-		.limit(1);
+		.limit(1)
 
-	return whiteboards[0] || null;
+	return whiteboards[0] || null
 }
 
 export async function getWhiteboardById(whiteboardId: number) {
@@ -352,9 +352,9 @@ export async function getWhiteboardById(whiteboardId: number) {
 		.select()
 		.from(table.whiteboard)
 		.where(eq(table.whiteboard.id, whiteboardId))
-		.limit(1);
+		.limit(1)
 
-	return whiteboards[0] || null;
+	return whiteboards[0] || null
 }
 
 export async function getWhiteboardWithTask(whiteboardId: number, taskId: number) {
@@ -371,17 +371,17 @@ export async function getWhiteboardWithTask(whiteboardId: number, taskId: number
 		.innerJoin(table.taskBlock, eq(table.whiteboard.taskBlockId, table.taskBlock.id))
 		.innerJoin(table.task, eq(table.taskBlock.taskId, table.task.id))
 		.where(eq(table.whiteboard.id, whiteboardId))
-		.limit(1);
+		.limit(1)
 
 	if (!whiteboardData.length || whiteboardData[0].task.id !== taskId) {
-		return null;
+		return null
 	}
 
 	return {
 		whiteboard: whiteboardData[0].whiteboard,
 		taskBlock: whiteboardData[0].taskBlock,
 		task: whiteboardData[0].task
-	};
+	}
 }
 
 export async function getWhiteboardObjects(whiteboardId: number = 1) {
@@ -389,15 +389,15 @@ export async function getWhiteboardObjects(whiteboardId: number = 1) {
 		.select()
 		.from(table.whiteboardObject)
 		.where(eq(table.whiteboardObject.whiteboardId, whiteboardId))
-		.orderBy(table.whiteboardObject.createdAt);
+		.orderBy(table.whiteboardObject.createdAt)
 
-	return objects;
+	return objects
 }
 
 export async function saveWhiteboardObject(data: {
-	objectId: string;
-	objectData: Record<string, unknown>;
-	whiteboardId?: number;
+	objectId: string
+	objectData: Record<string, unknown>
+	whiteboardId?: number
 }) {
 	const [savedObject] = await db
 		.insert(table.whiteboardObject)
@@ -405,9 +405,9 @@ export async function saveWhiteboardObject(data: {
 			...data,
 			whiteboardId: data.whiteboardId ?? 1 // Default to whiteboard ID 1
 		})
-		.returning();
+		.returning()
 
-	return savedObject;
+	return savedObject
 }
 
 export async function updateWhiteboardObject(
@@ -424,9 +424,9 @@ export async function updateWhiteboardObject(
 				eq(table.whiteboardObject.whiteboardId, whiteboardId)
 			)
 		)
-		.returning();
+		.returning()
 
-	return updatedObject;
+	return updatedObject
 }
 
 export async function deleteWhiteboardObject(objectId: string, whiteboardId: number = 1) {
@@ -437,11 +437,11 @@ export async function deleteWhiteboardObject(objectId: string, whiteboardId: num
 				eq(table.whiteboardObject.objectId, objectId),
 				eq(table.whiteboardObject.whiteboardId, whiteboardId)
 			)
-		);
+		)
 }
 
 export async function deleteWhiteboardObjects(objectIds: string[], whiteboardId: number = 1) {
-	if (objectIds.length === 0) return;
+	if (objectIds.length === 0) return
 
 	await db
 		.delete(table.whiteboardObject)
@@ -450,13 +450,43 @@ export async function deleteWhiteboardObjects(objectIds: string[], whiteboardId:
 				eq(table.whiteboardObject.whiteboardId, whiteboardId),
 				inArray(table.whiteboardObject.objectId, objectIds)
 			)
-		);
+		)
 }
 
 export async function clearWhiteboard(whiteboardId: number = 1) {
 	await db
 		.delete(table.whiteboardObject)
-		.where(eq(table.whiteboardObject.whiteboardId, whiteboardId));
+		.where(eq(table.whiteboardObject.whiteboardId, whiteboardId))
+}
+
+export async function toggleWhiteboardLock(whiteboardId: number) {
+	const [whiteboard] = await db
+		.select()
+		.from(table.whiteboard)
+		.where(eq(table.whiteboard.id, whiteboardId))
+		.limit(1)
+
+	if (!whiteboard) {
+		throw new Error('Whiteboard not found')
+	}
+
+	const [updated] = await db
+		.update(table.whiteboard)
+		.set({ isLocked: !whiteboard.isLocked })
+		.where(eq(table.whiteboard.id, whiteboardId))
+		.returning()
+
+	return updated
+}
+
+export async function getWhiteboardLockStatus(whiteboardId: number) {
+	const [whiteboard] = await db
+		.select({ isLocked: table.whiteboard.isLocked })
+		.from(table.whiteboard)
+		.where(eq(table.whiteboard.id, whiteboardId))
+		.limit(1)
+
+	return whiteboard?.isLocked ?? false
 }
 
 export async function updateTaskBlocksOrder(blockUpdates: Array<{ id: number; index: number }>) {
@@ -465,9 +495,9 @@ export async function updateTaskBlocksOrder(blockUpdates: Array<{ id: number; in
 			await tx
 				.update(table.taskBlock)
 				.set({ index: update.index })
-				.where(eq(table.taskBlock.id, update.id));
+				.where(eq(table.taskBlock.id, update.id))
 		}
-	});
+	})
 }
 
 export async function updateTaskOrder(
@@ -478,9 +508,9 @@ export async function updateTaskOrder(
 			await tx
 				.update(table.subjectOfferingClassTask)
 				.set({ index: task.index })
-				.where(eq(table.task.id, task.id));
+				.where(eq(table.task.id, task.id))
 		}
-	});
+	})
 }
 
 export async function getLearningAreaStandardByCourseMapItemId(
@@ -515,21 +545,21 @@ export async function getLearningAreaStandardByCourseMapItemId(
 				eq(table.learningAreaStandard.yearLevel, table.subject.yearLevel)
 			)
 		)
-		.orderBy(asc(table.learningAreaStandard.id));
+		.orderBy(asc(table.learningAreaStandard.id))
 
 	// Group by learningArea.id using a Map for type safety
-	const map = new Map<number, curriculumLearningAreaStandard>();
+	const map = new Map<number, curriculumLearningAreaStandard>()
 	for (const row of rows) {
-		const laId = row.learningArea.id;
+		const laId = row.learningArea.id
 		if (!map.has(laId)) {
 			map.set(laId, {
 				learningArea: row.learningArea,
 				contents: []
-			});
+			})
 		}
-		map.get(laId)!.contents.push(row.learningAreaStandard);
+		map.get(laId)!.contents.push(row.learningAreaStandard)
 	}
-	return Array.from(map.values());
+	return Array.from(map.values())
 }
 
 export async function getLearningAreasBySubjectOfferingId(subjectOfferingId: number) {
@@ -549,15 +579,15 @@ export async function getLearningAreasBySubjectOfferingId(subjectOfferingId: num
 			eq(table.learningArea.curriculumSubjectId, table.curriculumSubject.id)
 		)
 		.where(eq(table.subjectOffering.id, subjectOfferingId))
-		.orderBy(asc(table.learningArea.id));
-	return learningAreas.map((row) => row.learningArea);
+		.orderBy(asc(table.learningArea.id))
+	return learningAreas.map((row) => row.learningArea)
 }
 
 // Select the learningAreaStandards and add this to the gemini service, use coursemap.ts funtion to get the learning area content
 export async function getStandardElaborationsByLearningAreaStandardIds(
 	learningAreaStandardIds: number[]
 ) {
-	if (learningAreaStandardIds.length === 0) return [];
+	if (learningAreaStandardIds.length === 0) return []
 
 	const elaborations = await db
 		.select({
@@ -568,20 +598,20 @@ export async function getStandardElaborationsByLearningAreaStandardIds(
 		})
 		.from(table.standardElaboration)
 		.where(inArray(table.standardElaboration.learningAreaStandardId, learningAreaStandardIds))
-		.orderBy(asc(table.standardElaboration.id));
+		.orderBy(asc(table.standardElaboration.id))
 
-	return elaborations;
+	return elaborations
 }
 
 export interface CurriculumStandardWithElaborations {
-	learningAreaStandard: table.LearningAreaStandard;
-	elaborations: table.StandardElaboration[];
+	learningAreaStandard: table.LearningAreaStandard
+	elaborations: table.StandardElaboration[]
 }
 
 export async function getLearningAreaStandardWithElaborationsByIds(
 	learningAreaStandardIds: number[]
 ): Promise<CurriculumStandardWithElaborations[]> {
-	if (learningAreaStandardIds.length === 0) return [];
+	if (learningAreaStandardIds.length === 0) return []
 
 	// Get the learning area content and their elaborations (joined)
 	const rows = await db
@@ -595,28 +625,28 @@ export async function getLearningAreaStandardWithElaborationsByIds(
 			eq(table.standardElaboration.learningAreaStandardId, table.learningAreaStandard.id)
 		)
 		.where(inArray(table.learningAreaStandard.id, learningAreaStandardIds))
-		.orderBy(asc(table.learningAreaStandard.id));
+		.orderBy(asc(table.learningAreaStandard.id))
 
 	// Group by learningAreaStandard.id
-	const map = new Map<number, CurriculumStandardWithElaborations>();
+	const map = new Map<number, CurriculumStandardWithElaborations>()
 	for (const row of rows) {
-		const lac = row.learningAreaStandard;
+		const lac = row.learningAreaStandard
 		if (!map.has(lac.id)) {
 			map.set(lac.id, {
 				learningAreaStandard: lac,
 				elaborations: []
-			});
+			})
 		}
 		if (row.standardElaboration && row.standardElaboration.id) {
-			map.get(lac.id)!.elaborations.push(row.standardElaboration);
+			map.get(lac.id)!.elaborations.push(row.standardElaboration)
 		}
 	}
-	return Array.from(map.values());
+	return Array.from(map.values())
 }
 
 export interface curriculumLearningAreaStandard {
-	learningArea: table.LearningArea;
-	contents: table.LearningAreaStandard[];
+	learningArea: table.LearningArea
+	contents: table.LearningAreaStandard[]
 }
 
 export async function getCurriculumLearningAreaWithStandards(subjectOfferingId: number) {
@@ -644,21 +674,21 @@ export async function getCurriculumLearningAreaWithStandards(subjectOfferingId: 
 			)
 		)
 		.where(eq(table.subjectOffering.id, subjectOfferingId))
-		.orderBy(asc(table.learningArea.name));
+		.orderBy(asc(table.learningArea.name))
 
 	// Group by learningArea.id using a Map for type safety
-	const map = new Map<number, curriculumLearningAreaStandard>();
+	const map = new Map<number, curriculumLearningAreaStandard>()
 	for (const row of rows) {
-		const laId = row.learningArea.id;
+		const laId = row.learningArea.id
 		if (!map.has(laId)) {
 			map.set(laId, {
 				learningArea: row.learningArea,
 				contents: []
-			});
+			})
 		}
-		map.get(laId)!.contents.push(row.learningAreaStandard);
+		map.get(laId)!.contents.push(row.learningAreaStandard)
 	}
-	return Array.from(map.values());
+	return Array.from(map.values())
 }
 
 export async function createRubric(title: string) {
@@ -667,9 +697,9 @@ export async function createRubric(title: string) {
 		.values({
 			title
 		})
-		.returning();
+		.returning()
 
-	return rubric;
+	return rubric
 }
 
 export async function updateRubric(rubricId: number, updates: { title?: string }) {
@@ -677,9 +707,9 @@ export async function updateRubric(rubricId: number, updates: { title?: string }
 		.update(table.rubric)
 		.set({ ...updates })
 		.where(eq(table.rubric.id, rubricId))
-		.returning();
+		.returning()
 
-	return rubric;
+	return rubric
 }
 
 export async function getAssessmenPlanRubric(assessmentPlanId: number) {
@@ -690,9 +720,9 @@ export async function getAssessmenPlanRubric(assessmentPlanId: number) {
 		.from(table.courseMapItemAssessmentPlan)
 		.innerJoin(table.rubric, eq(table.courseMapItemAssessmentPlan.rubricId, table.rubric.id))
 		.where(eq(table.courseMapItemAssessmentPlan.id, assessmentPlanId))
-		.limit(1);
+		.limit(1)
 
-	return rubric.length > 0 ? rubric[0].rubric : null;
+	return rubric.length > 0 ? rubric[0].rubric : null
 }
 
 export async function createRubricRow(rubricId: number, title: string) {
@@ -702,9 +732,9 @@ export async function createRubricRow(rubricId: number, title: string) {
 			rubricId,
 			title
 		})
-		.returning();
+		.returning()
 
-	return row;
+	return row
 }
 
 export async function updateRubricRow(rowId: number, updates: { title?: string }) {
@@ -712,13 +742,13 @@ export async function updateRubricRow(rowId: number, updates: { title?: string }
 		.update(table.rubricRow)
 		.set({ ...updates })
 		.where(eq(table.rubricRow.id, rowId))
-		.returning();
+		.returning()
 
-	return row;
+	return row
 }
 
 export async function deleteRubricRow(rowId: number) {
-	await db.delete(table.rubricRow).where(eq(table.rubricRow.id, rowId));
+	await db.delete(table.rubricRow).where(eq(table.rubricRow.id, rowId))
 }
 
 export async function createRubricCell(
@@ -735,40 +765,36 @@ export async function createRubricCell(
 			description,
 			marks
 		})
-		.returning();
+		.returning()
 
-	return cell;
+	return cell
 }
 
 export async function updateRubricCell(
 	cellId: number,
 	updates: {
-		level?: table.RubricCell['level'];
-		description?: string;
-		marks?: number;
+		level?: table.RubricCell['level']
+		description?: string
+		marks?: number
 	}
 ) {
 	const [cell] = await db
 		.update(table.rubricCell)
 		.set({ ...updates })
 		.where(eq(table.rubricCell.id, cellId))
-		.returning();
+		.returning()
 
-	return cell;
+	return cell
 }
 
 export async function deleteRubricCell(cellId: number) {
-	await db.delete(table.rubricCell).where(eq(table.rubricCell.id, cellId));
+	await db.delete(table.rubricCell).where(eq(table.rubricCell.id, cellId))
 }
 
 export async function getRubricById(rubricId: number) {
-	const rubrics = await db
-		.select()
-		.from(table.rubric)
-		.where(eq(table.rubric.id, rubricId))
-		.limit(1);
+	const rubrics = await db.select().from(table.rubric).where(eq(table.rubric.id, rubricId)).limit(1)
 
-	return rubrics[0] || null;
+	return rubrics[0] || null
 }
 
 export async function getRubricWithRowsAndCells(rubricId: number) {
@@ -782,20 +808,20 @@ export async function getRubricWithRowsAndCells(rubricId: number) {
 		.leftJoin(table.rubricRow, eq(table.rubric.id, table.rubricRow.rubricId))
 		.leftJoin(table.rubricCell, eq(table.rubricRow.id, table.rubricCell.rowId))
 		.where(eq(table.rubric.id, rubricId))
-		.orderBy(asc(table.rubricRow.id), asc(table.rubricCell.level));
+		.orderBy(asc(table.rubricRow.id), asc(table.rubricCell.level))
 
 	if (rows.length === 0) {
-		return null;
+		return null
 	}
 
-	const rubric = rows[0].rubric;
+	const rubric = rows[0].rubric
 	const rowsMap = new Map<
 		number,
 		{
-			row: table.RubricRow;
-			cells: table.RubricCell[];
+			row: table.RubricRow
+			cells: table.RubricCell[]
 		}
-	>();
+	>()
 
 	for (const row of rows) {
 		if (row.rubricRow) {
@@ -803,10 +829,10 @@ export async function getRubricWithRowsAndCells(rubricId: number) {
 				rowsMap.set(row.rubricRow.id, {
 					row: row.rubricRow,
 					cells: []
-				});
+				})
 			}
 			if (row.rubricCell) {
-				rowsMap.get(row.rubricRow.id)!.cells.push(row.rubricCell);
+				rowsMap.get(row.rubricRow.id)!.cells.push(row.rubricCell)
 			}
 		}
 	}
@@ -814,7 +840,7 @@ export async function getRubricWithRowsAndCells(rubricId: number) {
 	return {
 		rubric,
 		rows: Array.from(rowsMap.values())
-	};
+	}
 }
 
 export async function getRubricRowsByRubricId(rubricId: number) {
@@ -822,9 +848,9 @@ export async function getRubricRowsByRubricId(rubricId: number) {
 		.select()
 		.from(table.rubricRow)
 		.where(eq(table.rubricRow.rubricId, rubricId))
-		.orderBy(asc(table.rubricRow.id));
+		.orderBy(asc(table.rubricRow.id))
 
-	return rows;
+	return rows
 }
 
 export async function getRubricCellsByRowId(rowId: number) {
@@ -832,33 +858,33 @@ export async function getRubricCellsByRowId(rowId: number) {
 		.select()
 		.from(table.rubricCell)
 		.where(eq(table.rubricCell.rowId, rowId))
-		.orderBy(asc(table.rubricCell.level));
+		.orderBy(asc(table.rubricCell.level))
 
-	return cells;
+	return cells
 }
 
 export async function deleteRubric(rubricId: number) {
 	// Cascade delete will handle rubricRow and rubricCell deletion
-	await db.delete(table.rubric).where(eq(table.rubric.id, rubricId));
+	await db.delete(table.rubric).where(eq(table.rubric.id, rubricId))
 }
 
 export async function createCompleteRubric(
 	title: string,
 	rows: Array<{
-		title: string;
+		title: string
 		cells: Array<{
-			level: table.RubricCell['level'];
-			description: string;
-			marks: number;
-		}>;
+			level: table.RubricCell['level']
+			description: string
+			marks: number
+		}>
 	}>
 ) {
 	return await db.transaction(async (tx) => {
 		// Create the rubric
-		const [rubric] = await tx.insert(table.rubric).values({ title }).returning();
+		const [rubric] = await tx.insert(table.rubric).values({ title }).returning()
 
 		// Create rows and cells
-		const createdRows = [];
+		const createdRows = []
 		for (const rowData of rows) {
 			const [row] = await tx
 				.insert(table.rubricRow)
@@ -866,9 +892,9 @@ export async function createCompleteRubric(
 					rubricId: rubric.id,
 					title: rowData.title
 				})
-				.returning();
+				.returning()
 
-			const cells = [];
+			const cells = []
 			for (const cellData of rowData.cells) {
 				const [cell] = await tx
 					.insert(table.rubricCell)
@@ -878,24 +904,24 @@ export async function createCompleteRubric(
 						description: cellData.description,
 						marks: cellData.marks
 					})
-					.returning();
-				cells.push(cell);
+					.returning()
+				cells.push(cell)
 			}
 
-			createdRows.push({ row, cells });
+			createdRows.push({ row, cells })
 		}
 
-		return { rubric, rows: createdRows };
-	});
+		return { rubric, rows: createdRows }
+	})
 }
 
 export async function duplicateRubric(rubricId: number, newTitle?: string) {
-	const existingRubric = await getRubricWithRowsAndCells(rubricId);
+	const existingRubric = await getRubricWithRowsAndCells(rubricId)
 	if (!existingRubric) {
-		throw new Error('Rubric not found');
+		throw new Error('Rubric not found')
 	}
 
-	const title = newTitle || `${existingRubric.rubric.title} (Copy)`;
+	const title = newTitle || `${existingRubric.rubric.title} (Copy)`
 	const rows = existingRubric.rows.map(({ row, cells }) => ({
 		title: row.title,
 		cells: cells.map((cell) => ({
@@ -903,9 +929,9 @@ export async function duplicateRubric(rubricId: number, newTitle?: string) {
 			description: cell.description,
 			marks: cell.marks
 		}))
-	}));
+	}))
 
-	return await createCompleteRubric(title, rows);
+	return await createCompleteRubric(title, rows)
 }
 
 export async function getSubjectOfferingClassTaskByTaskId(
@@ -921,9 +947,9 @@ export async function getSubjectOfferingClassTaskByTaskId(
 				eq(table.subjectOfferingClassTask.subjectOfferingClassId, subjectOfferingClassId)
 			)
 		)
-		.limit(1);
+		.limit(1)
 
-	return classTask || null;
+	return classTask || null
 }
 
 export async function updateSubjectOfferingClassTaskStatus(
@@ -939,18 +965,18 @@ export async function updateSubjectOfferingClassTaskStatus(
 				eq(table.subjectOfferingClassTask.taskId, taskId),
 				eq(table.subjectOfferingClassTask.subjectOfferingClassId, subjectOfferingClassId)
 			)
-		);
+		)
 }
 
 export async function updateSubjectOfferingClassTaskQuizSettings(
 	taskId: number,
 	subjectOfferingClassId: number,
 	quizSettings: {
-		quizMode?: quizModeEnum;
-		quizStartTime?: Date | null;
-		quizDurationMinutes?: number | null;
-		gradeRelease?: gradeReleaseEnum;
-		gradeReleaseTime?: Date | null;
+		quizMode?: quizModeEnum
+		quizStartTime?: Date | null
+		quizDurationMinutes?: number | null
+		gradeRelease?: gradeReleaseEnum
+		gradeReleaseTime?: Date | null
 	}
 ) {
 	await db
@@ -961,7 +987,7 @@ export async function updateSubjectOfferingClassTaskQuizSettings(
 				eq(table.subjectOfferingClassTask.taskId, taskId),
 				eq(table.subjectOfferingClassTask.subjectOfferingClassId, subjectOfferingClassId)
 			)
-		);
+		)
 }
 
 export async function startQuizSession(classTaskId: number) {
@@ -970,7 +996,7 @@ export async function startQuizSession(classTaskId: number) {
 		.set({
 			quizStartTime: new Date()
 		})
-		.where(eq(table.subjectOfferingClassTask.id, classTaskId));
+		.where(eq(table.subjectOfferingClassTask.id, classTaskId))
 }
 
 // Task Block Response functions
@@ -999,9 +1025,9 @@ export async function upsertClassTaskBlockResponse(
 				response
 			}
 		})
-		.returning();
+		.returning()
 
-	return upsertedResponse;
+	return upsertedResponse
 }
 
 export async function getClassTaskBlockResponsesByClassTaskId(classTaskId: number) {
@@ -1013,22 +1039,22 @@ export async function getClassTaskBlockResponsesByClassTaskId(classTaskId: numbe
 		.from(table.classTaskBlockResponse)
 		.innerJoin(table.taskBlock, eq(table.classTaskBlockResponse.taskBlockId, table.taskBlock.id))
 		.where(eq(table.classTaskBlockResponse.classTaskId, classTaskId))
-		.orderBy(asc(table.classTaskBlockResponse.authorId), asc(table.taskBlock.index));
+		.orderBy(asc(table.classTaskBlockResponse.authorId), asc(table.taskBlock.index))
 
 	const groupedResponses: {
 		[authorId: string]: {
-			[blockId: number]: table.ClassTaskBlockResponse;
-		};
-	} = {};
-	for (const item of responses) {
-		const authorId = item.response.authorId;
-		if (!groupedResponses[authorId]) {
-			groupedResponses[authorId] = {};
+			[blockId: number]: table.ClassTaskBlockResponse
 		}
-		groupedResponses[authorId][item.block.id] = item.response;
+	} = {}
+	for (const item of responses) {
+		const authorId = item.response.authorId
+		if (!groupedResponses[authorId]) {
+			groupedResponses[authorId] = {}
+		}
+		groupedResponses[authorId][item.block.id] = item.response
 	}
 
-	return groupedResponses;
+	return groupedResponses
 }
 
 export async function getClassTaskBlockResponsesByAuthorId(classTaskId: number, authorId: string) {
@@ -1044,15 +1070,15 @@ export async function getClassTaskBlockResponsesByAuthorId(classTaskId: number, 
 				eq(table.classTaskBlockResponse.authorId, authorId),
 				eq(table.classTaskBlockResponse.classTaskId, classTaskId)
 			)
-		);
+		)
 
 	return responses.reduce(
 		(acc, curr) => {
-			acc[curr.block.id] = curr.response;
-			return acc;
+			acc[curr.block.id] = curr.response
+			return acc
 		},
 		{} as { [blockId: number]: table.ClassTaskBlockResponse }
-	);
+	)
 }
 
 // Helper function to get teacher from class
@@ -1070,9 +1096,9 @@ export async function getClassTeacher(subjectOfferingClassId: number) {
 				eq(table.userSubjectOfferingClass.isArchived, false)
 			)
 		)
-		.limit(1);
+		.limit(1)
 
-	return teacher[0]?.userId || null;
+	return teacher[0]?.userId || null
 }
 
 // Class Task Response functions
@@ -1088,9 +1114,9 @@ export async function createClassTaskResponse(
 			authorId,
 			comment
 		})
-		.returning();
+		.returning()
 
-	return response;
+	return response
 }
 
 export async function upsertClassTaskResponse(classTaskId: number, authorId: string) {
@@ -1103,9 +1129,9 @@ export async function upsertClassTaskResponse(classTaskId: number, authorId: str
 		.onConflictDoNothing({
 			target: [table.classTaskResponse.classTaskId, table.classTaskResponse.authorId]
 		})
-		.returning();
+		.returning()
 
-	return response;
+	return response
 }
 
 export async function getClassTaskResponse(classTaskId: number, authorId: string) {
@@ -1118,9 +1144,9 @@ export async function getClassTaskResponse(classTaskId: number, authorId: string
 				eq(table.classTaskResponse.authorId, authorId)
 			)
 		)
-		.limit(1);
+		.limit(1)
 
-	return response[0] || null;
+	return response[0] || null
 }
 
 export async function getClassTaskResponseResources(classTaskResponseId: number) {
@@ -1137,9 +1163,9 @@ export async function getClassTaskResponseResources(classTaskResponseId: number)
 				eq(table.classTaskResponseResource.isArchived, false),
 				eq(table.resource.isArchived, false)
 			)
-		);
+		)
 
-	return resources;
+	return resources
 }
 
 export async function getClassTaskResponsesWithStudents(classTaskId: number) {
@@ -1161,9 +1187,9 @@ export async function getClassTaskResponsesWithStudents(classTaskId: number) {
 				eq(table.classTaskResponse.isArchived, false)
 			)
 		)
-		.orderBy(asc(table.user.lastName), asc(table.user.firstName));
+		.orderBy(asc(table.user.lastName), asc(table.user.firstName))
 
-	return responses;
+	return responses
 }
 
 export async function updateClassTaskResponseComment(
@@ -1176,9 +1202,9 @@ export async function updateClassTaskResponseComment(
 			comment
 		})
 		.where(eq(table.classTaskResponse.id, classTaskResponseId))
-		.returning();
+		.returning()
 
-	return response;
+	return response
 }
 
 export async function archiveAllResourcesFromClassTaskResponse(classTaskResponseId: number) {
@@ -1187,7 +1213,7 @@ export async function archiveAllResourcesFromClassTaskResponse(classTaskResponse
 		.set({
 			isArchived: true
 		})
-		.where(eq(table.classTaskResponseResource.classTaskResponseId, classTaskResponseId));
+		.where(eq(table.classTaskResponseResource.classTaskResponseId, classTaskResponseId))
 }
 
 export async function deleteResourcesFromClassTaskResponse(classTaskResponseId: number) {
@@ -1203,13 +1229,13 @@ export async function deleteResourcesFromClassTaskResponse(classTaskResponseId: 
 				eq(table.classTaskResponseResource.isArchived, false),
 				eq(table.resource.isArchived, false)
 			)
-		);
+		)
 
 	await db
 		.delete(table.classTaskResponseResource)
-		.where(eq(table.classTaskResponseResource.classTaskResponseId, classTaskResponseId));
+		.where(eq(table.classTaskResponseResource.classTaskResponseId, classTaskResponseId))
 
-	return resources.map((r) => r.resource);
+	return resources.map((r) => r.resource)
 }
 
 export async function deleteResourceFromClassTaskResponse(
@@ -1236,10 +1262,10 @@ export async function deleteResourceFromClassTaskResponse(
 				eq(table.classTaskResponseResource.isArchived, false),
 				eq(table.resource.isArchived, false)
 			)
-		);
+		)
 
 	if (!resourceData) {
-		throw new Error('Resource not found or access denied');
+		throw new Error('Resource not found or access denied')
 	}
 
 	await db
@@ -1249,9 +1275,9 @@ export async function deleteResourceFromClassTaskResponse(
 				eq(table.classTaskResponseResource.classTaskResponseId, classTaskResponseId),
 				eq(table.classTaskResponseResource.resourceId, resourceId)
 			)
-		);
+		)
 
-	return resourceData.resource;
+	return resourceData.resource
 }
 
 export async function addResourceToClassTaskResponse(
@@ -1265,9 +1291,9 @@ export async function addResourceToClassTaskResponse(
 			resourceId,
 			authorId: '' // This will be set by the calling function
 		})
-		.returning();
+		.returning()
 
-	return relationship;
+	return relationship
 }
 
 export async function addResourcesToClassTaskResponse(
@@ -1276,7 +1302,7 @@ export async function addResourcesToClassTaskResponse(
 	authorId: string
 ) {
 	if (resourceIds.length === 0) {
-		return [];
+		return []
 	}
 
 	const newRelationships = await db
@@ -1289,7 +1315,7 @@ export async function addResourcesToClassTaskResponse(
 			}))
 		)
 		.onConflictDoNothing()
-		.returning();
+		.returning()
 
-	return newRelationships;
+	return newRelationships
 }

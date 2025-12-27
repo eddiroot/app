@@ -1,37 +1,37 @@
 <script lang="ts">
-	import { page } from '$app/state';
-	import { type TaskBlock } from '$lib/server/db/schema';
-	import { dndState, draggable, droppable, type DragDropState } from '@thisux/sveltednd';
+	import { page } from '$app/state'
+	import { type TaskBlock } from '$lib/server/db/schema'
+	import { dndState, draggable, droppable, type DragDropState } from '@thisux/sveltednd'
 	// UI Components
-	import { Badge } from '$lib/components/ui/badge';
-	import Button, { buttonVariants } from '$lib/components/ui/button/button.svelte';
-	import * as Card from '$lib/components/ui/card';
-	import * as Dialog from '$lib/components/ui/dialog';
-	import * as Form from '$lib/components/ui/form';
-	import { Input } from '$lib/components/ui/input';
-	import { Label } from '$lib/components/ui/label';
-	import * as Select from '$lib/components/ui/select';
+	import { Badge } from '$lib/components/ui/badge'
+	import Button, { buttonVariants } from '$lib/components/ui/button/button.svelte'
+	import * as Card from '$lib/components/ui/card'
+	import * as Dialog from '$lib/components/ui/dialog'
+	import * as Form from '$lib/components/ui/form'
+	import { Input } from '$lib/components/ui/input'
+	import { Label } from '$lib/components/ui/label'
+	import * as Select from '$lib/components/ui/select'
 	// Block Components
-	import BlockAudio from './components/block-audio.svelte';
-	import BlockBalancingEquations from './components/block-balancing-equations.svelte';
-	import BlockChoice from './components/block-choice.svelte';
-	import BlockClose from './components/block-close.svelte';
-	import BlockFillBlank from './components/block-fill-blank.svelte';
-	import BlockGraph from './components/block-graph.svelte';
-	import BlockHeading from './components/block-heading.svelte';
-	import BlockHighlightText from './components/block-highlight-text.svelte';
-	import BlockImage from './components/block-image.svelte';
-	import BlockMatching from './components/block-matching.svelte';
-	import BlockMathInput from './components/block-math-input.svelte';
-	import BlockRichText from './components/block-rich-text-editor.svelte';
-	import BlockShortAnswer from './components/block-short-answer.svelte';
-	import BlockTable from './components/block-table.svelte';
-	import BlockVideo from './components/block-video.svelte';
-	import BlockWhiteboard from './components/block-whiteboard.svelte';
+	import BlockAudio from './components/block-audio.svelte'
+	import BlockBalancingEquations from './components/block-balancing-equations.svelte'
+	import BlockChoice from './components/block-choice.svelte'
+	import BlockClose from './components/block-close.svelte'
+	import BlockFillBlank from './components/block-fill-blank.svelte'
+	import BlockGraph from './components/block-graph.svelte'
+	import BlockHeading from './components/block-heading.svelte'
+	import BlockHighlightText from './components/block-highlight-text.svelte'
+	import BlockImage from './components/block-image.svelte'
+	import BlockMatching from './components/block-matching.svelte'
+	import BlockMathInput from './components/block-math-input.svelte'
+	import BlockRichText from './components/block-rich-text-editor.svelte'
+	import BlockShortAnswer from './components/block-short-answer.svelte'
+	import BlockTable from './components/block-table.svelte'
+	import BlockVideo from './components/block-video.svelte'
+	import BlockWhiteboard from './components/block-whiteboard.svelte'
 	// Icons
-	import CheckCircleIcon from '@lucide/svelte/icons/check-circle';
-	import ClockIcon from '@lucide/svelte/icons/clock';
-	import EyeIcon from '@lucide/svelte/icons/eye';
+	import CheckCircleIcon from '@lucide/svelte/icons/check-circle'
+	import ClockIcon from '@lucide/svelte/icons/clock'
+	import EyeIcon from '@lucide/svelte/icons/eye'
 
 	import {
 		createBlock,
@@ -40,7 +40,7 @@
 		updateBlockOrder,
 		updateTaskTitle,
 		upsertBlockResponse
-	} from './client';
+	} from './client'
 
 	import {
 		gradeReleaseEnum,
@@ -48,7 +48,7 @@
 		taskBlockTypeEnum,
 		taskStatusEnum,
 		userTypeEnum
-	} from '$lib/enums';
+	} from '$lib/enums'
 	import {
 		blockTypes,
 		ViewMode,
@@ -69,287 +69,285 @@
 		type BlockTableConfig,
 		type BlockVideoConfig,
 		type BlockWhiteboardConfig
-	} from '$lib/schema/task';
-	import { formatTimer } from '$lib/utils';
-	import { PencilIcon, SettingsIcon } from '@lucide/svelte';
-	import GripVerticalIcon from '@lucide/svelte/icons/grip-vertical';
-	import PresentationIcon from '@lucide/svelte/icons/presentation';
-	import { superForm } from 'sveltekit-superforms';
-	import { zod4 } from 'sveltekit-superforms/adapters';
-	import { quizSettingsFormSchema, startQuizFormSchema, statusFormSchema } from './schema';
+	} from '$lib/schema/task'
+	import { formatTimer } from '$lib/utils'
+	import { PencilIcon, SettingsIcon } from '@lucide/svelte'
+	import GripVerticalIcon from '@lucide/svelte/icons/grip-vertical'
+	import PresentationIcon from '@lucide/svelte/icons/presentation'
+	import { superForm } from 'sveltekit-superforms'
+	import { zod4 } from 'sveltekit-superforms/adapters'
+	import { quizSettingsFormSchema, startQuizFormSchema, statusFormSchema } from './schema'
 
-	let { data } = $props();
+	let { data } = $props()
 
-	let blocks = $state(data.blocks);
-	let responses = $state<Record<number, any>>({});
+	let blocks = $state(data.blocks)
+	let responses = $state<Record<number, any>>({})
 
-	let mouseOverElement = $state<string>('');
+	let mouseOverElement = $state<string>('')
 	let viewMode = $state<ViewMode>(
 		data.user.type == userTypeEnum.student ? ViewMode.ANSWER : ViewMode.CONFIGURE
-	);
-	let selectedStudent = $state<string | null>(null);
-	let showSettings = $state(false);
+	)
+	let selectedStudent = $state<string | null>(null)
+	let showSettings = $state(false)
 
-	let timeRemaining = $state<number>(0);
-	let timerInterval: ReturnType<typeof setInterval> | null = null;
+	let timeRemaining = $state<number>(0)
+	let timerInterval: ReturnType<typeof setInterval> | null = null
 
 	const statusForm = superForm(data.statusForm, {
 		validators: zod4(statusFormSchema),
 		resetForm: false
-	});
-	const { form: statusFormData, enhance: statusEnhance } = statusForm;
+	})
+	const { form: statusFormData, enhance: statusEnhance } = statusForm
 
 	const quizSettingsForm = superForm(data.quizSettingsForm, {
 		validators: zod4(quizSettingsFormSchema),
 		resetForm: false,
 		onUpdated: ({ form }) => {
 			if (form.valid) {
-				showSettings = false;
+				showSettings = false
 			}
 		}
-	});
-	const { form: quizSettingsFormData, enhance: quizSettingsEnhance } = quizSettingsForm;
+	})
+	const { form: quizSettingsFormData, enhance: quizSettingsEnhance } = quizSettingsForm
 
 	const startQuizForm = superForm(data.startQuizForm, {
 		validators: zod4(startQuizFormSchema),
 		resetForm: false
-	});
-	const { enhance: startQuizEnhance } = startQuizForm;
+	})
+	const { enhance: startQuizEnhance } = startQuizForm
 
 	const isContentBlocked = $derived(() => {
-		if (data.user.type !== userTypeEnum.student) return false;
+		if (data.user.type !== userTypeEnum.student) return false
 
-		if (data.classTask.quizMode === quizModeEnum.none) return false;
+		if (data.classTask.quizMode === quizModeEnum.none) return false
 
 		if (!data.isQuizStarted) {
-			return true;
+			return true
 		}
 
-		return false;
-	});
+		return false
+	})
 
 	$effect(() => {
 		const isStudentInQuizMode =
 			data.user.type === userTypeEnum.student &&
 			(data.classTask.quizMode === quizModeEnum.scheduled ||
-				data.classTask.quizMode === quizModeEnum.manual);
+				data.classTask.quizMode === quizModeEnum.manual)
 
 		if (isStudentInQuizMode && data.classTask.quizDurationMinutes && data.classTask.quizStartTime) {
-			const startTime = new Date(data.classTask.quizStartTime).getTime();
-			const durationMs = data.classTask.quizDurationMinutes * 60 * 1000;
-			const elapsed = Date.now() - startTime;
-			const remaining = Math.max(0, (durationMs - elapsed) / 1000);
+			const startTime = new Date(data.classTask.quizStartTime).getTime()
+			const durationMs = data.classTask.quizDurationMinutes * 60 * 1000
+			const elapsed = Date.now() - startTime
+			const remaining = Math.max(0, (durationMs - elapsed) / 1000)
 
-			timeRemaining = remaining;
+			timeRemaining = remaining
 
 			if (remaining > 0) {
-				startTimer();
+				startTimer()
 			}
 		}
 
 		return () => {
 			if (timerInterval) {
-				clearInterval(timerInterval);
+				clearInterval(timerInterval)
 			}
-		};
-	});
+		}
+	})
 
 	function startTimer() {
-		if (timerInterval) clearInterval(timerInterval);
+		if (timerInterval) clearInterval(timerInterval)
 
 		timerInterval = setInterval(() => {
-			timeRemaining -= 1;
-		}, 1000);
+			timeRemaining -= 1
+		}, 1000)
 	}
 
 	$effect(() => {
 		blocks.forEach((block) => {
 			if (!Object.prototype.hasOwnProperty.call(responses, block.id)) {
 				const serverResponse =
-					data.user.type === userTypeEnum.student ? data.blockResponses![block.id]?.response : null;
-				responses[block.id] = serverResponse || getInitialResponse(block.type);
+					data.user.type === userTypeEnum.student ? data.blockResponses![block.id]?.response : null
+				responses[block.id] = serverResponse || getInitialResponse(block.type)
 			}
-		});
-	});
+		})
+	})
 
 	function getInitialResponse(blockType: taskBlockTypeEnum): BlockResponse | null {
 		switch (blockType) {
 			case taskBlockTypeEnum.choice:
-				return { answers: [] };
+				return { answers: [] }
 			case taskBlockTypeEnum.fillBlank:
-				return { answers: [] };
+				return { answers: [] }
 			case taskBlockTypeEnum.matching:
-				return { matches: [] };
+				return { matches: [] }
 			case taskBlockTypeEnum.shortAnswer:
-				return { answer: '' };
+				return { answer: '' }
 			case taskBlockTypeEnum.close:
-				return { answer: '' };
+				return { answer: '' }
 			case taskBlockTypeEnum.highlightText:
-				return { selectedText: [] };
+				return { selectedText: [] }
 			case taskBlockTypeEnum.graph:
-				return { studentPlots: [] };
+				return { studentPlots: [] }
 			case taskBlockTypeEnum.balancingEquations:
-				return { coefficients: { reactants: [], products: [] } };
+				return { coefficients: { reactants: [], products: [] } }
 			case taskBlockTypeEnum.mathInput:
-				return { answer: '' };
+				return { answer: '' }
 			default:
-				return null;
+				return null
 		}
 	}
 
 	function getCurrentResponse(blockId: number, blockType: taskBlockTypeEnum) {
-		const initialResponse = getInitialResponse(blockType);
-		if (!initialResponse) return null;
+		const initialResponse = getInitialResponse(blockType)
+		if (!initialResponse) return null
 
 		if (data.user.type == userTypeEnum.student) {
-			return responses[blockId] || data.blockResponses![blockId]?.response || initialResponse;
+			return responses[blockId] || data.blockResponses![blockId]?.response || initialResponse
 		}
 
 		if (viewMode === ViewMode.REVIEW && selectedStudent) {
-			return data.groupedBlockResponses![selectedStudent]?.[blockId]?.response || initialResponse;
+			return data.groupedBlockResponses![selectedStudent]?.[blockId]?.response || initialResponse
 		}
 
-		return responses[blockId] || initialResponse;
+		return responses[blockId] || initialResponse
 	}
 
 	async function handleConfigUpdate(block: TaskBlock, config: any) {
-		await updateBlock({ block, config });
-		const blockIndex = blocks.findIndex((b) => b.id === block.id);
+		await updateBlock({ block, config })
+		const blockIndex = blocks.findIndex((b) => b.id === block.id)
 		if (blockIndex !== -1) {
-			blocks[blockIndex] = { ...blocks[blockIndex], config };
+			blocks[blockIndex] = { ...blocks[blockIndex], config }
 		}
 	}
 
 	async function handleResponseUpdate(blockId: number, response: any) {
-		responses[blockId] = response;
+		responses[blockId] = response
 
-		if (data.user.type !== userTypeEnum.student) return;
+		if (data.user.type !== userTypeEnum.student) return
 
 		try {
-			await upsertBlockResponse(blockId, data.classTask.id, response);
+			await upsertBlockResponse(blockId, data.classTask.id, response)
 		} catch (error) {
-			console.error('Failed to save response:', error);
+			console.error('Failed to save response:', error)
 		}
 	}
 
-	const draggedOverClasses = 'border-accent-foreground';
-	const notDraggedOverClasses = 'border-bg';
+	const draggedOverClasses = 'border-accent-foreground'
+	const notDraggedOverClasses = 'border-bg'
 
 	async function handleDrop(state: DragDropState<TaskBlock>) {
-		const { draggedItem, sourceContainer, targetContainer } = state;
-		if (!targetContainer) return;
+		const { draggedItem, sourceContainer, targetContainer } = state
+		if (!targetContainer) return
 
 		if (sourceContainer === 'blockPalette' && targetContainer.startsWith('task')) {
-			const index = blocks.findIndex((b) => b.id.toString() === targetContainer.split('-')[1]);
+			const index = blocks.findIndex((b) => b.id.toString() === targetContainer.split('-')[1])
 
 			const { block } = await createBlock({
 				taskId: data.task.id,
 				type: draggedItem.type,
 				config: draggedItem.config,
 				index: targetContainer === 'task-bottom' ? blocks.length : index
-			});
+			})
 
 			if (!block) {
-				alert('Failed to create block. Please try again.');
-				return;
+				alert('Failed to create block. Please try again.')
+				return
 			}
 
 			if (targetContainer === 'task-bottom') {
-				blocks = [...blocks, block];
+				blocks = [...blocks, block]
 			} else if (index !== -1) {
-				blocks = [...blocks.slice(0, index), block, ...blocks.slice(index)];
+				blocks = [...blocks.slice(0, index), block, ...blocks.slice(index)]
 			} else {
-				alert('Failed to insert block at the correct position. Please try again.');
-				return;
+				alert('Failed to insert block at the correct position. Please try again.')
+				return
 			}
 		}
 
 		// Handle drops from two-column layout to main task
 		if (sourceContainer.startsWith('two-column-') && targetContainer.startsWith('task')) {
-			const index = blocks.findIndex((b) => b.id.toString() === targetContainer.split('-')[1]);
+			const index = blocks.findIndex((b) => b.id.toString() === targetContainer.split('-')[1])
 
 			const { block } = await createBlock({
 				taskId: data.task.id,
 				type: draggedItem.type,
 				config: draggedItem.config,
 				index: targetContainer === 'task-bottom' ? blocks.length : index
-			});
+			})
 
 			if (!block) {
-				alert('Failed to create block. Please try again.');
-				return;
+				alert('Failed to create block. Please try again.')
+				return
 			}
 
 			if (targetContainer === 'task-bottom') {
-				blocks = [...blocks, block];
+				blocks = [...blocks, block]
 			} else if (index !== -1) {
-				blocks = [...blocks.slice(0, index), block, ...blocks.slice(index)];
+				blocks = [...blocks.slice(0, index), block, ...blocks.slice(index)]
 			} else {
-				alert('Failed to insert block at the correct position. Please try again.');
-				return;
+				alert('Failed to insert block at the correct position. Please try again.')
+				return
 			}
 		}
 
 		if (sourceContainer.startsWith('task') && targetContainer.startsWith('task')) {
-			const sourceIndex = draggedItem.index;
-			const targetIndex = blocks.findIndex(
-				(b) => b.id.toString() === targetContainer.split('-')[1]
-			);
+			const sourceIndex = draggedItem.index
+			const targetIndex = blocks.findIndex((b) => b.id.toString() === targetContainer.split('-')[1])
 
 			if (targetIndex === -1 || sourceIndex === -1) {
-				alert('Failed to find block for drag and drop. Please try again.');
-				return;
+				alert('Failed to find block for drag and drop. Please try again.')
+				return
 			}
 
 			if (sourceIndex === targetIndex) {
-				return;
+				return
 			}
 
-			const newBlocks = [...blocks];
-			const [movedBlock] = newBlocks.splice(sourceIndex, 1);
+			const newBlocks = [...blocks]
+			const [movedBlock] = newBlocks.splice(sourceIndex, 1)
 
 			// Adjust target index if moving downwards (after removing the source item, indices shift)
-			const adjustedTargetIndex = sourceIndex < targetIndex ? targetIndex - 1 : targetIndex;
-			newBlocks.splice(adjustedTargetIndex, 0, movedBlock);
+			const adjustedTargetIndex = sourceIndex < targetIndex ? targetIndex - 1 : targetIndex
+			newBlocks.splice(adjustedTargetIndex, 0, movedBlock)
 
 			const finalisedBlocks = newBlocks.map((block, index) => ({
 				...block,
 				index
-			}));
+			}))
 
 			const blockOrder = finalisedBlocks.map(({ id, index }) => ({
 				id,
 				index
-			}));
+			}))
 
 			try {
-				await updateBlockOrder({ blockOrder });
+				await updateBlockOrder({ blockOrder })
 			} catch (error) {
-				blocks = [...blocks];
-				alert('Failed to update block order. Please try again.');
-				console.error('Error updating block order:', error);
+				blocks = [...blocks]
+				alert('Failed to update block order. Please try again.')
+				console.error('Error updating block order:', error)
 			}
 
-			blocks = finalisedBlocks;
+			blocks = finalisedBlocks
 		}
 
 		if (sourceContainer.startsWith('task') && targetContainer === 'blockPalette') {
-			const { success } = await deleteBlock(draggedItem.id);
+			const { success } = await deleteBlock(draggedItem.id)
 			if (!success) {
-				alert('Failed to delete block. Please try again.');
-				return;
+				alert('Failed to delete block. Please try again.')
+				return
 			}
-			blocks = blocks.filter((block) => block.id !== draggedItem.id);
+			blocks = blocks.filter((block) => block.id !== draggedItem.id)
 		}
 
 		// Handle drops from main task to two-column layout
 		if (sourceContainer.startsWith('task') && targetContainer.startsWith('two-column-')) {
-			const { success } = await deleteBlock(draggedItem.id);
+			const { success } = await deleteBlock(draggedItem.id)
 			if (!success) {
-				alert('Failed to move block to column. Please try again.');
-				return;
+				alert('Failed to move block to column. Please try again.')
+				return
 			}
-			blocks = blocks.filter((block) => block.id !== draggedItem.id);
+			blocks = blocks.filter((block) => block.id !== draggedItem.id)
 		}
 	}
 </script>
@@ -374,14 +372,14 @@
 								bind:value={$statusFormData.status}
 								onValueChange={(value) => {
 									if (value) {
-										$statusFormData.status = value as any;
+										$statusFormData.status = value as any
 										// Auto-submit the form when value changes
 										setTimeout(() => {
 											const form = document.querySelector(
 												'form[action="?/status"]'
-											) as HTMLFormElement;
-											if (form) form.submit();
-										}, 0);
+											) as HTMLFormElement
+											if (form) form.submit()
+										}, 0)
 									}
 								}}
 							>
