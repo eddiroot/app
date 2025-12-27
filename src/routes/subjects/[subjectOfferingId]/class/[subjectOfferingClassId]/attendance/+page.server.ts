@@ -1,5 +1,6 @@
 import { subjectClassAllocationAttendanceStatus } from '$lib/enums';
 import {
+	endClassPass,
 	getAttendanceComponentsByAttendanceId,
 	getBehaviourQuickActionsByAttendanceId,
 	getBehaviourQuickActionsBySchoolId,
@@ -17,7 +18,7 @@ import { convertToFullName } from '$lib/utils.js';
 import { fail, redirect } from '@sveltejs/kit';
 import { superValidate } from 'sveltekit-superforms';
 import { zod4 } from 'sveltekit-superforms/adapters';
-import { attendanceSchema, bulkApplyBehavioursSchema, startClassPassSchema } from './schema.js';
+import { attendanceSchema, bulkApplyBehavioursSchema, classPassSchema } from './schema.js';
 
 export const load = async ({ locals: { security }, params: { subjectOfferingClassId } }) => {
 	const user = security.isAuthenticated().getUser();
@@ -179,7 +180,7 @@ export const actions = {
 
 	startClassPass: async ({ request }) => {
 		const formData = await request.formData();
-		const form = await superValidate(formData, zod4(startClassPassSchema));
+		const form = await superValidate(formData, zod4(classPassSchema));
 
 		if (!form.valid) {
 			return fail(400, { form });
@@ -191,6 +192,23 @@ export const actions = {
 		} catch (err) {
 			console.error('Error starting class pass:', err);
 			return fail(500, { form, error: 'Failed to start class pass' });
+		}
+	},
+
+	endClassPass: async ({ request }) => {
+		const formData = await request.formData();
+		const form = await superValidate(formData, zod4(classPassSchema));
+
+		if (!form.valid) {
+			return fail(400, { form });
+		}
+
+		try {
+			await endClassPass(form.data.subjectClassAllocationId, form.data.userId);
+			return { form, success: true };
+		} catch (err) {
+			console.error('Error ending class pass:', err);
+			return fail(500, { form, error: 'Failed to end class pass' });
 		}
 	}
 };

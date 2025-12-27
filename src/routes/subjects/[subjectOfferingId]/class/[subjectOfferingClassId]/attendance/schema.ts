@@ -18,11 +18,11 @@ export const bulkApplyBehavioursSchema = z.object({
 	behaviourQuickActionIds: z.array(z.string()).min(1, 'At least one behaviour must be selected')
 });
 
-export const startClassPassSchema = z.object({
+export const classPassSchema = z.object({
 	subjectClassAllocationId: z.number().min(1, 'Subject Class Allocation ID is required'),
 	userId: z.string().min(1, 'User ID is required')
 });
 
 export type AttendanceSchema = typeof attendanceSchema;
 export type BulkApplyBehavioursSchema = typeof bulkApplyBehavioursSchema;
-export type StartClassPassSchema = typeof startClassPassSchema;
+export type ClassPassSchema = typeof classPassSchema;

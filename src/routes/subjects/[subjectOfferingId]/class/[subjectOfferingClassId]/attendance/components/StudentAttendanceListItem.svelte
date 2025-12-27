@@ -5,9 +5,13 @@
 	import { Checkbox } from '$lib/components/ui/checkbox/index.js';
 	import * as Dialog from '$lib/components/ui/dialog/index.js';
 	import * as Form from '$lib/components/ui/form/index.js';
+	import Label from '$lib/components/ui/label/label.svelte';
 	import * as Select from '$lib/components/ui/select/index.js';
 	import { Textarea } from '$lib/components/ui/textarea/index.js';
-	import { subjectClassAllocationAttendanceStatus } from '$lib/enums';
+	import {
+		subjectClassAllocationAttendanceComponentType,
+		subjectClassAllocationAttendanceStatus
+	} from '$lib/enums';
 	import type { SubjectClassAllocationAttendanceComponent } from '$lib/server/db/schema';
 	import {
 		type BehaviourQuickAction,
@@ -16,9 +20,10 @@
 		type User
 	} from '$lib/server/db/schema';
 	import { convertToFullName } from '$lib/utils';
+	import DoorClosed from '@lucide/svelte/icons/door-closed';
+	import DoorOpen from '@lucide/svelte/icons/door-open';
 	import History from '@lucide/svelte/icons/history';
 	import NotepadText from '@lucide/svelte/icons/notepad-text';
-	import DoorOpen from '@lucide/svelte/icons/door-open';
 	import { tick } from 'svelte';
 	import { superForm } from 'sveltekit-superforms';
 	import { zod4Client } from 'sveltekit-superforms/adapters';
@@ -141,6 +146,12 @@
 	});
 
 	let components = $derived(attendanceRecord.attendanceComponents || []);
+	const isLatestComponentClassPass =
+		// svelte-ignore state_referenced_locally
+		components.findIndex(
+			(c) => c.type === subjectClassAllocationAttendanceComponentType.classPass
+		) ===
+		components.length - 1;
 </script>
 
 <div class="transition-all">
@@ -261,28 +272,36 @@
 					</Form.Control>
 				</Form.Field>
 			</form>
-			<div class="relative">
-				<Button
-					variant="outline"
-					onclick={() => (dialogOpen = true)}
-					disabled={type === 'unmarked' || !isClassActive}
-				>
-					<NotepadText />
-				</Button>
-				{#if attendanceRecord.classNote}
-					<span class="absolute -top-1 -right-1 flex h-3 w-3">
-						<span class="animate-pulse inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
-						<span class="absolute inline-flex h-3 w-3 rounded-full bg-primary"></span>
-					</span>
-				{/if}
-			</div>
 			<Button
 				variant="outline"
-				onclick={() => (classPassDialogOpen = true)}
+				onclick={() => (dialogOpen = true)}
 				disabled={type === 'unmarked' || !isClassActive}
+				class={attendanceRecord.classNote ? 'border-warning/50!' : ''}
 			>
-				<DoorOpen />
+				<NotepadText />
 			</Button>
+			{#if isLatestComponentClassPass}
+				<form method="POST" action="?/endClassPass">
+					<input type="hidden" name="userId" value={user.id} />
+					<input
+						type="hidden"
+						name="subjectClassAllocationId"
+						value={attendanceRecord.subjectClassAllocation.id}
+					/>
+					<Button type="submit" disabled={type === 'unmarked' || !isClassActive}>
+						<DoorClosed />
+					</Button>
+				</form>
+			{:else}
+				<Button
+					variant="outline"
+					onclick={() => (classPassDialogOpen = true)}
+					disabled={type === 'unmarked' || !isClassActive}
+				>
+					<DoorOpen />
+				</Button>
+			{/if}
+
 			<Button variant="outline" href={`${page.url.pathname}/${user.id}`}>
 				<History />
 			</Button>
@@ -316,15 +335,19 @@
 			/>
 			<div class="space-y-4 py-4">
 				{#if attendanceRecord.classNote}
-					<div>
-						<Form.Label class="text-sm font-medium">Class Note</Form.Label>
-						<p class="bg-muted mt-1 rounded-md p-3 text-sm">{attendanceRecord.classNote}</p>
+					<div class="space-y-2">
+						<Label>Class Note</Label>
+						<Textarea
+							disabled
+							defaultValue={attendanceRecord.classNote}
+							class="min-h-20 resize-none"
+						/>
 					</div>
 				{/if}
 				<Form.Field {form} name="noteTeacher">
 					<Form.Control>
 						{#snippet children({ props })}
-							<Form.Label class="text-sm font-medium">Additional Notes</Form.Label>
+							<Form.Label>Additional Notes</Form.Label>
 							<Textarea
 								{...props}
 								bind:value={$formData.noteTeacher}
@@ -360,7 +383,7 @@
 				name="subjectClassAllocationId"
 				value={attendanceRecord.subjectClassAllocation.id}
 			/>
-			<Dialog.Footer>
+			<Dialog.Footer class="mt-4">
 				<Button variant="outline" type="button" onclick={() => (classPassDialogOpen = false)}>
 					Cancel
 				</Button>
