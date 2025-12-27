@@ -157,8 +157,13 @@
 		return FileQuestionIcon;
 	};
 
+	const userData = () => user;
 	const sidebar = Sidebar.useSidebar();
-	const fullName = convertToFullName(user?.firstName, user?.middleName, user?.lastName);
+	const fullName = convertToFullName(
+		userData()?.firstName,
+		userData()?.middleName,
+		userData()?.lastName
+	);
 	let form: HTMLFormElement | null = $state(null);
 
 	function getInitials(firstName: string | null, lastName: string | null): string {
@@ -199,8 +204,9 @@
 		return page.url.pathname === expectedPath || page.url.pathname.startsWith(expectedPath + '/');
 	}
 
-	let currentCampus = $state(campuses.length > 0 ? campuses[0] : null);
-	const permissions = $state(getPermissions(user?.type || ''));
+	const campusesData = () => campuses;
+	let currentCampus = $state(campusesData().length > 0 ? campusesData()[0] : null);
+	const permissions = $state(getPermissions(userData()?.type || ''));
 </script>
 
 <Sidebar.Root
