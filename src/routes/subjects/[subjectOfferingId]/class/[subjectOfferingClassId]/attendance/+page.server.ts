@@ -7,6 +7,8 @@ import {
 	getSubjectClassAllocationAndStudentAttendancesByClassIdForToday,
 	getSubjectOfferingClassByAllocationId,
 	getUserById,
+	getUserSubjectOfferingClassByUserAndClass,
+	startClassPass,
 	updateAttendanceComponents,
 	upsertSubjectClassAllocationAttendance
 } from '$lib/server/db/service';
@@ -15,7 +17,7 @@ import { convertToFullName } from '$lib/utils.js';
 import { fail, redirect } from '@sveltejs/kit';
 import { superValidate } from 'sveltekit-superforms';
 import { zod4 } from 'sveltekit-superforms/adapters';
-import { attendanceSchema, bulkApplyBehavioursSchema } from './schema.js';
+import { attendanceSchema, bulkApplyBehavioursSchema, startClassPassSchema } from './schema.js';
 
 export const load = async ({ locals: { security }, params: { subjectOfferingClassId } }) => {
 	const user = security.isAuthenticated().getUser();
@@ -34,19 +36,25 @@ export const load = async ({ locals: { security }, params: { subjectOfferingClas
 
 	const attendancesWithBehaviours = await Promise.all(
 		attendances.map(async (attendance) => {
+			const userClass = await getUserSubjectOfferingClassByUserAndClass(
+				attendance.user.id,
+				attendance.subjectClassAllocation.subjectOfferingClassId
+			);
 			if (attendance.attendance?.id) {
 				const behaviours = await getBehaviourQuickActionsByAttendanceId(attendance.attendance.id);
 				const components = await getAttendanceComponentsByAttendanceId(attendance.attendance.id);
 				return {
 					...attendance,
 					behaviourQuickActionIds: behaviours.map((b) => b.id),
-					attendanceComponents: components
+					attendanceComponents: components,
+					classNote: userClass?.classNote || null
 				};
 			}
 			return {
 				...attendance,
 				behaviourQuickActionIds: [],
-				attendanceComponents: []
+				attendanceComponents: [],
+				classNote: userClass?.classNote || null
 			};
 		})
 	);
@@ -166,6 +174,23 @@ export const actions = {
 		} catch (err) {
 			console.error('Error updating components:', err);
 			return fail(500, { error: 'Failed to update components' });
+		}
+	},
+
+	startClassPass: async ({ request }) => {
+		const formData = await request.formData();
+		const form = await superValidate(formData, zod4(startClassPassSchema));
+
+		if (!form.valid) {
+			return fail(400, { form });
+		}
+
+		try {
+			await startClassPass(form.data.subjectClassAllocationId, form.data.userId);
+			return { form, success: true };
+		} catch (err) {
+			console.error('Error starting class pass:', err);
+			return fail(500, { form, error: 'Failed to start class pass' });
 		}
 	}
 };

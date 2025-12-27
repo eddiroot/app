@@ -18,6 +18,7 @@
 	import { convertToFullName } from '$lib/utils';
 	import History from '@lucide/svelte/icons/history';
 	import NotepadText from '@lucide/svelte/icons/notepad-text';
+	import DoorOpen from '@lucide/svelte/icons/door-open';
 	import { tick } from 'svelte';
 	import { superForm } from 'sveltekit-superforms';
 	import { zod4Client } from 'sveltekit-superforms/adapters';
@@ -30,6 +31,7 @@
 		subjectClassAllocation: Pick<SubjectClassAllocation, 'id' | 'startTime' | 'endTime'>;
 		behaviourQuickActionIds?: number[];
 		attendanceComponents?: SubjectClassAllocationAttendanceComponent[];
+		classNote?: string | null;
 	};
 
 	let {
@@ -77,6 +79,7 @@
 	const user = $derived(attendanceRecord.user);
 	const fullName = $derived(convertToFullName(user.firstName, user.middleName, user.lastName));
 	let dialogOpen = $state(false);
+	let classPassDialogOpen = $state(false);
 
 	const selectedBehavioursLabel = $derived(
 		$formData.behaviourQuickActionIds.length === 0
@@ -258,12 +261,27 @@
 					</Form.Control>
 				</Form.Field>
 			</form>
+			<div class="relative">
+				<Button
+					variant="outline"
+					onclick={() => (dialogOpen = true)}
+					disabled={type === 'unmarked' || !isClassActive}
+				>
+					<NotepadText />
+				</Button>
+				{#if attendanceRecord.classNote}
+					<span class="absolute -top-1 -right-1 flex h-3 w-3">
+						<span class="animate-pulse inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+						<span class="absolute inline-flex h-3 w-3 rounded-full bg-primary"></span>
+					</span>
+				{/if}
+			</div>
 			<Button
 				variant="outline"
-				onclick={() => (dialogOpen = true)}
+				onclick={() => (classPassDialogOpen = true)}
 				disabled={type === 'unmarked' || !isClassActive}
 			>
-				<NotepadText />
+				<DoorOpen />
 			</Button>
 			<Button variant="outline" href={`${page.url.pathname}/${user.id}`}>
 				<History />
@@ -296,7 +314,13 @@
 				name="subjectClassAllocationId"
 				value={attendanceRecord.subjectClassAllocation.id}
 			/>
-			<div class="py-4">
+			<div class="space-y-4 py-4">
+				{#if attendanceRecord.classNote}
+					<div>
+						<Form.Label class="text-sm font-medium">Class Note</Form.Label>
+						<p class="bg-muted mt-1 rounded-md p-3 text-sm">{attendanceRecord.classNote}</p>
+					</div>
+				{/if}
 				<Form.Field {form} name="noteTeacher">
 					<Form.Control>
 						{#snippet children({ props })}
@@ -314,6 +338,41 @@
 			<Dialog.Footer>
 				<Button variant="outline" type="button" onclick={() => (dialogOpen = false)}>Close</Button>
 				<Button variant="default" type="submit">Save</Button>
+			</Dialog.Footer>
+		</form>
+	</Dialog.Content>
+</Dialog.Root>
+
+<!-- Class Pass Confirmation Dialog -->
+<Dialog.Root bind:open={classPassDialogOpen}>
+	<Dialog.Content class="max-w-md">
+		<form method="POST" action="?/startClassPass">
+			<Dialog.Header>
+				<Dialog.Title>Start Class Pass</Dialog.Title>
+				<Dialog.Description>
+					This will start a class pass for {fullName}. The current attendance component will end and
+					a class pass component will begin.
+				</Dialog.Description>
+			</Dialog.Header>
+			<input type="hidden" name="userId" value={user.id} />
+			<input
+				type="hidden"
+				name="subjectClassAllocationId"
+				value={attendanceRecord.subjectClassAllocation.id}
+			/>
+			<Dialog.Footer>
+				<Button variant="outline" type="button" onclick={() => (classPassDialogOpen = false)}>
+					Cancel
+				</Button>
+				<Button
+					variant="default"
+					type="submit"
+					onclick={() => {
+						classPassDialogOpen = false;
+					}}
+				>
+					Start Class Pass
+				</Button>
 			</Dialog.Footer>
 		</form>
 	</Dialog.Content>

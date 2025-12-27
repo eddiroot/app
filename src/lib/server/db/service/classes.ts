@@ -167,6 +167,7 @@ export async function getSubjectClassAllocationAndStudentAttendancesByClassIdFor
 			},
 			subjectClassAllocation: {
 				id: table.subjectClassAllocation.id,
+				subjectOfferingClassId: table.subjectClassAllocation.subjectOfferingClassId,
 				startTime: table.subjectClassAllocation.startTime,
 				endTime: table.subjectClassAllocation.endTime
 			}
@@ -497,4 +498,22 @@ export async function getStudentsBySubjectOfferingClassId(subjectOfferingClassId
 		.orderBy(asc(table.user.lastName), asc(table.user.firstName));
 
 	return students;
+}
+
+export async function getUserSubjectOfferingClassByUserAndClass(
+	userId: string,
+	subjectOfferingClassId: number
+) {
+	const [userClass] = await db
+		.select()
+		.from(table.userSubjectOfferingClass)
+		.where(
+			and(
+				eq(table.userSubjectOfferingClass.userId, userId),
+				eq(table.userSubjectOfferingClass.subOffClassId, subjectOfferingClassId)
+			)
+		)
+		.limit(1);
+
+	return userClass;
 }

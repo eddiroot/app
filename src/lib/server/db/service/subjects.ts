@@ -933,6 +933,99 @@ export async function upsertSubjectClassAllocationAttendance(
 	});
 }
 
+export async function startClassPass(
+	subjectClassAllocationId: number,
+	userId: string
+) {
+	return await db.transaction(async (tx) => {
+		// Get class allocation details for time calculation
+		const [classAllocation] = await tx
+			.select({
+				startTime: table.subjectClassAllocation.startTime,
+				endTime: table.subjectClassAllocation.endTime
+			})
+			.from(table.subjectClassAllocation)
+			.where(eq(table.subjectClassAllocation.id, subjectClassAllocationId))
+			.limit(1);
+
+		if (!classAllocation) {
+			throw new Error('Class allocation not found');
+		}
+
+		// Get or create attendance record
+		const [existingAttendance] = await tx
+			.select()
+			.from(table.subjectClassAllocationAttendance)
+			.where(
+				and(
+					eq(
+						table.subjectClassAllocationAttendance.subjectClassAllocationId,
+						subjectClassAllocationId
+					),
+					eq(table.subjectClassAllocationAttendance.userId, userId)
+				)
+			)
+			.limit(1);
+
+		let attendanceId: number;
+
+		if (!existingAttendance) {
+			// Create new attendance record with present status
+			const [attendance] = await tx
+				.insert(table.subjectClassAllocationAttendance)
+				.values({
+					subjectClassAllocationId,
+					userId,
+					status: subjectClassAllocationAttendanceStatus.present
+				})
+				.returning();
+
+			attendanceId = attendance.id;
+
+			// Create initial present component for entire duration
+			await tx.insert(table.subjectClassAllocationAttendanceComponent).values({
+				attendanceId,
+				type: subjectClassAllocationAttendanceComponentType.present,
+				startTime: classAllocation.startTime,
+				endTime: classAllocation.endTime
+			});
+		} else {
+			attendanceId = existingAttendance.id;
+		}
+
+		// Get current time
+		const now = new Date();
+		const currentTime = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}`;
+
+		// Get existing components
+		const existingComponents = await tx
+			.select()
+			.from(table.subjectClassAllocationAttendanceComponent)
+			.where(eq(table.subjectClassAllocationAttendanceComponent.attendanceId, attendanceId))
+			.orderBy(table.subjectClassAllocationAttendanceComponent.startTime);
+
+		if (existingComponents.length > 0) {
+			const lastComponent = existingComponents[existingComponents.length - 1];
+
+			// Update the last component's end time to current time
+			await tx
+				.update(table.subjectClassAllocationAttendanceComponent)
+				.set({ endTime: currentTime })
+				.where(eq(table.subjectClassAllocationAttendanceComponent.id, lastComponent.id));
+
+			// Create a new classPass component from current time to end of class
+			await tx.insert(table.subjectClassAllocationAttendanceComponent).values({
+				attendanceId,
+				type: subjectClassAllocationAttendanceComponentType.classPass,
+				startTime: currentTime,
+				endTime: classAllocation.endTime
+			});
+		}
+
+		return { success: true };
+	});
+}
+
 export async function getSubjectYearLevelBySubjectOfferingId(subjectOfferingId: number) {
 	const subject = await db
 		.select({
