@@ -207,7 +207,7 @@ export async function createTask(
 			version: 1,
 			subjectOfferingId,
 			aiTutorEnabled,
-			isArchived,
+			isArchived
 		})
 		.returning();
 
@@ -476,6 +476,36 @@ export async function clearWhiteboard(whiteboardId: number = 1) {
 		.where(eq(table.whiteboardObject.whiteboardId, whiteboardId));
 }
 
+export async function toggleWhiteboardLock(whiteboardId: number) {
+	const [whiteboard] = await db
+		.select()
+		.from(table.whiteboard)
+		.where(eq(table.whiteboard.id, whiteboardId))
+		.limit(1);
+
+	if (!whiteboard) {
+		throw new Error('Whiteboard not found');
+	}
+
+	const [updated] = await db
+		.update(table.whiteboard)
+		.set({ isLocked: !whiteboard.isLocked })
+		.where(eq(table.whiteboard.id, whiteboardId))
+		.returning();
+
+	return updated;
+}
+
+export async function getWhiteboardLockStatus(whiteboardId: number) {
+	const [whiteboard] = await db
+		.select({ isLocked: table.whiteboard.isLocked })
+		.from(table.whiteboard)
+		.where(eq(table.whiteboard.id, whiteboardId))
+		.limit(1);
+
+	return whiteboard?.isLocked ?? false;
+}
+
 export async function updateTaskBlocksOrder(blockUpdates: Array<{ id: number; index: number }>) {
 	await db.transaction(async (tx) => {
 		for (const update of blockUpdates) {
@@ -556,7 +586,10 @@ export async function getLearningAreasBySubjectOfferingId(subjectOfferingId: num
 			learningArea: table.learningArea
 		})
 		.from(table.subjectOffering)
-		.innerJoin(table.curriculumSubject, eq(table.subjectOffering.curriculumSubjectId, table.curriculumSubject.id))
+		.innerJoin(
+			table.curriculumSubject,
+			eq(table.subjectOffering.curriculumSubjectId, table.curriculumSubject.id)
+		)
 		.innerJoin(
 			table.learningArea,
 			eq(table.learningArea.curriculumSubjectId, table.curriculumSubject.id)

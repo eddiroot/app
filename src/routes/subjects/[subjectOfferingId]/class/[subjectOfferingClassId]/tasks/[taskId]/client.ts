@@ -1,6 +1,7 @@
-import type { taskBlockTypeEnum } from '$lib/enums';
+import { invalidateAll } from '$app/navigation'
+import type { taskBlockTypeEnum } from '$lib/enums'
 
-const API_BASE = '/api/tasks';
+const API_BASE = '/api/tasks'
 
 export async function updateTaskTitle(request: { taskId: number; title: string }) {
 	const response = await fetch(API_BASE, {
@@ -9,22 +10,22 @@ export async function updateTaskTitle(request: { taskId: number; title: string }
 			'Content-Type': 'application/json'
 		},
 		body: JSON.stringify(request)
-	});
+	})
 
-	const data = await response.json();
+	const data = await response.json()
 
 	if (!response.ok) {
-		throw new Error(data.error || 'Failed to update task title');
+		throw new Error(data.error || 'Failed to update task title')
 	}
 
-	return data;
+	return data
 }
 
 export async function createBlock(request: {
-	taskId: number;
-	type: taskBlockTypeEnum;
-	config: unknown;
-	index: number;
+	taskId: number
+	type: taskBlockTypeEnum
+	config: unknown
+	index: number
 }) {
 	const response = await fetch(`${API_BASE}/blocks`, {
 		method: 'POST',
@@ -32,29 +33,34 @@ export async function createBlock(request: {
 			'Content-Type': 'application/json'
 		},
 		body: JSON.stringify(request)
-	});
+	})
 
-	const data = await response.json();
+	const data = await response.json()
 
 	if (!response.ok) {
-		throw new Error(data.error || 'Failed to create block');
+		throw new Error(data.error || 'Failed to create block')
 	}
 
-	return data;
+	// If a whiteboard block was created, invalidate to reload whiteboardMap
+	if (request.type === 'whiteboard') {
+		await invalidateAll()
+	}
+
+	return data
 }
 
 export async function updateBlock(request: {
 	block: {
-		id: number;
-		createdAt: Date;
-		updatedAt: Date;
-		type: taskBlockTypeEnum;
-		taskId: number;
-		config: unknown;
-		index: number;
-		availableMarks: number | null;
-	};
-	config: unknown;
+		id: number
+		createdAt: Date
+		updatedAt: Date
+		type: taskBlockTypeEnum
+		taskId: number
+		config: unknown
+		index: number
+		availableMarks: number | null
+	}
+	config: unknown
 }) {
 	const response = await fetch(`${API_BASE}/blocks`, {
 		method: 'PATCH',
@@ -62,29 +68,29 @@ export async function updateBlock(request: {
 			'Content-Type': 'application/json'
 		},
 		body: JSON.stringify(request)
-	});
+	})
 
-	const data = await response.json();
+	const data = await response.json()
 
 	if (!response.ok) {
-		throw new Error(data.error || 'Failed to update block');
+		throw new Error(data.error || 'Failed to update block')
 	}
 
-	return data;
+	return data
 }
 
 export async function deleteBlock(blockId: number) {
 	const response = await fetch(`${API_BASE}/blocks?blockId=${blockId}`, {
 		method: 'DELETE'
-	});
+	})
 
-	const data = await response.json();
+	const data = await response.json()
 
 	if (!response.ok) {
-		throw new Error(data.error || 'Failed to delete block');
+		throw new Error(data.error || 'Failed to delete block')
 	}
 
-	return data;
+	return data
 }
 
 export async function updateBlockOrder(request: { blockOrder: { id: number; index: number }[] }) {
@@ -94,15 +100,15 @@ export async function updateBlockOrder(request: { blockOrder: { id: number; inde
 			'Content-Type': 'application/json'
 		},
 		body: JSON.stringify(request)
-	});
+	})
 
-	const data = await response.json();
+	const data = await response.json()
 
 	if (!response.ok) {
-		throw new Error(data.error || 'Failed to update block order');
+		throw new Error(data.error || 'Failed to update block order')
 	}
 
-	return data;
+	return data
 }
 
 export async function upsertBlockResponse(
@@ -120,11 +126,11 @@ export async function upsertBlockResponse(
 			classTaskId,
 			response
 		})
-	});
+	})
 
 	if (!result.ok) {
-		throw new Error('Failed to save response');
+		throw new Error('Failed to save response')
 	}
 
-	return result.json();
+	return result.json()
 }
