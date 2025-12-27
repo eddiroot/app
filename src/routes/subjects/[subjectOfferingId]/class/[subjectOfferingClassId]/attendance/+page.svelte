@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
+	import { invalidateAll } from '$app/navigation';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { Input } from '$lib/components/ui/input/index.js';
 	import { convertToFullName } from '$lib/utils';
@@ -88,6 +89,7 @@
 						return async ({ result }) => {
 							if (result.type === 'success') {
 								cancelBulkApply();
+								invalidateAll();
 							}
 						};
 					}}
@@ -123,7 +125,7 @@
 				Unrecorded ({unmarkedAttendances.length})
 			</h2>
 			<div class="space-y-3">
-				{#each unmarkedAttendances as attendanceRecord (`${attendanceRecord.user.id}-${bulkApplyBehaviourIds.join(',')}`)}
+				{#each unmarkedAttendances as attendanceRecord (attendanceRecord.user.id)}
 					<div animate:flip={{ duration: 400 }} in:fade={{ duration: 200 }}>
 						<StudentAttendanceListItem
 							{attendanceRecord}
@@ -147,7 +149,7 @@
 				Recorded ({markedAttendances.length})
 			</h2>
 			<div class="space-y-3">
-				{#each markedAttendances as attendanceRecord (`${attendanceRecord.user.id}-${bulkApplyBehaviourIds.join(',')}`)}
+				{#each markedAttendances as attendanceRecord (attendanceRecord.user.id)}
 					<div animate:flip={{ duration: 400 }} in:fade={{ duration: 200 }}>
 						<StudentAttendanceListItem
 							{attendanceRecord}
