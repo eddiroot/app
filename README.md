@@ -40,7 +40,7 @@ npm run db:seed
 
 ## Cleaning schema
 
-2. Run the following commands one-by-one
+2. Run the following commands
 
 ```bash
 docker compose down --volumes

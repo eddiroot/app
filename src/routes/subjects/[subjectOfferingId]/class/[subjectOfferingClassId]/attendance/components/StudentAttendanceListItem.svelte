@@ -1,10 +1,18 @@
 <script lang="ts">
 	import { page } from '$app/state';
+	import * as Avatar from '$lib/components/ui/avatar/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';
+	import { Checkbox } from '$lib/components/ui/checkbox/index.js';
 	import * as Dialog from '$lib/components/ui/dialog/index.js';
 	import * as Form from '$lib/components/ui/form/index.js';
+	import Label from '$lib/components/ui/label/label.svelte';
 	import * as Select from '$lib/components/ui/select/index.js';
 	import { Textarea } from '$lib/components/ui/textarea/index.js';
+	import {
+		subjectClassAllocationAttendanceComponentType,
+		subjectClassAllocationAttendanceStatus
+	} from '$lib/enums';
+	import type { SubjectClassAllocationAttendanceComponent } from '$lib/server/db/schema';
 	import {
 		type BehaviourQuickAction,
 		type SubjectClassAllocation,
@@ -12,40 +20,52 @@
 		type User
 	} from '$lib/server/db/schema';
 	import { convertToFullName } from '$lib/utils';
+	import DoorClosed from '@lucide/svelte/icons/door-closed';
+	import DoorOpen from '@lucide/svelte/icons/door-open';
 	import History from '@lucide/svelte/icons/history';
-	import MessageCircleWarning from '@lucide/svelte/icons/message-circle-warning';
-	import NotebookPen from '@lucide/svelte/icons/notebook-pen';
 	import NotepadText from '@lucide/svelte/icons/notepad-text';
 	import { tick } from 'svelte';
-	import { fade } from 'svelte/transition';
 	import { superForm } from 'sveltekit-superforms';
 	import { zod4Client } from 'sveltekit-superforms/adapters';
 	import { attendanceSchema } from '../schema';
+	import AttendanceProgressBar from './AttendanceProgressBar.svelte';
 
 	type AttendanceRecord = {
 		user: Pick<User, 'id' | 'firstName' | 'middleName' | 'lastName'>;
 		attendance?: SubjectClassAllocationAttendance | null;
-		subjectClassAllocation: Pick<SubjectClassAllocation, 'id'>;
+		subjectClassAllocation: Pick<SubjectClassAllocation, 'id' | 'startTime' | 'endTime'>;
 		behaviourQuickActionIds?: number[];
+		attendanceComponents?: SubjectClassAllocationAttendanceComponent[];
+		classNote?: string | null;
 	};
 
 	let {
 		attendanceRecord,
 		behaviourQuickActions = [],
-		type = 'unmarked'
+		type = 'unmarked',
+		bulkApplyMode = false,
+		isSelected = false,
+		onToggleSelection,
+		onStartBulkApply
 	}: {
 		attendanceRecord: AttendanceRecord;
 		behaviourQuickActions?: BehaviourQuickAction[];
 		type?: 'unmarked' | 'marked';
+		bulkApplyMode?: boolean;
+		isSelected?: boolean;
+		onToggleSelection?: () => void;
+		onStartBulkApply?: (userId: string, behaviourIds: number[]) => void;
 	} = $props();
 
+	const attendanceRecordData = () => attendanceRecord;
 	const form = superForm(
 		{
-			subjectClassAllocationId: attendanceRecord.subjectClassAllocation.id,
-			userId: attendanceRecord.user.id,
-			status: attendanceRecord.attendance?.status || '',
-			noteTeacher: attendanceRecord.attendance?.noteTeacher || '',
-			behaviourQuickActionIds: (attendanceRecord.behaviourQuickActionIds ?? []).map(String)
+			subjectClassAllocationId: attendanceRecordData().subjectClassAllocation.id,
+			userId: attendanceRecordData().user.id,
+			status:
+				attendanceRecordData().attendance?.status || subjectClassAllocationAttendanceStatus.present,
+			noteTeacher: attendanceRecordData().attendance?.noteTeacher || '',
+			behaviourQuickActionIds: (attendanceRecordData().behaviourQuickActionIds ?? []).map(String)
 		},
 		{
 			validators: zod4Client(attendanceSchema),
@@ -62,18 +82,9 @@
 	const { form: formData, enhance: formEnhance } = form;
 
 	const user = $derived(attendanceRecord.user);
-	const attendance = $derived(attendanceRecord.attendance);
 	const fullName = $derived(convertToFullName(user.firstName, user.middleName, user.lastName));
 	let dialogOpen = $state(false);
-
-	const statusOptions = [
-		{ value: 'present', label: 'Present' },
-		{ value: 'absent', label: 'Absent' }
-	];
-
-	const selectedStatusLabel = $derived(
-		statusOptions.find((option) => option.value === $formData.status)?.label || 'Status'
-	);
+	let classPassDialogOpen = $state(false);
 
 	const selectedBehavioursLabel = $derived(
 		$formData.behaviourQuickActionIds.length === 0
@@ -87,29 +98,78 @@
 			label: behaviour.name
 		}))
 	);
+
+	const classStartTime = $derived(attendanceRecord.subjectClassAllocation.startTime);
+	const classEndTime = $derived(attendanceRecord.subjectClassAllocation.endTime);
+	let showSlider = $state(false);
+
+	function parseTimeToSeconds(timeStr: string): number {
+		const parts = timeStr.split(':').map(Number);
+		if (parts.length === 3) {
+			return parts[0] * 3600 + parts[1] * 60 + parts[2];
+		}
+		return parts[0] * 3600 + parts[1] * 60;
+	}
+
+	function getCurrentTimeString(): string {
+		const now = new Date();
+		const hours = now.getHours();
+		const minutes = now.getMinutes();
+		const seconds = now.getSeconds() + now.getMilliseconds() / 1000;
+		return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toFixed(3).padStart(6, '0')}`;
+	}
+
+	function isWithinClassTime(): boolean {
+		const now = new Date();
+		const currentSeconds = now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
+		const startSeconds = parseTimeToSeconds(classStartTime);
+		const endSeconds = parseTimeToSeconds(classEndTime);
+		return currentSeconds >= startSeconds && currentSeconds <= endSeconds;
+	}
+
+	let isClassActive = $state(isWithinClassTime());
+	let currentTime = $state(getCurrentTimeString());
+
+	$effect(() => {
+		const interval = setInterval(() => {
+			isClassActive = isWithinClassTime();
+			currentTime = getCurrentTimeString();
+		}, 1000);
+
+		return () => clearInterval(interval);
+	});
+
+	$effect(() => {
+		$formData.behaviourQuickActionIds = (attendanceRecordData().behaviourQuickActionIds || []).map(
+			String
+		);
+	});
+
+	let components = $derived(attendanceRecord.attendanceComponents || []);
+	const isLatestComponentClassPass =
+		// svelte-ignore state_referenced_locally
+		components.findIndex(
+			(c) => c.type === subjectClassAllocationAttendanceComponentType.classPass
+		) ===
+		components.length - 1;
 </script>
 
-<div class="border-border border-b transition-all last:border-b-0" in:fade={{ duration: 200 }}>
-	<div class="flex items-center justify-between p-4">
-		<!-- Student info and status -->
+<div class="transition-all">
+	<div class="flex items-center justify-between gap-x-4 rounded-t-md border-x border-t p-3">
 		<div class="flex items-center gap-2">
-			<div class="bg-muted flex h-10 w-10 items-center justify-center rounded-full">
-				<span class="text-sm font-medium">
+			{#if bulkApplyMode}
+				<Checkbox
+					checked={isSelected}
+					onCheckedChange={onToggleSelection}
+					disabled={!isClassActive}
+				/>
+			{/if}
+			<Avatar.Root class="h-10 w-10">
+				<Avatar.Fallback>
 					{user.firstName.charAt(0)}{user.lastName.charAt(0)}
-				</span>
-			</div>
-			<div class="flex flex-col">
-				<h3 class="truncate font-medium">{fullName}</h3>
-				<div class="flex items-center gap-2">
-					{#if attendance?.noteTeacher}
-						<NotebookPen class="size-4" />
-					{/if}
-
-					{#if attendance?.noteGuardian}
-						<MessageCircleWarning class="text-destructive size-4" />
-					{/if}
-				</div>
-			</div>
+				</Avatar.Fallback>
+			</Avatar.Root>
+			<h3 class="truncate font-medium">{fullName}</h3>
 		</div>
 
 		<div class="flex items-center gap-2">
@@ -126,12 +186,52 @@
 					value={attendanceRecord.subjectClassAllocation.id}
 				/>
 
+				<Form.Field {form} name="status" class="flex gap-0 space-y-0">
+					<Form.Control>
+						{#snippet children({ props })}
+							<Button
+								class="border-input w-[120px] rounded-r-none {type === 'marked' &&
+								$formData.status === 'present'
+									? 'bg-success/50! text-success-foreground! disabled:opacity-100!'
+									: ''} {type === 'marked' && $formData.status === 'absent'
+									? 'bg-destructive/50! text-destructive-foreground! disabled:opacity-100!'
+									: ''}"
+								onclick={async () => {
+									await tick();
+									form.submit();
+								}}
+								variant="outline"
+								disabled={type === 'marked' || !isClassActive}
+							>
+								{$formData.status.slice(0, 1).toUpperCase() + $formData.status.slice(1)}
+							</Button>
+							<Select.Root
+								type="single"
+								bind:value={$formData.status}
+								name={props.name}
+								disabled={!isClassActive}
+								onValueChange={async () => {
+									await tick();
+									form.submit();
+								}}
+							>
+								<Select.Trigger {...props} class="rounded-l-none border-l-0" />
+								<Select.Content>
+									<Select.Item value="present" label="Present" />
+									<Select.Item value="absent" label="Absent" />
+								</Select.Content>
+							</Select.Root>
+						{/snippet}
+					</Form.Control>
+				</Form.Field>
+
 				<Form.Field {form} name="behaviourQuickActionIds" class="space-y-0">
 					<Form.Control>
 						{#snippet children({ props })}
 							<Select.Root
 								type="multiple"
 								{...props}
+								disabled={!isClassActive || bulkApplyMode}
 								bind:value={$formData.behaviourQuickActionIds}
 								onValueChange={async () => {
 									await tick();
@@ -147,47 +247,77 @@
 											{option.label}
 										</Select.Item>
 									{/each}
-								</Select.Content>
-							</Select.Root>
-						{/snippet}
-					</Form.Control>
-				</Form.Field>
-
-				<Form.Field {form} name="status" class="space-y-0">
-					<Form.Control>
-						{#snippet children({ props })}
-							<Select.Root
-								type="single"
-								bind:value={$formData.status}
-								name={props.name}
-								onValueChange={async () => {
-									await tick();
-									form.submit();
-								}}
-							>
-								<Select.Trigger {...props} class="w-[120px]">
-									{selectedStatusLabel}
-								</Select.Trigger>
-								<Select.Content>
-									{#each statusOptions as option}
-										<Select.Item value={option.value} label={option.label} />
-									{/each}
+									{#if $formData.behaviourQuickActionIds.length > 0 && !bulkApplyMode && isClassActive}
+										<Select.Separator />
+										<div class="p-1">
+											<Button
+												variant="ghost"
+												size="sm"
+												class="w-full justify-start"
+												onclick={(e) => {
+													e.preventDefault();
+													const behaviourIds = $formData.behaviourQuickActionIds
+														.map((id) => parseInt(id, 10))
+														.filter((id) => !isNaN(id));
+													onStartBulkApply?.(user.id, behaviourIds);
+												}}
+											>
+												Apply to other students
+											</Button>
+										</div>
+									{/if}
 								</Select.Content>
 							</Select.Root>
 						{/snippet}
 					</Form.Control>
 				</Form.Field>
 			</form>
-
-			<Button variant="outline" onclick={() => (dialogOpen = true)} disabled={type === 'unmarked'}>
+			<Button
+				variant="outline"
+				onclick={() => (dialogOpen = true)}
+				disabled={type === 'unmarked' || !isClassActive}
+				class={attendanceRecord.classNote ? 'border-warning/50!' : ''}
+			>
 				<NotepadText />
 			</Button>
+			{#if isLatestComponentClassPass}
+				<form method="POST" action="?/endClassPass">
+					<input type="hidden" name="userId" value={user.id} />
+					<input
+						type="hidden"
+						name="subjectClassAllocationId"
+						value={attendanceRecord.subjectClassAllocation.id}
+					/>
+					<Button type="submit" disabled={type === 'unmarked' || !isClassActive}>
+						<DoorClosed />
+					</Button>
+				</form>
+			{:else}
+				<Button
+					variant="outline"
+					onclick={() => (classPassDialogOpen = true)}
+					disabled={type === 'unmarked' || !isClassActive}
+				>
+					<DoorOpen />
+				</Button>
+			{/if}
 
 			<Button variant="outline" href={`${page.url.pathname}/${user.id}`}>
 				<History />
 			</Button>
 		</div>
 	</div>
+
+	<!-- Attendance Progress Bar -->
+	<AttendanceProgressBar
+		{classStartTime}
+		{classEndTime}
+		bind:components
+		bind:showSlider
+		{currentTime}
+		attendanceId={attendanceRecord.attendance?.id}
+		disabled={type === 'unmarked' || !isClassActive}
+	/>
 </div>
 
 <!-- Modal Dialog -->
@@ -203,11 +333,21 @@
 				name="subjectClassAllocationId"
 				value={attendanceRecord.subjectClassAllocation.id}
 			/>
-			<div class="py-4">
+			<div class="space-y-4 py-4">
+				{#if attendanceRecord.classNote}
+					<div class="space-y-2">
+						<Label>Class Note</Label>
+						<Textarea
+							disabled
+							defaultValue={attendanceRecord.classNote}
+							class="min-h-20 resize-none"
+						/>
+					</div>
+				{/if}
 				<Form.Field {form} name="noteTeacher">
 					<Form.Control>
 						{#snippet children({ props })}
-							<Form.Label class="text-sm font-medium">Additional Notes</Form.Label>
+							<Form.Label>Additional Notes</Form.Label>
 							<Textarea
 								{...props}
 								bind:value={$formData.noteTeacher}
@@ -221,6 +361,41 @@
 			<Dialog.Footer>
 				<Button variant="outline" type="button" onclick={() => (dialogOpen = false)}>Close</Button>
 				<Button variant="default" type="submit">Save</Button>
+			</Dialog.Footer>
+		</form>
+	</Dialog.Content>
+</Dialog.Root>
+
+<!-- Class Pass Confirmation Dialog -->
+<Dialog.Root bind:open={classPassDialogOpen}>
+	<Dialog.Content class="max-w-md">
+		<form method="POST" action="?/startClassPass">
+			<Dialog.Header>
+				<Dialog.Title>Start Class Pass</Dialog.Title>
+				<Dialog.Description>
+					This will start a class pass for {fullName}. The current attendance component will end and
+					a class pass component will begin.
+				</Dialog.Description>
+			</Dialog.Header>
+			<input type="hidden" name="userId" value={user.id} />
+			<input
+				type="hidden"
+				name="subjectClassAllocationId"
+				value={attendanceRecord.subjectClassAllocation.id}
+			/>
+			<Dialog.Footer class="mt-4">
+				<Button variant="outline" type="button" onclick={() => (classPassDialogOpen = false)}>
+					Cancel
+				</Button>
+				<Button
+					variant="default"
+					type="submit"
+					onclick={() => {
+						classPassDialogOpen = false;
+					}}
+				>
+					Start Class Pass
+				</Button>
 			</Dialog.Footer>
 		</form>
 	</Dialog.Content>

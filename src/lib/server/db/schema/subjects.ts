@@ -15,6 +15,7 @@ import {
 } from 'drizzle-orm/pg-core';
 import { sql } from 'drizzle-orm/sql';
 import {
+	subjectClassAllocationAttendanceComponentType,
 	subjectClassAllocationAttendanceStatus,
 	subjectThreadResponseTypeEnum,
 	subjectThreadTypeEnum
@@ -161,6 +162,33 @@ export const subjectClassAllocationAttendance = pgTable(
 
 export type SubjectClassAllocationAttendance = typeof subjectClassAllocationAttendance.$inferSelect;
 
+export const subjectClassAllocationAttendanceComponentTypeEnumPg = pgEnum(
+	'sub_off_cls_allo_att_comp_type',
+	[
+		subjectClassAllocationAttendanceComponentType.present,
+		subjectClassAllocationAttendanceComponentType.absent,
+		subjectClassAllocationAttendanceComponentType.classPass
+	]
+);
+
+export const subjectClassAllocationAttendanceComponent = pgTable(
+	'sub_off_cls_allo_att_comp',
+	{
+		id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
+		attendanceId: integer('att_id')
+			.notNull()
+			.references(() => subjectClassAllocationAttendance.id, { onDelete: 'cascade' }),
+		type: subjectClassAllocationAttendanceComponentTypeEnumPg().notNull(),
+		startTime: time('start_time').notNull(),
+		endTime: time('end_time').notNull(),
+		...timestamps
+	},
+	(self) => [check('valid_time_range', sql`${self.endTime} > ${self.startTime}`)]
+);
+
+export type SubjectClassAllocationAttendanceComponent =
+	typeof subjectClassAllocationAttendanceComponent.$inferSelect;
+
 export const behaviourQuickAction = pgTable(
 	'behaviour_quick_action',
 	{
@@ -202,25 +230,27 @@ export const subjectThreadTypeEnumPg = pgEnum('enum_sub_thread_type', [
 	subjectThreadTypeEnum.qanda
 ]);
 
-export const subjectThread = pgTable('sub_thread', {
-	id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
-	type: subjectThreadTypeEnumPg().notNull(),
-	subjectOfferingId: integer('sub_off_id')
-		.notNull()
-		.references(() => subjectOffering.id, { onDelete: 'cascade' }),
-	userId: uuid('user_id')
-		.notNull()
-		.references(() => user.id, { onDelete: 'cascade' }),
-	title: text('title').notNull(),
-	content: text('content').notNull(),
-	isAnonymous: boolean('is_anonymous').notNull(),
-	isArchived: boolean('is_archived').notNull().default(false),
-	...timestamps,
-	...embeddings
-},
+export const subjectThread = pgTable(
+	'sub_thread',
+	{
+		id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
+		type: subjectThreadTypeEnumPg().notNull(),
+		subjectOfferingId: integer('sub_off_id')
+			.notNull()
+			.references(() => subjectOffering.id, { onDelete: 'cascade' }),
+		userId: uuid('user_id')
+			.notNull()
+			.references(() => user.id, { onDelete: 'cascade' }),
+		title: text('title').notNull(),
+		content: text('content').notNull(),
+		isAnonymous: boolean('is_anonymous').notNull(),
+		isArchived: boolean('is_archived').notNull().default(false),
+		...timestamps,
+		...embeddings
+	},
 	(self) => [
 		index('sub_thread_embedding_idx').using('hnsw', self.embedding.op('vector_cosine_ops')),
-		index('sub_thread_metadata_idx').using('gin', self.embeddingMetadata),
+		index('sub_thread_metadata_idx').using('gin', self.embeddingMetadata)
 	]
 );
 
@@ -255,7 +285,7 @@ export const subjectThreadResponse = pgTable(
 			foreignColumns: [self.id]
 		}).onDelete('cascade'),
 		index('sub_thread_resp_embedding_idx').using('hnsw', self.embedding.op('vector_cosine_ops')),
-		index('sub_thread_resp_metadata_idx').using('gin', self.embeddingMetadata),
+		index('sub_thread_resp_metadata_idx').using('gin', self.embeddingMetadata)
 	]
 );
 

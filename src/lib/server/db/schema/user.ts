@@ -110,6 +110,7 @@ export const userSubjectOfferingClass = pgTable(
 		subOffClassId: integer('sub_off_class_id')
 			.notNull()
 			.references(() => subjectOfferingClass.id, { onDelete: 'cascade' }),
+		classNote: text('class_note'),
 		isArchived: boolean('is_archived').notNull().default(false),
 		...timestamps
 	},

@@ -1,5 +1,5 @@
 import { userTypeEnum } from '$lib/enums';
-import { error, type RequestEvent } from '@sveltejs/kit';
+import { error, redirect, type RequestEvent } from '@sveltejs/kit';
 
 export class Security {
 	private readonly user?: import('$lib/server/auth').SessionValidationResult['user'];
@@ -10,7 +10,7 @@ export class Security {
 
 	isAuthenticated() {
 		if (!this.user) {
-			error(401);
+			redirect(303, '/login');
 		}
 		return this;
 	}
@@ -52,7 +52,7 @@ export class Security {
 
 	getUser() {
 		if (!this.user) {
-			error(401);
+			redirect(303, '/login');
 		}
 		return this.user;
 	}
