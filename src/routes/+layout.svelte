@@ -84,6 +84,7 @@
 
 <Toaster />
 <ModeWatcher />
+<Toaster />
 <div class="[--header-height:calc(--spacing(14))]">
 	<Sidebar.Provider class="flex flex-col">
 		<header class="bg-background sticky top-0 z-50 h-14">

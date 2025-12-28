@@ -40,8 +40,10 @@ export const actions = {
 			const updatedWhiteboard = await toggleWhiteboardLock(whiteboardId)
 
 			return {
-				success: true,
-				isLocked: updatedWhiteboard.isLocked
+				type: 'success',
+				data: {
+					isLocked: updatedWhiteboard.isLocked
+				}
 			}
 		} catch (err) {
 			console.error('Error toggling whiteboard lock:', err)
