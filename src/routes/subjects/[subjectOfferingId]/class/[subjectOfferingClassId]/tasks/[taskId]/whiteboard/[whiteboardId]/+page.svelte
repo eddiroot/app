@@ -2,6 +2,7 @@
 	import { browser } from '$app/environment'
 	import { goto } from '$app/navigation'
 	import { page } from '$app/state'
+	import * as Alert from '$lib/components/ui/alert'
 	import Button from '$lib/components/ui/button/button.svelte'
 	import * as Tooltip from '$lib/components/ui/tooltip/index.js'
 	import type { CanvasEventContext } from '$lib/components/whiteboard/canvas-events'
@@ -25,8 +26,10 @@
 	import WhiteboardZoomControls from '$lib/components/whiteboard/whiteboard-controls.svelte'
 	import WhiteboardFloatingMenu from '$lib/components/whiteboard/whiteboard-floating-menu.svelte'
 	import WhiteboardToolbar from '$lib/components/whiteboard/whiteboard-toolbar.svelte'
+	import { userTypeEnum } from '$lib/enums'
 	import ArrowLeftIcon from '@lucide/svelte/icons/arrow-left'
 	import { onDestroy, onMount } from 'svelte'
+	import { toast } from 'svelte-sonner'
 
 	// Dynamic imports for browser-only modules
 	let fabric: typeof import('fabric')
@@ -40,6 +43,9 @@
 	let ControlPointManager: typeof import('$lib/components/whiteboard/control-points').ControlPointManager
 
 	let { data } = $props()
+
+	let isLocked = $state(data.whiteboard.isLocked)
+	const isTeacher = $derived(data.user?.type === userTypeEnum.teacher)
 
 	let socket = $state() as WebSocket
 	let canvas: any // Will be fabric.Canvas once loaded
@@ -338,6 +344,34 @@
 
 	const goBack = () => {
 		goto(`/subjects/${subjectOfferingId}/class/${subjectOfferingClassId}/tasks/${taskId}`)
+	}
+
+	// Apply lock state to canvas
+	const applyCanvasLockState = (locked: boolean) => {
+		if (!canvas) return
+
+		if (locked && !isTeacher) {
+			// Student in locked mode - view only (pan only)
+			canvas.isDrawingMode = false
+			canvas.selection = false
+			canvas.forEachObject((obj: any) => {
+				obj.selectable = false
+				obj.evented = false
+			})
+			canvas.discardActiveObject()
+			canvas.renderAll()
+			// Force pan tool for students when locked
+			setPanTool()
+		} else {
+			// Teacher or unlocked - allow editing
+			canvas.isDrawingMode = false
+			canvas.selection = true
+			canvas.forEachObject((obj: any) => {
+				obj.selectable = true
+				obj.evented = true
+			})
+			canvas.renderAll()
+		}
 	}
 
 	// Handle floating menu option changes
@@ -657,7 +691,7 @@
 
 		let resizeCanvas: (() => void) | undefined
 
-		// Async initialization
+			// Async initialization
 		;(async () => {
 			// Dynamically import browser-only modules
 			fabric = await import('fabric')
@@ -731,6 +765,28 @@
 					controlPointManager
 				}
 			)
+
+			// Add lock/unlock message handler
+			const originalOnMessage = socket.onmessage
+			socket.onmessage = (event) => {
+				try {
+					const msgData = JSON.parse(event.data)
+					if (msgData.type === 'lock' || msgData.type === 'unlock') {
+						isLocked = msgData.isLocked
+						applyCanvasLockState(isLocked)
+					}
+				} catch (e) {
+					// Ignore parse errors
+				}
+
+				// Call original handler
+				if (originalOnMessage) {
+					originalOnMessage.call(socket, event)
+				}
+			}
+
+			// Apply initial lock state
+			applyCanvasLockState(isLocked)
 
 			// Setup all canvas event handlers using the extracted module
 			const canvasEventContext: CanvasEventContext = {
@@ -1032,6 +1088,7 @@
 					<ArrowLeftIcon class="mr-2 h-4 w-4" />
 					Back to Task
 				</Button>
+
 				<div class="flex-1">
 					<h1 class="text-lg font-semibold">
 						{data.whiteboard.title || 'Interactive Whiteboard'}
@@ -1040,24 +1097,155 @@
 						{data.task.title}
 					</p>
 				</div>
+
+				{#if isTeacher}
+					<form
+						method="POST"
+						action="?/toggleLock"
+						onsubmit={async (e) => {
+							e.preventDefault()
+							const formData = new FormData(e.currentTarget)
+							try {
+								const res = await fetch(e.currentTarget.action, {
+									method: 'POST',
+									body: formData
+								})
+								const result = await res.json()
+
+								// Handle SvelteKit's devalue serialization format
+								if (result.type === 'success' && result.data) {
+									let actionData =
+										typeof result.data === 'string' ? JSON.parse(result.data) : result.data
+
+									// If actionData is an array (devalue format), reconstruct the object
+									if (Array.isArray(actionData)) {
+										// devalue format: [schema, values...]
+										// Index 0: schema object, Index 1: "success", Index 2: {isLocked: ref}, Index 3: actual boolean
+										const reconstructed = {
+											type: actionData[1], // "success"
+											data: {
+												isLocked: actionData[3] // the actual boolean value
+											}
+										}
+										actionData = reconstructed
+									}
+
+									if (actionData.type === 'success' && actionData.data?.isLocked !== undefined) {
+										const newLockState = actionData.data.isLocked
+										isLocked = newLockState
+										applyCanvasLockState(newLockState)
+
+										// Show toast notification
+										if (toast) {
+											if (newLockState) {
+												toast.success('Whiteboard locked', {
+													description: 'Students can now only view and pan the whiteboard'
+												})
+											} else {
+												toast.success('Whiteboard unlocked', {
+													description: 'Students can now edit the whiteboard'
+												})
+											}
+										}
+
+										if (socket && socket.readyState === WebSocket.OPEN) {
+											const lockMessage = newLockState ? 'lock' : 'unlock'
+											socket.send(
+												JSON.stringify({
+													type: lockMessage,
+													isLocked: newLockState,
+													whiteboardId: whiteboardIdNum
+												})
+											)
+										}
+									}
+								}
+							} catch (err) {
+								console.error('Lock toggle failed:', err)
+							}
+						}}
+					>
+						<Button type="submit" variant="ghost" size="icon">
+							{#if isLocked}
+								<svg
+									xmlns="http://www.w3.org/2000/svg"
+									width="20"
+									height="20"
+									viewBox="0 0 24 24"
+									fill="none"
+									stroke="currentColor"
+									stroke-width="2"
+									stroke-linecap="round"
+									stroke-linejoin="round"
+									><rect width="18" height="11" x="3" y="11" rx="2" ry="2" /><path
+										d="M7 11V7a5 5 0 0 1 10 0v4"
+									/></svg
+								>
+							{:else}
+								<svg
+									xmlns="http://www.w3.org/2000/svg"
+									width="20"
+									height="20"
+									viewBox="0 0 24 24"
+									fill="none"
+									stroke="currentColor"
+									stroke-width="2"
+									stroke-linecap="round"
+									stroke-linejoin="round"
+									><rect width="18" height="11" x="3" y="11" rx="2" ry="2" /><path
+										d="M7 11V7a5 5 0 0 1 9.9-1"
+									/></svg
+								>
+							{/if}
+						</Button>
+					</form>
+				{/if}
 			</div>
 		</header>
 
 		<!-- Whiteboard Canvas -->
 		<main class="relative flex flex-1 items-center justify-center overflow-hidden p-4">
-			<!-- Floating Toolbar -->
-			<WhiteboardToolbar
-				{selectedTool}
-				onSelectTool={setSelectTool}
-				onPanTool={setPanTool}
-				onDrawTool={setDrawTool}
-				onLineTool={setLineTool}
-				onAddShape={addShape}
-				onAddText={addText}
-				onAddImage={addImage}
-				onEraserTool={setEraserTool}
-				onClearCanvas={clearCanvas}
-			/>
+			{#if isLocked && !isTeacher}
+				<div class="absolute top-8 left-1/2 z-50 w-auto max-w-2xl -translate-x-1/2">
+					<Alert.Root variant="default" class="border-border/50 bg-background/20 backdrop-blur-sm">
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							width="16"
+							height="16"
+							viewBox="0 0 24 24"
+							fill="none"
+							stroke="currentColor"
+							stroke-width="2"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							class="h-4 w-4"
+						>
+							<rect width="18" height="11" x="3" y="11" rx="2" ry="2" />
+							<path d="M7 11V7a5 5 0 0 1 10 0v4" />
+						</svg>
+						<Alert.Title>View Only Mode</Alert.Title>
+						<Alert.Description>
+							This whiteboard is locked by your teacher. You can pan and zoom to view content.
+						</Alert.Description>
+					</Alert.Root>
+				</div>
+			{/if}
+
+			<!-- Floating Toolbar - Hidden for students when locked -->
+			{#if !(isLocked && !isTeacher)}
+				<WhiteboardToolbar
+					{selectedTool}
+					onSelectTool={setSelectTool}
+					onPanTool={setPanTool}
+					onDrawTool={setDrawTool}
+					onLineTool={setLineTool}
+					onAddShape={addShape}
+					onAddText={addText}
+					onAddImage={addImage}
+					onEraserTool={setEraserTool}
+					onClearCanvas={clearCanvas}
+				/>
+			{/if}
 
 			<div class="flex h-full w-full rounded-lg border-2 bg-white shadow-lg dark:bg-neutral-700">
 				<canvas bind:this={whiteboardCanvas} class="h-full w-full"></canvas>
@@ -1087,17 +1275,17 @@
 				onMoveBackward={handleMoveBackward}
 			/>
 
-			<!-- Zoom Controls -->
+			<!-- Zoom Controls - Disable undo/redo for locked students -->
 			<WhiteboardZoomControls
 				{currentZoom}
 				onZoomIn={zoomIn}
 				onZoomOut={zoomOut}
 				onResetZoom={resetZoom}
 				onRecenterView={recenterView}
-				onUndo={handleUndo}
-				onRedo={handleRedo}
-				{canUndo}
-				{canRedo}
+				onUndo={isLocked && !isTeacher ? () => {} : handleUndo}
+				onRedo={isLocked && !isTeacher ? () => {} : handleRedo}
+				canUndo={isLocked && !isTeacher ? false : canUndo}
+				canRedo={isLocked && !isTeacher ? false : canRedo}
 			/>
 		</main>
 	</div>

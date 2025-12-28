@@ -1,71 +1,72 @@
 <script lang="ts">
-	import '../app.css';
+	import '../app.css'
 
-	import { ModeWatcher } from 'mode-watcher';
+	import { ModeWatcher } from 'mode-watcher'
+	import { Toaster } from 'svelte-sonner'
 
-	import { page } from '$app/state';
+	import { page } from '$app/state'
 
-	import AiSidebar from '$lib/components/ai-sidebar.svelte';
-	import AppSidebar from '$lib/components/app-sidebar.svelte';
-	import ThemeToggle from '$lib/components/theme-toggle.svelte';
-	import * as Breadcrumb from '$lib/components/ui/breadcrumb/index.js';
-	import Button from '$lib/components/ui/button/button.svelte';
-	import * as Resizable from '$lib/components/ui/resizable';
-	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
-	import { IsMobile } from '$lib/hooks/is-mobile.svelte.js';
-	import type { Task } from '$lib/server/db/schema';
+	import AiSidebar from '$lib/components/ai-sidebar.svelte'
+	import AppSidebar from '$lib/components/app-sidebar.svelte'
+	import ThemeToggle from '$lib/components/theme-toggle.svelte'
+	import * as Breadcrumb from '$lib/components/ui/breadcrumb/index.js'
+	import Button from '$lib/components/ui/button/button.svelte'
+	import * as Resizable from '$lib/components/ui/resizable'
+	import * as Sidebar from '$lib/components/ui/sidebar/index.js'
+	import { IsMobile } from '$lib/hooks/is-mobile.svelte.js'
+	import type { Task } from '$lib/server/db/schema'
 
-	let { children, data } = $props();
+	let { children, data } = $props()
 
-	const user = $derived(() => data?.user);
-	let isMobile = new IsMobile();
-	let aiSidebarPane: ReturnType<typeof Resizable.Pane> | undefined = $state();
+	const user = $derived(() => data?.user)
+	let isMobile = new IsMobile()
+	let aiSidebarPane: ReturnType<typeof Resizable.Pane> | undefined = $state()
 
 	const generateBreadcrumbItems = (url: string) => {
-		const segments = url.split('/').filter(Boolean);
+		const segments = url.split('/').filter(Boolean)
 
 		if (segments.length === 0) {
-			return [];
+			return []
 		}
 
-		const items: Array<{ label: string; href: string; isFirst: boolean; isLast: boolean }> = [];
-		let currentPath = '';
+		const items: Array<{ label: string; href: string; isFirst: boolean; isLast: boolean }> = []
+		let currentPath = ''
 
 		for (let i = 0; i < segments.length; i++) {
-			const segment = segments[i];
-			currentPath += `/${segment}`;
+			const segment = segments[i]
+			currentPath += `/${segment}`
 
-			let label = segment;
-			let href = currentPath;
+			let label = segment
+			let href = currentPath
 
 			if (segments[i - 1] === 'subjects' && !isNaN(Number(segment))) {
-				const subjectOfferingId = Number(segment);
-				const subject = data?.subjects?.find((s) => s.subjectOffering.id === subjectOfferingId);
-				label = subject?.subject.name || `Subject ${segment}`;
+				const subjectOfferingId = Number(segment)
+				const subject = data?.subjects?.find((s) => s.subjectOffering.id === subjectOfferingId)
+				label = subject?.subject.name || `Subject ${segment}`
 			} else if (
 				segments[i - 1] === 'class' &&
 				segments[i - 2] &&
 				!isNaN(Number(segments[i - 2]))
 			) {
 				// This is the class ID in /subjects/[subjectOfferingId]/class/[classId]
-				const subjectOfferingId = Number(segments[i - 2]);
-				const classId = Number(segment);
-				const subject = data?.subjects?.find((s) => s.subjectOffering.id === subjectOfferingId);
-				const classItem = subject?.classes?.find((c) => c.id === classId);
-				label = classItem?.name || `Class ${segment}`;
+				const subjectOfferingId = Number(segments[i - 2])
+				const classId = Number(segment)
+				const subject = data?.subjects?.find((s) => s.subjectOffering.id === subjectOfferingId)
+				const classItem = subject?.classes?.find((c) => c.id === classId)
+				label = classItem?.name || `Class ${segment}`
 			} else if (segments[i - 1] === 'tasks' && !isNaN(Number(segment))) {
-				const taskId = Number(segment);
-				const pageData = page.data;
-				const task = pageData?.task || pageData?.tasks?.find((l: Task) => l.id === taskId);
-				label = task?.title || `Task ${segment}`;
+				const taskId = Number(segment)
+				const pageData = page.data
+				const task = pageData?.task || pageData?.tasks?.find((l: Task) => l.id === taskId)
+				label = task?.title || `Task ${segment}`
 			} else if (segments[i - 1] === 'whiteboard' && !isNaN(Number(segment))) {
-				const whiteboardId = Number(segment);
-				const pageData = page.data;
+				const whiteboardId = Number(segment)
+				const pageData = page.data
 				const whiteboard =
-					pageData?.whiteboard || pageData?.whiteboards?.find((w: Task) => w.id === whiteboardId);
-				label = whiteboard?.title || `Whiteboard ${segment}`;
+					pageData?.whiteboard || pageData?.whiteboards?.find((w: Task) => w.id === whiteboardId)
+				label = whiteboard?.title || `Whiteboard ${segment}`
 			} else {
-				label = segment.charAt(0).toUpperCase() + segment.slice(1).replace(/-/g, ' ');
+				label = segment.charAt(0).toUpperCase() + segment.slice(1).replace(/-/g, ' ')
 			}
 
 			items.push({
@@ -73,11 +74,11 @@
 				href,
 				isFirst: i === 0,
 				isLast: i === segments.length - 1
-			});
+			})
 		}
 
-		return items;
-	};
+		return items
+	}
 </script>
 
 <svelte:head>
@@ -85,6 +86,7 @@
 	<!-- <meta name="description" content="" /> -->
 </svelte:head>
 <ModeWatcher />
+<Toaster />
 <div class="[--header-height:calc(--spacing(14))]">
 	<Sidebar.Provider class="flex flex-col">
 		<header class="bg-background sticky top-0 z-50 h-14">
@@ -125,12 +127,12 @@
 							name="right"
 							aria-label="Toggle AI Sidebar"
 							onclick={() => {
-								if (isMobile.current.valueOf()) return;
+								if (isMobile.current.valueOf()) return
 								if (aiSidebarPane && aiSidebarPane.getSize() > 0) {
-									aiSidebarPane?.collapse();
+									aiSidebarPane?.collapse()
 								} else if (aiSidebarPane && aiSidebarPane.getSize() == 0) {
-									aiSidebarPane?.resize(30);
-									aiSidebarPane?.expand();
+									aiSidebarPane?.resize(30)
+									aiSidebarPane?.expand()
 								}
 							}}
 						/>
