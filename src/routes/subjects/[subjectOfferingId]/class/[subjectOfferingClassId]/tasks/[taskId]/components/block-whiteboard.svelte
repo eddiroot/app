@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { browser } from '$app/environment'
 	import { goto } from '$app/navigation'
 	import { page } from '$app/state'
 	import Button from '$lib/components/ui/button/button.svelte'
@@ -8,6 +9,7 @@
 	import * as Tooltip from '$lib/components/ui/tooltip/index.js'
 	import { ViewMode, type WhiteboardBlockProps } from '$lib/schema/task'
 	import PresentationIcon from '@lucide/svelte/icons/presentation'
+	import { onDestroy, onMount } from 'svelte'
 	import { toast } from 'svelte-sonner'
 
 	let {
@@ -29,11 +31,46 @@
 	const whiteboardId = $derived(whiteboardMap?.[blockId] ?? null)
 	let isLocked = $state(false)
 	let isTogglingLock = $state(false)
+	let socket: WebSocket | null = $state(null)
 
 	// Update isLocked when whiteboardId or lockStates change
 	$effect(() => {
 		if (whiteboardId && whiteboardLockStates) {
 			isLocked = whiteboardLockStates[whiteboardId] ?? false
+		}
+	})
+
+	// Setup WebSocket connection for broadcasting lock changes
+	onMount(() => {
+		if (!browser || !whiteboardId) return
+
+		// Connect to the whiteboard WebSocket
+		const wsUrl = `/subjects/${subjectOfferingId}/class/${subjectOfferingClassId}/tasks/${taskId}/whiteboard/ws`
+		const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:'
+		const wsFullUrl = `${protocol}//${window.location.host}${wsUrl}`
+
+		socket = new WebSocket(wsFullUrl)
+
+		socket.onopen = () => {
+			// Initialize with whiteboardId
+			if (socket && socket.readyState === WebSocket.OPEN) {
+				socket.send(
+					JSON.stringify({
+						type: 'init',
+						whiteboardId: whiteboardId
+					})
+				)
+			}
+		}
+
+		socket.onerror = (error) => {
+			console.error('WebSocket error:', error)
+		}
+	})
+
+	onDestroy(() => {
+		if (socket && socket.readyState === WebSocket.OPEN) {
+			socket.close()
 		}
 	})
 
@@ -89,6 +126,18 @@
 					// Also update the shared state
 					if (whiteboardLockStates) {
 						whiteboardLockStates[whiteboardId] = newLockState
+					}
+
+					// Broadcast lock state change via WebSocket to all connected clients
+					if (socket && socket.readyState === WebSocket.OPEN) {
+						const lockMessage = newLockState ? 'lock' : 'unlock'
+						socket.send(
+							JSON.stringify({
+								type: lockMessage,
+								isLocked: newLockState,
+								whiteboardId: whiteboardId
+							})
+						)
 					}
 
 					// Show toast notification
