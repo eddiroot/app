@@ -57,6 +57,14 @@ npm run db:push
 npm run db:seed
 ```
 
+## git stuff
+
+If you need to clear all local branches except main:
+
+```bash
+git branch | grep -v "main" | xargs git branch -D
+```
+
 ## UI
 
 To add new [shadcn-svelte components](https://www.shadcn-svelte.com/docs/components), use this command:
