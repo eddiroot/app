@@ -79,7 +79,9 @@
 	let canUndo = $state(false)
 	let canRedo = $state(false)
 	let isApplyingHistory = false // Flag to prevent recording history during undo/redo
-	let isRecordingManually = false // Flag to prevent double-recording during option changes
+	let isLoadingFromServer = false // Flag to prevent recording history during initial load or remote updates
+	let isDrawingObject = false // Flag to prevent recording temporary objects during drawing
+	let isControlPointModifying = false // Flag to prevent history recording during control point modifications
 
 	// Current tool options - updated when menu changes
 	let currentTextOptions = $state<TextOptions>({ ...DEFAULT_TEXT_OPTIONS })
@@ -386,9 +388,6 @@
 			const previousData = activeObject.toObject()
 			previousData.id = (activeObject as any).id
 
-			// Set flag to prevent double-recording in object:modified
-			isRecordingManually = true
-
 			activeObject.set({
 				fontSize: options.fontSize,
 				fontFamily: options.fontFamily,
@@ -401,27 +400,24 @@
 			const objData = activeObject.toObject()
 			;(objData as any).id = (activeObject as any).id
 
-			// Record history for option change
-			history.recordModify((activeObject as any).id, previousData, objData, data.user.id)
-			canUndo = history.canUndo()
-			canRedo = history.canRedo()
+			// Record history for option change (only if not loading)
+			if (!isLoadingFromServer && !isApplyingHistory) {
+				history.recordModify((activeObject as any).id, previousData, objData, data.user.id)
+				canUndo = history.canUndo()
+				canRedo = history.canRedo()
+			}
 
 			sendCanvasUpdate({
 				type: 'modify',
 				object: objData
 			})
-
-			// Reset flag after a small delay to ensure object:modified doesn't fire
-			setTimeout(() => {
-				isRecordingManually = false
-			}, 10)
 		}
 	}
 	const handleShapeOptionsChange = (options: any) => {
 		// Update current options for new objects
 		currentShapeOptions = { ...options }
 
-		if (!canvas) return
+		if (!canvas || !history) return
 		let activeObject = canvas.getActiveObject()
 
 		// If a control point is selected, find its linked object
@@ -440,8 +436,13 @@
 			(activeObject.type === 'rect' ||
 				activeObject.type === 'ellipse' ||
 				activeObject.type === 'triangle' ||
-				activeObject.type === 'image')
+				activeObject.type === 'image') &&
+			data.user?.id
 		) {
+			// Store previous state for history
+			const previousData = activeObject.toObject()
+			previousData.id = (activeObject as any).id
+
 			// For images, only apply opacity (other properties don't make sense for images)
 			if (activeObject.type === 'image') {
 				activeObject.set({
@@ -479,6 +480,14 @@
 			canvas.renderAll()
 			const objData = activeObject.toObject()
 			objData.id = activeObject.id
+
+			// Record history for option change (only if not loading)
+			if (!isLoadingFromServer && !isApplyingHistory) {
+				history.recordModify((activeObject as any).id, previousData, objData, data.user.id)
+				canUndo = history.canUndo()
+				canRedo = history.canRedo()
+			}
+
 			sendCanvasUpdate({
 				type: 'modify',
 				object: objData
@@ -490,11 +499,15 @@
 		// Update current options for new objects
 		currentDrawOptions = { ...options }
 
-		if (!canvas) return
+		if (!canvas || !history) return
 
 		// First, check if there's an active path object selected and update it
 		const activeObject = canvas.getActiveObject()
-		if (activeObject && activeObject.type === 'path') {
+		if (activeObject && activeObject.type === 'path' && data.user?.id) {
+			// Store previous state for history
+			const previousData = activeObject.toObject()
+			previousData.id = (activeObject as any).id
+
 			activeObject.set({
 				strokeWidth: options.brushSize,
 				stroke: options.brushColour,
@@ -503,6 +516,14 @@
 			canvas.renderAll()
 			const objData = activeObject.toObject()
 			objData.id = activeObject.id
+
+			// Record history for option change (only if not loading)
+			if (!isLoadingFromServer && !isApplyingHistory) {
+				history.recordModify((activeObject as any).id, previousData, objData, data.user.id)
+				canUndo = history.canUndo()
+				canRedo = history.canRedo()
+			}
+
 			sendCanvasUpdate({
 				type: 'modify',
 				object: objData
@@ -536,7 +557,7 @@
 		// Update current options for new objects
 		currentLineOptions = { ...options }
 
-		if (!canvas) return
+		if (!canvas || !history) return
 		let activeObject = canvas.getActiveObject()
 
 		// If a control point is selected, find its linked line
@@ -554,8 +575,13 @@
 			activeObject &&
 			(activeObject.type === 'polyline' ||
 				activeObject.type === 'line' ||
-				activeObject.type === 'group')
+				activeObject.type === 'group') &&
+			data.user?.id
 		) {
+			// Store previous state for history
+			const previousData = activeObject.toObject()
+			previousData.id = (activeObject as any).id
+
 			if (activeObject.type === 'polyline' || activeObject.type === 'line') {
 				// Get the center point before changing stroke width
 				const centerBefore = activeObject.getCenterPoint()
@@ -605,6 +631,14 @@
 			canvas.renderAll()
 			const objData = activeObject.toObject()
 			objData.id = activeObject.id
+
+			// Record history for option change (only if not loading)
+			if (!isLoadingFromServer && !isApplyingHistory) {
+				history.recordModify((activeObject as any).id, previousData, objData, data.user.id)
+				canUndo = history.canUndo()
+				canRedo = history.canRedo()
+			}
+
 			sendCanvasUpdate({
 				type: 'modify',
 				object: objData
@@ -762,7 +796,25 @@
 				canvas,
 				whiteboardIdNum,
 				{
-					controlPointManager
+					controlPointManager,
+					onLoadStart: () => {
+						// Set flag to prevent history recording during load
+						isLoadingFromServer = true
+						console.log('Loading objects from server - history recording disabled')
+					},
+					onLoadEnd: (objects) => {
+						// Reset flag after load completes
+						isLoadingFromServer = false
+						console.log('Finished loading', objects.length, 'objects - history recording enabled')
+					},
+					onRemoteActionStart: () => {
+						// Set flag to prevent history recording during remote actions from other users
+						isLoadingFromServer = true
+					},
+					onRemoteActionEnd: () => {
+						// Reset flag after remote action completes
+						isLoadingFromServer = false
+					}
 				}
 			)
 
@@ -869,6 +921,9 @@
 				setCurrentZoom: (value) => {
 					currentZoom = value
 				},
+				setIsDrawingObject: (value) => {
+					isDrawingObject = value
+				},
 
 				// Options getters
 				getCurrentTextOptions: () => currentTextOptions,
@@ -893,7 +948,16 @@
 			// Setup history tracking
 			// Track object additions
 			canvas.on('object:added', (e: any) => {
-				if (isApplyingHistory || !e.target || !history) return
+				// Skip if applying history, loading from server, actively drawing, control point modifying, or missing data
+				if (
+					isApplyingHistory ||
+					isLoadingFromServer ||
+					isDrawingObject ||
+					isControlPointModifying ||
+					!e.target ||
+					!history
+				)
+					return
 
 				// Skip control points entirely - they are client-side only
 				if (controlPointManager.isControlPoint(e.target)) {
@@ -924,7 +988,7 @@
 			// Track object modifications (store previous state before modification)
 			const objectStates = new Map<string, Record<string, unknown>>()
 			canvas.on('object:modified', (e: any) => {
-				if (isApplyingHistory || isRecordingManually || !e.target || !history) return
+				if (isApplyingHistory || isLoadingFromServer || !e.target || !history) return
 				const objectId = e.target.id
 				if (objectId && data.user?.id) {
 					const previousData = objectStates.get(objectId)
@@ -943,8 +1007,22 @@
 			// Store state before modification starts
 			canvas.on('object:moving', (e: any) => {
 				if (isApplyingHistory || !e.target) return
-				// Skip control points - they are client-side only
-				if (controlPointManager.isControlPoint(e.target)) return
+				// If this is a control point being moved, set the flag to prevent history recording
+				// for the object that will be modified by the control point
+				if (controlPointManager.isControlPoint(e.target)) {
+					isControlPointModifying = true
+					// Capture the linked object's state before modification
+					const linkedObjectId = (e.target as any).linkedObjectId
+					if (linkedObjectId && !objectStates.has(linkedObjectId)) {
+						const linkedObj = canvas.getObjects().find((o: any) => o.id === linkedObjectId)
+						if (linkedObj) {
+							const state = linkedObj.toObject()
+							state.id = linkedObjectId
+							objectStates.set(linkedObjectId, state)
+						}
+					}
+					return
+				}
 				const objectId = e.target.id
 				if (objectId && !objectStates.has(objectId)) {
 					const state = e.target.toObject()
@@ -977,9 +1055,48 @@
 				}
 			})
 
+			// Track when control point modifications complete (on mouse up)
+			canvas.on('mouse:up', (e: any) => {
+				// If we were modifying via control points, reset the flag
+				// and record the modification for the linked object
+				if (isControlPointModifying && history && data.user?.id) {
+					isControlPointModifying = false
+
+					// Check if the target is a control point and record the linked object's modification
+					if (e.target && controlPointManager.isControlPoint(e.target)) {
+						const linkedObjectId = (e.target as any).linkedObjectId
+						if (linkedObjectId) {
+							const previousData = objectStates.get(linkedObjectId)
+							const linkedObj = canvas.getObjects().find((o: any) => o.id === linkedObjectId)
+							if (linkedObj && previousData) {
+								const newData = linkedObj.toObject()
+								newData.id = linkedObjectId
+								history.recordModify(linkedObjectId, previousData, newData, data.user.id)
+								objectStates.delete(linkedObjectId)
+								canUndo = history.canUndo()
+								canRedo = history.canRedo()
+							}
+						}
+					}
+				}
+			})
+
 			// Track object removals
 			canvas.on('object:removed', (e: any) => {
-				if (isApplyingHistory || !e.target || !history) return
+				// Skip if applying history, loading from server, actively drawing, control point modifying, or missing data
+				if (
+					isApplyingHistory ||
+					isLoadingFromServer ||
+					isDrawingObject ||
+					isControlPointModifying ||
+					!e.target ||
+					!history
+				)
+					return
+				// Skip control points - they are client-side only
+				if (controlPointManager.isControlPoint(e.target)) return
+				// Skip temporary objects (selectable: false) - these are being removed during drawing
+				if (e.target.selectable === false) return
 				const objectId = e.target.id
 				if (objectId && data.user?.id) {
 					const objectData = e.target.toObject()

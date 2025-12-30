@@ -1,43 +1,46 @@
-import * as fabric from 'fabric';
-import type { ControlPointManager } from './control-points';
-import type { LayerAction } from './types';
+import * as fabric from 'fabric'
+import type { ControlPointManager } from './control-points'
+import type { LayerAction } from './types'
 
 /**
  * WebSocket message types
  */
 interface WebSocketMessage {
-	whiteboardId: number;
-	type: 'init' | 'load' | 'add' | 'modify' | 'update' | 'delete' | 'remove' | 'clear' | 'layer';
+	whiteboardId: number
+	type: 'init' | 'load' | 'add' | 'modify' | 'update' | 'delete' | 'remove' | 'clear' | 'layer'
 	whiteboard?: {
-		objects: SerializedObject[];
-	};
-	object?: SerializedObject;
-	objects?: SerializedObject[];
-	live?: boolean;
-	action?: LayerAction;
+		objects: SerializedObject[]
+	}
+	object?: SerializedObject
+	objects?: SerializedObject[]
+	live?: boolean
+	action?: LayerAction
 }
 
 /**
  * Serialized object data from WebSocket
  */
 interface SerializedObject {
-	id?: string;
-	type?: string;
-	left?: number;
-	top?: number;
-	scaleX?: number;
-	scaleY?: number;
-	angle?: number;
-	opacity?: number;
-	[key: string]: unknown;
+	id?: string
+	type?: string
+	left?: number
+	top?: number
+	scaleX?: number
+	scaleY?: number
+	angle?: number
+	opacity?: number
+	[key: string]: unknown
 }
 
 /**
  * WebSocket setup options
  */
 interface WebSocketOptions {
-	onLoad?: (objects: fabric.FabricObject[]) => void;
-	controlPointManager?: ControlPointManager;
+	onLoadStart?: () => void
+	onLoadEnd?: (objects: fabric.FabricObject[]) => void
+	onRemoteActionStart?: () => void
+	onRemoteActionEnd?: () => void
+	controlPointManager?: ControlPointManager
 }
 
 /**
@@ -49,7 +52,7 @@ export function setupWebSocket(
 	whiteboardId: number,
 	options?: WebSocketOptions
 ): WebSocket {
-	const socket = new WebSocket(url);
+	const socket = new WebSocket(url)
 
 	socket.addEventListener('open', () => {
 		if (socket && socket.readyState === WebSocket.OPEN) {
@@ -58,34 +61,51 @@ export function setupWebSocket(
 					type: 'init',
 					whiteboardId
 				})
-			);
+			)
 		}
-	});
+	})
 
 	socket.addEventListener('message', async (event) => {
 		try {
-			const messageData = JSON.parse(event.data) as WebSocketMessage;
-			if (messageData.whiteboardId !== whiteboardId) return;
+			const messageData = JSON.parse(event.data) as WebSocketMessage
+			if (messageData.whiteboardId !== whiteboardId) return
 
 			if (messageData.type === 'load') {
-				await handleLoadMessage(canvas, messageData, options?.onLoad, options?.controlPointManager);
+				options?.onLoadStart?.()
+				await handleLoadMessage(
+					canvas,
+					messageData,
+					options?.onLoadEnd,
+					options?.controlPointManager
+				)
 			} else if (messageData.type === 'add') {
-				await handleAddMessage(canvas, messageData, options?.controlPointManager);
+				// Prevent history recording for remote actions
+				options?.onRemoteActionStart?.()
+				await handleAddMessage(canvas, messageData, options?.controlPointManager)
+				options?.onRemoteActionEnd?.()
 			} else if (messageData.type === 'modify' || messageData.type === 'update') {
-				handleModifyMessage(canvas, messageData, options?.controlPointManager);
+				// Prevent history recording for remote actions
+				options?.onRemoteActionStart?.()
+				handleModifyMessage(canvas, messageData, options?.controlPointManager)
+				options?.onRemoteActionEnd?.()
 			} else if (messageData.type === 'delete' || messageData.type === 'remove') {
-				handleDeleteMessage(canvas, messageData, options?.controlPointManager);
+				// Prevent history recording for remote actions
+				options?.onRemoteActionStart?.()
+				handleDeleteMessage(canvas, messageData, options?.controlPointManager)
+				options?.onRemoteActionEnd?.()
 			} else if (messageData.type === 'layer') {
-				handleLayerMessage(canvas, messageData);
+				handleLayerMessage(canvas, messageData)
 			} else if (messageData.type === 'clear') {
-				canvas.clear();
+				options?.onRemoteActionStart?.()
+				canvas.clear()
+				options?.onRemoteActionEnd?.()
 			}
 		} catch (e) {
-			console.error('Error parsing JSON:', e);
+			console.error('Error parsing JSON:', e)
 		}
-	});
+	})
 
-	return socket;
+	return socket
 }
 
 /**
@@ -94,21 +114,21 @@ export function setupWebSocket(
 async function handleLoadMessage(
 	canvas: fabric.Canvas,
 	messageData: WebSocketMessage,
-	onLoad?: (objects: fabric.FabricObject[]) => void,
+	onLoadEnd?: (objects: fabric.FabricObject[]) => void,
 	controlPointManager?: ControlPointManager
 ): Promise<void> {
 	if (messageData.whiteboard && messageData.whiteboard.objects.length > 0) {
-		const objects = await fabric.util.enlivenObjects(messageData.whiteboard.objects);
-		canvas.clear();
+		const objects = await fabric.util.enlivenObjects(messageData.whiteboard.objects)
+		canvas.clear()
 
-		const fabricObjects: fabric.FabricObject[] = [];
+		const fabricObjects: fabric.FabricObject[] = []
 		objects.forEach((obj: unknown) => {
 			const fabricObj = obj as fabric.FabricObject & {
-				id: string;
-				hasControls: boolean;
-				hasBorders: boolean;
-			};
-			fabricObj.hasControls = false; // Disable controls on load
+				id: string
+				hasControls: boolean
+				hasBorders: boolean
+			}
+			fabricObj.hasControls = false // Disable controls on load
 			// For polylines, rectangles, ellipses, and triangles, also disable borders since we use custom control points
 			if (
 				fabricObj.type === 'polyline' ||
@@ -116,18 +136,18 @@ async function handleLoadMessage(
 				fabricObj.type === 'ellipse' ||
 				fabricObj.type === 'triangle'
 			) {
-				fabricObj.hasBorders = false;
+				fabricObj.hasBorders = false
 			}
-			canvas.add(fabricObj);
-			fabricObjects.push(fabricObj);
+			canvas.add(fabricObj)
+			fabricObjects.push(fabricObj)
 			// DO NOT create control points automatically - they'll be created on user selection
-		});
+		})
 
-		canvas.renderAll();
+		canvas.renderAll()
 
-		// Call the onLoad callback if provided
-		if (onLoad) {
-			onLoad(fabricObjects);
+		// Call the onLoadEnd callback if provided
+		if (onLoadEnd) {
+			onLoadEnd(fabricObjects)
 		}
 	}
 }
@@ -141,20 +161,20 @@ async function handleAddMessage(
 	controlPointManager?: ControlPointManager
 ): Promise<void> {
 	if (messageData.object) {
-		const objects = await fabric.util.enlivenObjects([messageData.object]);
-		const obj = objects[0] as fabric.FabricObject & { id?: string };
-		obj.id = messageData.object.id;
+		const objects = await fabric.util.enlivenObjects([messageData.object])
+		const obj = objects[0] as fabric.FabricObject & { id?: string }
+		obj.id = messageData.object.id
 		// For polylines, disable fabric.js controls since we use custom control points
 		if (obj.type === 'polyline') {
 			obj.set({
 				hasControls: false,
 				hasBorders: false
-			});
+			})
 		}
-		canvas.add(obj);
+		canvas.add(obj)
 		// DO NOT create control points automatically - they'll be created on user selection
 
-		canvas.renderAll();
+		canvas.renderAll()
 	}
 }
 
@@ -166,25 +186,25 @@ function handleModifyMessage(
 	messageData: WebSocketMessage,
 	controlPointManager?: ControlPointManager
 ): void {
-	if (!messageData.object) return;
+	if (!messageData.object) return
 
-	const objects = canvas.getObjects();
+	const objects = canvas.getObjects()
 	// @ts-expect-error - Custom id property
-	const obj = objects.find((o) => o.id === messageData.object!.id);
+	const obj = objects.find((o) => o.id === messageData.object!.id)
 	if (obj) {
 		// Skip updating textbox if it's currently being edited by this user
 		if (obj.type === 'textbox') {
-			const textbox = obj as fabric.Textbox;
+			const textbox = obj as fabric.Textbox
 			if (textbox.isEditing) {
 				// Don't update text that's currently being edited to avoid cursor issues
-				return;
+				return
 			}
 		}
 
 		// Skip live updates for textboxes - only apply final updates
-		const isLiveUpdate = messageData.live || false;
+		const isLiveUpdate = messageData.live || false
 		if (isLiveUpdate && messageData.object.type === 'textbox') {
-			return;
+			return
 		}
 
 		// For live image updates, only update the essential properties to reduce lag
@@ -197,52 +217,52 @@ function handleModifyMessage(
 				scaleY: messageData.object.scaleY,
 				angle: messageData.object.angle,
 				opacity: messageData.object.opacity
-			});
+			})
 		} else {
 			// For textboxes, handle text property specially
 			if (obj.type === 'textbox' && 'text' in messageData.object) {
-				const textbox = obj as fabric.Textbox;
+				const textbox = obj as fabric.Textbox
 
 				// Use set() method with text property explicitly
 				textbox.set({
 					text: messageData.object.text as string
-				});
+				})
 
 				// Then update other properties (excluding text and type to avoid duplication)
 				// eslint-disable-next-line @typescript-eslint/no-unused-vars
-				const { text: _text, type: _type, ...otherProps } = messageData.object;
+				const { text: _text, type: _type, ...otherProps } = messageData.object
 				if (Object.keys(otherProps).length > 0) {
-					textbox.set(otherProps as Partial<fabric.FabricObjectProps>);
+					textbox.set(otherProps as Partial<fabric.FabricObjectProps>)
 				}
 
 				// Force complete re-initialization of the textbox
-				textbox.initDimensions();
-				textbox.setCoords();
+				textbox.initDimensions()
+				textbox.setCoords()
 
 				// Mark as dirty to force re-render
-				textbox.dirty = true;
+				textbox.dirty = true
 			} else {
 				// Full update for all other objects
-				obj.set(messageData.object as Partial<fabric.FabricObjectProps>);
+				obj.set(messageData.object as Partial<fabric.FabricObjectProps>)
 			}
 		}
 
 		// Recalculate coordinates after update
-		obj.setCoords();
+		obj.setCoords()
 
 		// For polylines with control point updates, completely replace the object
 		// Only do this if specifically marked as a control point update
 		if (obj.type === 'polyline' && controlPointManager && messageData.object.isControlPointUpdate) {
 			// @ts-expect-error - Custom id property
-			const objId = obj.id;
+			const objId = obj.id
 			// DON'T create control points - they should only exist if user selected the line
 			// Remove old control points only if they exist
-			const existingPoints = controlPointManager.getLineHandler().getControlPointsForObject(objId);
+			const existingPoints = controlPointManager.getLineHandler().getControlPointsForObject(objId)
 			if (existingPoints.length > 0) {
-				controlPointManager.removeControlPoints(objId);
+				controlPointManager.removeControlPoints(objId)
 			}
 			// Remove the old line
-			canvas.remove(obj);
+			canvas.remove(obj)
 			// Create a new polyline with the clean data
 			const newLine = new fabric.Polyline(messageData.object.points as any[], {
 				id: objId,
@@ -253,26 +273,26 @@ function handleModifyMessage(
 				selectable: true,
 				hasControls: false,
 				hasBorders: false
-			});
-			canvas.add(newLine);
+			})
+			canvas.add(newLine)
 			// DON'T recreate control points - user must select the line to see them
-			canvas.renderAll();
-			return; // Skip the normal update path
+			canvas.renderAll()
+			return // Skip the normal update path
 		}
 
 		// For polylines being moved normally, ONLY update control points if they already exist
 		if (obj.type === 'polyline' && controlPointManager) {
 			// @ts-expect-error - Custom id property
-			const objId = obj.id;
-			const existingPoints = controlPointManager.getLineHandler().getControlPointsForObject(objId);
+			const objId = obj.id
+			const existingPoints = controlPointManager.getLineHandler().getControlPointsForObject(objId)
 			// Only update if control points already exist (user has selected this line)
 			if (existingPoints.length > 0) {
-				controlPointManager.updateControlPoints(objId, obj);
+				controlPointManager.updateControlPoints(objId, obj)
 			}
 		}
 
 		// Force immediate render
-		canvas.requestRenderAll();
+		canvas.requestRenderAll()
 	}
 }
 
@@ -284,49 +304,49 @@ function handleDeleteMessage(
 	messageData: WebSocketMessage,
 	controlPointManager?: ControlPointManager
 ): void {
-	const objects = canvas.getObjects();
-	const objectsToRemove = messageData.objects || (messageData.object ? [messageData.object] : []);
+	const objects = canvas.getObjects()
+	const objectsToRemove = messageData.objects || (messageData.object ? [messageData.object] : [])
 	objectsToRemove.forEach((objData: SerializedObject) => {
 		// @ts-expect-error - Custom id property
-		const obj = objects.find((o) => o.id === objData.id);
+		const obj = objects.find((o) => o.id === objData.id)
 		if (obj) {
 			// Remove control points if this is a polyline
 			if (obj.type === 'polyline' && controlPointManager) {
 				// @ts-expect-error - Custom id property
-				controlPointManager.removeControlPoints(obj.id);
+				controlPointManager.removeControlPoints(obj.id)
 			}
-			canvas.remove(obj);
+			canvas.remove(obj)
 		}
-	});
-	canvas.renderAll();
+	})
+	canvas.renderAll()
 }
 
 /**
  * Handles 'layer' message - updates the z-index/layering of an object
  */
 function handleLayerMessage(canvas: fabric.Canvas, messageData: WebSocketMessage): void {
-	if (!messageData.object || !messageData.action) return;
+	if (!messageData.object || !messageData.action) return
 
-	const objects = canvas.getObjects();
+	const objects = canvas.getObjects()
 	// @ts-expect-error - Custom id property
-	const obj = objects.find((o) => o.id === messageData.object!.id);
+	const obj = objects.find((o) => o.id === messageData.object!.id)
 
 	if (obj) {
 		switch (messageData.action) {
 			case 'bringToFront':
-				canvas.bringObjectToFront(obj);
-				break;
+				canvas.bringObjectToFront(obj)
+				break
 			case 'sendToBack':
-				canvas.sendObjectToBack(obj);
-				break;
+				canvas.sendObjectToBack(obj)
+				break
 			case 'moveForward':
-				canvas.bringObjectForward(obj);
-				break;
+				canvas.bringObjectForward(obj)
+				break
 			case 'moveBackward':
-				canvas.sendObjectBackwards(obj);
-				break;
+				canvas.sendObjectBackwards(obj)
+				break
 		}
-		canvas.renderAll();
+		canvas.renderAll()
 	}
 }
 
@@ -335,6 +355,6 @@ function handleLayerMessage(canvas: fabric.Canvas, messageData: WebSocketMessage
  */
 export function closeWebSocket(socket: WebSocket | undefined): void {
 	if (socket) {
-		socket.close();
+		socket.close()
 	}
 }
