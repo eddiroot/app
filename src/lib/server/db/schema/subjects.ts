@@ -61,10 +61,6 @@ export const subject = subjectSchema.table('sub', {
 		.notNull()
 		.references(() => yearLevel.id, { onDelete: 'cascade' }),
 	description: text('description'),
-	curriculumSubjectId: integer('cur_sub_id').references(() => curriculumSubject.id, {
-		onDelete: 'set null'
-	}),
-	gradeScaleId: integer('grade_scale_id').references(() => gradeScale.id, { onDelete: 'set null' }), // If null fall back to year level's grade scale
 	...flags,
 	...timestamps
 });
@@ -81,6 +77,8 @@ export const subjectOffering = subjectSchema.table('sub_off', {
 	campusId: integer('campus_id')
 		.notNull()
 		.references(() => campus.id, { onDelete: 'cascade' }),
+	curriculumSubjectId: integer('cur_sub_id').references(() => curriculumSubject.id, {onDelete: 'set null'}),
+	gradeScaleId: integer('grade_scale_id').references(() => gradeScale.id, { onDelete: 'set null' }),
 	...flags,
 	...timestamps
 });
