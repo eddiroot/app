@@ -1,6 +1,5 @@
-import type { yearLevelEnum } from '$lib/enums';
-import { boolean, index, integer, jsonb, pgTable, text, timestamp, vector } from 'drizzle-orm/pg-core';
-
+import { yearLevelEnum } from '$lib/enums';
+import { boolean, index, integer, jsonb, pgEnum, pgTable, text, timestamp, vector } from 'drizzle-orm/pg-core';
 
 export const timestamps = {
 	createdAt: timestamp({ mode: 'date' }).defaultNow().notNull(),
@@ -9,6 +8,25 @@ export const timestamps = {
 		.$onUpdate(() => new Date())
 		.notNull()
 };
+
+// Enums used across multiple schema files - defined here to avoid circular dependencies
+export const yearLevelEnumPg = pgEnum('enum_year_level', [
+	yearLevelEnum.none,
+	yearLevelEnum.foundation,
+	yearLevelEnum.year1,
+	yearLevelEnum.year2,
+	yearLevelEnum.year3,
+	yearLevelEnum.year4,
+	yearLevelEnum.year5,
+	yearLevelEnum.year6,
+	yearLevelEnum.year7,
+	yearLevelEnum.year8,
+	yearLevelEnum.year9,
+	yearLevelEnum.year10,
+	yearLevelEnum.year11,
+	yearLevelEnum.year12,
+]);
+
 
 export const embeddings = {
 	embedding: vector('embedding', { dimensions: 768 }),

@@ -1,4 +1,4 @@
-import { constraintTypeEnum } from '../../../../enums';
+import { constraintTypeEnum } from '../../../../../enums';
 
 export interface ConstraintDefinition {
 	FETName: string;
