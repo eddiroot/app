@@ -1567,3 +1567,143 @@ export async function getSubjectThreadResponseEmbeddingMetadata(
 		yearLevel: result.yearLevel
 	};
 }
+
+export async function toggleSubjectThreadLike(threadId: number, userId: string) {
+	const [existingLike] = await db
+		.select()
+		.from(table.subjectThreadLike)
+		.where(
+			and(
+				eq(table.subjectThreadLike.subjectThreadId, threadId),
+				eq(table.subjectThreadLike.userId, userId)
+			)
+		)
+		.limit(1);
+
+	if (existingLike) {
+		// Unlike - remove the like
+		await db.delete(table.subjectThreadLike).where(eq(table.subjectThreadLike.id, existingLike.id));
+		return { liked: false };
+	} else {
+		// Like - add the like
+		await db.insert(table.subjectThreadLike).values({
+			subjectThreadId: threadId,
+			userId
+		});
+		return { liked: true };
+	}
+}
+
+export async function getSubjectThreadLikeInfo(threadId: number, userId: string) {
+	const likes = await db
+		.select()
+		.from(table.subjectThreadLike)
+		.where(eq(table.subjectThreadLike.subjectThreadId, threadId));
+
+	const userLiked = likes.some((like) => like.userId === userId);
+
+	return {
+		count: likes.length,
+		userLiked
+	};
+}
+
+export async function getSubjectThreadLikeCounts(threadIds: number[], userId: string) {
+	if (threadIds.length === 0) return [];
+
+	const likes = await db
+		.select()
+		.from(table.subjectThreadLike)
+		.where(inArray(table.subjectThreadLike.subjectThreadId, threadIds));
+
+	// Group by thread ID
+	const likesMap = new Map<number, { count: number; userLiked: boolean }>();
+
+	for (const threadId of threadIds) {
+		likesMap.set(threadId, { count: 0, userLiked: false });
+	}
+
+	for (const like of likes) {
+		const current = likesMap.get(like.subjectThreadId)!;
+		current.count++;
+		if (like.userId === userId) {
+			current.userLiked = true;
+		}
+	}
+
+	return Array.from(likesMap.entries()).map(([threadId, info]) => ({
+		threadId,
+		...info
+	}));
+}
+
+export async function toggleSubjectThreadResponseLike(responseId: number, userId: string) {
+	const [existingLike] = await db
+		.select()
+		.from(table.subjectThreadResponseLike)
+		.where(
+			and(
+				eq(table.subjectThreadResponseLike.subjectThreadResponseId, responseId),
+				eq(table.subjectThreadResponseLike.userId, userId)
+			)
+		)
+		.limit(1);
+
+	if (existingLike) {
+		// Unlike - remove the like
+		await db
+			.delete(table.subjectThreadResponseLike)
+			.where(eq(table.subjectThreadResponseLike.id, existingLike.id));
+		return { liked: false };
+	} else {
+		// Like - add the like
+		await db.insert(table.subjectThreadResponseLike).values({
+			subjectThreadResponseId: responseId,
+			userId
+		});
+		return { liked: true };
+	}
+}
+
+export async function getSubjectThreadResponseLikeInfo(responseId: number, userId: string) {
+	const likes = await db
+		.select()
+		.from(table.subjectThreadResponseLike)
+		.where(eq(table.subjectThreadResponseLike.subjectThreadResponseId, responseId));
+
+	const userLiked = likes.some((like) => like.userId === userId);
+
+	return {
+		count: likes.length,
+		userLiked
+	};
+}
+
+export async function getSubjectThreadResponseLikeCounts(responseIds: number[], userId: string) {
+	if (responseIds.length === 0) return [];
+
+	const likes = await db
+		.select()
+		.from(table.subjectThreadResponseLike)
+		.where(inArray(table.subjectThreadResponseLike.subjectThreadResponseId, responseIds));
+
+	// Group by response ID
+	const likesMap = new Map<number, { count: number; userLiked: boolean }>();
+
+	for (const responseId of responseIds) {
+		likesMap.set(responseId, { count: 0, userLiked: false });
+	}
+
+	for (const like of likes) {
+		const current = likesMap.get(like.subjectThreadResponseId)!;
+		current.count++;
+		if (like.userId === userId) {
+			current.userLiked = true;
+		}
+	}
+
+	return Array.from(likesMap.entries()).map(([responseId, info]) => ({
+		responseId,
+		...info
+	}));
+}

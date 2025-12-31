@@ -291,6 +291,40 @@ export const subjectThreadResponse = pgTable(
 
 export type SubjectThreadResponse = typeof subjectThreadResponse.$inferSelect;
 
+export const subjectThreadLike = pgTable(
+	'sub_thread_like',
+	{
+		id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
+		subjectThreadId: integer('sub_thread_id')
+			.notNull()
+			.references(() => subjectThread.id, { onDelete: 'cascade' }),
+		userId: uuid('user_id')
+			.notNull()
+			.references(() => user.id, { onDelete: 'cascade' }),
+		...timestamps
+	},
+	(self) => [unique().on(self.subjectThreadId, self.userId)]
+);
+
+export type SubjectThreadLike = typeof subjectThreadLike.$inferSelect;
+
+export const subjectThreadResponseLike = pgTable(
+	'sub_thread_resp_like',
+	{
+		id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
+		subjectThreadResponseId: integer('sub_thread_resp_id')
+			.notNull()
+			.references(() => subjectThreadResponse.id, { onDelete: 'cascade' }),
+		userId: uuid('user_id')
+			.notNull()
+			.references(() => user.id, { onDelete: 'cascade' }),
+		...timestamps
+	},
+	(self) => [unique().on(self.subjectThreadResponseId, self.userId)]
+);
+
+export type SubjectThreadResponseLike = typeof subjectThreadResponseLike.$inferSelect;
+
 export const subjectOfferingClassResource = pgTable('sub_off_cls_res', {
 	id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
 	title: text('title'),

@@ -5,6 +5,7 @@
 	import Reply from '@lucide/svelte/icons/reply';
 	import User from '@lucide/svelte/icons/user';
 	import ResponseForm from './form.svelte';
+	import LikeButton from './like-button.svelte';
 	import Self from './response-item.svelte';
 	import { shouldShowResponseUserInfo } from './utils';
 
@@ -54,6 +55,13 @@
 	function closeReplyForm() {
 		showReplyForm = false;
 	}
+
+	const responseLikeInfo = $derived(() => {
+		const likeData = data.responseLikes?.find(
+			(like: any) => like.responseId === response.response.id
+		);
+		return likeData || { count: 0, userLiked: false };
+	});
 </script>
 
 <div
@@ -97,20 +105,27 @@
 				{@html response.response.content || 'No content available'}
 			</div>
 
-			<!-- Reply button -->
-			{#if depth < maxDepth}
-				<div class="mt-2">
+			<!-- Action buttons -->
+			<div class="mt-2 flex items-center gap-1">
+				<LikeButton
+					action="?/toggleResponseLike"
+					itemId={response.response.id}
+					initialLiked={responseLikeInfo().userLiked}
+					initialCount={responseLikeInfo().count}
+					size="sm"
+				/>
+				{#if depth < maxDepth}
 					<Button
 						variant="ghost"
 						size="sm"
 						onclick={toggleReplyForm}
-						class="text-muted-foreground hover:text-foreground -ml-2 text-xs"
+						class="text-muted-foreground hover:text-foreground text-xs"
 					>
 						<Reply class="mr-1 h-3 w-3" />
 						Reply
 					</Button>
-				</div>
-			{/if}
+				{/if}
+			</div>
 		</div>
 	</div>
 
