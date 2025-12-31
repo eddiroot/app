@@ -1,6 +1,5 @@
 import { SQL, sql } from 'drizzle-orm';
 import {
-	boolean,
 	check,
 	integer,
 	pgSchema,
@@ -11,7 +10,7 @@ import {
 } from 'drizzle-orm/pg-core';
 import { schoolSpaceTypeEnum } from '../../../enums';
 import { gradeScale } from './curriculum';
-import { timestamps, yearLevelEnumPg } from './utils';
+import { flags, timestamps, yearLevelEnumPg } from './utils';
 
 export const schoolSchema = pgSchema('school');
 
@@ -33,7 +32,7 @@ export const yearLevel = schoolSchema.table('year_level', {
 		.references(() => school.id, { onDelete: 'cascade' }),
 	yearLevel: yearLevelEnumPg().notNull(),
 	gradeScaleId: integer('grade_scale_id').references(() => gradeScale.id, { onDelete: 'set null' }),
-	isArchived: boolean('is_archived').notNull().default(false),
+	...flags,
 	...timestamps
 });
 
@@ -47,7 +46,7 @@ export const campus = schoolSchema.table('cmps', {
 	name: text('name').notNull(),
 	address: text('address').notNull(),
 	description: text('description'),
-	isArchived: boolean('is_archived').notNull().default(false),
+	...flags,
 	...timestamps
 });
 
@@ -62,7 +61,7 @@ export const schoolBuilding = schoolSchema.table(
 			.references(() => campus.id, { onDelete: 'cascade' }),
 		name: text('name').notNull(),
 		description: text('description'),
-		isArchived: boolean('is_archived').notNull().default(false),
+		...flags,
 		...timestamps
 	},
 	(self) => [unique().on(self.campusId, self.name)]
@@ -90,7 +89,7 @@ export const schoolSpace = schoolSchema.table(
 		type: schoolSpaceTypeEnumPg().notNull(),
 		capacity: integer('capacity'),
 		description: text('description'),
-		isArchived: boolean('is_archived').notNull().default(false),
+		...flags,
 		...timestamps
 	},
 	(self) => [unique().on(self.buildingId, self.name)]
@@ -106,7 +105,7 @@ export const schoolSemester = schoolSchema.table(
 		schoolYear: integer('sch_year_id').notNull(),
 		semNumber: integer('sem_number').notNull(),
 		name: text('name').generatedAlwaysAs((): SQL => sql`'Semester ' || sem_number`),
-		isArchived: boolean('is_archived').notNull().default(false),
+		...flags,
 		...timestamps
 	},
 	(self) => [
@@ -128,7 +127,7 @@ export const schoolTerm = schoolSchema.table(
 		name: text('name').generatedAlwaysAs((): SQL => sql`'Term ' || term_number`),
 		startDate: timestamp('sch_term_start_date', { withTimezone: true, mode: 'date' }).notNull(),
 		endDate: timestamp('sch_term_end_date', { withTimezone: true, mode: 'date' }).notNull(),
-		isArchived: boolean('is_archived').notNull().default(false),
+		...flags,
 		...timestamps
 	},
 	(self) => [

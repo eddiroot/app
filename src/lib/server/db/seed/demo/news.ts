@@ -19,25 +19,25 @@ export async function seedDemoNews(
 				name: 'School Announcements',
 				description: 'General school announcements and updates',
 				color: '#3B82F6', // Blue
-				isArchived: false
+				
 			},
 			{
 				name: 'Academic News',
 				description: 'Academic achievements and educational updates',
 				color: '#10B981', // Green
-				isArchived: false
+				
 			},
 			{
 				name: 'Sports & Activities',
 				description: 'Sports events, extracurricular activities, and student achievements',
 				color: '#F59E0B', // Orange
-				isArchived: false
+				
 			},
 			{
 				name: 'Community Events',
 				description: 'Community involvement and special events',
 				color: '#8B5CF6', // Purple
-				isArchived: false
+				
 			}
 		])
 		.returning();
@@ -89,7 +89,7 @@ export async function seedDemoNews(
 			publishedAt: new Date(),
 			isPinned: true,
 			viewCount: 0,
-			isArchived: false
+			
 		},
 		{
 			title: 'Year 9 Science Fair Competition Results',
@@ -134,7 +134,7 @@ export async function seedDemoNews(
 			publishedAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
 			isPinned: false,
 			viewCount: 15,
-			isArchived: false
+			
 		},
 		{
 			title: 'Basketball Team Wins Regional Championship',
@@ -177,7 +177,7 @@ export async function seedDemoNews(
 			publishedAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000),
 			isPinned: true,
 			viewCount: 42,
-			isArchived: false
+			
 		},
 		{
 			title: 'Library Renovation Project Update',
@@ -218,7 +218,7 @@ export async function seedDemoNews(
 			publishedAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000),
 			isPinned: false,
 			viewCount: 28,
-			isArchived: false
+			
 		},
 		{
 			title: "Drama Club Presents: A Midsummer Night's Dream",
@@ -258,7 +258,7 @@ export async function seedDemoNews(
 			publishedAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
 			isPinned: false,
 			viewCount: 35,
-			isArchived: false
+			
 		},
 		{
 			title: 'Community Garden Project Launch',
@@ -297,7 +297,7 @@ export async function seedDemoNews(
 			publishedAt: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000),
 			isPinned: false,
 			viewCount: 22,
-			isArchived: false
+			
 		},
 		{
 			title: 'Parent-Teacher Conference Scheduling Now Open',
@@ -338,7 +338,7 @@ export async function seedDemoNews(
 			publishedAt: new Date(Date.now() - 12 * 24 * 60 * 60 * 1000),
 			isPinned: false,
 			viewCount: 67,
-			isArchived: false
+			
 		}
 	]);
 

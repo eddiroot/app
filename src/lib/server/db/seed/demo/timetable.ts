@@ -36,7 +36,6 @@ export async function seedDemoTimetable(
 			name: 'Main School Timetable 2025',
 			schoolYear: 2025,
 			schoolSemesterId: semester1?.id,
-			isArchived: false
 		})
 		.returning();
 

@@ -86,3 +86,55 @@ export async function approvePublic(table: TableWithFlags, id: number) {
         })
         .where(eq(table.id, id));
 }
+
+// ============================================================================
+// SQL WHERE CLAUSE HELPERS
+// ============================================================================
+
+/**
+ * SQL condition to check if a flag is set (for WHERE clauses)
+ * Usage: where(hasFlag(table.flags, RecordFlagEnum.archived))
+ */
+export function hasFlag(flagsColumn: PgColumn, flag: RecordFlagEnum) {
+    return sql`(${flagsColumn} & ${flag}) != 0`;
+}
+
+/**
+ * SQL condition to check if a flag is NOT set (for WHERE clauses)
+ * Usage: where(notHasFlag(table.flags, RecordFlagEnum.archived))
+ */
+export function notHasFlag(flagsColumn: PgColumn, flag: RecordFlagEnum) {
+    return sql`(${flagsColumn} & ${flag}) = 0`;
+}
+
+/**
+ * SQL condition to check if record is archived
+ * Usage: where(isArchived(table.flags))
+ */
+export function isArchived(flagsColumn: PgColumn) {
+    return hasFlag(flagsColumn, RecordFlagEnum.archived);
+}
+
+/**
+ * SQL condition to check if record is NOT archived
+ * Usage: where(notArchived(table.flags))
+ */
+export function notArchived(flagsColumn: PgColumn) {
+    return notHasFlag(flagsColumn, RecordFlagEnum.archived);
+}
+
+/**
+ * SQL expression to set a flag (for UPDATE SET)
+ * Usage: .set({ flags: setFlagExpr(table.flags, RecordFlagEnum.archived) })
+ */
+export function setFlagExpr(flagsColumn: PgColumn, flag: RecordFlagEnum) {
+    return sql`${flagsColumn} | ${flag}`;
+}
+
+/**
+ * SQL expression to clear a flag (for UPDATE SET)
+ * Usage: .set({ flags: clearFlagExpr(table.flags, RecordFlagEnum.archived) })
+ */
+export function clearFlagExpr(flagsColumn: PgColumn, flag: RecordFlagEnum) {
+    return sql`${flagsColumn} & ~${flag}`;
+}
