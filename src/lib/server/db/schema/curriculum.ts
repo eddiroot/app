@@ -1,6 +1,6 @@
 
-import { gradeScaleEnum } from '$lib/enums';
 import { boolean, doublePrecision, index, integer, pgEnum, pgTable, text, unique, varchar } from 'drizzle-orm/pg-core';
+import { gradeScaleEnum } from '../../../enums';
 import { school } from './schools';
 import { embeddings, publish, timestamps, yearLevelEnumPg } from './utils';
 
