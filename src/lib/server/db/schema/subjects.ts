@@ -20,12 +20,12 @@ import {
 	subjectThreadTypeEnum
 } from '../../../enums';
 import { courseMapItem } from './coursemap';
-import { curriculumSubject, gradeScale, yearLevelEnumPg } from './curriculum';
+import { curriculumSubject, gradeScale } from './curriculum';
 import { resource } from './resource';
-import { campus, school, schoolSpace } from './schools';
+import { campus, school, schoolSpace, yearLevel } from './schools';
 import { timetableDraft } from './timetables';
 import { user } from './user';
-import { embeddings, timestamps } from './utils';
+import { embeddings, timestamps, yearLevelEnumPg } from './utils';
 
 export const subjectGroupEnumPg = pgEnum('enum_sub_group', [
 	subjectGroupEnum.english,
@@ -47,19 +47,6 @@ export const coreSubject = pgTable('sub_core', {
 
 export type CoreSubject = typeof coreSubject.$inferSelect;
 
-export const yearLevel = pgTable ('year_level', {
-	id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
-	schoolId: integer('sch_id')
-		.notNull()
-		.references(() => school.id, { onDelete: 'cascade' }),
-	yearLevel: yearLevelEnumPg().notNull(),
-	gradeScaleId: integer('grade_scale_id')
-		.references(() => gradeScale.id, { onDelete: 'set null' }),
-	isArchived: boolean('is_archived').notNull().default(false),
-	...timestamps
-});
-
-export type YearLevel = typeof yearLevel.$inferSelect;
 
 export const subject = pgTable(
 	'sub',

@@ -11,7 +11,8 @@ import {
 	varchar
 } from 'drizzle-orm/pg-core';
 import { schoolSpaceTypeEnum } from '../../../enums';
-import { timestamps } from './utils';
+import { gradeScale } from './curriculum';
+import { timestamps, yearLevelEnumPg } from './utils';
 
 export const school = pgTable('sch', {
 	id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
@@ -23,6 +24,20 @@ export const school = pgTable('sch', {
 });
 
 export type School = typeof school.$inferSelect;
+
+export const yearLevel = pgTable ('year_level', {
+	id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
+	schoolId: integer('sch_id')
+		.notNull()
+		.references(() => school.id, { onDelete: 'cascade' }),
+	yearLevel: yearLevelEnumPg().notNull(),
+	gradeScaleId: integer('grade_scale_id')
+		.references(() => gradeScale.id, { onDelete: 'set null' }),
+	isArchived: boolean('is_archived').notNull().default(false),
+	...timestamps
+});
+
+export type YearLevel = typeof yearLevel.$inferSelect;
 
 export const campus = pgTable('cmps', {
 	id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),

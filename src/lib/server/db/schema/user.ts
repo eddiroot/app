@@ -15,10 +15,9 @@ import {
 	userHonorificEnum,
 	userTypeEnum
 } from '../../../enums';
-import { yearLevelEnumPg } from './curriculum';
 import { campus, school } from './schools';
 import { subject, subjectOffering, subjectOfferingClass } from './subjects';
-import { timestamps } from './utils';
+import { timestamps, yearLevelEnumPg } from './utils';
 
 export const userTypeEnumPg = pgEnum('enum_user_type', [
 	userTypeEnum.none,

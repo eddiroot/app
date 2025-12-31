@@ -13,11 +13,10 @@ import {
 	uuid
 } from 'drizzle-orm/pg-core';
 import { constraintTypeEnum, queueStatusEnum } from '../../../enums';
-import { yearLevelEnumPg } from './curriculum';
 import { school, schoolSemester, schoolSpace } from './schools';
 import { subjectOffering } from './subjects';
 import { user } from './user';
-import { timestamps } from './utils';
+import { timestamps, yearLevelEnumPg } from './utils';
 
 export const timetable = pgTable(
 	'tt',
