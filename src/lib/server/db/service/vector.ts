@@ -142,8 +142,9 @@ export async function vectorSimilaritySearch<T>(
 	}));
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+ 
 export async function getTempPoolEmbeddingMetadata(
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	_record: Record<string, unknown>
 ): Promise<EmbeddingMetadata> {
 	// return empty metadata for temp pool

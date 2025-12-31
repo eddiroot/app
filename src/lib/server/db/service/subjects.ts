@@ -1075,10 +1075,11 @@ export async function endClassPass(subjectClassAllocationId: number, userId: str
 export async function getSubjectYearLevelBySubjectOfferingId(subjectOfferingId: number) {
 	const subject = await db
 		.select({
-			yearLevel: table.subject.yearLevel
+			yearLevel: table.yearLevel.yearLevel
 		})
 		.from(table.subjectOffering)
 		.innerJoin(table.subject, eq(table.subject.id, table.subjectOffering.subjectId))
+		.innerJoin(table.yearLevel, eq(table.subject.yearLevelId, table.yearLevel.id))
 		.where(eq(table.subjectOffering.id, subjectOfferingId))
 		.limit(1);
 
