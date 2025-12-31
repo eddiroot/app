@@ -1,5 +1,5 @@
-import { yearLevelEnum } from '$lib/enums';
 import { boolean, index, integer, jsonb, pgEnum, pgTable, text, timestamp, vector } from 'drizzle-orm/pg-core';
+import { yearLevelEnum } from '../../../enums';
 
 export const timestamps = {
 	createdAt: timestamp({ mode: 'date' }).defaultNow().notNull(),
