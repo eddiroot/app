@@ -13,9 +13,6 @@ export * from './subjects.js';
 // Class
 export * from './classes.js';
 
-// Chatbot
-export * from './chatbot.js';
-
 // Course Map
 export * from './coursemap.js';
 

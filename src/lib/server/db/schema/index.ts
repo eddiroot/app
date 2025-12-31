@@ -1,9 +1,6 @@
 // Re-export all schema definitions and types from individual schema files
 // This allows importing directly from $lib/server/db/schema instead of specific files
 
-// Chatbot schemas
-export * from './chatbot';
-
 // Task schemas
 export * from './task';
 

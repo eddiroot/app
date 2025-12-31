@@ -85,11 +85,9 @@ export async function getSubjectOfferingLearningAreas(subjectOfferingId: number)
 				learningArea: table.learningArea
 			})
 			.from(table.subjectOffering)
-			.innerJoin(table.subject, eq(table.subjectOffering.subjectId, table.subject.id))
-			.innerJoin(table.coreSubject, eq(table.subject.coreSubjectId, table.coreSubject.id))
 			.innerJoin(
 				table.curriculumSubject,
-				eq(table.coreSubject.curriculumSubjectId, table.curriculumSubject.id)
+				eq(table.subjectOffering.curriculumSubjectId, table.curriculumSubject.id)
 			)
 			.innerJoin(
 				table.learningArea,
@@ -356,7 +354,7 @@ export async function getCourseMapItemPlanContexts(
 	const rows = await db
 		.select({
 			description: table.courseMapItem.description,
-			yearLevel: table.subject.yearLevel,
+			yearLevel: table.yearLevel.yearLevel,
 			learningAreaStandard: table.learningAreaStandard,
 			standardElaboration: table.standardElaboration
 		})
@@ -378,10 +376,11 @@ export async function getCourseMapItemPlanContexts(
 			table.standardElaboration,
 			eq(table.standardElaboration.learningAreaStandardId, table.learningAreaStandard.id)
 		)
+		.innerJoin(table.yearLevel, eq(table.subject.yearLevelId, table.yearLevel.id))
 		.where(
 			and(
 				eq(table.courseMapItem.id, courseMapItemId),
-				eq(table.learningAreaStandard.yearLevel, table.subject.yearLevel)
+				eq(table.learningAreaStandard.yearLevel, table.yearLevel.yearLevel)
 			)
 		);
 
@@ -799,10 +798,11 @@ export async function getLearningAreaStandardsByCourseMapItemId(
 			eq(table.subjectOffering.id, table.courseMapItem.subjectOfferingId)
 		)
 		.innerJoin(table.subject, eq(table.subject.id, table.subjectOffering.subjectId))
+		.innerJoin(table.yearLevel, eq(table.subject.yearLevelId, table.yearLevel.id))
 		.where(
 			and(
 				eq(table.courseMapItemLearningArea.courseMapItemId, courseMapItemId),
-				eq(table.learningAreaStandard.yearLevel, table.subject.yearLevel)
+				eq(table.learningAreaStandard.yearLevel, table.yearLevel.yearLevel)
 			)
 		);
 
@@ -818,13 +818,15 @@ export async function getCourseMapItemAssessmentPlanEmbeddingMetadata(
 		.select({
 			subjectOfferingId: table.courseMapItem.subjectOfferingId,
 			subjectId: table.subjectOffering.subjectId,
-			yearLevel: table.subject.yearLevel
+			yearLevel: table.yearLevel.yearLevel
 		})
 		.from(table.courseMapItem)
 		.innerJoin(
 			table.subjectOffering,
 			eq(table.courseMapItem.subjectOfferingId, table.subjectOffering.id)
 		)
+		.innerJoin(table.subject, eq(table.subjectOffering.subjectId, table.subject.id))
+		.innerJoin(table.yearLevel, eq(table.subject.yearLevelId, table.yearLevel.id))
 		.where(eq(table.courseMapItem.id, courseMapItemId))
 		.limit(1);
 
@@ -844,13 +846,15 @@ export async function getCourseMapItemLessonPlanEmbeddingMetadata(
 		.select({
 			subjectOfferingId: table.courseMapItem.subjectOfferingId,
 			subjectId: table.subjectOffering.subjectId,
-			yearLevel: table.subject.yearLevel
+			yearLevel: table.yearLevel.yearLevel
 		})
 		.from(table.courseMapItem)
 		.innerJoin(
 			table.subjectOffering,
 			eq(table.courseMapItem.subjectOfferingId, table.subjectOffering.id)
 		)
+		.innerJoin(table.subject, eq(table.subjectOffering.subjectId, table.subject.id))
+		.innerJoin(table.yearLevel, eq(table.subject.yearLevelId, table.yearLevel.id))
 		.where(eq(table.courseMapItem.id, courseMapItemId))
 		.limit(1);
 

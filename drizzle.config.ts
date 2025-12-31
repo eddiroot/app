@@ -33,7 +33,6 @@ export default defineConfig({
 		'timetable',
 		'user',
 		'utils',
-		'chatbot',
 		'subject'
 	]
 });

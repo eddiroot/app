@@ -52,12 +52,10 @@ export async function getSubjectOfferingById(subjectOfferingId: number) {
 			subjectOffering: table.subjectOffering,
 			subject: table.subject,
 			coreSubject: table.coreSubject,
-			electiveSubject: table.electiveSubject
 		})
 		.from(table.subjectOffering)
 		.innerJoin(table.subject, eq(table.subject.id, table.subjectOffering.subjectId))
 		.leftJoin(table.coreSubject, eq(table.coreSubject.id, table.subject.coreSubjectId))
-		.leftJoin(table.electiveSubject, eq(table.electiveSubject.id, table.subject.electiveSubjectId))
 		.where(eq(table.subjectOffering.id, subjectOfferingId))
 		.limit(1);
 
@@ -196,8 +194,9 @@ export async function getSubjectOfferingsByForTimetableByTimetableId(timetableId
 		})
 		.from(table.subjectOffering)
 		.innerJoin(table.subject, eq(table.subjectOffering.subjectId, table.subject.id))
+		.innerJoin(table.yearLevel, eq(table.subject.yearLevelId, table.yearLevel.id))
 		.where(and(...conditions))
-		.orderBy(asc(table.subject.yearLevel), asc(table.subject.name));
+		.orderBy(asc(table.yearLevel.yearLevel), asc(table.subject.name));
 
 	return subjectOfferings;
 }
@@ -258,7 +257,7 @@ export async function getSubjectOfferingsByYearLevelForTimetableByTimetableId(
 	//       subjectOffering.year = calendar year (2025, 2026, etc.)
 	const conditions = [
 		eq(table.subject.schoolId, timetableData.schoolId),
-		eq(table.subject.yearLevel, yearLevel), // Filter by student grade level
+		eq(table.yearLevel.yearLevel, yearLevel), // Filter by student grade level
 		eq(table.subjectOffering.year, timetableData.schoolYear), // Filter by calendar year
 		notArchived(table.subjectOffering.flags),
 		notArchived(table.subject.flags)
@@ -277,6 +276,7 @@ export async function getSubjectOfferingsByYearLevelForTimetableByTimetableId(
 		})
 		.from(table.subjectOffering)
 		.innerJoin(table.subject, eq(table.subjectOffering.subjectId, table.subject.id))
+		.innerJoin(table.yearLevel, eq(table.subject.yearLevelId, table.yearLevel.id))
 		.where(and(...conditions))
 		.orderBy(asc(table.subject.name));
 
@@ -549,46 +549,20 @@ export async function getSubjectsBySchoolId(schoolId: number, includeArchived: b
 		.select({
 			id: table.subject.id,
 			name: table.subject.name,
+			yearLevel: table.yearLevel.yearLevel,
 			schoolId: table.subject.schoolId,
-			yearLevel: table.subject.yearLevel,
 			createdAt: table.subject.createdAt,
 			updatedAt: table.subject.updatedAt
 		})
 		.from(table.subject)
+		.innerJoin(table.yearLevel, eq(table.subject.yearLevelId, table.yearLevel.id))
 		.where(
 			and(
 				eq(table.subject.schoolId, schoolId),
 				includeArchived ? undefined : notArchived(table.subject.flags)
 			)
 		)
-		.orderBy(asc(table.subject.yearLevel), asc(table.subject.name));
-
-	return subjects;
-}
-
-export async function getSubjectsByYearLevel(
-	schoolId: number,
-	yearLevel: yearLevelEnum,
-	includeArchived: boolean = false
-) {
-	const subjects = await db
-		.select({
-			id: table.subject.id,
-			name: table.subject.name,
-			schoolId: table.subject.schoolId,
-			yearLevel: table.subject.yearLevel,
-			createdAt: table.subject.createdAt,
-			updatedAt: table.subject.updatedAt
-		})
-		.from(table.subject)
-		.where(
-			and(
-				eq(table.subject.schoolId, schoolId),
-				eq(table.subject.yearLevel, yearLevel),
-				includeArchived ? undefined : notArchived(table.subject.flags)
-			)
-		)
-		.orderBy(asc(table.subject.name));
+		.orderBy(asc(table.yearLevel.yearLevel), asc(table.subject.name));
 
 	return subjects;
 }
@@ -1497,12 +1471,12 @@ export async function getSubjectOfferingMetadataByOfferingId(subjectOfferingId: 
 }> {
 	const result = await db
 		.select({
-			curriculumSubjectId: table.coreSubject.curriculumSubjectId,
-			yearLevel: table.subject.yearLevel
+			curriculumSubjectId: table.subjectOffering.curriculumSubjectId,
+			yearLevel: table.yearLevel.yearLevel
 		})
 		.from(table.subjectOffering)
 		.innerJoin(table.subject, eq(table.subjectOffering.subjectId, table.subject.id))
-		.leftJoin(table.coreSubject, eq(table.subject.coreSubjectId, table.coreSubject.id))
+		.innerJoin(table.yearLevel, eq(table.subject.yearLevelId, table.yearLevel.id))
 		.where(eq(table.subjectOffering.id, subjectOfferingId))
 		.limit(1);
 
@@ -1523,7 +1497,7 @@ export async function getSubjectThreadEmbeddingMetadata(
 		.select({
 			subjectOfferingId: table.subjectThread.subjectOfferingId,
 			subjectId: table.subject.id,
-			yearLevel: table.subject.yearLevel
+			yearLevel: table.yearLevel.yearLevel
 		})
 		.from(table.subjectThread)
 		.innerJoin(
@@ -1531,6 +1505,7 @@ export async function getSubjectThreadEmbeddingMetadata(
 			eq(table.subjectThread.subjectOfferingId, table.subjectOffering.id)
 		)
 		.innerJoin(table.subject, eq(table.subjectOffering.subjectId, table.subject.id))
+		.innerJoin(table.yearLevel, eq(table.subject.yearLevelId, table.yearLevel.id))
 		.where(eq(table.subjectThread.id, record.id as number))
 		.limit(1);
 
@@ -1548,7 +1523,7 @@ export async function getSubjectThreadResponseEmbeddingMetadata(
 		.select({
 			subjectOfferingId: table.subjectThread.subjectOfferingId,
 			subjectId: table.subject.id,
-			yearLevel: table.subject.yearLevel
+			yearLevel: table.yearLevel.yearLevel
 		})
 		.from(table.subjectThreadResponse)
 		.innerJoin(
@@ -1560,6 +1535,7 @@ export async function getSubjectThreadResponseEmbeddingMetadata(
 			eq(table.subjectThread.subjectOfferingId, table.subjectOffering.id)
 		)
 		.innerJoin(table.subject, eq(table.subjectOffering.subjectId, table.subject.id))
+		.innerJoin(table.yearLevel, eq(table.subject.yearLevelId, table.yearLevel.id))
 		.where(eq(table.subjectThreadResponse.id, record.id as number))
 		.limit(1);
 
