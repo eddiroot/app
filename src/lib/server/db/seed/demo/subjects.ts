@@ -122,7 +122,7 @@ export async function seedDemoSubjects(
 
     console.log(`  Created ${classes.length} subject offering classes for Year 9`);
 
-    // Assign teachers to Year 9 subject offerings based on their specialisation
+    // Assign teachers to Year 9 subject offerings and classes based on their specialisation
     const teacherSubjectMap = [
         { teacherIndex: 0, subjectKeyword: 'Mathematics' },
         { teacherIndex: 1, subjectKeyword: 'English' },
@@ -139,27 +139,47 @@ export async function seedDemoSubjects(
         });
 
         if (matchingOffering && userData.teachers[teacherIndex]) {
+            // Assign to subject offering
             await db.insert(schema.userSubjectOffering).values({
                 userId: userData.teachers[teacherIndex].id,
                 subOfferingId: matchingOffering.id
             });
+
+            // Assign to subject offering class
+            const matchingClass = classes.find((c) => c.subOfferingId === matchingOffering.id);
+            if (matchingClass) {
+                await db.insert(schema.userSubjectOfferingClass).values({
+                    userId: userData.teachers[teacherIndex].id,
+                    subOffClassId: matchingClass.id
+                });
+            }
         }
     }
 
-    console.log(`  Assigned ${userData.teachers.length} teachers to Year 9 subject offerings`);
+    console.log(`  Assigned ${userData.teachers.length} teachers to Year 9 subject offerings and classes`);
 
-    // Assign students to Year 9 subject offerings
+    // Assign students to Year 9 subject offerings and classes
     const year9Students = userData.students.filter((s) => s.yearLevel === yearLevelEnum.year9);
     for (const student of year9Students) {
         for (const offering of year9Offerings) {
+            // Assign to subject offering
             await db.insert(schema.userSubjectOffering).values({
                 userId: student.id,
                 subOfferingId: offering.id
             });
+
+            // Assign to subject offering class
+            const matchingClass = classes.find((c) => c.subOfferingId === offering.id);
+            if (matchingClass) {
+                await db.insert(schema.userSubjectOfferingClass).values({
+                    userId: student.id,
+                    subOffClassId: matchingClass.id
+                });
+            }
         }
     }
 
-    console.log(`  Assigned ${year9Students.length} students to Year 9 subject offerings`);
+    console.log(`  Assigned ${year9Students.length} students to Year 9 subject offerings and classes`);
 
     // Assign admin to all offerings
     for (const offering of offerings) {
