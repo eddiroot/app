@@ -10,6 +10,7 @@
 	import MessageSquare from '@lucide/svelte/icons/message-square';
 	import User from '@lucide/svelte/icons/user';
 	import ResponseForm from './form.svelte';
+	import LikeButton from './like-button.svelte';
 	import ResponseItem from './response-item.svelte';
 	import { getThreadTypeDisplay, shouldShowUserInfo } from './utils';
 
@@ -140,6 +141,13 @@
 					{@html thread()?.thread.content || 'No content available'}
 				</div>
 			</Card.Content>
+			<Card.Footer>
+				<LikeButton
+					action="?/toggleThreadLike"
+					initialLiked={data.threadLikes?.userLiked || false}
+					initialCount={data.threadLikes?.count || 0}
+				/>
+			</Card.Footer>
 		</Card.Root>
 
 		<!-- Answers Section (for questions) -->
