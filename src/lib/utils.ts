@@ -1,6 +1,6 @@
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
-import { yearLevelEnum } from './enums';
+import { RecordFlagEnum, yearLevelEnum } from './enums';
 
 export function cn(...inputs: ClassValue[]) {
 	return twMerge(clsx(inputs));
@@ -335,3 +335,32 @@ export function parseCSVData(csvText: string): Array<Record<string, string>> {
 
 	return data;
 }
+
+/**
+ * Helper functions for working with flags
+ */
+export const FlagUtils = {
+	/** Check if a flag is set */
+	hasFlag: (flags: number, flag: RecordFlagEnum): boolean => (flags & flag) !== 0,
+
+	/** Set a flag (turn on) */
+	setFlag: (flags: number, flag: RecordFlagEnum): number => flags | flag,
+
+	/** Clear a flag (turn off) */
+	clearFlag: (flags: number, flag: RecordFlagEnum): number => flags & ~flag,
+
+	/** Toggle a flag */
+	toggleFlag: (flags: number, flag: RecordFlagEnum): number => flags ^ flag,
+
+	/** Set multiple flags at once */
+	setFlags: (flags: number, ...newFlags: RecordFlagEnum[]): number =>
+		newFlags.reduce((acc, flag) => acc | flag, flags),
+
+	/** Check if all specified flags are set */
+	hasAllFlags: (flags: number, ...checkFlags: RecordFlagEnum[]): boolean =>
+		checkFlags.every((flag) => (flags & flag) !== 0),
+
+	/** Check if any of the specified flags are set */
+	hasAnyFlag: (flags: number, ...checkFlags: RecordFlagEnum[]): boolean =>
+		checkFlags.some((flag) => (flags & flag) !== 0)
+};

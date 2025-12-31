@@ -1,5 +1,4 @@
 import {
-	boolean,
 	doublePrecision,
 	index,
 	integer,
@@ -10,7 +9,7 @@ import {
 } from 'drizzle-orm/pg-core';
 import { gradeScaleEnum } from '../../../enums';
 import { school } from './schools';
-import { embeddings, publish, timestamps, yearLevelEnumPg } from './utils';
+import { embeddings, flags, timestamps, yearLevelEnumPg } from './utils';
 
 export const curriculumSchema = pgSchema('curriculum');
 
@@ -21,9 +20,8 @@ export const curriculum = curriculumSchema.table('crclm', {
 	schoolId: integer('school_id').references(() => school.id, { onDelete: 'cascade' }),
 	countryCode: varchar('country_code', { length: 2 }).notNull(),
 	stateCode: varchar('state_code', { length: 3 }).notNull(),
-	isArchived: boolean('is_archived').notNull().default(false),
 	...timestamps,
-	...publish
+	...flags
 });
 
 export type Curriculum = typeof curriculum.$inferSelect;
@@ -34,7 +32,7 @@ export const curriculumSubject = curriculumSchema.table('crclm_sub', {
 	curriculumId: integer('cur_id')
 		.notNull()
 		.references(() => curriculum.id, { onDelete: 'cascade' }),
-	isArchived: boolean('is_archived').notNull().default(false),
+	...flags,
 	...timestamps
 });
 
@@ -48,7 +46,7 @@ export const learningArea = curriculumSchema.table(
 			.notNull()
 			.references(() => curriculumSubject.id, { onDelete: 'cascade' }),
 		name: text('name').notNull(),
-		isArchived: boolean('is_archived').notNull().default(false),
+		...flags,
 		...timestamps,
 		...embeddings
 	},
@@ -69,7 +67,7 @@ export const learningAreaContent = curriculumSchema.table(
 			.references(() => learningArea.id, { onDelete: 'cascade' }),
 		description: text('description').notNull(),
 		number: integer('number').notNull(),
-		isArchived: boolean('is_archived').notNull().default(false),
+		...flags,
 		...timestamps,
 		...embeddings
 	},
@@ -89,7 +87,7 @@ export const learningAreaTopic = curriculumSchema.table(
 			.notNull()
 			.references(() => learningArea.id, { onDelete: 'cascade' }),
 		name: text('name').notNull(),
-		isArchived: boolean('is_archived').notNull().default(false),
+		...flags,
 		...timestamps,
 		...embeddings
 	},
@@ -111,7 +109,7 @@ export const learningAreaStandard = curriculumSchema.table(
 		code: varchar('code', { length: 20 }).notNull(),
 		description: text('description'),
 		yearLevel: yearLevelEnumPg().notNull(),
-		isArchived: boolean('is_archived').notNull().default(false),
+		...flags,
 		...timestamps,
 		...embeddings
 	},
@@ -131,7 +129,7 @@ export const standardElaboration = curriculumSchema.table(
 			.notNull()
 			.references(() => learningAreaStandard.id, { onDelete: 'cascade' }),
 		standardElaboration: text('std_elab').notNull(),
-		isArchived: boolean('is_archived').notNull().default(false),
+		...flags,
 		...timestamps,
 		...embeddings
 	},
@@ -152,7 +150,7 @@ export const outcome = curriculumSchema.table(
 			.references(() => curriculumSubject.id, { onDelete: 'cascade' }),
 		number: integer('number').notNull(),
 		description: text('description').notNull(),
-		isArchived: boolean('is_archived').notNull().default(false),
+		...flags,
 		...timestamps,
 		...embeddings
 	},
@@ -172,7 +170,7 @@ export const learningAreaOutcome = curriculumSchema.table('lrn_a_outcome', {
 	outcomeId: integer('out_id')
 		.notNull()
 		.references(() => outcome.id, { onDelete: 'cascade' }),
-	isArchived: boolean('is_archived').notNull().default(false),
+	...flags,
 	...timestamps
 });
 
@@ -189,7 +187,7 @@ export const keySkill = curriculumSchema.table(
 		}),
 		number: integer('number').notNull(), // e.g. 1/2/3
 		topicName: text('topic_name'),
-		isArchived: boolean('is_archived').notNull().default(false),
+		...flags,
 		...timestamps,
 		...embeddings
 	},
@@ -212,7 +210,7 @@ export const keyKnowledge = curriculumSchema.table(
 			onDelete: 'cascade'
 		}),
 		number: integer('number').notNull(),
-		isArchived: boolean('is_archived').notNull().default(false),
+		...flags,
 		...timestamps,
 		...embeddings
 	},
@@ -293,7 +291,7 @@ export const curriculumSubjectExtraContent = curriculumSchema.table(
 			.notNull()
 			.references(() => curriculumSubject.id, { onDelete: 'cascade' }),
 		content: text('content').notNull(),
-		isArchived: boolean('is_archived').notNull().default(false),
+		...flags,
 		...timestamps,
 		...embeddings
 	},
@@ -319,7 +317,7 @@ export const gradeScale = curriculumSchema.table('grade_scale', {
 	id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
 	name: text('name').notNull(),
 	gradeScaleType: gradeScaleEnumPg().notNull(),
-	isArchived: boolean('is_archived').notNull().default(false),
+	...flags,
 	...timestamps
 });
 
@@ -335,7 +333,7 @@ export const gradeScaleLevel = curriculumSchema.table('grade_scale_level', {
 	minimumScore: doublePrecision('minimum_score').notNull(),
 	maximumScore: doublePrecision('maximum_score').notNull(),
 	gradeValue: doublePrecision('grade_value'),
-	isArchived: boolean('is_archived').notNull().default(false),
+	...flags,
 	...timestamps
 });
 
