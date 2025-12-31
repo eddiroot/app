@@ -1,6 +1,5 @@
 import {
 	boolean,
-	check,
 	date,
 	foreignKey,
 	index,
@@ -13,47 +12,54 @@ import {
 	uuid,
 	type AnyPgColumn
 } from 'drizzle-orm/pg-core';
-import { sql } from 'drizzle-orm/sql';
 import {
 	subjectClassAllocationAttendanceComponentType,
 	subjectClassAllocationAttendanceStatus,
+	subjectGroupEnum,
 	subjectThreadResponseTypeEnum,
 	subjectThreadTypeEnum
 } from '../../../enums';
 import { courseMapItem } from './coursemap';
-import { curriculumSubject, yearLevelEnumPg } from './curriculum';
+import { curriculumSubject, gradeScale, yearLevelEnumPg } from './curriculum';
 import { resource } from './resource';
 import { campus, school, schoolSpace } from './schools';
 import { timetableDraft } from './timetables';
 import { user } from './user';
 import { embeddings, timestamps } from './utils';
 
+export const subjectGroupEnumPg = pgEnum('enum_sub_group', [
+	subjectGroupEnum.english,
+	subjectGroupEnum.mathematics,
+	subjectGroupEnum.science,
+]);
+
 export const coreSubject = pgTable('sub_core', {
 	id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
 	name: text('name').notNull(),
 	description: text('description'),
-	curriculumSubjectId: integer('cur_sub_id')
-		.notNull()
-		.references(() => curriculumSubject.id, { onDelete: 'cascade' }),
 	schoolId: integer('sch_id')
 		.notNull()
 		.references(() => school.id, { onDelete: 'cascade' }),
+	subjectGroup: subjectGroupEnumPg().notNull(),
 	isArchived: boolean('is_archived').notNull().default(false),
 	...timestamps
 });
 
 export type CoreSubject = typeof coreSubject.$inferSelect;
 
-export const electiveSubject = pgTable('sub_elec', {
+export const yearLevel = pgTable ('year_level', {
 	id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
-	name: text('name').notNull(),
-	description: text('description'),
 	schoolId: integer('sch_id')
 		.notNull()
 		.references(() => school.id, { onDelete: 'cascade' }),
+	yearLevel: yearLevelEnumPg().notNull(),
+	gradeScaleId: integer('grade_scale_id')
+		.references(() => gradeScale.id, { onDelete: 'set null' }),
 	isArchived: boolean('is_archived').notNull().default(false),
 	...timestamps
 });
+
+export type YearLevel = typeof yearLevel.$inferSelect;
 
 export const subject = pgTable(
 	'sub',
@@ -63,23 +69,18 @@ export const subject = pgTable(
 		schoolId: integer('sch_id')
 			.notNull()
 			.references(() => school.id, { onDelete: 'cascade' }),
-		coreSubjectId: integer('sub_core_id').references(() => coreSubject.id, {
-			onDelete: 'set null'
-		}),
-		electiveSubjectId: integer('sub_elec_id').references(() => electiveSubject.id, {
-			onDelete: 'set null'
-		}),
-		yearLevel: yearLevelEnumPg().notNull(),
+		coreSubjectId: integer('core_sub_id').references(() => coreSubject.id, { onDelete: 'cascade' }), // If its part of a multi-year subject
+		yearLevelId: integer('yr_lvl_id')
+			.notNull()
+			.references(() => yearLevel.id, { onDelete: 'cascade' }),
+		description: text('description'),
+		curriculumSubjectId: integer('cur_sub_id')
+			.references(() => curriculumSubject.id, { onDelete: 'set null' }),
+		gradeScaleId: integer('grade_scale_id')
+			.references(() => gradeScale.id, { onDelete: 'set null' }), // If null fall back to year level's grade scale
 		isArchived: boolean('is_archived').notNull().default(false),
 		...timestamps
 	},
-	(subject) => [
-		unique().on(subject.schoolId, subject.name),
-		check(
-			'either_core_or_elective',
-			sql`(sub_core_id IS NOT NULL AND sub_elec_id IS NULL) OR (sub_core_id IS NULL AND sub_elec_id IS NOT NULL)`
-		)
-	]
 );
 
 export type Subject = typeof subject.$inferSelect;
