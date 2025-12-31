@@ -6,11 +6,7 @@ import { drizzle } from 'drizzle-orm/node-postgres';
 import type { PgTable } from 'drizzle-orm/pg-core';
 import pg from 'pg';
 import { Resource } from 'sst';
-
-// Import schema modules (not just the pgSchema objects)
-import * as curriculumModule from '$lib/server/db/schema/curriculum';
-import * as taskModule from '$lib/server/db/schema/task';
-
+import { AVAILABLE_SCHEMAS, type SchemaModule } from '../consts';
 // ============================================================================
 // DATABASE CONNECTION (standalone - avoids $app/environment)
 // ============================================================================
@@ -30,8 +26,6 @@ const db = drizzle(pool, { schema });
 // ============================================================================
 // TYPES
 // ============================================================================
-
-type SchemaModule = Record<string, unknown>;
 
 interface EmbedTableResult {
 	tableName: string;
@@ -274,15 +268,6 @@ export async function embedAllSchemas(
 }
 
 // ============================================================================
-// SCHEMA REGISTRY
-// ============================================================================
-
-const AVAILABLE_SCHEMAS: Record<string, SchemaModule> = {
-	curriculum: curriculumModule,
-	task: taskModule
-};
-
-// ============================================================================
 // CLI
 // ============================================================================
 
@@ -304,9 +289,9 @@ async function main() {
 		console.log('  --batch=N   Batch size for processing (default: 50)');
 		console.log('');
 		console.log('Examples:');
-		console.log('  npm embed:schema curriculum');
-		console.log('  npm embed:schema task --batch=100');
-		console.log('  npm embed:schema all');
+		console.log('  npm run embed:schema curriculum');
+		console.log('  npm run embed:schema task --batch=100');
+		console.log('  npm run embed:schema all');
 		process.exit(0);
 	}
 

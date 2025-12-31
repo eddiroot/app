@@ -4,19 +4,8 @@ import { drizzle } from 'drizzle-orm/node-postgres';
 import type { PgTable } from 'drizzle-orm/pg-core';
 import pg from 'pg';
 import { Resource } from 'sst';
-
+import { AVAILABLE_SCHEMAS } from '../consts';
 // Import schema modules
-import * as coursemapModule from '$lib/server/db/schema/coursemap';
-import * as curriculumModule from '$lib/server/db/schema/curriculum';
-import * as eventsModule from '$lib/server/db/schema/events';
-import * as newsModule from '$lib/server/db/schema/news';
-import * as resourceModule from '$lib/server/db/schema/resource';
-import * as schoolModule from '$lib/server/db/schema/schools';
-import * as subjectsModule from '$lib/server/db/schema/subjects';
-import * as taskModule from '$lib/server/db/schema/task';
-import * as timetableModule from '$lib/server/db/schema/timetables';
-import * as userModule from '$lib/server/db/schema/user';
-
 import { exportSchemaToFile, exportTableToFile } from './sql-generator';
 
 // ============================================================================
@@ -89,23 +78,6 @@ function findTableByName(tableName: string): PgTable | null {
 }
 
 // ============================================================================
-// SCHEMA REGISTRY
-// ============================================================================
-
-const AVAILABLE_SCHEMAS: Record<string, SchemaModule> = {
-	curriculum: curriculumModule,
-	task: taskModule,
-	school: schoolModule,
-	user: userModule,
-	news: newsModule,
-	subjects: subjectsModule,
-	timetable: timetableModule,
-	events: eventsModule,
-	resource: resourceModule,
-	coursemap: coursemapModule
-};
-
-// ============================================================================
 // CLI
 // ============================================================================
 
@@ -133,11 +105,29 @@ function printHelp() {
 	console.log('  --transaction      Wrap in BEGIN/COMMIT transaction');
 	console.log('  --override-id      Use OVERRIDING SYSTEM VALUE for identity columns');
 	console.log('  --no-header        Omit file header comment');
+	console.log('  --omit-ids         Omit primary key IDs (let DB assign new ones)');
+	console.log('  --id-offset=<n>    Add offset to all ID columns (e.g., --id-offset=10000)');
+	console.log('');
+	console.log('ID Conflict Resolution:');
+	console.log('  When exporting data for different environments or curricula that may');
+	console.log('  have overlapping IDs, use one of these approaches:');
+	console.log('');
+	console.log('  --omit-ids         Best when FK relationships are not critical or will');
+	console.log('                     be re-established via other means. Lets PostgreSQL');
+	console.log('                     assign fresh sequential IDs.');
+	console.log('');
+	console.log('  --id-offset=N      Best when preserving FK relationships. Shifts all');
+	console.log('                     IDs (primary and foreign keys) by N. Use different');
+	console.log('                     offsets for different data sets:');
+	console.log('                       Curriculum 1: --id-offset=0 (or omit)');
+	console.log('                       Curriculum 2: --id-offset=100000');
+	console.log('                       Curriculum 3: --id-offset=200000');
 	console.log('');
 	console.log('Examples:');
 	console.log('  npm run sql:export schema curriculum');
 	console.log('  npm run sql:export table crclm_sub_la --transaction');
 	console.log('  npm run sql:export schema task --output=./exports');
+	console.log('  npm run sql:export schema curriculum --id-offset=100000');
 	console.log('  npm run sql:export list');
 }
 
@@ -146,11 +136,13 @@ async function exportSchema(schemaName: string, options: {
 	wrapInTransaction?: boolean;
 	overrideIdentity?: boolean;
 	includeHeader?: boolean;
+	omitIds?: boolean;
+	idOffset?: number;
 }) {
 	const schemaModule = AVAILABLE_SCHEMAS[schemaName];
 
 	if (!schemaModule) {
-		console.error(`❌ Schema "${schemaName}" not found.`);
+		console.error(` Schema "${schemaName}" not found.`);
 		console.log(`Available schemas: ${Object.keys(AVAILABLE_SCHEMAS).join(', ')}`);
 		process.exit(1);
 	}
@@ -163,6 +155,12 @@ async function exportSchema(schemaName: string, options: {
 
 	console.log(`\n Exporting schema: ${schemaName}`);
 	console.log(`   Tables: ${tables.length}`);
+	if (options.idOffset) {
+		console.log(`   ID Offset: ${options.idOffset}`);
+	}
+	if (options.omitIds) {
+		console.log(`   Omitting IDs (PostgreSQL will assign new ones)`);
+	}
 
 	const filePath = await exportSchemaToFile(db, tables, schemaName, options);
 
@@ -174,6 +172,8 @@ async function exportTable(tableName: string, options: {
 	wrapInTransaction?: boolean;
 	overrideIdentity?: boolean;
 	includeHeader?: boolean;
+	omitIds?: boolean;
+	idOffset?: number;
 }) {
 	const table = findTableByName(tableName);
 
@@ -184,6 +184,12 @@ async function exportTable(tableName: string, options: {
 	}
 
 	console.log(`\n Exporting table: ${tableName}`);
+	if (options.idOffset) {
+		console.log(`   ID Offset: ${options.idOffset}`);
+	}
+	if (options.omitIds) {
+		console.log(`   Omitting IDs (PostgreSQL will assign new ones)`);
+	}
 
 	const filePath = await exportTableToFile(db, table, options);
 
@@ -213,12 +219,28 @@ async function main() {
 	const wrapInTransaction = args.includes('--transaction');
 	const overrideIdentity = args.includes('--override-id');
 	const includeHeader = !args.includes('--no-header');
+	const omitIds = args.includes('--omit-ids');
+	const idOffsetArg = args.find((a) => a.startsWith('--id-offset='))?.split('=')[1];
+	const idOffset = idOffsetArg ? parseInt(idOffsetArg, 10) : undefined;
+
+	// Validate id-offset
+	if (idOffsetArg && (isNaN(idOffset!) || idOffset! < 0)) {
+		console.error('Error: --id-offset must be a non-negative integer');
+		process.exit(1);
+	}
+
+	// Warn if both omitIds and idOffset are set
+	if (omitIds && idOffset) {
+		console.warn('Warning: --omit-ids and --id-offset are both set. --omit-ids will take precedence for primary keys.');
+	}
 
 	const options = {
 		outputDir,
 		wrapInTransaction,
 		overrideIdentity,
-		includeHeader
+		includeHeader,
+		omitIds,
+		idOffset
 	};
 
 	if (!command || command === '--help' || command === '-h') {
