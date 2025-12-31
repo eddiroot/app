@@ -25,7 +25,8 @@
 		"db:studio": "sst shell drizzle-kit studio",
 		"db:diagram": "tsx ./src/lib/server/db/dbml.ts",
 		"embed:schema": "npx sst shell -- npx vite-node src/lib/scripts/embedding/index.ts",
-		"sso": "aws sso login --sso-session=eddi"
+		"sso": "aws sso login --sso-session=eddi",
+		"sql:export": "npx sst shell -- npx vite-node src/lib/scripts/sql/index.ts"
 	},
 	"devDependencies": {
 		"@eslint/compat": "^1.2.5",

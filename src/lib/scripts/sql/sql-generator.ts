@@ -1,5 +1,5 @@
-import { db } from '$lib/server/db';
 import { eq, getTableName } from 'drizzle-orm';
+import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import type { PgColumn, PgTable } from 'drizzle-orm/pg-core';
 import { existsSync, mkdirSync, writeFileSync } from 'fs';
 import { join } from 'path';
@@ -175,6 +175,13 @@ function generateSection(title: string): string {
 }
 
 // ============================================================================
+// DATABASE TYPE
+// ============================================================================
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type DrizzleDb = NodePgDatabase<any>;
+
+// ============================================================================
 // MAIN EXPORT FUNCTIONS
 // ============================================================================
 
@@ -182,6 +189,7 @@ function generateSection(title: string): string {
  * Export a single record from a table by its primary key ID
  */
 export async function exportRecordToSql(
+	db: DrizzleDb,
 	table: TableWithId,
 	id: number | string,
 	options: SqlGeneratorOptions = {}
@@ -223,6 +231,7 @@ export async function exportRecordToSql(
  * Export all records from a single table
  */
 export async function exportTableToSql(
+	db: DrizzleDb,
 	table: PgTable,
 	options: SqlGeneratorOptions = {}
 ): Promise<string> {
@@ -266,6 +275,7 @@ export async function exportTableToSql(
  * Tables are exported in the order provided (important for foreign key constraints)
  */
 export async function exportSchemaToSql(
+	db: DrizzleDb,
 	tables: PgTable[],
 	schemaName: string,
 	options: SqlGeneratorOptions = {}
@@ -323,8 +333,6 @@ export function writeSqlFile(
 
 	const filePath = join(outputDir, fileName.endsWith('.sql') ? fileName : `${fileName}.sql`);
 	writeFileSync(filePath, content, 'utf-8');
-
-	console.log(`📄 Wrote SQL file: ${filePath}`);
 	return filePath;
 }
 
@@ -332,11 +340,12 @@ export function writeSqlFile(
  * Export and write a table to SQL file
  */
 export async function exportTableToFile(
+	db: DrizzleDb,
 	table: PgTable,
 	options: SqlGeneratorOptions & { fileName?: string } = {}
 ): Promise<string> {
 	const tableName = getTableName(table);
-	const sql = await exportTableToSql(table, options);
+	const sql = await exportTableToSql(db, table, options);
 	const fileName = options.fileName || `${tableName}.sql`;
 
 	return writeSqlFile(sql, fileName, options.outputDir);
@@ -346,12 +355,12 @@ export async function exportTableToFile(
  * Export and write a schema to SQL file
  */
 export async function exportSchemaToFile(
+	db: DrizzleDb,
 	tables: PgTable[],
 	schemaName: string,
 	options: SqlGeneratorOptions & { fileName?: string } = {}
 ): Promise<string> {
-	const sql = await exportSchemaToSql(tables, schemaName, options);
+	const sql = await exportSchemaToSql(db, tables, schemaName, options);
 	const fileName = options.fileName || `${schemaName}.sql`;
-
 	return writeSqlFile(sql, fileName, options.outputDir);
 }
