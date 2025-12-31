@@ -39,7 +39,7 @@
 	} = $props();
 
 	const dataForm = () => data.form;
-	const formId = () => isReply ? `reply-form-${parentResponseId}` : 'main-response-form';
+	const formId = () => (isReply ? `reply-form-${parentResponseId}` : 'main-response-form');
 
 	const form = superForm(dataForm(), {
 		id: formId(),
@@ -57,7 +57,7 @@
 
 	const { form: formData, enhance } = form;
 	const isOP = $derived(() => currentUserId === threadAuthorId);
-	
+
 	let resetEditor = $state(false);
 </script>
 

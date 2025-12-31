@@ -105,9 +105,9 @@ export const actions: Actions = {
 			// Parse tags from comma-separated string to array
 			const tagsArray = tags
 				? tags
-					.split(',')
-					.map((tag) => tag.trim())
-					.filter((tag) => tag.length > 0)
+						.split(',')
+						.map((tag) => tag.trim())
+						.filter((tag) => tag.length > 0)
 				: undefined;
 
 			// Convert plain text content to structured format (same as create)

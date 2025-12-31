@@ -1,5 +1,16 @@
-import { boolean, index, integer, jsonb, pgEnum, pgTable, text, timestamp, vector } from 'drizzle-orm/pg-core';
+import {
+	boolean,
+	index,
+	integer,
+	jsonb,
+	pgSchema,
+	text,
+	timestamp,
+	vector
+} from 'drizzle-orm/pg-core';
 import { yearLevelEnum } from '../../../enums';
+
+export const utilsSchema = pgSchema('utils');
 
 export const timestamps = {
 	createdAt: timestamp({ mode: 'date' }).defaultNow().notNull(),
@@ -10,7 +21,7 @@ export const timestamps = {
 };
 
 // Enums used across multiple schema files - defined here to avoid circular dependencies
-export const yearLevelEnumPg = pgEnum('enum_year_level', [
+export const yearLevelEnumPg = utilsSchema.enum('enum_year_level', [
 	yearLevelEnum.none,
 	yearLevelEnum.foundation,
 	yearLevelEnum.year1,
@@ -24,9 +35,8 @@ export const yearLevelEnumPg = pgEnum('enum_year_level', [
 	yearLevelEnum.year9,
 	yearLevelEnum.year10,
 	yearLevelEnum.year11,
-	yearLevelEnum.year12,
+	yearLevelEnum.year12
 ]);
-
 
 export const embeddings = {
 	embedding: vector('embedding', { dimensions: 768 }),
@@ -43,16 +53,18 @@ export const embeddings = {
 };
 
 // Temporary pool table for documents that are not saved.
-export const tempPool = pgTable('temp_pool', {
-	id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
-	content: text('content').notNull(),
-	...embeddings,
-	...timestamps
-},
-(self)	=> [
-	index('temp_pool_embedding_idx').using('hnsw', self.embedding.op('vector_cosine_ops')),
-	index('temp_pool_metadata_idx').using('gin', self.embeddingMetadata),
-]
+export const tempPool = utilsSchema.table(
+	'temp_pool',
+	{
+		id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
+		content: text('content').notNull(),
+		...embeddings,
+		...timestamps
+	},
+	(self) => [
+		index('temp_pool_embedding_idx').using('hnsw', self.embedding.op('vector_cosine_ops')),
+		index('temp_pool_metadata_idx').using('gin', self.embeddingMetadata)
+	]
 );
 
 export type TempPool = typeof tempPool.$inferSelect;
@@ -62,4 +74,4 @@ export const publish = {
 	isPublicApproved: boolean('is_public_approved').notNull().default(false),
 	publicRequestedAt: timestamp({ mode: 'date' }),
 	publicApprovedAt: timestamp({ mode: 'date' })
-}
+};

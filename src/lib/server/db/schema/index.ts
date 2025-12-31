@@ -36,4 +36,3 @@ export * from './events';
 
 // News schemas
 export * from './news';
-

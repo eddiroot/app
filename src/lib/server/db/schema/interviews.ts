@@ -1,6 +1,8 @@
-import { boolean, integer, jsonb, pgTable, timestamp, uuid, varchar } from 'drizzle-orm/pg-core';
+import { boolean, integer, jsonb, pgSchema, timestamp, uuid, varchar } from 'drizzle-orm/pg-core';
 
-export const interviewConfigs = pgTable('interview_configs', {
+export const interviewSchema = pgSchema('interviews');
+
+export const interviewConfigs = interviewSchema.table('interview_configs', {
 	id: uuid('id').primaryKey().defaultRandom(),
 	schoolId: integer('school_id').notNull(),
 	wholeSchool: boolean('whole_school').notNull().default(false),
@@ -16,7 +18,7 @@ export const interviewConfigs = pgTable('interview_configs', {
 	updatedAt: timestamp('updated_at').defaultNow()
 });
 
-export const interviewSlots = pgTable('interview_slots', {
+export const interviewSlots = interviewSchema.table('interview_slots', {
 	id: uuid('id').primaryKey().defaultRandom(),
 	configId: uuid('config_id').notNull(),
 	teacherId: uuid('teacher_id').notNull(),
@@ -31,7 +33,7 @@ export const interviewSlots = pgTable('interview_slots', {
 	updatedAt: timestamp('updated_at').defaultNow()
 });
 
-export const interviewBookings = pgTable('interview_bookings', {
+export const interviewBookings = interviewSchema.table('interview_bookings', {
 	id: uuid('id').primaryKey().defaultRandom(),
 	slotId: uuid('slot_id').notNull(),
 	parentId: uuid('parent_id').notNull(),

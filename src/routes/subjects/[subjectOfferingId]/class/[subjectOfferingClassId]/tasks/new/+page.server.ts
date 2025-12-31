@@ -106,7 +106,7 @@ export const actions = {
 					// Clean up temp files
 					if (tempFilePaths.length > 0) {
 						try {
-							await Promise.all(tempFilePaths.map(path => fsPromises.unlink(path)));
+							await Promise.all(tempFilePaths.map((path) => fsPromises.unlink(path)));
 						} catch {
 							// Ignore cleanup errors
 						}
@@ -119,11 +119,18 @@ export const actions = {
 					);
 				} catch (workflowError) {
 					// Re-throw redirects
-					if (workflowError && typeof workflowError === 'object' && 'status' in workflowError && workflowError.status === 303) {
+					if (
+						workflowError &&
+						typeof workflowError === 'object' &&
+						'status' in workflowError &&
+						workflowError.status === 303
+					) {
 						throw workflowError;
 					}
 
-					throw new Error(`AI generation failed: ${workflowError instanceof Error ? workflowError.message : String(workflowError)}`);
+					throw new Error(
+						`AI generation failed: ${workflowError instanceof Error ? workflowError.message : String(workflowError)}`
+					);
 				}
 			} else {
 				// Manual creation - not yet implemented

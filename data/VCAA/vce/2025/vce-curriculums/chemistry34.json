@@ -1,653 +1,653 @@
 {
-    "id": 3000,
-    "curriculumId": 3000,
-    "name": "Chemistry Units 3 and 4",
-    "isArchived": false,
-    "learningAreas": [
-      {
-        "id": 3006,
-        "curriculumSubjectId": 3000,
-        "name": "What are the current and future options for supplying energy?",
-        "abbreviation": "U3AOS1",
-        "description": "In this area of study students focus on analysing and comparing a range of fossil fuels and biofuels as energy sources for society, and carbohydrates, proteins and lipids as fuel sources for the body. They write balanced thermochemical equations for the combustion of various fuels. The amounts of energy and gases produced in combustion reactions are quantified using stoichiometry. They explore how energy can be sustainably produced from chemicals to meet the needs of society while minimising negative impacts on the environment. The selection of learning contexts should allow students to develop practical techniques to investigate how energy from fuels can be obtained and measured, and to determine the efficiency of different fuels and electrochemical cells as sources of energy. Students develop their skills in the use of scientific equipment and apparatus. They may measure energy released in combustion reactions through quantitative calorimetry experiments and may compare amounts of energy released in different fuels, such as methane, alcohols, waxes and foods. They design, construct and test galvanic and fuel cells, and account for differences between experimental findings and predictions made by using the electrochemical series. Students may work collaboratively to construct electrochemical half-cells and experiment with different combinations of half-cells to develop their own electrochemical series. Students respond to challenges such as designing an electrochemical cell that generates the most energy under laboratory conditions using a limited range of supplied chemicals and materials."
-      },
-      {
-        "id": 3007,
-        "curriculumSubjectId": 3000,
-        "name": "How can the rate and yield of chemical reactions be optimised?",
-        "abbreviation": "U3AOS2",
-        "description": "In this area of study, students explore the factors that affect the rate and yield of equilibrium and electrolytic reactions involved in producing important materials for society. Reactants and products in chemical reactions are treated qualitatively through the application of Le Chatelier’s principle and quantified using equilibrium expressions, reaction quotients and Faraday’s Laws. Students explore the sustainability of different options for producing useful materials for society. The selection of learning contexts should allow students to develop practical techniques to investigate equilibrium and electrolysis. Students develop their skills in the use of scientific equipment and apparatus. They investigate reaction rates including the measurement of mass, gas volumes and time. They use an equilibrium system, such as iron(III) thiocyanate, to predict and test the effect of different changes to the system. They investigate the effect of catalysts on reaction rates, such as comparing the rate of decomposition of hydrogen peroxide using organic and inorganic catalysts. Students explore the application of electrolysis in the manufacture of useful products through experiments such as electroplating and anodising. They model and explain the operation of secondary cells: for example, those in portable devices such as laptops or cell phones. Students respond to challenges such as predicting and testing the optimum conditions under which a selected reaction can produce the highest product yield."
-      },
-      {
-        "id": 3008,
-        "curriculumSubjectId": 3000,
-        "name": "How are organic compounds categorised and synthesised?",
-        "abbreviation": "U4AOS1",
-        "description": "In this area of study students focus on the structure, naming, properties and reactions of organic compounds, including the chemical reactions associated with the metabolism of food. They explore how synthetic organic compounds can be produced more sustainably for use in society. The selection of learning contexts should allow students to develop practical techniques to investigate organic structures and reactions. Students develop their skills in the use of scientific equipment and apparatus. They may construct models to explore organic structures, including isomers. Students may compare the properties of biodiesels produced using different oils, or may investigate organic reaction pathways such as the synthesis of esters used in food flavourings. They may investigate food metabolism by hydrolysing different types of plant starches. Students respond to challenges such as how to improve the atom economy of a selected chemical reaction or reaction pathway."
-      },
-      {
-        "id": 3009,
-        "curriculumSubjectId": 3000,
-        "name": "How are organic compounds analysed and used?",
-        "abbreviation": "U4AOS2",
-        "description": "In this area of study students focus on laboratory and instrumental analyses of organic compounds, and the function of some organic compounds as medicines. They use distillation to separate mixtures, use volumetric analysis to calculate redox quantities, and explore how instrumental analysis is used to ensure the quality of consumer products. Students explain how some medicines that bind to the active sites of enzymes function by inhibiting the enzymes’ mode of action. The selection of learning contexts should allow students to develop practical techniques to analyse organic compounds. Students develop their skills in the use of scientific equipment and apparatus. They may perform qualitative tests to identify features of organic compounds, such as the identification of functional groups in an unknown compound. Students may perform quantitative analyses including redox titrations to determine concentrations and quantities of substances, such as the amount of Vitamin C in fruits. They design and improve on experiments such as the testing of the viscosity of alcohols. They respond to challenges such as the identification of a molecule using primary data from analytical techniques used in the laboratory or secondary data obtained from spectroscopy. Students may use distillation to extract and purify the natural organic compounds in plants, such as extracting limonene from orange peel."
-      },
-      {
-        "id": 3010,
-        "curriculumSubjectId": 3000,
-        "name": "How is scientific inquiry used to investigate the sustainable production of energy and/or materials?",
-        "abbreviation": "U4AOS3",
-        "description": "Students undertake a student-designed scientific investigation in either Unit 3 or Unit 4, or across both Units 3 and 4. The investigation involves the generation of primary data related to the production of energy and/or chemicals and/or the analysis or synthesis of organic compounds, and should be inspired by a contemporary chemical challenge or issue. The investigation draws on knowledge and related key science skills developed across Units 3 and 4 and is undertaken by students in the laboratory and/or in the field. When undertaking the investigation students are required to apply the key science skills to develop a question, state an aim, formulate a hypothesis and plan a course of action to answer the question, while complying with safety and ethical guidelines. Students then undertake an experiment to generate primary quantitative data, analyse and evaluate the data, identify limitations of data and methods, link experimental results to scientific ideas, discuss implications of the results, and draw a conclusion in response to the question. The presentation format for the investigation is a scientific poster constructed according to the structure outlined on page 14. A logbook is maintained by students for recording, assessment and authentication purposes."
-      }
-    ],
-    "outcomes": [
-    {
-      "id": 3006,
-      "curriculumSubjectId": 3000,
-      "number": 1,
-      "description": "On completion of this unit the student should be able to compare fuels quantitatively with reference to combustion products and energy outputs, apply knowledge of the electrochemical series to design, construct and test primary cells and fuel cells, and evaluate the sustainability of electrochemical cells in producing energy for society.",
-      "topics": [
-        {
-          "id": 3021,
-          "outcomeId": 3006,
-          "name": "Carbon-based fuels"
-        },
-        {
-          "id": 3022,
-          "outcomeId": 3006,
-          "name": "Measuring changes in chemical reactions"
-        },
-        {
-          "id": 3023,
-          "outcomeId": 3006,
-          "name": "Primary galvanic cells and fuel cells as sources of energy"
-        }
-      ],
-      "keyKnowledge": [
-        {
-          "id": 3086,
-          "description": "the definition of a fuel, including the distinction between fossil fuels (coal, natural gas, petrol) and biofuels (biogas, bioethanol, biodiesel) with reference to their renewability (ability of a resource to be replaced by natural processes within a relatively short period of time)",
-          "outcomeId": 3006,
-          "outcomeTopicId": 3021
-        },
-        {
-          "id": 3087,
-          "description": "fuel sources for the body measured in kJ g-1: carbohydrates, proteins and lipids (fats and oils)",
-          "outcomeId": 3006,
-          "outcomeTopicId": 3021
-        },
-        {
-          "id": 3088,
-          "description": "photosynthesis as the process that converts light energy into chemical energy and as a source of glucose and oxygen for respiration in living things: 6CO2(g) + 6H2O(l) → C6H12O6(aq)+ 6O2(g)",
-          "outcomeId": 3006,
-          "outcomeTopicId": 3021
-        },
-        {
-          "id": 3089,
-          "description": "oxidation of glucose as the primary carbohydrate energy source, including the balanced equation for cellular respiration: C6H12O6(aq) + 6O2(g) 6CO2(g) + 6H2O(l)",
-          "outcomeId": 3006,
-          "outcomeTopicId": 3021
-        },
-        {
-          "id": 3090,
-          "description": "production of bioethanol by the fermentation of glucose and subsequent distillation to produce a more sustainable transport fuel: C6H12O6(aq) → 2C2H5OH(aq) + 2CO2(g)",
-          "outcomeId": 3006,
-          "outcomeTopicId": 3021
-        },
-        {
-          "id": 3091,
-          "description": "comparison of exothermic and endothermic reactions, with reference to bond making and bond breaking, including enthalpy changes (∆H) measured in kJ, molar enthalpy changes measured in kJ mol-1 and enthalpy changes for mixtures measured in kJ g-1, and their representations in energy profile diagrams",
-          "outcomeId": 3006,
-          "outcomeTopicId": 3021
-        },
-        {
-          "id": 3092,
-          "description": "determination of limiting reactants or reagents in chemical reactions",
-          "outcomeId": 3006,
-          "outcomeTopicId": 3021
-        },
-        {
-          "id": 3093,
-          "description": "combustion (complete and incomplete) reactions of fuels as exothermic reactions: the writing of balanced thermochemical equations, including states, for the complete and incomplete combustion of organic molecules using experimental data and data tables",
-          "outcomeId": 3006,
-          "outcomeTopicId": 3021
-        },
-        {
-          "id": 3094,
-          "description": "calculations related to the application of stoichiometry to reactions involving the combustion of fuels, including mass-mass, mass-volume and volume-volume stoichiometry, to determine heat energy released, reactant and product amounts and net volume or mass of major greenhouse gases (CO2, CH4 and H2O), limited to standard laboratory conditions (SLC) at 25 °C and 100 kPa",
-          "outcomeId": 3006,
-          "outcomeTopicId": 3022
-        },
-        {
-          "id": 3095,
-          "description": "the use of specific heat capacity of water to approximate the quantity of heat energy released during the combustion of a known mass of fuel and food",
-          "outcomeId": 3006,
-          "outcomeTopicId": 3022
-        },
-        {
-          "id": 3096,
-          "description": "the principles of solution calorimetry, including determination of calibration factor and consideration of the effects of heat loss; analysis of temperature-time graphs obtained from solution calorimetry",
-          "outcomeId": 3006,
-          "outcomeTopicId": 3022
-        },
-        {
-          "id": 3097,
-          "description": "energy from fuels and food:",
-          "outcomeId": 3006,
-          "outcomeTopicId": 3022
-        },
-        {
-          "id": 3098,
-          "description": "calculation of energy transformation efficiency during combustion as a percentage of chemical energy converted to useful energy",
-          "outcomeId": 3006,
-          "outcomeTopicId": 3022
-        },
-        {
-          "id": 3099,
-          "description": "comparison and calculations of energy values of foods containing carbohydrates, proteins and fats and oils",
-          "outcomeId": 3006,
-          "outcomeTopicId": 3022
-        },
-        {
-          "id": 3100,
-          "description": "the writing of balanced half-equations (including states) for oxidation and reduction reactions, and the overall redox cell reaction in both acidic and basic conditions",
-          "outcomeId": 3006,
-          "outcomeTopicId": 3023
-        },
-        {
-          "id": 3101,
-          "description": "the common design features and general operating principles of non-rechargeable (primary) galvanic cells converting chemical energy into electrical energy, including electrode polarities and the role of the electrodes (inert and reactive) and electrolyte solutions (details of specific cells not required)",
-          "outcomeId": 3006,
-          "outcomeTopicId": 3023
-        },
-        {
-          "id": 3102,
-          "description": "the use and limitations of the electrochemical series in designing galvanic cells and as a tool for predicting the products of redox reactions, for deducing overall equations from redox half-equations and for determining maximum cell voltage under standard conditions",
-          "outcomeId": 3006,
-          "outcomeTopicId": 3023
-        },
-        {
-          "id": 3103,
-          "description": "the common design features and general operating principles of fuel cells, including the use of porous electrodes for gaseous reactants to increase cell efficiency (details of specific cells not required)",
-          "outcomeId": 3006,
-          "outcomeTopicId": 3023
-        },
-        {
-          "id": 3104,
-          "description": "the application of Faraday’s Laws and stoichiometry to determine the quantity of galvanic or fuel cell reactant and product, and the current or time required to either use a particular quantity of reactant or produce a particular quantity of product",
-          "outcomeId": 3006,
-          "outcomeTopicId": 3023
-        },
-        {
-          "id": 3105,
-          "description": "contemporary responses to challenges and the role of innovation in the design of fuel cells to meet society’s energy needs, with reference to green chemistry principles: design for energy efficiency, and use of renewable feedstocks",
-          "outcomeId": 3006,
-          "outcomeTopicId": 3023
-        },
-        {
-          "id": 3085,
-          "description": "redox reactions as simultaneous oxidation and reduction processes, and the use of oxidation numbers to identify the reducing agent, oxidising agent and conjugate redox pairs",
-          "outcomeId": 3006,
-          "outcomeTopicId": 3023
-        }
-      ]
-    },
-    {
-      "id": 3007,
-      "curriculumSubjectId": 3000,
-      "number": 2,
-      "description": "On completion of this unit the student should be able to experimentally analyse chemical systems to predict how the rate and extent of chemical reactions can be optimised, explain how electrolysis is involved in the production of chemicals, and evaluate the sustainability of electrolytic processes in producing useful materials for society.",
-      "topics": [
-        {
-          "id": 3024,
-          "outcomeId": 3007,
-          "name": "Rates of chemical reactions"
-        },
-        {
-          "id": 3025,
-          "outcomeId": 3007,
-          "name": "Extent of chemical reactions"
-        },
-        {
-          "id": 3026,
-          "outcomeId": 3007,
-          "name": "Production of chemicals using electrolysis"
-        }
-      ],
-      "keyKnowledge": [
-        {
-          "id": 3106,
-          "description": "factors affecting the frequency and success of reactant particle collisions and the rate of a chemical reaction in open and closed systems, including temperature, surface area, concentration, gas pressures, presence of a catalyst, activation energy and orientation",
-          "outcomeId": 3007,
-          "outcomeTopicId": 3024
-        },
-        {
-          "id": 3107,
-          "description": "the role of catalysts in increasing the rate of specific reactions, with reference to alternative reaction pathways of lower activation energies and represented using energy profile diagrams",
-          "outcomeId": 3007,
-          "outcomeTopicId": 3024
-        },
-        {
-          "id": 3108,
-          "description": "the distinction between reversible and irreversible reactions, and between rate and extent of a reaction",
-          "outcomeId": 3007,
-          "outcomeTopicId": 3025
-        },
-        {
-          "id": 3109,
-          "description": "the dynamic nature of homogeneous equilibria involving aqueous solutions or gases, and their representation by balanced chemical or thermochemical equations (including states) and by concentration-time graphs",
-          "outcomeId": 3007,
-          "outcomeTopicId": 3025
-        },
-        {
-          "id": 3110,
-          "description": "the change in position of equilibrium that can occur when changes in temperature or species or volume (concentration or pressure) are applied to a system at equilibrium, and the representation of these changes using concentration-time graphs",
-          "outcomeId": 3007,
-          "outcomeTopicId": 3025
-        },
-        {
-          "id": 3111,
-          "description": "the application of Le Chatelier’s principle to identify factors that favour the yield of a chemical reaction",
-          "outcomeId": 3007,
-          "outcomeTopicId": 3025
-        },
-        {
-          "id": 3112,
-          "description": "calculations involving equilibrium expressions (including units) for a closed homogeneous equilibrium system and the dependence of the equilibrium constant (K) value on the system temperature and the equation used to represent the reaction",
-          "outcomeId": 3007,
-          "outcomeTopicId": 3025
-        },
-        {
-          "id": 3113,
-          "description": "the reaction quotient (Q) as a quantitative measure of the extent of a chemical reaction: that is, the relative amounts of products and reactants present during a reaction at a given point in time",
-          "outcomeId": 3007,
-          "outcomeTopicId": 3025
-        },
-        {
-          "id": 3114,
-          "description": "responses to the conflict between optimal rate and temperature considerations in producing equilibrium reaction products, with reference to the green chemistry principles of catalysis and designing for energy efficiency",
-          "outcomeId": 3007,
-          "outcomeTopicId": 3025
-        },
-        {
-          "id": 3115,
-          "description": "the use and limitations of the electrochemical series to explain or predict the products of the electrolysis of particular chemicals, given their state (molten liquid or in aqueous solution) and the electrode materials used, including the writing of balanced equations (with states) for the reactions occurring at the anode and cathode and the overall redox reaction for the cell",
-          "outcomeId": 3007,
-          "outcomeTopicId": 3026
-        },
-        {
-          "id": 3116,
-          "description": "the common design features and general operating principles of commercial electrolytic cells (including, where practicable, the removal of products as they form), and the selection of suitable electrode materials, the electrolyte (including its state) and any chemical additives that result in a desired electrolysis product (details of specific cells not required)",
-          "outcomeId": 3007,
-          "outcomeTopicId": 3026
-        },
-        {
-          "id": 3117,
-          "description": "the common design features and general operating principles of rechargeable (secondary) cells, with reference to discharging as a galvanic cell and recharging as an electrolytic cell, including the conditions required for the cell reactions to be reversed and the electrode polarities in each mode (details of specific cells not required)",
-          "outcomeId": 3007,
-          "outcomeTopicId": 3026
-        },
-        {
-          "id": 3118,
-          "description": "the role of innovation in designing cells to meet society’s energy needs in terms of producing ‘green’ hydrogen (including equations in acidic conditions) using the following methods:",
-          "outcomeId": 3007,
-          "outcomeTopicId": 3026
-        },
-        {
-          "id": 3119,
-          "description": "polymer electrolyte membrane electrolysis powered by either photovoltaic (solar) or wind energy",
-          "outcomeId": 3007,
-          "outcomeTopicId": 3026
-        },
-        {
-          "id": 3120,
-          "description": "artificial photosynthesis using a water oxidation and proton reduction catalyst system",
-          "outcomeId": 3007,
-          "outcomeTopicId": 3026
-        },
-        {
-          "id": 3121,
-          "description": "the application of Faraday’s Laws and stoichiometry to determine the quantity of electrolytic reactant and product, and the current or time required to either use a particular quantity of reactant or produce a particular quantity of product",
-          "outcomeId": 3007,
-          "outcomeTopicId": 3026
-        }
-      ]
-    },
-    {
-      "id": 3008,
-      "curriculumSubjectId": 3000,
-      "number": 1,
-      "description": "On completion of this unit the student should be able to analyse the general structures and reactions of the major organic families of compounds, design reaction pathways for organic synthesis, and evaluate the sustainability of the manufacture of organic compounds used in society.",
-      "topics": [
-        {
-          "id": 3028,
-          "outcomeId": 3008,
-          "name": "Reactions of organic compounds"
-        }
-      ],
-      "keyKnowledge": [
-        {
-          "id": 3122,
-          "description": "organic reactions and pathways, including equations, reactants, products, reaction conditions and catalysts (specific enzymes not required):",
-          "outcomeId": 3008,
-          "outcomeTopicId": 3028
-        },
-        {
-          "id": 3123,
-          "description": "synthesis of primary haloalkanes and primary alcohols by substitution",
-          "outcomeId": 3008,
-          "outcomeTopicId": 3028
-        },
-        {
-          "id": 3124,
-          "description": "addition reactions of alkenes",
-          "outcomeId": 3008,
-          "outcomeTopicId": 3028
-        },
-        {
-          "id": 3125,
-          "description": "the esterification between an alcohol and a carboxylic acid",
-          "outcomeId": 3008,
-          "outcomeTopicId": 3028
-        },
-        {
-          "id": 3126,
-          "description": "hydrolysis of esters",
-          "outcomeId": 3008,
-          "outcomeTopicId": 3028
-        },
-        {
-          "id": 3127,
-          "description": "pathways for the synthesis of primary amines and carboxylic acids",
-          "outcomeId": 3008,
-          "outcomeTopicId": 3028
-        },
-        {
-          "id": 3128,
-          "description": "transesterification of plant triglycerides using alcohols to produce biodiesel",
-          "outcomeId": 3008,
-          "outcomeTopicId": 3028
-        },
-        {
-          "id": 3129,
-          "description": "hydrolytic reactions of proteins, carbohydrates and fats and oils to break down large biomolecules in food to produce smaller molecules",
-          "outcomeId": 3008,
-          "outcomeTopicId": 3028
-        },
-        {
-          "id": 3130,
-          "description": "condensation reactions to synthesise large biologically important molecules for storage as proteins, starch, glycogen and lipids (fats and oils)",
-          "outcomeId": 3008,
-          "outcomeTopicId": 3028
-        },
-        {
-          "id": 3131,
-          "description": "calculations of percentage yield and atom economy of single-step or overall reaction pathways, and the advantages for society and for industry of developing chemical processes with a high atom economy",
-          "outcomeId": 3008,
-          "outcomeTopicId": 3028
-        },
-        {
-          "id": 3132,
-          "description": "the sustainability of the production of chemicals, with reference to the green chemistry principles of use of renewable feedstocks, catalysis and designing safer chemicals",
-          "outcomeId": 3008,
-          "outcomeTopicId": 3028
-        }
-      ]
-    },
-    {
-      "id": 3009,
-      "curriculumSubjectId": 3000,
-      "number": 2,
-      "description": "On completion of this unit the student should be able to apply qualitative and quantitative tests to analyse organic compounds and their structural characteristics, deduce structures of organic compounds using instrumental analysis data, explain how some medicines function, and experimentally analyse how some natural medicines can be extracted and purified.",
-      "topics": [
-        {
-          "id": 3029,
-          "outcomeId": 3009,
-          "name": "Laboratory analysis of organic compounds"
-        },
-        {
-          "id": 3031,
-          "outcomeId": 3009,
-          "name": "Instrumental analysis of organic compounds"
-        },
-        {
-          "id": 3032,
-          "outcomeId": 3009,
-          "name": "Medicinal chemistry"
-        }
-      ],
-      "keyKnowledge": [
-        {
-          "id": 3133,
-          "description": "qualitative tests for the presence of carbon-carbon double bonds, hydroxyl and carboxyl functional groups",
-          "outcomeId": 3009,
-          "outcomeTopicId": 3029
-        },
-        {
-          "id": 3134,
-          "description": "applications and principles of laboratory analysis techniques in verifying components and purity of consumer products, including melting point determination and distillation (simple and fractional)",
-          "outcomeId": 3009,
-          "outcomeTopicId": 3029
-        },
-        {
-          "id": 3135,
-          "description": "measurement of the degree of unsaturation of compounds using iodine",
-          "outcomeId": 3009,
-          "outcomeTopicId": 3029
-        },
-        {
-          "id": 3084,
-          "description": "volumetric analysis, including calculations of excess and limiting reactants using redox titrations (excluding back titrations)",
-          "outcomeId": 3009,
-          "outcomeTopicId": 3031
-        },
-        {
-          "id": 3136,
-          "description": "applications of mass spectrometry (excluding features of instrumentation and operation) and interpretation of qualitative and quantitative data, including identification of molecular ion peak, determination of molecular mass and identification of simple fragments",
-          "outcomeId": 3009,
-          "outcomeTopicId": 3031
-        },
-        {
-          "id": 3137,
-          "description": "identification of bond types by qualitative infrared spectroscopy (IR) data analysis using characteristic absorption bands",
-          "outcomeId": 3009,
-          "outcomeTopicId": 3031
-        },
-        {
-          "id": 3138,
-          "description": "structural determination of organic compounds by low resolution carbon-13 nuclear magnetic resonance (13C-NMR) spectral analysis, using chemical shift values to deduce the number and nature of different carbon environments",
-          "outcomeId": 3009,
-          "outcomeTopicId": 3031
-        },
-        {
-          "id": 3139,
-          "description": "structural determination of organic compounds by low and high resolution proton nuclear magnetic resonance (1H-NMR) spectral analysis, using chemical shift values, integration curves (where the height is proportional to the area underneath a peak) and peak splitting patterns (excluding coupling constants), and application of the n+1 rule (where n is the number of neighbouring protons) to deduce the number and nature of different proton environments",
-          "outcomeId": 3009,
-          "outcomeTopicId": 3031
-        },
-        {
-          "id": 3140,
-          "description": "the principles of chromatography, including high performance liquid chromatography (HPLC) and the use of retention times and the construction of a calibration curve to determine the concentration of an organic compound in a solution (excluding features of instrumentation and operation)",
-          "outcomeId": 3009,
-          "outcomeTopicId": 3031
-        },
-        {
-          "id": 3141,
-          "description": "deduction of the structures of simple organic compounds using a combination of mass spectrometry (MS), infrared spectroscopy (IR), proton nuclear magnetic resonance (1H-NMR) and carbon-13 nuclear magnetic resonance (13C-NMR) (limited to data analysis)",
-          "outcomeId": 3009,
-          "outcomeTopicId": 3031
-        },
-        {
-          "id": 3142,
-          "description": "the roles and applications of laboratory and instrumental analysis, with reference to product purity and the identification of organic compounds or functional groups in isolation or within a mixture",
-          "outcomeId": 3009,
-          "outcomeTopicId": 3031
-        },
-        {
-          "id": 3143,
-          "description": "extraction and purification of natural plant compounds as possible active ingredients for medicines, using solvent extraction and distillation",
-          "outcomeId": 3009,
-          "outcomeTopicId": 3032
-        },
-        {
-          "id": 3144,
-          "description": "identification of the structure and functional groups of organic molecules that are medicines",
-          "outcomeId": 3009,
-          "outcomeTopicId": 3032
-        },
-        {
-          "id": 3145,
-          "description": "significance of isomers and the identification of chiral centres (carbon atom surrounded by four different groups) in the effectiveness of medicines",
-          "outcomeId": 3009,
-          "outcomeTopicId": 3032
-        },
-        {
-          "id": 3146,
-          "description": "enzymes as protein-based catalysts in living systems: primary, secondary, tertiary and quaternary structures and changes in enzyme function in terms of structure and bonding as a result of increased temperature (denaturation), decreased temperature (lowered activity), or changes in pH (formation of zwitterions and denaturation)",
-          "outcomeId": 3009,
-          "outcomeTopicId": 3032
-        },
-        {
-          "id": 3147,
-          "description": "medicines that function as competitive enzyme inhibitors: organic molecules that bind through lock-and-key mechanism to an active site preventing binding of the actual substrate",
-          "outcomeId": 3009,
-          "outcomeTopicId": 3032
-        }
-      ]
-    },
-    {
-      "id": 3010,
-      "curriculumSubjectId": 3000,
-      "number": 3,
-      "description": "On completion of this unit the student should be able to design and conduct a scientific investigation related to the production of energy and/or chemicals and/or the analysis or synthesis of organic compounds, and present an aim, methodology and method, results, discussion and conclusion in a scientific poster.",
-      "topics": [
-        {
-          "id": 3033,
-          "outcomeId": 3010,
-          "name": "Investigation design"
-        },
-        {
-          "id": 3034,
-          "outcomeId": 3010,
-          "name": "Scientific evidence"
-        },
-        {
-          "id": 3035,
-          "outcomeId": 3010,
-          "name": "Science communication"
-        }
-      ],
-      "keyKnowledge": [
-        {
-          "id": 3148,
-          "description": "chemical concepts specific to the selected scientific investigation and their significance, including definitions of key terms",
-          "outcomeId": 3010,
-          "outcomeTopicId": 3033
-        },
-        {
-          "id": 3149,
-          "description": "characteristics of the selected scientific methodology and method, and appropriateness of the use of independent, dependent and controlled variables in the selected scientific investigation",
-          "outcomeId": 3010,
-          "outcomeTopicId": 3033
-        },
-        {
-          "id": 3150,
-          "description": "techniques of primary quantitative data generation relevant to the selected scientific investigation",
-          "outcomeId": 3010,
-          "outcomeTopicId": 3033
-        },
-        {
-          "id": 3151,
-          "description": "the accuracy, precision, repeatability, reproducibility, resolution and validity of measurements",
-          "outcomeId": 3010,
-          "outcomeTopicId": 3033
-        },
-        {
-          "id": 3152,
-          "description": "the health, safety and ethical guidelines relevant to the selected scientific investigation",
-          "outcomeId": 3010,
-          "outcomeTopicId": 3033
-        },
-        {
-          "id": 3153,
-          "description": "the nature of evidence that supports or refutes a hypothesis, model or theory",
-          "outcomeId": 3010,
-          "outcomeTopicId": 3034
-        },
-        {
-          "id": 3154,
-          "description": "ways of organising, analysing and evaluating primary data to identify patterns and relationships, including sources of error and uncertainty",
-          "outcomeId": 3010,
-          "outcomeTopicId": 3034
-        },
-        {
-          "id": 3155,
-          "description": "authentication of generated primary data through the use of a logbook",
-          "outcomeId": 3010,
-          "outcomeTopicId": 3034
-        },
-        {
-          "id": 3156,
-          "description": "assumptions and limitations of investigation methodology and/or data generation and/or analysis methods",
-          "outcomeId": 3010,
-          "outcomeTopicId": 3034
-        },
-        {
-          "id": 3157,
-          "description": "conventions of science communication: scientific terminology and representations, symbols, formulas, standard abbreviations and units of measurement",
-          "outcomeId": 3010,
-          "outcomeTopicId": 3035
-        },
-        {
-          "id": 3158,
-          "description": "conventions of scientific poster presentation, including succinct communication of the selected scientific investigation, and acknowledgements and references",
-          "outcomeId": 3010,
-          "outcomeTopicId": 3035
-        },
-        {
-          "id": 3159,
-          "description": "the key findings and implications of the selected scientific investigation",
-          "outcomeId": 3010,
-          "outcomeTopicId": 3035
-        }
-      ]
-    }
-  ],
-  "keySkills": [
-    {
-      "id": 3000,
-      "description": "Develop aims and questions, formulate hypotheses and make predictions: (identify, research and construct aims and questions for investigation, identify independent, dependent and controlled variables in experiments, formulate hypotheses to focus investigations, predict possible outcomes of investigations)",
-      "curriculumSubjectId": 3000
-    },
-    {
-      "id": 3001,
-      "description": "Plan and conduct investigations: (Determine appropriate investigation methodology: case study; classification and identification; controlled experiment; fieldwork; literature review; modelling; product, process or system development; simulation. Design and conduct investigations; select and use methods appropriate to the selected investigation methodology, including consideration of sampling technique and size, equipment and procedures, taking into account potential sources of error and causes of uncertainty; determine the type and amount of qualitative and/or quantitative data to be generated or collated. Work independently and collaboratively as appropriate and within identified research constraints, adapting or extending processes as required and recording such modifications in a logbook)",
-      "curriculumSubjectId": 3000
-    },
-    {
-      "id": 3002,
-      "description": "Comply with safety and ethical guidelines: (Demonstrate safe laboratory practices when planning and conducting investigations by using risk assessments that are informed by safety data sheets (SDS), and accounting for risks. Apply relevant occupational health and safety guidelines while undertaking practical investigations. Demonstrate ethical conduct when undertaking and reporting investigations)",
-      "curriculumSubjectId": 3000
-    },
-    {
-      "id": 3003,
-      "description": "Generate, collate and record data: (Systematically generate and record primary data, and collate secondary data, appropriate to the investigation, including use of databases and reputable online data sources. Record and summarise both qualitative and quantitative data, including use of a logbook as an authentication of generated or collated data. Organise and present data in useful and meaningful ways, including schematic diagrams, flow charts, tables, bar charts, line graphs and calibration curves)",
-      "curriculumSubjectId": 3000
-    },
-    {
-      "id": 3004,
-      "description": "Analyse and evaluate data and investigation methods: (Process quantitative data using appropriate mathematical relationships and units, including calculations of ratios, percentages, percentage change and mean. Use appropriate numbers of significant figures in calculations. Plot graphs involving two variables that show linear and non-linear relationships. Identify and analyse experimental data qualitatively, handling, where appropriate, concepts of: accuracy, precision, repeatability, reproducibility, resolution, and validity of measurements; and errors (random and systematic). Identify outliers, and contradictory, provisional or incomplete data. Repeat experiments to evaluate the precision of data. Evaluate investigation methods and suggest ways to improve precision, and to reduce the likelihood of errors)",
-      "curriculumSubjectId": 3000
-    },
-    {
-      "id": 3005,
-      "description": "Construct evidence-based arguments and draw conclusions: (Distinguish between opinion, anecdote and evidence, and between scientific and non-scientific ideas. Evaluate data to determine the degree to which the evidence supports the aim of the investigation, and make recommendations, as appropriate, for modifying or extending the investigation. Evaluate data to determine the degree to which the evidence supports or refutes the initial prediction or hypothesis. Use reasoning to construct scientific arguments, and to draw and justify conclusions consistent with evidence and relevant to the question under investigation. Identify, describe and explain the limitations of conclusions, including identification of further evidence required. Discuss the implications of research findings and proposals)",
-      "curriculumSubjectId": 3000
-    },
-    {
-      "id": 3006,
-      "description": "Analyse, evaluate and communicate scientific ideas: (Use appropriate chemical terminology, representations and conventions, including standard abbreviations, graphing conventions, algebraic equations, units of measurement and significant figures. Discuss relevant chemical information, ideas, concepts, theories and models and the connections between them. Analyse and explain how models and theories are used to organise and understand observed phenomena and concepts related to chemistry, identifying limitations of selected models/theories. Critically evaluate and interpret a range of scientific and media texts (including journal articles, mass media communications and opinions in the public domain), processes, claims and conclusions related to chemistry by considering the quality of available evidence. Apply sustainability concepts (green chemistry principles, development goals and the transition from a linear towards a circular economy) to analyse and evaluate responses to chemistry-based scenarios, case studies, issues and challenges. Identify and explain when judgements or decisions associated with chemistry-related issues may be based on sociocultural, economic, political, legal and/or ethical factors and not solely on scientific evidence. Use clear, coherent and concise expression to communicate to specific audiences and for specific purposes in appropriate scientific genres, including scientific reports and posters. Acknowledge sources of information and assistance, and use standard scientific referencing conventions)",
-      "curriculumSubjectId": 3000
-    }
-  ]
+	"id": 3000,
+	"curriculumId": 3000,
+	"name": "Chemistry Units 3 and 4",
+	"isArchived": false,
+	"learningAreas": [
+		{
+			"id": 3006,
+			"curriculumSubjectId": 3000,
+			"name": "What are the current and future options for supplying energy?",
+			"abbreviation": "U3AOS1",
+			"description": "In this area of study students focus on analysing and comparing a range of fossil fuels and biofuels as energy sources for society, and carbohydrates, proteins and lipids as fuel sources for the body. They write balanced thermochemical equations for the combustion of various fuels. The amounts of energy and gases produced in combustion reactions are quantified using stoichiometry. They explore how energy can be sustainably produced from chemicals to meet the needs of society while minimising negative impacts on the environment. The selection of learning contexts should allow students to develop practical techniques to investigate how energy from fuels can be obtained and measured, and to determine the efficiency of different fuels and electrochemical cells as sources of energy. Students develop their skills in the use of scientific equipment and apparatus. They may measure energy released in combustion reactions through quantitative calorimetry experiments and may compare amounts of energy released in different fuels, such as methane, alcohols, waxes and foods. They design, construct and test galvanic and fuel cells, and account for differences between experimental findings and predictions made by using the electrochemical series. Students may work collaboratively to construct electrochemical half-cells and experiment with different combinations of half-cells to develop their own electrochemical series. Students respond to challenges such as designing an electrochemical cell that generates the most energy under laboratory conditions using a limited range of supplied chemicals and materials."
+		},
+		{
+			"id": 3007,
+			"curriculumSubjectId": 3000,
+			"name": "How can the rate and yield of chemical reactions be optimised?",
+			"abbreviation": "U3AOS2",
+			"description": "In this area of study, students explore the factors that affect the rate and yield of equilibrium and electrolytic reactions involved in producing important materials for society. Reactants and products in chemical reactions are treated qualitatively through the application of Le Chatelier’s principle and quantified using equilibrium expressions, reaction quotients and Faraday’s Laws. Students explore the sustainability of different options for producing useful materials for society. The selection of learning contexts should allow students to develop practical techniques to investigate equilibrium and electrolysis. Students develop their skills in the use of scientific equipment and apparatus. They investigate reaction rates including the measurement of mass, gas volumes and time. They use an equilibrium system, such as iron(III) thiocyanate, to predict and test the effect of different changes to the system. They investigate the effect of catalysts on reaction rates, such as comparing the rate of decomposition of hydrogen peroxide using organic and inorganic catalysts. Students explore the application of electrolysis in the manufacture of useful products through experiments such as electroplating and anodising. They model and explain the operation of secondary cells: for example, those in portable devices such as laptops or cell phones. Students respond to challenges such as predicting and testing the optimum conditions under which a selected reaction can produce the highest product yield."
+		},
+		{
+			"id": 3008,
+			"curriculumSubjectId": 3000,
+			"name": "How are organic compounds categorised and synthesised?",
+			"abbreviation": "U4AOS1",
+			"description": "In this area of study students focus on the structure, naming, properties and reactions of organic compounds, including the chemical reactions associated with the metabolism of food. They explore how synthetic organic compounds can be produced more sustainably for use in society. The selection of learning contexts should allow students to develop practical techniques to investigate organic structures and reactions. Students develop their skills in the use of scientific equipment and apparatus. They may construct models to explore organic structures, including isomers. Students may compare the properties of biodiesels produced using different oils, or may investigate organic reaction pathways such as the synthesis of esters used in food flavourings. They may investigate food metabolism by hydrolysing different types of plant starches. Students respond to challenges such as how to improve the atom economy of a selected chemical reaction or reaction pathway."
+		},
+		{
+			"id": 3009,
+			"curriculumSubjectId": 3000,
+			"name": "How are organic compounds analysed and used?",
+			"abbreviation": "U4AOS2",
+			"description": "In this area of study students focus on laboratory and instrumental analyses of organic compounds, and the function of some organic compounds as medicines. They use distillation to separate mixtures, use volumetric analysis to calculate redox quantities, and explore how instrumental analysis is used to ensure the quality of consumer products. Students explain how some medicines that bind to the active sites of enzymes function by inhibiting the enzymes’ mode of action. The selection of learning contexts should allow students to develop practical techniques to analyse organic compounds. Students develop their skills in the use of scientific equipment and apparatus. They may perform qualitative tests to identify features of organic compounds, such as the identification of functional groups in an unknown compound. Students may perform quantitative analyses including redox titrations to determine concentrations and quantities of substances, such as the amount of Vitamin C in fruits. They design and improve on experiments such as the testing of the viscosity of alcohols. They respond to challenges such as the identification of a molecule using primary data from analytical techniques used in the laboratory or secondary data obtained from spectroscopy. Students may use distillation to extract and purify the natural organic compounds in plants, such as extracting limonene from orange peel."
+		},
+		{
+			"id": 3010,
+			"curriculumSubjectId": 3000,
+			"name": "How is scientific inquiry used to investigate the sustainable production of energy and/or materials?",
+			"abbreviation": "U4AOS3",
+			"description": "Students undertake a student-designed scientific investigation in either Unit 3 or Unit 4, or across both Units 3 and 4. The investigation involves the generation of primary data related to the production of energy and/or chemicals and/or the analysis or synthesis of organic compounds, and should be inspired by a contemporary chemical challenge or issue. The investigation draws on knowledge and related key science skills developed across Units 3 and 4 and is undertaken by students in the laboratory and/or in the field. When undertaking the investigation students are required to apply the key science skills to develop a question, state an aim, formulate a hypothesis and plan a course of action to answer the question, while complying with safety and ethical guidelines. Students then undertake an experiment to generate primary quantitative data, analyse and evaluate the data, identify limitations of data and methods, link experimental results to scientific ideas, discuss implications of the results, and draw a conclusion in response to the question. The presentation format for the investigation is a scientific poster constructed according to the structure outlined on page 14. A logbook is maintained by students for recording, assessment and authentication purposes."
+		}
+	],
+	"outcomes": [
+		{
+			"id": 3006,
+			"curriculumSubjectId": 3000,
+			"number": 1,
+			"description": "On completion of this unit the student should be able to compare fuels quantitatively with reference to combustion products and energy outputs, apply knowledge of the electrochemical series to design, construct and test primary cells and fuel cells, and evaluate the sustainability of electrochemical cells in producing energy for society.",
+			"topics": [
+				{
+					"id": 3021,
+					"outcomeId": 3006,
+					"name": "Carbon-based fuels"
+				},
+				{
+					"id": 3022,
+					"outcomeId": 3006,
+					"name": "Measuring changes in chemical reactions"
+				},
+				{
+					"id": 3023,
+					"outcomeId": 3006,
+					"name": "Primary galvanic cells and fuel cells as sources of energy"
+				}
+			],
+			"keyKnowledge": [
+				{
+					"id": 3086,
+					"description": "the definition of a fuel, including the distinction between fossil fuels (coal, natural gas, petrol) and biofuels (biogas, bioethanol, biodiesel) with reference to their renewability (ability of a resource to be replaced by natural processes within a relatively short period of time)",
+					"outcomeId": 3006,
+					"outcomeTopicId": 3021
+				},
+				{
+					"id": 3087,
+					"description": "fuel sources for the body measured in kJ g-1: carbohydrates, proteins and lipids (fats and oils)",
+					"outcomeId": 3006,
+					"outcomeTopicId": 3021
+				},
+				{
+					"id": 3088,
+					"description": "photosynthesis as the process that converts light energy into chemical energy and as a source of glucose and oxygen for respiration in living things: 6CO2(g) + 6H2O(l) → C6H12O6(aq)+ 6O2(g)",
+					"outcomeId": 3006,
+					"outcomeTopicId": 3021
+				},
+				{
+					"id": 3089,
+					"description": "oxidation of glucose as the primary carbohydrate energy source, including the balanced equation for cellular respiration: C6H12O6(aq) + 6O2(g) 6CO2(g) + 6H2O(l)",
+					"outcomeId": 3006,
+					"outcomeTopicId": 3021
+				},
+				{
+					"id": 3090,
+					"description": "production of bioethanol by the fermentation of glucose and subsequent distillation to produce a more sustainable transport fuel: C6H12O6(aq) → 2C2H5OH(aq) + 2CO2(g)",
+					"outcomeId": 3006,
+					"outcomeTopicId": 3021
+				},
+				{
+					"id": 3091,
+					"description": "comparison of exothermic and endothermic reactions, with reference to bond making and bond breaking, including enthalpy changes (∆H) measured in kJ, molar enthalpy changes measured in kJ mol-1 and enthalpy changes for mixtures measured in kJ g-1, and their representations in energy profile diagrams",
+					"outcomeId": 3006,
+					"outcomeTopicId": 3021
+				},
+				{
+					"id": 3092,
+					"description": "determination of limiting reactants or reagents in chemical reactions",
+					"outcomeId": 3006,
+					"outcomeTopicId": 3021
+				},
+				{
+					"id": 3093,
+					"description": "combustion (complete and incomplete) reactions of fuels as exothermic reactions: the writing of balanced thermochemical equations, including states, for the complete and incomplete combustion of organic molecules using experimental data and data tables",
+					"outcomeId": 3006,
+					"outcomeTopicId": 3021
+				},
+				{
+					"id": 3094,
+					"description": "calculations related to the application of stoichiometry to reactions involving the combustion of fuels, including mass-mass, mass-volume and volume-volume stoichiometry, to determine heat energy released, reactant and product amounts and net volume or mass of major greenhouse gases (CO2, CH4 and H2O), limited to standard laboratory conditions (SLC) at 25 °C and 100 kPa",
+					"outcomeId": 3006,
+					"outcomeTopicId": 3022
+				},
+				{
+					"id": 3095,
+					"description": "the use of specific heat capacity of water to approximate the quantity of heat energy released during the combustion of a known mass of fuel and food",
+					"outcomeId": 3006,
+					"outcomeTopicId": 3022
+				},
+				{
+					"id": 3096,
+					"description": "the principles of solution calorimetry, including determination of calibration factor and consideration of the effects of heat loss; analysis of temperature-time graphs obtained from solution calorimetry",
+					"outcomeId": 3006,
+					"outcomeTopicId": 3022
+				},
+				{
+					"id": 3097,
+					"description": "energy from fuels and food:",
+					"outcomeId": 3006,
+					"outcomeTopicId": 3022
+				},
+				{
+					"id": 3098,
+					"description": "calculation of energy transformation efficiency during combustion as a percentage of chemical energy converted to useful energy",
+					"outcomeId": 3006,
+					"outcomeTopicId": 3022
+				},
+				{
+					"id": 3099,
+					"description": "comparison and calculations of energy values of foods containing carbohydrates, proteins and fats and oils",
+					"outcomeId": 3006,
+					"outcomeTopicId": 3022
+				},
+				{
+					"id": 3100,
+					"description": "the writing of balanced half-equations (including states) for oxidation and reduction reactions, and the overall redox cell reaction in both acidic and basic conditions",
+					"outcomeId": 3006,
+					"outcomeTopicId": 3023
+				},
+				{
+					"id": 3101,
+					"description": "the common design features and general operating principles of non-rechargeable (primary) galvanic cells converting chemical energy into electrical energy, including electrode polarities and the role of the electrodes (inert and reactive) and electrolyte solutions (details of specific cells not required)",
+					"outcomeId": 3006,
+					"outcomeTopicId": 3023
+				},
+				{
+					"id": 3102,
+					"description": "the use and limitations of the electrochemical series in designing galvanic cells and as a tool for predicting the products of redox reactions, for deducing overall equations from redox half-equations and for determining maximum cell voltage under standard conditions",
+					"outcomeId": 3006,
+					"outcomeTopicId": 3023
+				},
+				{
+					"id": 3103,
+					"description": "the common design features and general operating principles of fuel cells, including the use of porous electrodes for gaseous reactants to increase cell efficiency (details of specific cells not required)",
+					"outcomeId": 3006,
+					"outcomeTopicId": 3023
+				},
+				{
+					"id": 3104,
+					"description": "the application of Faraday’s Laws and stoichiometry to determine the quantity of galvanic or fuel cell reactant and product, and the current or time required to either use a particular quantity of reactant or produce a particular quantity of product",
+					"outcomeId": 3006,
+					"outcomeTopicId": 3023
+				},
+				{
+					"id": 3105,
+					"description": "contemporary responses to challenges and the role of innovation in the design of fuel cells to meet society’s energy needs, with reference to green chemistry principles: design for energy efficiency, and use of renewable feedstocks",
+					"outcomeId": 3006,
+					"outcomeTopicId": 3023
+				},
+				{
+					"id": 3085,
+					"description": "redox reactions as simultaneous oxidation and reduction processes, and the use of oxidation numbers to identify the reducing agent, oxidising agent and conjugate redox pairs",
+					"outcomeId": 3006,
+					"outcomeTopicId": 3023
+				}
+			]
+		},
+		{
+			"id": 3007,
+			"curriculumSubjectId": 3000,
+			"number": 2,
+			"description": "On completion of this unit the student should be able to experimentally analyse chemical systems to predict how the rate and extent of chemical reactions can be optimised, explain how electrolysis is involved in the production of chemicals, and evaluate the sustainability of electrolytic processes in producing useful materials for society.",
+			"topics": [
+				{
+					"id": 3024,
+					"outcomeId": 3007,
+					"name": "Rates of chemical reactions"
+				},
+				{
+					"id": 3025,
+					"outcomeId": 3007,
+					"name": "Extent of chemical reactions"
+				},
+				{
+					"id": 3026,
+					"outcomeId": 3007,
+					"name": "Production of chemicals using electrolysis"
+				}
+			],
+			"keyKnowledge": [
+				{
+					"id": 3106,
+					"description": "factors affecting the frequency and success of reactant particle collisions and the rate of a chemical reaction in open and closed systems, including temperature, surface area, concentration, gas pressures, presence of a catalyst, activation energy and orientation",
+					"outcomeId": 3007,
+					"outcomeTopicId": 3024
+				},
+				{
+					"id": 3107,
+					"description": "the role of catalysts in increasing the rate of specific reactions, with reference to alternative reaction pathways of lower activation energies and represented using energy profile diagrams",
+					"outcomeId": 3007,
+					"outcomeTopicId": 3024
+				},
+				{
+					"id": 3108,
+					"description": "the distinction between reversible and irreversible reactions, and between rate and extent of a reaction",
+					"outcomeId": 3007,
+					"outcomeTopicId": 3025
+				},
+				{
+					"id": 3109,
+					"description": "the dynamic nature of homogeneous equilibria involving aqueous solutions or gases, and their representation by balanced chemical or thermochemical equations (including states) and by concentration-time graphs",
+					"outcomeId": 3007,
+					"outcomeTopicId": 3025
+				},
+				{
+					"id": 3110,
+					"description": "the change in position of equilibrium that can occur when changes in temperature or species or volume (concentration or pressure) are applied to a system at equilibrium, and the representation of these changes using concentration-time graphs",
+					"outcomeId": 3007,
+					"outcomeTopicId": 3025
+				},
+				{
+					"id": 3111,
+					"description": "the application of Le Chatelier’s principle to identify factors that favour the yield of a chemical reaction",
+					"outcomeId": 3007,
+					"outcomeTopicId": 3025
+				},
+				{
+					"id": 3112,
+					"description": "calculations involving equilibrium expressions (including units) for a closed homogeneous equilibrium system and the dependence of the equilibrium constant (K) value on the system temperature and the equation used to represent the reaction",
+					"outcomeId": 3007,
+					"outcomeTopicId": 3025
+				},
+				{
+					"id": 3113,
+					"description": "the reaction quotient (Q) as a quantitative measure of the extent of a chemical reaction: that is, the relative amounts of products and reactants present during a reaction at a given point in time",
+					"outcomeId": 3007,
+					"outcomeTopicId": 3025
+				},
+				{
+					"id": 3114,
+					"description": "responses to the conflict between optimal rate and temperature considerations in producing equilibrium reaction products, with reference to the green chemistry principles of catalysis and designing for energy efficiency",
+					"outcomeId": 3007,
+					"outcomeTopicId": 3025
+				},
+				{
+					"id": 3115,
+					"description": "the use and limitations of the electrochemical series to explain or predict the products of the electrolysis of particular chemicals, given their state (molten liquid or in aqueous solution) and the electrode materials used, including the writing of balanced equations (with states) for the reactions occurring at the anode and cathode and the overall redox reaction for the cell",
+					"outcomeId": 3007,
+					"outcomeTopicId": 3026
+				},
+				{
+					"id": 3116,
+					"description": "the common design features and general operating principles of commercial electrolytic cells (including, where practicable, the removal of products as they form), and the selection of suitable electrode materials, the electrolyte (including its state) and any chemical additives that result in a desired electrolysis product (details of specific cells not required)",
+					"outcomeId": 3007,
+					"outcomeTopicId": 3026
+				},
+				{
+					"id": 3117,
+					"description": "the common design features and general operating principles of rechargeable (secondary) cells, with reference to discharging as a galvanic cell and recharging as an electrolytic cell, including the conditions required for the cell reactions to be reversed and the electrode polarities in each mode (details of specific cells not required)",
+					"outcomeId": 3007,
+					"outcomeTopicId": 3026
+				},
+				{
+					"id": 3118,
+					"description": "the role of innovation in designing cells to meet society’s energy needs in terms of producing ‘green’ hydrogen (including equations in acidic conditions) using the following methods:",
+					"outcomeId": 3007,
+					"outcomeTopicId": 3026
+				},
+				{
+					"id": 3119,
+					"description": "polymer electrolyte membrane electrolysis powered by either photovoltaic (solar) or wind energy",
+					"outcomeId": 3007,
+					"outcomeTopicId": 3026
+				},
+				{
+					"id": 3120,
+					"description": "artificial photosynthesis using a water oxidation and proton reduction catalyst system",
+					"outcomeId": 3007,
+					"outcomeTopicId": 3026
+				},
+				{
+					"id": 3121,
+					"description": "the application of Faraday’s Laws and stoichiometry to determine the quantity of electrolytic reactant and product, and the current or time required to either use a particular quantity of reactant or produce a particular quantity of product",
+					"outcomeId": 3007,
+					"outcomeTopicId": 3026
+				}
+			]
+		},
+		{
+			"id": 3008,
+			"curriculumSubjectId": 3000,
+			"number": 1,
+			"description": "On completion of this unit the student should be able to analyse the general structures and reactions of the major organic families of compounds, design reaction pathways for organic synthesis, and evaluate the sustainability of the manufacture of organic compounds used in society.",
+			"topics": [
+				{
+					"id": 3028,
+					"outcomeId": 3008,
+					"name": "Reactions of organic compounds"
+				}
+			],
+			"keyKnowledge": [
+				{
+					"id": 3122,
+					"description": "organic reactions and pathways, including equations, reactants, products, reaction conditions and catalysts (specific enzymes not required):",
+					"outcomeId": 3008,
+					"outcomeTopicId": 3028
+				},
+				{
+					"id": 3123,
+					"description": "synthesis of primary haloalkanes and primary alcohols by substitution",
+					"outcomeId": 3008,
+					"outcomeTopicId": 3028
+				},
+				{
+					"id": 3124,
+					"description": "addition reactions of alkenes",
+					"outcomeId": 3008,
+					"outcomeTopicId": 3028
+				},
+				{
+					"id": 3125,
+					"description": "the esterification between an alcohol and a carboxylic acid",
+					"outcomeId": 3008,
+					"outcomeTopicId": 3028
+				},
+				{
+					"id": 3126,
+					"description": "hydrolysis of esters",
+					"outcomeId": 3008,
+					"outcomeTopicId": 3028
+				},
+				{
+					"id": 3127,
+					"description": "pathways for the synthesis of primary amines and carboxylic acids",
+					"outcomeId": 3008,
+					"outcomeTopicId": 3028
+				},
+				{
+					"id": 3128,
+					"description": "transesterification of plant triglycerides using alcohols to produce biodiesel",
+					"outcomeId": 3008,
+					"outcomeTopicId": 3028
+				},
+				{
+					"id": 3129,
+					"description": "hydrolytic reactions of proteins, carbohydrates and fats and oils to break down large biomolecules in food to produce smaller molecules",
+					"outcomeId": 3008,
+					"outcomeTopicId": 3028
+				},
+				{
+					"id": 3130,
+					"description": "condensation reactions to synthesise large biologically important molecules for storage as proteins, starch, glycogen and lipids (fats and oils)",
+					"outcomeId": 3008,
+					"outcomeTopicId": 3028
+				},
+				{
+					"id": 3131,
+					"description": "calculations of percentage yield and atom economy of single-step or overall reaction pathways, and the advantages for society and for industry of developing chemical processes with a high atom economy",
+					"outcomeId": 3008,
+					"outcomeTopicId": 3028
+				},
+				{
+					"id": 3132,
+					"description": "the sustainability of the production of chemicals, with reference to the green chemistry principles of use of renewable feedstocks, catalysis and designing safer chemicals",
+					"outcomeId": 3008,
+					"outcomeTopicId": 3028
+				}
+			]
+		},
+		{
+			"id": 3009,
+			"curriculumSubjectId": 3000,
+			"number": 2,
+			"description": "On completion of this unit the student should be able to apply qualitative and quantitative tests to analyse organic compounds and their structural characteristics, deduce structures of organic compounds using instrumental analysis data, explain how some medicines function, and experimentally analyse how some natural medicines can be extracted and purified.",
+			"topics": [
+				{
+					"id": 3029,
+					"outcomeId": 3009,
+					"name": "Laboratory analysis of organic compounds"
+				},
+				{
+					"id": 3031,
+					"outcomeId": 3009,
+					"name": "Instrumental analysis of organic compounds"
+				},
+				{
+					"id": 3032,
+					"outcomeId": 3009,
+					"name": "Medicinal chemistry"
+				}
+			],
+			"keyKnowledge": [
+				{
+					"id": 3133,
+					"description": "qualitative tests for the presence of carbon-carbon double bonds, hydroxyl and carboxyl functional groups",
+					"outcomeId": 3009,
+					"outcomeTopicId": 3029
+				},
+				{
+					"id": 3134,
+					"description": "applications and principles of laboratory analysis techniques in verifying components and purity of consumer products, including melting point determination and distillation (simple and fractional)",
+					"outcomeId": 3009,
+					"outcomeTopicId": 3029
+				},
+				{
+					"id": 3135,
+					"description": "measurement of the degree of unsaturation of compounds using iodine",
+					"outcomeId": 3009,
+					"outcomeTopicId": 3029
+				},
+				{
+					"id": 3084,
+					"description": "volumetric analysis, including calculations of excess and limiting reactants using redox titrations (excluding back titrations)",
+					"outcomeId": 3009,
+					"outcomeTopicId": 3031
+				},
+				{
+					"id": 3136,
+					"description": "applications of mass spectrometry (excluding features of instrumentation and operation) and interpretation of qualitative and quantitative data, including identification of molecular ion peak, determination of molecular mass and identification of simple fragments",
+					"outcomeId": 3009,
+					"outcomeTopicId": 3031
+				},
+				{
+					"id": 3137,
+					"description": "identification of bond types by qualitative infrared spectroscopy (IR) data analysis using characteristic absorption bands",
+					"outcomeId": 3009,
+					"outcomeTopicId": 3031
+				},
+				{
+					"id": 3138,
+					"description": "structural determination of organic compounds by low resolution carbon-13 nuclear magnetic resonance (13C-NMR) spectral analysis, using chemical shift values to deduce the number and nature of different carbon environments",
+					"outcomeId": 3009,
+					"outcomeTopicId": 3031
+				},
+				{
+					"id": 3139,
+					"description": "structural determination of organic compounds by low and high resolution proton nuclear magnetic resonance (1H-NMR) spectral analysis, using chemical shift values, integration curves (where the height is proportional to the area underneath a peak) and peak splitting patterns (excluding coupling constants), and application of the n+1 rule (where n is the number of neighbouring protons) to deduce the number and nature of different proton environments",
+					"outcomeId": 3009,
+					"outcomeTopicId": 3031
+				},
+				{
+					"id": 3140,
+					"description": "the principles of chromatography, including high performance liquid chromatography (HPLC) and the use of retention times and the construction of a calibration curve to determine the concentration of an organic compound in a solution (excluding features of instrumentation and operation)",
+					"outcomeId": 3009,
+					"outcomeTopicId": 3031
+				},
+				{
+					"id": 3141,
+					"description": "deduction of the structures of simple organic compounds using a combination of mass spectrometry (MS), infrared spectroscopy (IR), proton nuclear magnetic resonance (1H-NMR) and carbon-13 nuclear magnetic resonance (13C-NMR) (limited to data analysis)",
+					"outcomeId": 3009,
+					"outcomeTopicId": 3031
+				},
+				{
+					"id": 3142,
+					"description": "the roles and applications of laboratory and instrumental analysis, with reference to product purity and the identification of organic compounds or functional groups in isolation or within a mixture",
+					"outcomeId": 3009,
+					"outcomeTopicId": 3031
+				},
+				{
+					"id": 3143,
+					"description": "extraction and purification of natural plant compounds as possible active ingredients for medicines, using solvent extraction and distillation",
+					"outcomeId": 3009,
+					"outcomeTopicId": 3032
+				},
+				{
+					"id": 3144,
+					"description": "identification of the structure and functional groups of organic molecules that are medicines",
+					"outcomeId": 3009,
+					"outcomeTopicId": 3032
+				},
+				{
+					"id": 3145,
+					"description": "significance of isomers and the identification of chiral centres (carbon atom surrounded by four different groups) in the effectiveness of medicines",
+					"outcomeId": 3009,
+					"outcomeTopicId": 3032
+				},
+				{
+					"id": 3146,
+					"description": "enzymes as protein-based catalysts in living systems: primary, secondary, tertiary and quaternary structures and changes in enzyme function in terms of structure and bonding as a result of increased temperature (denaturation), decreased temperature (lowered activity), or changes in pH (formation of zwitterions and denaturation)",
+					"outcomeId": 3009,
+					"outcomeTopicId": 3032
+				},
+				{
+					"id": 3147,
+					"description": "medicines that function as competitive enzyme inhibitors: organic molecules that bind through lock-and-key mechanism to an active site preventing binding of the actual substrate",
+					"outcomeId": 3009,
+					"outcomeTopicId": 3032
+				}
+			]
+		},
+		{
+			"id": 3010,
+			"curriculumSubjectId": 3000,
+			"number": 3,
+			"description": "On completion of this unit the student should be able to design and conduct a scientific investigation related to the production of energy and/or chemicals and/or the analysis or synthesis of organic compounds, and present an aim, methodology and method, results, discussion and conclusion in a scientific poster.",
+			"topics": [
+				{
+					"id": 3033,
+					"outcomeId": 3010,
+					"name": "Investigation design"
+				},
+				{
+					"id": 3034,
+					"outcomeId": 3010,
+					"name": "Scientific evidence"
+				},
+				{
+					"id": 3035,
+					"outcomeId": 3010,
+					"name": "Science communication"
+				}
+			],
+			"keyKnowledge": [
+				{
+					"id": 3148,
+					"description": "chemical concepts specific to the selected scientific investigation and their significance, including definitions of key terms",
+					"outcomeId": 3010,
+					"outcomeTopicId": 3033
+				},
+				{
+					"id": 3149,
+					"description": "characteristics of the selected scientific methodology and method, and appropriateness of the use of independent, dependent and controlled variables in the selected scientific investigation",
+					"outcomeId": 3010,
+					"outcomeTopicId": 3033
+				},
+				{
+					"id": 3150,
+					"description": "techniques of primary quantitative data generation relevant to the selected scientific investigation",
+					"outcomeId": 3010,
+					"outcomeTopicId": 3033
+				},
+				{
+					"id": 3151,
+					"description": "the accuracy, precision, repeatability, reproducibility, resolution and validity of measurements",
+					"outcomeId": 3010,
+					"outcomeTopicId": 3033
+				},
+				{
+					"id": 3152,
+					"description": "the health, safety and ethical guidelines relevant to the selected scientific investigation",
+					"outcomeId": 3010,
+					"outcomeTopicId": 3033
+				},
+				{
+					"id": 3153,
+					"description": "the nature of evidence that supports or refutes a hypothesis, model or theory",
+					"outcomeId": 3010,
+					"outcomeTopicId": 3034
+				},
+				{
+					"id": 3154,
+					"description": "ways of organising, analysing and evaluating primary data to identify patterns and relationships, including sources of error and uncertainty",
+					"outcomeId": 3010,
+					"outcomeTopicId": 3034
+				},
+				{
+					"id": 3155,
+					"description": "authentication of generated primary data through the use of a logbook",
+					"outcomeId": 3010,
+					"outcomeTopicId": 3034
+				},
+				{
+					"id": 3156,
+					"description": "assumptions and limitations of investigation methodology and/or data generation and/or analysis methods",
+					"outcomeId": 3010,
+					"outcomeTopicId": 3034
+				},
+				{
+					"id": 3157,
+					"description": "conventions of science communication: scientific terminology and representations, symbols, formulas, standard abbreviations and units of measurement",
+					"outcomeId": 3010,
+					"outcomeTopicId": 3035
+				},
+				{
+					"id": 3158,
+					"description": "conventions of scientific poster presentation, including succinct communication of the selected scientific investigation, and acknowledgements and references",
+					"outcomeId": 3010,
+					"outcomeTopicId": 3035
+				},
+				{
+					"id": 3159,
+					"description": "the key findings and implications of the selected scientific investigation",
+					"outcomeId": 3010,
+					"outcomeTopicId": 3035
+				}
+			]
+		}
+	],
+	"keySkills": [
+		{
+			"id": 3000,
+			"description": "Develop aims and questions, formulate hypotheses and make predictions: (identify, research and construct aims and questions for investigation, identify independent, dependent and controlled variables in experiments, formulate hypotheses to focus investigations, predict possible outcomes of investigations)",
+			"curriculumSubjectId": 3000
+		},
+		{
+			"id": 3001,
+			"description": "Plan and conduct investigations: (Determine appropriate investigation methodology: case study; classification and identification; controlled experiment; fieldwork; literature review; modelling; product, process or system development; simulation. Design and conduct investigations; select and use methods appropriate to the selected investigation methodology, including consideration of sampling technique and size, equipment and procedures, taking into account potential sources of error and causes of uncertainty; determine the type and amount of qualitative and/or quantitative data to be generated or collated. Work independently and collaboratively as appropriate and within identified research constraints, adapting or extending processes as required and recording such modifications in a logbook)",
+			"curriculumSubjectId": 3000
+		},
+		{
+			"id": 3002,
+			"description": "Comply with safety and ethical guidelines: (Demonstrate safe laboratory practices when planning and conducting investigations by using risk assessments that are informed by safety data sheets (SDS), and accounting for risks. Apply relevant occupational health and safety guidelines while undertaking practical investigations. Demonstrate ethical conduct when undertaking and reporting investigations)",
+			"curriculumSubjectId": 3000
+		},
+		{
+			"id": 3003,
+			"description": "Generate, collate and record data: (Systematically generate and record primary data, and collate secondary data, appropriate to the investigation, including use of databases and reputable online data sources. Record and summarise both qualitative and quantitative data, including use of a logbook as an authentication of generated or collated data. Organise and present data in useful and meaningful ways, including schematic diagrams, flow charts, tables, bar charts, line graphs and calibration curves)",
+			"curriculumSubjectId": 3000
+		},
+		{
+			"id": 3004,
+			"description": "Analyse and evaluate data and investigation methods: (Process quantitative data using appropriate mathematical relationships and units, including calculations of ratios, percentages, percentage change and mean. Use appropriate numbers of significant figures in calculations. Plot graphs involving two variables that show linear and non-linear relationships. Identify and analyse experimental data qualitatively, handling, where appropriate, concepts of: accuracy, precision, repeatability, reproducibility, resolution, and validity of measurements; and errors (random and systematic). Identify outliers, and contradictory, provisional or incomplete data. Repeat experiments to evaluate the precision of data. Evaluate investigation methods and suggest ways to improve precision, and to reduce the likelihood of errors)",
+			"curriculumSubjectId": 3000
+		},
+		{
+			"id": 3005,
+			"description": "Construct evidence-based arguments and draw conclusions: (Distinguish between opinion, anecdote and evidence, and between scientific and non-scientific ideas. Evaluate data to determine the degree to which the evidence supports the aim of the investigation, and make recommendations, as appropriate, for modifying or extending the investigation. Evaluate data to determine the degree to which the evidence supports or refutes the initial prediction or hypothesis. Use reasoning to construct scientific arguments, and to draw and justify conclusions consistent with evidence and relevant to the question under investigation. Identify, describe and explain the limitations of conclusions, including identification of further evidence required. Discuss the implications of research findings and proposals)",
+			"curriculumSubjectId": 3000
+		},
+		{
+			"id": 3006,
+			"description": "Analyse, evaluate and communicate scientific ideas: (Use appropriate chemical terminology, representations and conventions, including standard abbreviations, graphing conventions, algebraic equations, units of measurement and significant figures. Discuss relevant chemical information, ideas, concepts, theories and models and the connections between them. Analyse and explain how models and theories are used to organise and understand observed phenomena and concepts related to chemistry, identifying limitations of selected models/theories. Critically evaluate and interpret a range of scientific and media texts (including journal articles, mass media communications and opinions in the public domain), processes, claims and conclusions related to chemistry by considering the quality of available evidence. Apply sustainability concepts (green chemistry principles, development goals and the transition from a linear towards a circular economy) to analyse and evaluate responses to chemistry-based scenarios, case studies, issues and challenges. Identify and explain when judgements or decisions associated with chemistry-related issues may be based on sociocultural, economic, political, legal and/or ethical factors and not solely on scientific evidence. Use clear, coherent and concise expression to communicate to specific audiences and for specific purposes in appropriate scientific genres, including scientific reports and posters. Acknowledge sources of information and assistance, and use standard scientific referencing conventions)",
+			"curriculumSubjectId": 3000
+		}
+	]
 }

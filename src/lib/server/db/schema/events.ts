@@ -1,11 +1,13 @@
-import { boolean, integer, pgTable, text, timestamp, unique, uuid } from 'drizzle-orm/pg-core';
+import { boolean, integer, pgSchema, text, timestamp, unique, uuid } from 'drizzle-orm/pg-core';
 import { campus, school } from './schools';
 import { subjectOffering, subjectOfferingClass } from './subjects';
 import { user } from './user';
 import { timestamps } from './utils';
 
+export const eventsSchema = pgSchema('events');
+
 // Things like whole school assemblies, school fairs etc
-export const schoolEvent = pgTable('sch_evt', {
+export const schoolEvent = eventsSchema.table('sch_evt', {
 	id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
 	schoolId: integer('sch_id')
 		.notNull()
@@ -21,7 +23,7 @@ export const schoolEvent = pgTable('sch_evt', {
 export type SchoolEvent = typeof schoolEvent.$inferSelect;
 
 // Per-campus athletics days, swimming carnivals, etc
-export const campusEvent = pgTable('cmps_evt', {
+export const campusEvent = eventsSchema.table('cmps_evt', {
 	id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
 	campusId: integer('cmps_id')
 		.notNull()
@@ -37,7 +39,7 @@ export const campusEvent = pgTable('cmps_evt', {
 export type CampusEvent = typeof campusEvent.$inferSelect;
 
 // Things like a year 8 geography excursion, or a subject-level exam
-export const subjectOfferingEvent = pgTable('sub_off_evt', {
+export const subjectOfferingEvent = eventsSchema.table('sub_off_evt', {
 	id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
 	subjectOfferingId: integer('sub_off_id')
 		.notNull()
@@ -53,7 +55,7 @@ export const subjectOfferingEvent = pgTable('sub_off_evt', {
 export type SubjectOfferingEvent = typeof subjectOfferingEvent.$inferSelect;
 
 // Thing like a class test or a class excursion
-export const subjectOfferingClassEvent = pgTable('sub_off_cls_evt', {
+export const subjectOfferingClassEvent = eventsSchema.table('sub_off_cls_evt', {
 	id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
 	subjectOfferingClassId: integer('sub_off_cls_id')
 		.notNull()
@@ -69,7 +71,7 @@ export const subjectOfferingClassEvent = pgTable('sub_off_cls_evt', {
 export type SubjectOfferingClassEvent = typeof subjectOfferingClassEvent.$inferSelect;
 
 // RSVP Response table to track event RSVPs
-export const eventRSVP = pgTable(
+export const eventRSVP = eventsSchema.table(
 	'event_rsvp',
 	{
 		id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),

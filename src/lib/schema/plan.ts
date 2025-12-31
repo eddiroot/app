@@ -1,52 +1,51 @@
 export const planSchema = {
-  type: 'object',
-  properties: {
-    summary: {
-      type: 'string',
-      description: 'A brief summary (max 60 words) of the lesson plan to preview'
-    },
-    name: {
-      type: 'string',
-      description: 'Title of the generated lesson plan'
-    },
-    description: {
-      type: 'string',
-      description: 'A narrative overview of what the lesson will cover (30-60 words)'
-    },
-    scopes: {
-      type: 'array',
-      description: 'An ordered breakdown of lesson sections',
-      items: {
-        type: 'object',
-        properties: {
-          title: {
-            type: 'string',
-            description: 'Heading or focus for this section'
-          },
-          details: {
-            type: 'string',
-            description: 'Short description of activities or content in this section'
-          }
-        },
-        required: ['title', 'details']
-      }
-    },
-    usedStandards: {
-      type: 'array',
-      description: 'The 1-2 learning-area standards leveraged in this plan',
-      maxItems: 2,
-      items: {
-        type: 'object',
-        properties: {
-          id: { type: 'integer' },
-        },
-        required: ['id']
-      }
-    }
-  },
-  required: ['summary','name','description','scopes','usedStandards']
-
-}
+	type: 'object',
+	properties: {
+		summary: {
+			type: 'string',
+			description: 'A brief summary (max 60 words) of the lesson plan to preview'
+		},
+		name: {
+			type: 'string',
+			description: 'Title of the generated lesson plan'
+		},
+		description: {
+			type: 'string',
+			description: 'A narrative overview of what the lesson will cover (30-60 words)'
+		},
+		scopes: {
+			type: 'array',
+			description: 'An ordered breakdown of lesson sections',
+			items: {
+				type: 'object',
+				properties: {
+					title: {
+						type: 'string',
+						description: 'Heading or focus for this section'
+					},
+					details: {
+						type: 'string',
+						description: 'Short description of activities or content in this section'
+					}
+				},
+				required: ['title', 'details']
+			}
+		},
+		usedStandards: {
+			type: 'array',
+			description: 'The 1-2 learning-area standards leveraged in this plan',
+			maxItems: 2,
+			items: {
+				type: 'object',
+				properties: {
+					id: { type: 'integer' }
+				},
+				required: ['id']
+			}
+		}
+	},
+	required: ['summary', 'name', 'description', 'scopes', 'usedStandards']
+};
 
 /**
  * Build a prompt for Gemini to generate a lesson plan conforming to planSchema.
@@ -56,11 +55,8 @@ export const planSchema = {
  * @param userInstruction - Optional guidance or preferences for the lesson plan.
  * @returns A prompt string ready to send to Gemini.
  */
-export function buildLessonPlanPrompt(
-  contextsJson: string,
-  userInstruction: string = ''
-): string {
-  return `
+export function buildLessonPlanPrompt(contextsJson: string, userInstruction: string = ''): string {
+	return `
 You are given:
 
 1) A PlanContext array (JSON), representing curriculum context: description, standards, and elaborations and a year level.
@@ -97,139 +93,130 @@ Respond now with just the JSON object.
   `.trim();
 }
 
-
 export interface LessonPlan {
-  summary: string;
-  name: string;
-  description: string;
-  scopes: { title: string; details: string }[];
+	summary: string;
+	name: string;
+	description: string;
+	scopes: { title: string; details: string }[];
 }
 
 /**
  * Turn a lesson plan into a rich text prompt for Gemini's image model.
  */
 export function buildLessonPlanImagePrompt(plan: LessonPlan): string {
-  let prompt = `Illustration for lesson "${plan.name}". Summary: ${plan.summary}\n\n`;
-  prompt += `Overview: ${plan.description}\n\n`;
-  prompt += `Sections:\n`;
-  plan.scopes.forEach((scope, i) => {
-    prompt += `${i + 1}. ${scope.title} — ${scope.details}\n`;
-  });
-  prompt += `\nCreate an engaging, colorful illustration that captures the essence of this plan. Do not generate text in the image, just visuals.`;
-  return prompt.trim();
+	let prompt = `Illustration for lesson "${plan.name}". Summary: ${plan.summary}\n\n`;
+	prompt += `Overview: ${plan.description}\n\n`;
+	prompt += `Sections:\n`;
+	plan.scopes.forEach((scope, i) => {
+		prompt += `${i + 1}. ${scope.title} — ${scope.details}\n`;
+	});
+	prompt += `\nCreate an engaging, colorful illustration that captures the essence of this plan. Do not generate text in the image, just visuals.`;
+	return prompt.trim();
 }
 
 export type AssessmentPlan = {
-  summary: string;
-  name: string;
-  description: string;
-  scopes: Array<{ title: string; details: string }>;
-  usedStandards: Array<{ id: number; name?: string }>;
-  rubric: {
-    rows: Array<{
-      title: string;
-      cells: Array<{
-        level: 'exemplary' | 'accomplished' | 'developing' | 'beginning';
-        description: string;
-        marks: number;
-      }>;
-    }>;
-  };
+	summary: string;
+	name: string;
+	description: string;
+	scopes: Array<{ title: string; details: string }>;
+	usedStandards: Array<{ id: number; name?: string }>;
+	rubric: {
+		rows: Array<{
+			title: string;
+			cells: Array<{
+				level: 'exemplary' | 'accomplished' | 'developing' | 'beginning';
+				description: string;
+				marks: number;
+			}>;
+		}>;
+	};
 };
 
 export function buildAssessmentPlanImagePrompt(plan: AssessmentPlan): string {
-  let prompt = `Illustration for assessment "${plan.name}". Summary: ${plan.summary}\n\n`;
-  prompt += `Overview: ${plan.description}\n\n`;
-  prompt += `Assessment sections:\n`;
-  plan.scopes.forEach((scope, i) => {
-    prompt += `${i + 1}. ${scope.title} — ${scope.details}\n`;
-  });
-  prompt += `\nCreate an engaging, educational illustration that represents this assessment task. Focus on academic, evaluation, or testing themes. Do not generate text in the image, just visuals.`;
-  return prompt.trim();
+	let prompt = `Illustration for assessment "${plan.name}". Summary: ${plan.summary}\n\n`;
+	prompt += `Overview: ${plan.description}\n\n`;
+	prompt += `Assessment sections:\n`;
+	plan.scopes.forEach((scope, i) => {
+		prompt += `${i + 1}. ${scope.title} — ${scope.details}\n`;
+	});
+	prompt += `\nCreate an engaging, educational illustration that represents this assessment task. Focus on academic, evaluation, or testing themes. Do not generate text in the image, just visuals.`;
+	return prompt.trim();
 }
 
-
 export const assessmentSchema = {
-  type: 'object',
-  properties: {
-    summary: {
-      type: 'string',
-      description: 'Short preview (≤ 60 words) so a teacher can decide to accept/regenerate'
-    },
-    name: {
-      type: 'string',
-      description: 'Title of the assessment task'
-    },
-    description: {
-      type: 'string',
-      description: 'Detailed overview of the assessment (30-60 words)'
-    },
-    scopes: {
-      type: 'array',
-      description: 'Ordered sections or parts of the assessment',
-      items: {
-        type: 'object',
-        properties: {
-          title: { type: 'string' },
-          details: { type: 'string' }
-        },
-        required: ['title', 'details']
-      }
-    },
-    usedStandards: {
-      type: 'array',
-      description:
-        'Learning-area standards addressed (should cover most of the area, not just one or two)',
-      items: {
-        type: 'object',
-        properties: { id: { type: 'integer' }, name: { type: 'string' } },
-        required: ['id']
-      },
-      minItems: 3                // encourage broad coverage
-    },
-    rubric: {
-      type: 'object',
-      description: 'Analytic rubric aligned to the assessment',
-      properties: {
-        rows: {
-          type: 'array',
-          items: {
-            type: 'object',
-            properties: {
-              title: { type: 'string', description: 'Criterion name (e.g. "Analysis")' },
-              cells: {
-                type: 'array',
-                items: {
-                  type: 'object',
-                  properties: {
-                    level: {
-                      type: 'string',
-                      enum: ['exemplary', 'accomplished', 'developing', 'beginning']
-                    },
-                    description: { type: 'string' },
-                    marks: { type: 'number' }
-                  },
-                  required: ['level', 'description', 'marks']
-                },
-                minItems: 4,
-                maxItems: 4
-              }
-            },
-            required: ['title', 'cells']
-          }
-        }
-      },
-      required: ['rows']
-    }
-  },
-  required: [
-    'summary',
-    'name',
-    'description',
-    'scopes',
-    'usedStandards',
-    'rubric'
-  ]
+	type: 'object',
+	properties: {
+		summary: {
+			type: 'string',
+			description: 'Short preview (≤ 60 words) so a teacher can decide to accept/regenerate'
+		},
+		name: {
+			type: 'string',
+			description: 'Title of the assessment task'
+		},
+		description: {
+			type: 'string',
+			description: 'Detailed overview of the assessment (30-60 words)'
+		},
+		scopes: {
+			type: 'array',
+			description: 'Ordered sections or parts of the assessment',
+			items: {
+				type: 'object',
+				properties: {
+					title: { type: 'string' },
+					details: { type: 'string' }
+				},
+				required: ['title', 'details']
+			}
+		},
+		usedStandards: {
+			type: 'array',
+			description:
+				'Learning-area standards addressed (should cover most of the area, not just one or two)',
+			items: {
+				type: 'object',
+				properties: { id: { type: 'integer' }, name: { type: 'string' } },
+				required: ['id']
+			},
+			minItems: 3 // encourage broad coverage
+		},
+		rubric: {
+			type: 'object',
+			description: 'Analytic rubric aligned to the assessment',
+			properties: {
+				rows: {
+					type: 'array',
+					items: {
+						type: 'object',
+						properties: {
+							title: { type: 'string', description: 'Criterion name (e.g. "Analysis")' },
+							cells: {
+								type: 'array',
+								items: {
+									type: 'object',
+									properties: {
+										level: {
+											type: 'string',
+											enum: ['exemplary', 'accomplished', 'developing', 'beginning']
+										},
+										description: { type: 'string' },
+										marks: { type: 'number' }
+									},
+									required: ['level', 'description', 'marks']
+								},
+								minItems: 4,
+								maxItems: 4
+							}
+						},
+						required: ['title', 'cells']
+					}
+				}
+			},
+			required: ['rows']
+		}
+	},
+	required: ['summary', 'name', 'description', 'scopes', 'usedStandards', 'rubric']
 } as const;
 
 // ─────────────────────────────────────────────────────────────
@@ -243,11 +230,8 @@ export const assessmentSchema = {
  * @param yearLevel       Target year level (e.g. "Year 8")
  * @param userInstruction Optional teacher guidance to influence focus/style
  */
-export function buildAssessmentPlanPrompt(
-  contextsJson: string,
-  userInstruction = ''
-): string {
-  return `
+export function buildAssessmentPlanPrompt(contextsJson: string, userInstruction = ''): string {
+	return `
 You are given:
 
 1) A PlanContext array (JSON) containing curriculum context (topic description, standards, elaborations, yearLevel).

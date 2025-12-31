@@ -1,294 +1,294 @@
 {
-  "id": 11000,
-  "curriculumId": 11000,
-  "name": "Literature Units 1 and 2",
-  "isArchived": false,
-  "learningAreas": [
-    {
-      "id": 11000,
-      "curriculumSubjectId": 11000,
-      "name": "Reading practices",
-      "abbreviation": "U1AOS1",
-      "description": "In this area of study students consider how language, structure and stylistic choices are used in different literary forms and types of text. They consider both print and non-print texts, reflecting on the contribution of form and style to meaning. Students reflect on the degree to which points of view, experiences and contexts shape their own and others’ interpretations of text. Students closely examine the literary forms, features and language of texts. They begin to identify and explore textual details, including language and features, to develop a close analysis response to a text. On completion of this unit the student should be able to respond to a range of texts through close analysis. To achieve this outcome the student will draw on key knowledge and key skills outlined in Area of Study 1. the significance of characters, settings and events featured in the texts in shaping reader response"
-    },
-    {
-      "id": 11001,
-      "curriculumSubjectId": 11000,
-      "name": "Exploration of literary movements and genres",
-      "abbreviation": "U1AOS2",
-      "description": "Exploration of literary movements and genres In this area of study students explore the concerns, ideas, style and conventions common to a distinctive type of literature seen in literary movements or genres. Examples of these groupings include literary movements and/or genres such as modernism, epic, tragedy and magic realism, as well as more popular, or mainstream, genres and subgenres such as crime, romance and science fiction. Students explore texts from the selected movement or genre, identifying and examining attributes, patterns and similarities that locate each text within that grouping. Students engage with the ideas and concerns shared by the texts through language, settings, narrative structures and characterisation, and they experiment with the assumptions and representations embedded in the texts. Students must study at least one complete text alongside multiple samples of other texts from the selected movement or genre. On completion of this unit the student should be able to explore conventions common to a selected movement or genre, and engage with the ideas, concerns and representations from at least one complete text alongside multiple samples of other texts considered characteristic of the selected movement or genre. To achieve this outcome the student will draw on key knowledge and key skills outlined in Area of Study 2. conventions of a movement or genre, including language, settings, narrative structures and characterisation"
-    },
-    {
-      "id": 11002,
-      "curriculumSubjectId": 11000,
-      "name": "Voices of Country",
-      "abbreviation": "U2AOS1",
-      "description": "In this area of study students explore the voices, perspectives and knowledge of Aboriginal and Torres Strait Islander authors and creators. They consider the interconnectedness of place, culture and identity through the experiences, texts and voices of Aboriginal and Torres Strait Islander peoples, including connections to Country, the impact of colonisation and its ongoing consequences, and issues of reconciliation and reclamation. Students examine representations of culture and identity in Aboriginal and Torres Strait Islander peoples’ texts and the ways in which these texts present voices and perspectives that explore and challenge assumptions and stereotypes arising from colonisation. Students acknowledge and reflect on a range of Australian views and values (including their own) through a text(s). Within that exploration, students consider stories about the Australian landscape and culture. On completion of this unit the student should be able to explore and reflect on the voices, perspectives and knowledge in the texts of Aboriginal and Torres Strait Islander authors and creators. To achieve this outcome the student will draw on key knowledge and key skills outlined in Area of Study 1."
-    },
-    {
-      "id": 11003,
-      "curriculumSubjectId": 11000,
-      "name": "The text in its context",
-      "abbreviation": "U2AOS2",
-      "description": "The text in its context In this area of study students focus on the text and its historical, social and cultural context. Students reflect on representations of a specific time period and/or culture within a text. Students explore the text to understand its point of view and what it reflects or comments on. They identify the language and the representations in the text that reflect the specific time period and/or culture, its ideas and concepts. Students develop an understanding that contextual meaning is already implicitly or explicitly inscribed in a text and that textual details and structures can be scrutinised to illustrate its significance. Students develop the ability to analyse language closely, recognising that words have historical and cultural import. On completion of this unit the student should be able to analyse and respond to the representation of a specific time period and/or culture explored in a text and reflect or comment on the ideas and concerns of individuals and groups in that context. To achieve this outcome the student will draw on key knowledge and key skills outlined in Area of Study 2."
-    }
-  ],
-  "outcomes": [
-    {
-      "id": 11000,
-      "curriculumSubjectId": 11000,
-      "number": 1,
-      "description": "On completion of this unit the student should be able to respond to a range of texts through close analysis.",
-      "keyKnowledge": [
-        {
-          "id": 11000,
-          "description": "the significance of characters, settings and events featured in the texts in shaping reader response",
-          "outcomeId": 11000
-        },
-        {
-          "id": 11001,
-          "description": "the ways the literary forms, features and language of texts can guide readers to meaning in print and non-print texts",
-          "outcomeId": 11000
-        },
-        {
-          "id": 11002,
-          "description": "the ways others’ views on texts may influence or enhance a reading of a text and reveal assumptions and ideas about aspects of culture and society",
-          "outcomeId": 11000
-        },
-        {
-          "id": 11003,
-          "description": "the conventions of presentation, discussion and/or debate",
-          "outcomeId": 11000
-        },
-        {
-          "id": 11004,
-          "description": "the features appropriate for written and oral responses, including structure, conventions and language",
-          "outcomeId": 11000
-        }
-      ],
-      "keySkills": [
-        {
-          "id": 11000,
-          "description": "develop and produce close analysis written and/or oral responses to texts",
-          "outcomeId": 11000
-        },
-        {
-          "id": 11001,
-          "description": "discuss how the literary forms, features and language of texts contribute to meaning",
-          "outcomeId": 11000
-        },
-        {
-          "id": 11002,
-          "description": "discuss how their own views, values and contexts influence their readings of texts",
-          "outcomeId": 11000
-        },
-        {
-          "id": 11003,
-          "description": "explore, interpret and reflect on different ideas and values represented in literature",
-          "outcomeId": 11000
-        },
-        {
-          "id": 11004,
-          "description": "apply understanding of other interpretations to their reading of a text(s)",
-          "outcomeId": 11000
-        },
-        {
-          "id": 11005,
-          "description": "use evidence from the texts to support a response",
-          "outcomeId": 11000
-        }
-      ]
-    },
-    {
-      "id": 11001,
-      "curriculumSubjectId": 11000,
-      "number": 2,
-      "description": "On completion of this unit the student should be able to explore conventions common to a selected movement or genre, and engage with the ideas, concerns and representations from at least one complete text alongside multiple samples of other texts considered characteristic of the selected movement or genre.",
-      "keyKnowledge": [
-        {
-          "id": 11005,
-          "description": "conventions of a movement or genre, including language, settings, narrative structures and characterisation",
-          "outcomeId": 11001
-        },
-        {
-          "id": 11006,
-          "description": "the ways the conventions of a movement or genre contribute to meaning",
-          "outcomeId": 11001
-        },
-        {
-          "id": 11007,
-          "description": "the ideas and concerns embedded in text typical of a movement or genre",
-          "outcomeId": 11001
-        },
-        {
-          "id": 11008,
-          "description": "assumptions and representations in texts typical of a movement or genre",
-          "outcomeId": 11001
-        },
-        {
-          "id": 11009,
-          "description": "the conventions of presentation, discussion and/or debate",
-          "outcomeId": 11001
-        },
-        {
-          "id": 11010,
-          "description": "the features appropriate for written and oral responses, including structure, conventions and language",
-          "outcomeId": 11001
-        }
-      ],
-      "keySkills": [
-        {
-          "id": 11006,
-          "description": "explore the replication of conventions across at least one complete text alongside multiple samples of other texts typical of a movement or genre",
-          "outcomeId": 11001
-        },
-        {
-          "id": 11007,
-          "description": "comment on how the conventions of a movement or genre contribute to meaning",
-          "outcomeId": 11001
-        },
-        {
-          "id": 11008,
-          "description": "analyse and reflect on the ideas and concerns raised by texts typical of a movement or genre",
-          "outcomeId": 11001
-        },
-        {
-          "id": 11009,
-          "description": "explore and experiment with the assumptions and representations in texts associated with a movement or genre",
-          "outcomeId": 11001
-        },
-        {
-          "id": 11010,
-          "description": "develop and produce analytical and creative written and/or oral responses to texts",
-          "outcomeId": 11001
-        }
-      ]
-    },
-    {
-      "id": 11002,
-      "curriculumSubjectId": 11000,
-      "number": 1,
-      "description": "On completion of this unit the student should be able to explore and reflect on the voices, perspectives and knowledge in the texts of Aboriginal and Torres Strait Islander authors and creators.",
-      "keyKnowledge": [
-        {
-          "id": 11011,
-          "description": "the significance and interconnectedness of place, culture and identity in Aboriginal and Torres Strait Islander texts",
-          "outcomeId": 11002
-        },
-        {
-          "id": 11012,
-          "description": "Aboriginal and Torres Strait Islander concepts of storytelling, text and language",
-          "outcomeId": 11002
-        },
-        {
-          "id": 11013,
-          "description": "the impact of colonisation on and the place of reconciliation in literary representations of and by Aboriginal and Torres Strait Islander peoples",
-          "outcomeId": 11002
-        },
-        {
-          "id": 11014,
-          "description": "Aboriginal and Torres Strait Islander experiences of colonisation and its ongoing consequences, and issues of reconciliation and reclamation as represented in a text(s)",
-          "outcomeId": 11002
-        },
-        {
-          "id": 11015,
-          "description": "the conventions of presentation, discussion and/or debate",
-          "outcomeId": 11002
-        },
-        {
-          "id": 11016,
-          "description": "the features appropriate for creative and/or analytical written and/or oral responses, including structure, conventions and language",
-          "outcomeId": 11002
-        }
-      ],
-      "keySkills": [
-        {
-          "id": 11011,
-          "description": "engage with and explore Aboriginal and Torres Strait Islander perspectives, knowledge and storytelling",
-          "outcomeId": 11002
-        },
-        {
-          "id": 11012,
-          "description": "investigate and research the voices and stories of Aboriginal and Torres Strait Islander peoples",
-          "outcomeId": 11002
-        },
-        {
-          "id": 11013,
-          "description": "reflect on literary representations of and by Aboriginal and Torres Strait Islander peoples",
-          "outcomeId": 11002
-        },
-        {
-          "id": 11014,
-          "description": "comment on and understand assumptions and representations in a text(s) that comes from a colonial viewpoint",
-          "outcomeId": 11002
-        },
-        {
-          "id": 11015,
-          "description": "share and listen to stories within the context of Australian culture and landscapes",
-          "outcomeId": 11002
-        },
-        {
-          "id": 11016,
-          "description": "develop and produce creative and/or analytical responses to texts",
-          "outcomeId": 11002
-        }
-      ]
-    },
-    {
-      "id": 11003,
-      "curriculumSubjectId": 11000,
-      "number": 2,
-      "description": "On completion of this unit the student should be able to analyse and respond to the representation of a specific time period and/or culture explored in a text and reflect or comment on the ideas and concerns of individuals and groups in that context.",
-      "keyKnowledge": [
-        {
-          "id": 11017,
-          "description": "the features of society and the ideas and behaviour that the text appears to endorse and/or critique",
-          "outcomeId": 11003
-        },
-        {
-          "id": 11018,
-          "description": "the ways the literary forms, features and language of texts reveal the specific time period and/or culture represented in a text",
-          "outcomeId": 11003
-        },
-        {
-          "id": 11019,
-          "description": "the ways in which characters, setting, events and ideas convey the social and cultural concerns of a text",
-          "outcomeId": 11003
-        },
-        {
-          "id": 11020,
-          "description": "the conventions of presentation, discussion and/or debate",
-          "outcomeId": 11003
-        },
-        {
-          "id": 11021,
-          "description": "the features appropriate for creative and/or analytical written and/or oral responses, including structure, conventions and language",
-          "outcomeId": 11003
-        }
-      ],
-      "keySkills": [
-        {
-          "id": 11017,
-          "description": "explore and analyse how a text represents its historical, social and cultural context",
-          "outcomeId": 11003
-        },
-        {
-          "id": 11018,
-          "description": "develop critical responses to a text by examining how the literary form, features and language are used in the text to reveal the specific period and/or culture represented in the text",
-          "outcomeId": 11003
-        },
-        {
-          "id": 11019,
-          "description": "explore how a text enables an understanding of a specific time period and/or culture",
-          "outcomeId": 11003
-        },
-        {
-          "id": 11020,
-          "description": "develop and produce creative and/or analytical responses to texts",
-          "outcomeId": 11003
-        }
-      ]
-    }
-  ],
-  "extraContents": []
+	"id": 11000,
+	"curriculumId": 11000,
+	"name": "Literature Units 1 and 2",
+	"isArchived": false,
+	"learningAreas": [
+		{
+			"id": 11000,
+			"curriculumSubjectId": 11000,
+			"name": "Reading practices",
+			"abbreviation": "U1AOS1",
+			"description": "In this area of study students consider how language, structure and stylistic choices are used in different literary forms and types of text. They consider both print and non-print texts, reflecting on the contribution of form and style to meaning. Students reflect on the degree to which points of view, experiences and contexts shape their own and others’ interpretations of text. Students closely examine the literary forms, features and language of texts. They begin to identify and explore textual details, including language and features, to develop a close analysis response to a text. On completion of this unit the student should be able to respond to a range of texts through close analysis. To achieve this outcome the student will draw on key knowledge and key skills outlined in Area of Study 1. the significance of characters, settings and events featured in the texts in shaping reader response"
+		},
+		{
+			"id": 11001,
+			"curriculumSubjectId": 11000,
+			"name": "Exploration of literary movements and genres",
+			"abbreviation": "U1AOS2",
+			"description": "Exploration of literary movements and genres In this area of study students explore the concerns, ideas, style and conventions common to a distinctive type of literature seen in literary movements or genres. Examples of these groupings include literary movements and/or genres such as modernism, epic, tragedy and magic realism, as well as more popular, or mainstream, genres and subgenres such as crime, romance and science fiction. Students explore texts from the selected movement or genre, identifying and examining attributes, patterns and similarities that locate each text within that grouping. Students engage with the ideas and concerns shared by the texts through language, settings, narrative structures and characterisation, and they experiment with the assumptions and representations embedded in the texts. Students must study at least one complete text alongside multiple samples of other texts from the selected movement or genre. On completion of this unit the student should be able to explore conventions common to a selected movement or genre, and engage with the ideas, concerns and representations from at least one complete text alongside multiple samples of other texts considered characteristic of the selected movement or genre. To achieve this outcome the student will draw on key knowledge and key skills outlined in Area of Study 2. conventions of a movement or genre, including language, settings, narrative structures and characterisation"
+		},
+		{
+			"id": 11002,
+			"curriculumSubjectId": 11000,
+			"name": "Voices of Country",
+			"abbreviation": "U2AOS1",
+			"description": "In this area of study students explore the voices, perspectives and knowledge of Aboriginal and Torres Strait Islander authors and creators. They consider the interconnectedness of place, culture and identity through the experiences, texts and voices of Aboriginal and Torres Strait Islander peoples, including connections to Country, the impact of colonisation and its ongoing consequences, and issues of reconciliation and reclamation. Students examine representations of culture and identity in Aboriginal and Torres Strait Islander peoples’ texts and the ways in which these texts present voices and perspectives that explore and challenge assumptions and stereotypes arising from colonisation. Students acknowledge and reflect on a range of Australian views and values (including their own) through a text(s). Within that exploration, students consider stories about the Australian landscape and culture. On completion of this unit the student should be able to explore and reflect on the voices, perspectives and knowledge in the texts of Aboriginal and Torres Strait Islander authors and creators. To achieve this outcome the student will draw on key knowledge and key skills outlined in Area of Study 1."
+		},
+		{
+			"id": 11003,
+			"curriculumSubjectId": 11000,
+			"name": "The text in its context",
+			"abbreviation": "U2AOS2",
+			"description": "The text in its context In this area of study students focus on the text and its historical, social and cultural context. Students reflect on representations of a specific time period and/or culture within a text. Students explore the text to understand its point of view and what it reflects or comments on. They identify the language and the representations in the text that reflect the specific time period and/or culture, its ideas and concepts. Students develop an understanding that contextual meaning is already implicitly or explicitly inscribed in a text and that textual details and structures can be scrutinised to illustrate its significance. Students develop the ability to analyse language closely, recognising that words have historical and cultural import. On completion of this unit the student should be able to analyse and respond to the representation of a specific time period and/or culture explored in a text and reflect or comment on the ideas and concerns of individuals and groups in that context. To achieve this outcome the student will draw on key knowledge and key skills outlined in Area of Study 2."
+		}
+	],
+	"outcomes": [
+		{
+			"id": 11000,
+			"curriculumSubjectId": 11000,
+			"number": 1,
+			"description": "On completion of this unit the student should be able to respond to a range of texts through close analysis.",
+			"keyKnowledge": [
+				{
+					"id": 11000,
+					"description": "the significance of characters, settings and events featured in the texts in shaping reader response",
+					"outcomeId": 11000
+				},
+				{
+					"id": 11001,
+					"description": "the ways the literary forms, features and language of texts can guide readers to meaning in print and non-print texts",
+					"outcomeId": 11000
+				},
+				{
+					"id": 11002,
+					"description": "the ways others’ views on texts may influence or enhance a reading of a text and reveal assumptions and ideas about aspects of culture and society",
+					"outcomeId": 11000
+				},
+				{
+					"id": 11003,
+					"description": "the conventions of presentation, discussion and/or debate",
+					"outcomeId": 11000
+				},
+				{
+					"id": 11004,
+					"description": "the features appropriate for written and oral responses, including structure, conventions and language",
+					"outcomeId": 11000
+				}
+			],
+			"keySkills": [
+				{
+					"id": 11000,
+					"description": "develop and produce close analysis written and/or oral responses to texts",
+					"outcomeId": 11000
+				},
+				{
+					"id": 11001,
+					"description": "discuss how the literary forms, features and language of texts contribute to meaning",
+					"outcomeId": 11000
+				},
+				{
+					"id": 11002,
+					"description": "discuss how their own views, values and contexts influence their readings of texts",
+					"outcomeId": 11000
+				},
+				{
+					"id": 11003,
+					"description": "explore, interpret and reflect on different ideas and values represented in literature",
+					"outcomeId": 11000
+				},
+				{
+					"id": 11004,
+					"description": "apply understanding of other interpretations to their reading of a text(s)",
+					"outcomeId": 11000
+				},
+				{
+					"id": 11005,
+					"description": "use evidence from the texts to support a response",
+					"outcomeId": 11000
+				}
+			]
+		},
+		{
+			"id": 11001,
+			"curriculumSubjectId": 11000,
+			"number": 2,
+			"description": "On completion of this unit the student should be able to explore conventions common to a selected movement or genre, and engage with the ideas, concerns and representations from at least one complete text alongside multiple samples of other texts considered characteristic of the selected movement or genre.",
+			"keyKnowledge": [
+				{
+					"id": 11005,
+					"description": "conventions of a movement or genre, including language, settings, narrative structures and characterisation",
+					"outcomeId": 11001
+				},
+				{
+					"id": 11006,
+					"description": "the ways the conventions of a movement or genre contribute to meaning",
+					"outcomeId": 11001
+				},
+				{
+					"id": 11007,
+					"description": "the ideas and concerns embedded in text typical of a movement or genre",
+					"outcomeId": 11001
+				},
+				{
+					"id": 11008,
+					"description": "assumptions and representations in texts typical of a movement or genre",
+					"outcomeId": 11001
+				},
+				{
+					"id": 11009,
+					"description": "the conventions of presentation, discussion and/or debate",
+					"outcomeId": 11001
+				},
+				{
+					"id": 11010,
+					"description": "the features appropriate for written and oral responses, including structure, conventions and language",
+					"outcomeId": 11001
+				}
+			],
+			"keySkills": [
+				{
+					"id": 11006,
+					"description": "explore the replication of conventions across at least one complete text alongside multiple samples of other texts typical of a movement or genre",
+					"outcomeId": 11001
+				},
+				{
+					"id": 11007,
+					"description": "comment on how the conventions of a movement or genre contribute to meaning",
+					"outcomeId": 11001
+				},
+				{
+					"id": 11008,
+					"description": "analyse and reflect on the ideas and concerns raised by texts typical of a movement or genre",
+					"outcomeId": 11001
+				},
+				{
+					"id": 11009,
+					"description": "explore and experiment with the assumptions and representations in texts associated with a movement or genre",
+					"outcomeId": 11001
+				},
+				{
+					"id": 11010,
+					"description": "develop and produce analytical and creative written and/or oral responses to texts",
+					"outcomeId": 11001
+				}
+			]
+		},
+		{
+			"id": 11002,
+			"curriculumSubjectId": 11000,
+			"number": 1,
+			"description": "On completion of this unit the student should be able to explore and reflect on the voices, perspectives and knowledge in the texts of Aboriginal and Torres Strait Islander authors and creators.",
+			"keyKnowledge": [
+				{
+					"id": 11011,
+					"description": "the significance and interconnectedness of place, culture and identity in Aboriginal and Torres Strait Islander texts",
+					"outcomeId": 11002
+				},
+				{
+					"id": 11012,
+					"description": "Aboriginal and Torres Strait Islander concepts of storytelling, text and language",
+					"outcomeId": 11002
+				},
+				{
+					"id": 11013,
+					"description": "the impact of colonisation on and the place of reconciliation in literary representations of and by Aboriginal and Torres Strait Islander peoples",
+					"outcomeId": 11002
+				},
+				{
+					"id": 11014,
+					"description": "Aboriginal and Torres Strait Islander experiences of colonisation and its ongoing consequences, and issues of reconciliation and reclamation as represented in a text(s)",
+					"outcomeId": 11002
+				},
+				{
+					"id": 11015,
+					"description": "the conventions of presentation, discussion and/or debate",
+					"outcomeId": 11002
+				},
+				{
+					"id": 11016,
+					"description": "the features appropriate for creative and/or analytical written and/or oral responses, including structure, conventions and language",
+					"outcomeId": 11002
+				}
+			],
+			"keySkills": [
+				{
+					"id": 11011,
+					"description": "engage with and explore Aboriginal and Torres Strait Islander perspectives, knowledge and storytelling",
+					"outcomeId": 11002
+				},
+				{
+					"id": 11012,
+					"description": "investigate and research the voices and stories of Aboriginal and Torres Strait Islander peoples",
+					"outcomeId": 11002
+				},
+				{
+					"id": 11013,
+					"description": "reflect on literary representations of and by Aboriginal and Torres Strait Islander peoples",
+					"outcomeId": 11002
+				},
+				{
+					"id": 11014,
+					"description": "comment on and understand assumptions and representations in a text(s) that comes from a colonial viewpoint",
+					"outcomeId": 11002
+				},
+				{
+					"id": 11015,
+					"description": "share and listen to stories within the context of Australian culture and landscapes",
+					"outcomeId": 11002
+				},
+				{
+					"id": 11016,
+					"description": "develop and produce creative and/or analytical responses to texts",
+					"outcomeId": 11002
+				}
+			]
+		},
+		{
+			"id": 11003,
+			"curriculumSubjectId": 11000,
+			"number": 2,
+			"description": "On completion of this unit the student should be able to analyse and respond to the representation of a specific time period and/or culture explored in a text and reflect or comment on the ideas and concerns of individuals and groups in that context.",
+			"keyKnowledge": [
+				{
+					"id": 11017,
+					"description": "the features of society and the ideas and behaviour that the text appears to endorse and/or critique",
+					"outcomeId": 11003
+				},
+				{
+					"id": 11018,
+					"description": "the ways the literary forms, features and language of texts reveal the specific time period and/or culture represented in a text",
+					"outcomeId": 11003
+				},
+				{
+					"id": 11019,
+					"description": "the ways in which characters, setting, events and ideas convey the social and cultural concerns of a text",
+					"outcomeId": 11003
+				},
+				{
+					"id": 11020,
+					"description": "the conventions of presentation, discussion and/or debate",
+					"outcomeId": 11003
+				},
+				{
+					"id": 11021,
+					"description": "the features appropriate for creative and/or analytical written and/or oral responses, including structure, conventions and language",
+					"outcomeId": 11003
+				}
+			],
+			"keySkills": [
+				{
+					"id": 11017,
+					"description": "explore and analyse how a text represents its historical, social and cultural context",
+					"outcomeId": 11003
+				},
+				{
+					"id": 11018,
+					"description": "develop critical responses to a text by examining how the literary form, features and language are used in the text to reveal the specific period and/or culture represented in the text",
+					"outcomeId": 11003
+				},
+				{
+					"id": 11019,
+					"description": "explore how a text enables an understanding of a specific time period and/or culture",
+					"outcomeId": 11003
+				},
+				{
+					"id": 11020,
+					"description": "develop and produce creative and/or analytical responses to texts",
+					"outcomeId": 11003
+				}
+			]
+		}
+	],
+	"extraContents": []
 }

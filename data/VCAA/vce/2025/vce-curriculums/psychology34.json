@@ -1,432 +1,432 @@
 {
-  "id": 8000,
-  "curriculumId": 8000,
-  "name": "Psychology Units 3 and 4",
-  "isArchived": false,
-  "learningAreas": [
-    {
-      "id": 8006,
-      "curriculumSubjectId": 8000,
-      "name": "How does the nervous system enable psychological functioning?",
-      "abbreviation": "U3AOS1",
-      "description": "In this area of study students explore the role of different branches of the nervous system in enabling a person to integrate, coordinate and respond to internal and external sensory stimuli. Students apply their understanding of neurotransmitters in the transmission of neural information across a neural synapse to produce excitatory and inhibitory effects and explore the effect that neuromodulators have on brain activity. The interaction of gut microbiota with stress and the nervous system in the control of processes and behaviour is also explored. Students evaluate the ways in which stress can affect mental wellbeing, by considering stress as a psychobiological process. They compare the explanatory power of different models that explain stress as well as exploring strategies for coping with stress and improving mental wellbeing."
-    },
-    {
-      "id": 8007,
-      "curriculumSubjectId": 8000,
-      "name": "How do people learn and remember?",
-      "abbreviation": "U3AOS2",
-      "description": "Learning and memory are interdependent processes that demonstrate the acquisition of skills and knowledge through experience across the life span. In this area of study students evaluate models to explain learning and apply their knowledge of learning to a range of everyday experiences and contemporary social issues. Students explore memory as the process by which knowledge is encoded, stored and later retrieved, as illustrated by Richard Atkinson and Richard Shiffrin’s multi-store model of memory, including how information passes through distinct memory stores in order for it to be stored relatively permanently. Students explore the interconnectedness of brain regions in storing explicit and implicit memories and the role of semantic and episodic memory in cognition. They consider the use of mnemonics to increase the encoding, storage and retrieval of information and develop an understanding of the contribution of Aboriginal and Torres Strait Islander knowledges and perspectives in understanding memory and learning."
-    },
-    {
-      "id": 8008,
-      "curriculumSubjectId": 8000,
-      "name": "How does sleep affect mental processes and behaviour?",
-      "abbreviation": "U4AOS1",
-      "description": "In this area of study students focus on sleep as an example of an altered state of consciousness and the different demands humans have for sleep across the life span. They compare REM and NREM sleep as examples of naturally occurring altered states of consciousness and investigate the biological mechanisms of the sleep-wake cycle in terms of the timing of sleep, what causes individuals to be sleepy at night and why individuals wake when required. Students analyse the effects of sleep deprivation on psychological functioning, including emotional, behavioural and cognitive functioning. They compare the effects of total sleep deprivation and blood alcohol concentration readings of 0.05 and 0.10 in terms of affective and cognitive functioning. Students examine circadian rhythm disorders as the result of changes to an individual’s sleep-wake cycle and apply their knowledge regarding sleep hygiene and zeitgebers to suggest ways to improve the sleep-wake cycle and mental wellbeing."
-    },
-    {
-      "id": 8009,
-      "curriculumSubjectId": 8000,
-      "name": "What influences mental wellbeing?",
-      "abbreviation": "U4AOS2",
-      "description": "In this area of study students explore mental wellbeing in terms of social and emotional wellbeing, levels of functioning, and resilience to cope with and manage change and uncertainty. Students investigate the concept of mental wellbeing as a continuum, recognising that an individual’s mental wellbeing is influenced by the interaction of internal and external factors and fluctuates over time. They recognise that for Aboriginal and Torres Strait Islander people mental wellbeing is one element of a multidimensional and holistic view of wellbeing. Students apply a biopsychosocial approach to consider how biological, psychological and social factors are involved in the development and management of a specific phobia. Students explore protective factors that contribute to an individual’s mental wellbeing from a biopsychosocial perspective and the importance of cultural determinants to the wellbeing of Aboriginal and Torres Strait Islander peoples. On completion of this unit the student should be able to discuss the concept of mental wellbeing, apply a biopsychosocial approach to explain the development and management of specific phobia, and discuss protective factors that contribute to the maintenance of mental wellbeing."
-    },
-    {
-      "id": 8010,
-      "curriculumSubjectId": 8000,
-      "name": "How is scientific inquiry used to investigate mental processes and psychological functioning?",
-      "abbreviation": "U4AOS3",
-      "description": "Students undertake a student-designed scientific investigation in either Unit 3 or Unit 4, or across both Units 3 and 4. The investigation involves the generation of primary data relating to mental processes and psychological functioning. The investigation draws on knowledge and related key science skills developed across Units 3 and 4 and is undertaken by students in the laboratory and/or the field. When undertaking the investigation students are required to apply the key science skills to develop a research question, state an aim, formulate a hypothesis, and plan an appropriate methodology and method to answer the question, while complying with safety and ethical guidelines. Students then undertake an investigation to generate primary quantitative data, analyse and evaluate the data, identify limitations of data and methods, link experimental results to scientific ideas, discuss implications of the results, and draw a conclusion in response to the question. The presentation format for the investigation is a scientific poster constructed according to the structure outlined on pages 15 and 16. A logbook is maintained by students for recording, assessment and authentication purposes."
-    }
-  ],
-  "outcomes": [
-    {
-      "id": 8006,
-      "curriculumSubjectId": 8000,
-      "number": 1,
-      "description": "On completion of this unit the student should be able to analyse how the functioning of the human nervous system enables a person to interact with the external world, and evaluate the different ways in which stress can affect psychobiological functioning.",
-      "topics": [
-        {
-          "id": 8014,
-          "outcomeId": 8006,
-          "name": "Nervous system functioning"
-        },
-        {
-          "id": 8015,
-          "outcomeId": 8006,
-          "name": "Stress as an example of a psychobiological process"
-        }
-      ],
-      "keyKnowledge": [
-        {
-          "id": 8054,
-          "description": "the roles of different subdivisions of the central and peripheral nervous systems in responding to, and processing and coordinating with, sensory stimuli received by the body to enable conscious and unconscious responses, including spinal reflexes",
-          "outcomeId": 8006,
-          "outcomeTopicId": 8014
-        },
-        {
-          "id": 8055,
-          "description": "the role of neurotransmitters in the transmission of neural information across a neural synapse to produce excitatory effects (as with glutamate) or inhibitory effects (as with gamma-amino butyric acid [GABA]) as compared to neuromodulators (such as dopamine and serotonin) that have a range of effects on brain activity",
-          "outcomeId": 8006,
-          "outcomeTopicId": 8014
-        },
-        {
-          "id": 8056,
-          "description": "synaptic plasticity – resulting from long-term potentiation and long-term depression, which together act to modify connections between neurons (sprouting, rerouting and pruning) – as the fundamental mechanism of memory formation that leads to learning",
-          "outcomeId": 8006,
-          "outcomeTopicId": 8014
-        },
-        {
-          "id": 8057,
-          "description": "internal and external stressors causing psychological and physiological stress responses, including the flight-or-fight-or-freeze response in acute stress and the role of cortisol in chronic stress",
-          "outcomeId": 8006,
-          "outcomeTopicId": 8015
-        },
-        {
-          "id": 8058,
-          "description": "the gut–brain axis (GBA) as an area of emerging research, with reference to the interaction of gut microbiota with stress and the nervous system in the control of psychological processes and behaviour",
-          "outcomeId": 8006,
-          "outcomeTopicId": 8015
-        },
-        {
-          "id": 8059,
-          "description": "the explanatory power of Hans Selye’s General Adaptation Syndrome as a biological model of stress, including alarm reaction (shock/counter shock), resistance and exhaustion",
-          "outcomeId": 8006,
-          "outcomeTopicId": 8015
-        },
-        {
-          "id": 8060,
-          "description": "the explanatory power of Richard Lazarus and Susan Folkman’s Transactional Model of Stress and Coping to explain stress as a psychological process (primary and secondary appraisal only)",
-          "outcomeId": 8006,
-          "outcomeTopicId": 8015
-        },
-        {
-          "id": 8061,
-          "description": "use of strategies (approach and avoidance) for coping with stress and improving mental wellbeing, including context-specific effectiveness and coping flexibility",
-          "outcomeId": 8006,
-          "outcomeTopicId": 8015
-        }
-      ]
-    },
-    {
-      "id": 8007,
-      "curriculumSubjectId": 8000,
-      "number": 2,
-      "description": "On completion of this unit the student should be able to apply different approaches to explain learning to familiar and novel contexts and discuss memory as a psychobiological process.",
-      "topics": [
-        {
-          "id": 8016,
-          "outcomeId": 8007,
-          "name": "Approaches to understand learning"
-        },
-        {
-          "id": 8017,
-          "outcomeId": 8007,
-          "name": "The psychobiological process of memory"
-        }
-      ],
-      "keyKnowledge": [
-        {
-          "id": 8062,
-          "description": "behaviourist approaches to learning, as illustrated by classical conditioning as a three-phase process (before conditioning, during conditioning and after conditioning) that results in the involuntary association between a neutral stimulus and unconditioned stimulus to produce a conditioned response, and operant conditioning as a three-phase process (antecedent, behaviour and consequence) involving reinforcement (positive and negative) and punishment (positive and negative)",
-          "outcomeId": 8007,
-          "outcomeTopicId": 8016
-        },
-        {
-          "id": 8063,
-          "description": "social-cognitive approaches to learning, as illustrated by observational learning as a process involving attention, retention, reproduction, motivation and reinforcement",
-          "outcomeId": 8007,
-          "outcomeTopicId": 8016
-        },
-        {
-          "id": 8064,
-          "description": "approaches to learning that situate the learner within a system, as illustrated by Aboriginal and Torres Strait Islander ways of knowing where learning is viewed as being embedded in relationships where the learner is part of a multimodal system of knowledge patterned on Country",
-          "outcomeId": 8007,
-          "outcomeTopicId": 8016
-        },
-        {
-          "id": 8065,
-          "description": "the explanatory power of the Atkinson-Shiffrin multi-store model of memory in the encoding, storage and retrieval of stored information in sensory, short-term and long-term memory stores",
-          "outcomeId": 8007,
-          "outcomeTopicId": 8017
-        },
-        {
-          "id": 8066,
-          "description": "the roles of the hippocampus, amygdala, neocortex, basal ganglia and cerebellum in long-term implicit and explicit memories",
-          "outcomeId": 8007,
-          "outcomeTopicId": 8017
-        },
-        {
-          "id": 8067,
-          "description": "the role of episodic and semantic memory in retrieving autobiographical events and in constructing possible imagined futures, including evidence from brain imaging and post-mortem studies of brain lesions in people with Alzheimer’s disease and aphantasia as an example of individual differences in the experience of mental imagery",
-          "outcomeId": 8007,
-          "outcomeTopicId": 8017
-        },
-        {
-          "id": 8068,
-          "description": "the use of mnemonics (acronyms, acrostics and the method of loci) by written cultures to increase the encoding, storage and retrieval of information as compared with the use of mnemonics such as sung narrative used by oral cultures, including Aboriginal peoples’ use of songlines",
-          "outcomeId": 8007,
-          "outcomeTopicId": 8017
-        }
-      ]
-    },
-    {
-      "id": 8008,
-      "curriculumSubjectId": 8000,
-      "number": 1,
-      "description": "On completion of this unit the student should be able to analyse the demand for sleep and evaluate the effects of sleep disruption on a person’s psychological functioning.",
-      "topics": [
-        {
-          "id": 8018,
-          "outcomeId": 8008,
-          "name": "The demand for sleep"
-        },
-        {
-          "id": 8019,
-          "outcomeId": 8008,
-          "name": "Importance of sleep to mental wellbeing"
-        }
-      ],
-      "keyKnowledge": [
-        {
-          "id": 8069,
-          "description": "sleep as a psychological construct that is broadly categorised as a naturally occurring altered state of consciousness and is further categorised into REM and NREM sleep, and the measurement of physiological responses associated with sleep, through electroencephalography (EEG), electromyography (EMG), electro-oculography (EOG), sleep diaries and video monitoring",
-          "outcomeId": 8008,
-          "outcomeTopicId": 8018
-        },
-        {
-          "id": 8070,
-          "description": "regulation of sleep-wake patterns by internal biological mechanisms, with reference to circadian rhythm, ultradian rhythms of REM and NREM Stages 1–3, the suprachiasmatic nucleus and melatonin",
-          "outcomeId": 8008,
-          "outcomeTopicId": 8018
-        },
-        {
-          "id": 8071,
-          "description": "differences in, and explanations for, the demands for sleep across the life span, with reference to total amount of sleep and changes in a typical pattern of sleep (proportion of REM and NREM)",
-          "outcomeId": 8008,
-          "outcomeTopicId": 8018
-        },
-        {
-          "id": 8072,
-          "description": "the effects of partial sleep deprivation (inadequate sleep either in quantity or quality) on a person’s affective, behavioural and cognitive functioning, and the affective and cognitive effects of one night of full sleep deprivation as a comparison to blood alcohol concentration readings of 0.05 and 0.10",
-          "outcomeId": 8008,
-          "outcomeTopicId": 8019
-        },
-        {
-          "id": 8073,
-          "description": "changes to a person’s sleep-wake cycle that cause circadian rhythm sleep disorders (Delayed Sleep Phase Syndrome [DSPS], Advanced Sleep Phase Disorder [ASPD] and shift work) and the treatments of circadian rhythm sleep disorders through bright light therapy",
-          "outcomeId": 8008,
-          "outcomeTopicId": 8019
-        },
-        {
-          "id": 8074,
-          "description": "improving sleep hygiene and adaptation to zeitgebers to improve sleep-wake patterns and mental wellbeing, with reference to daylight and blue light, temperature, and eating and drinking patterns",
-          "outcomeId": 8008,
-          "outcomeTopicId": 8019
-        }
-      ]
-    },
-    {
-      "id": 8009,
-      "curriculumSubjectId": 8000,
-      "number": 2,
-      "description": "On completion of this unit the student should be able to discuss the concept of mental wellbeing, apply a biopsychosocial approach to explain the development and management of specific phobia, and discuss protective factors that contribute to the maintenance of mental wellbeing.",
-      "topics": [
-        {
-          "id": 8020,
-          "outcomeId": 8009,
-          "name": "Defining mental wellbeing"
-        },
-        {
-          "id": 8021,
-          "outcomeId": 8009,
-          "name": "Application of a biopsychosocial approach to explain specific phobia"
-        },
-        {
-          "id": 8022,
-          "outcomeId": 8009,
-          "name": "Maintenance of mental wellbeing"
-        }
-      ],
-      "keyKnowledge": [
-        {
-          "id": 8075,
-          "description": "ways of considering mental wellbeing, including levels of functioning; resilience, as the ability to cope with and manage change and uncertainty; and social and emotional wellbeing (SEWB), as a multidimensional and holistic framework for wellbeing that encapsulates all elements of being (body, mind and emotions, family and kinship, community, culture, country, spirituality and ancestors) for Aboriginal and Torres Strait Islander people",
-          "outcomeId": 8009,
-          "outcomeTopicId": 8020
-        },
-        {
-          "id": 8076,
-          "description": "mental wellbeing as a continuum, with an individual’s mental wellbeing influenced by the interaction of internal and external factors and fluctuating over time, as illustrated by variations for individuals experiencing stress, anxiety and phobia",
-          "outcomeId": 8009,
-          "outcomeTopicId": 8020
-        },
-        {
-          "id": 8077,
-          "description": "the relative influences of factors that contribute to the development of specific phobia, with reference to gamma-amino butyric acid (GABA) dysfunction and long-term potentiation (biological); behavioural models involving precipitation by classical conditioning and perpetuation by operant conditioning, and cognitive biases including memory bias and catastrophic thinking (psychological); and specific environmental triggers and stigma around seeking treatment (social)",
-          "outcomeId": 8009,
-          "outcomeTopicId": 8021
-        },
-        {
-          "id": 8078,
-          "description": "evidence-based interventions and their use for specific phobia, with reference to the use of short-acting anti-anxiety benzodiazepine agents (GABA agonists) in the management of phobic anxiety and breathing retraining (biological); the use of cognitive behavioural therapy (CBT) and systematic desensitisation as psychotherapeutic treatments of phobia (psychological); and psychoeducation for families/supporters with reference to challenging unrealistic or anxious thoughts and not encouraging avoidance behaviours (social)",
-          "outcomeId": 8009,
-          "outcomeTopicId": 8021
-        },
-        {
-          "id": 8079,
-          "description": "the application of a biopsychosocial approach to maintaining mental wellbeing, with reference to protective factors including adequate nutritional intake and hydration and sleep (biological), cognitive behavioural strategies and mindfulness meditation (psychological) and support from family, friends and community that is authentic and energising (social)",
-          "outcomeId": 8009,
-          "outcomeTopicId": 8022
-        },
-        {
-          "id": 8080,
-          "description": "cultural determinants, including cultural continuity and self-determination, as integral for the maintenance of wellbeing in Aboriginal and Torres Strait Islander peoples",
-          "outcomeId": 8009,
-          "outcomeTopicId": 8022
-        }
-      ]
-    },
-    {
-      "id": 8010,
-      "curriculumSubjectId": 8000,
-      "number": 3,
-      "description": "On completion of this unit the student should be able to design and conduct a scientific investigation related to mental processes and psychological functioning, and present an aim, methodology and method, results, discussion and conclusion in a scientific poster.",
-      "topics": [
-        {
-          "id": 8023,
-          "outcomeId": 8010,
-          "name": "Investigation design"
-        },
-        {
-          "id": 8024,
-          "outcomeId": 8010,
-          "name": "Scientific evidence"
-        },
-        {
-          "id": 8025,
-          "outcomeId": 8010,
-          "name": "Science communication"
-        }
-      ],
-      "keyKnowledge": [
-        {
-          "id": 8081,
-          "description": "psychological concepts specific to the selected scientific investigation and their significance, including definitions of key terms",
-          "outcomeId": 8010,
-          "outcomeTopicId": 8023
-        },
-        {
-          "id": 8082,
-          "description": "characteristics of the selected scientific methodology and method, and appropriateness of the use of independent, dependent and controlled variables in the selected scientific investigation",
-          "outcomeId": 8010,
-          "outcomeTopicId": 8023
-        },
-        {
-          "id": 8083,
-          "description": "techniques of primary quantitative data generation relevant to the selected scientific investigation",
-          "outcomeId": 8010,
-          "outcomeTopicId": 8023
-        },
-        {
-          "id": 8084,
-          "description": "the accuracy, precision, repeatability, reproducibility and validity of measurements",
-          "outcomeId": 8010,
-          "outcomeTopicId": 8023
-        },
-        {
-          "id": 8085,
-          "description": "the health, safety and ethical guidelines relevant to the selected scientific investigation",
-          "outcomeId": 8010,
-          "outcomeTopicId": 8023
-        },
-        {
-          "id": 8086,
-          "description": "the nature of evidence that supports or refutes a hypothesis, model or theory",
-          "outcomeId": 8010,
-          "outcomeTopicId": 8024
-        },
-        {
-          "id": 8087,
-          "description": "ways of organising, analysing and evaluating primary data to identify patterns and relationships, including sources of error and uncertainty",
-          "outcomeId": 8010,
-          "outcomeTopicId": 8024
-        },
-        {
-          "id": 8088,
-          "description": "authentication of generated primary data using a logbook",
-          "outcomeId": 8010,
-          "outcomeTopicId": 8024
-        },
-        {
-          "id": 8089,
-          "description": "assumptions and limitations of investigation methodology and/or data generation and/or analysis methods",
-          "outcomeId": 8010,
-          "outcomeTopicId": 8024
-        },
-        {
-          "id": 8090,
-          "description": "criteria used to evaluate the validity of measurements and psychological research",
-          "outcomeId": 8010,
-          "outcomeTopicId": 8024
-        },
-        {
-          "id": 8091,
-          "description": "conventions of science communication: scientific terminology and representations, symbols, formulas, standard abbreviations and units of measurement",
-          "outcomeId": 8010,
-          "outcomeTopicId": 8025
-        },
-        {
-          "id": 8092,
-          "description": "conventions of scientific poster presentation, including succinct communication of the selected scientific investigation and acknowledgements and references",
-          "outcomeId": 8010,
-          "outcomeTopicId": 8025
-        },
-        {
-          "id": 8093,
-          "description": "the key findings and implications of the selected scientific investigation",
-          "outcomeId": 8010,
-          "outcomeTopicId": 8025
-        }
-      ]
-    }
-  ],
-  "keySkills": [
-    {
-      "id": 8000,
-      "description": "Develop aims and questions, formulate hypotheses and make predictions: (identify, research and construct aims and questions for investigation, identify independent, dependent and controlled variables in experiments, formulate hypotheses to focus investigations, predict possible outcomes of investigations)",
-      "curriculumSubjectId": 8000
-    },
-    {
-      "id": 8001,
-      "description": "Plan and conduct investigations: (Determine appropriate investigation methodology: case study; classification and identification; controlled experiment; fieldwork; literature review; modelling; product, process or system development; simulation. Design and conduct investigations; select and use methods appropriate to the selected investigation methodology, including consideration of sampling technique and size, equipment and procedures, taking into account potential sources of error and causes of uncertainty; determine the type and amount of qualitative and/or quantitative data to be generated or collated. Work independently and collaboratively as appropriate and within identified research constraints, adapting or extending processes as required and recording such modifications in a logbook)",
-      "curriculumSubjectId": 8000
-    },
-    {
-      "id": 8002,
-      "description": "Comply with safety and ethical guidelines: (Demonstrate safe laboratory practices when planning and conducting investigations by using risk assessments that are informed by safety data sheets (SDS), and accounting for risks. Apply relevant occupational health and safety guidelines while undertaking practical investigations. Demonstrate ethical conduct when undertaking and reporting investigations)",
-      "curriculumSubjectId": 8000
-    },
-    {
-      "id": 8003,
-      "description": "Generate, collate and record data: (Systematically generate and record primary data, and collate secondary data, appropriate to the investigation, including use of databases and reputable online data sources. Record and summarise both qualitative and quantitative data, including use of a logbook as an authentication of generated or collated data. Organise and present data in useful and meaningful ways, including schematic diagrams, flow charts, tables, bar charts, line graphs and calibration curves)",
-      "curriculumSubjectId": 8000
-    },
-    {
-      "id": 8004,
-      "description": "Analyse and evaluate data and investigation methods: (Process quantitative data using appropriate mathematical relationships and units, including calculations of ratios, percentages, percentage change and mean. Use appropriate numbers of significant figures in calculations. Plot graphs involving two variables that show linear and non-linear relationships. Identify and analyse experimental data qualitatively, handling, where appropriate, concepts of: accuracy, precision, repeatability, reproducibility, resolution, and validity of measurements; and errors (random and systematic). Identify outliers, and contradictory, provisional or incomplete data. Repeat experiments to evaluate the precision of data. Evaluate investigation methods and suggest ways to improve precision, and to reduce the likelihood of errors)",
-      "curriculumSubjectId": 8000
-    },
-    {
-      "id": 8005,
-      "description": "Construct evidence-based arguments and draw conclusions: (Distinguish between opinion, anecdote and evidence, and between scientific and non-scientific ideas. Evaluate data to determine the degree to which the evidence supports the aim of the investigation, and make recommendations, as appropriate, for modifying or extending the investigation. Evaluate data to determine the degree to which the evidence supports or refutes the initial prediction or hypothesis. Use reasoning to construct scientific arguments, and to draw and justify conclusions consistent with evidence and relevant to the question under investigation. Identify, describe and explain the limitations of conclusions, including identification of further evidence required. Discuss the implications of research findings and proposals)",
-      "curriculumSubjectId": 8000
-    },
-    {
-      "id": 8006,
-      "description": "Analyse, evaluate and communicate scientific ideas: (Use appropriate scientific terminology, representations and conventions, including standard abbreviations, graphing conventions, algebraic equations, units of measurement and significant figures. Discuss relevant scientific information, ideas, concepts, theories and models and the connections between them. Analyse and explain how models and theories are used to organise and understand observed phenomena and concepts, identifying limitations of selected models/theories. Critically evaluate and interpret a range of scientific and media texts (including journal articles, mass media communications and opinions in the public domain), processes, claims and conclusions related to chemistry by considering the quality of available evidence. Apply sustainability concepts to analyse and evaluate responses to chemistry-based scenarios, case studies, issues and challenges. Identify and explain when judgements or decisions associated with chemistry-related issues may be based on sociocultural, economic, political, legal and/or ethical factors and not solely on scientific evidence. Use clear, coherent and concise expression to communicate to specific audiences and for specific purposes in appropriate scientific genres, including scientific reports and posters. Acknowledge sources of information and assistance, and use standard scientific referencing conventions)",
-      "curriculumSubjectId": 8000
-    }
-  ]
+	"id": 8000,
+	"curriculumId": 8000,
+	"name": "Psychology Units 3 and 4",
+	"isArchived": false,
+	"learningAreas": [
+		{
+			"id": 8006,
+			"curriculumSubjectId": 8000,
+			"name": "How does the nervous system enable psychological functioning?",
+			"abbreviation": "U3AOS1",
+			"description": "In this area of study students explore the role of different branches of the nervous system in enabling a person to integrate, coordinate and respond to internal and external sensory stimuli. Students apply their understanding of neurotransmitters in the transmission of neural information across a neural synapse to produce excitatory and inhibitory effects and explore the effect that neuromodulators have on brain activity. The interaction of gut microbiota with stress and the nervous system in the control of processes and behaviour is also explored. Students evaluate the ways in which stress can affect mental wellbeing, by considering stress as a psychobiological process. They compare the explanatory power of different models that explain stress as well as exploring strategies for coping with stress and improving mental wellbeing."
+		},
+		{
+			"id": 8007,
+			"curriculumSubjectId": 8000,
+			"name": "How do people learn and remember?",
+			"abbreviation": "U3AOS2",
+			"description": "Learning and memory are interdependent processes that demonstrate the acquisition of skills and knowledge through experience across the life span. In this area of study students evaluate models to explain learning and apply their knowledge of learning to a range of everyday experiences and contemporary social issues. Students explore memory as the process by which knowledge is encoded, stored and later retrieved, as illustrated by Richard Atkinson and Richard Shiffrin’s multi-store model of memory, including how information passes through distinct memory stores in order for it to be stored relatively permanently. Students explore the interconnectedness of brain regions in storing explicit and implicit memories and the role of semantic and episodic memory in cognition. They consider the use of mnemonics to increase the encoding, storage and retrieval of information and develop an understanding of the contribution of Aboriginal and Torres Strait Islander knowledges and perspectives in understanding memory and learning."
+		},
+		{
+			"id": 8008,
+			"curriculumSubjectId": 8000,
+			"name": "How does sleep affect mental processes and behaviour?",
+			"abbreviation": "U4AOS1",
+			"description": "In this area of study students focus on sleep as an example of an altered state of consciousness and the different demands humans have for sleep across the life span. They compare REM and NREM sleep as examples of naturally occurring altered states of consciousness and investigate the biological mechanisms of the sleep-wake cycle in terms of the timing of sleep, what causes individuals to be sleepy at night and why individuals wake when required. Students analyse the effects of sleep deprivation on psychological functioning, including emotional, behavioural and cognitive functioning. They compare the effects of total sleep deprivation and blood alcohol concentration readings of 0.05 and 0.10 in terms of affective and cognitive functioning. Students examine circadian rhythm disorders as the result of changes to an individual’s sleep-wake cycle and apply their knowledge regarding sleep hygiene and zeitgebers to suggest ways to improve the sleep-wake cycle and mental wellbeing."
+		},
+		{
+			"id": 8009,
+			"curriculumSubjectId": 8000,
+			"name": "What influences mental wellbeing?",
+			"abbreviation": "U4AOS2",
+			"description": "In this area of study students explore mental wellbeing in terms of social and emotional wellbeing, levels of functioning, and resilience to cope with and manage change and uncertainty. Students investigate the concept of mental wellbeing as a continuum, recognising that an individual’s mental wellbeing is influenced by the interaction of internal and external factors and fluctuates over time. They recognise that for Aboriginal and Torres Strait Islander people mental wellbeing is one element of a multidimensional and holistic view of wellbeing. Students apply a biopsychosocial approach to consider how biological, psychological and social factors are involved in the development and management of a specific phobia. Students explore protective factors that contribute to an individual’s mental wellbeing from a biopsychosocial perspective and the importance of cultural determinants to the wellbeing of Aboriginal and Torres Strait Islander peoples. On completion of this unit the student should be able to discuss the concept of mental wellbeing, apply a biopsychosocial approach to explain the development and management of specific phobia, and discuss protective factors that contribute to the maintenance of mental wellbeing."
+		},
+		{
+			"id": 8010,
+			"curriculumSubjectId": 8000,
+			"name": "How is scientific inquiry used to investigate mental processes and psychological functioning?",
+			"abbreviation": "U4AOS3",
+			"description": "Students undertake a student-designed scientific investigation in either Unit 3 or Unit 4, or across both Units 3 and 4. The investigation involves the generation of primary data relating to mental processes and psychological functioning. The investigation draws on knowledge and related key science skills developed across Units 3 and 4 and is undertaken by students in the laboratory and/or the field. When undertaking the investigation students are required to apply the key science skills to develop a research question, state an aim, formulate a hypothesis, and plan an appropriate methodology and method to answer the question, while complying with safety and ethical guidelines. Students then undertake an investigation to generate primary quantitative data, analyse and evaluate the data, identify limitations of data and methods, link experimental results to scientific ideas, discuss implications of the results, and draw a conclusion in response to the question. The presentation format for the investigation is a scientific poster constructed according to the structure outlined on pages 15 and 16. A logbook is maintained by students for recording, assessment and authentication purposes."
+		}
+	],
+	"outcomes": [
+		{
+			"id": 8006,
+			"curriculumSubjectId": 8000,
+			"number": 1,
+			"description": "On completion of this unit the student should be able to analyse how the functioning of the human nervous system enables a person to interact with the external world, and evaluate the different ways in which stress can affect psychobiological functioning.",
+			"topics": [
+				{
+					"id": 8014,
+					"outcomeId": 8006,
+					"name": "Nervous system functioning"
+				},
+				{
+					"id": 8015,
+					"outcomeId": 8006,
+					"name": "Stress as an example of a psychobiological process"
+				}
+			],
+			"keyKnowledge": [
+				{
+					"id": 8054,
+					"description": "the roles of different subdivisions of the central and peripheral nervous systems in responding to, and processing and coordinating with, sensory stimuli received by the body to enable conscious and unconscious responses, including spinal reflexes",
+					"outcomeId": 8006,
+					"outcomeTopicId": 8014
+				},
+				{
+					"id": 8055,
+					"description": "the role of neurotransmitters in the transmission of neural information across a neural synapse to produce excitatory effects (as with glutamate) or inhibitory effects (as with gamma-amino butyric acid [GABA]) as compared to neuromodulators (such as dopamine and serotonin) that have a range of effects on brain activity",
+					"outcomeId": 8006,
+					"outcomeTopicId": 8014
+				},
+				{
+					"id": 8056,
+					"description": "synaptic plasticity – resulting from long-term potentiation and long-term depression, which together act to modify connections between neurons (sprouting, rerouting and pruning) – as the fundamental mechanism of memory formation that leads to learning",
+					"outcomeId": 8006,
+					"outcomeTopicId": 8014
+				},
+				{
+					"id": 8057,
+					"description": "internal and external stressors causing psychological and physiological stress responses, including the flight-or-fight-or-freeze response in acute stress and the role of cortisol in chronic stress",
+					"outcomeId": 8006,
+					"outcomeTopicId": 8015
+				},
+				{
+					"id": 8058,
+					"description": "the gut–brain axis (GBA) as an area of emerging research, with reference to the interaction of gut microbiota with stress and the nervous system in the control of psychological processes and behaviour",
+					"outcomeId": 8006,
+					"outcomeTopicId": 8015
+				},
+				{
+					"id": 8059,
+					"description": "the explanatory power of Hans Selye’s General Adaptation Syndrome as a biological model of stress, including alarm reaction (shock/counter shock), resistance and exhaustion",
+					"outcomeId": 8006,
+					"outcomeTopicId": 8015
+				},
+				{
+					"id": 8060,
+					"description": "the explanatory power of Richard Lazarus and Susan Folkman’s Transactional Model of Stress and Coping to explain stress as a psychological process (primary and secondary appraisal only)",
+					"outcomeId": 8006,
+					"outcomeTopicId": 8015
+				},
+				{
+					"id": 8061,
+					"description": "use of strategies (approach and avoidance) for coping with stress and improving mental wellbeing, including context-specific effectiveness and coping flexibility",
+					"outcomeId": 8006,
+					"outcomeTopicId": 8015
+				}
+			]
+		},
+		{
+			"id": 8007,
+			"curriculumSubjectId": 8000,
+			"number": 2,
+			"description": "On completion of this unit the student should be able to apply different approaches to explain learning to familiar and novel contexts and discuss memory as a psychobiological process.",
+			"topics": [
+				{
+					"id": 8016,
+					"outcomeId": 8007,
+					"name": "Approaches to understand learning"
+				},
+				{
+					"id": 8017,
+					"outcomeId": 8007,
+					"name": "The psychobiological process of memory"
+				}
+			],
+			"keyKnowledge": [
+				{
+					"id": 8062,
+					"description": "behaviourist approaches to learning, as illustrated by classical conditioning as a three-phase process (before conditioning, during conditioning and after conditioning) that results in the involuntary association between a neutral stimulus and unconditioned stimulus to produce a conditioned response, and operant conditioning as a three-phase process (antecedent, behaviour and consequence) involving reinforcement (positive and negative) and punishment (positive and negative)",
+					"outcomeId": 8007,
+					"outcomeTopicId": 8016
+				},
+				{
+					"id": 8063,
+					"description": "social-cognitive approaches to learning, as illustrated by observational learning as a process involving attention, retention, reproduction, motivation and reinforcement",
+					"outcomeId": 8007,
+					"outcomeTopicId": 8016
+				},
+				{
+					"id": 8064,
+					"description": "approaches to learning that situate the learner within a system, as illustrated by Aboriginal and Torres Strait Islander ways of knowing where learning is viewed as being embedded in relationships where the learner is part of a multimodal system of knowledge patterned on Country",
+					"outcomeId": 8007,
+					"outcomeTopicId": 8016
+				},
+				{
+					"id": 8065,
+					"description": "the explanatory power of the Atkinson-Shiffrin multi-store model of memory in the encoding, storage and retrieval of stored information in sensory, short-term and long-term memory stores",
+					"outcomeId": 8007,
+					"outcomeTopicId": 8017
+				},
+				{
+					"id": 8066,
+					"description": "the roles of the hippocampus, amygdala, neocortex, basal ganglia and cerebellum in long-term implicit and explicit memories",
+					"outcomeId": 8007,
+					"outcomeTopicId": 8017
+				},
+				{
+					"id": 8067,
+					"description": "the role of episodic and semantic memory in retrieving autobiographical events and in constructing possible imagined futures, including evidence from brain imaging and post-mortem studies of brain lesions in people with Alzheimer’s disease and aphantasia as an example of individual differences in the experience of mental imagery",
+					"outcomeId": 8007,
+					"outcomeTopicId": 8017
+				},
+				{
+					"id": 8068,
+					"description": "the use of mnemonics (acronyms, acrostics and the method of loci) by written cultures to increase the encoding, storage and retrieval of information as compared with the use of mnemonics such as sung narrative used by oral cultures, including Aboriginal peoples’ use of songlines",
+					"outcomeId": 8007,
+					"outcomeTopicId": 8017
+				}
+			]
+		},
+		{
+			"id": 8008,
+			"curriculumSubjectId": 8000,
+			"number": 1,
+			"description": "On completion of this unit the student should be able to analyse the demand for sleep and evaluate the effects of sleep disruption on a person’s psychological functioning.",
+			"topics": [
+				{
+					"id": 8018,
+					"outcomeId": 8008,
+					"name": "The demand for sleep"
+				},
+				{
+					"id": 8019,
+					"outcomeId": 8008,
+					"name": "Importance of sleep to mental wellbeing"
+				}
+			],
+			"keyKnowledge": [
+				{
+					"id": 8069,
+					"description": "sleep as a psychological construct that is broadly categorised as a naturally occurring altered state of consciousness and is further categorised into REM and NREM sleep, and the measurement of physiological responses associated with sleep, through electroencephalography (EEG), electromyography (EMG), electro-oculography (EOG), sleep diaries and video monitoring",
+					"outcomeId": 8008,
+					"outcomeTopicId": 8018
+				},
+				{
+					"id": 8070,
+					"description": "regulation of sleep-wake patterns by internal biological mechanisms, with reference to circadian rhythm, ultradian rhythms of REM and NREM Stages 1–3, the suprachiasmatic nucleus and melatonin",
+					"outcomeId": 8008,
+					"outcomeTopicId": 8018
+				},
+				{
+					"id": 8071,
+					"description": "differences in, and explanations for, the demands for sleep across the life span, with reference to total amount of sleep and changes in a typical pattern of sleep (proportion of REM and NREM)",
+					"outcomeId": 8008,
+					"outcomeTopicId": 8018
+				},
+				{
+					"id": 8072,
+					"description": "the effects of partial sleep deprivation (inadequate sleep either in quantity or quality) on a person’s affective, behavioural and cognitive functioning, and the affective and cognitive effects of one night of full sleep deprivation as a comparison to blood alcohol concentration readings of 0.05 and 0.10",
+					"outcomeId": 8008,
+					"outcomeTopicId": 8019
+				},
+				{
+					"id": 8073,
+					"description": "changes to a person’s sleep-wake cycle that cause circadian rhythm sleep disorders (Delayed Sleep Phase Syndrome [DSPS], Advanced Sleep Phase Disorder [ASPD] and shift work) and the treatments of circadian rhythm sleep disorders through bright light therapy",
+					"outcomeId": 8008,
+					"outcomeTopicId": 8019
+				},
+				{
+					"id": 8074,
+					"description": "improving sleep hygiene and adaptation to zeitgebers to improve sleep-wake patterns and mental wellbeing, with reference to daylight and blue light, temperature, and eating and drinking patterns",
+					"outcomeId": 8008,
+					"outcomeTopicId": 8019
+				}
+			]
+		},
+		{
+			"id": 8009,
+			"curriculumSubjectId": 8000,
+			"number": 2,
+			"description": "On completion of this unit the student should be able to discuss the concept of mental wellbeing, apply a biopsychosocial approach to explain the development and management of specific phobia, and discuss protective factors that contribute to the maintenance of mental wellbeing.",
+			"topics": [
+				{
+					"id": 8020,
+					"outcomeId": 8009,
+					"name": "Defining mental wellbeing"
+				},
+				{
+					"id": 8021,
+					"outcomeId": 8009,
+					"name": "Application of a biopsychosocial approach to explain specific phobia"
+				},
+				{
+					"id": 8022,
+					"outcomeId": 8009,
+					"name": "Maintenance of mental wellbeing"
+				}
+			],
+			"keyKnowledge": [
+				{
+					"id": 8075,
+					"description": "ways of considering mental wellbeing, including levels of functioning; resilience, as the ability to cope with and manage change and uncertainty; and social and emotional wellbeing (SEWB), as a multidimensional and holistic framework for wellbeing that encapsulates all elements of being (body, mind and emotions, family and kinship, community, culture, country, spirituality and ancestors) for Aboriginal and Torres Strait Islander people",
+					"outcomeId": 8009,
+					"outcomeTopicId": 8020
+				},
+				{
+					"id": 8076,
+					"description": "mental wellbeing as a continuum, with an individual’s mental wellbeing influenced by the interaction of internal and external factors and fluctuating over time, as illustrated by variations for individuals experiencing stress, anxiety and phobia",
+					"outcomeId": 8009,
+					"outcomeTopicId": 8020
+				},
+				{
+					"id": 8077,
+					"description": "the relative influences of factors that contribute to the development of specific phobia, with reference to gamma-amino butyric acid (GABA) dysfunction and long-term potentiation (biological); behavioural models involving precipitation by classical conditioning and perpetuation by operant conditioning, and cognitive biases including memory bias and catastrophic thinking (psychological); and specific environmental triggers and stigma around seeking treatment (social)",
+					"outcomeId": 8009,
+					"outcomeTopicId": 8021
+				},
+				{
+					"id": 8078,
+					"description": "evidence-based interventions and their use for specific phobia, with reference to the use of short-acting anti-anxiety benzodiazepine agents (GABA agonists) in the management of phobic anxiety and breathing retraining (biological); the use of cognitive behavioural therapy (CBT) and systematic desensitisation as psychotherapeutic treatments of phobia (psychological); and psychoeducation for families/supporters with reference to challenging unrealistic or anxious thoughts and not encouraging avoidance behaviours (social)",
+					"outcomeId": 8009,
+					"outcomeTopicId": 8021
+				},
+				{
+					"id": 8079,
+					"description": "the application of a biopsychosocial approach to maintaining mental wellbeing, with reference to protective factors including adequate nutritional intake and hydration and sleep (biological), cognitive behavioural strategies and mindfulness meditation (psychological) and support from family, friends and community that is authentic and energising (social)",
+					"outcomeId": 8009,
+					"outcomeTopicId": 8022
+				},
+				{
+					"id": 8080,
+					"description": "cultural determinants, including cultural continuity and self-determination, as integral for the maintenance of wellbeing in Aboriginal and Torres Strait Islander peoples",
+					"outcomeId": 8009,
+					"outcomeTopicId": 8022
+				}
+			]
+		},
+		{
+			"id": 8010,
+			"curriculumSubjectId": 8000,
+			"number": 3,
+			"description": "On completion of this unit the student should be able to design and conduct a scientific investigation related to mental processes and psychological functioning, and present an aim, methodology and method, results, discussion and conclusion in a scientific poster.",
+			"topics": [
+				{
+					"id": 8023,
+					"outcomeId": 8010,
+					"name": "Investigation design"
+				},
+				{
+					"id": 8024,
+					"outcomeId": 8010,
+					"name": "Scientific evidence"
+				},
+				{
+					"id": 8025,
+					"outcomeId": 8010,
+					"name": "Science communication"
+				}
+			],
+			"keyKnowledge": [
+				{
+					"id": 8081,
+					"description": "psychological concepts specific to the selected scientific investigation and their significance, including definitions of key terms",
+					"outcomeId": 8010,
+					"outcomeTopicId": 8023
+				},
+				{
+					"id": 8082,
+					"description": "characteristics of the selected scientific methodology and method, and appropriateness of the use of independent, dependent and controlled variables in the selected scientific investigation",
+					"outcomeId": 8010,
+					"outcomeTopicId": 8023
+				},
+				{
+					"id": 8083,
+					"description": "techniques of primary quantitative data generation relevant to the selected scientific investigation",
+					"outcomeId": 8010,
+					"outcomeTopicId": 8023
+				},
+				{
+					"id": 8084,
+					"description": "the accuracy, precision, repeatability, reproducibility and validity of measurements",
+					"outcomeId": 8010,
+					"outcomeTopicId": 8023
+				},
+				{
+					"id": 8085,
+					"description": "the health, safety and ethical guidelines relevant to the selected scientific investigation",
+					"outcomeId": 8010,
+					"outcomeTopicId": 8023
+				},
+				{
+					"id": 8086,
+					"description": "the nature of evidence that supports or refutes a hypothesis, model or theory",
+					"outcomeId": 8010,
+					"outcomeTopicId": 8024
+				},
+				{
+					"id": 8087,
+					"description": "ways of organising, analysing and evaluating primary data to identify patterns and relationships, including sources of error and uncertainty",
+					"outcomeId": 8010,
+					"outcomeTopicId": 8024
+				},
+				{
+					"id": 8088,
+					"description": "authentication of generated primary data using a logbook",
+					"outcomeId": 8010,
+					"outcomeTopicId": 8024
+				},
+				{
+					"id": 8089,
+					"description": "assumptions and limitations of investigation methodology and/or data generation and/or analysis methods",
+					"outcomeId": 8010,
+					"outcomeTopicId": 8024
+				},
+				{
+					"id": 8090,
+					"description": "criteria used to evaluate the validity of measurements and psychological research",
+					"outcomeId": 8010,
+					"outcomeTopicId": 8024
+				},
+				{
+					"id": 8091,
+					"description": "conventions of science communication: scientific terminology and representations, symbols, formulas, standard abbreviations and units of measurement",
+					"outcomeId": 8010,
+					"outcomeTopicId": 8025
+				},
+				{
+					"id": 8092,
+					"description": "conventions of scientific poster presentation, including succinct communication of the selected scientific investigation and acknowledgements and references",
+					"outcomeId": 8010,
+					"outcomeTopicId": 8025
+				},
+				{
+					"id": 8093,
+					"description": "the key findings and implications of the selected scientific investigation",
+					"outcomeId": 8010,
+					"outcomeTopicId": 8025
+				}
+			]
+		}
+	],
+	"keySkills": [
+		{
+			"id": 8000,
+			"description": "Develop aims and questions, formulate hypotheses and make predictions: (identify, research and construct aims and questions for investigation, identify independent, dependent and controlled variables in experiments, formulate hypotheses to focus investigations, predict possible outcomes of investigations)",
+			"curriculumSubjectId": 8000
+		},
+		{
+			"id": 8001,
+			"description": "Plan and conduct investigations: (Determine appropriate investigation methodology: case study; classification and identification; controlled experiment; fieldwork; literature review; modelling; product, process or system development; simulation. Design and conduct investigations; select and use methods appropriate to the selected investigation methodology, including consideration of sampling technique and size, equipment and procedures, taking into account potential sources of error and causes of uncertainty; determine the type and amount of qualitative and/or quantitative data to be generated or collated. Work independently and collaboratively as appropriate and within identified research constraints, adapting or extending processes as required and recording such modifications in a logbook)",
+			"curriculumSubjectId": 8000
+		},
+		{
+			"id": 8002,
+			"description": "Comply with safety and ethical guidelines: (Demonstrate safe laboratory practices when planning and conducting investigations by using risk assessments that are informed by safety data sheets (SDS), and accounting for risks. Apply relevant occupational health and safety guidelines while undertaking practical investigations. Demonstrate ethical conduct when undertaking and reporting investigations)",
+			"curriculumSubjectId": 8000
+		},
+		{
+			"id": 8003,
+			"description": "Generate, collate and record data: (Systematically generate and record primary data, and collate secondary data, appropriate to the investigation, including use of databases and reputable online data sources. Record and summarise both qualitative and quantitative data, including use of a logbook as an authentication of generated or collated data. Organise and present data in useful and meaningful ways, including schematic diagrams, flow charts, tables, bar charts, line graphs and calibration curves)",
+			"curriculumSubjectId": 8000
+		},
+		{
+			"id": 8004,
+			"description": "Analyse and evaluate data and investigation methods: (Process quantitative data using appropriate mathematical relationships and units, including calculations of ratios, percentages, percentage change and mean. Use appropriate numbers of significant figures in calculations. Plot graphs involving two variables that show linear and non-linear relationships. Identify and analyse experimental data qualitatively, handling, where appropriate, concepts of: accuracy, precision, repeatability, reproducibility, resolution, and validity of measurements; and errors (random and systematic). Identify outliers, and contradictory, provisional or incomplete data. Repeat experiments to evaluate the precision of data. Evaluate investigation methods and suggest ways to improve precision, and to reduce the likelihood of errors)",
+			"curriculumSubjectId": 8000
+		},
+		{
+			"id": 8005,
+			"description": "Construct evidence-based arguments and draw conclusions: (Distinguish between opinion, anecdote and evidence, and between scientific and non-scientific ideas. Evaluate data to determine the degree to which the evidence supports the aim of the investigation, and make recommendations, as appropriate, for modifying or extending the investigation. Evaluate data to determine the degree to which the evidence supports or refutes the initial prediction or hypothesis. Use reasoning to construct scientific arguments, and to draw and justify conclusions consistent with evidence and relevant to the question under investigation. Identify, describe and explain the limitations of conclusions, including identification of further evidence required. Discuss the implications of research findings and proposals)",
+			"curriculumSubjectId": 8000
+		},
+		{
+			"id": 8006,
+			"description": "Analyse, evaluate and communicate scientific ideas: (Use appropriate scientific terminology, representations and conventions, including standard abbreviations, graphing conventions, algebraic equations, units of measurement and significant figures. Discuss relevant scientific information, ideas, concepts, theories and models and the connections between them. Analyse and explain how models and theories are used to organise and understand observed phenomena and concepts, identifying limitations of selected models/theories. Critically evaluate and interpret a range of scientific and media texts (including journal articles, mass media communications and opinions in the public domain), processes, claims and conclusions related to chemistry by considering the quality of available evidence. Apply sustainability concepts to analyse and evaluate responses to chemistry-based scenarios, case studies, issues and challenges. Identify and explain when judgements or decisions associated with chemistry-related issues may be based on sociocultural, economic, political, legal and/or ethical factors and not solely on scientific evidence. Use clear, coherent and concise expression to communicate to specific audiences and for specific purposes in appropriate scientific genres, including scientific reports and posters. Acknowledge sources of information and assistance, and use standard scientific referencing conventions)",
+			"curriculumSubjectId": 8000
+		}
+	]
 }
