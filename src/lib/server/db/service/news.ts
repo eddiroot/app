@@ -1,7 +1,8 @@
-import { newsStatusEnum, newsVisibilityEnum } from '$lib/enums.js';
+import { newsStatusEnum, newsVisibilityEnum, RecordFlagEnum } from '$lib/enums.js';
 import { db } from '$lib/server/db';
 import * as table from '$lib/server/db/schema';
 import { and, asc, count, desc, eq, gte, isNull, lte, or, sql } from 'drizzle-orm';
+import { clearFlagExpr, isArchived, notArchived, setFlagExpr } from './utils';
 import type { EmbeddingMetadata } from './vector';
 
 // News CRUD operations
@@ -66,7 +67,7 @@ export async function getNewsById(newsId: number, includeArchived: boolean = fal
 		.where(
 			includeArchived
 				? eq(table.news.id, newsId)
-				: and(eq(table.news.id, newsId), eq(table.news.isArchived, false))
+				: and(eq(table.news.id, newsId), notArchived(table.news.flags))
 		)
 		.limit(1);
 
@@ -104,7 +105,7 @@ export async function getNewsDraftsByAuthor(
 				eq(table.news.authorId, authorId),
 				eq(table.news.schoolId, schoolId),
 				eq(table.news.status, newsStatusEnum.draft),
-				eq(table.news.isArchived, false)
+				notArchived(table.news.flags)
 			)
 		)
 		.orderBy(desc(table.news.updatedAt))
@@ -126,7 +127,7 @@ export async function getArchivedNewsBySchoolId(
 ) {
 	const { campusId, categoryId, limit = 50, offset = 0 } = options;
 
-	const conditions = [eq(table.news.schoolId, schoolId), eq(table.news.isArchived, true)];
+	const conditions = [eq(table.news.schoolId, schoolId), isArchived(table.news.flags)];
 
 	if (campusId !== undefined) {
 		conditions.push(eq(table.news.campusId, campusId));
@@ -177,7 +178,7 @@ export async function getPublishedNewsBySchoolId(
 	const conditions = [
 		eq(table.news.schoolId, schoolId),
 		eq(table.news.status, newsStatusEnum.published),
-		eq(table.news.isArchived, false),
+		notArchived(table.news.flags),
 		// Only show news that's published and not expired
 		lte(table.news.publishedAt, currentDate),
 		or(isNull(table.news.expiresAt), gte(table.news.expiresAt, currentDate))
@@ -286,7 +287,7 @@ export async function archiveNews(newsId: number) {
 	const [archivedNews] = await db
 		.update(table.news)
 		.set({
-			isArchived: true,
+			flags: setFlagExpr(table.news.flags, RecordFlagEnum.archived),
 			status: newsStatusEnum.archived
 		})
 		.where(eq(table.news.id, newsId))
@@ -299,7 +300,7 @@ export async function unarchiveNews(newsId: number) {
 	const [unarchivedNews] = await db
 		.update(table.news)
 		.set({
-			isArchived: false,
+			flags: clearFlagExpr(table.news.flags, RecordFlagEnum.archived),
 			status: newsStatusEnum.draft
 		})
 		.where(eq(table.news.id, newsId))
@@ -326,7 +327,7 @@ export async function getNewsCategories(includeArchived: boolean = false) {
 	const categories = await db
 		.select()
 		.from(table.newsCategory)
-		.where(includeArchived ? undefined : eq(table.newsCategory.isArchived, false))
+		.where(includeArchived ? undefined : notArchived(table.newsCategory.flags))
 		.orderBy(asc(table.newsCategory.name));
 
 	return categories;
@@ -352,7 +353,7 @@ export async function updateNewsCategory(
 export async function archiveNewsCategory(categoryId: number) {
 	const [archivedCategory] = await db
 		.update(table.newsCategory)
-		.set({ isArchived: true })
+		.set({ flags: setFlagExpr(table.newsCategory.flags, RecordFlagEnum.archived) })
 		.where(eq(table.newsCategory.id, categoryId))
 		.returning();
 
@@ -394,7 +395,7 @@ export async function getNewsResources(
 		.where(
 			and(
 				eq(table.newsResource.newsId, newsId),
-				includeArchived ? undefined : eq(table.newsResource.isArchived, false),
+				includeArchived ? undefined : notArchived(table.newsResource.flags),
 				// Filter for images using the actual fields from your resource table
 				or(
 					sql`${table.resource.contentType} LIKE 'image/%'`,
@@ -443,7 +444,7 @@ export async function getNewsResources(
 export async function removeResourceFromNews(newsResourceId: number) {
 	const [archivedResource] = await db
 		.update(table.newsResource)
-		.set({ isArchived: true })
+		.set({ flags: setFlagExpr(table.newsResource.flags, RecordFlagEnum.archived) })
 		.where(eq(table.newsResource.id, newsResourceId))
 		.returning();
 
@@ -484,7 +485,7 @@ export async function getNewsStats(newsId: number) {
 	const resourceCount = await db
 		.select({ count: count() })
 		.from(table.newsResource)
-		.where(and(eq(table.newsResource.newsId, newsId), eq(table.newsResource.isArchived, false)))
+		.where(and(eq(table.newsResource.newsId, newsId), notArchived(table.newsResource.flags)))
 		.limit(1);
 
 	return {

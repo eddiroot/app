@@ -16,7 +16,7 @@ import {
 } from '../../../enums';
 import { campus, school } from './schools';
 import { subject, subjectOffering, subjectOfferingClass } from './subjects';
-import { timestamps, yearLevelEnumPg } from './utils';
+import { flags, timestamps, yearLevelEnumPg } from './utils';
 
 export const userSchema = pgSchema('user');
 
@@ -65,7 +65,7 @@ export const user = userSchema.table('user', {
 	avatarUrl: text('avatar_url'),
 	verificationCode: text('verification_code'),
 	emailVerified: boolean('email_verified').notNull().default(false),
-	isArchived: boolean('is_archived').notNull().default(false),
+	...flags,
 	...timestamps
 });
 
@@ -93,7 +93,7 @@ export const userSubjectOffering = userSchema.table('user_sub_off', {
 		.notNull()
 		.references(() => subjectOffering.id, { onDelete: 'cascade' }),
 	isComplete: integer('is_complete').default(0).notNull(),
-	isArchived: integer('is_archived').default(0).notNull(),
+	...flags,
 	color: integer('color').default(100).notNull(),
 	...timestamps
 });
@@ -111,7 +111,7 @@ export const userSubjectOfferingClass = userSchema.table(
 			.notNull()
 			.references(() => subjectOfferingClass.id, { onDelete: 'cascade' }),
 		classNote: text('class_note'),
-		isArchived: boolean('is_archived').notNull().default(false),
+		...flags,
 		...timestamps
 	},
 	(self) => [unique().on(self.userId, self.subOffClassId)]

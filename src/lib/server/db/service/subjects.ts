@@ -1,4 +1,5 @@
 import {
+	RecordFlagEnum,
 	subjectClassAllocationAttendanceComponentType,
 	subjectClassAllocationAttendanceStatus,
 	subjectThreadResponseTypeEnum,
@@ -11,6 +12,7 @@ import { db } from '$lib/server/db';
 import * as table from '$lib/server/db/schema';
 import { and, asc, desc, eq, gte, inArray, lt, or } from 'drizzle-orm';
 import type { EmbeddingMetadata } from '.';
+import { notArchived, setFlagExpr } from './utils';
 
 export async function getSubjectsByUserId(userId: string) {
 	const subjects = await db
@@ -115,7 +117,7 @@ export async function getSubjectOfferingsBySchoolId(schoolId: number) {
 		})
 		.from(table.subjectOffering)
 		.innerJoin(table.subject, eq(table.subjectOffering.subjectId, table.subject.id))
-		.where(and(eq(table.subject.schoolId, schoolId), eq(table.subjectOffering.isArchived, false)))
+		.where(and(eq(table.subject.schoolId, schoolId), notArchived(table.subjectOffering.flags)))
 		.orderBy(
 			asc(table.subject.name),
 			asc(table.subjectOffering.year),
@@ -177,8 +179,8 @@ export async function getSubjectOfferingsByForTimetableByTimetableId(timetableId
 	const conditions = [
 		eq(table.subject.schoolId, timetableData.schoolId),
 		eq(table.subjectOffering.year, timetableData.schoolYear),
-		eq(table.subjectOffering.isArchived, false),
-		eq(table.subject.isArchived, false)
+		notArchived(table.subjectOffering.flags),
+		notArchived(table.subject.flags)
 	];
 
 	// Add semester condition if available
@@ -258,8 +260,8 @@ export async function getSubjectOfferingsByYearLevelForTimetableByTimetableId(
 		eq(table.subject.schoolId, timetableData.schoolId),
 		eq(table.subject.yearLevel, yearLevel), // Filter by student grade level
 		eq(table.subjectOffering.year, timetableData.schoolYear), // Filter by calendar year
-		eq(table.subjectOffering.isArchived, false),
-		eq(table.subject.isArchived, false)
+		notArchived(table.subjectOffering.flags),
+		notArchived(table.subject.flags)
 	];
 
 	// Add semester condition if available
@@ -340,7 +342,7 @@ export async function createSubjectThread(
 	type: subjectThreadTypeEnum,
 	content: string,
 	isAnonymous: boolean,
-	isArchived: boolean = false
+	flags: number = RecordFlagEnum.none
 ) {
 	const [thread] = await db
 		.insert(table.subjectThread)
@@ -351,7 +353,7 @@ export async function createSubjectThread(
 			type,
 			content,
 			isAnonymous,
-			isArchived
+			flags
 		})
 		.returning();
 
@@ -386,7 +388,7 @@ export async function createSubjectThreadResponse(
 	content: string,
 	parentResponseId?: number | null,
 	isAnonymous: boolean = false,
-	isArchived: boolean = false
+	flags: number = RecordFlagEnum.none
 ) {
 	const [response] = await db
 		.insert(table.subjectThreadResponse)
@@ -397,7 +399,7 @@ export async function createSubjectThreadResponse(
 			content,
 			parentResponseId: parentResponseId || null,
 			isAnonymous,
-			isArchived
+			flags
 		})
 		.returning();
 
@@ -511,7 +513,7 @@ export async function getTeacherBySubjectOfferingIdForUserInClass(
 			and(
 				eq(table.userSubjectOfferingClass.userId, userId),
 				eq(table.subjectOfferingClass.subOfferingId, subjectOfferingId),
-				eq(table.userSubjectOfferingClass.isArchived, false) // Only consider non-archived records
+				notArchived(table.userSubjectOfferingClass.flags) // Only consider non-archived records
 			)
 		);
 
@@ -535,7 +537,7 @@ export async function getTeacherBySubjectOfferingIdForUserInClass(
 			and(
 				inArray(table.userSubjectOfferingClass.subOffClassId, subjectClassIds),
 				eq(table.user.type, userTypeEnum.teacher),
-				eq(table.userSubjectOfferingClass.isArchived, false) // Only consider non-archived records
+				notArchived(table.userSubjectOfferingClass.flags) // Only consider non-archived records
 			)
 		);
 
@@ -556,7 +558,7 @@ export async function getSubjectsBySchoolId(schoolId: number, includeArchived: b
 		.where(
 			and(
 				eq(table.subject.schoolId, schoolId),
-				includeArchived ? undefined : eq(table.subject.isArchived, false)
+				includeArchived ? undefined : notArchived(table.subject.flags)
 			)
 		)
 		.orderBy(asc(table.subject.yearLevel), asc(table.subject.name));
@@ -583,7 +585,7 @@ export async function getSubjectsByYearLevel(
 			and(
 				eq(table.subject.schoolId, schoolId),
 				eq(table.subject.yearLevel, yearLevel),
-				includeArchived ? undefined : eq(table.subject.isArchived, false)
+				includeArchived ? undefined : notArchived(table.subject.flags)
 			)
 		)
 		.orderBy(asc(table.subject.name));
@@ -739,8 +741,8 @@ export async function getResourcesBySubjectOfferingClassId(subjectOfferingClassI
 		.where(
 			and(
 				eq(table.subjectOfferingClassResource.subjectOfferingClassId, subjectOfferingClassId),
-				eq(table.subjectOfferingClassResource.isArchived, false),
-				eq(table.resource.isArchived, false)
+				notArchived(table.subjectOfferingClassResource.flags),
+				notArchived(table.resource.flags)
 			)
 		)
 		.orderBy(table.subjectOfferingClassResource.createdAt);
@@ -765,7 +767,7 @@ export async function addResourceToSubjectOfferingClass(
 			title: title || null,
 			description: description || null,
 			coursemapItemId: coursemapItemId || null,
-			isArchived: false
+			flags: RecordFlagEnum.none
 		})
 		.returning();
 
@@ -778,7 +780,7 @@ export async function removeResourceFromSubjectOfferingClass(
 ) {
 	await db
 		.update(table.subjectOfferingClassResource)
-		.set({ isArchived: true })
+		.set({ flags: setFlagExpr(table.subjectOfferingClassResource.flags, RecordFlagEnum.archived) })
 		.where(
 			and(
 				eq(table.subjectOfferingClassResource.subjectOfferingClassId, subjectOfferingClassId),
@@ -1410,7 +1412,7 @@ export async function getBehaviourQuickActionsBySchoolId(schoolId: number) {
 		.where(
 			and(
 				eq(table.behaviourQuickAction.schoolId, schoolId),
-				eq(table.behaviourQuickAction.isArchived, false)
+				notArchived(table.behaviourQuickAction.flags)
 			)
 		)
 		.orderBy(asc(table.behaviourQuickAction.name));
@@ -1466,7 +1468,7 @@ export async function deleteBehaviourQuickAction(id: number) {
 	await db
 		.update(table.behaviourQuickAction)
 		.set({
-			isArchived: true,
+			flags: setFlagExpr(table.behaviourQuickAction.flags, RecordFlagEnum.archived),
 			updatedAt: new Date()
 		})
 		.where(eq(table.behaviourQuickAction.id, id));

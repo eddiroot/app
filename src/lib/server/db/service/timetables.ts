@@ -2,6 +2,7 @@ import { constraintTypeEnum, queueStatusEnum, userTypeEnum, yearLevelEnum } from
 import { db } from '$lib/server/db';
 import * as table from '$lib/server/db/schema';
 import { and, asc, count, eq, ilike, inArray, or } from 'drizzle-orm';
+import { notArchived } from './utils.js';
 
 // ============================================================================
 // TIMETABLE - Core Operations
@@ -28,7 +29,7 @@ export async function getSchoolTimetablesBySchoolId(
 		.where(
 			and(
 				eq(table.timetable.schoolId, schoolId),
-				includeArchived ? undefined : eq(table.timetable.isArchived, false)
+				includeArchived ? undefined : notArchived(table.timetable.flags)
 			)
 		)
 		.orderBy(asc(table.timetable.name));
@@ -62,8 +63,7 @@ export async function createSchoolTimetable(data: {
 			schoolId: data.schoolId,
 			name: data.name,
 			schoolYear: data.schoolYear,
-			schoolSemesterId: data.schoolSemesterId,
-			isArchived: false
+			schoolSemesterId: data.schoolSemesterId
 		})
 		.returning();
 
@@ -447,7 +447,7 @@ export async function assignStudentsToGroupsRandomly(
 				eq(table.user.schoolId, schoolId),
 				eq(table.user.type, userTypeEnum.student),
 				eq(table.user.yearLevel, yearLevel),
-				eq(table.user.isArchived, false)
+				notArchived(table.user.flags)
 			)
 		);
 
@@ -549,7 +549,7 @@ export async function getStudentsWithGroupsByTimetableDraftId(
 			and(
 				eq(table.user.schoolId, schoolId),
 				eq(table.user.type, userTypeEnum.student),
-				eq(table.user.isArchived, false)
+				notArchived(table.user.flags)
 			)
 		)
 		.orderBy(
@@ -611,7 +611,7 @@ export async function getStudentsForTimetable(timetableId: number, schoolId: num
 			and(
 				eq(table.user.schoolId, schoolId),
 				eq(table.user.type, userTypeEnum.student),
-				eq(table.user.isArchived, false)
+				notArchived(table.user.flags)
 			)
 		)
 		.orderBy(asc(table.user.yearLevel), asc(table.user.lastName), asc(table.user.firstName));
@@ -1352,7 +1352,7 @@ export async function searchUsersBySchoolId(schoolId: number, searchTerm: string
 		.where(
 			and(
 				eq(table.user.schoolId, schoolId),
-				eq(table.user.isArchived, false),
+				notArchived(table.user.flags),
 				or(
 					ilike(table.user.firstName, searchPattern),
 					ilike(table.user.lastName, searchPattern),

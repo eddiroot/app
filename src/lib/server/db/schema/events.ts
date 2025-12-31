@@ -2,7 +2,7 @@ import { boolean, integer, pgSchema, text, timestamp, unique, uuid } from 'drizz
 import { campus, school } from './schools';
 import { subjectOffering, subjectOfferingClass } from './subjects';
 import { user } from './user';
-import { timestamps } from './utils';
+import { flags, timestamps } from './utils';
 
 export const eventsSchema = pgSchema('events');
 
@@ -16,7 +16,7 @@ export const schoolEvent = eventsSchema.table('sch_evt', {
 	startTimestamp: timestamp('start_ts').notNull(),
 	endTimestamp: timestamp('end_ts').notNull(),
 	requiresRSVP: boolean('requires_rsvp').notNull().default(false),
-	isArchived: boolean('is_archived').notNull().default(false),
+	...flags,
 	...timestamps
 });
 
@@ -32,7 +32,7 @@ export const campusEvent = eventsSchema.table('cmps_evt', {
 	startTimestamp: timestamp('start_ts').notNull(),
 	endTimestamp: timestamp('end_ts').notNull(),
 	requiresRSVP: boolean('requires_rsvp').notNull().default(false),
-	isArchived: boolean('is_archived').notNull().default(false),
+	...flags,
 	...timestamps
 });
 
@@ -48,7 +48,7 @@ export const subjectOfferingEvent = eventsSchema.table('sub_off_evt', {
 	startTimestamp: timestamp('start_ts').notNull(),
 	endTimestamp: timestamp('end_ts').notNull(),
 	requiresRSVP: boolean('requires_rsvp').notNull().default(false),
-	isArchived: boolean('is_archived').notNull().default(false),
+	...flags,
 	...timestamps
 });
 
@@ -64,7 +64,7 @@ export const subjectOfferingClassEvent = eventsSchema.table('sub_off_cls_evt', {
 	startTimestamp: timestamp('start_ts').notNull(),
 	endTimestamp: timestamp('end_ts').notNull(),
 	requiresRSVP: boolean('requires_rsvp').notNull().default(false),
-	isArchived: boolean('is_archived').notNull().default(false),
+	...flags,
 	...timestamps
 });
 

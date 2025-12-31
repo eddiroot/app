@@ -1,6 +1,7 @@
 import {
 	gradeReleaseEnum,
 	quizModeEnum,
+	RecordFlagEnum,
 	taskBlockTypeEnum,
 	taskStatusEnum,
 	taskTypeEnum,
@@ -13,6 +14,7 @@ import * as table from '$lib/server/db/schema';
 import { and, asc, desc, eq, gte, inArray, or, sql } from 'drizzle-orm';
 import { z } from 'zod';
 import { verifyUserAccessToClass } from './user';
+import { notArchived, setFlagExpr } from './utils';
 import type { EmbeddingMetadata } from './vector';
 
 export async function addTasksToClass(
@@ -196,7 +198,7 @@ export async function createTask(
 	type: taskTypeEnum,
 	subjectOfferingId: number,
 	aiTutorEnabled: boolean = true,
-	isArchived: boolean = false
+	flags: number = RecordFlagEnum.none
 ) {
 	const [task] = await db
 		.insert(table.task)
@@ -208,7 +210,7 @@ export async function createTask(
 			version: 1,
 			subjectOfferingId,
 			aiTutorEnabled,
-			isArchived
+			flags
 		})
 		.returning();
 
@@ -1068,7 +1070,7 @@ export async function getClassTeacher(subjectOfferingClassId: number) {
 			and(
 				eq(table.userSubjectOfferingClass.subOffClassId, subjectOfferingClassId),
 				eq(table.user.type, userTypeEnum.teacher),
-				eq(table.userSubjectOfferingClass.isArchived, false)
+				notArchived(table.userSubjectOfferingClass.flags)
 			)
 		)
 		.limit(1);
@@ -1135,8 +1137,8 @@ export async function getClassTaskResponseResources(classTaskResponseId: number)
 		.where(
 			and(
 				eq(table.classTaskResponseResource.classTaskResponseId, classTaskResponseId),
-				eq(table.classTaskResponseResource.isArchived, false),
-				eq(table.resource.isArchived, false)
+				notArchived(table.classTaskResponseResource.flags),
+				notArchived(table.resource.flags)
 			)
 		);
 
@@ -1159,7 +1161,7 @@ export async function getClassTaskResponsesWithStudents(classTaskId: number) {
 		.where(
 			and(
 				eq(table.classTaskResponse.classTaskId, classTaskId),
-				eq(table.classTaskResponse.isArchived, false)
+				notArchived(table.classTaskResponse.flags)
 			)
 		)
 		.orderBy(asc(table.user.lastName), asc(table.user.firstName));
@@ -1186,7 +1188,7 @@ export async function archiveAllResourcesFromClassTaskResponse(classTaskResponse
 	await db
 		.update(table.classTaskResponseResource)
 		.set({
-			isArchived: true
+			flags: setFlagExpr(table.classTaskResponseResource.flags, RecordFlagEnum.archived)
 		})
 		.where(eq(table.classTaskResponseResource.classTaskResponseId, classTaskResponseId));
 }
@@ -1201,8 +1203,8 @@ export async function deleteResourcesFromClassTaskResponse(classTaskResponseId: 
 		.where(
 			and(
 				eq(table.classTaskResponseResource.classTaskResponseId, classTaskResponseId),
-				eq(table.classTaskResponseResource.isArchived, false),
-				eq(table.resource.isArchived, false)
+				notArchived(table.classTaskResponseResource.flags),
+				notArchived(table.resource.flags)
 			)
 		);
 
@@ -1234,8 +1236,8 @@ export async function deleteResourceFromClassTaskResponse(
 				eq(table.classTaskResponseResource.classTaskResponseId, classTaskResponseId),
 				eq(table.classTaskResponseResource.resourceId, resourceId),
 				eq(table.classTaskResponse.authorId, userId),
-				eq(table.classTaskResponseResource.isArchived, false),
-				eq(table.resource.isArchived, false)
+				notArchived(table.classTaskResponseResource.flags),
+				notArchived(table.resource.flags)
 			)
 		);
 

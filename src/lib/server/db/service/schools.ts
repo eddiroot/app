@@ -1,7 +1,8 @@
-import { schoolSpaceTypeEnum, userTypeEnum, yearLevelEnum } from '$lib/enums.js';
+import { RecordFlagEnum, schoolSpaceTypeEnum, userTypeEnum, yearLevelEnum } from '$lib/enums.js';
 import { db } from '$lib/server/db';
 import * as table from '$lib/server/db/schema';
 import { and, asc, count, eq, inArray } from 'drizzle-orm';
+import { clearFlagExpr, notArchived, setFlagExpr } from './utils';
 
 export async function getUsersBySchoolId(schoolId: number, includeArchived: boolean = false) {
 	const users = await db
@@ -20,7 +21,7 @@ export async function getUsersBySchoolId(schoolId: number, includeArchived: bool
 		.where(
 			and(
 				eq(table.user.schoolId, schoolId),
-				includeArchived ? undefined : eq(table.user.isArchived, false)
+				includeArchived ? undefined : notArchived(table.user.flags)
 			)
 		)
 		.orderBy(asc(table.user.type), asc(table.user.lastName), asc(table.user.firstName));
@@ -49,7 +50,7 @@ export async function getUsersBySchoolIdAndTypes(
 			and(
 				eq(table.user.schoolId, schoolId),
 				inArray(table.user.type, types),
-				includeArchived ? undefined : eq(table.user.isArchived, false)
+				includeArchived ? undefined : notArchived(table.user.flags)
 			)
 		)
 		.orderBy(asc(table.user.type), asc(table.user.lastName), asc(table.user.firstName));
@@ -77,7 +78,7 @@ export async function getUsersBySchoolIdAndType(
 			and(
 				eq(table.user.schoolId, schoolId),
 				eq(table.user.type, type),
-				includeArchived ? undefined : eq(table.user.isArchived, false)
+				includeArchived ? undefined : notArchived(table.user.flags)
 			)
 		)
 		.orderBy(asc(table.user.lastName), asc(table.user.firstName));
@@ -180,10 +181,10 @@ export async function getCampusesBySchoolId(schoolId: number, includeArchived: b
 		.where(
 			and(
 				eq(table.campus.schoolId, schoolId),
-				includeArchived ? undefined : eq(table.campus.isArchived, false)
+				includeArchived ? undefined : notArchived(table.campus.flags)
 			)
 		)
-		.orderBy(asc(table.campus.isArchived), asc(table.campus.name));
+		.orderBy(asc(table.campus.flags), asc(table.campus.name));
 
 	return campuses;
 }
@@ -229,7 +230,7 @@ export async function updateCampus(
 export async function archiveCampus(campusId: number) {
 	const [archivedCampus] = await db
 		.update(table.campus)
-		.set({ isArchived: true })
+		.set({ flags: setFlagExpr(table.campus.flags, RecordFlagEnum.archived) })
 		.where(eq(table.campus.id, campusId))
 		.returning();
 
@@ -239,7 +240,7 @@ export async function archiveCampus(campusId: number) {
 export async function unarchiveCampus(campusId: number) {
 	const [unarchivedCampus] = await db
 		.update(table.campus)
-		.set({ isArchived: false })
+		.set({ flags: clearFlagExpr(table.campus.flags, RecordFlagEnum.archived) })
 		.where(eq(table.campus.id, campusId))
 		.returning();
 
@@ -250,7 +251,7 @@ export async function createBuilding(
 	campusId: number,
 	name: string,
 	description?: string | null,
-	isArchived: boolean = false
+	flags: number = RecordFlagEnum.none
 ) {
 	const [building] = await db
 		.insert(table.schoolBuilding)
@@ -258,7 +259,7 @@ export async function createBuilding(
 			campusId,
 			name,
 			description: description || null,
-			isArchived
+			flags
 		})
 		.returning();
 
@@ -272,7 +273,7 @@ export async function getBuildingsByCampusId(campusId: number, includeArchived: 
 		.where(
 			and(
 				eq(table.schoolBuilding.campusId, campusId),
-				includeArchived ? undefined : eq(table.schoolBuilding.isArchived, false)
+				includeArchived ? undefined : notArchived(table.schoolBuilding.flags)
 			)
 		)
 		.orderBy(asc(table.schoolBuilding.name));
@@ -294,7 +295,7 @@ export async function getBuildingsBySchoolId(schoolId: number, includeArchived: 
 		.where(
 			and(
 				eq(table.campus.schoolId, schoolId),
-				includeArchived ? undefined : eq(table.schoolBuilding.isArchived, false)
+				includeArchived ? undefined : notArchived(table.schoolBuilding.flags)
 			)
 		)
 		.orderBy(asc(table.campus.name), asc(table.schoolBuilding.name));
@@ -311,7 +312,7 @@ export async function createSpace(
 	type: schoolSpaceTypeEnum,
 	capacity?: number | null,
 	description?: string | null,
-	isArchived: boolean = false
+	flags: number = RecordFlagEnum.none
 ) {
 	const [space] = await db
 		.insert(table.schoolSpace)
@@ -321,7 +322,7 @@ export async function createSpace(
 			type,
 			capacity: capacity || null,
 			description: description || null,
-			isArchived
+			flags
 		})
 		.returning();
 
@@ -340,7 +341,7 @@ export async function getSpacesBySchoolId(schoolId: number, includeArchived: boo
 			type: table.schoolSpace.type,
 			capacity: table.schoolSpace.capacity,
 			description: table.schoolSpace.description,
-			isArchived: table.schoolSpace.isArchived,
+			flags: table.schoolSpace.flags,
 			createdAt: table.schoolSpace.createdAt,
 			updatedAt: table.schoolSpace.updatedAt
 		})
@@ -350,7 +351,7 @@ export async function getSpacesBySchoolId(schoolId: number, includeArchived: boo
 		.where(
 			and(
 				eq(table.campus.schoolId, schoolId),
-				includeArchived ? undefined : eq(table.schoolSpace.isArchived, false)
+				includeArchived ? undefined : notArchived(table.schoolSpace.flags)
 			)
 		)
 		.orderBy(table.schoolSpace.name);
@@ -367,7 +368,7 @@ export async function createYearLevelsForSchool(schoolId: number, yearLevels: ye
 			.values({
 				schoolId,
 				yearLevel: yl,
-				isArchived: false
+				flags: RecordFlagEnum.none
 			})
 			.returning();
 
@@ -399,7 +400,7 @@ export async function getSpacesByCampusId(campusId: number, includeArchived: boo
 		.where(
 			and(
 				eq(table.schoolBuilding.campusId, campusId),
-				includeArchived ? undefined : eq(table.schoolSpace.isArchived, false)
+				includeArchived ? undefined : notArchived(table.schoolSpace.flags)
 			)
 		)
 		.orderBy(table.schoolSpace.name);
@@ -414,7 +415,7 @@ export async function getSpaceById(spaceId: number, includeArchived: boolean = f
 		.where(
 			and(
 				eq(table.schoolSpace.id, spaceId),
-				includeArchived ? undefined : eq(table.schoolSpace.isArchived, false)
+				includeArchived ? undefined : notArchived(table.schoolSpace.flags)
 			)
 		)
 		.limit(1);
@@ -429,7 +430,7 @@ export async function updateSpace(
 		type?: schoolSpaceTypeEnum;
 		capacity?: number | null;
 		description?: string | null;
-		isArchived?: boolean;
+		flags?: number;
 	}
 ) {
 	const [space] = await db
@@ -444,7 +445,7 @@ export async function updateSpace(
 export async function archiveSpace(spaceId: number) {
 	const [space] = await db
 		.update(table.schoolSpace)
-		.set({ isArchived: true })
+		.set({ flags: setFlagExpr(table.schoolSpace.flags, RecordFlagEnum.archived) })
 		.where(eq(table.schoolSpace.id, spaceId))
 		.returning();
 
@@ -463,7 +464,7 @@ export async function getSubjectsBySchoolIdAndYearLevel(
 			and(
 				eq(table.subject.schoolId, schoolId),
 				eq(table.yearLevel.yearLevel, yearLevel),
-				eq(table.subject.isArchived, false)
+				notArchived(table.subject.flags)
 			)
 		)
 		.orderBy(asc(table.subject.name));
@@ -478,7 +479,7 @@ export async function getSemestersBySchoolId(schoolId: number, includeArchived: 
 		.where(
 			and(
 				eq(table.schoolSemester.schoolId, schoolId),
-				includeArchived ? undefined : eq(table.schoolSemester.isArchived, false)
+				includeArchived ? undefined : notArchived(table.schoolSemester.flags)
 			)
 		)
 		.orderBy(asc(table.schoolSemester.schoolYear), asc(table.schoolSemester.semNumber));
@@ -498,7 +499,7 @@ export async function getSemestersWithTermsBySchoolIdForYear(
 			and(
 				eq(table.schoolSemester.schoolId, schoolId),
 				eq(table.schoolSemester.schoolYear, year),
-				includeArchived ? undefined : eq(table.schoolSemester.isArchived, false)
+				includeArchived ? undefined : notArchived(table.schoolSemester.flags)
 			)
 		)
 		.orderBy(asc(table.schoolSemester.schoolYear), asc(table.schoolSemester.semNumber));
@@ -515,7 +516,7 @@ export async function getSemestersWithTermsBySchoolIdForYear(
 		.where(
 			and(
 				inArray(table.schoolTerm.schoolSemesterId, semesterIds),
-				includeArchived ? undefined : eq(table.schoolTerm.isArchived, false)
+				includeArchived ? undefined : notArchived(table.schoolTerm.flags)
 			)
 		)
 		.orderBy(asc(table.schoolTerm.startDate));
@@ -539,7 +540,7 @@ export async function createSchoolTerm(
 			termNumber: termNumber,
 			startDate,
 			endDate,
-			isArchived: false
+			flags: RecordFlagEnum.none
 		})
 		.returning();
 

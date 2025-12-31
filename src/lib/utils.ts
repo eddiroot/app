@@ -128,7 +128,6 @@ export function yearLevelToLabel(yearLevel: string): string {
 			return 'Year 11';
 		case yearLevelEnum.year12:
 			return 'Year 12';
-
 		case yearLevelEnum.none:
 			return 'No Year Level';
 		default:

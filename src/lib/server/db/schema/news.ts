@@ -13,7 +13,7 @@ import { newsPriorityEnum, newsStatusEnum, newsVisibilityEnum } from '../../../e
 import { resource } from './resource';
 import { campus, school } from './schools';
 import { user } from './user';
-import { embeddings, timestamps } from './utils';
+import { embeddings, flags, timestamps } from './utils';
 
 export const newsSchema = pgSchema('news');
 
@@ -43,7 +43,7 @@ export const newsCategory = newsSchema.table('news_category', {
 	name: text('name').notNull().unique(),
 	description: text('description'),
 	color: text('color'), // For UI styling
-	isArchived: boolean('is_archived').notNull().default(false),
+	...flags,
 	...timestamps
 });
 
@@ -72,7 +72,7 @@ export const news = newsSchema.table(
 		tags: jsonb('tags'),
 		isPinned: boolean('is_pinned').notNull().default(false),
 		viewCount: integer('view_count').notNull().default(0),
-		isArchived: boolean('is_archived').notNull().default(false),
+		...flags,
 		...timestamps,
 		...embeddings
 	},
@@ -98,7 +98,7 @@ export const newsResource = newsSchema.table('news_resource', {
 		.notNull()
 		.references(() => user.id, { onDelete: 'cascade' }),
 	displayOrder: integer('display_order').notNull().default(0),
-	isArchived: boolean('is_archived').notNull().default(false),
+	...flags,
 	...timestamps
 });
 
