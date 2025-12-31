@@ -1,5 +1,4 @@
 import {
-	boolean,
 	index,
 	integer,
 	jsonb,
@@ -18,6 +17,13 @@ export const timestamps = {
 		.defaultNow()
 		.$onUpdate(() => new Date())
 		.notNull()
+};
+
+/**
+ * Standard flags column - uses bitwise RecordFlagEnum from enums.ts
+ */
+export const flags = {
+	flags: integer('flags').notNull().default(0)
 };
 
 // Enums used across multiple schema files - defined here to avoid circular dependencies
@@ -59,6 +65,7 @@ export const tempPool = utilsSchema.table(
 		id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
 		content: text('content').notNull(),
 		...embeddings,
+		...flags,
 		...timestamps
 	},
 	(self) => [
@@ -69,9 +76,3 @@ export const tempPool = utilsSchema.table(
 
 export type TempPool = typeof tempPool.$inferSelect;
 
-export const publish = {
-	isPublicRequested: boolean('is_public_requested').notNull().default(false),
-	isPublicApproved: boolean('is_public_approved').notNull().default(false),
-	publicRequestedAt: timestamp({ mode: 'date' }),
-	publicApprovedAt: timestamp({ mode: 'date' })
-};
