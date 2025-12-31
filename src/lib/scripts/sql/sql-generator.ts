@@ -17,6 +17,10 @@ interface SqlGeneratorOptions {
 	overrideIdentity?: boolean;
 	/** Output directory for generated files */
 	outputDir?: string;
+	/** Omit ID columns - let PostgreSQL assign new IDs (incompatible with foreign keys) */
+	omitIds?: boolean;
+	/** Add offset to all ID columns (both primary and foreign keys) */
+	idOffset?: number;
 }
 
 interface TableWithId extends PgTable {
@@ -24,13 +28,60 @@ interface TableWithId extends PgTable {
 }
 
 // ============================================================================
+// ID COLUMN DETECTION
+// ============================================================================
+
+/**
+ * Check if a SQL column name is an ID column (ends with _id or is exactly 'id')
+ */
+function isIdColumn(columnName: string): boolean {
+	return columnName === 'id' || columnName.endsWith('_id');
+}
+
+/**
+ * Check if a JSONB key is an ID field (ends with 'Id' in camelCase)
+ */
+function isJsonbIdKey(key: string): boolean {
+	return key === 'id' || key.endsWith('Id');
+}
+
+// ============================================================================
 // SQL VALUE ESCAPING
 // ============================================================================
 
 /**
+ * Apply ID offset to JSONB object recursively
+ */
+function applyIdOffsetToJsonb(obj: unknown, offset: number): unknown {
+	if (obj === null || obj === undefined) return obj;
+
+	if (Array.isArray(obj)) {
+		return obj.map((item) => applyIdOffsetToJsonb(item, offset));
+	}
+
+	if (typeof obj === 'object') {
+		const result: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(obj as Record<string, unknown>)) {
+			// Check if key is an ID field that should be offset (ends with 'Id' in camelCase)
+			if (isJsonbIdKey(key) && typeof value === 'number') {
+				result[key] = value + offset;
+			} else if (typeof value === 'object' && value !== null) {
+				// Recursively process nested objects
+				result[key] = applyIdOffsetToJsonb(value, offset);
+			} else {
+				result[key] = value;
+			}
+		}
+		return result;
+	}
+
+	return obj;
+}
+
+/**
  * Escape a JavaScript value for SQL insertion
  */
-function escapeValue(value: unknown): string {
+function escapeValue(value: unknown, idOffset?: number): string {
 	if (value === null || value === undefined) {
 		return 'NULL';
 	}
@@ -54,12 +105,14 @@ function escapeValue(value: unknown): string {
 			return `'[${value.join(',')}]'::vector`;
 		}
 		// Other arrays (text[], etc.)
-		return `ARRAY[${value.map((v) => escapeValue(v)).join(',')}]`;
+		return `ARRAY[${value.map((v) => escapeValue(v, idOffset)).join(',')}]`;
 	}
 
 	// JSON/JSONB objects
 	if (typeof value === 'object') {
-		const jsonStr = JSON.stringify(value).replace(/'/g, "''");
+		// Apply ID offset to JSONB content if offset is provided
+		const processedValue = idOffset ? applyIdOffsetToJsonb(value, idOffset) : value;
+		const jsonStr = JSON.stringify(processedValue).replace(/'/g, "''");
 		return `'${jsonStr}'::jsonb`;
 	}
 
@@ -108,7 +161,7 @@ function getColumnName(table: PgTable, key: string): string {
 function generateInsertStatement(
 	table: PgTable,
 	record: Record<string, unknown>,
-	options: { overrideIdentity?: boolean } = {}
+	options: { overrideIdentity?: boolean; omitIds?: boolean; idOffset?: number } = {}
 ): string {
 	const tableName = getFullTableName(table);
 	const columns: string[] = [];
@@ -118,8 +171,18 @@ function generateInsertStatement(
 		if (value === undefined) continue;
 
 		const colName = getColumnName(table, key);
+
+		// Skip ID column if omitIds is set
+		if (options.omitIds && colName === 'id') continue;
+
 		columns.push(`"${colName}"`);
-		values.push(escapeValue(value));
+
+		// Apply offset to ID columns (columns ending with _id or exactly 'id')
+		if (options.idOffset && isIdColumn(colName) && typeof value === 'number') {
+			values.push(String(value + options.idOffset));
+		} else {
+			values.push(escapeValue(value, options.idOffset));
+		}
 	}
 
 	const override = options.overrideIdentity ? ' OVERRIDING SYSTEM VALUE' : '';
@@ -132,7 +195,7 @@ function generateInsertStatement(
 function generateBatchInsertStatement(
 	table: PgTable,
 	records: Record<string, unknown>[],
-	options: { overrideIdentity?: boolean } = {}
+	options: { overrideIdentity?: boolean; omitIds?: boolean; idOffset?: number } = {}
 ): string {
 	if (records.length === 0) return '';
 
@@ -140,12 +203,27 @@ function generateBatchInsertStatement(
 
 	// Get columns from first record
 	const firstRecord = records[0];
-	const columnKeys = Object.keys(firstRecord).filter((k) => firstRecord[k] !== undefined);
+	let columnKeys = Object.keys(firstRecord).filter((k) => firstRecord[k] !== undefined);
+
+	// Filter out 'id' column if omitIds is set
+	if (options.omitIds) {
+		columnKeys = columnKeys.filter((k) => getColumnName(table, k) !== 'id');
+	}
+
 	const columns = columnKeys.map((k) => `"${getColumnName(table, k)}"`);
 
 	// Generate value rows
 	const valueRows = records.map((record) => {
-		const values = columnKeys.map((key) => escapeValue(record[key]));
+		const values = columnKeys.map((key) => {
+			const colName = getColumnName(table, key);
+			const value = record[key];
+
+			// Apply offset to ID columns (columns ending with _id or exactly 'id')
+			if (options.idOffset && isIdColumn(colName) && typeof value === 'number') {
+				return String(value + options.idOffset);
+			}
+			return escapeValue(value, options.idOffset);
+		});
 		return `  (${values.join(', ')})`;
 	});
 
@@ -215,7 +293,9 @@ export async function exportRecordToSql(
 
 	statements.push(
 		generateInsertStatement(table, record as Record<string, unknown>, {
-			overrideIdentity: options.overrideIdentity
+			overrideIdentity: options.overrideIdentity,
+			omitIds: options.omitIds,
+			idOffset: options.idOffset
 		})
 	);
 
@@ -258,7 +338,9 @@ export async function exportTableToSql(
 
 	statements.push(
 		generateBatchInsertStatement(table, records as Record<string, unknown>[], {
-			overrideIdentity: options.overrideIdentity
+			overrideIdentity: options.overrideIdentity,
+			omitIds: options.omitIds,
+			idOffset: options.idOffset
 		})
 	);
 
@@ -302,7 +384,9 @@ export async function exportSchemaToSql(
 		statements.push(generateSection(`${tableName} (${records.length} records)`));
 		statements.push(
 			generateBatchInsertStatement(table, records as Record<string, unknown>[], {
-				overrideIdentity: options.overrideIdentity
+				overrideIdentity: options.overrideIdentity,
+				omitIds: options.omitIds,
+				idOffset: options.idOffset
 			})
 		);
 	}
