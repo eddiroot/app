@@ -6,8 +6,8 @@ import * as schema from './schema';
 
 let _db:
 	| (NodePgDatabase<typeof schema> & {
-		$client: Pool;
-	})
+			$client: Pool;
+	  })
 	| null = null;
 
 if (!building) {

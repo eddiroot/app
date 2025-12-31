@@ -43,8 +43,7 @@ npx sst secret set SecretName secret-value
 # repeat for each secret in sst.config.ts
 npm run db:migrate
 npm run db:push
-npm run db:restore -- snapshots/eddi_vcaa.sql.gz
-npm run db:seed
+npm run db:seed:fresh
 ```
 
 ## Cleaning schema
@@ -61,9 +60,8 @@ npx sst dev --stage dev
 
 ```bash
 npm run db:migrate
-npm run db:restore -- snapshots/eddi_vcaa.sql.gz
 npm run db:push
-npm run db:seed
+npm run db:seed:fresh
 ```
 
 ## git stuff

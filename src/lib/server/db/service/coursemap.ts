@@ -807,7 +807,9 @@ export async function getLearningAreaStandardsByCourseMapItemId(
 	return standards.map((row) => row.learningAreaStandard);
 }
 
-export async function getCourseMapItemAssessmentPlanEmbeddingMetadata(record: Record<string, unknown>): Promise<EmbeddingMetadata> {
+export async function getCourseMapItemAssessmentPlanEmbeddingMetadata(
+	record: Record<string, unknown>
+): Promise<EmbeddingMetadata> {
 	const courseMapItemId = record.courseMapItemId as number;
 
 	const [result] = await db
@@ -828,10 +830,12 @@ export async function getCourseMapItemAssessmentPlanEmbeddingMetadata(record: Re
 		subjectOfferingId: result?.subjectOfferingId,
 		subjectId: result?.subjectId,
 		yearLevel: result?.yearLevel
-	 };
+	};
 }
 
-export async function getCourseMapItemLessonPlanEmbeddingMetadata(record: Record<string, unknown>): Promise<EmbeddingMetadata> {
+export async function getCourseMapItemLessonPlanEmbeddingMetadata(
+	record: Record<string, unknown>
+): Promise<EmbeddingMetadata> {
 	const courseMapItemId = record.courseMapItemId as number;
 
 	const [result] = await db
@@ -852,5 +856,5 @@ export async function getCourseMapItemLessonPlanEmbeddingMetadata(record: Record
 		subjectOfferingId: result?.subjectOfferingId,
 		subjectId: result?.subjectId,
 		yearLevel: result?.yearLevel
-	 };
+	};
 }

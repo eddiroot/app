@@ -1,1066 +1,1066 @@
 {
-  "id": 19000,
-  "curriculumId": 19000,
-  "name": "Accounting Units 3 and 4",
-  "isArchived": false,
-  "learningAreas": [
-    {
-      "id": 19000,
-      "curriculumSubjectId": 19000,
-      "name": "Recording and analysing financial data",
-      "abbreviation": "U3AOS1",
-      "description": "Recording and analysing financial data In this area of study, students focus on identifying and recording financial data for a business. They use double entry accounting to record data and generate accounting information in the form of accounting reports and graphical representations. This information is used to assist the owner in making informed decisions about the operation of the business. Students should also consider strategies to improve the performance of the business, taking into account the relevant ethical considerations. On completion of this unit the student should be able to record financial data using a double entry system; explain the role of the General Journal, General Ledger and inventory cards in the recording process; and describe, discuss and analyse various aspects of accounting reports and the accounting system, including ethical considerations. To achieve this outcome, the student will draw on key knowledge and key skills outlined in Area of Study 1. the accounting assumptions and qualitative characteristics, as applicable documents used by a business to record financial transactions"
-    },
-    {
-      "id": 19001,
-      "curriculumSubjectId": 19000,
-      "name": "Preparing and interpreting accounting reports",
-      "abbreviation": "U3AOS2",
-      "description": "Preparing and interpreting accounting reports The preparation of financial reports at the end of the reporting period provides information to be used as a basis for planning and decision-making by the business owner. Students develop their understanding of the accounting processes and complete those processes that are applicable to the end of a reporting period for a trading business. They apply the accrual method of accounting to the preparation of accounting reports and draw a distinction between cash and profit, considering the implications of these differences when using reports to make decisions. Students undertake an analysis of accounting reports and interpret the information, taking into account relevant ethical considerations, in order to evaluate the performance of the business. On completion of this unit, the student should be able to record transactions and prepare, interpret and analyse accounting reports for a trading business. To achieve this outcome, the student will draw on key knowledge and key skills outlined in Area of Study 2. the accounting assumptions and qualitative characteristics documents used by a business to record financial transactions"
-    },
-    {
-      "id": 19002,
-      "curriculumSubjectId": 19000,
-      "name": "Extension of recording and reporting",
-      "abbreviation": "U4AOS1",
-      "description": "Extension of recording and reporting In this area of study, students further develop their understanding of the recording and reporting of financial data in the General Journal and General Ledger by focusing on balance day adjustments and the alternative methods of depreciating for non-current depreciable assets. Students prepare accounting reports using manual methods and ICT. They consider the effects of balance day adjustments on the accounting reports, and the implications of using alternative methods of depreciation on the accounting reports and on the performance of the business. They also examine ethical considerations that may affect the recording and reporting of financial data and the effects of these on business performance. On completion of this unit, the student should be able to record financial data and balance day adjustments using a double entry system, report accounting information using an accrual-based system, and evaluate the effects of balance day adjustments and alternative methods of depreciation on accounting reports. To achieve this outcome, the student will draw on key knowledge and key skills outlined in Area of Study 1. the accounting assumptions and qualitative characteristics, as applicable documents used by a business to record financial transactions"
-    },
-    {
-      "id": 19003,
-      "curriculumSubjectId": 19000,
-      "name": "Budgeting and decision-making",
-      "abbreviation": "U4AOS2",
-      "description": "Budgeting and decision-making Business owners must plan for future activities if they are to successfully manage the business. Preparing budgeted accounting reports provides the owner with information that will assist in managing and developing strategies to improve business performance. Students prepare and analyse budgeted accounting reports, both manually and using ICT, and suggest strategies to improve the performance of the business. They also discuss and evaluate the ethical considerations associated with business decision-making and business improvement. On completion of this unit, the student should be able to prepare budgeted accounting reports and variance reports for a trading business, using financial and other relevant information, and model, analyse and discuss the effects of alternative strategies on the performance of a business. To achieve this outcome, the student will draw on key knowledge and key skills outlined in Area of Study 2. the accounting assumptions and qualitative characteristics indicators and other relevant information (financial and non-financial) used to measure business performance"
-    }
-  ],
-  "outcomes": [
-    {
-      "id": 19000,
-      "curriculumSubjectId": 19000,
-      "number": 7001,
-      "description": "On completion of this unit the student should be able to record financial data using a double entry system; explain the role of the General Journal, General Ledger and inventory cards in the recording process; and describe, discuss and analyse various aspects of accounting reports and the accounting system, including ethical considerations.",
-      "keyKnowledge": [
-        {
-          "id": 19000,
-          "description": "the accounting assumptions and qualitative characteristics, as applicable",
-          "outcomeId": 19000
-        },
-        {
-          "id": 19001,
-          "description": "documents used by a business to record financial transactions",
-          "outcomeId": 19000
-        },
-        {
-          "id": 19002,
-          "description": "the accounting elements: assets, liabilities, owner’s equity, revenues and expenses",
-          "outcomeId": 19000
-        },
-        {
-          "id": 19003,
-          "description": "the classification of assets and liabilities into categories of current and non-current",
-          "outcomeId": 19000
-        },
-        {
-          "id": 19004,
-          "description": "the effects of transactions on the accounting equation",
-          "outcomeId": 19000
-        },
-        {
-          "id": 19005,
-          "description": "the characteristics of the General Ledger with T-form accounts for manual recording",
-          "outcomeId": 19000
-        },
-        {
-          "id": 19006,
-          "description": "the GST Clearing account",
-          "outcomeId": 19000
-        },
-        {
-          "id": 19007,
-          "description": "the General Journal and General Ledger and their use in recording transactions, both manually and using ICT, including:",
-          "outcomeId": 19000
-        },
-        {
-          "id": 19008,
-          "description": "establishment of a double entry system",
-          "outcomeId": 19000
-        },
-        {
-          "id": 19009,
-          "description": "cash payments (GST on settlement discounts excluded)",
-          "outcomeId": 19000
-        },
-        {
-          "id": 19010,
-          "description": "cash receipts (GST on settlement discounts excluded)",
-          "outcomeId": 19000
-        },
-        {
-          "id": 19011,
-          "description": "credit sales of inventory",
-          "outcomeId": 19000
-        },
-        {
-          "id": 19012,
-          "description": "credit purchases of inventory",
-          "outcomeId": 19000
-        },
-        {
-          "id": 19013,
-          "description": "Sales Returns from accounts receivable",
-          "outcomeId": 19000
-        },
-        {
-          "id": 19014,
-          "description": "Purchase Returns to accounts payable",
-          "outcomeId": 19000
-        },
-        {
-          "id": 19015,
-          "description": "inventory write-down",
-          "outcomeId": 19000
-        },
-        {
-          "id": 19016,
-          "description": "inventory loss or gain",
-          "outcomeId": 19000
-        },
-        {
-          "id": 19017,
-          "description": "correction of errors",
-          "outcomeId": 19000
-        },
-        {
-          "id": 19018,
-          "description": "inventory used for advertising purposes (GST excluded)",
-          "outcomeId": 19000
-        },
-        {
-          "id": 19019,
-          "description": "drawings of inventory by the owner (GST excluded)",
-          "outcomeId": 19000
-        },
-        {
-          "id": 19020,
-          "description": "contribution of non-current assets at fair value by the owner",
-          "outcomeId": 19000
-        },
-        {
-          "id": 19021,
-          "description": "the purpose and preparation of the Trial Balance",
-          "outcomeId": 19000
-        },
-        {
-          "id": 19022,
-          "description": "inventory cards using the First-In, First-Out (FIFO) and Identified Cost methods for:",
-          "outcomeId": 19000
-        },
-        {
-          "id": 19023,
-          "description": "inventory sold",
-          "outcomeId": 19000
-        },
-        {
-          "id": 19024,
-          "description": "inventory purchased",
-          "outcomeId": 19000
-        },
-        {
-          "id": 19025,
-          "description": "inventory returned",
-          "outcomeId": 19000
-        },
-        {
-          "id": 19026,
-          "description": "drawings of inventory by the owner",
-          "outcomeId": 19000
-        },
-        {
-          "id": 19027,
-          "description": "inventory used for advertising",
-          "outcomeId": 19000
-        },
-        {
-          "id": 19028,
-          "description": "inventory loss or gain",
-          "outcomeId": 19000
-        },
-        {
-          "id": 19029,
-          "description": "inventory write-down",
-          "outcomeId": 19000
-        },
-        {
-          "id": 19030,
-          "description": "inventory valuation",
-          "outcomeId": 19000
-        },
-        {
-          "id": 19031,
-          "description": "product cost and period cost",
-          "outcomeId": 19000
-        },
-        {
-          "id": 19032,
-          "description": "the lower of cost and net realisable value (NRV)",
-          "outcomeId": 19000
-        },
-        {
-          "id": 19033,
-          "description": "the creation of an allowance for doubtful debts using the Income Statement approach",
-          "outcomeId": 19000
-        },
-        {
-          "id": 19034,
-          "description": "the writing-off of bad debts using the allowance method in the subsequent period",
-          "outcomeId": 19000
-        },
-        {
-          "id": 19035,
-          "description": "internal control procedures to safeguard resources against theft and fraud",
-          "outcomeId": 19000
-        },
-        {
-          "id": 19036,
-          "description": "financial indicators: inventory turnover, accounts payable turnover, accounts receivable turnover",
-          "outcomeId": 19000
-        },
-        {
-          "id": 19037,
-          "description": "non-financial information available to assist analysis and decision-making in relation to inventory, accounts receivable and accounts payable",
-          "outcomeId": 19000
-        },
-        {
-          "id": 19038,
-          "description": "strategies to improve the management of inventory, accounts receivable and accounts payable",
-          "outcomeId": 19000
-        },
-        {
-          "id": 19039,
-          "description": "ethical considerations when making business decisions in relation to operating a trading business.",
-          "outcomeId": 19000
-        }
-      ],
-      "keySkills": [
-        {
-          "id": 19000,
-          "description": "use correct accounting terminology",
-          "outcomeId": 19000
-        },
-        {
-          "id": 19001,
-          "description": "explain and apply relevant qualitative characteristics and accounting assumptions",
-          "outcomeId": 19000
-        },
-        {
-          "id": 19002,
-          "description": "apply theoretical knowledge to simulated situations",
-          "outcomeId": 19000
-        },
-        {
-          "id": 19003,
-          "description": "identify and manually record financial data in the General Journal, General Ledger and inventory cards",
-          "outcomeId": 19000
-        },
-        {
-          "id": 19004,
-          "description": "use ICT to record financial data in the General Journal, General Ledger and inventory cards and to construct graphical representations",
-          "outcomeId": 19000
-        },
-        {
-          "id": 19005,
-          "description": "distinguish between current and non-current assets, and current and non-current liabilities",
-          "outcomeId": 19000
-        },
-        {
-          "id": 19006,
-          "description": "explain the purpose of a Trial Balance",
-          "outcomeId": 19000
-        },
-        {
-          "id": 19007,
-          "description": "explain and apply appropriate internal control procedures",
-          "outcomeId": 19000
-        },
-        {
-          "id": 19008,
-          "description": "analyse the effects of financial transactions on the accounting equation",
-          "outcomeId": 19000
-        },
-        {
-          "id": 19009,
-          "description": "distinguish between product and period costs in relation to inventory valuation",
-          "outcomeId": 19000
-        },
-        {
-          "id": 19010,
-          "description": "use ICT, including spreadsheets, to model and analyse the effects of alternative inventory valuation methods and cost assignment methods",
-          "outcomeId": 19000
-        },
-        {
-          "id": 19011,
-          "description": "evaluate the effects of alternative inventory valuation methods and cost assignment methods on the accounting equation",
-          "outcomeId": 19000
-        },
-        {
-          "id": 19012,
-          "description": "model and analyse the financial effects of alternative strategies to improve business performance",
-          "outcomeId": 19000
-        },
-        {
-          "id": 19013,
-          "description": "discuss strategies to improve the management of inventory, accounts receivable and accounts payable",
-          "outcomeId": 19000
-        },
-        {
-          "id": 19014,
-          "description": "discuss ethical considerations involved in decisions made by owners of trading businesses.",
-          "outcomeId": 19000
-        }
-      ]
-    },
-    {
-      "id": 19001,
-      "curriculumSubjectId": 19000,
-      "number": 7002,
-      "description": "On completion of this unit, the student should be able to record transactions and prepare, interpret and analyse accounting reports for a trading business.",
-      "keyKnowledge": [
-        {
-          "id": 19040,
-          "description": "the accounting assumptions and qualitative characteristics",
-          "outcomeId": 19001
-        },
-        {
-          "id": 19041,
-          "description": "documents used by a business to record financial transactions",
-          "outcomeId": 19001
-        },
-        {
-          "id": 19042,
-          "description": "the recording of transactions using manual methods and ICT, including spreadsheets",
-          "outcomeId": 19001
-        },
-        {
-          "id": 19043,
-          "description": "the process of balancing General Ledger accounts for assets, liabilities and owner’s equity",
-          "outcomeId": 19001
-        },
-        {
-          "id": 19044,
-          "description": "the recording of closing entries for revenue and expenses in the General Journal and in the General Ledger",
-          "outcomeId": 19001
-        },
-        {
-          "id": 19045,
-          "description": "the preparation of the Profit and Loss Summary account in the General Ledger, with transfer of profit or loss to the Capital account in the General Journal and the General Ledger",
-          "outcomeId": 19001
-        },
-        {
-          "id": 19046,
-          "description": "the recording of the transfer of drawings to the Capital account in the General Journal and General Ledger",
-          "outcomeId": 19001
-        },
-        {
-          "id": 19047,
-          "description": "the characteristics and use of classified accounting reports:",
-          "outcomeId": 19001
-        },
-        {
-          "id": 19048,
-          "description": "Income Statement",
-          "outcomeId": 19001
-        },
-        {
-          "id": 19049,
-          "description": "Balance Sheet",
-          "outcomeId": 19001
-        },
-        {
-          "id": 19050,
-          "description": "Cash Flow Statement",
-          "outcomeId": 19001
-        },
-        {
-          "id": 19051,
-          "description": "the effects of transactions on the accounting reports",
-          "outcomeId": 19001
-        },
-        {
-          "id": 19052,
-          "description": "the distinction between cash and profit",
-          "outcomeId": 19001
-        },
-        {
-          "id": 19053,
-          "description": "financial indicators and non-financial information used to measure business performance",
-          "outcomeId": 19001
-        },
-        {
-          "id": 19054,
-          "description": "graphical representations related to preparing and interpreting accounting reports",
-          "outcomeId": 19001
-        },
-        {
-          "id": 19055,
-          "description": "strategies to improve business performance",
-          "outcomeId": 19001
-        },
-        {
-          "id": 19056,
-          "description": "ethical considerations in relation to the recording and reporting of accounting information.",
-          "outcomeId": 19001
-        }
-      ],
-      "keySkills": [
-        {
-          "id": 19015,
-          "description": "use correct accounting terminology",
-          "outcomeId": 19001
-        },
-        {
-          "id": 19016,
-          "description": "explain and apply relevant qualitative characteristics and accounting assumptions",
-          "outcomeId": 19001
-        },
-        {
-          "id": 19017,
-          "description": "apply theoretical knowledge to simulated situations",
-          "outcomeId": 19001
-        },
-        {
-          "id": 19018,
-          "description": "identify and record financial data manually in the General Journal and the General Ledger, and manually prepare accounting reports",
-          "outcomeId": 19001
-        },
-        {
-          "id": 19019,
-          "description": "use ICT, including spreadsheets, to record transactions in the General Journal and the General Ledger and prepare accounting reports",
-          "outcomeId": 19001
-        },
-        {
-          "id": 19020,
-          "description": "construct appropriate graphical representations to assist with the analysis of classified accounting reports and other information to evaluate the performance of a business",
-          "outcomeId": 19001
-        },
-        {
-          "id": 19021,
-          "description": "analyse the effects of financial transactions on the accounting reports",
-          "outcomeId": 19001
-        },
-        {
-          "id": 19022,
-          "description": "distinguish between cash and profit",
-          "outcomeId": 19001
-        },
-        {
-          "id": 19023,
-          "description": "discuss ethical considerations in relation to the recording and reporting of accounting information.",
-          "outcomeId": 19001
-        }
-      ]
-    },
-    {
-      "id": 19002,
-      "curriculumSubjectId": 19000,
-      "number": 7003,
-      "description": "On completion of this unit, the student should be able to record financial data and balance day adjustments using a double entry system, report accounting information using an accrual-based system, and evaluate the effects of balance day adjustments and alternative methods of depreciation on accounting reports.",
-      "keyKnowledge": [
-        {
-          "id": 19057,
-          "description": "the accounting assumptions and qualitative characteristics, as applicable",
-          "outcomeId": 19002
-        },
-        {
-          "id": 19058,
-          "description": "documents used by a business to record financial transactions",
-          "outcomeId": 19002
-        },
-        {
-          "id": 19059,
-          "description": "indicators and other relevant information (financial and non-financial) to measure business performance",
-          "outcomeId": 19002
-        },
-        {
-          "id": 19060,
-          "description": "the recording of transactions in the General Journal and General Ledger and preparation of classified accounting reports using manual methods and ICT",
-          "outcomeId": 19002
-        },
-        {
-          "id": 19061,
-          "description": "the purchase of non-current depreciable assets for cash",
-          "outcomeId": 19002
-        },
-        {
-          "id": 19062,
-          "description": "the purchase of non-current depreciable assets financed by a loan",
-          "outcomeId": 19002
-        },
-        {
-          "id": 19063,
-          "description": "methods of depreciation: straight-line and reducing balance",
-          "outcomeId": 19002
-        },
-        {
-          "id": 19064,
-          "description": "the implications of alternative methods of depreciation for accounting reports",
-          "outcomeId": 19002
-        },
-        {
-          "id": 19065,
-          "description": "the recording and reporting of the disposal of a non-current depreciable asset",
-          "outcomeId": 19002
-        },
-        {
-          "id": 19066,
-          "description": "GST will apply to the cash disposal of a non-current asset",
-          "outcomeId": 19002
-        },
-        {
-          "id": 19067,
-          "description": "GST will not apply to a disposal where there is a trade in of a non-current asset",
-          "outcomeId": 19002
-        },
-        {
-          "id": 19068,
-          "description": "the recording and reporting of balance day adjustments:",
-          "outcomeId": 19002
-        },
-        {
-          "id": 19069,
-          "description": "prepaid expenses (asset approach), with GST being recorded at the time of payment",
-          "outcomeId": 19002
-        },
-        {
-          "id": 19070,
-          "description": "accrued expenses, with GST being recorded at the time of payment",
-          "outcomeId": 19002
-        },
-        {
-          "id": 19071,
-          "description": "the payment of accrued expenses in the subsequent reporting period",
-          "outcomeId": 19002
-        },
-        {
-          "id": 19072,
-          "description": "unearned revenue (liability approach), with no GST recorded at the time of the deposit",
-          "outcomeId": 19002
-        },
-        {
-          "id": 19073,
-          "description": "accrued revenue, with GST being recorded at the time of receipt",
-          "outcomeId": 19002
-        },
-        {
-          "id": 19074,
-          "description": "receipt of accrued revenue in the subsequent reporting period",
-          "outcomeId": 19002
-        },
-        {
-          "id": 19075,
-          "description": "the purpose and preparation of an adjusted Trial Balance",
-          "outcomeId": 19002
-        },
-        {
-          "id": 19076,
-          "description": "the characteristics and use of classified accounting reports:",
-          "outcomeId": 19002
-        },
-        {
-          "id": 19077,
-          "description": "Cash Flow Statement",
-          "outcomeId": 19002
-        },
-        {
-          "id": 19078,
-          "description": "Income Statement",
-          "outcomeId": 19002
-        },
-        {
-          "id": 19079,
-          "description": "Balance Sheet",
-          "outcomeId": 19002
-        },
-        {
-          "id": 19080,
-          "description": "the effects of transactions on the accounting reports",
-          "outcomeId": 19002
-        },
-        {
-          "id": 19081,
-          "description": "the distinction between cash and profit",
-          "outcomeId": 19002
-        },
-        {
-          "id": 19082,
-          "description": "ethical considerations in relation to the recording and reporting of financial information, and business decision-making.",
-          "outcomeId": 19002
-        }
-      ],
-      "keySkills": [
-        {
-          "id": 19024,
-          "description": "use correct accounting terminology",
-          "outcomeId": 19002
-        },
-        {
-          "id": 19025,
-          "description": "explain and apply relevant qualitative characteristics and accounting assumptions",
-          "outcomeId": 19002
-        },
-        {
-          "id": 19026,
-          "description": "apply theoretical knowledge to simulated situations",
-          "outcomeId": 19002
-        },
-        {
-          "id": 19027,
-          "description": "identify and record financial data and report accounting information",
-          "outcomeId": 19002
-        },
-        {
-          "id": 19028,
-          "description": "manually record transactions in the General Journal and General Ledger and prepare accounting reports",
-          "outcomeId": 19002
-        },
-        {
-          "id": 19029,
-          "description": "use ICT, including spreadsheets, to record transactions, prepare accounting reports and construct graphical representations",
-          "outcomeId": 19002
-        },
-        {
-          "id": 19030,
-          "description": "prepare an adjusted Trial Balance",
-          "outcomeId": 19002
-        },
-        {
-          "id": 19031,
-          "description": "analyse the effects of financial transactions on the accounting reports",
-          "outcomeId": 19002
-        },
-        {
-          "id": 19032,
-          "description": "use ICT, including spreadsheets, to model and analyse alternative depreciation methods",
-          "outcomeId": 19002
-        },
-        {
-          "id": 19033,
-          "description": "compare alternative methods of depreciating non-current assets and justify the method selected",
-          "outcomeId": 19002
-        },
-        {
-          "id": 19034,
-          "description": "evaluate the effects of alternative methods of depreciating non-current assets on accounting reports",
-          "outcomeId": 19002
-        },
-        {
-          "id": 19035,
-          "description": "analyse the effects of balance day adjustments on accounting reports",
-          "outcomeId": 19002
-        },
-        {
-          "id": 19036,
-          "description": "analyse and interpret classified accounting reports, graphical representations and other information to evaluate the performance of a business",
-          "outcomeId": 19002
-        },
-        {
-          "id": 19037,
-          "description": "discuss and evaluate ethical considerations in relation to the recording and reporting of financial information, and business decision-making.",
-          "outcomeId": 19002
-        }
-      ]
-    },
-    {
-      "id": 19003,
-      "curriculumSubjectId": 19000,
-      "number": 7004,
-      "description": "On completion of this unit, the student should be able to prepare budgeted accounting reports and variance reports for a trading business, using financial and other relevant information, and model, analyse and discuss the effects of alternative strategies on the performance of a business.",
-      "keyKnowledge": [
-        {
-          "id": 19083,
-          "description": "the accounting assumptions and qualitative characteristics",
-          "outcomeId": 19003
-        },
-        {
-          "id": 19084,
-          "description": "indicators and other relevant information (financial and non-financial) used to measure business performance",
-          "outcomeId": 19003
-        },
-        {
-          "id": 19085,
-          "description": "the characteristics and use of classified budgeted accounting reports:",
-          "outcomeId": 19003
-        },
-        {
-          "id": 19086,
-          "description": "Budgeted Cash Flow Statement",
-          "outcomeId": 19003
-        },
-        {
-          "id": 19087,
-          "description": "Budgeted Income Statement",
-          "outcomeId": 19003
-        },
-        {
-          "id": 19088,
-          "description": "Budgeted Balance Sheet",
-          "outcomeId": 19003
-        },
-        {
-          "id": 19089,
-          "description": "the use of variance reports and trends for Cash Flow Statements and Income Statements",
-          "outcomeId": 19003
-        },
-        {
-          "id": 19090,
-          "description": "the distinction between cash and profit",
-          "outcomeId": 19003
-        },
-        {
-          "id": 19091,
-          "description": "the analysis of historical and budgeted accounting reports, including a consideration of the limitations of analysis, to develop strategies to improve business performance",
-          "outcomeId": 19003
-        },
-        {
-          "id": 19092,
-          "description": "graphical representations related to preparing and interpreting budgeted accounting reports",
-          "outcomeId": 19003
-        },
-        {
-          "id": 19093,
-          "description": "strategies to improve business performance",
-          "outcomeId": 19003
-        },
-        {
-          "id": 19094,
-          "description": "ethical considerations in relation to business decision-making and the strategies used to improve business performance.",
-          "outcomeId": 19003
-        }
-      ],
-      "keySkills": [
-        {
-          "id": 19038,
-          "description": "use applicable accounting terminology",
-          "outcomeId": 19003
-        },
-        {
-          "id": 19039,
-          "description": "explain and apply relevant qualitative characteristics and accounting assumptions",
-          "outcomeId": 19003
-        },
-        {
-          "id": 19040,
-          "description": "apply theoretical knowledge to simulated situations",
-          "outcomeId": 19003
-        },
-        {
-          "id": 19041,
-          "description": "manually prepare classified budgeted accounting reports and variance reports",
-          "outcomeId": 19003
-        },
-        {
-          "id": 19042,
-          "description": "use ICT, including spreadsheets, to prepare and analyse classified budgeted accounting reports and variance reports, and construct graphical representations",
-          "outcomeId": 19003
-        },
-        {
-          "id": 19043,
-          "description": "model and analyse the financial effects of alternative strategies to improve business performance",
-          "outcomeId": 19003
-        },
-        {
-          "id": 19044,
-          "description": "analyse and interpret classified historical, budgeted and variance reports, graphical representations and other information to evaluate the performance of a business",
-          "outcomeId": 19003
-        },
-        {
-          "id": 19045,
-          "description": "discuss strategies to improve the performance of a business",
-          "outcomeId": 19003
-        },
-        {
-          "id": 19046,
-          "description": "discuss and evaluate ethical considerations in relation to business decision-making and the strategies used to improve business performance.",
-          "outcomeId": 19003
-        }
-      ]
-    }
-  ],
-  "extracontents": [
-    {
-      "id": 19000,
-      "description": "Qualitative characteristics: The International Accounting Standard Board’s (IASB) Conceptual Framework specifies six main qualitative characteristics that financial information in general-purpose financial reports should have. These are listed and described below.",
-      "curriculumSubjectId": 19000,
-      "extraContentType": "definition"
-    },
-    {
-      "id": 19001,
-      "description": "Relevance: Relevant information is that which directly assists the user in making decisions. Relevant financial information is related to making an economic decision and directly assists the user in forming predictions about outcomes of past, present or future events. It may also confirm or change previous evaluations through provision of suitable feedback.",
-      "curriculumSubjectId": 19000,
-      "extraContentType": "definition"
-    },
-    {
-      "id": 19002,
-      "description": "Faithful representation: The information reported must be a faithful representation of the real-world economic event it represents. This means that user is assured that the information presented is complete, free from material error, and neutral (without bias).",
-      "curriculumSubjectId": 19000,
-      "extraContentType": "definition"
-    },
-    {
-      "id": 19003,
-      "description": "Comparability: Comparability is the qualitative characteristic that enables the user to identify and understand similarities and differences between items. Information about an entity is more useful if it can be compared with similar information about other entities, and with similar information about the same entity for another date or period.",
-      "curriculumSubjectId": 19000,
-      "extraContentType": "definition"
-    },
-    {
-      "id": 19004,
-      "description": "Verifiability: Verifiability refers to the ability to ensure that different knowledgeable and independent observers can reach a consensus that a particular depiction of an event is faithfully represented. Verifiability is maintained by retaining the source documents used to record the transaction, and is checked through auditing. The purpose of verifiability is to hold the accounting professional accountable for their work.",
-      "curriculumSubjectId": 19000,
-      "extraContentType": "definition"
-    },
-    {
-      "id": 19005,
-      "description": "Timeliness: Timeliness means that information is available to decision-makers in time to be capable of influence on decisions. Information being available sooner, rather than later, can enhance its capacity to influence decisions, while a lack of timeliness can rob information of its potential usefulness. Generally, the older the information, the less useful it is.",
-      "curriculumSubjectId": 19000,
-      "extraContentType": "definition"
-    },
-    {
-      "id": 19006,
-      "description": "Understandability: Understandability requires financial information to be comprehensible to users with reasonable knowledge of business and economic activities. To be understandable, information should be presented clearly and concisely.",
-      "curriculumSubjectId": 19000,
-      "extraContentType": "definition"
-    },
-    {
-      "id": 19007,
-      "description": "The accounting entity assumption: Under the accounting entity assumption, the records of assets, liabilities and business activities of an entity are kept completely separate from those of the owner of the entity, as well as from those of other entities. A separate set of accounting records is maintained for each entity, with each financial statement prepared providing information on the relevant individual entity only.",
-      "curriculumSubjectId": 19000,
-      "extraContentType": "definition"
-    },
-    {
-      "id": 19008,
-      "description": "The accrual basis assumption: Under the accrual basis assumption, revenue is recognised in the period in which the expected inflow of economic benefits can be measured in a faithful and verifiable manner; that is, revenue is recognised when it is earned. Expenses are recognised when the consumption of goods and services can be measured; that is, expenses are recognised when they are incurred. The accrual basis profit for an accounting period is determined by subtracting expenses incurred for a period from revenue earned in the same period.",
-      "curriculumSubjectId": 19000,
-      "extraContentType": "definition"
-    },
-    {
-      "id": 19009,
-      "description": "The going concern assumption: Under the going concern assumption, financial reports are prepared on the assumption that an existing entity will continue to operate into the future. It is assumed that the entity will not be wound up in the near future but will continue its activities.",
-      "curriculumSubjectId": 19000,
-      "extraContentType": "definition"
-    },
-    {
-      "id": 19010,
-      "description": "The period assumption: According to the period assumption, reports are prepared for a particular period of time, such as a month or a year, in order to obtain comparability of results. Profit determination involves a process of recognising the revenue for a period and deducting the expenses incurred for the same period. A distinction can be made between assets, that will provide benefit to future reporting periods, and expenses which are totally consumed within one reporting period.",
-      "curriculumSubjectId": 19000,
-      "extraContentType": "definition"
-    },
-    {
-      "id": 19011,
-      "description": "Assets: An asset is a present economic resource controlled by an entity as a result of past events. An economic resource is a right that has the potential to produce future economic benefits.",
-      "curriculumSubjectId": 19000,
-      "extraContentType": "definition"
-    },
-    {
-      "id": 19012,
-      "description": "Current assets: Current assets are cash and other types of assets held primarily for the purpose of sale or trading, or are reasonably expected to be converted to cash, sold or consumed by a business within 12 months after the end of the reporting period.",
-      "curriculumSubjectId": 19000,
-      "extraContentType": "definition"
-    },
-    {
-      "id": 19013,
-      "description": "Non-current assets: Non-current assets are expected to be used by the business entity for a number of years and are not held for resale.",
-      "curriculumSubjectId": 19000,
-      "extraContentType": "definition"
-    },
-    {
-      "id": 19014,
-      "description": "Liabilities: A liability is a present obligation of the entity to transfer an economic resource as a result of past events.",
-      "curriculumSubjectId": 19000,
-      "extraContentType": "definition"
-    },
-    {
-      "id": 19015,
-      "description": "Current liabilities: Current liabilities are obligations of the entity that are reasonably expected to be settled within 12 months after the end of the reporting period.",
-      "curriculumSubjectId": 19000,
-      "extraContentType": "definition"
-    },
-    {
-      "id": 19016,
-      "description": "Non-current liabilities: Non-current liabilities are obligations of the entity that are not required to be settled within 12 months after the end of the reporting period.",
-      "curriculumSubjectId": 19000,
-      "extraContentType": "definition"
-    },
-    {
-      "id": 19017,
-      "description": "Owner's equity: Owner's equity is the residual interest in the assets of the entity after deducting all its liabilities.",
-      "curriculumSubjectId": 19000,
-      "extraContentType": "definition"
-    },
-    {
-      "id": 19018,
-      "description": "Revenues: Revenues are increases in assets or decreases in liabilities that result in increases in owner's equity, other than those relating to contributions from the owner. Revenue arises in the course of the ordinary activities of a business and includes items such as sales, fees, interest, dividends, royalties and rent.",
-      "curriculumSubjectId": 19000,
-      "extraContentType": "definition"
-    },
-    {
-      "id": 19019,
-      "description": "Expenses: Expenses are decreases in assets or increases in liabilities, other than those relating to distributions to the owner, that result in a decrease in owner's equity. Expenses encompass losses as well as those expenses that arise in the course of the ordinary activities of a business. Expenses that arise in the course of the ordinary activities of an entity include cost of sales, wages and depreciation.",
-      "curriculumSubjectId": 19000,
-      "extraContentType": "definition"
-    },
-    {
-      "id": 19020,
-      "description": "Gross Profit Margin: (gross profit/net sales) x 100",
-      "curriculumSubjectId": 19000,
-      "extraContentType": "definition"
-    },
-    {
-      "id": 19021,
-      "description": "Net Profit Margin: (net profit/net sales) x 100",
-      "curriculumSubjectId": 19000,
-      "extraContentType": "definition"
-    },
-    {
-      "id": 19022,
-      "description": "Return on assets: (net profit/average total assets) x 100",
-      "curriculumSubjectId": 19000,
-      "extraContentType": "definition"
-    },
-    {
-      "id": 19023,
-      "description": "Asset turnover: (net sales/average total assets) x 100",
-      "curriculumSubjectId": 19000,
-      "extraContentType": "definition"
-    },
-    {
-      "id": 19024,
-      "description": "Return on Owner's Investment: (net profit/average capital) x 100",
-      "curriculumSubjectId": 19000,
-      "extraContentType": "definition"
-    },
-    {
-      "id": 19025,
-      "description": "cash flow cover: (net cash from operating activities/average current liabilities) x 100",
-      "curriculumSubjectId": 19000,
-      "extraContentType": "definition"
-    },
-    {
-      "id": 19026,
-      "description": "Working capital ratio: (current assets/current liabilities) x 100",
-      "curriculumSubjectId": 19000,
-      "extraContentType": "definition"
-    },
-    {
-      "id": 19027,
-      "description": "Quick assets ratio: (current assets - (inventory + prepayments))/current liabilities x 100",
-      "curriculumSubjectId": 19000,
-      "extraContentType": "definition"
-    },
-    {
-      "id": 19028,
-      "description": "Debt ratio: (total liabilities/total assets) x 100",
-      "curriculumSubjectId": 19000,
-      "extraContentType": "definition"
-    },
-    {
-      "id": 19029,
-      "description": "Inventory turnover: (average inventory/cost of goods sold) x 365",
-      "curriculumSubjectId": 19000,
-      "extraContentType": "definition"
-    },
-    {
-      "id": 19030,
-      "description": "Accounts payable turnover: (average accounts payable/net credit purchases (plus GST)) x 365",
-      "curriculumSubjectId": 19000,
-      "extraContentType": "definition"
-    },
-    {
-      "id": 19031,
-      "description": "Accounts receivable turnover: (average accounts receivable/net credit sales (plus GST)) x 365",
-      "curriculumSubjectId": 19000,
-      "extraContentType": "definition"
-    },
-    {
-      "id": 19032,
-      "description": "Documents for a business: Documents used by a business to record financial transactions include: electronic funds transfer (EFT) receipt; electronic funds transfer (EFT) payment; cash receipt; sales invoice; purchase invoice; credit note; memo; statement of account; bank statement; order, shipping and order confirmation; and delivery docket. These documents may be prepared manually or be computer generated. Many documents satisfy the requirements of a tax invoice, which contains specified items of information that are required for effective operation of the GST system.",
-      "curriculumSubjectId": 19000,
-      "extraContentType": "definition"
-    },
-    {
-      "id": 19033,
-      "description": "Goods and services tax: The goods and services tax (GST) is to be included throughout the study design, except where it has been specifically excluded, as indicated in the relevant key knowledge dot points.",
-      "curriculumSubjectId": 19000,
-      "extraContentType": "definition"
-    },
-    {
-      "id": 19034,
-      "description": "FIFO Inventory gain: Inventory gains are determined by using the latest cost price recorded in the IN column of the inventory card. This follows the qualitative characteristic of faithful representation.",
-      "curriculumSubjectId": 19000,
-      "extraContentType": "definition"
-    },
-    {
-      "id": 19035,
-      "description": "FIFO Inventory loss: Inventory losses are to be determined by assuming the inventory lost on the date of the count is calculated by using the oldest cost price of available inventory on hand recorded on the inventory card.",
-      "curriculumSubjectId": 19000,
-      "extraContentType": "definition"
-    },
-    {
-      "id": 19036,
-      "description": "FIFO Sales returns: The cost of each inventory item is calculated by using the latest cost prices shown in the OUT column of the inventory card (reversing the last out).",
-      "curriculumSubjectId": 19000,
-      "extraContentType": "definition"
-    },
-    {
-      "id": 19037,
-      "description": "FIFO Purchases returns: The cost of inventory returned to suppliers is calculated by using the cost price identified by the supplier's credit note.",
-      "curriculumSubjectId": 19000,
-      "extraContentType": "definition"
-    },
-    {
-      "id": 19038,
-      "description": "Identified Cost method Inventory loss/gain: The number of inventory items and their cost is revealed by a physical count.",
-      "curriculumSubjectId": 19000,
-      "extraContentType": "definition"
-    },
-    {
-      "id": 19039,
-      "description": "Identified Cost method Sales returns: The cost of each inventory item is identified on the business document or inventory card.",
-      "curriculumSubjectId": 19000,
-      "extraContentType": "definition"
-    },
-    {
-      "id": 19040,
-      "description": "Identified cost method Purchases returns: The cost of inventory returned to suppliers is calculated by using the cost price identified by the supplier's credit note.",
-      "curriculumSubjectId": 19000,
-      "extraContentType": "definition"
-    },
-    {
-      "id": 19041,
-      "description": "Doubtful debts: An allowance for doubtful debts is created using a percentage of net credit sales. Bad debts are written off using the allowance method.",
-      "curriculumSubjectId": 19000,
-      "extraContentType": "definition"
-    },
-    {
-      "id": 19042,
-      "description": "Closing revenue accounts: Only one General Journal entry is required to close all revenues (including Sales Returns) to the Profit and Loss Summary account, resulting in one entry in the General Ledger account.",
-      "curriculumSubjectId": 19000,
-      "extraContentType": "definition"
-    },
-    {
-      "id": 19043,
-      "description": "Closing expense accounts: Only one General Journal entry is required to close all expenses to the Profit and Loss Summary account, resulting in one entry in the General Ledger account. One General Journal entry is required to transfer the profit/loss from the Profit and Loss Summary account to the Capital account.",
-      "curriculumSubjectId": 19000,
-      "extraContentType": "definition"
-    },
-    {
-      "id": 19044,
-      "description": "Information and communications technology: Information and communications technology (ICT) is an essential aspect of business operations increasingly used to capture, model, analyse and convey information. Students are required to be aware of the use of spreadsheets, the internet and multimedia software in relation to accounting. Commercial accounting software packages may be used. The use of word processing software by students to provide theoretical responses is not applicable to the ICT requirement of each unit. Each unit of VCE Accounting involves student application of ICT to record transactions; create reports; model possible outcomes; construct graphical representations and visualisations; and model alternative scenarios. As a guide, students would typically require a minimum of 15 hours of scheduled class time per unit involving ICT to be able to achieve the outcomes for each unit. Knowledge and use of spreadsheets is essential and should be integrated throughout Units 1 to 4. Spreadsheets are used in accounting practice in a variety of ways, including recording inventory; preparing income statements, variance reports, budgets and other accounting information in various formats; numeric calculation; constructing graphical representations (including charts); comparing the results of alternative business options; and analysing data to assist in decision-making. Financial modelling is used to make estimates of how future scenarios will influence the performance of a business through mathematical projections of the key variables affecting the business. ICT is an important tool used in modelling the potential consequences of different future scenarios when making business decisions. Modelling using ICT enables comparison and analysis of the potential consequences of different decisions. In contemporary society, it is essential for an accountant to use critical and creative thinking skills to explore alternatives, and effectively communicate these to key stakeholders, such as business owners.",
-      "curriculumSubjectId": 19000,
-      "extraContentType": "definition"
-    },
-    {
-      "id": 19045,
-      "description": "Ethical considerations: Business decisions will be influenced not only by financial considerations but also by ethical considerations, including those that are social and environmental in nature. Ethical considerations often have a direct impact on the financial performance of the business. In all consultations and communications, accountants are required to maintain their integrity, impartiality, objectivity and confidentiality.",
-      "curriculumSubjectId": 19000,
-      "extraContentType": "definition"
-    }
-  ]
+	"id": 19000,
+	"curriculumId": 19000,
+	"name": "Accounting Units 3 and 4",
+	"isArchived": false,
+	"learningAreas": [
+		{
+			"id": 19000,
+			"curriculumSubjectId": 19000,
+			"name": "Recording and analysing financial data",
+			"abbreviation": "U3AOS1",
+			"description": "Recording and analysing financial data In this area of study, students focus on identifying and recording financial data for a business. They use double entry accounting to record data and generate accounting information in the form of accounting reports and graphical representations. This information is used to assist the owner in making informed decisions about the operation of the business. Students should also consider strategies to improve the performance of the business, taking into account the relevant ethical considerations. On completion of this unit the student should be able to record financial data using a double entry system; explain the role of the General Journal, General Ledger and inventory cards in the recording process; and describe, discuss and analyse various aspects of accounting reports and the accounting system, including ethical considerations. To achieve this outcome, the student will draw on key knowledge and key skills outlined in Area of Study 1. the accounting assumptions and qualitative characteristics, as applicable documents used by a business to record financial transactions"
+		},
+		{
+			"id": 19001,
+			"curriculumSubjectId": 19000,
+			"name": "Preparing and interpreting accounting reports",
+			"abbreviation": "U3AOS2",
+			"description": "Preparing and interpreting accounting reports The preparation of financial reports at the end of the reporting period provides information to be used as a basis for planning and decision-making by the business owner. Students develop their understanding of the accounting processes and complete those processes that are applicable to the end of a reporting period for a trading business. They apply the accrual method of accounting to the preparation of accounting reports and draw a distinction between cash and profit, considering the implications of these differences when using reports to make decisions. Students undertake an analysis of accounting reports and interpret the information, taking into account relevant ethical considerations, in order to evaluate the performance of the business. On completion of this unit, the student should be able to record transactions and prepare, interpret and analyse accounting reports for a trading business. To achieve this outcome, the student will draw on key knowledge and key skills outlined in Area of Study 2. the accounting assumptions and qualitative characteristics documents used by a business to record financial transactions"
+		},
+		{
+			"id": 19002,
+			"curriculumSubjectId": 19000,
+			"name": "Extension of recording and reporting",
+			"abbreviation": "U4AOS1",
+			"description": "Extension of recording and reporting In this area of study, students further develop their understanding of the recording and reporting of financial data in the General Journal and General Ledger by focusing on balance day adjustments and the alternative methods of depreciating for non-current depreciable assets. Students prepare accounting reports using manual methods and ICT. They consider the effects of balance day adjustments on the accounting reports, and the implications of using alternative methods of depreciation on the accounting reports and on the performance of the business. They also examine ethical considerations that may affect the recording and reporting of financial data and the effects of these on business performance. On completion of this unit, the student should be able to record financial data and balance day adjustments using a double entry system, report accounting information using an accrual-based system, and evaluate the effects of balance day adjustments and alternative methods of depreciation on accounting reports. To achieve this outcome, the student will draw on key knowledge and key skills outlined in Area of Study 1. the accounting assumptions and qualitative characteristics, as applicable documents used by a business to record financial transactions"
+		},
+		{
+			"id": 19003,
+			"curriculumSubjectId": 19000,
+			"name": "Budgeting and decision-making",
+			"abbreviation": "U4AOS2",
+			"description": "Budgeting and decision-making Business owners must plan for future activities if they are to successfully manage the business. Preparing budgeted accounting reports provides the owner with information that will assist in managing and developing strategies to improve business performance. Students prepare and analyse budgeted accounting reports, both manually and using ICT, and suggest strategies to improve the performance of the business. They also discuss and evaluate the ethical considerations associated with business decision-making and business improvement. On completion of this unit, the student should be able to prepare budgeted accounting reports and variance reports for a trading business, using financial and other relevant information, and model, analyse and discuss the effects of alternative strategies on the performance of a business. To achieve this outcome, the student will draw on key knowledge and key skills outlined in Area of Study 2. the accounting assumptions and qualitative characteristics indicators and other relevant information (financial and non-financial) used to measure business performance"
+		}
+	],
+	"outcomes": [
+		{
+			"id": 19000,
+			"curriculumSubjectId": 19000,
+			"number": 7001,
+			"description": "On completion of this unit the student should be able to record financial data using a double entry system; explain the role of the General Journal, General Ledger and inventory cards in the recording process; and describe, discuss and analyse various aspects of accounting reports and the accounting system, including ethical considerations.",
+			"keyKnowledge": [
+				{
+					"id": 19000,
+					"description": "the accounting assumptions and qualitative characteristics, as applicable",
+					"outcomeId": 19000
+				},
+				{
+					"id": 19001,
+					"description": "documents used by a business to record financial transactions",
+					"outcomeId": 19000
+				},
+				{
+					"id": 19002,
+					"description": "the accounting elements: assets, liabilities, owner’s equity, revenues and expenses",
+					"outcomeId": 19000
+				},
+				{
+					"id": 19003,
+					"description": "the classification of assets and liabilities into categories of current and non-current",
+					"outcomeId": 19000
+				},
+				{
+					"id": 19004,
+					"description": "the effects of transactions on the accounting equation",
+					"outcomeId": 19000
+				},
+				{
+					"id": 19005,
+					"description": "the characteristics of the General Ledger with T-form accounts for manual recording",
+					"outcomeId": 19000
+				},
+				{
+					"id": 19006,
+					"description": "the GST Clearing account",
+					"outcomeId": 19000
+				},
+				{
+					"id": 19007,
+					"description": "the General Journal and General Ledger and their use in recording transactions, both manually and using ICT, including:",
+					"outcomeId": 19000
+				},
+				{
+					"id": 19008,
+					"description": "establishment of a double entry system",
+					"outcomeId": 19000
+				},
+				{
+					"id": 19009,
+					"description": "cash payments (GST on settlement discounts excluded)",
+					"outcomeId": 19000
+				},
+				{
+					"id": 19010,
+					"description": "cash receipts (GST on settlement discounts excluded)",
+					"outcomeId": 19000
+				},
+				{
+					"id": 19011,
+					"description": "credit sales of inventory",
+					"outcomeId": 19000
+				},
+				{
+					"id": 19012,
+					"description": "credit purchases of inventory",
+					"outcomeId": 19000
+				},
+				{
+					"id": 19013,
+					"description": "Sales Returns from accounts receivable",
+					"outcomeId": 19000
+				},
+				{
+					"id": 19014,
+					"description": "Purchase Returns to accounts payable",
+					"outcomeId": 19000
+				},
+				{
+					"id": 19015,
+					"description": "inventory write-down",
+					"outcomeId": 19000
+				},
+				{
+					"id": 19016,
+					"description": "inventory loss or gain",
+					"outcomeId": 19000
+				},
+				{
+					"id": 19017,
+					"description": "correction of errors",
+					"outcomeId": 19000
+				},
+				{
+					"id": 19018,
+					"description": "inventory used for advertising purposes (GST excluded)",
+					"outcomeId": 19000
+				},
+				{
+					"id": 19019,
+					"description": "drawings of inventory by the owner (GST excluded)",
+					"outcomeId": 19000
+				},
+				{
+					"id": 19020,
+					"description": "contribution of non-current assets at fair value by the owner",
+					"outcomeId": 19000
+				},
+				{
+					"id": 19021,
+					"description": "the purpose and preparation of the Trial Balance",
+					"outcomeId": 19000
+				},
+				{
+					"id": 19022,
+					"description": "inventory cards using the First-In, First-Out (FIFO) and Identified Cost methods for:",
+					"outcomeId": 19000
+				},
+				{
+					"id": 19023,
+					"description": "inventory sold",
+					"outcomeId": 19000
+				},
+				{
+					"id": 19024,
+					"description": "inventory purchased",
+					"outcomeId": 19000
+				},
+				{
+					"id": 19025,
+					"description": "inventory returned",
+					"outcomeId": 19000
+				},
+				{
+					"id": 19026,
+					"description": "drawings of inventory by the owner",
+					"outcomeId": 19000
+				},
+				{
+					"id": 19027,
+					"description": "inventory used for advertising",
+					"outcomeId": 19000
+				},
+				{
+					"id": 19028,
+					"description": "inventory loss or gain",
+					"outcomeId": 19000
+				},
+				{
+					"id": 19029,
+					"description": "inventory write-down",
+					"outcomeId": 19000
+				},
+				{
+					"id": 19030,
+					"description": "inventory valuation",
+					"outcomeId": 19000
+				},
+				{
+					"id": 19031,
+					"description": "product cost and period cost",
+					"outcomeId": 19000
+				},
+				{
+					"id": 19032,
+					"description": "the lower of cost and net realisable value (NRV)",
+					"outcomeId": 19000
+				},
+				{
+					"id": 19033,
+					"description": "the creation of an allowance for doubtful debts using the Income Statement approach",
+					"outcomeId": 19000
+				},
+				{
+					"id": 19034,
+					"description": "the writing-off of bad debts using the allowance method in the subsequent period",
+					"outcomeId": 19000
+				},
+				{
+					"id": 19035,
+					"description": "internal control procedures to safeguard resources against theft and fraud",
+					"outcomeId": 19000
+				},
+				{
+					"id": 19036,
+					"description": "financial indicators: inventory turnover, accounts payable turnover, accounts receivable turnover",
+					"outcomeId": 19000
+				},
+				{
+					"id": 19037,
+					"description": "non-financial information available to assist analysis and decision-making in relation to inventory, accounts receivable and accounts payable",
+					"outcomeId": 19000
+				},
+				{
+					"id": 19038,
+					"description": "strategies to improve the management of inventory, accounts receivable and accounts payable",
+					"outcomeId": 19000
+				},
+				{
+					"id": 19039,
+					"description": "ethical considerations when making business decisions in relation to operating a trading business.",
+					"outcomeId": 19000
+				}
+			],
+			"keySkills": [
+				{
+					"id": 19000,
+					"description": "use correct accounting terminology",
+					"outcomeId": 19000
+				},
+				{
+					"id": 19001,
+					"description": "explain and apply relevant qualitative characteristics and accounting assumptions",
+					"outcomeId": 19000
+				},
+				{
+					"id": 19002,
+					"description": "apply theoretical knowledge to simulated situations",
+					"outcomeId": 19000
+				},
+				{
+					"id": 19003,
+					"description": "identify and manually record financial data in the General Journal, General Ledger and inventory cards",
+					"outcomeId": 19000
+				},
+				{
+					"id": 19004,
+					"description": "use ICT to record financial data in the General Journal, General Ledger and inventory cards and to construct graphical representations",
+					"outcomeId": 19000
+				},
+				{
+					"id": 19005,
+					"description": "distinguish between current and non-current assets, and current and non-current liabilities",
+					"outcomeId": 19000
+				},
+				{
+					"id": 19006,
+					"description": "explain the purpose of a Trial Balance",
+					"outcomeId": 19000
+				},
+				{
+					"id": 19007,
+					"description": "explain and apply appropriate internal control procedures",
+					"outcomeId": 19000
+				},
+				{
+					"id": 19008,
+					"description": "analyse the effects of financial transactions on the accounting equation",
+					"outcomeId": 19000
+				},
+				{
+					"id": 19009,
+					"description": "distinguish between product and period costs in relation to inventory valuation",
+					"outcomeId": 19000
+				},
+				{
+					"id": 19010,
+					"description": "use ICT, including spreadsheets, to model and analyse the effects of alternative inventory valuation methods and cost assignment methods",
+					"outcomeId": 19000
+				},
+				{
+					"id": 19011,
+					"description": "evaluate the effects of alternative inventory valuation methods and cost assignment methods on the accounting equation",
+					"outcomeId": 19000
+				},
+				{
+					"id": 19012,
+					"description": "model and analyse the financial effects of alternative strategies to improve business performance",
+					"outcomeId": 19000
+				},
+				{
+					"id": 19013,
+					"description": "discuss strategies to improve the management of inventory, accounts receivable and accounts payable",
+					"outcomeId": 19000
+				},
+				{
+					"id": 19014,
+					"description": "discuss ethical considerations involved in decisions made by owners of trading businesses.",
+					"outcomeId": 19000
+				}
+			]
+		},
+		{
+			"id": 19001,
+			"curriculumSubjectId": 19000,
+			"number": 7002,
+			"description": "On completion of this unit, the student should be able to record transactions and prepare, interpret and analyse accounting reports for a trading business.",
+			"keyKnowledge": [
+				{
+					"id": 19040,
+					"description": "the accounting assumptions and qualitative characteristics",
+					"outcomeId": 19001
+				},
+				{
+					"id": 19041,
+					"description": "documents used by a business to record financial transactions",
+					"outcomeId": 19001
+				},
+				{
+					"id": 19042,
+					"description": "the recording of transactions using manual methods and ICT, including spreadsheets",
+					"outcomeId": 19001
+				},
+				{
+					"id": 19043,
+					"description": "the process of balancing General Ledger accounts for assets, liabilities and owner’s equity",
+					"outcomeId": 19001
+				},
+				{
+					"id": 19044,
+					"description": "the recording of closing entries for revenue and expenses in the General Journal and in the General Ledger",
+					"outcomeId": 19001
+				},
+				{
+					"id": 19045,
+					"description": "the preparation of the Profit and Loss Summary account in the General Ledger, with transfer of profit or loss to the Capital account in the General Journal and the General Ledger",
+					"outcomeId": 19001
+				},
+				{
+					"id": 19046,
+					"description": "the recording of the transfer of drawings to the Capital account in the General Journal and General Ledger",
+					"outcomeId": 19001
+				},
+				{
+					"id": 19047,
+					"description": "the characteristics and use of classified accounting reports:",
+					"outcomeId": 19001
+				},
+				{
+					"id": 19048,
+					"description": "Income Statement",
+					"outcomeId": 19001
+				},
+				{
+					"id": 19049,
+					"description": "Balance Sheet",
+					"outcomeId": 19001
+				},
+				{
+					"id": 19050,
+					"description": "Cash Flow Statement",
+					"outcomeId": 19001
+				},
+				{
+					"id": 19051,
+					"description": "the effects of transactions on the accounting reports",
+					"outcomeId": 19001
+				},
+				{
+					"id": 19052,
+					"description": "the distinction between cash and profit",
+					"outcomeId": 19001
+				},
+				{
+					"id": 19053,
+					"description": "financial indicators and non-financial information used to measure business performance",
+					"outcomeId": 19001
+				},
+				{
+					"id": 19054,
+					"description": "graphical representations related to preparing and interpreting accounting reports",
+					"outcomeId": 19001
+				},
+				{
+					"id": 19055,
+					"description": "strategies to improve business performance",
+					"outcomeId": 19001
+				},
+				{
+					"id": 19056,
+					"description": "ethical considerations in relation to the recording and reporting of accounting information.",
+					"outcomeId": 19001
+				}
+			],
+			"keySkills": [
+				{
+					"id": 19015,
+					"description": "use correct accounting terminology",
+					"outcomeId": 19001
+				},
+				{
+					"id": 19016,
+					"description": "explain and apply relevant qualitative characteristics and accounting assumptions",
+					"outcomeId": 19001
+				},
+				{
+					"id": 19017,
+					"description": "apply theoretical knowledge to simulated situations",
+					"outcomeId": 19001
+				},
+				{
+					"id": 19018,
+					"description": "identify and record financial data manually in the General Journal and the General Ledger, and manually prepare accounting reports",
+					"outcomeId": 19001
+				},
+				{
+					"id": 19019,
+					"description": "use ICT, including spreadsheets, to record transactions in the General Journal and the General Ledger and prepare accounting reports",
+					"outcomeId": 19001
+				},
+				{
+					"id": 19020,
+					"description": "construct appropriate graphical representations to assist with the analysis of classified accounting reports and other information to evaluate the performance of a business",
+					"outcomeId": 19001
+				},
+				{
+					"id": 19021,
+					"description": "analyse the effects of financial transactions on the accounting reports",
+					"outcomeId": 19001
+				},
+				{
+					"id": 19022,
+					"description": "distinguish between cash and profit",
+					"outcomeId": 19001
+				},
+				{
+					"id": 19023,
+					"description": "discuss ethical considerations in relation to the recording and reporting of accounting information.",
+					"outcomeId": 19001
+				}
+			]
+		},
+		{
+			"id": 19002,
+			"curriculumSubjectId": 19000,
+			"number": 7003,
+			"description": "On completion of this unit, the student should be able to record financial data and balance day adjustments using a double entry system, report accounting information using an accrual-based system, and evaluate the effects of balance day adjustments and alternative methods of depreciation on accounting reports.",
+			"keyKnowledge": [
+				{
+					"id": 19057,
+					"description": "the accounting assumptions and qualitative characteristics, as applicable",
+					"outcomeId": 19002
+				},
+				{
+					"id": 19058,
+					"description": "documents used by a business to record financial transactions",
+					"outcomeId": 19002
+				},
+				{
+					"id": 19059,
+					"description": "indicators and other relevant information (financial and non-financial) to measure business performance",
+					"outcomeId": 19002
+				},
+				{
+					"id": 19060,
+					"description": "the recording of transactions in the General Journal and General Ledger and preparation of classified accounting reports using manual methods and ICT",
+					"outcomeId": 19002
+				},
+				{
+					"id": 19061,
+					"description": "the purchase of non-current depreciable assets for cash",
+					"outcomeId": 19002
+				},
+				{
+					"id": 19062,
+					"description": "the purchase of non-current depreciable assets financed by a loan",
+					"outcomeId": 19002
+				},
+				{
+					"id": 19063,
+					"description": "methods of depreciation: straight-line and reducing balance",
+					"outcomeId": 19002
+				},
+				{
+					"id": 19064,
+					"description": "the implications of alternative methods of depreciation for accounting reports",
+					"outcomeId": 19002
+				},
+				{
+					"id": 19065,
+					"description": "the recording and reporting of the disposal of a non-current depreciable asset",
+					"outcomeId": 19002
+				},
+				{
+					"id": 19066,
+					"description": "GST will apply to the cash disposal of a non-current asset",
+					"outcomeId": 19002
+				},
+				{
+					"id": 19067,
+					"description": "GST will not apply to a disposal where there is a trade in of a non-current asset",
+					"outcomeId": 19002
+				},
+				{
+					"id": 19068,
+					"description": "the recording and reporting of balance day adjustments:",
+					"outcomeId": 19002
+				},
+				{
+					"id": 19069,
+					"description": "prepaid expenses (asset approach), with GST being recorded at the time of payment",
+					"outcomeId": 19002
+				},
+				{
+					"id": 19070,
+					"description": "accrued expenses, with GST being recorded at the time of payment",
+					"outcomeId": 19002
+				},
+				{
+					"id": 19071,
+					"description": "the payment of accrued expenses in the subsequent reporting period",
+					"outcomeId": 19002
+				},
+				{
+					"id": 19072,
+					"description": "unearned revenue (liability approach), with no GST recorded at the time of the deposit",
+					"outcomeId": 19002
+				},
+				{
+					"id": 19073,
+					"description": "accrued revenue, with GST being recorded at the time of receipt",
+					"outcomeId": 19002
+				},
+				{
+					"id": 19074,
+					"description": "receipt of accrued revenue in the subsequent reporting period",
+					"outcomeId": 19002
+				},
+				{
+					"id": 19075,
+					"description": "the purpose and preparation of an adjusted Trial Balance",
+					"outcomeId": 19002
+				},
+				{
+					"id": 19076,
+					"description": "the characteristics and use of classified accounting reports:",
+					"outcomeId": 19002
+				},
+				{
+					"id": 19077,
+					"description": "Cash Flow Statement",
+					"outcomeId": 19002
+				},
+				{
+					"id": 19078,
+					"description": "Income Statement",
+					"outcomeId": 19002
+				},
+				{
+					"id": 19079,
+					"description": "Balance Sheet",
+					"outcomeId": 19002
+				},
+				{
+					"id": 19080,
+					"description": "the effects of transactions on the accounting reports",
+					"outcomeId": 19002
+				},
+				{
+					"id": 19081,
+					"description": "the distinction between cash and profit",
+					"outcomeId": 19002
+				},
+				{
+					"id": 19082,
+					"description": "ethical considerations in relation to the recording and reporting of financial information, and business decision-making.",
+					"outcomeId": 19002
+				}
+			],
+			"keySkills": [
+				{
+					"id": 19024,
+					"description": "use correct accounting terminology",
+					"outcomeId": 19002
+				},
+				{
+					"id": 19025,
+					"description": "explain and apply relevant qualitative characteristics and accounting assumptions",
+					"outcomeId": 19002
+				},
+				{
+					"id": 19026,
+					"description": "apply theoretical knowledge to simulated situations",
+					"outcomeId": 19002
+				},
+				{
+					"id": 19027,
+					"description": "identify and record financial data and report accounting information",
+					"outcomeId": 19002
+				},
+				{
+					"id": 19028,
+					"description": "manually record transactions in the General Journal and General Ledger and prepare accounting reports",
+					"outcomeId": 19002
+				},
+				{
+					"id": 19029,
+					"description": "use ICT, including spreadsheets, to record transactions, prepare accounting reports and construct graphical representations",
+					"outcomeId": 19002
+				},
+				{
+					"id": 19030,
+					"description": "prepare an adjusted Trial Balance",
+					"outcomeId": 19002
+				},
+				{
+					"id": 19031,
+					"description": "analyse the effects of financial transactions on the accounting reports",
+					"outcomeId": 19002
+				},
+				{
+					"id": 19032,
+					"description": "use ICT, including spreadsheets, to model and analyse alternative depreciation methods",
+					"outcomeId": 19002
+				},
+				{
+					"id": 19033,
+					"description": "compare alternative methods of depreciating non-current assets and justify the method selected",
+					"outcomeId": 19002
+				},
+				{
+					"id": 19034,
+					"description": "evaluate the effects of alternative methods of depreciating non-current assets on accounting reports",
+					"outcomeId": 19002
+				},
+				{
+					"id": 19035,
+					"description": "analyse the effects of balance day adjustments on accounting reports",
+					"outcomeId": 19002
+				},
+				{
+					"id": 19036,
+					"description": "analyse and interpret classified accounting reports, graphical representations and other information to evaluate the performance of a business",
+					"outcomeId": 19002
+				},
+				{
+					"id": 19037,
+					"description": "discuss and evaluate ethical considerations in relation to the recording and reporting of financial information, and business decision-making.",
+					"outcomeId": 19002
+				}
+			]
+		},
+		{
+			"id": 19003,
+			"curriculumSubjectId": 19000,
+			"number": 7004,
+			"description": "On completion of this unit, the student should be able to prepare budgeted accounting reports and variance reports for a trading business, using financial and other relevant information, and model, analyse and discuss the effects of alternative strategies on the performance of a business.",
+			"keyKnowledge": [
+				{
+					"id": 19083,
+					"description": "the accounting assumptions and qualitative characteristics",
+					"outcomeId": 19003
+				},
+				{
+					"id": 19084,
+					"description": "indicators and other relevant information (financial and non-financial) used to measure business performance",
+					"outcomeId": 19003
+				},
+				{
+					"id": 19085,
+					"description": "the characteristics and use of classified budgeted accounting reports:",
+					"outcomeId": 19003
+				},
+				{
+					"id": 19086,
+					"description": "Budgeted Cash Flow Statement",
+					"outcomeId": 19003
+				},
+				{
+					"id": 19087,
+					"description": "Budgeted Income Statement",
+					"outcomeId": 19003
+				},
+				{
+					"id": 19088,
+					"description": "Budgeted Balance Sheet",
+					"outcomeId": 19003
+				},
+				{
+					"id": 19089,
+					"description": "the use of variance reports and trends for Cash Flow Statements and Income Statements",
+					"outcomeId": 19003
+				},
+				{
+					"id": 19090,
+					"description": "the distinction between cash and profit",
+					"outcomeId": 19003
+				},
+				{
+					"id": 19091,
+					"description": "the analysis of historical and budgeted accounting reports, including a consideration of the limitations of analysis, to develop strategies to improve business performance",
+					"outcomeId": 19003
+				},
+				{
+					"id": 19092,
+					"description": "graphical representations related to preparing and interpreting budgeted accounting reports",
+					"outcomeId": 19003
+				},
+				{
+					"id": 19093,
+					"description": "strategies to improve business performance",
+					"outcomeId": 19003
+				},
+				{
+					"id": 19094,
+					"description": "ethical considerations in relation to business decision-making and the strategies used to improve business performance.",
+					"outcomeId": 19003
+				}
+			],
+			"keySkills": [
+				{
+					"id": 19038,
+					"description": "use applicable accounting terminology",
+					"outcomeId": 19003
+				},
+				{
+					"id": 19039,
+					"description": "explain and apply relevant qualitative characteristics and accounting assumptions",
+					"outcomeId": 19003
+				},
+				{
+					"id": 19040,
+					"description": "apply theoretical knowledge to simulated situations",
+					"outcomeId": 19003
+				},
+				{
+					"id": 19041,
+					"description": "manually prepare classified budgeted accounting reports and variance reports",
+					"outcomeId": 19003
+				},
+				{
+					"id": 19042,
+					"description": "use ICT, including spreadsheets, to prepare and analyse classified budgeted accounting reports and variance reports, and construct graphical representations",
+					"outcomeId": 19003
+				},
+				{
+					"id": 19043,
+					"description": "model and analyse the financial effects of alternative strategies to improve business performance",
+					"outcomeId": 19003
+				},
+				{
+					"id": 19044,
+					"description": "analyse and interpret classified historical, budgeted and variance reports, graphical representations and other information to evaluate the performance of a business",
+					"outcomeId": 19003
+				},
+				{
+					"id": 19045,
+					"description": "discuss strategies to improve the performance of a business",
+					"outcomeId": 19003
+				},
+				{
+					"id": 19046,
+					"description": "discuss and evaluate ethical considerations in relation to business decision-making and the strategies used to improve business performance.",
+					"outcomeId": 19003
+				}
+			]
+		}
+	],
+	"extracontents": [
+		{
+			"id": 19000,
+			"description": "Qualitative characteristics: The International Accounting Standard Board’s (IASB) Conceptual Framework specifies six main qualitative characteristics that financial information in general-purpose financial reports should have. These are listed and described below.",
+			"curriculumSubjectId": 19000,
+			"extraContentType": "definition"
+		},
+		{
+			"id": 19001,
+			"description": "Relevance: Relevant information is that which directly assists the user in making decisions. Relevant financial information is related to making an economic decision and directly assists the user in forming predictions about outcomes of past, present or future events. It may also confirm or change previous evaluations through provision of suitable feedback.",
+			"curriculumSubjectId": 19000,
+			"extraContentType": "definition"
+		},
+		{
+			"id": 19002,
+			"description": "Faithful representation: The information reported must be a faithful representation of the real-world economic event it represents. This means that user is assured that the information presented is complete, free from material error, and neutral (without bias).",
+			"curriculumSubjectId": 19000,
+			"extraContentType": "definition"
+		},
+		{
+			"id": 19003,
+			"description": "Comparability: Comparability is the qualitative characteristic that enables the user to identify and understand similarities and differences between items. Information about an entity is more useful if it can be compared with similar information about other entities, and with similar information about the same entity for another date or period.",
+			"curriculumSubjectId": 19000,
+			"extraContentType": "definition"
+		},
+		{
+			"id": 19004,
+			"description": "Verifiability: Verifiability refers to the ability to ensure that different knowledgeable and independent observers can reach a consensus that a particular depiction of an event is faithfully represented. Verifiability is maintained by retaining the source documents used to record the transaction, and is checked through auditing. The purpose of verifiability is to hold the accounting professional accountable for their work.",
+			"curriculumSubjectId": 19000,
+			"extraContentType": "definition"
+		},
+		{
+			"id": 19005,
+			"description": "Timeliness: Timeliness means that information is available to decision-makers in time to be capable of influence on decisions. Information being available sooner, rather than later, can enhance its capacity to influence decisions, while a lack of timeliness can rob information of its potential usefulness. Generally, the older the information, the less useful it is.",
+			"curriculumSubjectId": 19000,
+			"extraContentType": "definition"
+		},
+		{
+			"id": 19006,
+			"description": "Understandability: Understandability requires financial information to be comprehensible to users with reasonable knowledge of business and economic activities. To be understandable, information should be presented clearly and concisely.",
+			"curriculumSubjectId": 19000,
+			"extraContentType": "definition"
+		},
+		{
+			"id": 19007,
+			"description": "The accounting entity assumption: Under the accounting entity assumption, the records of assets, liabilities and business activities of an entity are kept completely separate from those of the owner of the entity, as well as from those of other entities. A separate set of accounting records is maintained for each entity, with each financial statement prepared providing information on the relevant individual entity only.",
+			"curriculumSubjectId": 19000,
+			"extraContentType": "definition"
+		},
+		{
+			"id": 19008,
+			"description": "The accrual basis assumption: Under the accrual basis assumption, revenue is recognised in the period in which the expected inflow of economic benefits can be measured in a faithful and verifiable manner; that is, revenue is recognised when it is earned. Expenses are recognised when the consumption of goods and services can be measured; that is, expenses are recognised when they are incurred. The accrual basis profit for an accounting period is determined by subtracting expenses incurred for a period from revenue earned in the same period.",
+			"curriculumSubjectId": 19000,
+			"extraContentType": "definition"
+		},
+		{
+			"id": 19009,
+			"description": "The going concern assumption: Under the going concern assumption, financial reports are prepared on the assumption that an existing entity will continue to operate into the future. It is assumed that the entity will not be wound up in the near future but will continue its activities.",
+			"curriculumSubjectId": 19000,
+			"extraContentType": "definition"
+		},
+		{
+			"id": 19010,
+			"description": "The period assumption: According to the period assumption, reports are prepared for a particular period of time, such as a month or a year, in order to obtain comparability of results. Profit determination involves a process of recognising the revenue for a period and deducting the expenses incurred for the same period. A distinction can be made between assets, that will provide benefit to future reporting periods, and expenses which are totally consumed within one reporting period.",
+			"curriculumSubjectId": 19000,
+			"extraContentType": "definition"
+		},
+		{
+			"id": 19011,
+			"description": "Assets: An asset is a present economic resource controlled by an entity as a result of past events. An economic resource is a right that has the potential to produce future economic benefits.",
+			"curriculumSubjectId": 19000,
+			"extraContentType": "definition"
+		},
+		{
+			"id": 19012,
+			"description": "Current assets: Current assets are cash and other types of assets held primarily for the purpose of sale or trading, or are reasonably expected to be converted to cash, sold or consumed by a business within 12 months after the end of the reporting period.",
+			"curriculumSubjectId": 19000,
+			"extraContentType": "definition"
+		},
+		{
+			"id": 19013,
+			"description": "Non-current assets: Non-current assets are expected to be used by the business entity for a number of years and are not held for resale.",
+			"curriculumSubjectId": 19000,
+			"extraContentType": "definition"
+		},
+		{
+			"id": 19014,
+			"description": "Liabilities: A liability is a present obligation of the entity to transfer an economic resource as a result of past events.",
+			"curriculumSubjectId": 19000,
+			"extraContentType": "definition"
+		},
+		{
+			"id": 19015,
+			"description": "Current liabilities: Current liabilities are obligations of the entity that are reasonably expected to be settled within 12 months after the end of the reporting period.",
+			"curriculumSubjectId": 19000,
+			"extraContentType": "definition"
+		},
+		{
+			"id": 19016,
+			"description": "Non-current liabilities: Non-current liabilities are obligations of the entity that are not required to be settled within 12 months after the end of the reporting period.",
+			"curriculumSubjectId": 19000,
+			"extraContentType": "definition"
+		},
+		{
+			"id": 19017,
+			"description": "Owner's equity: Owner's equity is the residual interest in the assets of the entity after deducting all its liabilities.",
+			"curriculumSubjectId": 19000,
+			"extraContentType": "definition"
+		},
+		{
+			"id": 19018,
+			"description": "Revenues: Revenues are increases in assets or decreases in liabilities that result in increases in owner's equity, other than those relating to contributions from the owner. Revenue arises in the course of the ordinary activities of a business and includes items such as sales, fees, interest, dividends, royalties and rent.",
+			"curriculumSubjectId": 19000,
+			"extraContentType": "definition"
+		},
+		{
+			"id": 19019,
+			"description": "Expenses: Expenses are decreases in assets or increases in liabilities, other than those relating to distributions to the owner, that result in a decrease in owner's equity. Expenses encompass losses as well as those expenses that arise in the course of the ordinary activities of a business. Expenses that arise in the course of the ordinary activities of an entity include cost of sales, wages and depreciation.",
+			"curriculumSubjectId": 19000,
+			"extraContentType": "definition"
+		},
+		{
+			"id": 19020,
+			"description": "Gross Profit Margin: (gross profit/net sales) x 100",
+			"curriculumSubjectId": 19000,
+			"extraContentType": "definition"
+		},
+		{
+			"id": 19021,
+			"description": "Net Profit Margin: (net profit/net sales) x 100",
+			"curriculumSubjectId": 19000,
+			"extraContentType": "definition"
+		},
+		{
+			"id": 19022,
+			"description": "Return on assets: (net profit/average total assets) x 100",
+			"curriculumSubjectId": 19000,
+			"extraContentType": "definition"
+		},
+		{
+			"id": 19023,
+			"description": "Asset turnover: (net sales/average total assets) x 100",
+			"curriculumSubjectId": 19000,
+			"extraContentType": "definition"
+		},
+		{
+			"id": 19024,
+			"description": "Return on Owner's Investment: (net profit/average capital) x 100",
+			"curriculumSubjectId": 19000,
+			"extraContentType": "definition"
+		},
+		{
+			"id": 19025,
+			"description": "cash flow cover: (net cash from operating activities/average current liabilities) x 100",
+			"curriculumSubjectId": 19000,
+			"extraContentType": "definition"
+		},
+		{
+			"id": 19026,
+			"description": "Working capital ratio: (current assets/current liabilities) x 100",
+			"curriculumSubjectId": 19000,
+			"extraContentType": "definition"
+		},
+		{
+			"id": 19027,
+			"description": "Quick assets ratio: (current assets - (inventory + prepayments))/current liabilities x 100",
+			"curriculumSubjectId": 19000,
+			"extraContentType": "definition"
+		},
+		{
+			"id": 19028,
+			"description": "Debt ratio: (total liabilities/total assets) x 100",
+			"curriculumSubjectId": 19000,
+			"extraContentType": "definition"
+		},
+		{
+			"id": 19029,
+			"description": "Inventory turnover: (average inventory/cost of goods sold) x 365",
+			"curriculumSubjectId": 19000,
+			"extraContentType": "definition"
+		},
+		{
+			"id": 19030,
+			"description": "Accounts payable turnover: (average accounts payable/net credit purchases (plus GST)) x 365",
+			"curriculumSubjectId": 19000,
+			"extraContentType": "definition"
+		},
+		{
+			"id": 19031,
+			"description": "Accounts receivable turnover: (average accounts receivable/net credit sales (plus GST)) x 365",
+			"curriculumSubjectId": 19000,
+			"extraContentType": "definition"
+		},
+		{
+			"id": 19032,
+			"description": "Documents for a business: Documents used by a business to record financial transactions include: electronic funds transfer (EFT) receipt; electronic funds transfer (EFT) payment; cash receipt; sales invoice; purchase invoice; credit note; memo; statement of account; bank statement; order, shipping and order confirmation; and delivery docket. These documents may be prepared manually or be computer generated. Many documents satisfy the requirements of a tax invoice, which contains specified items of information that are required for effective operation of the GST system.",
+			"curriculumSubjectId": 19000,
+			"extraContentType": "definition"
+		},
+		{
+			"id": 19033,
+			"description": "Goods and services tax: The goods and services tax (GST) is to be included throughout the study design, except where it has been specifically excluded, as indicated in the relevant key knowledge dot points.",
+			"curriculumSubjectId": 19000,
+			"extraContentType": "definition"
+		},
+		{
+			"id": 19034,
+			"description": "FIFO Inventory gain: Inventory gains are determined by using the latest cost price recorded in the IN column of the inventory card. This follows the qualitative characteristic of faithful representation.",
+			"curriculumSubjectId": 19000,
+			"extraContentType": "definition"
+		},
+		{
+			"id": 19035,
+			"description": "FIFO Inventory loss: Inventory losses are to be determined by assuming the inventory lost on the date of the count is calculated by using the oldest cost price of available inventory on hand recorded on the inventory card.",
+			"curriculumSubjectId": 19000,
+			"extraContentType": "definition"
+		},
+		{
+			"id": 19036,
+			"description": "FIFO Sales returns: The cost of each inventory item is calculated by using the latest cost prices shown in the OUT column of the inventory card (reversing the last out).",
+			"curriculumSubjectId": 19000,
+			"extraContentType": "definition"
+		},
+		{
+			"id": 19037,
+			"description": "FIFO Purchases returns: The cost of inventory returned to suppliers is calculated by using the cost price identified by the supplier's credit note.",
+			"curriculumSubjectId": 19000,
+			"extraContentType": "definition"
+		},
+		{
+			"id": 19038,
+			"description": "Identified Cost method Inventory loss/gain: The number of inventory items and their cost is revealed by a physical count.",
+			"curriculumSubjectId": 19000,
+			"extraContentType": "definition"
+		},
+		{
+			"id": 19039,
+			"description": "Identified Cost method Sales returns: The cost of each inventory item is identified on the business document or inventory card.",
+			"curriculumSubjectId": 19000,
+			"extraContentType": "definition"
+		},
+		{
+			"id": 19040,
+			"description": "Identified cost method Purchases returns: The cost of inventory returned to suppliers is calculated by using the cost price identified by the supplier's credit note.",
+			"curriculumSubjectId": 19000,
+			"extraContentType": "definition"
+		},
+		{
+			"id": 19041,
+			"description": "Doubtful debts: An allowance for doubtful debts is created using a percentage of net credit sales. Bad debts are written off using the allowance method.",
+			"curriculumSubjectId": 19000,
+			"extraContentType": "definition"
+		},
+		{
+			"id": 19042,
+			"description": "Closing revenue accounts: Only one General Journal entry is required to close all revenues (including Sales Returns) to the Profit and Loss Summary account, resulting in one entry in the General Ledger account.",
+			"curriculumSubjectId": 19000,
+			"extraContentType": "definition"
+		},
+		{
+			"id": 19043,
+			"description": "Closing expense accounts: Only one General Journal entry is required to close all expenses to the Profit and Loss Summary account, resulting in one entry in the General Ledger account. One General Journal entry is required to transfer the profit/loss from the Profit and Loss Summary account to the Capital account.",
+			"curriculumSubjectId": 19000,
+			"extraContentType": "definition"
+		},
+		{
+			"id": 19044,
+			"description": "Information and communications technology: Information and communications technology (ICT) is an essential aspect of business operations increasingly used to capture, model, analyse and convey information. Students are required to be aware of the use of spreadsheets, the internet and multimedia software in relation to accounting. Commercial accounting software packages may be used. The use of word processing software by students to provide theoretical responses is not applicable to the ICT requirement of each unit. Each unit of VCE Accounting involves student application of ICT to record transactions; create reports; model possible outcomes; construct graphical representations and visualisations; and model alternative scenarios. As a guide, students would typically require a minimum of 15 hours of scheduled class time per unit involving ICT to be able to achieve the outcomes for each unit. Knowledge and use of spreadsheets is essential and should be integrated throughout Units 1 to 4. Spreadsheets are used in accounting practice in a variety of ways, including recording inventory; preparing income statements, variance reports, budgets and other accounting information in various formats; numeric calculation; constructing graphical representations (including charts); comparing the results of alternative business options; and analysing data to assist in decision-making. Financial modelling is used to make estimates of how future scenarios will influence the performance of a business through mathematical projections of the key variables affecting the business. ICT is an important tool used in modelling the potential consequences of different future scenarios when making business decisions. Modelling using ICT enables comparison and analysis of the potential consequences of different decisions. In contemporary society, it is essential for an accountant to use critical and creative thinking skills to explore alternatives, and effectively communicate these to key stakeholders, such as business owners.",
+			"curriculumSubjectId": 19000,
+			"extraContentType": "definition"
+		},
+		{
+			"id": 19045,
+			"description": "Ethical considerations: Business decisions will be influenced not only by financial considerations but also by ethical considerations, including those that are social and environmental in nature. Ethical considerations often have a direct impact on the financial performance of the business. In all consultations and communications, accountants are required to maintain their integrity, impartiality, objectivity and confidentiality.",
+			"curriculumSubjectId": 19000,
+			"extraContentType": "definition"
+		}
+	]
 }

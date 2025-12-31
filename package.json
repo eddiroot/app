@@ -24,6 +24,7 @@
 		"db:restore": "bash ./scripts/db-restore.sh",
 		"db:studio": "sst shell drizzle-kit studio",
 		"db:diagram": "tsx ./src/lib/server/db/dbml.ts",
+		"embed:schema": "npx sst shell -- npx vite-node src/lib/scripts/embedding/index.ts",
 		"sso": "aws sso login --sso-session=eddi"
 	},
 	"devDependencies": {
@@ -77,6 +78,7 @@
 		"typescript-eslint": "^8.20.0",
 		"vaul-svelte": "^1.0.0-next.7",
 		"vite": "^6.2.6",
+		"vite-node": "^5.2.0",
 		"vite-plugin-devtools-json": "^0.2.0"
 	},
 	"dependencies": {

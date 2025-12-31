@@ -1,11 +1,13 @@
-import { boolean, foreignKey, index, integer, pgTable, text, unique } from 'drizzle-orm/pg-core';
+import { boolean, foreignKey, index, integer, pgSchema, text, unique } from 'drizzle-orm/pg-core';
 import { learningArea, learningAreaStandard } from './curriculum';
 import { resource } from './resource';
 import { subjectOffering } from './subjects';
 import { rubric, task } from './task';
 import { embeddings, timestamps } from './utils';
 
-export const courseMapItem = pgTable(
+export const courseMapSchema = pgSchema('course_map');
+
+export const courseMapItem = courseMapSchema.table(
 	'cm_itm',
 	{
 		id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
@@ -35,7 +37,7 @@ export const courseMapItem = pgTable(
 
 export type CourseMapItem = typeof courseMapItem.$inferSelect;
 
-export const courseMapItemLearningArea = pgTable(
+export const courseMapItemLearningArea = courseMapSchema.table(
 	'cm_itm_la',
 	{
 		id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
@@ -62,15 +64,14 @@ export const courseMapItemLearningArea = pgTable(
 export type CourseMapItemLearningArea = typeof courseMapItemLearningArea.$inferSelect;
 
 // if we want to check across the area of study standards,
-export const courseMapItemAssessmentPlan = pgTable(
+export const courseMapItemAssessmentPlan = courseMapSchema.table(
 	'cm_itm_ass_pln',
 	{
 		id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
 		courseMapItemId: integer('cm_itm_id')
 			.notNull()
 			.references(() => courseMapItem.id, { onDelete: 'cascade' }),
-		taskId: integer('task_id')
-			.references(() => task.id, { onDelete: 'set null' }),
+		taskId: integer('task_id').references(() => task.id, { onDelete: 'set null' }),
 		name: text('name').notNull(),
 		scope: text('scope').array(),
 		description: text('description'),
@@ -89,13 +90,13 @@ export const courseMapItemAssessmentPlan = pgTable(
 		}).onDelete('cascade'),
 		unique().on(self.originalId, self.version),
 		index('cm_ass_pln_embedding_idx').using('hnsw', self.embedding.op('vector_cosine_ops')),
-		index('cm_ass_pln_metadata_idx').using('gin', self.embeddingMetadata),
+		index('cm_ass_pln_metadata_idx').using('gin', self.embeddingMetadata)
 	]
 );
 
 export type CourseMapItemAssessmentPlan = typeof courseMapItemAssessmentPlan.$inferSelect;
 
-export const assessmentPlanResource = pgTable('cm_ass_pln_res', {
+export const assessmentPlanResource = courseMapSchema.table('cm_ass_pln_res', {
 	id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
 	courseMapItemAssessmentPlanId: integer('cm_itm_ass_pln_id')
 		.notNull()
@@ -105,15 +106,14 @@ export const assessmentPlanResource = pgTable('cm_ass_pln_res', {
 		.references(() => resource.id, { onDelete: 'cascade' })
 });
 
-export const courseMapItemLessonPlan = pgTable(
+export const courseMapItemLessonPlan = courseMapSchema.table(
 	'cm_itm_les_pln',
 	{
 		id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
 		courseMapItemId: integer('cm_itm_id')
 			.notNull()
 			.references(() => courseMapItem.id, { onDelete: 'cascade' }),
-		taskId: integer('task_id')
-			.references(() => task.id, { onDelete: 'cascade' }),
+		taskId: integer('task_id').references(() => task.id, { onDelete: 'cascade' }),
 		name: text('name').notNull(),
 		scope: text('scope').array(),
 		description: text('description'),
@@ -131,13 +131,13 @@ export const courseMapItemLessonPlan = pgTable(
 		}).onDelete('cascade'),
 		unique().on(self.originalId, self.version),
 		index('cm_les_pln_embedding_idx').using('hnsw', self.embedding.op('vector_cosine_ops')),
-		index('cm_les_pln_metadata_idx').using('gin', self.embeddingMetadata),
+		index('cm_les_pln_metadata_idx').using('gin', self.embeddingMetadata)
 	]
 );
 
 export type CourseMapItemLessonPlan = typeof courseMapItemLessonPlan.$inferSelect;
 
-export const lessonPlanResource = pgTable('cm_les_pln_res', {
+export const lessonPlanResource = courseMapSchema.table('cm_les_pln_res', {
 	id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
 	courseMapItemLessonPlanId: integer('cm_itm_les_pln_id')
 		.notNull()
@@ -149,7 +149,7 @@ export const lessonPlanResource = pgTable('cm_les_pln_res', {
 
 export type LessonPlanResource = typeof lessonPlanResource.$inferSelect;
 
-export const lessonPlanLearningAreaStandard = pgTable('cm_les_pln_la_std', {
+export const lessonPlanLearningAreaStandard = courseMapSchema.table('cm_les_pln_la_std', {
 	id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
 	courseMapItemLessonPlanId: integer('cm_itm_les_pln_id')
 		.notNull()
@@ -163,7 +163,7 @@ export const lessonPlanLearningAreaStandard = pgTable('cm_les_pln_la_std', {
 });
 export type LessonPlanLearningAreaStandard = typeof lessonPlanLearningAreaStandard.$inferSelect;
 
-export const assessmentPlanLearningAreaStandard = pgTable('cm_ass_pln_la_std', {
+export const assessmentPlanLearningAreaStandard = courseMapSchema.table('cm_ass_pln_la_std', {
 	id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
 	courseMapItemAssessmentPlanId: integer('cm_itm_ass_pln_id')
 		.notNull()
@@ -178,7 +178,7 @@ export const assessmentPlanLearningAreaStandard = pgTable('cm_ass_pln_la_std', {
 export type AssessmentPlanLearningAreaStandard =
 	typeof assessmentPlanLearningAreaStandard.$inferSelect;
 
-export const courseMapItemResource = pgTable(
+export const courseMapItemResource = courseMapSchema.table(
 	'cm_itm_res',
 	{
 		id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),

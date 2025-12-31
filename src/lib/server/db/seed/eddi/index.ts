@@ -6,30 +6,30 @@ import { seedCurriculum } from './curriculum';
 import { seedEddiSchool } from './school';
 
 export async function seedEddi(context: SeedContext) {
-    logSection('Seeding Eddi Platform Data');
+	logSection('Seeding Eddi Platform Data');
 
-    const { db, fresh } = context;
+	const { db, fresh } = context;
 
-    // Check if Eddi data already exists (unless fresh mode)
-    if (!fresh) {
-        const [existingEddiSchool] = await db
-            .select()
-            .from(schema.school)
-            .where(eq(schema.school.name, 'eddi.edu.au'))
-            .limit(1);
+	// Check if Eddi data already exists (unless fresh mode)
+	if (!fresh) {
+		const [existingEddiSchool] = await db
+			.select()
+			.from(schema.school)
+			.where(eq(schema.school.name, 'eddi.edu.au'))
+			.limit(1);
 
-        if (existingEddiSchool) {
-            return { eddiSchool: existingEddiSchool };
-        }
-    }
+		if (existingEddiSchool) {
+			return { eddiSchool: existingEddiSchool };
+		}
+	}
 
-    // Create eddi.edu.au school
-    logSubsection('Creating eddi.edu.au school');
-    const eddiSchool = await seedEddiSchool(db);
+	// Create eddi.edu.au school
+	logSubsection('Creating eddi.edu.au school');
+	const eddiSchool = await seedEddiSchool(db);
 
-    // Seed curriculum
-    logSubsection('Seeding Curriculum');
-    await seedCurriculum(db, eddiSchool.id);
+	// Seed curriculum
+	logSubsection('Seeding Curriculum');
+	await seedCurriculum(db, eddiSchool.id);
 
-    return { eddiSchool };
+	return { eddiSchool };
 }

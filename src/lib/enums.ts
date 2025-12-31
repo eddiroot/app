@@ -1,4 +1,3 @@
-
 export enum yearLevelEnum {
 	none = 'N',
 	foundation = 'F',
@@ -13,7 +12,7 @@ export enum yearLevelEnum {
 	year9 = '9',
 	year10 = '10',
 	year11 = '11',
-	year12 = '12',
+	year12 = '12'
 }
 
 export enum schoolSpaceTypeEnum {
@@ -52,7 +51,7 @@ export enum taskTypeEnum {
 	lesson = 'lesson',
 	homework = 'homework',
 	test = 'test',
-	assignment = 'assignment',
+	assignment = 'assignment'
 }
 
 export enum taskBlockTypeEnum {

@@ -5,8 +5,7 @@ import {
 	index,
 	integer,
 	jsonb,
-	pgEnum,
-	pgTable,
+	pgSchema,
 	text,
 	timestamp,
 	unique,
@@ -27,26 +26,28 @@ import { subjectOffering, subjectOfferingClass } from './subjects';
 import { user } from './user';
 import { embeddings, timestamps } from './utils';
 
-export const taskTypeEnumPg = pgEnum('enum_task_type', [
+export const taskSchema = pgSchema('task');
+
+export const taskTypeEnumPg = taskSchema.enum('enum_task_type', [
 	taskTypeEnum.lesson,
 	taskTypeEnum.homework,
 	taskTypeEnum.test,
-	taskTypeEnum.assignment,
+	taskTypeEnum.assignment
 ]);
 
-export const quizModeEnumPg = pgEnum('enum_quiz_mode', [
+export const quizModeEnumPg = taskSchema.enum('enum_quiz_mode', [
 	quizModeEnum.none,
 	quizModeEnum.scheduled,
 	quizModeEnum.manual
 ]);
 
-export const gradeReleaseEnumPg = pgEnum('enum_grade_release', [
+export const gradeReleaseEnumPg = taskSchema.enum('enum_grade_release', [
 	gradeReleaseEnum.instant,
 	gradeReleaseEnum.manual,
 	gradeReleaseEnum.scheduled
 ]);
 
-export const task = pgTable(
+export const task = taskSchema.table(
 	'task',
 	{
 		id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
@@ -74,7 +75,7 @@ export const task = pgTable(
 
 export type Task = typeof task.$inferSelect;
 
-export const taskStandard = pgTable('task_std', {
+export const taskStandard = taskSchema.table('task_std', {
 	id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
 	taskId: integer('task_id')
 		.notNull()
@@ -86,7 +87,7 @@ export const taskStandard = pgTable('task_std', {
 
 export type TaskStandard = typeof taskStandard.$inferSelect;
 
-export const taskBlockTypeEnumPg = pgEnum('enum_task_block_type', [
+export const taskBlockTypeEnumPg = taskSchema.enum('enum_task_block_type', [
 	taskBlockTypeEnum.heading,
 	taskBlockTypeEnum.richText,
 	taskBlockTypeEnum.mathInput,
@@ -105,27 +106,28 @@ export const taskBlockTypeEnumPg = pgEnum('enum_task_block_type', [
 	taskBlockTypeEnum.balancingEquations
 ]);
 
-export const taskBlock = pgTable('task_block', {
-	id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
-	taskId: integer('task_id')
-		.notNull()
-		.references(() => task.id, { onDelete: 'cascade' }),
-	type: taskBlockTypeEnumPg().notNull(),
-	config: jsonb('config').notNull(),
-	index: integer('index').default(0), // If null it is not within the task but stored for reuse. 
-	availableMarks: integer('available_marks'),
-	...timestamps,
-	...embeddings
-},
+export const taskBlock = taskSchema.table(
+	'task_block',
+	{
+		id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
+		taskId: integer('task_id')
+			.notNull()
+			.references(() => task.id, { onDelete: 'cascade' }),
+		type: taskBlockTypeEnumPg().notNull(),
+		config: jsonb('config').notNull(),
+		index: integer('index').default(0), // If null it is not within the task but stored for reuse.
+		availableMarks: integer('available_marks'),
+		...timestamps,
+		...embeddings
+	},
 	(self) => [
 		index('task_block_embedding_idx').using('hnsw', self.embedding.op('vector_cosine_ops')),
-		index('task_block_metadata_idx').using('gin', self.embeddingMetadata),
+		index('task_block_metadata_idx').using('gin', self.embeddingMetadata)
 	]
-
 );
 export type TaskBlock = typeof taskBlock.$inferSelect;
 
-export const taskStatusEnumPg = pgEnum('enum_task_status', [
+export const taskStatusEnumPg = taskSchema.enum('enum_task_status', [
 	taskStatusEnum.draft,
 	taskStatusEnum.inProgress,
 	taskStatusEnum.published,
@@ -134,7 +136,7 @@ export const taskStatusEnumPg = pgEnum('enum_task_status', [
 	taskStatusEnum.graded
 ]);
 
-export const subjectOfferingClassTask = pgTable('sub_off_class_task', {
+export const subjectOfferingClassTask = taskSchema.table('sub_off_class_task', {
 	id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
 	index: integer('index').notNull(),
 	status: taskStatusEnumPg().notNull().default(taskStatusEnum.draft),
@@ -164,7 +166,7 @@ export const subjectOfferingClassTask = pgTable('sub_off_class_task', {
 
 export type SubjectOfferingClassTask = typeof subjectOfferingClassTask.$inferSelect;
 
-export const classTaskBlockResponse = pgTable(
+export const classTaskBlockResponse = taskSchema.table(
 	'cls_task_block_res',
 	{
 		id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
@@ -192,7 +194,7 @@ export const classTaskBlockResponse = pgTable(
 
 export type ClassTaskBlockResponse = typeof classTaskBlockResponse.$inferSelect;
 
-export const classTaskResponse = pgTable(
+export const classTaskResponse = taskSchema.table(
 	'cls_task_res',
 	{
 		id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
@@ -215,15 +217,16 @@ export const classTaskResponse = pgTable(
 		...timestamps,
 		...embeddings
 	},
-	(self) => [unique().on(self.classTaskId, self.authorId),
+	(self) => [
+		unique().on(self.classTaskId, self.authorId),
 		index('cls_task_res_embedding_idx').using('hnsw', self.embedding.op('vector_cosine_ops')),
-		index('cls_task_res_metadata_idx').using('gin', self.embeddingMetadata),
+		index('cls_task_res_metadata_idx').using('gin', self.embeddingMetadata)
 	]
 );
 
 export type ClassTaskResponse = typeof classTaskResponse.$inferSelect;
 
-export const classTaskResponseResource = pgTable('task_response_resource', {
+export const classTaskResponseResource = taskSchema.table('task_response_resource', {
 	id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
 	classTaskResponseId: integer('cls_task_res_id')
 		.notNull()
@@ -240,7 +243,7 @@ export const classTaskResponseResource = pgTable('task_response_resource', {
 
 export type ClassTaskResponseResource = typeof classTaskResponseResource.$inferSelect;
 
-export const rubric = pgTable('rubric', {
+export const rubric = taskSchema.table('rubric', {
 	id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
 	title: text('title').notNull(),
 	...timestamps
@@ -248,14 +251,14 @@ export const rubric = pgTable('rubric', {
 
 export type Rubric = typeof rubric.$inferSelect;
 
-export const rubricLevelEnumPg = pgEnum('enum_rubric_level', [
+export const rubricLevelEnumPg = taskSchema.enum('enum_rubric_level', [
 	'exemplary',
 	'accomplished',
 	'developing',
 	'beginning'
 ]);
 
-export const rubricRow = pgTable('rubric_row', {
+export const rubricRow = taskSchema.table('rubric_row', {
 	id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 2000 }),
 	rubricId: integer('rubric_id')
 		.notNull()
@@ -266,28 +269,29 @@ export const rubricRow = pgTable('rubric_row', {
 
 export type RubricRow = typeof rubricRow.$inferSelect;
 
-export const rubricCell = pgTable('rubric_cell', {
-	id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 3000 }),
-	rowId: integer('row_id')
-		.notNull()
-		.references(() => rubricRow.id, { onDelete: 'cascade' }),
-	level: rubricLevelEnumPg().notNull(),
-	description: text('description').notNull(),
-	marks: doublePrecision('marks').notNull(),
-	...timestamps,
-	...embeddings
-},
+export const rubricCell = taskSchema.table(
+	'rubric_cell',
+	{
+		id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 3000 }),
+		rowId: integer('row_id')
+			.notNull()
+			.references(() => rubricRow.id, { onDelete: 'cascade' }),
+		level: rubricLevelEnumPg().notNull(),
+		description: text('description').notNull(),
+		marks: doublePrecision('marks').notNull(),
+		...timestamps,
+		...embeddings
+	},
 	(self) => [
 		index('rubric_cell_embedding_idx').using('hnsw', self.embedding.op('vector_cosine_ops')),
-		index('rubric_cell_metadata_idx').using('gin', self.embeddingMetadata),
+		index('rubric_cell_metadata_idx').using('gin', self.embeddingMetadata)
 	]
-
 );
 
 export type RubricCell = typeof rubricCell.$inferSelect;
 
 // Tracks which rubric cell (performance level) a student achieved for each rubric row
-export const rubricCellFeedback = pgTable('rubric_feedback', {
+export const rubricCellFeedback = taskSchema.table('rubric_feedback', {
 	id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 4000 }),
 	classTaskResponseId: integer('class_task_response_id')
 		.notNull()
@@ -304,24 +308,26 @@ export const rubricCellFeedback = pgTable('rubric_feedback', {
 
 export type RubricCellFeedback = typeof rubricCellFeedback.$inferSelect;
 
-export const whiteboard = pgTable('whiteboard', {
-	id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
-	taskId: integer('task_id')
-		.notNull()
-		.references(() => task.id, { onDelete: 'cascade' }),
-	title: text('title'),
-	...timestamps,
-	...embeddings
-},
+export const whiteboard = taskSchema.table(
+	'whiteboard',
+	{
+		id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
+		taskId: integer('task_id')
+			.notNull()
+			.references(() => task.id, { onDelete: 'cascade' }),
+		title: text('title'),
+		...timestamps,
+		...embeddings
+	},
 	(self) => [
 		index('whiteboard_embedding_idx').using('hnsw', self.embedding.op('vector_cosine_ops')),
-		index('whiteboard_metadata_idx').using('gin', self.embeddingMetadata),
+		index('whiteboard_metadata_idx').using('gin', self.embeddingMetadata)
 	]
 );
 
 export type Whiteboard = typeof whiteboard.$inferSelect;
 
-export const whiteboardObjectTypeEnumPg = pgEnum('enum_whiteboard_object_type', [
+export const whiteboardObjectTypeEnumPg = taskSchema.enum('enum_whiteboard_object_type', [
 	whiteboardObjectTypeEnum.rect,
 	whiteboardObjectTypeEnum.circle,
 	whiteboardObjectTypeEnum.path,
@@ -329,7 +335,7 @@ export const whiteboardObjectTypeEnumPg = pgEnum('enum_whiteboard_object_type', 
 	whiteboardObjectTypeEnum.image
 ]);
 
-export const whiteboardObject = pgTable('whiteboard_object', {
+export const whiteboardObject = taskSchema.table('whiteboard_object', {
 	id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
 	whiteboardId: integer('whiteboard_id')
 		.notNull()
@@ -343,66 +349,71 @@ export const whiteboardObject = pgTable('whiteboard_object', {
 export type WhiteboardObject = typeof whiteboardObject.$inferSelect;
 
 // Hints and Steps for a given task block
-export const taskBlockGuidance = pgTable('tb_guidance', {
-	id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
-	taskBlockId: integer('task_block_id')
-		.notNull()
-		.references(() => taskBlock.id, { onDelete: 'cascade' }),
-	guidance: text('guidance').notNull(),
-	...timestamps,
-	...embeddings
-},
+export const taskBlockGuidance = taskSchema.table(
+	'tb_guidance',
+	{
+		id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
+		taskBlockId: integer('task_block_id')
+			.notNull()
+			.references(() => taskBlock.id, { onDelete: 'cascade' }),
+		guidance: text('guidance').notNull(),
+		...timestamps,
+		...embeddings
+	},
 	(self) => [
 		index('tb_guidance_embedding_idx').using('hnsw', self.embedding.op('vector_cosine_ops')),
-		index('tb_guidance_metadata_idx').using('gin', self.embeddingMetadata),
+		index('tb_guidance_metadata_idx').using('gin', self.embeddingMetadata)
 	]
 );
 
 export type TaskBlockGuidance = typeof taskBlockGuidance.$inferSelect;
 
 // Misconceptions associated with a task block
-export const taskblockMisconception = pgTable('tb_misc', {
-	id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
-	taskBlockId: integer('task_block_id')
-		.notNull()
-		.references(() => taskBlock.id, { onDelete: 'cascade' }),
-	misconception: text('misconception').notNull(),
-	...timestamps,
-	...embeddings
-},
+export const taskblockMisconception = taskSchema.table(
+	'tb_misc',
+	{
+		id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
+		taskBlockId: integer('task_block_id')
+			.notNull()
+			.references(() => taskBlock.id, { onDelete: 'cascade' }),
+		misconception: text('misconception').notNull(),
+		...timestamps,
+		...embeddings
+	},
 	(self) => [
 		index('tb_misc_embedding_idx').using('hnsw', self.embedding.op('vector_cosine_ops')),
-		index('tb_misc_metadata_idx').using('gin', self.embeddingMetadata),
+		index('tb_misc_metadata_idx').using('gin', self.embeddingMetadata)
 	]
 );
 
 export type TaskBlockMisconception = typeof taskblockMisconception.$inferSelect;
 
-export const taskPlan = pgTable('task_plan', {
-	id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
-	taskId: integer('task_id')
-		.references(() => task.id, { onDelete: 'cascade' }),
-	courseMapItemId: integer('cm_item_id')
-		.notNull()
-		.references(() => courseMapItem.id, { onDelete: 'cascade' }),
-	type: taskTypeEnumPg().notNull(),
-	name: text('name').notNull(),
-	description: text('description'),
-	learningObjectives: text('learning_objectives').array(),
-	durationMinutes: integer('duration_minutes'),
-	scheduledDate: timestamp('scheduled_date'),
-	...timestamps,
-	...embeddings
-},
+export const taskPlan = taskSchema.table(
+	'task_plan',
+	{
+		id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
+		taskId: integer('task_id').references(() => task.id, { onDelete: 'cascade' }),
+		courseMapItemId: integer('cm_item_id')
+			.notNull()
+			.references(() => courseMapItem.id, { onDelete: 'cascade' }),
+		type: taskTypeEnumPg().notNull(),
+		name: text('name').notNull(),
+		description: text('description'),
+		learningObjectives: text('learning_objectives').array(),
+		durationMinutes: integer('duration_minutes'),
+		scheduledDate: timestamp('scheduled_date'),
+		...timestamps,
+		...embeddings
+	},
 	(self) => [
 		index('task_plan_embedding_idx').using('hnsw', self.embedding.op('vector_cosine_ops')),
-		index('task_plan_metadata_idx').using('gin', self.embeddingMetadata),
+		index('task_plan_metadata_idx').using('gin', self.embeddingMetadata)
 	]
 );
 
 export type TaskPlan = typeof taskPlan.$inferSelect;
 
-export const taskPlanLearningAreaStandard = pgTable('task_plan_lrn_a_std', {
+export const taskPlanLearningAreaStandard = taskSchema.table('task_plan_lrn_a_std', {
 	id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
 	taskPlanId: integer('task_plan_id')
 		.notNull()
@@ -415,7 +426,7 @@ export const taskPlanLearningAreaStandard = pgTable('task_plan_lrn_a_std', {
 
 export type TaskPlanLearningAreaStandard = typeof taskPlanLearningAreaStandard.$inferSelect;
 
-export const taskPlanResource = pgTable('task_plan_resource', {
+export const taskPlanResource = taskSchema.table('task_plan_resource', {
 	id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
 	taskPlanId: integer('task_plan_id')
 		.notNull()

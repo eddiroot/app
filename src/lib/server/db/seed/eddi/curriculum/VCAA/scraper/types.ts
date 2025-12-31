@@ -32,7 +32,7 @@ export interface VCAAData {
 			outcomes: Array<OutcomeData>;
 		}>;
 	};
-	
+
 	// Direct structure (Biology, Legal Studies)
 	id?: number;
 	name?: string;
