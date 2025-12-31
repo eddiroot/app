@@ -1,4 +1,4 @@
-import type { yearLevelEnum } from '$lib/enums';
+import type { subjectGroupEnum, yearLevelEnum } from '$lib/enums';
 import { db } from '$lib/server/db';
 import * as table from '$lib/server/db/schema';
 import { and, eq, inArray } from 'drizzle-orm';
@@ -222,7 +222,7 @@ export async function getOutcomesByUnit(curriculumSubjectId: number, unitNumber:
 /**
  * Get or create curriculum by name
  */
-export async function getOrCreateCurriculum(name: string, version: string) {
+export async function getOrCreateCurriculum(name: string, version: string, countryCode: string, stateCode: string) {
 	const [existing] = await db
 		.select()
 		.from(table.curriculum)
@@ -238,6 +238,8 @@ export async function getOrCreateCurriculum(name: string, version: string) {
 		.values({
 			name,
 			version,
+			countryCode,
+			stateCode,
 			isArchived: false
 		})
 		.returning();
@@ -356,8 +358,8 @@ export async function createKeyKnowledge(data: {
 export async function createCoreSubject(data: {
 	name: string;
 	description: string;
-	curriculumSubjectId: number;
 	schoolId: number;
+	subjectGroup: subjectGroupEnum;
 }) {
 	const [coreSubject] = await db
 		.insert(table.coreSubject)
@@ -523,6 +525,7 @@ export async function getStandardElaborationEmbeddingMetadata(record: Record<str
 		yearLevel: result?.yearLevel
 	};
 }
+
 
 export async function getOutcomeEmbeddingMetadata(record: Record<string, unknown>): Promise<EmbeddingMetadata> {
 	return {

@@ -1,5 +1,5 @@
 import type { yearLevelEnum } from '$lib/enums';
-import { index, integer, jsonb, pgTable, text, timestamp, vector } from 'drizzle-orm/pg-core';
+import { boolean, index, integer, jsonb, pgTable, text, timestamp, vector } from 'drizzle-orm/pg-core';
 
 
 export const timestamps = {
@@ -38,3 +38,10 @@ export const tempPool = pgTable('temp_pool', {
 );
 
 export type TempPool = typeof tempPool.$inferSelect;
+
+export const publish = {
+	isPublicRequested: boolean('is_public_requested').notNull().default(false),
+	isPublicApproved: boolean('is_public_approved').notNull().default(false),
+	publicRequestedAt: timestamp({ mode: 'date' }),
+	publicApprovedAt: timestamp({ mode: 'date' })
+}

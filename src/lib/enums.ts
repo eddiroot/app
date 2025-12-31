@@ -1,3 +1,4 @@
+
 export enum yearLevelEnum {
 	none = 'N',
 	foundation = 'F',
@@ -11,13 +12,8 @@ export enum yearLevelEnum {
 	year8 = '8',
 	year9 = '9',
 	year10 = '10',
-	year10A = '10A',
 	year11 = '11',
 	year12 = '12',
-	year13 = '13',
-	VCE = 'VCE',
-	VCE12 = 'VCE12',
-	VCE34 = 'VCE34'
 }
 
 export enum schoolSpaceTypeEnum {
@@ -57,7 +53,6 @@ export enum taskTypeEnum {
 	homework = 'homework',
 	test = 'test',
 	assignment = 'assignment',
-	module = 'module'
 }
 
 export enum taskBlockTypeEnum {
@@ -278,4 +273,14 @@ export enum curriculumSubjectExtraContentTypeEnum {
 	rubric = 'rubric',
 	description = 'description',
 	detailedExample = 'detailed_example'
+}
+
+export enum gradeScaleEnum {
+	IB_DP = 'IB_DP',
+	IB_MYP = 'IB_MYP',
+	IB_PYP = 'IB_PYP',
+	IB_CP = 'IB_CP',
+	GPA = 'GPA',
+	percentage = 'percentage',
+	custom = 'custom'
 }
