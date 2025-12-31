@@ -33,7 +33,7 @@ async function seed(options: SeedOptions = {}): Promise<void> {
 
 	const db = drizzle(pool, { schema });
 
-	const context: SeedContext = { db, fresh };
+	const context: SeedContext = { db, pool, fresh };
 
 	try {
 		// Truncate tables if fresh mode

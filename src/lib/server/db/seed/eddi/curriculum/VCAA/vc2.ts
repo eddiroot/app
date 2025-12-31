@@ -1,8 +1,10 @@
 import { VCAAF10SubjectEnum, yearLevelEnum } from '$lib/enums';
 import { readFileSync } from 'fs';
 import { join } from 'path';
+import type pg from 'pg';
 import * as schema from '../../../../schema';
 import type { Database } from '../../../types';
+import { tryRunSqlFile } from '../../../utils';
 
 // Type definitions
 interface VC2Standard {
@@ -83,7 +85,14 @@ function getYearLevels(yearLevel: string): yearLevelEnum[] {
 	return single !== yearLevelEnum.none ? [single] : [];
 }
 
-export async function seedVC2Curriculum(db: Database, schoolId: number) {
+export async function seedVC2Curriculum(pool: pg.Pool, db: Database, schoolId: number) {
+	// Check for SQL file first (convention: vc2.sql alongside vc2.ts)
+	const sqlExecuted = await tryRunSqlFile(pool, import.meta.url);
+	if (sqlExecuted) {
+		return;
+	}
+
+	// Fall back to TypeScript seeding
 	// Create curriculum record
 	const [vc2Curriculum] = await db
 		.insert(schema.curriculum)

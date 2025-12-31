@@ -8,7 +8,7 @@ import { seedEddiSchool } from './school';
 export async function seedEddi(context: SeedContext) {
 	logSection('Seeding Eddi Platform Data');
 
-	const { db, fresh } = context;
+	const { db, pool, fresh } = context;
 
 	// Check if Eddi data already exists (unless fresh mode)
 	if (!fresh) {
@@ -29,7 +29,7 @@ export async function seedEddi(context: SeedContext) {
 
 	// Seed curriculum
 	logSubsection('Seeding Curriculum');
-	await seedCurriculum(db, eddiSchool.id);
+	await seedCurriculum(pool, db, eddiSchool.id);
 
 	return { eddiSchool };
 }

@@ -1,6 +1,7 @@
 import { eq, getTableName } from 'drizzle-orm';
 import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import type { PgColumn, PgTable } from 'drizzle-orm/pg-core';
+import { getTableConfig } from 'drizzle-orm/pg-core';
 import { existsSync, mkdirSync, writeFileSync } from 'fs';
 import { join } from 'path';
 
@@ -31,17 +32,25 @@ interface TableWithId extends PgTable {
 // ID COLUMN DETECTION
 // ============================================================================
 
+/** IDs that should never be shifted (same across all exports) */
+const EXCLUDED_ID_COLUMNS = ['school_id'];
+const EXCLUDED_JSONB_ID_KEYS = ['schoolId'];
+
 /**
- * Check if a SQL column name is an ID column (ends with _id or is exactly 'id')
+ * Check if a SQL column name is an ID column that should be shifted
+ * (ends with _id or is exactly 'id', but not school_id)
  */
 function isIdColumn(columnName: string): boolean {
+	if (EXCLUDED_ID_COLUMNS.includes(columnName)) return false;
 	return columnName === 'id' || columnName.endsWith('_id');
 }
 
 /**
- * Check if a JSONB key is an ID field (ends with 'Id' in camelCase)
+ * Check if a JSONB key is an ID field that should be shifted
+ * (ends with 'Id' in camelCase, but not schoolId)
  */
 function isJsonbIdKey(key: string): boolean {
+	if (EXCLUDED_JSONB_ID_KEYS.includes(key)) return false;
 	return key === 'id' || key.endsWith('Id');
 }
 
@@ -125,9 +134,8 @@ function escapeValue(value: unknown, idOffset?: number): string {
  * Get the schema name from a table if it has one
  */
 function getSchemaName(table: PgTable): string | null {
-	// Access internal drizzle property for schema
-	const tableConfig = (table as unknown as { _: { schema?: string } })._;
-	return tableConfig?.schema || null;
+	const config = getTableConfig(table);
+	return config.schema || null;
 }
 
 /**
