@@ -1459,3 +1459,22 @@ export async function getRubricCellEmbeddingMetadata(
 		criteriaId: record.criteriaId as number
 	};
 }
+
+
+export async function createTaskPlan(courseMapItemId: number, type: taskTypeEnum, name: string, learningObjectives: string[], durationMinutes: number, taskId?: number, description?: string, scheduledDate?: Date) {
+	const [taskPlan] = await db
+		.insert(table.taskPlan)
+		.values({
+			taskId: taskId ?? null,
+			courseMapItemId,
+			type,
+			name,
+			description: description || null,
+			learningObjectives: learningObjectives,
+			durationMinutes,
+			scheduledDate: scheduledDate || null
+		})
+		.returning();
+
+	return taskPlan;
+}
