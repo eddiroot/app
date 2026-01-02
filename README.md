@@ -14,6 +14,14 @@ We currently don't expect contributions from members outside of the core team. T
 
 # Developing
 
+**IMPORTANT: Ensure you remove your dev environment from AWS when you have finished testing to avoid unnecessary costs.**
+
+The command to do so is:
+
+```bash
+npx sst remove
+```
+
 ## Setup
 
 1. Paste the profiles into your `~/.aws/config`
