@@ -862,3 +862,83 @@ export async function getCourseMapItemLessonPlanEmbeddingMetadata(
 		yearLevel: result?.yearLevel
 	};
 }
+
+export async function getCourseTeachersBySubjectOfferingId(subjectOfferingId: number) {
+	const teachers = await db
+		.select({
+			user: table.user
+		})
+		.from(table.user)
+		.innerJoin(
+			table.userSubjectOfferingClass,
+			eq(table.user.id, table.userSubjectOfferingClass.userId)
+		)
+		.innerJoin(
+			table.subjectOfferingClass,
+			eq(
+				table.userSubjectOfferingClass.subOffClassId,
+				table.subjectOfferingClass.id
+			)
+		)
+		.where(
+			and(
+				eq(table.subjectOfferingClass.subOfferingId, subjectOfferingId),
+				eq(table.user.type, userTypeEnum.teacher),
+			)
+		)
+
+	return teachers.map((row) => row.user);
+}
+
+export async function getFullSubjectOfferingNameBySubjectOfferingId(subjectOfferingId: number) {
+	const [result] = await db
+		.select({
+			subjectName: table.subject.name,
+			yearLevel: table.yearLevel.yearLevel,
+		})
+		.from(table.subjectOffering)
+		.innerJoin(
+			table.subject,
+			eq(table.subjectOffering.subjectId, table.subject.id)
+		)
+		.innerJoin(
+			table.yearLevel,
+			eq(table.subject.yearLevelId, table.yearLevel.id)
+		)
+		.where(eq(table.subjectOffering.id, subjectOfferingId))
+		.limit(1);
+
+	if (!result) {
+		return null;
+	}
+
+	return `Year ${result.yearLevel} ${result.subjectName}`;
+}
+
+export async function getCurriculumSubjectBySubjectOfferingId(subjectOfferingId: number) {
+	const [result] = await db
+		.select({
+			curriculum: table.curriculum,
+			curriculumSubject: table.curriculumSubject
+		})
+		.from(table.subjectOffering)
+		.innerJoin(
+			table.curriculumSubject,
+			eq(table.subjectOffering.curriculumSubjectId, table.curriculumSubject.id)
+		)
+		.innerJoin(
+			table.curriculum,
+			eq(table.curriculumSubject.curriculumId, table.curriculum.id)
+		)
+		.where(eq(table.subjectOffering.id, subjectOfferingId))
+		.limit(1);
+
+	if (!result) {
+		return null;
+	}
+
+	return {
+		curriculum: result.curriculum,
+		curriculumSubject: result.curriculumSubject
+	};
+}

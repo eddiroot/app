@@ -9,13 +9,15 @@
 		yearLevel,
 		onCourseMapItemClick,
 		onCourseMapItemEdit,
-		onEmptyCellClick
+		onEmptyCellClick,
+		compact = false
 	}: {
 		courseMapItems: CourseMapItem[];
 		yearLevel: string;
 		onCourseMapItemClick: (item: CourseMapItem) => void;
 		onCourseMapItemEdit: (item: CourseMapItem) => void;
 		onEmptyCellClick: (week: number, term: number) => void;
+		compact?: boolean;
 	} = $props();
 
 	const courseMapItemsBySemester = $derived(
@@ -71,40 +73,44 @@
 <div class="w-full">
 	<!-- Single Curriculum Map Grid -->
 	<div class="w-full">
-		<div class="mb-4">
-			<h3 class="flex items-center gap-2 text-lg font-semibold">
-				<Calendar class="h-5 w-5" />
-				Year {yearLevel} Curriculum Map
-			</h3>
-		</div>
+		{#if !compact}
+			<div class="mb-4">
+				<h3 class="flex items-center gap-2 text-lg font-semibold">
+					<Calendar class="h-5 w-5" />
+					{yearLevel} Curriculum Map
+				</h3>
+			</div>
+		{/if}
 
-		<div class="w-full overflow-x-auto">
-			<table class="border-border w-full border-collapse border">
+		<div class="w-full overflow-x-auto {compact ? 'rounded-lg' : ''}">
+			<table class="border-border w-full border-collapse border {compact ? 'rounded-lg overflow-hidden' : ''}">
 				<!-- Week headers -->
 				<thead>
 					<tr>
 						<th
-							class="text-muted-foreground bg-muted/30 w-24 border p-2 text-left text-xs font-medium"
+							class="text-muted-foreground bg-muted/30 w-24 border p-2 text-left text-xs font-medium {compact ? 'first:rounded-tl-lg' : ''}"
 						>
 							Semester
 						</th>
 						{#each Array.from({ length: 18 }, (_, i) => i + 1) as weekNum}
-							<th class="bg-muted/50 w-16 border p-1 text-center text-xs font-medium">
+							<th class="bg-muted/50 w-16 border p-1 text-center text-xs font-medium {compact && weekNum === 18 ? 'rounded-tr-lg' : ''}">
 								{weekNum}
 							</th>
 						{/each}
 					</tr>
 				</thead>
 
+
 				<tbody>
 					<!-- Semester rows -->
 					{#each [1, 2] as semester}
 						{@const semesterItems = courseMapItemsBySemester[semester] || []}
 						{@const currentSemester = semester}
+						{@const isLastSemester = semester === 2}
 
 						<tr>
 							<!-- Semester label -->
-							<td class="text-muted-foreground bg-muted/30 border p-2 text-xs font-medium">
+							<td class="text-muted-foreground bg-muted/30 border p-2 text-xs font-medium {compact && isLastSemester ? 'rounded-bl-lg' : ''}">
 								<div>
 									<div class="font-medium">Semester {semester}</div>
 									<div class="text-xs opacity-70">
@@ -116,9 +122,10 @@
 							<!-- Week columns -->
 							{#each Array.from({ length: 18 }, (_, i) => i + 1) as weekNum}
 								{@const weekItems = getItemsForSemesterWeek(currentSemester, weekNum)}
+								{@const isLastCell = isLastSemester && weekNum === 18}
 
 								<td
-									class="border-border/50 bg-muted/20 hover:bg-muted/40 relative h-80 border transition-colors"
+									class="border-border/50 bg-muted/20 hover:bg-muted/40 relative {compact ? 'h-20' : 'h-80'} border transition-colors {compact && isLastCell ? 'rounded-br-lg' : ''}"
 								>
 									{#if weekItems.length === 0}
 										<!-- Empty week - clickable area with plus icon on hover -->
@@ -131,7 +138,7 @@
 											<span
 												class="pointer-events-none opacity-0 transition-opacity duration-200 group-hover:opacity-100"
 											>
-												<Plus class="text-muted-foreground h-6 w-6" />
+												<Plus class="text-muted-foreground {compact ? '' : 'h-6 w-6'}" />
 											</span>
 										</button>
 									{:else}
@@ -148,6 +155,7 @@
 															weekLength={calculateWeekLength(item, weekNum)}
 															{onCourseMapItemClick}
 															{onCourseMapItemEdit}
+															{compact}
 														/>
 													{/key}
 												</div>

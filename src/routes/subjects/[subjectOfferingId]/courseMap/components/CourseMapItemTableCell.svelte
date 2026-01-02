@@ -7,13 +7,15 @@
 		isStart = true,
 		weekLength = 1,
 		onCourseMapItemClick,
-		onCourseMapItemEdit
+		onCourseMapItemEdit,
+		compact = false
 	}: {
 		item: CourseMapItem;
 		isStart?: boolean;
 		weekLength?: number;
 		onCourseMapItemClick: (item: CourseMapItem) => void;
 		onCourseMapItemEdit: (item: CourseMapItem) => void;
+		compact?: boolean;
 	} = $props();
 
 	// Use Svelte 5 $derived for reactive computations
@@ -45,27 +47,29 @@
 		tabindex="0"
 		onkeydown={(e) => e.key === 'Enter' && handleItemClick(e)}
 	>
-		<div class="relative flex h-full min-h-0 flex-col items-center justify-center p-2 text-center">
+		<div class="relative flex h-full min-h-0 flex-col items-center justify-center {compact ? 'p-1' : 'p-2'} text-center">
 			<!-- Title - centered and larger -->
 			<div class="flex w-full items-center justify-center">
-				<h4 class="flex-1 text-center text-sm leading-tight font-semibold">
+				<h4 class="flex-1 text-center {compact ? 'text-[10px]' : 'text-sm'} leading-tight font-semibold {compact ? 'line-clamp-2' : ''}">
 					{item.topic}
 				</h4>
 			</div>
 
-			<!-- Three-dot edit button - top right -->
-			<button
-				class="edit-button absolute top-1 right-1 rounded p-1 opacity-0 transition-opacity group-hover:opacity-100 hover:bg-white/20"
-				onclick={handleEditClick}
-				aria-label="Edit {item.topic}"
-			>
-				<MoreHorizontal class="h-3 w-3" />
-			</button>
+			{#if !compact}
+				<!-- Three-dot edit button - top right -->
+				<button
+					class="edit-button absolute top-1 right-1 rounded p-1 opacity-0 transition-opacity group-hover:opacity-100 hover:bg-white/20"
+					onclick={handleEditClick}
+					aria-label="Edit {item.topic}"
+				>
+					<MoreHorizontal class="h-3 w-3" />
+				</button>
 
-			<!-- Week range indicator - bottom right -->
-			<div class="absolute right-1 bottom-1 text-xs font-medium opacity-70">
-				{item.duration || 1}w
-			</div>
+				<!-- Week range indicator - bottom right -->
+				<div class="absolute right-1 bottom-1 text-xs font-medium opacity-70">
+					{item.duration || 1}w
+				</div>
+			{/if}
 		</div>
 	</div>
 {/if}

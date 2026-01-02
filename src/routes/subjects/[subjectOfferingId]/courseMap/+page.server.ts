@@ -4,6 +4,9 @@ import {
 	createCourseMapItem,
 	deleteCoursemapItemAssessmentPlan,
 	getCourseMapItemsBySubjectOfferingId,
+	getCourseTeachersBySubjectOfferingId,
+	getCurriculumSubjectBySubjectOfferingId,
+	getFullSubjectOfferingNameBySubjectOfferingId,
 	getSubjectOfferingLearningAreas,
 	setCourseMapItemAreasOfStudy,
 	upsertCoursemapItemAssessmentPlan
@@ -33,11 +36,23 @@ export const load = async ({ params }: { params: { subjectOfferingId: string } }
 	// Get available learning areas for this subject offering
 	const availableLearningAreas = (await getSubjectOfferingLearningAreas(subjectOfferingId)) || [];
 
+	// Get teachers for this subject offering
+	const teachers = await getCourseTeachersBySubjectOfferingId(subjectOfferingId);
+
+	// Get curriculum subject info
+	const curriculumSubjectInfo = await getCurriculumSubjectBySubjectOfferingId(subjectOfferingId);
+
+	// Get full subject offering name (Year X Subject Name)
+	const fullSubjectOfferingName = await getFullSubjectOfferingNameBySubjectOfferingId(subjectOfferingId);
+
 	return {
 		subjectOfferingId,
 		subjectOffering,
 		courseMapItems,
-		availableLearningAreas
+		availableLearningAreas,
+		teachers,
+		curriculumSubjectInfo,
+		fullSubjectOfferingName
 	};
 };
 
