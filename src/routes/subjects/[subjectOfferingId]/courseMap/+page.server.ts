@@ -1,15 +1,15 @@
 import { db } from '$lib/server/db';
 import * as schema from '$lib/server/db/schema';
 import {
-	createCourseMapItem,
-	deleteCoursemapItemAssessmentPlan,
-	getCourseMapItemsBySubjectOfferingId,
-	getCourseTeachersBySubjectOfferingId,
-	getCurriculumSubjectBySubjectOfferingId,
-	getFullSubjectOfferingNameBySubjectOfferingId,
-	getSubjectOfferingLearningAreas,
-	setCourseMapItemAreasOfStudy,
-	upsertCoursemapItemAssessmentPlan
+    createCourseMapItem,
+    deleteCoursemapItemAssessmentPlan,
+    getCourseMapItemsBySubjectOfferingId,
+    getCourseTeachersBySubjectOfferingId,
+    getCurriculumSubjectBySubjectOfferingId,
+    getFullSubjectOfferingNameBySubjectOfferingId,
+    getSubjectOfferingLearningAreas,
+    setCourseMapItemAreasOfStudy,
+    upsertCoursemapItemAssessmentPlan
 } from '$lib/server/db/service/coursemap';
 import { getSubjectOfferingById } from '$lib/server/db/service/subjects';
 import type { Actions } from '@sveltejs/kit';

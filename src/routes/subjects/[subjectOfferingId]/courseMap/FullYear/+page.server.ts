@@ -1,7 +1,7 @@
 import {
-	getCourseMapItemsBySubjectOfferingId,
-	getFullSubjectOfferingNameBySubjectOfferingId,
-	getSubjectOfferingLearningAreas
+    getCourseMapItemsBySubjectOfferingId,
+    getFullSubjectOfferingNameBySubjectOfferingId,
+    getSubjectOfferingLearningAreas
 } from '$lib/server/db/service/coursemap';
 import { getSubjectOfferingById } from '$lib/server/db/service/subjects';
 import { error } from '@sveltejs/kit';
