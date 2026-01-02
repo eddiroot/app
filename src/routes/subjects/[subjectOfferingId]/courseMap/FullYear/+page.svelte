@@ -6,30 +6,16 @@
 		LearningArea,
 		LearningAreaStandard
 	} from '$lib/server/db/schema';
-	import CourseMapItemDrawer from './components/CourseMapItemDrawer.svelte';
-	import CurriculumSingleYearView from './components/CurriculumSingleYearView.svelte';
+	import CourseMapItemDrawer from '../components/CourseMapItemDrawer.svelte';
+	import CurriculumSingleYearView from '../components/CurriculumSingleYearView.svelte';
 
-	let { data, form } = $props();
+	let { data } = $props();
 
 	let courseMapItems = $state([...(data.courseMapItems || [])]);
 
 	$effect(() => {
 		if (data.courseMapItems) {
 			courseMapItems = [...data.courseMapItems];
-		}
-	});
-
-	// Use Svelte 5 $effect rune to handle form responses
-	$effect(() => {
-		if (form) {
-			if (form?.success && form?.courseMapItem) {
-				// Handle form submission success
-				if (form.action === 'create') {
-					handleItemCreated(form.courseMapItem);
-				} else if (form.action === 'update') {
-					handleItemUpdated(form.courseMapItem);
-				}
-			}
 		}
 	});
 
@@ -155,12 +141,14 @@
 </script>
 
 <svelte:head>
-	<title>Course Map - {data.subjectOffering?.subject?.name || 'Subject'}</title>
+	<title>Full Year Course Map - {data.subjectOffering?.subject?.name || 'Subject'}</title>
 </svelte:head>
 
 <div class="container mx-auto p-6">
 	<div class="mb-6">
-		<h1 class="text-2xl font-bold">Course Map</h1>
+		<h1 class="text-2xl font-bold">
+			{data.fullSubjectOfferingName || `${data.subjectOffering?.subject?.yearLevel || 'Year'} ${data.subjectOffering?.subject?.name || 'Subject'}`} Course Map
+		</h1>
 	</div>
 
 	<CurriculumSingleYearView
