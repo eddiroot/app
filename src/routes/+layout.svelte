@@ -62,7 +62,10 @@
 					pageData?.whiteboard || pageData?.whiteboards?.find((w: Task) => w.id === whiteboardId);
 				label = whiteboard?.title || `Whiteboard ${segment}`;
 			} else {
-				label = segment.charAt(0).toUpperCase() + segment.slice(1).replace(/-/g, ' ');
+				label = segment
+					.replace(/([a-z])([A-Z])/g, '$1 $2')
+					.replace(/-/g, ' ')
+					.replace(/^./, (char) => char.toUpperCase());
 			}
 
 			items.push({

@@ -98,7 +98,7 @@
 		},
 		{
 			title: 'Course Map',
-			url: 'curriculum',
+			url: 'courseMap',
 			icon: RouteIcon,
 			requiredPermission: userPermissions.viewCourseMap
 		}

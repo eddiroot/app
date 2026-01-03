@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import * as Avatar from '$lib/components/ui/avatar';
+	import * as Avatar from '$lib/components/ui/avatar/index.js';
 	import * as Card from '$lib/components/ui/card';
 	import type {
 		CourseMapItem,
@@ -11,7 +11,7 @@
 	import NotebookText from '@lucide/svelte/icons/notebook-text';
 	import Plus from '@lucide/svelte/icons/plus';
 	import CourseMapItemDrawer from './components/CourseMapItemDrawer.svelte';
-	import CurriculumSingleYearView from './components/CurriculumSingleYearView.svelte';
+	import CourseMapTable from './components/CourseMapTable.svelte';
 
 	let { data, form } = $props();
 
@@ -67,7 +67,7 @@
 
 			// Load learning area content for each selected learning area
 			const contentPromises = courseMapItemLearningAreas.map(async (learningArea) => {
-				const yearLevel = data.subjectOffering?.subject?.yearLevel || 'year9';
+				const yearLevel = 'year9'; // TODO: Get from proper source
 				const response = await fetch(
 					`/api/coursemap?action=learning-area-content&learningAreaId=${learningArea.id}&yearLevel=${yearLevel}`
 				);
@@ -115,7 +115,7 @@
 
 	// Handle course map item click - redirect to planning page
 	function handleCourseMapItemClick(item: CourseMapItem) {
-		goto(`/subjects/${data.subjectOfferingId}/curriculum/${item.id}/planning`);
+		goto(`/subjects/${data.subjectOfferingId}/courseMap/${item.id}/planning`);
 	}
 
 	// Handle course map item edit - open drawer in edit mode
@@ -167,7 +167,7 @@
 		if (target.closest('.curriculum-view-container')) {
 			return;
 		}
-		goto(`/subjects/${data.subjectOfferingId}/courseMap/FullYear`);
+		goto(`/subjects/${data.subjectOfferingId}/courseMap/fullYear`);
 	}
 
 	// Open drawer to create a new topic
@@ -187,23 +187,26 @@
 	<title>Course Map - {data.subjectOffering?.subject?.name || 'Subject'}</title>
 </svelte:head>
 
-<div class="container mx-auto space-y-6 p-6">
-	<!-- Hero Bar -->
-	<div class="bg-muted/30 rounded-lg p-6">
-		<h1 class="text-3xl font-bold">
-			{data.fullSubjectOfferingName || `${data.subjectOffering?.subject?.yearLevel || 'Year'} ${data.subjectOffering?.subject?.name || 'Subject'}`} Course Map
-		</h1>
-	</div>
+<!-- Full-width Hero Bar -->
+<div class="w-full bg-blue-500 px-6 py-26 relative">
+	<div class="absolute inset-0 bg-linear-to-br from-black/20 via-black/30 to-black/50"></div>
+	<h1 class="text-center text-4xl font-bold text-white relative">
+		{data.subjectOffering?.subject?.name || 'Subject'}: Course Map
+	</h1>
+</div>
 
+
+<!-- Main Content -->
+<div class="flex h-[calc(100vh-180px)] flex-col gap-3 overflow-hidden p-3">
 	<!-- Main Grid Layout -->
-	<div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
+	<div class="grid min-h-0 flex-1 grid-cols-1 gap-3 lg:grid-cols-3">
 		<!-- Left Column - Current Topic Card (Full Height) -->
-		<div class="lg:col-span-1">
-			<Card.Root class="h-full">
-				<Card.Content class="p-4">
+		<div class="min-h-0 lg:col-span-1">
+			<Card.Root class="flex h-full flex-col overflow-hidden">
+				<Card.Content class="flex-1 overflow-auto px-4 pb-4">
 					{#if currentTopic}
 						<!-- Display current topic name -->
-						<h3 class="mb-4 text-lg font-semibold">{currentTopic.topic}</h3>
+						<h3 class="mb-3 text-lg font-semibold">{currentTopic.topic}</h3>
 
 						<!-- Tasks Section -->
 						<div class="mb-4">
@@ -241,18 +244,18 @@
 		</div>
 
 		<!-- Right Column - 2 Rows -->
-		<div class="flex flex-col gap-6 lg:col-span-2">
+		<div class="flex min-h-0 flex-col gap-3 lg:col-span-2">
 			<!-- Full Course Map Card -->
 			<Card.Root
-				class="cursor-pointer transition-shadow hover:shadow-md"
+				class="flex min-h-0 flex-1 cursor-pointer flex-col overflow-hidden transition-shadow hover:shadow-md"
 				onclick={handleFullCourseMapCardClick}
 			>
-				<Card.Content class="p-4">
-					<h3 class="mb-4 text-lg font-semibold">Full Course Map</h3>
-					<div class="curriculum-view-container overflow-hidden rounded-lg">
-						<CurriculumSingleYearView
+				<Card.Content class="flex min-h-0 flex-1 flex-col px-4 pb-3">
+					<h3 class="mb-2 text-lg font-semibold">Full Course Map</h3>
+				<div class="curriculum-view-container min-h-0 flex-1 rounded-lg">
+						<CourseMapTable
 							{courseMapItems}
-							yearLevel={data.subjectOffering?.subject?.yearLevel || 'Year 9'}
+							yearLevel={data.fullSubjectOfferingName || 'Curriculum Map'}
 							onCourseMapItemClick={handleCourseMapItemClick}
 							onCourseMapItemEdit={handleCourseMapItemEdit}
 							onEmptyCellClick={handleEmptyCellClick}
@@ -263,19 +266,19 @@
 			</Card.Root>
 
 			<!-- Bottom Row - Teachers and Curriculum Cards -->
-			<div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+			<div class="grid shrink-0 grid-cols-1 gap-3 md:grid-cols-2">
 				<!-- Teachers Card -->
 				<Card.Root>
-					<Card.Content class="p-4">
-						<h3 class="mb-4 text-lg font-semibold">Teachers</h3>
+					<Card.Content class="px-4 pb-3">
+						<h3 class="mb-2 text-lg font-semibold">Teachers</h3>
 						{#if data.teachers && data.teachers.length > 0}
 							<div class="flex flex-wrap gap-2">
 								{#each data.teachers as teacher}
-									<Avatar.Root>
+									<Avatar.Root class="h-10 w-10 rounded-lg">
 										{#if teacher.avatarUrl}
 											<Avatar.Image src={teacher.avatarUrl} alt={`${teacher.firstName} ${teacher.lastName}`} />
 										{/if}
-										<Avatar.Fallback>
+										<Avatar.Fallback class="rounded-lg">
 											{teacher.firstName?.[0] || ''}{teacher.lastName?.[0] || ''}
 										</Avatar.Fallback>
 									</Avatar.Root>
@@ -289,8 +292,8 @@
 
 				<!-- Curriculum Card -->
 				<Card.Root>
-					<Card.Content class="p-4">
-						<h3 class="mb-4 text-lg font-semibold">Curriculum</h3>
+					<Card.Content class="px-4 pb-3">
+						<h3 class="mb-2 text-lg font-semibold">Curriculum</h3>
 						{#if data.curriculumSubjectInfo}
 							<div class="flex items-center gap-2">
 								<NotebookText class="text-muted-foreground" />
