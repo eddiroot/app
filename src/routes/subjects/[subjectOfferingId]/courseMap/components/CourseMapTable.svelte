@@ -69,9 +69,9 @@
 	}
 </script>
 
-<div class="flex h-full w-full flex-col rounded-lg">
+<div class="flex h-full w-full flex-col overflow-hidden rounded-lg">
 	<!-- Black header row -->
-	<div class="grid w-full gap-2 bg-black px-1 py-3" style="grid-template-columns: repeat(19, 1fr);">
+	<div class="grid w-full gap-2 rounded-t-lg bg-black px-1 py-5" style="grid-template-columns: 2.5fr repeat(18, 1fr);">
 		<div class="text-center text-xs font-medium text-white">Semester</div>
 		{#each Array.from({ length: 18 }, (_, i) => i + 1) as weekNum}
 			<div class="text-center text-xs font-medium text-white">{weekNum}</div>
@@ -79,11 +79,11 @@
 	</div>
 
 	<!-- Table body with light grey background -->
-	<div class="flex-1 bg-zinc-200 px-1 py-3">
-		<div class="flex h-full w-full flex-col gap-3">
+	<div class="flex-1 rounded-b-lg bg-zinc-200 px-1 py-2">
+		<div class="flex h-full w-full flex-col gap-2">
 			<!-- Semester rows -->
 			{#each [1, 2] as semester}
-				<div class="grid w-full flex-1 gap-2" style="grid-template-columns: repeat(19, 1fr);">
+				<div class="grid w-full flex-1 gap-2" style="grid-template-columns: 2.5fr repeat(18, 1fr);">
 					<!-- Semester label column -->
 					<div class="flex items-center justify-center rounded-xl border border-zinc-300 bg-white shadow-sm">
 						<span class="text-sm font-medium">Sem {semester}</span>

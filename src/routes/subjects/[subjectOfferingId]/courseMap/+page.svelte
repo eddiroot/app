@@ -8,8 +8,11 @@
 		LearningArea,
 		LearningAreaStandard
 	} from '$lib/server/db/schema';
+	import Brain from '@lucide/svelte/icons/brain';
+	import Map from '@lucide/svelte/icons/map';
 	import NotebookText from '@lucide/svelte/icons/notebook-text';
 	import Plus from '@lucide/svelte/icons/plus';
+	import User from '@lucide/svelte/icons/user';
 	import CourseMapItemDrawer from './components/CourseMapItemDrawer.svelte';
 	import CourseMapTable from './components/CourseMapTable.svelte';
 
@@ -206,8 +209,12 @@
 				<Card.Content class="flex-1 overflow-auto px-4 pb-4">
 					{#if currentTopic}
 						<!-- Display current topic name -->
-						<h3 class="mb-3 text-lg font-semibold">{currentTopic.topic}</h3>
-
+						<div class="mb-3 flex items-center gap-2">
+							<div class="flex h-8 w-8 items-center justify-center rounded-lg bg-purple-100">
+								<Brain class="h-5 w-5 text-purple-600" />
+							</div>
+							<h3 class="text-lg font-bold">{currentTopic.topic}</h3>
+						</div>
 						<!-- Tasks Section -->
 						<div class="mb-4">
 							<h4 class="text-muted-foreground mb-2 text-sm font-medium">Tasks</h4>
@@ -227,8 +234,14 @@
 						</div>
 					{:else}
 						<!-- No topics - show create option -->
+						<div class="mb-3 flex items-center gap-2">
+							<div class="flex h-8 w-8 items-center justify-center rounded-lg bg-purple-100">
+								<Brain class="h-5 w-5 text-purple-600" />
+							</div>
+							<h3 class="text-lg font-bold">Current Topic</h3>
+						</div>
 						<div class="flex items-center justify-between">
-							<h3 class="text-lg font-semibold">Create a Topic</h3>
+							<p class="text-base font-semibold">Create a Topic</p>
 							<button
 								type="button"
 								class="hover:bg-muted rounded-full p-2 transition-colors"
@@ -250,8 +263,13 @@
 				class="flex min-h-0 flex-1 cursor-pointer flex-col overflow-hidden transition-shadow hover:shadow-md"
 				onclick={handleFullCourseMapCardClick}
 			>
-				<Card.Content class="flex min-h-0 flex-1 flex-col px-4 pb-3">
-					<h3 class="mb-2 text-lg font-semibold">Full Course Map</h3>
+				<Card.Content class="flex min-h-0 flex-1 flex-col px-4 ">
+					<div class="mb-4 flex items-center gap-2">
+						<div class="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-100">
+							<Map class="h-5 w-5 text-blue-600" />
+						</div>
+						<h3 class="text-lg font-bold">Full Course Map</h3>
+					</div>
 				<div class="curriculum-view-container min-h-0 flex-1 rounded-lg">
 						<CourseMapTable
 							{courseMapItems}
@@ -270,9 +288,14 @@
 				<!-- Teachers Card -->
 				<Card.Root>
 					<Card.Content class="px-4 pb-3">
-						<h3 class="mb-2 text-lg font-semibold">Teachers</h3>
+						<div class="mb-2 flex items-center gap-2">
+							<div class="flex h-8 w-8 items-center justify-center rounded-lg bg-green-100">
+								<User class="h-5 w-5 text-green-600" />
+							</div>
+							<h3 class="text-lg font-bold">Teachers</h3>
+						</div>
 						{#if data.teachers && data.teachers.length > 0}
-							<div class="flex flex-wrap gap-2">
+							<div class="flex flex-wrap gap-2 ml-4 pt-2">
 								{#each data.teachers as teacher}
 									<Avatar.Root class="h-10 w-10 rounded-lg">
 										{#if teacher.avatarUrl}
@@ -293,14 +316,18 @@
 				<!-- Curriculum Card -->
 				<Card.Root>
 					<Card.Content class="px-4 pb-3">
-						<h3 class="mb-2 text-lg font-semibold">Curriculum</h3>
+						<div class="mb-2 flex items-center gap-2">
+							<div class="flex h-8 w-8 items-center justify-center rounded-lg bg-orange-100">
+								<NotebookText class="h-5 w-5 text-orange-600" />
+							</div>
+							<h3 class="text-lg font-bold">Curriculum</h3>
+						</div>
 						{#if data.curriculumSubjectInfo}
-							<div class="flex items-center gap-2">
-								<NotebookText class="text-muted-foreground" />
+							<div class="flex items-center gap-2 ml-4 pt-2">
 								<span>{data.curriculumSubjectInfo.curriculum.name} {data.curriculumSubjectInfo.curriculumSubject.name}</span>
 							</div>
 						{:else}
-							<p class="text-muted-foreground text-sm">Select a Curriculum</p>
+							<p class="text-muted-foreground text-m ml-4 pt-2">No curriculum assigned</p>
 						{/if}
 					</Card.Content>
 				</Card.Root>
