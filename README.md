@@ -31,8 +31,9 @@ npx sst remove
 ```bash
 docker compose up -d
 npm install
+sudo npx sst tunnel install
 npm run sso
-npx sst dev
+npx sst dev --stage dev
 ```
 
 3. In a new terminal, run these commands
@@ -53,7 +54,7 @@ npm run db:seed
 ```bash
 docker compose down --volumes
 docker compose up -d
-npx sst dev
+npx sst dev --stage dev
 ```
 
 3. In a new terminal, run these commands
