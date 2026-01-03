@@ -7,7 +7,7 @@
 		LearningAreaStandard
 	} from '$lib/server/db/schema';
 	import CourseMapItemDrawer from '../components/CourseMapItemDrawer.svelte';
-	import CurriculumSingleYearView from '../components/CurriculumSingleYearView.svelte';
+	import CourseMapTable from '../components/CourseMapTable.svelte';
 
 	let { data } = $props();
 
@@ -46,7 +46,7 @@
 
 			// Load learning area content for each selected learning area
 			const contentPromises = courseMapItemLearningAreas.map(async (learningArea) => {
-				const yearLevel = data.subjectOffering?.subject?.yearLevel || 'year9';
+				const yearLevel = 'year9'; // TODO: Get from proper source
 				const response = await fetch(
 					`/api/coursemap?action=learning-area-content&learningAreaId=${learningArea.id}&yearLevel=${yearLevel}`
 				);
@@ -94,7 +94,7 @@
 
 	// Handle course map item click - redirect to planning page
 	function handleCourseMapItemClick(item: CourseMapItem) {
-		goto(`/subjects/${data.subjectOfferingId}/curriculum/${item.id}/planning`);
+		goto(`/subjects/${data.subjectOfferingId}/courseMap/${item.id}/planning`);
 	}
 
 	// Handle course map item edit - open drawer in edit mode
@@ -144,20 +144,22 @@
 	<title>Full Year Course Map - {data.subjectOffering?.subject?.name || 'Subject'}</title>
 </svelte:head>
 
-<div class="container mx-auto p-6">
-	<div class="mb-6">
+<div class="flex h-[calc(100vh-4rem)] flex-col px-3 py-6">
+	<div class="mb-4">
 		<h1 class="text-2xl font-bold">
-			{data.fullSubjectOfferingName || `${data.subjectOffering?.subject?.yearLevel || 'Year'} ${data.subjectOffering?.subject?.name || 'Subject'}`} Course Map
+			{data.fullSubjectOfferingName || data.subjectOffering?.subject?.name || 'Subject'} Course Map
 		</h1>
 	</div>
 
-	<CurriculumSingleYearView
-		{courseMapItems}
-		yearLevel={data.subjectOffering?.subject?.yearLevel || 'Year 9'}
-		onCourseMapItemClick={handleCourseMapItemClick}
-		onCourseMapItemEdit={handleCourseMapItemEdit}
-		onEmptyCellClick={handleEmptyCellClick}
-	/>
+	<div class="min-h-0 flex-1">
+		<CourseMapTable
+			{courseMapItems}
+			yearLevel={data.fullSubjectOfferingName || 'Curriculum Map'}
+			onCourseMapItemClick={handleCourseMapItemClick}
+			onCourseMapItemEdit={handleCourseMapItemEdit}
+			onEmptyCellClick={handleEmptyCellClick}
+		/>
+	</div>
 
 	<CourseMapItemDrawer
 		bind:open={drawerOpen}

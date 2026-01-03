@@ -112,7 +112,7 @@
 		},
 		{
 			title: 'Course Map',
-			url: 'curriculum',
+			url: 'courseMap',
 			icon: RouteIcon,
 			classLevel: false,
 			requiredPermission: userPermissions.viewCourseMap
