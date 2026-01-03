@@ -1163,7 +1163,7 @@ async function seed() {
 		.where(
 			and(
 				eq(schema.schoolSemester.schoolId, schoolRecord.id),
-				eq(schema.schoolSemester.schoolYear, 2025),
+				eq(schema.schoolSemester.schoolYear, new Date().getFullYear()),
 				eq(schema.schoolSemester.semNumber, 1)
 			)
 		)
