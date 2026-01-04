@@ -1,90 +1,73 @@
+import { sql } from 'drizzle-orm';
+import { check } from 'drizzle-orm/gel-core';
 import {
 	boolean,
-	check,
 	date,
 	foreignKey,
 	index,
 	integer,
-	pgEnum,
-	pgTable,
+	pgSchema,
 	text,
 	time,
 	unique,
 	uuid,
 	type AnyPgColumn
 } from 'drizzle-orm/pg-core';
-import { sql } from 'drizzle-orm/sql';
 import {
 	subjectClassAllocationAttendanceComponentType,
 	subjectClassAllocationAttendanceStatus,
+	subjectGroupEnum,
 	subjectThreadResponseTypeEnum,
 	subjectThreadTypeEnum
 } from '../../../enums';
 import { courseMapItem } from './coursemap';
-import { curriculumSubject, yearLevelEnumPg } from './curriculum';
+import { curriculumSubject, gradeScale } from './curriculum';
 import { resource } from './resource';
-import { campus, school, schoolSpace } from './schools';
+import { campus, school, schoolSpace, yearLevel } from './schools';
 import { timetableDraft } from './timetables';
 import { user } from './user';
-import { embeddings, timestamps } from './utils';
+import { embeddings, timestamps, yearLevelEnumPg } from './utils';
 
-export const coreSubject = pgTable('sub_core', {
+export const subjectSchema = pgSchema('subject');
+
+export const subjectGroupEnumPg = subjectSchema.enum('enum_sub_group', [
+	subjectGroupEnum.english,
+	subjectGroupEnum.mathematics,
+	subjectGroupEnum.science
+]);
+
+export const coreSubject = subjectSchema.table('sub_core', {
 	id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
 	name: text('name').notNull(),
 	description: text('description'),
-	curriculumSubjectId: integer('cur_sub_id')
-		.notNull()
-		.references(() => curriculumSubject.id, { onDelete: 'cascade' }),
 	schoolId: integer('sch_id')
 		.notNull()
 		.references(() => school.id, { onDelete: 'cascade' }),
-	isArchived: boolean('is_archived').notNull().default(false),
+	subjectGroup: subjectGroupEnumPg().notNull(),
+	isArchived: boolean('is_archived').default(false).notNull(),
 	...timestamps
 });
 
 export type CoreSubject = typeof coreSubject.$inferSelect;
 
-export const electiveSubject = pgTable('sub_elec', {
+export const subject = subjectSchema.table('sub', {
 	id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
 	name: text('name').notNull(),
-	description: text('description'),
 	schoolId: integer('sch_id')
 		.notNull()
 		.references(() => school.id, { onDelete: 'cascade' }),
-	isArchived: boolean('is_archived').notNull().default(false),
+	coreSubjectId: integer('core_sub_id').references(() => coreSubject.id, { onDelete: 'cascade' }), // If its part of a multi-year subject
+	yearLevelId: integer('yr_lvl_id')
+		.notNull()
+		.references(() => yearLevel.id, { onDelete: 'cascade' }),
+	description: text('description'),
+	isArchived: boolean('is_archived').default(false).notNull(),
 	...timestamps
 });
 
-export const subject = pgTable(
-	'sub',
-	{
-		id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
-		name: text('name').notNull(),
-		schoolId: integer('sch_id')
-			.notNull()
-			.references(() => school.id, { onDelete: 'cascade' }),
-		coreSubjectId: integer('sub_core_id').references(() => coreSubject.id, {
-			onDelete: 'set null'
-		}),
-		electiveSubjectId: integer('sub_elec_id').references(() => electiveSubject.id, {
-			onDelete: 'set null'
-		}),
-		yearLevel: yearLevelEnumPg().notNull(),
-		isArchived: boolean('is_archived').notNull().default(false),
-		...timestamps
-	},
-	(subject) => [
-		unique().on(subject.schoolId, subject.name),
-		check(
-			'either_core_or_elective',
-			sql`(sub_core_id IS NOT NULL AND sub_elec_id IS NULL) OR (sub_core_id IS NULL AND sub_elec_id IS NOT NULL)`
-		)
-	]
-);
-
 export type Subject = typeof subject.$inferSelect;
 
-export const subjectOffering = pgTable('sub_off', {
+export const subjectOffering = subjectSchema.table('sub_off', {
 	id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
 	subjectId: integer('sub_id')
 		.notNull()
@@ -94,13 +77,15 @@ export const subjectOffering = pgTable('sub_off', {
 	campusId: integer('campus_id')
 		.notNull()
 		.references(() => campus.id, { onDelete: 'cascade' }),
-	isArchived: boolean('is_archived').notNull().default(false),
+	curriculumSubjectId: integer('cur_sub_id').references(() => curriculumSubject.id, {onDelete: 'set null'}),
+	gradeScaleId: integer('grade_scale_id').references(() => gradeScale.id, { onDelete: 'set null' }),
+	isArchived: boolean('is_archived').default(false).notNull(),
 	...timestamps
 });
 
 export type SubjectOffering = typeof subjectOffering.$inferSelect;
 
-export const subjectOfferingClass = pgTable(
+export const subjectOfferingClass = subjectSchema.table(
 	'sub_off_cls',
 	{
 		id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
@@ -111,7 +96,7 @@ export const subjectOfferingClass = pgTable(
 		subOfferingId: integer('sub_off_id')
 			.notNull()
 			.references(() => subjectOffering.id, { onDelete: 'cascade' }),
-		isArchived: boolean('is_archived').notNull().default(false),
+		isArchived: boolean('is_archived').default(false).notNull(),
 		...timestamps
 	},
 	(self) => [unique().on(self.subOfferingId, self.name)]
@@ -119,7 +104,7 @@ export const subjectOfferingClass = pgTable(
 
 export type SubjectOfferingClass = typeof subjectOfferingClass.$inferSelect;
 
-export const subjectClassAllocation = pgTable('sub_off_cls_allo', {
+export const subjectClassAllocation = subjectSchema.table('sub_off_cls_allo', {
 	id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
 	subjectOfferingClassId: integer('sub_off_cls_id')
 		.notNull()
@@ -130,18 +115,18 @@ export const subjectClassAllocation = pgTable('sub_off_cls_allo', {
 	date: date('date').notNull(),
 	startTime: time('start_time').notNull(),
 	endTime: time('end_time').notNull(),
-	isArchived: boolean('is_archived').notNull().default(false),
+	isArchived: boolean('is_archived').default(false).notNull(),
 	...timestamps
 });
 
 export type SubjectClassAllocation = typeof subjectClassAllocation.$inferSelect;
 
-export const subjectClassAllocationAttendanceStatusEnumPg = pgEnum('enum_sub_cls_allo_att_stat', [
-	subjectClassAllocationAttendanceStatus.present,
-	subjectClassAllocationAttendanceStatus.absent
-]);
+export const subjectClassAllocationAttendanceStatusEnumPg = subjectSchema.enum(
+	'enum_sub_cls_allo_att_stat',
+	[subjectClassAllocationAttendanceStatus.present, subjectClassAllocationAttendanceStatus.absent]
+);
 
-export const subjectClassAllocationAttendance = pgTable(
+export const subjectClassAllocationAttendance = subjectSchema.table(
 	'sub_off_cls_allo_att',
 	{
 		id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
@@ -154,7 +139,7 @@ export const subjectClassAllocationAttendance = pgTable(
 		status: subjectClassAllocationAttendanceStatusEnumPg().notNull(),
 		noteGuardian: text('note_guardian'),
 		noteTeacher: text('note_teacher'),
-		isArchived: boolean('is_archived').notNull().default(false),
+		isArchived: boolean('is_archived').default(false).notNull(),
 		...timestamps
 	},
 	(self) => [unique().on(self.subjectClassAllocationId, self.userId)]
@@ -162,7 +147,7 @@ export const subjectClassAllocationAttendance = pgTable(
 
 export type SubjectClassAllocationAttendance = typeof subjectClassAllocationAttendance.$inferSelect;
 
-export const subjectClassAllocationAttendanceComponentTypeEnumPg = pgEnum(
+export const subjectClassAllocationAttendanceComponentTypeEnumPg = subjectSchema.enum(
 	'sub_off_cls_allo_att_comp_type',
 	[
 		subjectClassAllocationAttendanceComponentType.present,
@@ -171,7 +156,7 @@ export const subjectClassAllocationAttendanceComponentTypeEnumPg = pgEnum(
 	]
 );
 
-export const subjectClassAllocationAttendanceComponent = pgTable(
+export const subjectClassAllocationAttendanceComponent = subjectSchema.table(
 	'sub_off_cls_allo_att_comp',
 	{
 		id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
@@ -189,7 +174,7 @@ export const subjectClassAllocationAttendanceComponent = pgTable(
 export type SubjectClassAllocationAttendanceComponent =
 	typeof subjectClassAllocationAttendanceComponent.$inferSelect;
 
-export const behaviourQuickAction = pgTable(
+export const behaviourQuickAction = subjectSchema.table(
 	'behaviour_quick_action',
 	{
 		id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
@@ -198,7 +183,7 @@ export const behaviourQuickAction = pgTable(
 			.references(() => school.id, { onDelete: 'cascade' }),
 		name: text('name').notNull(),
 		description: text('description'),
-		isArchived: boolean('is_archived').notNull().default(false),
+		isArchived: boolean('is_archived').default(false).notNull(),
 		...timestamps
 	},
 	(self) => [unique().on(self.schoolId, self.name)]
@@ -206,7 +191,7 @@ export const behaviourQuickAction = pgTable(
 
 export type BehaviourQuickAction = typeof behaviourQuickAction.$inferSelect;
 
-export const attendanceBehaviourQuickAction = pgTable(
+export const attendanceBehaviourQuickAction = subjectSchema.table(
 	'att_behaviour_quick_action',
 	{
 		id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
@@ -223,14 +208,14 @@ export const attendanceBehaviourQuickAction = pgTable(
 
 export type AttendanceBehaviourQuickAction = typeof attendanceBehaviourQuickAction.$inferSelect;
 
-export const subjectThreadTypeEnumPg = pgEnum('enum_sub_thread_type', [
+export const subjectThreadTypeEnumPg = subjectSchema.enum('enum_sub_thread_type', [
 	subjectThreadTypeEnum.discussion,
 	subjectThreadTypeEnum.question,
 	subjectThreadTypeEnum.announcement,
 	subjectThreadTypeEnum.qanda
 ]);
 
-export const subjectThread = pgTable(
+export const subjectThread = subjectSchema.table(
 	'sub_thread',
 	{
 		id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
@@ -244,7 +229,7 @@ export const subjectThread = pgTable(
 		title: text('title').notNull(),
 		content: text('content').notNull(),
 		isAnonymous: boolean('is_anonymous').notNull(),
-		isArchived: boolean('is_archived').notNull().default(false),
+		isArchived: boolean('is_archived').default(false).notNull(),
 		...timestamps,
 		...embeddings
 	},
@@ -256,12 +241,12 @@ export const subjectThread = pgTable(
 
 export type SubjectThread = typeof subjectThread.$inferSelect;
 
-export const subjectThreadResponseTypeEnumPg = pgEnum('enum_sub_thread_res_type', [
+export const subjectThreadResponseTypeEnumPg = subjectSchema.enum('enum_sub_thread_res_type', [
 	subjectThreadResponseTypeEnum.comment,
 	subjectThreadResponseTypeEnum.answer
 ]);
 
-export const subjectThreadResponse = pgTable(
+export const subjectThreadResponse = subjectSchema.table(
 	'sub_thread_resp',
 	{
 		id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
@@ -275,7 +260,7 @@ export const subjectThreadResponse = pgTable(
 		content: text('content').notNull(),
 		parentResponseId: integer('parent_id').references((): AnyPgColumn => subjectThreadResponse.id),
 		isAnonymous: boolean('is_anonymous').notNull().default(false),
-		isArchived: boolean('is_archived').notNull().default(false),
+		isArchived: boolean('is_archived').default(false).notNull(),
 		...timestamps,
 		...embeddings
 	},
@@ -291,7 +276,7 @@ export const subjectThreadResponse = pgTable(
 
 export type SubjectThreadResponse = typeof subjectThreadResponse.$inferSelect;
 
-export const subjectThreadLike = pgTable(
+export const subjectThreadLike = subjectSchema.table(
 	'sub_thread_like',
 	{
 		id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
@@ -308,7 +293,7 @@ export const subjectThreadLike = pgTable(
 
 export type SubjectThreadLike = typeof subjectThreadLike.$inferSelect;
 
-export const subjectThreadResponseLike = pgTable(
+export const subjectThreadResponseLike = subjectSchema.table(
 	'sub_thread_resp_like',
 	{
 		id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
@@ -325,7 +310,7 @@ export const subjectThreadResponseLike = pgTable(
 
 export type SubjectThreadResponseLike = typeof subjectThreadResponseLike.$inferSelect;
 
-export const subjectOfferingClassResource = pgTable('sub_off_cls_res', {
+export const subjectOfferingClassResource = subjectSchema.table('sub_off_cls_res', {
 	id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
 	title: text('title'),
 	description: text('description'),
@@ -341,13 +326,13 @@ export const subjectOfferingClassResource = pgTable('sub_off_cls_res', {
 	authorId: uuid('author_id')
 		.notNull()
 		.references(() => user.id, { onDelete: 'cascade' }),
-	isArchived: boolean('is_archived').notNull().default(false),
+	isArchived: boolean('is_archived').default(false).notNull(),
 	...timestamps
 });
 
 export type SubjectOfferingClassResource = typeof subjectOfferingClassResource.$inferSelect;
 
-export const subjectSelectionConstraint = pgTable('sub_sel_constraint', {
+export const subjectSelectionConstraint = subjectSchema.table('sub_sel_constraint', {
 	id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
 	schoolId: integer('school_id')
 		.notNull()
@@ -363,7 +348,7 @@ export const subjectSelectionConstraint = pgTable('sub_sel_constraint', {
 
 export type SubjectSelectionConstraint = typeof subjectSelectionConstraint.$inferSelect;
 
-export const subjectSelectionConstraintSubject = pgTable('constraint_subject', {
+export const subjectSelectionConstraintSubject = subjectSchema.table('constraint_subject', {
 	id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
 	constraintId: integer('constraint_id')
 		.notNull()

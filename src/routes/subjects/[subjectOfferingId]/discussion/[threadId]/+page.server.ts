@@ -44,7 +44,7 @@ export const load = async ({ locals: { security }, params: { threadId } }) => {
 		defaults: {
 			type:
 				thread?.thread?.type == subjectThreadTypeEnum.question ||
-					thread?.thread?.type === subjectThreadTypeEnum.qanda
+				thread?.thread?.type === subjectThreadTypeEnum.qanda
 					? subjectThreadResponseTypeEnum.answer
 					: subjectThreadResponseTypeEnum.comment,
 			content: '',

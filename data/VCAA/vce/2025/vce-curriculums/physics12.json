@@ -1,2286 +1,2286 @@
 {
-  "id": 6000,
-  "curriculumId": 6000,
-  "name": "Physics Units 1 and 2",
-  "isArchived": false,
-  "learningAreas": [
-    {
-      "id": 6000,
-      "curriculumSubjectId": 6000,
-      "name": "How are light and heat explained?",
-      "abbreviation": "U1AOS1",
-      "description": "In this area of study, students study light using the wave model and thermal energy using a particle model forming an understanding of the fundamental physics ideas of reflection, refraction and dispersion. They use these to understand observations made of the world such as mirages and rainbows. They investigate energy transfers and explore how light and thermal energy relate to one another. They apply light ideas to explain how light is used through optical fibres in communication, and how physics is used to inform global warming and climate change. On completion of this unit the student should be able to model, investigate and evaluate the wave-like nature of light, thermal energy and the emission and absorption of light by matter."
-    },
-    {
-      "id": 6001,
-      "curriculumSubjectId": 6000,
-      "name": "How is energy from the nucleus utilised?",
-      "abbreviation": "U1AOS2",
-      "description": "In this area of study, students build on their understanding of energy to explore energy that derives from the nuclei of atoms. They learn about the properties of the radiation from the nucleus and the effects of this radiation on human cells and tissues and apply this understanding to the use of radioisotopes in medical therapy. Students explore the transfer of energy from the nucleus through the processes of fission and fusion and apply these ideas to evaluate the viability of nuclear energy as an energy source for Australia."
-    },
-    {
-      "id": 6002,
-      "curriculumSubjectId": 6000,
-      "name": "How can electricity be used to transfer energy?",
-      "abbreviation": "U1AOS3",
-      "description": "Modelling is a useful tool in developing concepts that explain physical phenomena that cannot be directly observed. In this area of study, students develop conceptual models to analyse electrical phenomena and undertake practical investigations of circuit components. Concepts of electrical safety are developed through the study of safety mechanisms and the effect of current on humans. Students apply and critically assess mathematical models during experimental investigations of DC circuits. They explore electrical safety and the use of transducers to transfer energy in common devices. On completion of this unit the student should be able to investigate and apply a basic DC circuit model to simple battery-operated devices and household electrical systems, apply mathematical models to analyse circuits, and describe the safe and effective use of electricity by individuals and the community."
-    },
-    {
-      "id": 6003,
-      "curriculumSubjectId": 6000,
-      "name": "How is motion understood?",
-      "abbreviation": "U2AOS1",
-      "description": "In this area of study, students describe and analyse graphically, numerically and algebraically the energy and motion of an object, using specific physics terminology and conventions. They consider the effects of balanced and unbalanced forces on motion and investigate the translational and rotational forces on static structures. Students apply mathematical models during experimental investigations of motion, and apply their understanding of motion and force through a case study. On completion of this unit the student should be able to investigate, analyse, mathematically model and apply force, energy and motion."
-    },
-    {
-      "id": 6004,
-      "curriculumSubjectId": 6000,
-      "name": "Options: How does physics inform contemporary issues and applications in society?",
-      "abbreviation": "U2AOS2",
-      "description": "In this area of study, students develop a deeper understanding of an area of interest within diverse areas of physics. They select from eighteen options, explore the related physics and use this physics to form a stance, opinion or solution to a contemporary societal issue or application. In their explorations, a range of investigation methodologies may be used by students. On completion of this unit the student should be able to investigate and apply physics knowledge to develop and communicate an informed response to a contemporary societal issue or application related to a selected option."
-    },
-    {
-      "id": 6005,
-      "curriculumSubjectId": 6000,
-      "name": "How do physicists investigate questions?",
-      "abbreviation": "U2AOS3",
-      "description": "Systematic experimentation is an important aspect of physics inquiry. In this area of study, students adapt or design and then conduct a scientific investigation to generate appropriate primary qualitative and/or quantitative data, organise and interpret the data, and reach and evaluate a conclusion in response to the research question. Research questions may relate to different scientific methodologies that involve the generation of primary data, controlled experiments, fieldwork, correlational studies, classification and identification, modelling, and the development of a product, process or system. Students may extend their knowledge and skills related to understanding motion by designing and undertaking investigations such as, ‘What are the energy transformations during a theme park ride?’, ‘What are the forces experienced by a netballer’s ankle?’, ‘Is momentum conserved in a football tackle?’ and ‘What is the optimal design of the lightest capsule that is able to prevent an egg breaking during a drop?’. Video analysis can be used to investigate questions such as, ‘Is kinetic energy conserved in a pole vault?’. Questions may be used as a starting point for the investigation, such as ‘Does the shape of the cornea or the material of the lens have a greater effect on refraction?’, ‘How do the structures of winged seeds affect their dispersal?’ and ‘How do buttresses affect the stability of a church?’, or further questions may be posed that have arisen from the options in Unit 2, Area of Study 2. The student-adapted or student-designed scientific investigation relates to knowledge and skills developed in Area of Study 1 and/or Area of Study 2."
-    }
-  ],
-  "outcomes": [
-    {
-      "id": 6000,
-      "curriculumSubjectId": 6000,
-      "number": 1,
-      "description": "On completion of this unit the student should be able to model, investigate and evaluate the wave-like nature of light, thermal energy and the emission and absorption of light by matter.",
-      "topics": [
-        {
-          "id": 6000,
-          "outcomeId": 6000,
-          "name": "Electromagnetic radiation"
-        },
-        {
-          "id": 6001,
-          "outcomeId": 6000,
-          "name": "Thermal energy"
-        },
-        {
-          "id": 6002,
-          "outcomeId": 6000,
-          "name": "Interaction of thermal energy and electromagnetic radiation"
-        }
-      ],
-      "keyKnowledge": [
-        {
-          "id": 6000,
-          "description": "identify all electromagnetic waves as transverse waves travelling at the same speed, c, in a vacuum as distinct from mechanical waves that require a medium to propagate",
-          "outcomeId": 6000,
-          "outcomeTopicId": 6000
-        },
-        {
-          "id": 6001,
-          "description": "identify the amplitude, wavelength, period and frequency of waves",
-          "outcomeId": 6000,
-          "outcomeTopicId": 6000
-        },
-        {
-          "id": 6002,
-          "description": "calculate the wavelength, frequency, period and speed of travel of waves using:",
-          "outcomeId": 6000,
-          "outcomeTopicId": 6000
-        },
-        {
-          "id": 6003,
-          "description": "explain the wavelength of a wave as a result of the velocity (determined by the medium through which it travels) and the frequency (determined by the source)",
-          "outcomeId": 6000,
-          "outcomeTopicId": 6000
-        },
-        {
-          "id": 6004,
-          "description": "describe electromagnetic radiation emitted from the Sun as mainly ultraviolet, visible and infrared",
-          "outcomeId": 6000,
-          "outcomeTopicId": 6000
-        },
-        {
-          "id": 6005,
-          "description": "compare the wavelength and frequencies of different regions of the electromagnetic spectrum, including radio, microwave, infrared, visible, ultraviolet, x-ray and gamma, and compare the different uses each has in society",
-          "outcomeId": 6000,
-          "outcomeTopicId": 6000
-        },
-        {
-          "id": 6006,
-          "description": "investigate and analyse theoretically and practically the behaviour of waves including:",
-          "outcomeId": 6000,
-          "outcomeTopicId": 6000
-        },
-        {
-          "id": 6007,
-          "description": "refraction using Snell’s Law: n1 sin(θ1) = n2 sin(θ2) and n1v1 = n2v2",
-          "outcomeId": 6000,
-          "outcomeTopicId": 6000
-        },
-        {
-          "id": 6008,
-          "description": "total internal reflection and critical angle including applications: n1 sin(θc) = n2 sin(90º)",
-          "outcomeId": 6000,
-          "outcomeTopicId": 6000
-        },
-        {
-          "id": 6009,
-          "description": "investigate and explain theoretically and practically colour dispersion in prisms and lenses with reference to refraction of the components of white light as they pass from one medium to another",
-          "outcomeId": 6000,
-          "outcomeTopicId": 6000
-        },
-        {
-          "id": 6010,
-          "description": "explain the formation of optical phenomena: rainbows; mirages",
-          "outcomeId": 6000,
-          "outcomeTopicId": 6000
-        },
-        {
-          "id": 6011,
-          "description": "investigate light transmission through optical fibres for communication",
-          "outcomeId": 6000,
-          "outcomeTopicId": 6000
-        },
-        {
-          "id": 6012,
-          "description": "convert between Celsius and kelvin scales",
-          "outcomeId": 6000,
-          "outcomeTopicId": 6001
-        },
-        {
-          "id": 6013,
-          "description": "describe how an increase in temperature corresponds to an increase in thermal energy (kinetic and potential energy of the atoms) of a system:",
-          "outcomeId": 6000,
-          "outcomeTopicId": 6001
-        },
-        {
-          "id": 6014,
-          "description": "distinguish between conduction, convection and radiation with reference to heat transfers within and between systems",
-          "outcomeId": 6000,
-          "outcomeTopicId": 6001
-        },
-        {
-          "id": 6015,
-          "description": "explain why cooling results from evaporation using a simple kinetic energy model",
-          "outcomeId": 6000,
-          "outcomeTopicId": 6001
-        },
-        {
-          "id": 6016,
-          "description": "investigate and analyse theoretically and practically the energy required to:",
-          "outcomeId": 6000,
-          "outcomeTopicId": 6001
-        },
-        {
-          "id": 6017,
-          "description": "raise the temperature of a substance: Q = mcΔT",
-          "outcomeId": 6000,
-          "outcomeTopicId": 6001
-        },
-        {
-          "id": 6018,
-          "description": "change the state of a substance: Q = mL",
-          "outcomeId": 6000,
-          "outcomeTopicId": 6001
-        },
-        {
-          "id": 6019,
-          "description": "calculate the peak wavelength of the radiated electromagnetic radiation using Wien’s Law: λmaxT = constant",
-          "outcomeId": 6000,
-          "outcomeTopicId": 6002
-        },
-        {
-          "id": 6020,
-          "description": "compare the total energy across the electromagnetic spectrum emitted by objects at different temperatures",
-          "outcomeId": 6000,
-          "outcomeTopicId": 6002
-        },
-        {
-          "id": 6021,
-          "description": "apply concepts of energy transfer, energy transformation, temperature change and change of state to climate change and global warming.",
-          "outcomeId": 6000,
-          "outcomeTopicId": 6002
-        }
-      ]
-    },
-    {
-      "id": 6001,
-      "curriculumSubjectId": 6000,
-      "number": 2,
-      "description": "On completion of this unit the student should be able to explain, apply and evaluate nuclear radiation, radioactive decay and nuclear energy.",
-      "topics": [
-        {
-          "id": 6003,
-          "outcomeId": 6001,
-          "name": "Radiation from the nucleus"
-        },
-        {
-          "id": 6004,
-          "outcomeId": 6001,
-          "name": "Nuclear energy"
-        }
-      ],
-      "keyKnowledge": [
-        {
-          "id": 6022,
-          "description": "explain nuclear stability with reference to the forces in the nucleus including electrostatic forces, the strong nuclear force and the weak nuclear force",
-          "outcomeId": 6001,
-          "outcomeTopicId": 6003
-        },
-        {
-          "id": 6023,
-          "description": "model radioactive decay as random decay with a particular half-life, including mathematical modelling with reference to whole half-lives",
-          "outcomeId": 6001,
-          "outcomeTopicId": 6003
-        },
-        {
-          "id": 6024,
-          "description": "describe the properties of α, β-, β+ and γ radiation",
-          "outcomeId": 6001,
-          "outcomeTopicId": 6003
-        },
-        {
-          "id": 6025,
-          "description": "explain nuclear transformations using decay equations involving α, β-, β+ and γ radiation",
-          "outcomeId": 6001,
-          "outcomeTopicId": 6003
-        },
-        {
-          "id": 6026,
-          "description": "analyse decay series diagrams with reference to type of decay and stability of isotopes",
-          "outcomeId": 6001,
-          "outcomeTopicId": 6003
-        },
-        {
-          "id": 6027,
-          "description": "explain the effects of α, β and γ radiation on humans, including:",
-          "outcomeId": 6001,
-          "outcomeTopicId": 6003
-        },
-        {
-          "id": 6028,
-          "description": "different capacities to cause cell damage",
-          "outcomeId": 6001,
-          "outcomeTopicId": 6003
-        },
-        {
-          "id": 6029,
-          "description": "short- and long-term effects of low and high doses",
-          "outcomeId": 6001,
-          "outcomeTopicId": 6003
-        },
-        {
-          "id": 6030,
-          "description": "ionising impacts of radioactive sources outside and inside the body",
-          "outcomeId": 6001,
-          "outcomeTopicId": 6003
-        },
-        {
-          "id": 6031,
-          "description": "calculations of absorbed dose (gray), equivalent dose (sievert) and effective dose (sievert)",
-          "outcomeId": 6001,
-          "outcomeTopicId": 6003
-        },
-        {
-          "id": 6032,
-          "description": "evaluate the use of medical radioisotopes in therapy including the effects on healthy and damaged tissues and cells",
-          "outcomeId": 6001,
-          "outcomeTopicId": 6003
-        },
-        {
-          "id": 6033,
-          "description": "explain, qualitatively, nuclear energy as energy resulting from the conversion of mass",
-          "outcomeId": 6001,
-          "outcomeTopicId": 6004
-        },
-        {
-          "id": 6034,
-          "description": "explain fission chain reactions including:",
-          "outcomeId": 6001,
-          "outcomeTopicId": 6004
-        },
-        {
-          "id": 6035,
-          "description": "the effect of mass and shape on criticality",
-          "outcomeId": 6001,
-          "outcomeTopicId": 6004
-        },
-        {
-          "id": 6036,
-          "description": "neutron absorption and moderation",
-          "outcomeId": 6001,
-          "outcomeTopicId": 6004
-        },
-        {
-          "id": 6037,
-          "description": "compare the processes of nuclear fusion and nuclear fission",
-          "outcomeId": 6001,
-          "outcomeTopicId": 6004
-        },
-        {
-          "id": 6038,
-          "description": "explain, using a binding energy curve, why both fusion and fission are reactions that release energy",
-          "outcomeId": 6001,
-          "outcomeTopicId": 6004
-        },
-        {
-          "id": 6039,
-          "description": "investigate the viability of nuclear energy as an energy source for Australia.",
-          "outcomeId": 6001,
-          "outcomeTopicId": 6004
-        }
-      ]
-    },
-    {
-      "id": 6002,
-      "curriculumSubjectId": 6000,
-      "number": 3,
-      "description": "On completion of this unit the student should be able to investigate and apply a basic DC circuit model to simple battery-operated devices and household electrical systems, apply mathematical models to analyse circuits, and describe the safe and effective use of electricity by individuals and the community.",
-      "topics": [
-        {
-          "id": 6005,
-          "outcomeId": 6002,
-          "name": "Concepts used to model electricity"
-        },
-        {
-          "id": 6006,
-          "outcomeId": 6002,
-          "name": "Circuit electricity"
-        },
-        {
-          "id": 6007,
-          "outcomeId": 6002,
-          "name": "Using electricity"
-        },
-        {
-          "id": 6008,
-          "outcomeId": 6002,
-          "name": "Electrical safety in the home"
-        }
-      ],
-      "keyKnowledge": [
-        {
-          "id": 6040,
-          "description": "apply concepts of charge (Q), electric current (I), potential difference (V), energy (E) and power (P), in electric circuits",
-          "outcomeId": 6002,
-          "outcomeTopicId": 6005
-        },
-        {
-          "id": 6041,
-          "description": "analyse and evaluate different analogies used to describe electric current and potential difference",
-          "outcomeId": 6002,
-          "outcomeTopicId": 6005
-        },
-        {
-          "id": 6042,
-          "description": "investigate and analyse theoretically and practically electric circuits using the relationships:",
-          "outcomeId": 6002,
-          "outcomeTopicId": 6005
-        },
-        {
-          "id": 6043,
-          "description": "justify the use of selected meters (ammeter, voltmeter, multimeter) in circuits",
-          "outcomeId": 6002,
-          "outcomeTopicId": 6005
-        },
-        {
-          "id": 6044,
-          "description": "apply the kilowatt-hour (kW h) as a unit of energy",
-          "outcomeId": 6002,
-          "outcomeTopicId": 6005
-        },
-        {
-          "id": 6045,
-          "description": "model resistance in series and parallel circuits using:",
-          "outcomeId": 6002,
-          "outcomeTopicId": 6006
-        },
-        {
-          "id": 6046,
-          "description": "current versus potential difference (I–V ) graphs",
-          "outcomeId": 6002,
-          "outcomeTopicId": 6006
-        },
-        {
-          "id": 6047,
-          "description": "resistance as the potential difference to current ratio, including R = constant for ohmic devices",
-          "outcomeId": 6002,
-          "outcomeTopicId": 6006
-        },
-        {
-          "id": 6048,
-          "description": "equivalent resistance in arrangements in",
-          "outcomeId": 6002,
-          "outcomeTopicId": 6006
-        },
-        {
-          "id": 6049,
-          "description": "series: Requivalent = R1 + R2 + ... + Rn and",
-          "outcomeId": 6002,
-          "outcomeTopicId": 6006
-        },
-        {
-          "id": 6050,
-          "description": "parallel: …",
-          "outcomeId": 6002,
-          "outcomeTopicId": 6006
-        },
-        {
-          "id": 6051,
-          "description": "calculate and analyse the equivalent resistance of circuits comprising parallel and series resistance",
-          "outcomeId": 6002,
-          "outcomeTopicId": 6006
-        },
-        {
-          "id": 6052,
-          "description": "analyse circuits comprising voltage dividers",
-          "outcomeId": 6002,
-          "outcomeTopicId": 6006
-        },
-        {
-          "id": 6053,
-          "description": "model household (AC) electrical systems as simple direct current (DC) circuits",
-          "outcomeId": 6002,
-          "outcomeTopicId": 6006
-        },
-        {
-          "id": 6054,
-          "description": "compare power transfers in series and parallel circuits",
-          "outcomeId": 6002,
-          "outcomeTopicId": 6006
-        },
-        {
-          "id": 6055,
-          "description": "explain why the circuits in homes are mostly parallel circuits",
-          "outcomeId": 6002,
-          "outcomeTopicId": 6006
-        },
-        {
-          "id": 6056,
-          "description": "investigate and apply theoretically and practically concepts of current, resistance, potential difference (voltage drop) and power to the operation of electronic circuits comprising resistors, light bulbs, diodes, thermistors, light dependent resistors (LDRs), light-emitting diodes (LEDs) and potentiometers (quantitative analysis restricted to use of and P = VI)",
-          "outcomeId": 6002,
-          "outcomeTopicId": 6007
-        },
-        {
-          "id": 6057,
-          "description": "investigate practically the operation of simple circuits containing resistors, variable resistors, diodes and other non-ohmic devices",
-          "outcomeId": 6002,
-          "outcomeTopicId": 6007
-        },
-        {
-          "id": 6058,
-          "description": "describe energy transfers and transformations with reference to resistors, light bulbs, diodes, thermistors, light dependent resistors (LDRs), light-emitting diodes (LEDs) and potentiometers in common devices",
-          "outcomeId": 6002,
-          "outcomeTopicId": 6007
-        },
-        {
-          "id": 6059,
-          "description": "model household electricity connections as a simple DC circuit comprising fuses, switches, circuit breakers, loads and earth",
-          "outcomeId": 6002,
-          "outcomeTopicId": 6008
-        },
-        {
-          "id": 6060,
-          "description": "compare the operation of safety devices including fuses, circuit breakers and residual current devices (RCDs)",
-          "outcomeId": 6002,
-          "outcomeTopicId": 6008
-        },
-        {
-          "id": 6061,
-          "description": "describe the causes, effects and first aid treatment of electric shock and identify the approximate danger thresholds for current and duration.",
-          "outcomeId": 6002,
-          "outcomeTopicId": 6008
-        }
-      ]
-    },
-    {
-      "id": 6003,
-      "curriculumSubjectId": 6000,
-      "number": 1,
-      "description": "On completion of this unit the student should be able to investigate, analyse, mathematically model and apply force, energy and motion.",
-      "topics": [
-        {
-          "id": 6009,
-          "outcomeId": 6003,
-          "name": "Concepts used to model motion"
-        },
-        {
-          "id": 6010,
-          "outcomeId": 6003,
-          "name": "Forces and motion"
-        },
-        {
-          "id": 6011,
-          "outcomeId": 6003,
-          "name": "Energy and motion"
-        },
-        {
-          "id": 6012,
-          "outcomeId": 6003,
-          "name": "Equilibrium"
-        },
-        {
-          "id": 6013,
-          "outcomeId": 6003,
-          "name": "Application of motion"
-        }
-      ],
-      "keyKnowledge": [
-        {
-          "id": 6062,
-          "description": "identify parameters of motion as vectors or scalars",
-          "outcomeId": 6003,
-          "outcomeTopicId": 6009
-        },
-        {
-          "id": 6063,
-          "description": "analyse graphically, numerically and algebraically, straight-line motion under constant acceleration:",
-          "outcomeId": 6003,
-          "outcomeTopicId": 6009
-        },
-        {
-          "id": 6064,
-          "description": "analyse, graphically, non-uniform motion in a straight line",
-          "outcomeId": 6003,
-          "outcomeTopicId": 6009
-        },
-        {
-          "id": 6065,
-          "description": "apply concepts of momentum to linear motion: p = mv",
-          "outcomeId": 6003,
-          "outcomeTopicId": 6009
-        },
-        {
-          "id": 6066,
-          "description": "• explain changes in momentum as being caused by a net force:",
-          "outcomeId": 6003,
-          "outcomeTopicId": 6010
-        },
-        {
-          "id": 6067,
-          "description": "• model the force due to gravity, Fg, as the force of gravity acting at the centre of mass of a body, Fon body by Earth = mg, where g is the gravitational field strength (9.8 N kg-1 near the surface of Earth)",
-          "outcomeId": 6003,
-          "outcomeTopicId": 6010
-        },
-        {
-          "id": 6068,
-          "description": "• model forces as vectors acting at the point of application (with magnitude and direction), labelling these forces using the convention ‘force on A by B’ or Fon A by B = –Fon B by A",
-          "outcomeId": 6003,
-          "outcomeTopicId": 6010
-        },
-        {
-          "id": 6069,
-          "description": "• apply Newton’s three laws of motion to a body on which forces act: , Fon A by B = –Fon B by A",
-          "outcomeId": 6003,
-          "outcomeTopicId": 6010
-        },
-        {
-          "id": 6070,
-          "description": "• apply the vector model of forces, including vector addition and components of forces, to readily observable forces including the force due to gravity, friction and normal forces",
-          "outcomeId": 6003,
-          "outcomeTopicId": 6010
-        },
-        {
-          "id": 6071,
-          "description": "• apply the concept of work done by a force using:",
-          "outcomeId": 6003,
-          "outcomeTopicId": 6011
-        },
-        {
-          "id": 6072,
-          "description": "work done = force × displacement: W = Fscosθ, where force is constant",
-          "outcomeId": 6003,
-          "outcomeTopicId": 6011
-        },
-        {
-          "id": 6073,
-          "description": "work done = area under force vs distance graph",
-          "outcomeId": 6003,
-          "outcomeTopicId": 6011
-        },
-        {
-          "id": 6074,
-          "description": "investigate and analyse theoretically and practically Hooke’s Law for an ideal spring: F = –kx, where x is extension",
-          "outcomeId": 6003,
-          "outcomeTopicId": 6011
-        },
-        {
-          "id": 6075,
-          "description": "analyse and model mechanical energy transfers and transformations using energy conservation:",
-          "outcomeId": 6003,
-          "outcomeTopicId": 6011
-        },
-        {
-          "id": 6076,
-          "description": "changes in gravitational potential energy near Earth’s surface: Eg = mgΔh",
-          "outcomeId": 6003,
-          "outcomeTopicId": 6011
-        },
-        {
-          "id": 6077,
-          "description": "elastic potential energy in ideal springs:",
-          "outcomeId": 6003,
-          "outcomeTopicId": 6011
-        },
-        {
-          "id": 6078,
-          "description": "kinetic energy:",
-          "outcomeId": 6003,
-          "outcomeTopicId": 6011
-        },
-        {
-          "id": 6079,
-          "description": "• analyse rate of energy transfer using power:",
-          "outcomeId": 6003,
-          "outcomeTopicId": 6011
-        },
-        {
-          "id": 6080,
-          "description": "• calculate the efficiency of an energy transfer system:",
-          "outcomeId": 6003,
-          "outcomeTopicId": 6011
-        },
-        {
-          "id": 6081,
-          "description": "• analyse impulse in an isolated system (for collisions between objects moving in a straight line): FΔt= mΔv",
-          "outcomeId": 6003,
-          "outcomeTopicId": 6011
-        },
-        {
-          "id": 6082,
-          "description": "• investigate and analyse theoretically and practically momentum conservation in one dimension",
-          "outcomeId": 6003,
-          "outcomeTopicId": 6011
-        },
-        {
-          "id": 6083,
-          "description": "calculate torque, τ = r⊥ F",
-          "outcomeId": 6003,
-          "outcomeTopicId": 6012
-        },
-        {
-          "id": 6084,
-          "description": "analyse translational and rotational forces (torques) in simple structures in translational and rotational equilibrium",
-          "outcomeId": 6003,
-          "outcomeTopicId": 6012
-        },
-        {
-          "id": 6085,
-          "description": "investigate the application of motion concepts through a case study, for example, through motion in sport, vehicle safety, a device or a structure.",
-          "outcomeId": 6003,
-          "outcomeTopicId": 6013
-        }
-      ]
-    },
-    {
-      "id": 6004,
-      "curriculumSubjectId": 6000,
-      "number": 2,
-      "description": "On completion of this unit the student should be able to investigate and apply physics knowledge to develop and communicate an informed response to a contemporary societal issue or application related to a selected option.",
-      "topics": [
-        {
-          "id": 6014,
-          "outcomeId": 6004,
-          "name": "The physics of climate change"
-        },
-        {
-          "id": 6015,
-          "outcomeId": 6004,
-          "name": "Communicating physics"
-        },
-        {
-          "id": 6016,
-          "outcomeId": 6004,
-          "name": "The physics of nuclear fusion and fission reactions"
-        },
-        {
-          "id": 6017,
-          "outcomeId": 6004,
-          "name": "Communicating physics"
-        },
-        {
-          "id": 6018,
-          "outcomeId": 6004,
-          "name": "The physics of flight"
-        },
-        {
-          "id": 6019,
-          "outcomeId": 6004,
-          "name": "Bernoulli’s principle and pressure differences"
-        },
-        {
-          "id": 6020,
-          "outcomeId": 6004,
-          "name": "Communicating physics"
-        },
-        {
-          "id": 6021,
-          "outcomeId": 6004,
-          "name": "The physics of structures and materials"
-        },
-        {
-          "id": 6022,
-          "outcomeId": 6004,
-          "name": "Communicating physics"
-        },
-        {
-          "id": 6023,
-          "outcomeId": 6004,
-          "name": "The physics of forces on the human body"
-        },
-        {
-          "id": 6024,
-          "outcomeId": 6004,
-          "name": "Communicating physics"
-        },
-        {
-          "id": 6025,
-          "outcomeId": 6004,
-          "name": "The physics of medical radiation"
-        },
-        {
-          "id": 6026,
-          "outcomeId": 6004,
-          "name": "Communicating physics"
-        },
-        {
-          "id": 6027,
-          "outcomeId": 6004,
-          "name": "The physics of the use of electricity in the human body"
-        },
-        {
-          "id": 6028,
-          "outcomeId": 6004,
-          "name": "Communicating physics"
-        },
-        {
-          "id": 6029,
-          "outcomeId": 6004,
-          "name": "The physics of human vision"
-        },
-        {
-          "id": 6030,
-          "outcomeId": 6004,
-          "name": "Communicating physics"
-        },
-        {
-          "id": 6031,
-          "outcomeId": 6004,
-          "name": "The physics of photography"
-        },
-        {
-          "id": 6032,
-          "outcomeId": 6004,
-          "name": "Communicating physics"
-        },
-        {
-          "id": 6033,
-          "outcomeId": 6004,
-          "name": "The physics of sound production and music"
-        },
-        {
-          "id": 6034,
-          "outcomeId": 6004,
-          "name": "Communicating physics"
-        },
-        {
-          "id": 6035,
-          "outcomeId": 6004,
-          "name": "The physics of ball sports"
-        },
-        {
-          "id": 6036,
-          "outcomeId": 6004,
-          "name": "Communicating physics"
-        },
-        {
-          "id": 6037,
-          "outcomeId": 6004,
-          "name": "The physics of using AC electricity to charge a DC device"
-        },
-        {
-          "id": 6038,
-          "outcomeId": 6004,
-          "name": "Communicating physics"
-        },
-        {
-          "id": 6039,
-          "outcomeId": 6004,
-          "name": "The physics of stars"
-        },
-        {
-          "id": 6040,
-          "outcomeId": 6004,
-          "name": "Communicating physics"
-        },
-        {
-          "id": 6041,
-          "outcomeId": 6004,
-          "name": "The physics of life beyond the Solar System"
-        },
-        {
-          "id": 6042,
-          "outcomeId": 6004,
-          "name": "Communicating physics"
-        },
-        {
-          "id": 6043,
-          "outcomeId": 6004,
-          "name": "The physics of local traditional artefacts, knowledge and techniques"
-        },
-        {
-          "id": 6044,
-          "outcomeId": 6004,
-          "name": "Communicating physics"
-        },
-        {
-          "id": 6045,
-          "outcomeId": 6004,
-          "name": "The physics of particle accelerators"
-        },
-        {
-          "id": 6046,
-          "outcomeId": 6004,
-          "name": "Communicating physics"
-        },
-        {
-          "id": 6047,
-          "outcomeId": 6004,
-          "name": "The physics of the origins of matter"
-        },
-        {
-          "id": 6048,
-          "outcomeId": 6004,
-          "name": "Communicating physics"
-        },
-        {
-          "id": 6049,
-          "outcomeId": 6004,
-          "name": "The physics of local scientific research"
-        },
-        {
-          "id": 6050,
-          "outcomeId": 6004,
-          "name": "Communicating physics"
-        }
-      ],
-      "keyKnowledge": [
-        {
-          "id": 6086,
-          "description": "describe the transformation of radiation as it passes through the atmosphere, is absorbed and re-emitted by Earth",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6014
-        },
-        {
-          "id": 6087,
-          "description": "explain how greenhouse gases in the atmosphere (including methane, water and carbon dioxide) absorb and re-emit infrared radiation and the impact on global warming",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6014
-        },
-        {
-          "id": 6088,
-          "description": "compare the total energy across the electromagnetic spectrum emitted by objects at different temperatures such as the Sun",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6014
-        },
-        {
-          "id": 6089,
-          "description": "calculate the peak wavelength of the re-radiated electromagnetic radiation from Earth using Wien’s Law: λmaxT = constant",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6014
-        },
-        {
-          "id": 6090,
-          "description": "describe power radiated by a body as being dependent on the temperature of the body according to the Stefan-Boltzmann Law,",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6014
-        },
-        {
-          "id": 6091,
-          "description": "analyse the evidence for the influence of human activity in creating an enhanced greenhouse effect, including the change in the materials that comprise the surface of Earth and the balance of gases in the atmosphere",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6014
-        },
-        {
-          "id": 6092,
-          "description": "evaluate validity of sources of information",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6015
-        },
-        {
-          "id": 6093,
-          "description": "apply physics concepts specific to the investigation: definitions of key terms; and use of appropriate scientific terminology, conventions and representations",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6015
-        },
-        {
-          "id": 6094,
-          "description": "apply the use of data representations, models and theories in organising and explaining observed phenomena and physics concepts, and discuss the limitations of the explanations",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6015
-        },
-        {
-          "id": 6095,
-          "description": "discuss the influence of sociocultural, economic, legal and political factors relevant to the selected issue or application",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6015
-        },
-        {
-          "id": 6096,
-          "description": "apply physics understanding to justify a stance, opinion or solution to the selected issue or application.",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6015
-        },
-        {
-          "id": 6097,
-          "description": "explain nuclear fusion reactions of proton-proton and deuterium-tritium with reference to:",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6016
-        },
-        {
-          "id": 6098,
-          "description": "reactants, products and energy production",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6016
-        },
-        {
-          "id": 6099,
-          "description": "availability of reactants",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6016
-        },
-        {
-          "id": 6100,
-          "description": "energy production compared with mass of fuel",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6016
-        },
-        {
-          "id": 6101,
-          "description": "explain nuclear fission reactions of 235U and 239Pu with reference to:",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6016
-        },
-        {
-          "id": 6102,
-          "description": "fission initiation by slow and fast neutrons respectively",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6016
-        },
-        {
-          "id": 6103,
-          "description": "products of fission including typical unstable fission fragments and energy",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6016
-        },
-        {
-          "id": 6104,
-          "description": "radiation produced by unstable fission fragments",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6016
-        },
-        {
-          "id": 6105,
-          "description": "describe neutron absorption in 238U, including formation of 239Pu",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6016
-        },
-        {
-          "id": 6106,
-          "description": "describe the energy transfers and transformations in the systems that convert nuclear energy into thermal energy for subsequent power generation",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6016
-        },
-        {
-          "id": 6107,
-          "description": "explain the risks and benefits for society of using nuclear energy as a power source",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6016
-        },
-        {
-          "id": 6108,
-          "description": "evaluate validity of sources of information",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6017
-        },
-        {
-          "id": 6109,
-          "description": "apply physics concepts specific to the investigation: definitions of key terms; and use of appropriate scientific terminology, conventions and representations",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6017
-        },
-        {
-          "id": 6110,
-          "description": "apply the use of data representations, models and theories in organising and explaining observed phenomena and physics concepts, and discuss the limitations of the explanations",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6017
-        },
-        {
-          "id": 6111,
-          "description": "discuss the influence of sociocultural, economic, legal and political factors relevant to the selected issue or application",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6017
-        },
-        {
-          "id": 6112,
-          "description": "apply physics understanding to justify a stance, opinion or solution to the selected issue or application.",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6017
-        },
-        {
-          "id": 6113,
-          "description": "model the forces acting on an aircraft in flight as:",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6018
-        },
-        {
-          "id": 6114,
-          "description": "the force due to gravity, acting at the centre of mass",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6018
-        },
-        {
-          "id": 6115,
-          "description": "thrust",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6018
-        },
-        {
-          "id": 6116,
-          "description": "lift: , acting at the centre of pressure",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6018
-        },
-        {
-          "id": 6117,
-          "description": "drag: , acting at the centre of pressure",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6018
-        },
-        {
-          "id": 6118,
-          "description": "explain the production of aerodynamic lift with reference to:",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6018
-        },
-        {
-          "id": 6119,
-          "description": "conservation of momentum and downwash",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6019
-        },
-        {
-          "id": 6120,
-          "description": "compare contributions to aerodynamic drag, including skin friction, form and lift-induced",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6019
-        },
-        {
-          "id": 6121,
-          "description": "explain the production of thrust with reference to Newton’s laws of motion",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6019
-        },
-        {
-          "id": 6122,
-          "description": "apply balance of forces and torques with reference to Newton’s laws of motion to the different stages of flight and the control of the aircraft",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6019
-        },
-        {
-          "id": 6123,
-          "description": "evaluate validity of sources of information",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6020
-        },
-        {
-          "id": 6124,
-          "description": "apply physics concepts specific to the investigation: definitions of key terms; and use of appropriate scientific terminology, conventions and representations",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6020
-        },
-        {
-          "id": 6125,
-          "description": "apply the use of data representations, models and theories in organising and explaining observed phenomena and physics concepts, and discuss the limitations of the explanations",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6020
-        },
-        {
-          "id": 6126,
-          "description": "discuss the influence of sociocultural, economic, legal and political factors relevant to the selected issue or application",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6020
-        },
-        {
-          "id": 6127,
-          "description": "apply physics understanding to justify a stance, opinion or solution to the selected issue or application.",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6020
-        },
-        {
-          "id": 6128,
-          "description": "identify different types of external forces due to loads such as compression, tension and shear, that can act on a body, including gravitational forces",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6021
-        },
-        {
-          "id": 6129,
-          "description": "analyse the stability of structures using translational and rotational forces (torques) and identify that gravitational forces act at the centre of mass",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6021
-        },
-        {
-          "id": 6130,
-          "description": "calculate the stress and strain resulting from the application of compressive and tensile forces and loads to materials in structures, σ = F/A , ε = ∆l/l",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6021
-        },
-        {
-          "id": 6131,
-          "description": "analyse the behaviour of materials under load in terms of extension and compression, including Young’s modulus, E = σ/ε, area under stress versus strain graphs and the elastic or plastic behaviour of materials under load",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6021
-        },
-        {
-          "id": 6132,
-          "description": "evaluate the suitability of different materials for use in structures, comparing tensile and compressive strength and stiffness or flexibility under load",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6021
-        },
-        {
-          "id": 6133,
-          "description": "evaluate validity of sources of information",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6022
-        },
-        {
-          "id": 6134,
-          "description": "apply physics concepts specific to the investigation: definitions of key terms; and use of appropriate scientific terminology, conventions and representations",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6022
-        },
-        {
-          "id": 6135,
-          "description": "apply the use of data representations, models and theories in organising and explaining observed phenomena and physics concepts, and discuss the limitations of the explanations",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6022
-        },
-        {
-          "id": 6136,
-          "description": "discuss the influence of sociocultural, economic, legal and political factors relevant to the selected issue or application",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6022
-        },
-        {
-          "id": 6137,
-          "description": "apply physics understanding to justify a stance, opinion or solution to the selected issue or application.",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6022
-        },
-        {
-          "id": 6138,
-          "description": "apply centre of mass calculations to a body or system:",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6023
-        },
-        {
-          "id": 6139,
-          "description": "investigate and apply theoretically and practically translational forces (gravitational, compressive, tensile and shear) and torques",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6023
-        },
-        {
-          "id": 6140,
-          "description": "calculate the stress and strain resulting from the application of compressive and tensile forces and loads to materials in organic structures including bone and muscle using: and",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6023
-        },
-        {
-          "id": 6141,
-          "description": "analyse the behaviour of living tissue under load with reference to extension and compression, including Young’s modulus, , area under stress versus strain graphs and the elastic or plastic behaviour of materials under load",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6023
-        },
-        {
-          "id": 6142,
-          "description": "investigate the suitability of different materials for use in the human body, including bone, tendons and muscle, by comparing tensile and compressive strength and stiffness, toughness, and flexibility under load",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6023
-        },
-        {
-          "id": 6143,
-          "description": "evaluate the development, performance and challenges of using artificial materials and structures in prosthetics, including external prostheses for the replacement of lost limbs, and internal prostheses such as hip or valve replacements",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6023
-        },
-        {
-          "id": 6144,
-          "description": "evaluate validity of sources of information",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6024
-        },
-        {
-          "id": 6145,
-          "description": "apply physics concepts specific to the investigation: definitions of key terms; and use of appropriate scientific terminology, conventions and representations",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6024
-        },
-        {
-          "id": 6146,
-          "description": "apply the use of data representations, models and theories in organising and explaining observed phenomena and physics concepts, and discuss the limitations of the explanations",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6024
-        },
-        {
-          "id": 6147,
-          "description": "discuss the influence of sociocultural, economic, legal and political factors relevant to the selected issue or application",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6024
-        },
-        {
-          "id": 6148,
-          "description": "apply physics understanding to justify a stance, opinion or solution to the selected issue or application.",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6024
-        },
-        {
-          "id": 6149,
-          "description": "describe how X-rays for medical use are produced including the distinction between soft and hard X-rays",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6025
-        },
-        {
-          "id": 6150,
-          "description": "describe how medical radioisotopes may be produced by neutron bombardment and high energy collisions",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6025
-        },
-        {
-          "id": 6151,
-          "description": "compare ionising and non-ionising radiation with reference to how each affects living tissues and cells",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6025
-        },
-        {
-          "id": 6152,
-          "description": "compare the processes of, and images produced by, medical imaging using two or more of X-rays, computed tomography (CT), γ radiation, magnetic resonance imaging (MRI), single photon emission computed tomography (SPECT) and positron emission tomography (PET)",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6025
-        },
-        {
-          "id": 6153,
-          "description": "describe applications of medical radioisotopes in imaging and diagnosis",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6025
-        },
-        {
-          "id": 6154,
-          "description": "relate the detection and penetrating properties of α, β and γ radiation to their use in different medical applications",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6025
-        },
-        {
-          "id": 6155,
-          "description": "evaluate validity of sources of information",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6026
-        },
-        {
-          "id": 6156,
-          "description": "apply physics concepts specific to the investigation: definitions of key terms; and use of appropriate scientific terminology, conventions and representations",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6026
-        },
-        {
-          "id": 6157,
-          "description": "apply the use of data representations, models and theories in organising and explaining observed phenomena and physics concepts, and discuss the limitations of the explanations",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6026
-        },
-        {
-          "id": 6158,
-          "description": "discuss the influence of sociocultural, economic, legal and political factors relevant to the selected issue or application",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6026
-        },
-        {
-          "id": 6159,
-          "description": "apply physics understanding to justify a stance, opinion or solution to the selected issue or application.",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6026
-        },
-        {
-          "id": 6160,
-          "description": "compare charge carriers in the human body (specifically Na+, K+, Ca2+, Mg2+, PO43- and Cl- ions) with those in metals (specifically electrons)",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6027
-        },
-        {
-          "id": 6161,
-          "description": "describe the nervous system as the control of the function of the human body through electrical processes of nerve cells (through an action potential) and chemical transfer between nerve cells (through neurotransmitters diffusing across synapses)",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6027
-        },
-        {
-          "id": 6162,
-          "description": "model an action potential as a short-lasting electrical event across the cell membrane in response to a stimulus, including reference to the roles of ion channels (leakage and voltage gated) in changing membrane potentials during the processes of depolarisation, repolarisation, hyperpolarisation and return to resting state",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6027
-        },
-        {
-          "id": 6163,
-          "description": "explain heart beat with reference to the production of a potential difference and model heart beat with reference to the action of the nodes in atrial and ventricular muscles as the source of the electric signal, the staggering of signals from the atrial and ventricular muscles, and time delay before both muscles can contract again",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6027
-        },
-        {
-          "id": 6164,
-          "description": "describe the effects of current through, and potential difference across, the human body",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6027
-        },
-        {
-          "id": 6165,
-          "description": "explain why people have different electrical resistances with reference to comparison of the resistances in human bone, fat, muscle, nerves and skin",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6027
-        },
-        {
-          "id": 6166,
-          "description": "evaluate validity of sources of information",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6028
-        },
-        {
-          "id": 6167,
-          "description": "apply physics concepts specific to the investigation: definitions of key terms; and use of appropriate scientific terminology, conventions and representations",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6028
-        },
-        {
-          "id": 6168,
-          "description": "apply the use of data representations, models and theories in organising and explaining observed phenomena and physics concepts, and discuss the limitations of the explanations",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6028
-        },
-        {
-          "id": 6169,
-          "description": "discuss the influence of sociocultural, economic, legal and political factors relevant to the selected issue or application",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6028
-        },
-        {
-          "id": 6170,
-          "description": "apply physics understanding to justify a stance, opinion or solution to the selected issue or application.",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6028
-        },
-        {
-          "id": 6171,
-          "description": "describe image formation using pinhole cameras and convex and concave lenses",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6029
-        },
-        {
-          "id": 6172,
-          "description": "calculate image positions for thin lenses using either accurate ray tracing scale diagrams and/or the thin",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6029
-        },
-        {
-          "id": 6173,
-          "description": "lens equation:",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6029
-        },
-        {
-          "id": 6174,
-          "description": "calculate image sizes in pinhole and simple lens cameras:",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6029
-        },
-        {
-          "id": 6175,
-          "description": "explain the operation of simple two-lens telescopes and microscopes",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6029
-        },
-        {
-          "id": 6176,
-          "description": "model and explain human vision as refraction at a spherical surface with an adjusting lens and explain accommodation in the human eye including the effects of ageing",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6029
-        },
-        {
-          "id": 6177,
-          "description": "distinguish between short-sightedness and long-sightedness, and explain their correction by concave and convex lenses, respectively",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6029
-        },
-        {
-          "id": 6178,
-          "description": "apply the power of a lens: to eye glasses",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6029
-        },
-        {
-          "id": 6179,
-          "description": "investigate sunglasses including the function of polarised lenses, photochromatic lenses and the benefits and possible damaging effects of tinted lenses",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6029
-        },
-        {
-          "id": 6180,
-          "description": "evaluate validity of sources of information",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6030
-        },
-        {
-          "id": 6181,
-          "description": "apply physics concepts specific to the investigation: definitions of key terms; and use of appropriate scientific terminology, conventions and representations",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6030
-        },
-        {
-          "id": 6182,
-          "description": "apply the use of data representations, models and theories in organising and explaining observed phenomena and physics concepts, and discuss the limitations of the explanations",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6030
-        },
-        {
-          "id": 6183,
-          "description": "discuss the influence of sociocultural, economic, legal and political factors relevant to the selected issue or application",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6030
-        },
-        {
-          "id": 6184,
-          "description": "apply physics understanding to justify a stance, opinion or solution to the selected issue or application.",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6030
-        },
-        {
-          "id": 6185,
-          "description": "describe image formation using pinhole cameras and convex and concave lenses",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6031
-        },
-        {
-          "id": 6186,
-          "description": "calculate image positions for thin lenses using either accurate ray tracing scale diagrams and/or the thin",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6031
-        },
-        {
-          "id": 6187,
-          "description": "lens equation:",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6031
-        },
-        {
-          "id": 6188,
-          "description": "calculate image sizes in pinhole and simple lens cameras:",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6031
-        },
-        {
-          "id": 6189,
-          "description": "explain the operation of a simple two-lens camera",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6031
-        },
-        {
-          "id": 6190,
-          "description": "investigate the effect on image formation by polarising lenses, colour filters and aperture size and shutter speed",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6031
-        },
-        {
-          "id": 6191,
-          "description": "compare image formation by a traditional camera and a digital camera",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6031
-        },
-        {
-          "id": 6192,
-          "description": "evaluate validity of sources of information",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6032
-        },
-        {
-          "id": 6193,
-          "description": "apply physics concepts specific to the investigation: definitions of key terms; and use of appropriate scientific terminology, conventions and representations",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6032
-        },
-        {
-          "id": 6194,
-          "description": "apply the use of data representations, models and theories in organising and explaining observed phenomena and physics concepts, and discuss the limitations of the explanations",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6032
-        },
-        {
-          "id": 6195,
-          "description": "discuss the influence of sociocultural, economic, legal and political factors relevant to the selected issue or application",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6032
-        },
-        {
-          "id": 6196,
-          "description": "apply physics understanding to justify a stance, opinion or solution to the selected issue or application.",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6032
-        },
-        {
-          "id": 6197,
-          "description": "describe sound as the transmission of energy via longitudinal pressure waves and distinguish between sound intensity (W m-2) and sound intensity level (dB)",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6033
-        },
-        {
-          "id": 6198,
-          "description": "calculate sound intensity at different distances from a source using an inverse square law",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6033
-        },
-        {
-          "id": 6199,
-          "description": "explain resonance and identify it as related to the natural frequency of an object, and analyse the unique sound of an instrument as a consequence of multiple resonances created by the instrument and described as timbre",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6033
-        },
-        {
-          "id": 6200,
-          "description": "investigate factors that influence natural frequency including shape and material and explain how this relates to instruments",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6033
-        },
-        {
-          "id": 6201,
-          "description": "investigate and explain a variety of musical instruments with reference to the similarities and differences of sound production between instrument types (brass, string, woodwind and percussion) and how they compare with the human voice",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6033
-        },
-        {
-          "id": 6202,
-          "description": "analyse, for strings and open and closed resonant tubes, the fundamental and subsequent harmonics and apply this analysis to selected musical instruments",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6033
-        },
-        {
-          "id": 6203,
-          "description": "evaluate validity of sources of information",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6034
-        },
-        {
-          "id": 6204,
-          "description": "apply physics concepts specific to the investigation: definitions of key terms; and use of appropriate scientific terminology, conventions and representations",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6034
-        },
-        {
-          "id": 6205,
-          "description": "apply the use of data representations, models and theories in organising and explaining observed phenomena and physics concepts, and discuss the limitations of the explanations",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6034
-        },
-        {
-          "id": 6206,
-          "description": "discuss the influence of sociocultural, economic, legal and political factors relevant to the selected issue or application",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6034
-        },
-        {
-          "id": 6207,
-          "description": "apply physics understanding to justify a stance, opinion or solution to the selected issue or application.",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6034
-        },
-        {
-          "id": 6208,
-          "description": "investigate and calculate theoretically and practically the transfer of momentum in elastic and inelastic collisions (limited to two dimensions) including the use of the coefficient of restitution, e",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6035
-        },
-        {
-          "id": 6209,
-          "description": "investigate and apply theoretically and practically the coefficients of static and kinetic friction to sliding and rolling balls to calculate speeds using Newton’s laws of motion and the equations of constant acceleration",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6035
-        },
-        {
-          "id": 6210,
-          "description": "explain rolling of spherical objects using angular and linear speeds: v = r ω.",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6035
-        },
-        {
-          "id": 6211,
-          "description": "calculate air resistance (drag) and terminal velocity: vterminal = , where CD is the drag coefficient, ρ is the gas density, A is the frontal area",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6035
-        },
-        {
-          "id": 6212,
-          "description": "investigate and apply theoretically and practically the equations of constant acceleration to calculate the flight of objects through the air (neglecting air resistance) in two dimensions",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6035
-        },
-        {
-          "id": 6213,
-          "description": "model and describe qualitatively the flight of:",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6035
-        },
-        {
-          "id": 6214,
-          "description": "a ball through the air when air resistance is not neglected",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6035
-        },
-        {
-          "id": 6215,
-          "description": "spinning sports balls with reference to the Magnus effect",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6035
-        },
-        {
-          "id": 6216,
-          "description": "evaluate validity of sources of information",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6036
-        },
-        {
-          "id": 6217,
-          "description": "apply physics concepts specific to the investigation: definitions of key terms; and use of appropriate scientific terminology, conventions and representations",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6036
-        },
-        {
-          "id": 6218,
-          "description": "apply the use of data representations, models and theories in organising and explaining observed phenomena and physics concepts, and discuss the limitations of the explanations",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6036
-        },
-        {
-          "id": 6219,
-          "description": "discuss the influence of sociocultural, economic, legal and political factors relevant to the selected issue or application",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6036
-        },
-        {
-          "id": 6220,
-          "description": "apply physics understanding to justify a stance, opinion or solution to the selected issue or application.",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6036
-        },
-        {
-          "id": 6221,
-          "description": "analyse the role of the transformer in the power supply system including the analysis of voltage ratio:",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6037
-        },
-        {
-          "id": 6222,
-          "description": "explain the use of diodes in half-wave and full-wave bridge rectification",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6037
-        },
-        {
-          "id": 6223,
-          "description": "explain the effect of capacitors with reference to voltage drop and current change when charging and discharging (time constant for charging and discharging, τ = RC ) leading to smoothing for DC power supplies",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6037
-        },
-        {
-          "id": 6224,
-          "description": "describe the use of voltage regulators including Zener diodes and integrated circuits",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6037
-        },
-        {
-          "id": 6225,
-          "description": "apply the use of heat and light sensors such as thermistors and light-dependent resistors (LDRs) to trigger an output device such as lighting or a motor",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6037
-        },
-        {
-          "id": 6226,
-          "description": "compare different light sources (bulbs, LEDs, lasers) for their suitability for data transfer",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6037
-        },
-        {
-          "id": 6227,
-          "description": "evaluate validity of sources of information",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6038
-        },
-        {
-          "id": 6228,
-          "description": "apply physics concepts specific to the investigation: definitions of key terms; and use of appropriate scientific terminology, conventions and representations",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6038
-        },
-        {
-          "id": 6229,
-          "description": "apply the use of data representations, models and theories in organising and explaining observed phenomena and physics concepts, and discuss the limitations of the explanations",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6038
-        },
-        {
-          "id": 6230,
-          "description": "discuss the influence of sociocultural, economic, legal and political factors relevant to the selected issue or application",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6038
-        },
-        {
-          "id": 6231,
-          "description": "apply physics understanding to justify a stance, opinion or solution to the selected issue or application.",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6038
-        },
-        {
-          "id": 6232,
-          "description": "apply methods used to investigate the light from stars and for measurements of the distances to stars and galaxies",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6039
-        },
-        {
-          "id": 6233,
-          "description": "identify the properties of stars, including luminosity, radius and mass, temperature and spectral type, and explain how these properties are used to classify stars",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6039
-        },
-        {
-          "id": 6234,
-          "description": "distinguish between the different nuclear fusion phenomena that occur in stars of various sizes",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6039
-        },
-        {
-          "id": 6235,
-          "description": "apply the Hertzsprung–Russell diagram as a tool to describe the evolution and death of stars with differing initial mass",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6039
-        },
-        {
-          "id": 6236,
-          "description": "explain the event horizon of a black hole and use to calculate the Schwarzschild radius",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6039
-        },
-        {
-          "id": 6237,
-          "description": "describe the effects of the gravitational fields of black holes on space and time",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6039
-        },
-        {
-          "id": 6238,
-          "description": "evaluate validity of sources of information",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6040
-        },
-        {
-          "id": 6239,
-          "description": "apply physics concepts specific to the investigation: definitions of key terms; and use of appropriate scientific terminology, conventions and representations",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6040
-        },
-        {
-          "id": 6240,
-          "description": "apply the use of data representations, models and theories in organising and explaining observed phenomena and physics concepts, and discuss the limitations of the explanations",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6040
-        },
-        {
-          "id": 6241,
-          "description": "discuss the influence of sociocultural, economic, legal and political factors relevant to the selected issue or application",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6040
-        },
-        {
-          "id": 6242,
-          "description": "use physics understanding to justify a stance, opinion or solution to the selected issue or application.",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6040
-        },
-        {
-          "id": 6243,
-          "description": "identify spectroscopy as a tool to investigate the light from stars, and interpret and analyse spectroscopic data with reference to information from beyond our Solar System",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6041
-        },
-        {
-          "id": 6244,
-          "description": "compare methods of exoplanet detection including astrometric, radial velocity, transit method and microlensing, referring to databases that differentiate for size, eccentricity and radius, and by observing the gravitational effect of a planetary system on a star",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6041
-        },
-        {
-          "id": 6245,
-          "description": "explain and apply Doppler shift including spectral shift and ‘wobble’ of planetary systems using:",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6041
-        },
-        {
-          "id": 6246,
-          "description": "explain the use of the Fermi paradox and the Drake equation to question the possibility of life outside Earth’s Solar System and of predicting the likelihood of life existing in the Universe",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6041
-        },
-        {
-          "id": 6247,
-          "description": "distinguish between targeted and untargeted searches for extra-terrestrial intelligence (ETI), and describe optimising strategies including where to look and how to ‘listen’ with reference to choice of frequency and bandwidth",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6041
-        },
-        {
-          "id": 6248,
-          "description": "explain the nature of information that humans transmit beyond Earth to signal that intelligent life exists on Earth",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6041
-        },
-        {
-          "id": 6249,
-          "description": "evaluate validity of sources of information",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6042
-        },
-        {
-          "id": 6250,
-          "description": "apply physics concepts specific to the investigation: definitions of key terms; and use of appropriate scientific terminology, conventions and representations",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6042
-        },
-        {
-          "id": 6251,
-          "description": "apply the use of data representations, models and theories in organising and explaining observed phenomena and physics concepts, and discuss the limitations of the explanations",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6042
-        },
-        {
-          "id": 6252,
-          "description": "discuss the influence of sociocultural, economic, legal and political factors relevant to the selected issue or application",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6042
-        },
-        {
-          "id": 6253,
-          "description": "apply physics understanding to justify a stance, opinion or solution to the selected issue or application.",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6042
-        },
-        {
-          "id": 6254,
-          "description": "apply appropriate protocols to access information and to then select one or more Aboriginal and Torres Strait Islander peoples’ traditional artefacts, knowledge or techniques, for example a weapon, structure, building material, native fauna, native flora, land management technique, hunting technique, dance, artwork or story",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6043
-        },
-        {
-          "id": 6255,
-          "description": "investigate Aboriginal and Torres Strait Islander peoples’ descriptions and explanations of the chosen artefacts, knowledge or techniques",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6043
-        },
-        {
-          "id": 6256,
-          "description": "identify and discuss the physics ideas that are used in the descriptions and explanations of Aboriginal and Torres Strait Islander peoples’ artefacts, knowledge or techniques",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6043
-        },
-        {
-          "id": 6257,
-          "description": "apply physics ideas to the understanding and explanation of the chosen artefacts, knowledge or techniques",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6043
-        },
-        {
-          "id": 6258,
-          "description": "evaluate validity of sources of information",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6044
-        },
-        {
-          "id": 6259,
-          "description": "apply physics concepts specific to the investigation: definitions of key terms; and use of appropriate scientific terminology, conventions and representations",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6044
-        },
-        {
-          "id": 6260,
-          "description": "apply the use of data representations, models and theories in organising and explaining observed phenomena and physics concepts, and discuss the limitations of the explanations",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6044
-        },
-        {
-          "id": 6261,
-          "description": "discuss the influence of sociocultural, economic, legal and political factors relevant to the selected issue or application",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6044
-        },
-        {
-          "id": 6262,
-          "description": "apply physics understanding to justify a stance, opinion or solution to the selected issue or application.",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6044
-        },
-        {
-          "id": 6263,
-          "description": "distinguish between the use of particle accelerators to produce synchrotron light and to collide particles",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6045
-        },
-        {
-          "id": 6264,
-          "description": "explain the general purpose of the electron linac, circular booster, storage ring and beamlines in the Australian Synchrotron",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6045
-        },
-        {
-          "id": 6265,
-          "description": "explain, using the characteristics of brightness, spectrum and divergence, why for some experiments synchrotron radiation is preferable to laser light and radiation from X-ray tubes",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6045
-        },
-        {
-          "id": 6266,
-          "description": "explain the evolution of collider technology including:",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6045
-        },
-        {
-          "id": 6267,
-          "description": "particles involved in the collision event",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6045
-        },
-        {
-          "id": 6268,
-          "description": "the increasing energies attained since the 1950s",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6045
-        },
-        {
-          "id": 6269,
-          "description": "evaluate the role of colliders in the development of the Standard Model of particle physics, including reference to subatomic structure and processes",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6045
-        },
-        {
-          "id": 6270,
-          "description": "explain how the immense amount of data collected by the Large Hadron Collider is stored and analysed, and the associated role particle detectors have had in the development of information processing technologies",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6045
-        },
-        {
-          "id": 6271,
-          "description": "evaluate validity of sources of information",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6046
-        },
-        {
-          "id": 6272,
-          "description": "apply physics concepts specific to the investigation: definitions of key terms; and use of appropriate scientific terminology, conventions and representations",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6046
-        },
-        {
-          "id": 6273,
-          "description": "apply the use of data representations, models and theories in organising and explaining observed phenomena and physics concepts, and discuss the limitations of the explanations",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6046
-        },
-        {
-          "id": 6274,
-          "description": "discuss the influence of sociocultural, economic, legal and political factors relevant to the selected issue or application",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6046
-        },
-        {
-          "id": 6275,
-          "description": "apply physics understanding to justify a stance, opinion or solution to the selected issue or application.",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6046
-        },
-        {
-          "id": 6276,
-          "description": "describe the Big Bang as a currently held theory that explains the origins of both time and space, and evaluate evidence for the Big Bang including the identification of cosmic background radiation",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6047
-        },
-        {
-          "id": 6277,
-          "description": "explain the changes of matter during the different stages of the Universe over time due to expansion and cooling",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6047
-        },
-        {
-          "id": 6278,
-          "description": "relate predictions to the subsequent discoveries of the neutron, neutrino, positron and Higgs boson",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6047
-        },
-        {
-          "id": 6279,
-          "description": "compare the nature of leptons, hadrons, mesons and baryons",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6047
-        },
-        {
-          "id": 6280,
-          "description": "explain that for every elementary matter particle there exists an antimatter particle of equal mass and opposite charge, and that if a particle and its antiparticle come into contact the particles will annihilate each other to create radiation",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6047
-        },
-        {
-          "id": 6281,
-          "description": "describe the contribution that the detection of gravitational waves has made to understanding of the Universe",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6047
-        },
-        {
-          "id": 6282,
-          "description": "evaluate validity of sources of information",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6048
-        },
-        {
-          "id": 6283,
-          "description": "apply physics concepts specific to the investigation: definitions of key terms; and use of appropriate scientific terminology, conventions and representations",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6048
-        },
-        {
-          "id": 6284,
-          "description": "apply the use of data representations, models and theories in organising and explaining observed phenomena and physics concepts, and discuss the limitations of the explanations",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6048
-        },
-        {
-          "id": 6285,
-          "description": "discuss the influence of sociocultural, economic, legal and political factors relevant to the selected issue or application",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6048
-        },
-        {
-          "id": 6286,
-          "description": "apply physics understanding to justify a stance, opinion or solution to the selected issue or application.",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6048
-        },
-        {
-          "id": 6287,
-          "description": "investigate cutting-edge research that is based in Victoria, Australia or Oceania",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6049
-        },
-        {
-          "id": 6288,
-          "description": "select one area of local physics research and follow protocols to access information related to current research in the selected area",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6049
-        },
-        {
-          "id": 6289,
-          "description": "identify the physics related to the chosen research",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6049
-        },
-        {
-          "id": 6290,
-          "description": "explain how physics understanding has led to the development of the selected research",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6049
-        },
-        {
-          "id": 6291,
-          "description": "explain how critical and creative thinking shapes the application of physics concepts related to the selected research",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6049
-        },
-        {
-          "id": 6292,
-          "description": "analyse the extent to which both individual contribution and collaboration are involved in the selected research",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6049
-        },
-        {
-          "id": 6293,
-          "description": "evaluate how the chosen physics research may change the way we live",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6049
-        },
-        {
-          "id": 6294,
-          "description": "evaluate validity of sources of information",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6050
-        },
-        {
-          "id": 6295,
-          "description": "apply physics concepts specific to the investigation: definitions of key terms; and use of appropriate scientific terminology, conventions and representations",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6050
-        },
-        {
-          "id": 6296,
-          "description": "apply the use of data representations, models and theories in organising and explaining observed phenomena and physics concepts, and discuss the limitations of the explanations",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6050
-        },
-        {
-          "id": 6297,
-          "description": "discuss the influence of sociocultural, economic, legal and political factors relevant to the selected issue or application",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6050
-        },
-        {
-          "id": 6298,
-          "description": "apply physics understanding to justify a stance, opinion or solution to the selected issue or application.",
-          "outcomeId": 6004,
-          "outcomeTopicId": 6050
-        }
-      ]
-    },
-    {
-      "id": 6005,
-      "curriculumSubjectId": 6000,
-      "number": 3,
-      "description": "On completion of this unit the student should be able to draw an evidence-based conclusion from primary data generated from a student-adapted or student-designed scientific investigation related to a selected physics question.",
-      "topics": [
-        {
-          "id": 6051,
-          "outcomeId": 6005,
-          "name": "Investigation design"
-        },
-        {
-          "id": 6052,
-          "outcomeId": 6005,
-          "name": "Scientific evidence"
-        },
-        {
-          "id": 6053,
-          "outcomeId": 6005,
-          "name": "Science communication"
-        }
-      ],
-      "keyKnowledge": [
-        {
-          "id": 6299,
-          "description": "apply the physics concepts specific to the selected investigation and explain their significance, including definitions of key terms, and physics representations",
-          "outcomeId": 6005,
-          "outcomeTopicId": 6051
-        },
-        {
-          "id": 6300,
-          "description": "evaluate the characteristics of the scientific methodology relevant to the investigation, selected from: experiment; fieldwork, classification and identification, modelling, simulation, and the development of a product, process or system",
-          "outcomeId": 6005,
-          "outcomeTopicId": 6051
-        },
-        {
-          "id": 6301,
-          "description": "apply techniques of primary qualitative and quantitative data generation relevant to the investigation",
-          "outcomeId": 6005,
-          "outcomeTopicId": 6051
-        },
-        {
-          "id": 6302,
-          "description": "identify and apply concepts of accuracy, precision, repeatability, reproducibility, resolution, and validity of data in relation to the investigation",
-          "outcomeId": 6005,
-          "outcomeTopicId": 6051
-        },
-        {
-          "id": 6303,
-          "description": "identify and apply health, safety and ethical guidelines relevant to the selected scientific investigation",
-          "outcomeId": 6005,
-          "outcomeTopicId": 6051
-        },
-        {
-          "id": 6304,
-          "description": "distinguish between an aim, a hypothesis, a model, a theory and a law",
-          "outcomeId": 6005,
-          "outcomeTopicId": 6052
-        },
-        {
-          "id": 6305,
-          "description": "identify and explain observations and experiments that are consistent with, or challenge, current models or theories",
-          "outcomeId": 6005,
-          "outcomeTopicId": 6052
-        },
-        {
-          "id": 6306,
-          "description": "describe the characteristics of primary data",
-          "outcomeId": 6005,
-          "outcomeTopicId": 6052
-        },
-        {
-          "id": 6307,
-          "description": "evaluate methods of organising, analysing and evaluating primary data to identify patterns and relationships including scientific error, causes of uncertainty, and limitations of data, methodologies and methods",
-          "outcomeId": 6005,
-          "outcomeTopicId": 6052
-        },
-        {
-          "id": 6308,
-          "description": "model the scientific practice of using a logbook to authenticate generated primary data",
-          "outcomeId": 6005,
-          "outcomeTopicId": 6052
-        },
-        {
-          "id": 6309,
-          "description": "apply the conventions of scientific report writing including scientific terminology and representations, standard abbreviations, units of measurement, significant figures and acknowledgement of references",
-          "outcomeId": 6005,
-          "outcomeTopicId": 6053
-        },
-        {
-          "id": 6310,
-          "description": "apply the key findings of the selected investigation and their relationship to key physics concepts.",
-          "outcomeId": 6005,
-          "outcomeTopicId": 6053
-        }
-      ]
-    }
-  ],
-  "keySkills": [
-    {
-      "id": 6000,
-      "description": "Develop aims and questions, formulate hypotheses and make predictions: (identify, research and construct aims and questions for investigation, identify independent, dependent and controlled variables in experiments, formulate hypotheses to focus investigations, predict possible outcomes of investigations)",
-      "curriculumSubjectId": 6000
-    },
-    {
-      "id": 6001,
-      "description": "Plan and conduct investigations: (Determine appropriate investigation methodology: case study; classification and identification; controlled experiment; fieldwork; literature review; modelling; product, process or system development; simulation. Design and conduct investigations; select and use methods appropriate to the selected investigation methodology, including consideration of sampling technique and size, equipment and procedures, taking into account potential sources of error and causes of uncertainty; determine the type and amount of qualitative and/or quantitative data to be generated or collated. Work independently and collaboratively as appropriate and within identified research constraints, adapting or extending processes as required and recording such modifications in a logbook)",
-      "curriculumSubjectId": 6000
-    },
-    {
-      "id": 6002,
-      "description": "Comply with safety and ethical guidelines: (Demonstrate safe laboratory practices when planning and conducting investigations by using risk assessments that are informed by safety data sheets (SDS), and accounting for risks. Apply relevant occupational health and safety guidelines while undertaking practical investigations. Demonstrate ethical conduct when undertaking and reporting investigations)",
-      "curriculumSubjectId": 6000
-    },
-    {
-      "id": 6003,
-      "description": "Generate, collate and record data: (Systematically generate and record primary data, and collate secondary data, appropriate to the investigation, including use of databases and reputable online data sources. Record and summarise both qualitative and quantitative data, including use of a logbook as an authentication of generated or collated data. Organise and present data in useful and meaningful ways, including schematic diagrams, flow charts, tables, bar charts, line graphs and calibration curves)",
-      "curriculumSubjectId": 6000
-    },
-    {
-      "id": 6004,
-      "description": "Analyse and evaluate data and investigation methods: (Process quantitative data using appropriate mathematical relationships and units, including calculations of ratios, percentages, percentage change and mean. Use appropriate numbers of significant figures in calculations. Plot graphs involving two variables that show linear and non-linear relationships. Identify and analyse experimental data qualitatively, handling, where appropriate, concepts of: accuracy, precision, repeatability, reproducibility, resolution, and validity of measurements; and errors (random and systematic). Identify outliers, and contradictory, provisional or incomplete data. Repeat experiments to evaluate the precision of data. Evaluate investigation methods and suggest ways to improve precision, and to reduce the likelihood of errors)",
-      "curriculumSubjectId": 6000
-    },
-    {
-      "id": 6005,
-      "description": "Construct evidence-based arguments and draw conclusions: (Distinguish between opinion, anecdote and evidence, and between scientific and non-scientific ideas. Evaluate data to determine the degree to which the evidence supports the aim of the investigation, and make recommendations, as appropriate, for modifying or extending the investigation. Evaluate data to determine the degree to which the evidence supports or refutes the initial prediction or hypothesis. Use reasoning to construct scientific arguments, and to draw and justify conclusions consistent with evidence and relevant to the question under investigation. Identify, describe and explain the limitations of conclusions, including identification of further evidence required. Discuss the implications of research findings and proposals)",
-      "curriculumSubjectId": 6000
-    },
-    {
-      "id": 6006,
-      "description": "Analyse, evaluate and communicate scientific ideas: (Use appropriate scientific terminology, representations and conventions, including standard abbreviations, graphing conventions, algebraic equations, units of measurement and significant figures. Discuss relevant scientific information, ideas, concepts, theories and models and the connections between them. Analyse and explain how models and theories are used to organise and understand observed phenomena and concepts, identifying limitations of selected models/theories. Critically evaluate and interpret a range of scientific and media texts (including journal articles, mass media communications and opinions in the public domain), processes, claims and conclusions related to chemistry by considering the quality of available evidence. Apply sustainability concepts to analyse and evaluate responses to chemistry-based scenarios, case studies, issues and challenges. Identify and explain when judgements or decisions associated with chemistry-related issues may be based on sociocultural, economic, political, legal and/or ethical factors and not solely on scientific evidence. Use clear, coherent and concise expression to communicate to specific audiences and for specific purposes in appropriate scientific genres, including scientific reports and posters. Acknowledge sources of information and assistance, and use standard scientific referencing conventions)",
-      "curriculumSubjectId": 6000
-    }
-  ],
-  "extraContents": []
+	"id": 6000,
+	"curriculumId": 6000,
+	"name": "Physics Units 1 and 2",
+	"isArchived": false,
+	"learningAreas": [
+		{
+			"id": 6000,
+			"curriculumSubjectId": 6000,
+			"name": "How are light and heat explained?",
+			"abbreviation": "U1AOS1",
+			"description": "In this area of study, students study light using the wave model and thermal energy using a particle model forming an understanding of the fundamental physics ideas of reflection, refraction and dispersion. They use these to understand observations made of the world such as mirages and rainbows. They investigate energy transfers and explore how light and thermal energy relate to one another. They apply light ideas to explain how light is used through optical fibres in communication, and how physics is used to inform global warming and climate change. On completion of this unit the student should be able to model, investigate and evaluate the wave-like nature of light, thermal energy and the emission and absorption of light by matter."
+		},
+		{
+			"id": 6001,
+			"curriculumSubjectId": 6000,
+			"name": "How is energy from the nucleus utilised?",
+			"abbreviation": "U1AOS2",
+			"description": "In this area of study, students build on their understanding of energy to explore energy that derives from the nuclei of atoms. They learn about the properties of the radiation from the nucleus and the effects of this radiation on human cells and tissues and apply this understanding to the use of radioisotopes in medical therapy. Students explore the transfer of energy from the nucleus through the processes of fission and fusion and apply these ideas to evaluate the viability of nuclear energy as an energy source for Australia."
+		},
+		{
+			"id": 6002,
+			"curriculumSubjectId": 6000,
+			"name": "How can electricity be used to transfer energy?",
+			"abbreviation": "U1AOS3",
+			"description": "Modelling is a useful tool in developing concepts that explain physical phenomena that cannot be directly observed. In this area of study, students develop conceptual models to analyse electrical phenomena and undertake practical investigations of circuit components. Concepts of electrical safety are developed through the study of safety mechanisms and the effect of current on humans. Students apply and critically assess mathematical models during experimental investigations of DC circuits. They explore electrical safety and the use of transducers to transfer energy in common devices. On completion of this unit the student should be able to investigate and apply a basic DC circuit model to simple battery-operated devices and household electrical systems, apply mathematical models to analyse circuits, and describe the safe and effective use of electricity by individuals and the community."
+		},
+		{
+			"id": 6003,
+			"curriculumSubjectId": 6000,
+			"name": "How is motion understood?",
+			"abbreviation": "U2AOS1",
+			"description": "In this area of study, students describe and analyse graphically, numerically and algebraically the energy and motion of an object, using specific physics terminology and conventions. They consider the effects of balanced and unbalanced forces on motion and investigate the translational and rotational forces on static structures. Students apply mathematical models during experimental investigations of motion, and apply their understanding of motion and force through a case study. On completion of this unit the student should be able to investigate, analyse, mathematically model and apply force, energy and motion."
+		},
+		{
+			"id": 6004,
+			"curriculumSubjectId": 6000,
+			"name": "Options: How does physics inform contemporary issues and applications in society?",
+			"abbreviation": "U2AOS2",
+			"description": "In this area of study, students develop a deeper understanding of an area of interest within diverse areas of physics. They select from eighteen options, explore the related physics and use this physics to form a stance, opinion or solution to a contemporary societal issue or application. In their explorations, a range of investigation methodologies may be used by students. On completion of this unit the student should be able to investigate and apply physics knowledge to develop and communicate an informed response to a contemporary societal issue or application related to a selected option."
+		},
+		{
+			"id": 6005,
+			"curriculumSubjectId": 6000,
+			"name": "How do physicists investigate questions?",
+			"abbreviation": "U2AOS3",
+			"description": "Systematic experimentation is an important aspect of physics inquiry. In this area of study, students adapt or design and then conduct a scientific investigation to generate appropriate primary qualitative and/or quantitative data, organise and interpret the data, and reach and evaluate a conclusion in response to the research question. Research questions may relate to different scientific methodologies that involve the generation of primary data, controlled experiments, fieldwork, correlational studies, classification and identification, modelling, and the development of a product, process or system. Students may extend their knowledge and skills related to understanding motion by designing and undertaking investigations such as, ‘What are the energy transformations during a theme park ride?’, ‘What are the forces experienced by a netballer’s ankle?’, ‘Is momentum conserved in a football tackle?’ and ‘What is the optimal design of the lightest capsule that is able to prevent an egg breaking during a drop?’. Video analysis can be used to investigate questions such as, ‘Is kinetic energy conserved in a pole vault?’. Questions may be used as a starting point for the investigation, such as ‘Does the shape of the cornea or the material of the lens have a greater effect on refraction?’, ‘How do the structures of winged seeds affect their dispersal?’ and ‘How do buttresses affect the stability of a church?’, or further questions may be posed that have arisen from the options in Unit 2, Area of Study 2. The student-adapted or student-designed scientific investigation relates to knowledge and skills developed in Area of Study 1 and/or Area of Study 2."
+		}
+	],
+	"outcomes": [
+		{
+			"id": 6000,
+			"curriculumSubjectId": 6000,
+			"number": 1,
+			"description": "On completion of this unit the student should be able to model, investigate and evaluate the wave-like nature of light, thermal energy and the emission and absorption of light by matter.",
+			"topics": [
+				{
+					"id": 6000,
+					"outcomeId": 6000,
+					"name": "Electromagnetic radiation"
+				},
+				{
+					"id": 6001,
+					"outcomeId": 6000,
+					"name": "Thermal energy"
+				},
+				{
+					"id": 6002,
+					"outcomeId": 6000,
+					"name": "Interaction of thermal energy and electromagnetic radiation"
+				}
+			],
+			"keyKnowledge": [
+				{
+					"id": 6000,
+					"description": "identify all electromagnetic waves as transverse waves travelling at the same speed, c, in a vacuum as distinct from mechanical waves that require a medium to propagate",
+					"outcomeId": 6000,
+					"outcomeTopicId": 6000
+				},
+				{
+					"id": 6001,
+					"description": "identify the amplitude, wavelength, period and frequency of waves",
+					"outcomeId": 6000,
+					"outcomeTopicId": 6000
+				},
+				{
+					"id": 6002,
+					"description": "calculate the wavelength, frequency, period and speed of travel of waves using:",
+					"outcomeId": 6000,
+					"outcomeTopicId": 6000
+				},
+				{
+					"id": 6003,
+					"description": "explain the wavelength of a wave as a result of the velocity (determined by the medium through which it travels) and the frequency (determined by the source)",
+					"outcomeId": 6000,
+					"outcomeTopicId": 6000
+				},
+				{
+					"id": 6004,
+					"description": "describe electromagnetic radiation emitted from the Sun as mainly ultraviolet, visible and infrared",
+					"outcomeId": 6000,
+					"outcomeTopicId": 6000
+				},
+				{
+					"id": 6005,
+					"description": "compare the wavelength and frequencies of different regions of the electromagnetic spectrum, including radio, microwave, infrared, visible, ultraviolet, x-ray and gamma, and compare the different uses each has in society",
+					"outcomeId": 6000,
+					"outcomeTopicId": 6000
+				},
+				{
+					"id": 6006,
+					"description": "investigate and analyse theoretically and practically the behaviour of waves including:",
+					"outcomeId": 6000,
+					"outcomeTopicId": 6000
+				},
+				{
+					"id": 6007,
+					"description": "refraction using Snell’s Law: n1 sin(θ1) = n2 sin(θ2) and n1v1 = n2v2",
+					"outcomeId": 6000,
+					"outcomeTopicId": 6000
+				},
+				{
+					"id": 6008,
+					"description": "total internal reflection and critical angle including applications: n1 sin(θc) = n2 sin(90º)",
+					"outcomeId": 6000,
+					"outcomeTopicId": 6000
+				},
+				{
+					"id": 6009,
+					"description": "investigate and explain theoretically and practically colour dispersion in prisms and lenses with reference to refraction of the components of white light as they pass from one medium to another",
+					"outcomeId": 6000,
+					"outcomeTopicId": 6000
+				},
+				{
+					"id": 6010,
+					"description": "explain the formation of optical phenomena: rainbows; mirages",
+					"outcomeId": 6000,
+					"outcomeTopicId": 6000
+				},
+				{
+					"id": 6011,
+					"description": "investigate light transmission through optical fibres for communication",
+					"outcomeId": 6000,
+					"outcomeTopicId": 6000
+				},
+				{
+					"id": 6012,
+					"description": "convert between Celsius and kelvin scales",
+					"outcomeId": 6000,
+					"outcomeTopicId": 6001
+				},
+				{
+					"id": 6013,
+					"description": "describe how an increase in temperature corresponds to an increase in thermal energy (kinetic and potential energy of the atoms) of a system:",
+					"outcomeId": 6000,
+					"outcomeTopicId": 6001
+				},
+				{
+					"id": 6014,
+					"description": "distinguish between conduction, convection and radiation with reference to heat transfers within and between systems",
+					"outcomeId": 6000,
+					"outcomeTopicId": 6001
+				},
+				{
+					"id": 6015,
+					"description": "explain why cooling results from evaporation using a simple kinetic energy model",
+					"outcomeId": 6000,
+					"outcomeTopicId": 6001
+				},
+				{
+					"id": 6016,
+					"description": "investigate and analyse theoretically and practically the energy required to:",
+					"outcomeId": 6000,
+					"outcomeTopicId": 6001
+				},
+				{
+					"id": 6017,
+					"description": "raise the temperature of a substance: Q = mcΔT",
+					"outcomeId": 6000,
+					"outcomeTopicId": 6001
+				},
+				{
+					"id": 6018,
+					"description": "change the state of a substance: Q = mL",
+					"outcomeId": 6000,
+					"outcomeTopicId": 6001
+				},
+				{
+					"id": 6019,
+					"description": "calculate the peak wavelength of the radiated electromagnetic radiation using Wien’s Law: λmaxT = constant",
+					"outcomeId": 6000,
+					"outcomeTopicId": 6002
+				},
+				{
+					"id": 6020,
+					"description": "compare the total energy across the electromagnetic spectrum emitted by objects at different temperatures",
+					"outcomeId": 6000,
+					"outcomeTopicId": 6002
+				},
+				{
+					"id": 6021,
+					"description": "apply concepts of energy transfer, energy transformation, temperature change and change of state to climate change and global warming.",
+					"outcomeId": 6000,
+					"outcomeTopicId": 6002
+				}
+			]
+		},
+		{
+			"id": 6001,
+			"curriculumSubjectId": 6000,
+			"number": 2,
+			"description": "On completion of this unit the student should be able to explain, apply and evaluate nuclear radiation, radioactive decay and nuclear energy.",
+			"topics": [
+				{
+					"id": 6003,
+					"outcomeId": 6001,
+					"name": "Radiation from the nucleus"
+				},
+				{
+					"id": 6004,
+					"outcomeId": 6001,
+					"name": "Nuclear energy"
+				}
+			],
+			"keyKnowledge": [
+				{
+					"id": 6022,
+					"description": "explain nuclear stability with reference to the forces in the nucleus including electrostatic forces, the strong nuclear force and the weak nuclear force",
+					"outcomeId": 6001,
+					"outcomeTopicId": 6003
+				},
+				{
+					"id": 6023,
+					"description": "model radioactive decay as random decay with a particular half-life, including mathematical modelling with reference to whole half-lives",
+					"outcomeId": 6001,
+					"outcomeTopicId": 6003
+				},
+				{
+					"id": 6024,
+					"description": "describe the properties of α, β-, β+ and γ radiation",
+					"outcomeId": 6001,
+					"outcomeTopicId": 6003
+				},
+				{
+					"id": 6025,
+					"description": "explain nuclear transformations using decay equations involving α, β-, β+ and γ radiation",
+					"outcomeId": 6001,
+					"outcomeTopicId": 6003
+				},
+				{
+					"id": 6026,
+					"description": "analyse decay series diagrams with reference to type of decay and stability of isotopes",
+					"outcomeId": 6001,
+					"outcomeTopicId": 6003
+				},
+				{
+					"id": 6027,
+					"description": "explain the effects of α, β and γ radiation on humans, including:",
+					"outcomeId": 6001,
+					"outcomeTopicId": 6003
+				},
+				{
+					"id": 6028,
+					"description": "different capacities to cause cell damage",
+					"outcomeId": 6001,
+					"outcomeTopicId": 6003
+				},
+				{
+					"id": 6029,
+					"description": "short- and long-term effects of low and high doses",
+					"outcomeId": 6001,
+					"outcomeTopicId": 6003
+				},
+				{
+					"id": 6030,
+					"description": "ionising impacts of radioactive sources outside and inside the body",
+					"outcomeId": 6001,
+					"outcomeTopicId": 6003
+				},
+				{
+					"id": 6031,
+					"description": "calculations of absorbed dose (gray), equivalent dose (sievert) and effective dose (sievert)",
+					"outcomeId": 6001,
+					"outcomeTopicId": 6003
+				},
+				{
+					"id": 6032,
+					"description": "evaluate the use of medical radioisotopes in therapy including the effects on healthy and damaged tissues and cells",
+					"outcomeId": 6001,
+					"outcomeTopicId": 6003
+				},
+				{
+					"id": 6033,
+					"description": "explain, qualitatively, nuclear energy as energy resulting from the conversion of mass",
+					"outcomeId": 6001,
+					"outcomeTopicId": 6004
+				},
+				{
+					"id": 6034,
+					"description": "explain fission chain reactions including:",
+					"outcomeId": 6001,
+					"outcomeTopicId": 6004
+				},
+				{
+					"id": 6035,
+					"description": "the effect of mass and shape on criticality",
+					"outcomeId": 6001,
+					"outcomeTopicId": 6004
+				},
+				{
+					"id": 6036,
+					"description": "neutron absorption and moderation",
+					"outcomeId": 6001,
+					"outcomeTopicId": 6004
+				},
+				{
+					"id": 6037,
+					"description": "compare the processes of nuclear fusion and nuclear fission",
+					"outcomeId": 6001,
+					"outcomeTopicId": 6004
+				},
+				{
+					"id": 6038,
+					"description": "explain, using a binding energy curve, why both fusion and fission are reactions that release energy",
+					"outcomeId": 6001,
+					"outcomeTopicId": 6004
+				},
+				{
+					"id": 6039,
+					"description": "investigate the viability of nuclear energy as an energy source for Australia.",
+					"outcomeId": 6001,
+					"outcomeTopicId": 6004
+				}
+			]
+		},
+		{
+			"id": 6002,
+			"curriculumSubjectId": 6000,
+			"number": 3,
+			"description": "On completion of this unit the student should be able to investigate and apply a basic DC circuit model to simple battery-operated devices and household electrical systems, apply mathematical models to analyse circuits, and describe the safe and effective use of electricity by individuals and the community.",
+			"topics": [
+				{
+					"id": 6005,
+					"outcomeId": 6002,
+					"name": "Concepts used to model electricity"
+				},
+				{
+					"id": 6006,
+					"outcomeId": 6002,
+					"name": "Circuit electricity"
+				},
+				{
+					"id": 6007,
+					"outcomeId": 6002,
+					"name": "Using electricity"
+				},
+				{
+					"id": 6008,
+					"outcomeId": 6002,
+					"name": "Electrical safety in the home"
+				}
+			],
+			"keyKnowledge": [
+				{
+					"id": 6040,
+					"description": "apply concepts of charge (Q), electric current (I), potential difference (V), energy (E) and power (P), in electric circuits",
+					"outcomeId": 6002,
+					"outcomeTopicId": 6005
+				},
+				{
+					"id": 6041,
+					"description": "analyse and evaluate different analogies used to describe electric current and potential difference",
+					"outcomeId": 6002,
+					"outcomeTopicId": 6005
+				},
+				{
+					"id": 6042,
+					"description": "investigate and analyse theoretically and practically electric circuits using the relationships:",
+					"outcomeId": 6002,
+					"outcomeTopicId": 6005
+				},
+				{
+					"id": 6043,
+					"description": "justify the use of selected meters (ammeter, voltmeter, multimeter) in circuits",
+					"outcomeId": 6002,
+					"outcomeTopicId": 6005
+				},
+				{
+					"id": 6044,
+					"description": "apply the kilowatt-hour (kW h) as a unit of energy",
+					"outcomeId": 6002,
+					"outcomeTopicId": 6005
+				},
+				{
+					"id": 6045,
+					"description": "model resistance in series and parallel circuits using:",
+					"outcomeId": 6002,
+					"outcomeTopicId": 6006
+				},
+				{
+					"id": 6046,
+					"description": "current versus potential difference (I–V ) graphs",
+					"outcomeId": 6002,
+					"outcomeTopicId": 6006
+				},
+				{
+					"id": 6047,
+					"description": "resistance as the potential difference to current ratio, including R = constant for ohmic devices",
+					"outcomeId": 6002,
+					"outcomeTopicId": 6006
+				},
+				{
+					"id": 6048,
+					"description": "equivalent resistance in arrangements in",
+					"outcomeId": 6002,
+					"outcomeTopicId": 6006
+				},
+				{
+					"id": 6049,
+					"description": "series: Requivalent = R1 + R2 + ... + Rn and",
+					"outcomeId": 6002,
+					"outcomeTopicId": 6006
+				},
+				{
+					"id": 6050,
+					"description": "parallel: …",
+					"outcomeId": 6002,
+					"outcomeTopicId": 6006
+				},
+				{
+					"id": 6051,
+					"description": "calculate and analyse the equivalent resistance of circuits comprising parallel and series resistance",
+					"outcomeId": 6002,
+					"outcomeTopicId": 6006
+				},
+				{
+					"id": 6052,
+					"description": "analyse circuits comprising voltage dividers",
+					"outcomeId": 6002,
+					"outcomeTopicId": 6006
+				},
+				{
+					"id": 6053,
+					"description": "model household (AC) electrical systems as simple direct current (DC) circuits",
+					"outcomeId": 6002,
+					"outcomeTopicId": 6006
+				},
+				{
+					"id": 6054,
+					"description": "compare power transfers in series and parallel circuits",
+					"outcomeId": 6002,
+					"outcomeTopicId": 6006
+				},
+				{
+					"id": 6055,
+					"description": "explain why the circuits in homes are mostly parallel circuits",
+					"outcomeId": 6002,
+					"outcomeTopicId": 6006
+				},
+				{
+					"id": 6056,
+					"description": "investigate and apply theoretically and practically concepts of current, resistance, potential difference (voltage drop) and power to the operation of electronic circuits comprising resistors, light bulbs, diodes, thermistors, light dependent resistors (LDRs), light-emitting diodes (LEDs) and potentiometers (quantitative analysis restricted to use of and P = VI)",
+					"outcomeId": 6002,
+					"outcomeTopicId": 6007
+				},
+				{
+					"id": 6057,
+					"description": "investigate practically the operation of simple circuits containing resistors, variable resistors, diodes and other non-ohmic devices",
+					"outcomeId": 6002,
+					"outcomeTopicId": 6007
+				},
+				{
+					"id": 6058,
+					"description": "describe energy transfers and transformations with reference to resistors, light bulbs, diodes, thermistors, light dependent resistors (LDRs), light-emitting diodes (LEDs) and potentiometers in common devices",
+					"outcomeId": 6002,
+					"outcomeTopicId": 6007
+				},
+				{
+					"id": 6059,
+					"description": "model household electricity connections as a simple DC circuit comprising fuses, switches, circuit breakers, loads and earth",
+					"outcomeId": 6002,
+					"outcomeTopicId": 6008
+				},
+				{
+					"id": 6060,
+					"description": "compare the operation of safety devices including fuses, circuit breakers and residual current devices (RCDs)",
+					"outcomeId": 6002,
+					"outcomeTopicId": 6008
+				},
+				{
+					"id": 6061,
+					"description": "describe the causes, effects and first aid treatment of electric shock and identify the approximate danger thresholds for current and duration.",
+					"outcomeId": 6002,
+					"outcomeTopicId": 6008
+				}
+			]
+		},
+		{
+			"id": 6003,
+			"curriculumSubjectId": 6000,
+			"number": 1,
+			"description": "On completion of this unit the student should be able to investigate, analyse, mathematically model and apply force, energy and motion.",
+			"topics": [
+				{
+					"id": 6009,
+					"outcomeId": 6003,
+					"name": "Concepts used to model motion"
+				},
+				{
+					"id": 6010,
+					"outcomeId": 6003,
+					"name": "Forces and motion"
+				},
+				{
+					"id": 6011,
+					"outcomeId": 6003,
+					"name": "Energy and motion"
+				},
+				{
+					"id": 6012,
+					"outcomeId": 6003,
+					"name": "Equilibrium"
+				},
+				{
+					"id": 6013,
+					"outcomeId": 6003,
+					"name": "Application of motion"
+				}
+			],
+			"keyKnowledge": [
+				{
+					"id": 6062,
+					"description": "identify parameters of motion as vectors or scalars",
+					"outcomeId": 6003,
+					"outcomeTopicId": 6009
+				},
+				{
+					"id": 6063,
+					"description": "analyse graphically, numerically and algebraically, straight-line motion under constant acceleration:",
+					"outcomeId": 6003,
+					"outcomeTopicId": 6009
+				},
+				{
+					"id": 6064,
+					"description": "analyse, graphically, non-uniform motion in a straight line",
+					"outcomeId": 6003,
+					"outcomeTopicId": 6009
+				},
+				{
+					"id": 6065,
+					"description": "apply concepts of momentum to linear motion: p = mv",
+					"outcomeId": 6003,
+					"outcomeTopicId": 6009
+				},
+				{
+					"id": 6066,
+					"description": "• explain changes in momentum as being caused by a net force:",
+					"outcomeId": 6003,
+					"outcomeTopicId": 6010
+				},
+				{
+					"id": 6067,
+					"description": "• model the force due to gravity, Fg, as the force of gravity acting at the centre of mass of a body, Fon body by Earth = mg, where g is the gravitational field strength (9.8 N kg-1 near the surface of Earth)",
+					"outcomeId": 6003,
+					"outcomeTopicId": 6010
+				},
+				{
+					"id": 6068,
+					"description": "• model forces as vectors acting at the point of application (with magnitude and direction), labelling these forces using the convention ‘force on A by B’ or Fon A by B = –Fon B by A",
+					"outcomeId": 6003,
+					"outcomeTopicId": 6010
+				},
+				{
+					"id": 6069,
+					"description": "• apply Newton’s three laws of motion to a body on which forces act: , Fon A by B = –Fon B by A",
+					"outcomeId": 6003,
+					"outcomeTopicId": 6010
+				},
+				{
+					"id": 6070,
+					"description": "• apply the vector model of forces, including vector addition and components of forces, to readily observable forces including the force due to gravity, friction and normal forces",
+					"outcomeId": 6003,
+					"outcomeTopicId": 6010
+				},
+				{
+					"id": 6071,
+					"description": "• apply the concept of work done by a force using:",
+					"outcomeId": 6003,
+					"outcomeTopicId": 6011
+				},
+				{
+					"id": 6072,
+					"description": "work done = force × displacement: W = Fscosθ, where force is constant",
+					"outcomeId": 6003,
+					"outcomeTopicId": 6011
+				},
+				{
+					"id": 6073,
+					"description": "work done = area under force vs distance graph",
+					"outcomeId": 6003,
+					"outcomeTopicId": 6011
+				},
+				{
+					"id": 6074,
+					"description": "investigate and analyse theoretically and practically Hooke’s Law for an ideal spring: F = –kx, where x is extension",
+					"outcomeId": 6003,
+					"outcomeTopicId": 6011
+				},
+				{
+					"id": 6075,
+					"description": "analyse and model mechanical energy transfers and transformations using energy conservation:",
+					"outcomeId": 6003,
+					"outcomeTopicId": 6011
+				},
+				{
+					"id": 6076,
+					"description": "changes in gravitational potential energy near Earth’s surface: Eg = mgΔh",
+					"outcomeId": 6003,
+					"outcomeTopicId": 6011
+				},
+				{
+					"id": 6077,
+					"description": "elastic potential energy in ideal springs:",
+					"outcomeId": 6003,
+					"outcomeTopicId": 6011
+				},
+				{
+					"id": 6078,
+					"description": "kinetic energy:",
+					"outcomeId": 6003,
+					"outcomeTopicId": 6011
+				},
+				{
+					"id": 6079,
+					"description": "• analyse rate of energy transfer using power:",
+					"outcomeId": 6003,
+					"outcomeTopicId": 6011
+				},
+				{
+					"id": 6080,
+					"description": "• calculate the efficiency of an energy transfer system:",
+					"outcomeId": 6003,
+					"outcomeTopicId": 6011
+				},
+				{
+					"id": 6081,
+					"description": "• analyse impulse in an isolated system (for collisions between objects moving in a straight line): FΔt= mΔv",
+					"outcomeId": 6003,
+					"outcomeTopicId": 6011
+				},
+				{
+					"id": 6082,
+					"description": "• investigate and analyse theoretically and practically momentum conservation in one dimension",
+					"outcomeId": 6003,
+					"outcomeTopicId": 6011
+				},
+				{
+					"id": 6083,
+					"description": "calculate torque, τ = r⊥ F",
+					"outcomeId": 6003,
+					"outcomeTopicId": 6012
+				},
+				{
+					"id": 6084,
+					"description": "analyse translational and rotational forces (torques) in simple structures in translational and rotational equilibrium",
+					"outcomeId": 6003,
+					"outcomeTopicId": 6012
+				},
+				{
+					"id": 6085,
+					"description": "investigate the application of motion concepts through a case study, for example, through motion in sport, vehicle safety, a device or a structure.",
+					"outcomeId": 6003,
+					"outcomeTopicId": 6013
+				}
+			]
+		},
+		{
+			"id": 6004,
+			"curriculumSubjectId": 6000,
+			"number": 2,
+			"description": "On completion of this unit the student should be able to investigate and apply physics knowledge to develop and communicate an informed response to a contemporary societal issue or application related to a selected option.",
+			"topics": [
+				{
+					"id": 6014,
+					"outcomeId": 6004,
+					"name": "The physics of climate change"
+				},
+				{
+					"id": 6015,
+					"outcomeId": 6004,
+					"name": "Communicating physics"
+				},
+				{
+					"id": 6016,
+					"outcomeId": 6004,
+					"name": "The physics of nuclear fusion and fission reactions"
+				},
+				{
+					"id": 6017,
+					"outcomeId": 6004,
+					"name": "Communicating physics"
+				},
+				{
+					"id": 6018,
+					"outcomeId": 6004,
+					"name": "The physics of flight"
+				},
+				{
+					"id": 6019,
+					"outcomeId": 6004,
+					"name": "Bernoulli’s principle and pressure differences"
+				},
+				{
+					"id": 6020,
+					"outcomeId": 6004,
+					"name": "Communicating physics"
+				},
+				{
+					"id": 6021,
+					"outcomeId": 6004,
+					"name": "The physics of structures and materials"
+				},
+				{
+					"id": 6022,
+					"outcomeId": 6004,
+					"name": "Communicating physics"
+				},
+				{
+					"id": 6023,
+					"outcomeId": 6004,
+					"name": "The physics of forces on the human body"
+				},
+				{
+					"id": 6024,
+					"outcomeId": 6004,
+					"name": "Communicating physics"
+				},
+				{
+					"id": 6025,
+					"outcomeId": 6004,
+					"name": "The physics of medical radiation"
+				},
+				{
+					"id": 6026,
+					"outcomeId": 6004,
+					"name": "Communicating physics"
+				},
+				{
+					"id": 6027,
+					"outcomeId": 6004,
+					"name": "The physics of the use of electricity in the human body"
+				},
+				{
+					"id": 6028,
+					"outcomeId": 6004,
+					"name": "Communicating physics"
+				},
+				{
+					"id": 6029,
+					"outcomeId": 6004,
+					"name": "The physics of human vision"
+				},
+				{
+					"id": 6030,
+					"outcomeId": 6004,
+					"name": "Communicating physics"
+				},
+				{
+					"id": 6031,
+					"outcomeId": 6004,
+					"name": "The physics of photography"
+				},
+				{
+					"id": 6032,
+					"outcomeId": 6004,
+					"name": "Communicating physics"
+				},
+				{
+					"id": 6033,
+					"outcomeId": 6004,
+					"name": "The physics of sound production and music"
+				},
+				{
+					"id": 6034,
+					"outcomeId": 6004,
+					"name": "Communicating physics"
+				},
+				{
+					"id": 6035,
+					"outcomeId": 6004,
+					"name": "The physics of ball sports"
+				},
+				{
+					"id": 6036,
+					"outcomeId": 6004,
+					"name": "Communicating physics"
+				},
+				{
+					"id": 6037,
+					"outcomeId": 6004,
+					"name": "The physics of using AC electricity to charge a DC device"
+				},
+				{
+					"id": 6038,
+					"outcomeId": 6004,
+					"name": "Communicating physics"
+				},
+				{
+					"id": 6039,
+					"outcomeId": 6004,
+					"name": "The physics of stars"
+				},
+				{
+					"id": 6040,
+					"outcomeId": 6004,
+					"name": "Communicating physics"
+				},
+				{
+					"id": 6041,
+					"outcomeId": 6004,
+					"name": "The physics of life beyond the Solar System"
+				},
+				{
+					"id": 6042,
+					"outcomeId": 6004,
+					"name": "Communicating physics"
+				},
+				{
+					"id": 6043,
+					"outcomeId": 6004,
+					"name": "The physics of local traditional artefacts, knowledge and techniques"
+				},
+				{
+					"id": 6044,
+					"outcomeId": 6004,
+					"name": "Communicating physics"
+				},
+				{
+					"id": 6045,
+					"outcomeId": 6004,
+					"name": "The physics of particle accelerators"
+				},
+				{
+					"id": 6046,
+					"outcomeId": 6004,
+					"name": "Communicating physics"
+				},
+				{
+					"id": 6047,
+					"outcomeId": 6004,
+					"name": "The physics of the origins of matter"
+				},
+				{
+					"id": 6048,
+					"outcomeId": 6004,
+					"name": "Communicating physics"
+				},
+				{
+					"id": 6049,
+					"outcomeId": 6004,
+					"name": "The physics of local scientific research"
+				},
+				{
+					"id": 6050,
+					"outcomeId": 6004,
+					"name": "Communicating physics"
+				}
+			],
+			"keyKnowledge": [
+				{
+					"id": 6086,
+					"description": "describe the transformation of radiation as it passes through the atmosphere, is absorbed and re-emitted by Earth",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6014
+				},
+				{
+					"id": 6087,
+					"description": "explain how greenhouse gases in the atmosphere (including methane, water and carbon dioxide) absorb and re-emit infrared radiation and the impact on global warming",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6014
+				},
+				{
+					"id": 6088,
+					"description": "compare the total energy across the electromagnetic spectrum emitted by objects at different temperatures such as the Sun",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6014
+				},
+				{
+					"id": 6089,
+					"description": "calculate the peak wavelength of the re-radiated electromagnetic radiation from Earth using Wien’s Law: λmaxT = constant",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6014
+				},
+				{
+					"id": 6090,
+					"description": "describe power radiated by a body as being dependent on the temperature of the body according to the Stefan-Boltzmann Law,",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6014
+				},
+				{
+					"id": 6091,
+					"description": "analyse the evidence for the influence of human activity in creating an enhanced greenhouse effect, including the change in the materials that comprise the surface of Earth and the balance of gases in the atmosphere",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6014
+				},
+				{
+					"id": 6092,
+					"description": "evaluate validity of sources of information",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6015
+				},
+				{
+					"id": 6093,
+					"description": "apply physics concepts specific to the investigation: definitions of key terms; and use of appropriate scientific terminology, conventions and representations",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6015
+				},
+				{
+					"id": 6094,
+					"description": "apply the use of data representations, models and theories in organising and explaining observed phenomena and physics concepts, and discuss the limitations of the explanations",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6015
+				},
+				{
+					"id": 6095,
+					"description": "discuss the influence of sociocultural, economic, legal and political factors relevant to the selected issue or application",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6015
+				},
+				{
+					"id": 6096,
+					"description": "apply physics understanding to justify a stance, opinion or solution to the selected issue or application.",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6015
+				},
+				{
+					"id": 6097,
+					"description": "explain nuclear fusion reactions of proton-proton and deuterium-tritium with reference to:",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6016
+				},
+				{
+					"id": 6098,
+					"description": "reactants, products and energy production",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6016
+				},
+				{
+					"id": 6099,
+					"description": "availability of reactants",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6016
+				},
+				{
+					"id": 6100,
+					"description": "energy production compared with mass of fuel",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6016
+				},
+				{
+					"id": 6101,
+					"description": "explain nuclear fission reactions of 235U and 239Pu with reference to:",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6016
+				},
+				{
+					"id": 6102,
+					"description": "fission initiation by slow and fast neutrons respectively",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6016
+				},
+				{
+					"id": 6103,
+					"description": "products of fission including typical unstable fission fragments and energy",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6016
+				},
+				{
+					"id": 6104,
+					"description": "radiation produced by unstable fission fragments",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6016
+				},
+				{
+					"id": 6105,
+					"description": "describe neutron absorption in 238U, including formation of 239Pu",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6016
+				},
+				{
+					"id": 6106,
+					"description": "describe the energy transfers and transformations in the systems that convert nuclear energy into thermal energy for subsequent power generation",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6016
+				},
+				{
+					"id": 6107,
+					"description": "explain the risks and benefits for society of using nuclear energy as a power source",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6016
+				},
+				{
+					"id": 6108,
+					"description": "evaluate validity of sources of information",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6017
+				},
+				{
+					"id": 6109,
+					"description": "apply physics concepts specific to the investigation: definitions of key terms; and use of appropriate scientific terminology, conventions and representations",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6017
+				},
+				{
+					"id": 6110,
+					"description": "apply the use of data representations, models and theories in organising and explaining observed phenomena and physics concepts, and discuss the limitations of the explanations",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6017
+				},
+				{
+					"id": 6111,
+					"description": "discuss the influence of sociocultural, economic, legal and political factors relevant to the selected issue or application",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6017
+				},
+				{
+					"id": 6112,
+					"description": "apply physics understanding to justify a stance, opinion or solution to the selected issue or application.",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6017
+				},
+				{
+					"id": 6113,
+					"description": "model the forces acting on an aircraft in flight as:",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6018
+				},
+				{
+					"id": 6114,
+					"description": "the force due to gravity, acting at the centre of mass",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6018
+				},
+				{
+					"id": 6115,
+					"description": "thrust",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6018
+				},
+				{
+					"id": 6116,
+					"description": "lift: , acting at the centre of pressure",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6018
+				},
+				{
+					"id": 6117,
+					"description": "drag: , acting at the centre of pressure",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6018
+				},
+				{
+					"id": 6118,
+					"description": "explain the production of aerodynamic lift with reference to:",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6018
+				},
+				{
+					"id": 6119,
+					"description": "conservation of momentum and downwash",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6019
+				},
+				{
+					"id": 6120,
+					"description": "compare contributions to aerodynamic drag, including skin friction, form and lift-induced",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6019
+				},
+				{
+					"id": 6121,
+					"description": "explain the production of thrust with reference to Newton’s laws of motion",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6019
+				},
+				{
+					"id": 6122,
+					"description": "apply balance of forces and torques with reference to Newton’s laws of motion to the different stages of flight and the control of the aircraft",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6019
+				},
+				{
+					"id": 6123,
+					"description": "evaluate validity of sources of information",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6020
+				},
+				{
+					"id": 6124,
+					"description": "apply physics concepts specific to the investigation: definitions of key terms; and use of appropriate scientific terminology, conventions and representations",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6020
+				},
+				{
+					"id": 6125,
+					"description": "apply the use of data representations, models and theories in organising and explaining observed phenomena and physics concepts, and discuss the limitations of the explanations",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6020
+				},
+				{
+					"id": 6126,
+					"description": "discuss the influence of sociocultural, economic, legal and political factors relevant to the selected issue or application",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6020
+				},
+				{
+					"id": 6127,
+					"description": "apply physics understanding to justify a stance, opinion or solution to the selected issue or application.",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6020
+				},
+				{
+					"id": 6128,
+					"description": "identify different types of external forces due to loads such as compression, tension and shear, that can act on a body, including gravitational forces",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6021
+				},
+				{
+					"id": 6129,
+					"description": "analyse the stability of structures using translational and rotational forces (torques) and identify that gravitational forces act at the centre of mass",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6021
+				},
+				{
+					"id": 6130,
+					"description": "calculate the stress and strain resulting from the application of compressive and tensile forces and loads to materials in structures, σ = F/A , ε = ∆l/l",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6021
+				},
+				{
+					"id": 6131,
+					"description": "analyse the behaviour of materials under load in terms of extension and compression, including Young’s modulus, E = σ/ε, area under stress versus strain graphs and the elastic or plastic behaviour of materials under load",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6021
+				},
+				{
+					"id": 6132,
+					"description": "evaluate the suitability of different materials for use in structures, comparing tensile and compressive strength and stiffness or flexibility under load",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6021
+				},
+				{
+					"id": 6133,
+					"description": "evaluate validity of sources of information",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6022
+				},
+				{
+					"id": 6134,
+					"description": "apply physics concepts specific to the investigation: definitions of key terms; and use of appropriate scientific terminology, conventions and representations",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6022
+				},
+				{
+					"id": 6135,
+					"description": "apply the use of data representations, models and theories in organising and explaining observed phenomena and physics concepts, and discuss the limitations of the explanations",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6022
+				},
+				{
+					"id": 6136,
+					"description": "discuss the influence of sociocultural, economic, legal and political factors relevant to the selected issue or application",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6022
+				},
+				{
+					"id": 6137,
+					"description": "apply physics understanding to justify a stance, opinion or solution to the selected issue or application.",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6022
+				},
+				{
+					"id": 6138,
+					"description": "apply centre of mass calculations to a body or system:",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6023
+				},
+				{
+					"id": 6139,
+					"description": "investigate and apply theoretically and practically translational forces (gravitational, compressive, tensile and shear) and torques",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6023
+				},
+				{
+					"id": 6140,
+					"description": "calculate the stress and strain resulting from the application of compressive and tensile forces and loads to materials in organic structures including bone and muscle using: and",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6023
+				},
+				{
+					"id": 6141,
+					"description": "analyse the behaviour of living tissue under load with reference to extension and compression, including Young’s modulus, , area under stress versus strain graphs and the elastic or plastic behaviour of materials under load",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6023
+				},
+				{
+					"id": 6142,
+					"description": "investigate the suitability of different materials for use in the human body, including bone, tendons and muscle, by comparing tensile and compressive strength and stiffness, toughness, and flexibility under load",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6023
+				},
+				{
+					"id": 6143,
+					"description": "evaluate the development, performance and challenges of using artificial materials and structures in prosthetics, including external prostheses for the replacement of lost limbs, and internal prostheses such as hip or valve replacements",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6023
+				},
+				{
+					"id": 6144,
+					"description": "evaluate validity of sources of information",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6024
+				},
+				{
+					"id": 6145,
+					"description": "apply physics concepts specific to the investigation: definitions of key terms; and use of appropriate scientific terminology, conventions and representations",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6024
+				},
+				{
+					"id": 6146,
+					"description": "apply the use of data representations, models and theories in organising and explaining observed phenomena and physics concepts, and discuss the limitations of the explanations",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6024
+				},
+				{
+					"id": 6147,
+					"description": "discuss the influence of sociocultural, economic, legal and political factors relevant to the selected issue or application",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6024
+				},
+				{
+					"id": 6148,
+					"description": "apply physics understanding to justify a stance, opinion or solution to the selected issue or application.",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6024
+				},
+				{
+					"id": 6149,
+					"description": "describe how X-rays for medical use are produced including the distinction between soft and hard X-rays",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6025
+				},
+				{
+					"id": 6150,
+					"description": "describe how medical radioisotopes may be produced by neutron bombardment and high energy collisions",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6025
+				},
+				{
+					"id": 6151,
+					"description": "compare ionising and non-ionising radiation with reference to how each affects living tissues and cells",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6025
+				},
+				{
+					"id": 6152,
+					"description": "compare the processes of, and images produced by, medical imaging using two or more of X-rays, computed tomography (CT), γ radiation, magnetic resonance imaging (MRI), single photon emission computed tomography (SPECT) and positron emission tomography (PET)",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6025
+				},
+				{
+					"id": 6153,
+					"description": "describe applications of medical radioisotopes in imaging and diagnosis",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6025
+				},
+				{
+					"id": 6154,
+					"description": "relate the detection and penetrating properties of α, β and γ radiation to their use in different medical applications",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6025
+				},
+				{
+					"id": 6155,
+					"description": "evaluate validity of sources of information",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6026
+				},
+				{
+					"id": 6156,
+					"description": "apply physics concepts specific to the investigation: definitions of key terms; and use of appropriate scientific terminology, conventions and representations",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6026
+				},
+				{
+					"id": 6157,
+					"description": "apply the use of data representations, models and theories in organising and explaining observed phenomena and physics concepts, and discuss the limitations of the explanations",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6026
+				},
+				{
+					"id": 6158,
+					"description": "discuss the influence of sociocultural, economic, legal and political factors relevant to the selected issue or application",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6026
+				},
+				{
+					"id": 6159,
+					"description": "apply physics understanding to justify a stance, opinion or solution to the selected issue or application.",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6026
+				},
+				{
+					"id": 6160,
+					"description": "compare charge carriers in the human body (specifically Na+, K+, Ca2+, Mg2+, PO43- and Cl- ions) with those in metals (specifically electrons)",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6027
+				},
+				{
+					"id": 6161,
+					"description": "describe the nervous system as the control of the function of the human body through electrical processes of nerve cells (through an action potential) and chemical transfer between nerve cells (through neurotransmitters diffusing across synapses)",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6027
+				},
+				{
+					"id": 6162,
+					"description": "model an action potential as a short-lasting electrical event across the cell membrane in response to a stimulus, including reference to the roles of ion channels (leakage and voltage gated) in changing membrane potentials during the processes of depolarisation, repolarisation, hyperpolarisation and return to resting state",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6027
+				},
+				{
+					"id": 6163,
+					"description": "explain heart beat with reference to the production of a potential difference and model heart beat with reference to the action of the nodes in atrial and ventricular muscles as the source of the electric signal, the staggering of signals from the atrial and ventricular muscles, and time delay before both muscles can contract again",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6027
+				},
+				{
+					"id": 6164,
+					"description": "describe the effects of current through, and potential difference across, the human body",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6027
+				},
+				{
+					"id": 6165,
+					"description": "explain why people have different electrical resistances with reference to comparison of the resistances in human bone, fat, muscle, nerves and skin",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6027
+				},
+				{
+					"id": 6166,
+					"description": "evaluate validity of sources of information",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6028
+				},
+				{
+					"id": 6167,
+					"description": "apply physics concepts specific to the investigation: definitions of key terms; and use of appropriate scientific terminology, conventions and representations",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6028
+				},
+				{
+					"id": 6168,
+					"description": "apply the use of data representations, models and theories in organising and explaining observed phenomena and physics concepts, and discuss the limitations of the explanations",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6028
+				},
+				{
+					"id": 6169,
+					"description": "discuss the influence of sociocultural, economic, legal and political factors relevant to the selected issue or application",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6028
+				},
+				{
+					"id": 6170,
+					"description": "apply physics understanding to justify a stance, opinion or solution to the selected issue or application.",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6028
+				},
+				{
+					"id": 6171,
+					"description": "describe image formation using pinhole cameras and convex and concave lenses",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6029
+				},
+				{
+					"id": 6172,
+					"description": "calculate image positions for thin lenses using either accurate ray tracing scale diagrams and/or the thin",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6029
+				},
+				{
+					"id": 6173,
+					"description": "lens equation:",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6029
+				},
+				{
+					"id": 6174,
+					"description": "calculate image sizes in pinhole and simple lens cameras:",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6029
+				},
+				{
+					"id": 6175,
+					"description": "explain the operation of simple two-lens telescopes and microscopes",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6029
+				},
+				{
+					"id": 6176,
+					"description": "model and explain human vision as refraction at a spherical surface with an adjusting lens and explain accommodation in the human eye including the effects of ageing",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6029
+				},
+				{
+					"id": 6177,
+					"description": "distinguish between short-sightedness and long-sightedness, and explain their correction by concave and convex lenses, respectively",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6029
+				},
+				{
+					"id": 6178,
+					"description": "apply the power of a lens: to eye glasses",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6029
+				},
+				{
+					"id": 6179,
+					"description": "investigate sunglasses including the function of polarised lenses, photochromatic lenses and the benefits and possible damaging effects of tinted lenses",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6029
+				},
+				{
+					"id": 6180,
+					"description": "evaluate validity of sources of information",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6030
+				},
+				{
+					"id": 6181,
+					"description": "apply physics concepts specific to the investigation: definitions of key terms; and use of appropriate scientific terminology, conventions and representations",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6030
+				},
+				{
+					"id": 6182,
+					"description": "apply the use of data representations, models and theories in organising and explaining observed phenomena and physics concepts, and discuss the limitations of the explanations",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6030
+				},
+				{
+					"id": 6183,
+					"description": "discuss the influence of sociocultural, economic, legal and political factors relevant to the selected issue or application",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6030
+				},
+				{
+					"id": 6184,
+					"description": "apply physics understanding to justify a stance, opinion or solution to the selected issue or application.",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6030
+				},
+				{
+					"id": 6185,
+					"description": "describe image formation using pinhole cameras and convex and concave lenses",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6031
+				},
+				{
+					"id": 6186,
+					"description": "calculate image positions for thin lenses using either accurate ray tracing scale diagrams and/or the thin",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6031
+				},
+				{
+					"id": 6187,
+					"description": "lens equation:",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6031
+				},
+				{
+					"id": 6188,
+					"description": "calculate image sizes in pinhole and simple lens cameras:",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6031
+				},
+				{
+					"id": 6189,
+					"description": "explain the operation of a simple two-lens camera",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6031
+				},
+				{
+					"id": 6190,
+					"description": "investigate the effect on image formation by polarising lenses, colour filters and aperture size and shutter speed",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6031
+				},
+				{
+					"id": 6191,
+					"description": "compare image formation by a traditional camera and a digital camera",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6031
+				},
+				{
+					"id": 6192,
+					"description": "evaluate validity of sources of information",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6032
+				},
+				{
+					"id": 6193,
+					"description": "apply physics concepts specific to the investigation: definitions of key terms; and use of appropriate scientific terminology, conventions and representations",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6032
+				},
+				{
+					"id": 6194,
+					"description": "apply the use of data representations, models and theories in organising and explaining observed phenomena and physics concepts, and discuss the limitations of the explanations",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6032
+				},
+				{
+					"id": 6195,
+					"description": "discuss the influence of sociocultural, economic, legal and political factors relevant to the selected issue or application",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6032
+				},
+				{
+					"id": 6196,
+					"description": "apply physics understanding to justify a stance, opinion or solution to the selected issue or application.",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6032
+				},
+				{
+					"id": 6197,
+					"description": "describe sound as the transmission of energy via longitudinal pressure waves and distinguish between sound intensity (W m-2) and sound intensity level (dB)",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6033
+				},
+				{
+					"id": 6198,
+					"description": "calculate sound intensity at different distances from a source using an inverse square law",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6033
+				},
+				{
+					"id": 6199,
+					"description": "explain resonance and identify it as related to the natural frequency of an object, and analyse the unique sound of an instrument as a consequence of multiple resonances created by the instrument and described as timbre",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6033
+				},
+				{
+					"id": 6200,
+					"description": "investigate factors that influence natural frequency including shape and material and explain how this relates to instruments",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6033
+				},
+				{
+					"id": 6201,
+					"description": "investigate and explain a variety of musical instruments with reference to the similarities and differences of sound production between instrument types (brass, string, woodwind and percussion) and how they compare with the human voice",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6033
+				},
+				{
+					"id": 6202,
+					"description": "analyse, for strings and open and closed resonant tubes, the fundamental and subsequent harmonics and apply this analysis to selected musical instruments",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6033
+				},
+				{
+					"id": 6203,
+					"description": "evaluate validity of sources of information",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6034
+				},
+				{
+					"id": 6204,
+					"description": "apply physics concepts specific to the investigation: definitions of key terms; and use of appropriate scientific terminology, conventions and representations",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6034
+				},
+				{
+					"id": 6205,
+					"description": "apply the use of data representations, models and theories in organising and explaining observed phenomena and physics concepts, and discuss the limitations of the explanations",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6034
+				},
+				{
+					"id": 6206,
+					"description": "discuss the influence of sociocultural, economic, legal and political factors relevant to the selected issue or application",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6034
+				},
+				{
+					"id": 6207,
+					"description": "apply physics understanding to justify a stance, opinion or solution to the selected issue or application.",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6034
+				},
+				{
+					"id": 6208,
+					"description": "investigate and calculate theoretically and practically the transfer of momentum in elastic and inelastic collisions (limited to two dimensions) including the use of the coefficient of restitution, e",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6035
+				},
+				{
+					"id": 6209,
+					"description": "investigate and apply theoretically and practically the coefficients of static and kinetic friction to sliding and rolling balls to calculate speeds using Newton’s laws of motion and the equations of constant acceleration",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6035
+				},
+				{
+					"id": 6210,
+					"description": "explain rolling of spherical objects using angular and linear speeds: v = r ω.",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6035
+				},
+				{
+					"id": 6211,
+					"description": "calculate air resistance (drag) and terminal velocity: vterminal = , where CD is the drag coefficient, ρ is the gas density, A is the frontal area",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6035
+				},
+				{
+					"id": 6212,
+					"description": "investigate and apply theoretically and practically the equations of constant acceleration to calculate the flight of objects through the air (neglecting air resistance) in two dimensions",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6035
+				},
+				{
+					"id": 6213,
+					"description": "model and describe qualitatively the flight of:",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6035
+				},
+				{
+					"id": 6214,
+					"description": "a ball through the air when air resistance is not neglected",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6035
+				},
+				{
+					"id": 6215,
+					"description": "spinning sports balls with reference to the Magnus effect",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6035
+				},
+				{
+					"id": 6216,
+					"description": "evaluate validity of sources of information",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6036
+				},
+				{
+					"id": 6217,
+					"description": "apply physics concepts specific to the investigation: definitions of key terms; and use of appropriate scientific terminology, conventions and representations",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6036
+				},
+				{
+					"id": 6218,
+					"description": "apply the use of data representations, models and theories in organising and explaining observed phenomena and physics concepts, and discuss the limitations of the explanations",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6036
+				},
+				{
+					"id": 6219,
+					"description": "discuss the influence of sociocultural, economic, legal and political factors relevant to the selected issue or application",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6036
+				},
+				{
+					"id": 6220,
+					"description": "apply physics understanding to justify a stance, opinion or solution to the selected issue or application.",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6036
+				},
+				{
+					"id": 6221,
+					"description": "analyse the role of the transformer in the power supply system including the analysis of voltage ratio:",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6037
+				},
+				{
+					"id": 6222,
+					"description": "explain the use of diodes in half-wave and full-wave bridge rectification",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6037
+				},
+				{
+					"id": 6223,
+					"description": "explain the effect of capacitors with reference to voltage drop and current change when charging and discharging (time constant for charging and discharging, τ = RC ) leading to smoothing for DC power supplies",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6037
+				},
+				{
+					"id": 6224,
+					"description": "describe the use of voltage regulators including Zener diodes and integrated circuits",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6037
+				},
+				{
+					"id": 6225,
+					"description": "apply the use of heat and light sensors such as thermistors and light-dependent resistors (LDRs) to trigger an output device such as lighting or a motor",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6037
+				},
+				{
+					"id": 6226,
+					"description": "compare different light sources (bulbs, LEDs, lasers) for their suitability for data transfer",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6037
+				},
+				{
+					"id": 6227,
+					"description": "evaluate validity of sources of information",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6038
+				},
+				{
+					"id": 6228,
+					"description": "apply physics concepts specific to the investigation: definitions of key terms; and use of appropriate scientific terminology, conventions and representations",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6038
+				},
+				{
+					"id": 6229,
+					"description": "apply the use of data representations, models and theories in organising and explaining observed phenomena and physics concepts, and discuss the limitations of the explanations",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6038
+				},
+				{
+					"id": 6230,
+					"description": "discuss the influence of sociocultural, economic, legal and political factors relevant to the selected issue or application",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6038
+				},
+				{
+					"id": 6231,
+					"description": "apply physics understanding to justify a stance, opinion or solution to the selected issue or application.",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6038
+				},
+				{
+					"id": 6232,
+					"description": "apply methods used to investigate the light from stars and for measurements of the distances to stars and galaxies",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6039
+				},
+				{
+					"id": 6233,
+					"description": "identify the properties of stars, including luminosity, radius and mass, temperature and spectral type, and explain how these properties are used to classify stars",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6039
+				},
+				{
+					"id": 6234,
+					"description": "distinguish between the different nuclear fusion phenomena that occur in stars of various sizes",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6039
+				},
+				{
+					"id": 6235,
+					"description": "apply the Hertzsprung–Russell diagram as a tool to describe the evolution and death of stars with differing initial mass",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6039
+				},
+				{
+					"id": 6236,
+					"description": "explain the event horizon of a black hole and use to calculate the Schwarzschild radius",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6039
+				},
+				{
+					"id": 6237,
+					"description": "describe the effects of the gravitational fields of black holes on space and time",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6039
+				},
+				{
+					"id": 6238,
+					"description": "evaluate validity of sources of information",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6040
+				},
+				{
+					"id": 6239,
+					"description": "apply physics concepts specific to the investigation: definitions of key terms; and use of appropriate scientific terminology, conventions and representations",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6040
+				},
+				{
+					"id": 6240,
+					"description": "apply the use of data representations, models and theories in organising and explaining observed phenomena and physics concepts, and discuss the limitations of the explanations",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6040
+				},
+				{
+					"id": 6241,
+					"description": "discuss the influence of sociocultural, economic, legal and political factors relevant to the selected issue or application",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6040
+				},
+				{
+					"id": 6242,
+					"description": "use physics understanding to justify a stance, opinion or solution to the selected issue or application.",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6040
+				},
+				{
+					"id": 6243,
+					"description": "identify spectroscopy as a tool to investigate the light from stars, and interpret and analyse spectroscopic data with reference to information from beyond our Solar System",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6041
+				},
+				{
+					"id": 6244,
+					"description": "compare methods of exoplanet detection including astrometric, radial velocity, transit method and microlensing, referring to databases that differentiate for size, eccentricity and radius, and by observing the gravitational effect of a planetary system on a star",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6041
+				},
+				{
+					"id": 6245,
+					"description": "explain and apply Doppler shift including spectral shift and ‘wobble’ of planetary systems using:",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6041
+				},
+				{
+					"id": 6246,
+					"description": "explain the use of the Fermi paradox and the Drake equation to question the possibility of life outside Earth’s Solar System and of predicting the likelihood of life existing in the Universe",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6041
+				},
+				{
+					"id": 6247,
+					"description": "distinguish between targeted and untargeted searches for extra-terrestrial intelligence (ETI), and describe optimising strategies including where to look and how to ‘listen’ with reference to choice of frequency and bandwidth",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6041
+				},
+				{
+					"id": 6248,
+					"description": "explain the nature of information that humans transmit beyond Earth to signal that intelligent life exists on Earth",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6041
+				},
+				{
+					"id": 6249,
+					"description": "evaluate validity of sources of information",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6042
+				},
+				{
+					"id": 6250,
+					"description": "apply physics concepts specific to the investigation: definitions of key terms; and use of appropriate scientific terminology, conventions and representations",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6042
+				},
+				{
+					"id": 6251,
+					"description": "apply the use of data representations, models and theories in organising and explaining observed phenomena and physics concepts, and discuss the limitations of the explanations",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6042
+				},
+				{
+					"id": 6252,
+					"description": "discuss the influence of sociocultural, economic, legal and political factors relevant to the selected issue or application",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6042
+				},
+				{
+					"id": 6253,
+					"description": "apply physics understanding to justify a stance, opinion or solution to the selected issue or application.",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6042
+				},
+				{
+					"id": 6254,
+					"description": "apply appropriate protocols to access information and to then select one or more Aboriginal and Torres Strait Islander peoples’ traditional artefacts, knowledge or techniques, for example a weapon, structure, building material, native fauna, native flora, land management technique, hunting technique, dance, artwork or story",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6043
+				},
+				{
+					"id": 6255,
+					"description": "investigate Aboriginal and Torres Strait Islander peoples’ descriptions and explanations of the chosen artefacts, knowledge or techniques",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6043
+				},
+				{
+					"id": 6256,
+					"description": "identify and discuss the physics ideas that are used in the descriptions and explanations of Aboriginal and Torres Strait Islander peoples’ artefacts, knowledge or techniques",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6043
+				},
+				{
+					"id": 6257,
+					"description": "apply physics ideas to the understanding and explanation of the chosen artefacts, knowledge or techniques",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6043
+				},
+				{
+					"id": 6258,
+					"description": "evaluate validity of sources of information",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6044
+				},
+				{
+					"id": 6259,
+					"description": "apply physics concepts specific to the investigation: definitions of key terms; and use of appropriate scientific terminology, conventions and representations",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6044
+				},
+				{
+					"id": 6260,
+					"description": "apply the use of data representations, models and theories in organising and explaining observed phenomena and physics concepts, and discuss the limitations of the explanations",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6044
+				},
+				{
+					"id": 6261,
+					"description": "discuss the influence of sociocultural, economic, legal and political factors relevant to the selected issue or application",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6044
+				},
+				{
+					"id": 6262,
+					"description": "apply physics understanding to justify a stance, opinion or solution to the selected issue or application.",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6044
+				},
+				{
+					"id": 6263,
+					"description": "distinguish between the use of particle accelerators to produce synchrotron light and to collide particles",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6045
+				},
+				{
+					"id": 6264,
+					"description": "explain the general purpose of the electron linac, circular booster, storage ring and beamlines in the Australian Synchrotron",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6045
+				},
+				{
+					"id": 6265,
+					"description": "explain, using the characteristics of brightness, spectrum and divergence, why for some experiments synchrotron radiation is preferable to laser light and radiation from X-ray tubes",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6045
+				},
+				{
+					"id": 6266,
+					"description": "explain the evolution of collider technology including:",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6045
+				},
+				{
+					"id": 6267,
+					"description": "particles involved in the collision event",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6045
+				},
+				{
+					"id": 6268,
+					"description": "the increasing energies attained since the 1950s",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6045
+				},
+				{
+					"id": 6269,
+					"description": "evaluate the role of colliders in the development of the Standard Model of particle physics, including reference to subatomic structure and processes",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6045
+				},
+				{
+					"id": 6270,
+					"description": "explain how the immense amount of data collected by the Large Hadron Collider is stored and analysed, and the associated role particle detectors have had in the development of information processing technologies",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6045
+				},
+				{
+					"id": 6271,
+					"description": "evaluate validity of sources of information",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6046
+				},
+				{
+					"id": 6272,
+					"description": "apply physics concepts specific to the investigation: definitions of key terms; and use of appropriate scientific terminology, conventions and representations",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6046
+				},
+				{
+					"id": 6273,
+					"description": "apply the use of data representations, models and theories in organising and explaining observed phenomena and physics concepts, and discuss the limitations of the explanations",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6046
+				},
+				{
+					"id": 6274,
+					"description": "discuss the influence of sociocultural, economic, legal and political factors relevant to the selected issue or application",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6046
+				},
+				{
+					"id": 6275,
+					"description": "apply physics understanding to justify a stance, opinion or solution to the selected issue or application.",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6046
+				},
+				{
+					"id": 6276,
+					"description": "describe the Big Bang as a currently held theory that explains the origins of both time and space, and evaluate evidence for the Big Bang including the identification of cosmic background radiation",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6047
+				},
+				{
+					"id": 6277,
+					"description": "explain the changes of matter during the different stages of the Universe over time due to expansion and cooling",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6047
+				},
+				{
+					"id": 6278,
+					"description": "relate predictions to the subsequent discoveries of the neutron, neutrino, positron and Higgs boson",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6047
+				},
+				{
+					"id": 6279,
+					"description": "compare the nature of leptons, hadrons, mesons and baryons",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6047
+				},
+				{
+					"id": 6280,
+					"description": "explain that for every elementary matter particle there exists an antimatter particle of equal mass and opposite charge, and that if a particle and its antiparticle come into contact the particles will annihilate each other to create radiation",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6047
+				},
+				{
+					"id": 6281,
+					"description": "describe the contribution that the detection of gravitational waves has made to understanding of the Universe",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6047
+				},
+				{
+					"id": 6282,
+					"description": "evaluate validity of sources of information",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6048
+				},
+				{
+					"id": 6283,
+					"description": "apply physics concepts specific to the investigation: definitions of key terms; and use of appropriate scientific terminology, conventions and representations",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6048
+				},
+				{
+					"id": 6284,
+					"description": "apply the use of data representations, models and theories in organising and explaining observed phenomena and physics concepts, and discuss the limitations of the explanations",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6048
+				},
+				{
+					"id": 6285,
+					"description": "discuss the influence of sociocultural, economic, legal and political factors relevant to the selected issue or application",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6048
+				},
+				{
+					"id": 6286,
+					"description": "apply physics understanding to justify a stance, opinion or solution to the selected issue or application.",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6048
+				},
+				{
+					"id": 6287,
+					"description": "investigate cutting-edge research that is based in Victoria, Australia or Oceania",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6049
+				},
+				{
+					"id": 6288,
+					"description": "select one area of local physics research and follow protocols to access information related to current research in the selected area",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6049
+				},
+				{
+					"id": 6289,
+					"description": "identify the physics related to the chosen research",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6049
+				},
+				{
+					"id": 6290,
+					"description": "explain how physics understanding has led to the development of the selected research",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6049
+				},
+				{
+					"id": 6291,
+					"description": "explain how critical and creative thinking shapes the application of physics concepts related to the selected research",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6049
+				},
+				{
+					"id": 6292,
+					"description": "analyse the extent to which both individual contribution and collaboration are involved in the selected research",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6049
+				},
+				{
+					"id": 6293,
+					"description": "evaluate how the chosen physics research may change the way we live",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6049
+				},
+				{
+					"id": 6294,
+					"description": "evaluate validity of sources of information",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6050
+				},
+				{
+					"id": 6295,
+					"description": "apply physics concepts specific to the investigation: definitions of key terms; and use of appropriate scientific terminology, conventions and representations",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6050
+				},
+				{
+					"id": 6296,
+					"description": "apply the use of data representations, models and theories in organising and explaining observed phenomena and physics concepts, and discuss the limitations of the explanations",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6050
+				},
+				{
+					"id": 6297,
+					"description": "discuss the influence of sociocultural, economic, legal and political factors relevant to the selected issue or application",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6050
+				},
+				{
+					"id": 6298,
+					"description": "apply physics understanding to justify a stance, opinion or solution to the selected issue or application.",
+					"outcomeId": 6004,
+					"outcomeTopicId": 6050
+				}
+			]
+		},
+		{
+			"id": 6005,
+			"curriculumSubjectId": 6000,
+			"number": 3,
+			"description": "On completion of this unit the student should be able to draw an evidence-based conclusion from primary data generated from a student-adapted or student-designed scientific investigation related to a selected physics question.",
+			"topics": [
+				{
+					"id": 6051,
+					"outcomeId": 6005,
+					"name": "Investigation design"
+				},
+				{
+					"id": 6052,
+					"outcomeId": 6005,
+					"name": "Scientific evidence"
+				},
+				{
+					"id": 6053,
+					"outcomeId": 6005,
+					"name": "Science communication"
+				}
+			],
+			"keyKnowledge": [
+				{
+					"id": 6299,
+					"description": "apply the physics concepts specific to the selected investigation and explain their significance, including definitions of key terms, and physics representations",
+					"outcomeId": 6005,
+					"outcomeTopicId": 6051
+				},
+				{
+					"id": 6300,
+					"description": "evaluate the characteristics of the scientific methodology relevant to the investigation, selected from: experiment; fieldwork, classification and identification, modelling, simulation, and the development of a product, process or system",
+					"outcomeId": 6005,
+					"outcomeTopicId": 6051
+				},
+				{
+					"id": 6301,
+					"description": "apply techniques of primary qualitative and quantitative data generation relevant to the investigation",
+					"outcomeId": 6005,
+					"outcomeTopicId": 6051
+				},
+				{
+					"id": 6302,
+					"description": "identify and apply concepts of accuracy, precision, repeatability, reproducibility, resolution, and validity of data in relation to the investigation",
+					"outcomeId": 6005,
+					"outcomeTopicId": 6051
+				},
+				{
+					"id": 6303,
+					"description": "identify and apply health, safety and ethical guidelines relevant to the selected scientific investigation",
+					"outcomeId": 6005,
+					"outcomeTopicId": 6051
+				},
+				{
+					"id": 6304,
+					"description": "distinguish between an aim, a hypothesis, a model, a theory and a law",
+					"outcomeId": 6005,
+					"outcomeTopicId": 6052
+				},
+				{
+					"id": 6305,
+					"description": "identify and explain observations and experiments that are consistent with, or challenge, current models or theories",
+					"outcomeId": 6005,
+					"outcomeTopicId": 6052
+				},
+				{
+					"id": 6306,
+					"description": "describe the characteristics of primary data",
+					"outcomeId": 6005,
+					"outcomeTopicId": 6052
+				},
+				{
+					"id": 6307,
+					"description": "evaluate methods of organising, analysing and evaluating primary data to identify patterns and relationships including scientific error, causes of uncertainty, and limitations of data, methodologies and methods",
+					"outcomeId": 6005,
+					"outcomeTopicId": 6052
+				},
+				{
+					"id": 6308,
+					"description": "model the scientific practice of using a logbook to authenticate generated primary data",
+					"outcomeId": 6005,
+					"outcomeTopicId": 6052
+				},
+				{
+					"id": 6309,
+					"description": "apply the conventions of scientific report writing including scientific terminology and representations, standard abbreviations, units of measurement, significant figures and acknowledgement of references",
+					"outcomeId": 6005,
+					"outcomeTopicId": 6053
+				},
+				{
+					"id": 6310,
+					"description": "apply the key findings of the selected investigation and their relationship to key physics concepts.",
+					"outcomeId": 6005,
+					"outcomeTopicId": 6053
+				}
+			]
+		}
+	],
+	"keySkills": [
+		{
+			"id": 6000,
+			"description": "Develop aims and questions, formulate hypotheses and make predictions: (identify, research and construct aims and questions for investigation, identify independent, dependent and controlled variables in experiments, formulate hypotheses to focus investigations, predict possible outcomes of investigations)",
+			"curriculumSubjectId": 6000
+		},
+		{
+			"id": 6001,
+			"description": "Plan and conduct investigations: (Determine appropriate investigation methodology: case study; classification and identification; controlled experiment; fieldwork; literature review; modelling; product, process or system development; simulation. Design and conduct investigations; select and use methods appropriate to the selected investigation methodology, including consideration of sampling technique and size, equipment and procedures, taking into account potential sources of error and causes of uncertainty; determine the type and amount of qualitative and/or quantitative data to be generated or collated. Work independently and collaboratively as appropriate and within identified research constraints, adapting or extending processes as required and recording such modifications in a logbook)",
+			"curriculumSubjectId": 6000
+		},
+		{
+			"id": 6002,
+			"description": "Comply with safety and ethical guidelines: (Demonstrate safe laboratory practices when planning and conducting investigations by using risk assessments that are informed by safety data sheets (SDS), and accounting for risks. Apply relevant occupational health and safety guidelines while undertaking practical investigations. Demonstrate ethical conduct when undertaking and reporting investigations)",
+			"curriculumSubjectId": 6000
+		},
+		{
+			"id": 6003,
+			"description": "Generate, collate and record data: (Systematically generate and record primary data, and collate secondary data, appropriate to the investigation, including use of databases and reputable online data sources. Record and summarise both qualitative and quantitative data, including use of a logbook as an authentication of generated or collated data. Organise and present data in useful and meaningful ways, including schematic diagrams, flow charts, tables, bar charts, line graphs and calibration curves)",
+			"curriculumSubjectId": 6000
+		},
+		{
+			"id": 6004,
+			"description": "Analyse and evaluate data and investigation methods: (Process quantitative data using appropriate mathematical relationships and units, including calculations of ratios, percentages, percentage change and mean. Use appropriate numbers of significant figures in calculations. Plot graphs involving two variables that show linear and non-linear relationships. Identify and analyse experimental data qualitatively, handling, where appropriate, concepts of: accuracy, precision, repeatability, reproducibility, resolution, and validity of measurements; and errors (random and systematic). Identify outliers, and contradictory, provisional or incomplete data. Repeat experiments to evaluate the precision of data. Evaluate investigation methods and suggest ways to improve precision, and to reduce the likelihood of errors)",
+			"curriculumSubjectId": 6000
+		},
+		{
+			"id": 6005,
+			"description": "Construct evidence-based arguments and draw conclusions: (Distinguish between opinion, anecdote and evidence, and between scientific and non-scientific ideas. Evaluate data to determine the degree to which the evidence supports the aim of the investigation, and make recommendations, as appropriate, for modifying or extending the investigation. Evaluate data to determine the degree to which the evidence supports or refutes the initial prediction or hypothesis. Use reasoning to construct scientific arguments, and to draw and justify conclusions consistent with evidence and relevant to the question under investigation. Identify, describe and explain the limitations of conclusions, including identification of further evidence required. Discuss the implications of research findings and proposals)",
+			"curriculumSubjectId": 6000
+		},
+		{
+			"id": 6006,
+			"description": "Analyse, evaluate and communicate scientific ideas: (Use appropriate scientific terminology, representations and conventions, including standard abbreviations, graphing conventions, algebraic equations, units of measurement and significant figures. Discuss relevant scientific information, ideas, concepts, theories and models and the connections between them. Analyse and explain how models and theories are used to organise and understand observed phenomena and concepts, identifying limitations of selected models/theories. Critically evaluate and interpret a range of scientific and media texts (including journal articles, mass media communications and opinions in the public domain), processes, claims and conclusions related to chemistry by considering the quality of available evidence. Apply sustainability concepts to analyse and evaluate responses to chemistry-based scenarios, case studies, issues and challenges. Identify and explain when judgements or decisions associated with chemistry-related issues may be based on sociocultural, economic, political, legal and/or ethical factors and not solely on scientific evidence. Use clear, coherent and concise expression to communicate to specific audiences and for specific purposes in appropriate scientific genres, including scientific reports and posters. Acknowledge sources of information and assistance, and use standard scientific referencing conventions)",
+			"curriculumSubjectId": 6000
+		}
+	],
+	"extraContents": []
 }

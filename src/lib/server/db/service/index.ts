@@ -13,9 +13,6 @@ export * from './subjects.js';
 // Class
 export * from './classes.js';
 
-// Chatbot
-export * from './chatbot.js';
-
 // Course Map
 export * from './coursemap.js';
 
@@ -28,13 +25,11 @@ export * from './resource.js';
 // Events
 export * from './events.js';
 
-
-
 // Curriculum
 export * from './curriculum.js';
 
 // Vector
 export * from './vector.js';
 
-// News 
+// News
 export * from './news.js';

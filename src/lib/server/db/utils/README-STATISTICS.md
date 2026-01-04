@@ -5,6 +5,7 @@ This directory contains utility functions for calculating and analyzing statisti
 ## Overview
 
 The timetable schema is designed so that:
+
 - Each **FET class** (`fetSubjectOfferingClass`) has multiple **users** (teachers and students) enrolled via `fetSubjectOfferingClassUser`
 - Each **FET class** has multiple **allocations** (`fetSubjectClassAllocation`) spread across the timetable cycle
 - Each **allocation** references a specific day, start period, and end period
@@ -14,40 +15,49 @@ These utilities help deconstruct this schema to calculate meaningful statistics 
 ## Files
 
 ### `student-statistics.ts`
+
 Functions for calculating student workload statistics.
 
 **Key Functions:**
+
 - `generateStudentStatistics(timetableDraftId)` - Main function that generates statistics for all students
 - `getStudentEnrollmentsWithAllocations(timetableDraftId)` - Fetches raw data about student enrollments
 - `calculateStudentStatistic(userId, enrollments)` - Calculates statistics for a single student
 
 **Types:**
+
 - `StudentStatistic` - Complete statistics for a student including hours per cycle, daily hours, etc.
 - `StudentEnrollment` - Raw enrollment data with allocations
 - `ClassAllocation` - Single class time slot with timing information
 
 ### `teacher-statistics.ts`
+
 Functions for calculating teacher workload statistics (mirrors student statistics).
 
 **Key Functions:**
+
 - `generateTeacherStatistics(timetableDraftId)` - Main function that generates statistics for all teachers
 - `getTeacherAssignmentsWithAllocations(timetableDraftId)` - Fetches raw data about teacher assignments
 - `calculateTeacherStatistic(userId, assignments)` - Calculates statistics for a single teacher
 
 **Types:**
+
 - `TeacherStatistic` - Complete statistics for a teacher
 - `TeacherAssignment` - Raw assignment data with allocations
 
 ### `timetable-statistics.ts`
+
 Comprehensive analytics combining both student and teacher data.
 
 **Key Functions:**
+
 - `generateTimetableStatistics(timetableDraftId)` - Generates complete timetable statistics
 - `identifyWorkloadIssues(students, maxHours, minHours)` - Identifies students with workload problems
 - `identifyTeacherWorkloadIssues(teachers, maxHours, minHours)` - Identifies teachers with workload problems
 - `generateStatisticsReport(stats)` - Creates a text report of statistics
 
 **Types:**
+
 - `TimetableStatistics` - Combined student, teacher, and summary statistics
 - `TimetableSummary` - High-level overview of the entire timetable
 - `WorkloadDistribution` - Statistical distribution metrics (min, max, mean, median, std dev)
@@ -64,25 +74,28 @@ import { generateStudentStatistics } from '$lib/server/db/utils/student-statisti
 const students = await generateStudentStatistics(timetableDraftId);
 
 // Access individual student data
-students.forEach(student => {
-  console.log(`${student.userName}:`);
-  console.log(`  Classes: ${student.numberOfEnrolledClasses}`);
-  console.log(`  Total Hours/Cycle: ${student.totalHoursPerCycle.toFixed(2)}h`);
-  console.log(`  Average Hours/Day: ${student.averageHoursPerDay.toFixed(2)}h`);
-  console.log(`  Max Hours/Day: ${student.maxHoursPerDay.toFixed(2)}h`);
-  console.log(`  Free Days: ${student.numberOfFreeDays}`);
-  
-  // Daily breakdown
-  for (const [day, hours] of student.dailyHours.entries()) {
-    console.log(`    Day ${day}: ${hours.toFixed(2)}h`);
-  }
+students.forEach((student) => {
+	console.log(`${student.userName}:`);
+	console.log(`  Classes: ${student.numberOfEnrolledClasses}`);
+	console.log(`  Total Hours/Cycle: ${student.totalHoursPerCycle.toFixed(2)}h`);
+	console.log(`  Average Hours/Day: ${student.averageHoursPerDay.toFixed(2)}h`);
+	console.log(`  Max Hours/Day: ${student.maxHoursPerDay.toFixed(2)}h`);
+	console.log(`  Free Days: ${student.numberOfFreeDays}`);
+
+	// Daily breakdown
+	for (const [day, hours] of student.dailyHours.entries()) {
+		console.log(`    Day ${day}: ${hours.toFixed(2)}h`);
+	}
 });
 ```
 
 ### Comprehensive Timetable Analysis
 
 ```typescript
-import { generateTimetableStatistics, generateStatisticsReport } from '$lib/server/db/utils/timetable-statistics';
+import {
+	generateTimetableStatistics,
+	generateStatisticsReport
+} from '$lib/server/db/utils/timetable-statistics';
 
 // Get complete timetable statistics
 const stats = await generateTimetableStatistics(timetableDraftId);
@@ -99,7 +112,9 @@ console.log(`  Min: ${stats.summary.studentWorkloadDistribution.min.toFixed(2)}h
 console.log(`  Max: ${stats.summary.studentWorkloadDistribution.max.toFixed(2)}h`);
 console.log(`  Mean: ${stats.summary.studentWorkloadDistribution.mean.toFixed(2)}h`);
 console.log(`  Median: ${stats.summary.studentWorkloadDistribution.median.toFixed(2)}h`);
-console.log(`  Std Dev: ${stats.summary.studentWorkloadDistribution.standardDeviation.toFixed(2)}h`);
+console.log(
+	`  Std Dev: ${stats.summary.studentWorkloadDistribution.standardDeviation.toFixed(2)}h`
+);
 
 // Generate a full report
 const report = generateStatisticsReport(stats);
@@ -109,15 +124,19 @@ console.log(report);
 ### Identifying Workload Issues
 
 ```typescript
-import { generateTimetableStatistics, identifyWorkloadIssues, identifyTeacherWorkloadIssues } from '$lib/server/db/utils/timetable-statistics';
+import {
+	generateTimetableStatistics,
+	identifyWorkloadIssues,
+	identifyTeacherWorkloadIssues
+} from '$lib/server/db/utils/timetable-statistics';
 
 const stats = await generateTimetableStatistics(timetableDraftId);
 
 // Find students with workload issues
 const studentIssues = identifyWorkloadIssues(
-  stats.students,
-  7, // max hours per day
-  3  // min hours per day
+	stats.students,
+	7, // max hours per day
+	3 // min hours per day
 );
 
 console.log('Students with issues:');
@@ -127,9 +146,9 @@ console.log(`  Unbalanced schedule: ${studentIssues.unbalanced.length}`);
 
 // Find teachers with workload issues
 const teacherIssues = identifyTeacherWorkloadIssues(
-  stats.teachers,
-  8, // max hours per day
-  2  // min hours per day
+	stats.teachers,
+	8, // max hours per day
+	2 // min hours per day
 );
 
 console.log('Teachers with issues:');
@@ -148,11 +167,11 @@ const stats = await generateTimetableStatistics(timetableDraftId);
 
 // Analyze each day's utilization
 for (const [dayNumber, dayUtil] of stats.summary.dayUtilization.entries()) {
-  console.log(`\n${getDayName(dayNumber)}:`);
-  console.log(`  Students Scheduled: ${dayUtil.studentsScheduled}`);
-  console.log(`  Average Student Hours: ${dayUtil.averageStudentHours.toFixed(2)}h`);
-  console.log(`  Teachers Scheduled: ${dayUtil.teachersScheduled}`);
-  console.log(`  Average Teacher Hours: ${dayUtil.averageTeacherHours.toFixed(2)}h`);
+	console.log(`\n${getDayName(dayNumber)}:`);
+	console.log(`  Students Scheduled: ${dayUtil.studentsScheduled}`);
+	console.log(`  Average Student Hours: ${dayUtil.averageStudentHours.toFixed(2)}h`);
+	console.log(`  Teachers Scheduled: ${dayUtil.teachersScheduled}`);
+	console.log(`  Average Teacher Hours: ${dayUtil.averageTeacherHours.toFixed(2)}h`);
 }
 ```
 
@@ -164,13 +183,13 @@ import { generateStudentStatistics } from '$lib/server/db/utils/student-statisti
 import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ params }) => {
-  const timetableDraftId = parseInt(params.timetableDraftId);
-  
-  const students = await generateStudentStatistics(timetableDraftId);
-  
-  return {
-    students
-  };
+	const timetableDraftId = parseInt(params.timetableDraftId);
+
+	const students = await generateStudentStatistics(timetableDraftId);
+
+	return {
+		students
+	};
 };
 ```
 
@@ -200,12 +219,14 @@ Each statistic object includes:
 ## Performance Considerations
 
 These functions execute multiple database queries:
+
 1. Fetch all FET classes for the timetable draft
 2. Fetch all user enrollments/assignments
 3. Fetch all allocations for these classes
 4. Fetch period details for timing calculations
 
 For large timetables (>1000 students or >100 teachers), consider:
+
 - Caching results
 - Running calculations in background jobs
 - Implementing pagination for result sets
@@ -223,17 +244,17 @@ console.log(`Found ${students.length} students`);
 
 // Verify calculations
 const sampleStudent = students[0];
-const manualTotal = Array.from(sampleStudent.dailyHours.values())
-  .reduce((sum, h) => sum + h, 0);
+const manualTotal = Array.from(sampleStudent.dailyHours.values()).reduce((sum, h) => sum + h, 0);
 console.assert(
-  Math.abs(sampleStudent.totalHoursPerCycle - manualTotal) < 0.01,
-  'Total hours calculation mismatch'
+	Math.abs(sampleStudent.totalHoursPerCycle - manualTotal) < 0.01,
+	'Total hours calculation mismatch'
 );
 ```
 
 ## Future Enhancements
 
 Potential additions:
+
 - Gap analysis (free periods between classes)
 - Room utilization statistics
 - Subject-specific workload analysis

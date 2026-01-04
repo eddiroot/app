@@ -17,7 +17,7 @@
 	// Function to infer resource type from file extension
 	function inferResourceType(fileName: string): string {
 		const extension = fileName.split('.').pop()?.toLowerCase();
-		
+
 		switch (extension) {
 			case 'jpg':
 			case 'jpeg':
@@ -60,12 +60,12 @@
 	async function handleFileSelect(event: Event) {
 		const target = event.target as HTMLInputElement;
 		const files = target.files;
-		
+
 		if (!files || files.length === 0) return;
 
 		const file = files[0];
 		const formData = new FormData();
-		
+
 		// Auto-infer name and type
 		formData.set('name', extractName(file.name));
 		formData.set('resourceType', inferResourceType(file.name));
@@ -95,10 +95,4 @@
 </script>
 
 <!-- Hidden file input -->
-<input
-	bind:this={fileInput}
-	type="file"
-	class="hidden"
-	onchange={handleFileSelect}
-	accept="*/*"
-/>
+<input bind:this={fileInput} type="file" class="hidden" onchange={handleFileSelect} accept="*/*" />

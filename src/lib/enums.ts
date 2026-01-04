@@ -11,14 +11,41 @@ export enum yearLevelEnum {
 	year8 = '8',
 	year9 = '9',
 	year10 = '10',
-	year10A = '10A',
 	year11 = '11',
-	year12 = '12',
-	year13 = '13',
-	VCE = 'VCE',
-	VCE12 = 'VCE12',
-	VCE34 = 'VCE34'
+	year12 = '12'
 }
+
+// ============================================================================
+// BITWISE FLAGS
+// ============================================================================
+
+/**
+ * Bitwise flags for record status/labels
+ * Each bit position represents a different flag
+ *
+ * Position | Flag                | Value
+ * ---------|---------------------|-------
+ * 0        | archived            | 1
+ * 1        | publicRequested     | 2
+ * 2        | publicApproved      | 4
+ * 3        | draft               | 8
+ * 4        | featured            | 16
+ * 5        | verified            | 32
+ * ... add more as needed
+ */
+export enum RecordFlagEnum {
+	none = 0,
+	archived = 1 << 0, // 1
+	publicRequested = 1 << 1, // 2
+	publicApproved = 1 << 2, // 4
+	draft = 1 << 3, // 8
+	featured = 1 << 4, // 16
+	verified = 1 << 5 // 32
+}
+
+// ============================================================================
+// SCHOOL & SPACE
+// ============================================================================
 
 export enum schoolSpaceTypeEnum {
 	classroom = 'classroom',
@@ -56,8 +83,7 @@ export enum taskTypeEnum {
 	lesson = 'lesson',
 	homework = 'homework',
 	test = 'test',
-	assignment = 'assignment',
-	module = 'module'
+	assignment = 'assignment'
 }
 
 export enum taskBlockTypeEnum {
@@ -278,4 +304,14 @@ export enum curriculumSubjectExtraContentTypeEnum {
 	rubric = 'rubric',
 	description = 'description',
 	detailedExample = 'detailed_example'
+}
+
+export enum gradeScaleEnum {
+	IB_DP = 'IB_DP',
+	IB_MYP = 'IB_MYP',
+	IB_PYP = 'IB_PYP',
+	IB_CP = 'IB_CP',
+	GPA = 'GPA',
+	percentage = 'percentage',
+	custom = 'custom'
 }

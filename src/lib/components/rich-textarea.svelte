@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { Button } from '$lib/components/ui/button';
 	import type { WithElementRef, WithoutChildren } from '$lib/utils.js';
-	import { cn } from "$lib/utils.js";
+	import { cn } from '$lib/utils.js';
 	import BoldIcon from '@lucide/svelte/icons/bold';
 	import CodeIcon from '@lucide/svelte/icons/code';
 	import ItalicIcon from '@lucide/svelte/icons/italic';
@@ -12,14 +12,14 @@
 	import Placeholder from '@tiptap/extension-placeholder';
 	import StarterKit from '@tiptap/starter-kit';
 	import { onDestroy, onMount } from 'svelte';
-	import type { HTMLTextareaAttributes } from "svelte/elements";
+	import type { HTMLTextareaAttributes } from 'svelte/elements';
 
 	let {
 		ref = $bindable(null),
 		value = $bindable(),
 		reset = $bindable(false),
 		class: className,
-		"data-slot": dataSlot = "textarea",
+		'data-slot': dataSlot = 'textarea',
 		placeholder,
 		disabled = false,
 		...restProps
@@ -80,8 +80,8 @@
 	bind:this={ref}
 	data-slot={dataSlot}
 	class={cn(
-		"border-input focus-within:border-ring focus-within:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:bg-input/30 shadow-xs w-full rounded-md border bg-transparent transition-[color,box-shadow] focus-within:ring-[3px]",
-		disabled && "cursor-not-allowed opacity-50",
+		'border-input focus-within:border-ring focus-within:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:bg-input/30 w-full rounded-md border bg-transparent shadow-xs transition-[color,box-shadow] focus-within:ring-[3px]',
+		disabled && 'cursor-not-allowed opacity-50',
 		className
 	)}
 >
@@ -92,7 +92,10 @@
 		<div class="flex items-center gap-x-1 border-b px-3 py-2">
 			<Button
 				type="button"
-				onmousedown={(e) => { e.preventDefault(); editorBox.current?.chain().focus().toggleBold().run(); }}
+				onmousedown={(e) => {
+					e.preventDefault();
+					editorBox.current?.chain().focus().toggleBold().run();
+				}}
 				variant={isActive('bold') ? 'default' : 'ghost'}
 				size="sm"
 			>
@@ -100,7 +103,10 @@
 			</Button>
 			<Button
 				type="button"
-				onmousedown={(e) => { e.preventDefault(); editorBox.current?.chain().focus().toggleItalic().run(); }}
+				onmousedown={(e) => {
+					e.preventDefault();
+					editorBox.current?.chain().focus().toggleItalic().run();
+				}}
 				variant={isActive('italic') ? 'default' : 'ghost'}
 				size="sm"
 			>
@@ -108,7 +114,10 @@
 			</Button>
 			<Button
 				type="button"
-				onmousedown={(e) => { e.preventDefault(); editorBox.current?.chain().focus().toggleCodeBlock().run(); }}
+				onmousedown={(e) => {
+					e.preventDefault();
+					editorBox.current?.chain().focus().toggleCodeBlock().run();
+				}}
 				variant={isActive('codeBlock') ? 'default' : 'ghost'}
 				size="sm"
 			>
@@ -116,7 +125,10 @@
 			</Button>
 			<Button
 				type="button"
-				onmousedown={(e) => { e.preventDefault(); editorBox.current?.chain().focus().toggleBlockquote().run(); }}
+				onmousedown={(e) => {
+					e.preventDefault();
+					editorBox.current?.chain().focus().toggleBlockquote().run();
+				}}
 				variant={isActive('blockquote') ? 'default' : 'ghost'}
 				size="sm"
 			>
@@ -124,7 +136,10 @@
 			</Button>
 			<Button
 				type="button"
-				onmousedown={(e) => { e.preventDefault(); editorBox.current?.chain().focus().toggleBulletList().run(); }}
+				onmousedown={(e) => {
+					e.preventDefault();
+					editorBox.current?.chain().focus().toggleBulletList().run();
+				}}
 				variant={isActive('bulletList') ? 'default' : 'ghost'}
 				size="sm"
 			>
@@ -132,7 +147,10 @@
 			</Button>
 			<Button
 				type="button"
-				onmousedown={(e) => { e.preventDefault(); editorBox.current?.chain().focus().toggleOrderedList().run(); }}
+				onmousedown={(e) => {
+					e.preventDefault();
+					editorBox.current?.chain().focus().toggleOrderedList().run();
+				}}
 				variant={isActive('orderedList') ? 'default' : 'ghost'}
 				size="sm"
 			>

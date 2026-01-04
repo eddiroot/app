@@ -3,17 +3,19 @@ import {
 	boolean,
 	check,
 	integer,
-	pgEnum,
-	pgTable,
+	pgSchema,
 	text,
 	timestamp,
 	unique,
 	varchar
 } from 'drizzle-orm/pg-core';
 import { schoolSpaceTypeEnum } from '../../../enums';
-import { timestamps } from './utils';
+import { gradeScale } from './curriculum';
+import { timestamps, yearLevelEnumPg } from './utils';
 
-export const school = pgTable('sch', {
+export const schoolSchema = pgSchema('school');
+
+export const school = schoolSchema.table('sch', {
 	id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
 	name: text('name').notNull().unique(),
 	logoUrl: text('logo_url'),
@@ -24,7 +26,20 @@ export const school = pgTable('sch', {
 
 export type School = typeof school.$inferSelect;
 
-export const campus = pgTable('cmps', {
+export const yearLevel = schoolSchema.table('year_level', {
+	id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
+	schoolId: integer('sch_id')
+		.notNull()
+		.references(() => school.id, { onDelete: 'cascade' }),
+	yearLevel: yearLevelEnumPg().notNull(),
+	gradeScaleId: integer('grade_scale_id').references(() => gradeScale.id, { onDelete: 'set null' }),
+	isArchived: boolean('is_archived').default(false).notNull(),
+	...timestamps
+});
+
+export type YearLevel = typeof yearLevel.$inferSelect;
+
+export const campus = schoolSchema.table('cmps', {
 	id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
 	schoolId: integer('sch_id')
 		.notNull()
@@ -32,13 +47,13 @@ export const campus = pgTable('cmps', {
 	name: text('name').notNull(),
 	address: text('address').notNull(),
 	description: text('description'),
-	isArchived: boolean('is_archived').notNull().default(false),
+	isArchived: boolean('is_archived').default(false).notNull(),
 	...timestamps
 });
 
 export type Campus = typeof campus.$inferSelect;
 
-export const schoolBuilding = pgTable(
+export const schoolBuilding = schoolSchema.table(
 	'sch_bldng',
 	{
 		id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
@@ -47,7 +62,7 @@ export const schoolBuilding = pgTable(
 			.references(() => campus.id, { onDelete: 'cascade' }),
 		name: text('name').notNull(),
 		description: text('description'),
-		isArchived: boolean('is_archived').notNull().default(false),
+		isArchived: boolean('is_archived').default(false).notNull(),
 		...timestamps
 	},
 	(self) => [unique().on(self.campusId, self.name)]
@@ -55,7 +70,7 @@ export const schoolBuilding = pgTable(
 
 export type SchoolBuilding = typeof schoolBuilding.$inferSelect;
 
-export const schoolSpaceTypeEnumPg = pgEnum('enum_sch_space_type', [
+export const schoolSpaceTypeEnumPg = schoolSchema.enum('enum_sch_space_type', [
 	schoolSpaceTypeEnum.classroom,
 	schoolSpaceTypeEnum.laboratory,
 	schoolSpaceTypeEnum.gymnasium,
@@ -64,7 +79,7 @@ export const schoolSpaceTypeEnumPg = pgEnum('enum_sch_space_type', [
 	schoolSpaceTypeEnum.auditorium
 ]);
 
-export const schoolSpace = pgTable(
+export const schoolSpace = schoolSchema.table(
 	'sch_space',
 	{
 		id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
@@ -75,7 +90,7 @@ export const schoolSpace = pgTable(
 		type: schoolSpaceTypeEnumPg().notNull(),
 		capacity: integer('capacity'),
 		description: text('description'),
-		isArchived: boolean('is_archived').notNull().default(false),
+		isArchived: boolean('is_archived').default(false).notNull(),
 		...timestamps
 	},
 	(self) => [unique().on(self.buildingId, self.name)]
@@ -83,7 +98,7 @@ export const schoolSpace = pgTable(
 
 export type SchoolSpace = typeof schoolSpace.$inferSelect;
 
-export const schoolSemester = pgTable(
+export const schoolSemester = schoolSchema.table(
 	'sch_sem',
 	{
 		id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
@@ -91,7 +106,7 @@ export const schoolSemester = pgTable(
 		schoolYear: integer('sch_year_id').notNull(),
 		semNumber: integer('sem_number').notNull(),
 		name: text('name').generatedAlwaysAs((): SQL => sql`'Semester ' || sem_number`),
-		isArchived: boolean('is_archived').notNull().default(false),
+		isArchived: boolean('is_archived').default(false).notNull(),
 		...timestamps
 	},
 	(self) => [
@@ -102,7 +117,7 @@ export const schoolSemester = pgTable(
 
 export type SchoolSemester = typeof schoolSemester.$inferSelect;
 
-export const schoolTerm = pgTable(
+export const schoolTerm = schoolSchema.table(
 	'sch_term',
 	{
 		id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
@@ -113,7 +128,7 @@ export const schoolTerm = pgTable(
 		name: text('name').generatedAlwaysAs((): SQL => sql`'Term ' || term_number`),
 		startDate: timestamp('sch_term_start_date', { withTimezone: true, mode: 'date' }).notNull(),
 		endDate: timestamp('sch_term_end_date', { withTimezone: true, mode: 'date' }).notNull(),
-		isArchived: boolean('is_archived').notNull().default(false),
+		isArchived: boolean('is_archived').default(false).notNull(),
 		...timestamps
 	},
 	(self) => [

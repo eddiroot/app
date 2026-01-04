@@ -1,6 +1,4 @@
 <script>
-
 </script>
-<div>
-    INFO Page
-</div>
+
+<div>INFO Page</div>

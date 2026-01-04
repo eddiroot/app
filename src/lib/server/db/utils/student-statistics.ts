@@ -4,6 +4,7 @@ import { and, eq, inArray } from 'drizzle-orm';
 import type { StudentStatistic } from '../../../../routes/admin/timetables/[timetableId]/[timetableDraftId]/result/student-columns';
 import * as table from '../schema/timetables';
 import { user } from '../schema/user';
+import { notArchived } from '../service/utils';
 
 /**
  * Represents a student enrollment with their class allocations
@@ -43,7 +44,7 @@ export async function getStudentEnrollmentsWithAllocations(
 		.where(
 			and(
 				eq(table.fetSubjectOfferingClass.timetableDraftId, timetableDraftId),
-				eq(table.fetSubjectOfferingClass.isArchived, false)
+				notArchived(table.fetSubjectOfferingClass.flags)
 			)
 		);
 
@@ -67,7 +68,7 @@ export async function getStudentEnrollmentsWithAllocations(
 		.where(
 			and(
 				inArray(table.fetSubjectOfferingClassUser.fetSubOffClassId, fetClassIds),
-				eq(table.fetSubjectOfferingClassUser.isArchived, false)
+				notArchived(table.fetSubjectOfferingClassUser.flags)
 			)
 		);
 
@@ -92,7 +93,7 @@ export async function getStudentEnrollmentsWithAllocations(
 		.where(
 			and(
 				inArray(table.fetSubjectClassAllocation.fetSubjectOfferingClassId, fetClassIds),
-				eq(table.fetSubjectClassAllocation.isArchived, false)
+				notArchived(table.fetSubjectClassAllocation.flags)
 			)
 		);
 

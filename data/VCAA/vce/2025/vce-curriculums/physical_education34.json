@@ -1,321 +1,321 @@
 {
-  "id": 25000,
-  "curriculumId": 25000,
-  "name": "Physical Education Units 3 and 4",
-  "isArchived": false,
-  "learningAreas": [
-    {
-      "id": 25000,
-      "curriculumSubjectId": 25000,
-      "name": "How are movement skills improved?",
-      "abbreviation": "U3AOS1",
-      "description": "In this area of study, students examine the biomechanical and skill-acquisition principles that can be applied when analysing and improving movement skills for participation and performance. Through practical activities, students explore and analyse their own movement and use coaching to investigate factors that influence skill acquisition. They develop an understanding of how appropriately applying biomechanical and skill-acquisition principles leads to the development of optimal movement patterns to enhance participation and performance. On completion of this unit, the student should be able to analyse primary data collected from participation in physical activity, sport and exercise to develop and refine movement skills from an individual and coaching perspective, by applying biomechanical and skill-acquisition principles. To achieve this outcome, the student will draw on key knowledge and key skills outlined in Area of Study 1. classification of movement skills, including fundamental movement skills, sport-specific skills, open and closed skills, gross and fine skills, and discrete, serial and continuous motor skills"
-    },
-    {
-      "id": 25001,
-      "curriculumSubjectId": 25000,
-      "name": "How does the body produce energy?",
-      "abbreviation": "U3AOS2",
-      "description": "In this area of study, students explore the various systems and mechanisms associated with the production of energy required for human movement. They consider the cardiovascular, respiratory and muscular systems and the roles of each in supplying oxygen to, and creating energy at, the working muscles. They examine the ways in which energy for movement is produced by the 3 energy systems and the associated fuels used for physical activity, sport and exercise of varying intensity and duration. Students also consider the many factors contributing to fatigue, nutritional tools to delay fatigue and recovery strategies used to optimise the return to pre-exercise conditions. Through practical activities, students explore the interplay of the energy systems during physical activity, sport and exercise. On completion of this unit, the student should be able to use data collected in practical activities to analyse how the major body and energy systems work together to enable movements to occur; explain the factors causing fatigue; and recommend suitable recovery strategies. To achieve this outcome, the student will draw on key knowledge and key skills outlined in Area of Study 2. oxygen uptake at rest and during physical activity and recovery, including oxygen deficit, steady state and excess post-exercise oxygen consumption (EPOC) acute physiological responses to exercise in the cardiovascular, respiratory and muscular systems"
-    },
-    {
-      "id": 25002,
-      "curriculumSubjectId": 25000,
-      "name": "What are the foundations of an effective training program?",
-      "abbreviation": "U4AOS1",
-      "description": "In this area of study, students analyse the information required to form the foundation of an effective training program. Through participation, they undertake and collect data from an activity analysis and justify the specific physiological requirements of an activity. Students determine the relevant factors that affect each of the fitness components and conduct an assessment of fitness that demonstrates correct and appropriate implementation of testing protocols and procedures and informs the design of the training program. On completion of this unit, the student should be able to undertake an activity analysis to justify the physiological requirements of an activity that informs an appropriate assessment of fitness. To achieve this outcome, the student will draw on key knowledge and key skills outlined in Area of Study 1. types of data collected from an activity analysis, including skill frequencies, movement patterns, heart rates and work-to-rest ratios used to identify physiological requirements"
-    },
-    {
-      "id": 25003,
-      "curriculumSubjectId": 25000,
-      "name": "How is training implemented effectively to improve fitness?",
-      "abbreviation": "U4AOS2",
-      "description": "In this area of study, students focus on participation, implementation and evaluation of training principles and methods from practical and theoretical perspectives. They consider the ways in which fitness can be improved by applying appropriate training principles and methods when designing and critiquing a training program. Students identify and consider components of an exercise training session, and they record and analyse relevant data that can be used to adjust training. Students explain the chronic adaptations of the cardiovascular, respiratory and muscular systems that improve fitness and enhance performance. On completion of this unit, the student should be able to participate in a variety of training methods; design and evaluate training programs; and explain performance improvements that occur due to chronic adaptations, depending on the type of training undertaken. To achieve this outcome, the student will draw on key knowledge and key skills outlined in Area of Study 2. strategies to monitor and record physiological, psychological and sociological training data, including training diaries, digital tools and wearable technologies components of an exercise training session, including warm up, the conditioning phase and cool down"
-    },
-    {
-      "id": 25004,
-      "curriculumSubjectId": 25000,
-      "name": "Integrated movement experiences",
-      "abbreviation": "U4AOS3",
-      "description": "In this area of study, students reflect on their participation in a practical activity and use primary data collected to demonstrate their integration of theory and practice across Units 3 and 4. Using an interdisciplinary approach, students are required to analyse the interrelationships between skill acquisition, biomechanics, energy production and training, and the impacts these have on performance. To do this, students reflect on their participation in either: a practical activity focusing on a particular movement skill, the performance of which can be compared to another individual completing the same skill a practical activity focusing on comparing their participation in 2 different movement skills. The specific practical activity can occur at any time during Unit 3 or Unit 4, as evidenced in students’ reflective folio. An extended response will be used to assess this area of study, in which students will answer a prompt(s) utilising the evidence recorded in their reflective folio. Prior to the extended response, students will use a planning tool such as a mind map to determine and explore links between theoretical concepts and the practical activity."
-    }
-  ],
-  "outcomes": [
-    {
-      "id": 25000,
-      "curriculumSubjectId": 25000,
-      "number": 1,
-      "description": "On completion of this unit, the student should be able to analyse primary data collected from participation in physical activity, sport and exercise to develop and refine movement skills from an individual and coaching perspective, by applying biomechanical and skill-acquisition principles.",
-      "keyKnowledge": [
-        {
-          "id": 25000,
-          "description": "classification of movement skills, including fundamental movement skills, sport-specific skills, open and closed skills, gross and fine skills, and discrete, serial and continuous motor skills",
-          "outcomeId": 25000
-        },
-        {
-          "id": 25001,
-          "description": "the link between motor skill development, participation and performance",
-          "outcomeId": 25000
-        },
-        {
-          "id": 25002,
-          "description": "considerations when coaching to enhance participation and performance: sociocultural factors that affect skill development, characteristics of the 3 stages of learning (cognitive, associative and autonomous), theories of skill acquisition (linear vs non-linear) applied through direct and constraint-based approaches, psychological skills (confidence, motivation, optimal arousal and concentration) and accompanying strategies, scheduling of practice including type (part and whole), distribution (massed and distributed) and variability (blocked and random), frequency and type of feedback including intrinsic and augmented (knowledge of results and knowledge of performance)",
-          "outcomeId": 25000
-        },
-        {
-          "id": 25003,
-          "description": "biomechanical principles for analysis of human movement: linear and angular concepts of human movement including force/torque, momentum, impulse and speed/velocity, Newton’s 3 laws of linear motion: inertia, acceleration and action-reaction, projectile motion (height, angle and speed of release), anatomical third-class levers (axis, force, resistance and mechanical advantage), equilibrium: stability (centre of gravity, base of support and line of gravity)",
-          "outcomeId": 25000
-        },
-        {
-          "id": 25004,
-          "description": "qualitative movement analysis stages (preparation, observation, evaluation and error correction).",
-          "outcomeId": 25000
-        }
-      ],
-      "keySkills": [
-        {
-          "id": 25000,
-          "description": "analyse primary data",
-          "outcomeId": 25000
-        },
-        {
-          "id": 25001,
-          "description": "analyse and classify movement skills",
-          "outcomeId": 25000
-        },
-        {
-          "id": 25002,
-          "description": "analyse the link between motor skill development, participation and performance",
-          "outcomeId": 25000
-        },
-        {
-          "id": 25003,
-          "description": "participate in, describe and develop coaching strategies to enhance participation and performance, considering the needs of the learner and the performance requirements of the skill",
-          "outcomeId": 25000
-        },
-        {
-          "id": 25004,
-          "description": "analyse, interpret and apply graphical, visual and physical representations of biomechanical principles to improve movement skills",
-          "outcomeId": 25000
-        },
-        {
-          "id": 25005,
-          "description": "perform a qualitative movement analysis of a movement skill using video and systematic observation to analyse and improve a variety of movement skills.",
-          "outcomeId": 25000
-        }
-      ]
-    },
-    {
-      "id": 25001,
-      "curriculumSubjectId": 25000,
-      "number": 2,
-      "description": "On completion of this unit, the student should be able to use data collected in practical activities to analyse how the major body and energy systems work together to enable movements to occur; explain the factors causing fatigue; and recommend suitable recovery strategies.",
-      "keyKnowledge": [
-        {
-          "id": 25005,
-          "description": "oxygen uptake at rest and during physical activity and recovery, including oxygen deficit, steady state and excess post-exercise oxygen consumption (EPOC)",
-          "outcomeId": 25001
-        },
-        {
-          "id": 25006,
-          "description": "acute physiological responses to exercise in the cardiovascular, respiratory and muscular systems",
-          "outcomeId": 25001
-        },
-        {
-          "id": 25007,
-          "description": "the 3 energy systems (ATP-CP, anaerobic glycolysis and aerobic), including their fuels (chemical and food); rate and yield of each system; their contribution at rest and varying intensities; and recovery rates associated with active and passive recovery",
-          "outcomeId": 25001
-        },
-        {
-          "id": 25008,
-          "description": "the interplay of energy systems in relation to the intensity and duration of physical activity, sport and exercise",
-          "outcomeId": 25001
-        },
-        {
-          "id": 25009,
-          "description": "muscular fatigue mechanisms, including fuel depletion, accumulation of metabolic by-products and thermoregulatory fatigue linked to varied sport and exercise intensities and durations",
-          "outcomeId": 25001
-        },
-        {
-          "id": 25010,
-          "description": "nutritional and hydration strategies used to enhance performance, delay fatigue and improve recovery, including carbohydrate ingestion, protein and water.",
-          "outcomeId": 25001
-        }
-      ],
-      "keySkills": [
-        {
-          "id": 25006,
-          "description": "explain the changes in oxygen supply and demand at rest, and during sub-maximal and maximal exercise",
-          "outcomeId": 25001
-        },
-        {
-          "id": 25007,
-          "description": "participate in laboratory activities to collect and analyse data on the range of physiological responses the body experiences during exercise",
-          "outcomeId": 25001
-        },
-        {
-          "id": 25008,
-          "description": "perform, observe, analyse and report on practical activities designed to explore the relationship between the energy systems during activity and recovery",
-          "outcomeId": 25001
-        },
-        {
-          "id": 25009,
-          "description": "participate in physical activity, sport and exercise to describe, using appropriate terminology, the interplay and relative contribution of the 3 energy systems",
-          "outcomeId": 25001
-        },
-        {
-          "id": 25010,
-          "description": "explain the muscular fatigue mechanisms associated with the use of the 3 energy systems and the individual and environmental factors that influence fatigue under various intensities and durations",
-          "outcomeId": 25001
-        },
-        {
-          "id": 25011,
-          "description": "describe nutritional and hydration strategies and how these are used to enhance performance, delay fatigue and improve recovery.",
-          "outcomeId": 25001
-        }
-      ]
-    },
-    {
-      "id": 25002,
-      "curriculumSubjectId": 25000,
-      "number": 1,
-      "description": "On completion of this unit, the student should be able to undertake an activity analysis to justify the physiological requirements of an activity that informs an appropriate assessment of fitness.",
-      "keyKnowledge": [
-        {
-          "id": 25011,
-          "description": "types of data collected from an activity analysis, including skill frequencies, movement patterns, heart rates and work-to-rest ratios used to identify physiological requirements",
-          "outcomeId": 25002
-        },
-        {
-          "id": 25012,
-          "description": "factors affecting fitness components required in physical activity, sport or exercise (aerobic power, anaerobic capacity, muscular strength, power and endurance, flexibility, balance, coordination, speed and agility)",
-          "outcomeId": 25002
-        },
-        {
-          "id": 25013,
-          "description": "assessment of fitness for an activity: the purpose of fitness testing from physiological and psychological perspectives, pre-participation health screening and informed consent, standardised, recognised fitness tests that test appropriately identified physiological requirements, test reliability, validity and accuracy.",
-          "outcomeId": 25002
-        }
-      ],
-      "keySkills": [
-        {
-          "id": 25012,
-          "description": "undertake an activity analysis and analyse associated data to justify the necessary physiological requirements",
-          "outcomeId": 25002
-        },
-        {
-          "id": 25013,
-          "description": "justify the selection of standardised, recognised fitness tests for the specific physiological requirements of the activity",
-          "outcomeId": 25002
-        },
-        {
-          "id": 25014,
-          "description": "perform and observe a reliable, valid and accurate assessment of fitness.",
-          "outcomeId": 25002
-        }
-      ]
-    },
-    {
-      "id": 25003,
-      "curriculumSubjectId": 25000,
-      "number": 2,
-      "description": "On completion of this unit, the student should be able to participate in a variety of training methods; design and evaluate training programs; and explain performance improvements that occur due to chronic adaptations, depending on the type of training undertaken.",
-      "keyKnowledge": [
-        {
-          "id": 25014,
-          "description": "strategies to monitor and record physiological, psychological and sociological training data, including training diaries, digital tools and wearable technologies",
-          "outcomeId": 25003
-        },
-        {
-          "id": 25015,
-          "description": "components of an exercise training session, including warm up, the conditioning phase and cool down",
-          "outcomeId": 25003
-        },
-        {
-          "id": 25016,
-          "description": "training program principles, including frequency, intensity, time/duration, type, progression, specificity, individuality, diminishing returns, variety, maintenance, tapering, overtraining and detraining",
-          "outcomeId": 25003
-        },
-        {
-          "id": 25017,
-          "description": "training methods, including continuous, interval (short, intermediate, long and HIIT), fartlek, circuit, weight/resistance, flexibility and plyometrics",
-          "outcomeId": 25003
-        },
-        {
-          "id": 25018,
-          "description": "chronic adaptations of the cardiovascular, respiratory and muscular systems to aerobic, anaerobic and resistance training that produce improvements in: VO2 max, lactate inflection point (LIP), speed and force of muscular contraction, lactate tolerance.",
-          "outcomeId": 25003
-        }
-      ],
-      "keySkills": [
-        {
-          "id": 25015,
-          "description": "participate in and reflect on training sessions by recording physiological, psychological and sociological data in a reflective folio",
-          "outcomeId": 25003
-        },
-        {
-          "id": 25016,
-          "description": "participate in and conduct components of an exercise training session",
-          "outcomeId": 25003
-        },
-        {
-          "id": 25017,
-          "description": "design a training program that demonstrates the correct application of training principles and methods to enhance and/or maintain fitness components",
-          "outcomeId": 25003
-        },
-        {
-          "id": 25018,
-          "description": "analyse training data to identify and prescribe appropriate modifications to a training program",
-          "outcomeId": 25003
-        },
-        {
-          "id": 25019,
-          "description": "evaluate and critique the effectiveness of different training programs",
-          "outcomeId": 25003
-        },
-        {
-          "id": 25020,
-          "description": "explain how the chronic adaptations of the cardiovascular, respiratory and muscular systems to training lead to improved performance.",
-          "outcomeId": 25003
-        }
-      ]
-    },
-    {
-      "id": 25004,
-      "curriculumSubjectId": 25000,
-      "number": 3,
-      "description": "On completion of this unit, the student should be able to integrate theory and practice that enables them to analyse the interrelationships between skill acquisition, biomechanics, energy production and training, and the impacts these have on performance.",
-      "keyKnowledge": [
-        {
-          "id": 25019,
-          "description": "the integration of theory and practice utilised in and through participation in practical activity",
-          "outcomeId": 25004
-        },
-        {
-          "id": 25020,
-          "description": "interdisciplinary learning that connects knowledge related to skill acquisition, biomechanics, energy production and training and the impacts these have on performance.",
-          "outcomeId": 25004
-        }
-      ],
-      "keySkills": [
-        {
-          "id": 25021,
-          "description": "reflect on primary data from participation in a practical activity",
-          "outcomeId": 25004
-        },
-        {
-          "id": 25022,
-          "description": "use primary data to demonstrate integration of theory and practice",
-          "outcomeId": 25004
-        },
-        {
-          "id": 25023,
-          "description": "analyse interrelationships between skill acquisition, biomechanics, energy production and training knowledge for the practical activity completed in consideration of/in relation to the impacts these have on performance between movement skills or performers.",
-          "outcomeId": 25004
-        }
-      ]
-    }
-  ],
-  "extraContents": []
+	"id": 25000,
+	"curriculumId": 25000,
+	"name": "Physical Education Units 3 and 4",
+	"isArchived": false,
+	"learningAreas": [
+		{
+			"id": 25000,
+			"curriculumSubjectId": 25000,
+			"name": "How are movement skills improved?",
+			"abbreviation": "U3AOS1",
+			"description": "In this area of study, students examine the biomechanical and skill-acquisition principles that can be applied when analysing and improving movement skills for participation and performance. Through practical activities, students explore and analyse their own movement and use coaching to investigate factors that influence skill acquisition. They develop an understanding of how appropriately applying biomechanical and skill-acquisition principles leads to the development of optimal movement patterns to enhance participation and performance. On completion of this unit, the student should be able to analyse primary data collected from participation in physical activity, sport and exercise to develop and refine movement skills from an individual and coaching perspective, by applying biomechanical and skill-acquisition principles. To achieve this outcome, the student will draw on key knowledge and key skills outlined in Area of Study 1. classification of movement skills, including fundamental movement skills, sport-specific skills, open and closed skills, gross and fine skills, and discrete, serial and continuous motor skills"
+		},
+		{
+			"id": 25001,
+			"curriculumSubjectId": 25000,
+			"name": "How does the body produce energy?",
+			"abbreviation": "U3AOS2",
+			"description": "In this area of study, students explore the various systems and mechanisms associated with the production of energy required for human movement. They consider the cardiovascular, respiratory and muscular systems and the roles of each in supplying oxygen to, and creating energy at, the working muscles. They examine the ways in which energy for movement is produced by the 3 energy systems and the associated fuels used for physical activity, sport and exercise of varying intensity and duration. Students also consider the many factors contributing to fatigue, nutritional tools to delay fatigue and recovery strategies used to optimise the return to pre-exercise conditions. Through practical activities, students explore the interplay of the energy systems during physical activity, sport and exercise. On completion of this unit, the student should be able to use data collected in practical activities to analyse how the major body and energy systems work together to enable movements to occur; explain the factors causing fatigue; and recommend suitable recovery strategies. To achieve this outcome, the student will draw on key knowledge and key skills outlined in Area of Study 2. oxygen uptake at rest and during physical activity and recovery, including oxygen deficit, steady state and excess post-exercise oxygen consumption (EPOC) acute physiological responses to exercise in the cardiovascular, respiratory and muscular systems"
+		},
+		{
+			"id": 25002,
+			"curriculumSubjectId": 25000,
+			"name": "What are the foundations of an effective training program?",
+			"abbreviation": "U4AOS1",
+			"description": "In this area of study, students analyse the information required to form the foundation of an effective training program. Through participation, they undertake and collect data from an activity analysis and justify the specific physiological requirements of an activity. Students determine the relevant factors that affect each of the fitness components and conduct an assessment of fitness that demonstrates correct and appropriate implementation of testing protocols and procedures and informs the design of the training program. On completion of this unit, the student should be able to undertake an activity analysis to justify the physiological requirements of an activity that informs an appropriate assessment of fitness. To achieve this outcome, the student will draw on key knowledge and key skills outlined in Area of Study 1. types of data collected from an activity analysis, including skill frequencies, movement patterns, heart rates and work-to-rest ratios used to identify physiological requirements"
+		},
+		{
+			"id": 25003,
+			"curriculumSubjectId": 25000,
+			"name": "How is training implemented effectively to improve fitness?",
+			"abbreviation": "U4AOS2",
+			"description": "In this area of study, students focus on participation, implementation and evaluation of training principles and methods from practical and theoretical perspectives. They consider the ways in which fitness can be improved by applying appropriate training principles and methods when designing and critiquing a training program. Students identify and consider components of an exercise training session, and they record and analyse relevant data that can be used to adjust training. Students explain the chronic adaptations of the cardiovascular, respiratory and muscular systems that improve fitness and enhance performance. On completion of this unit, the student should be able to participate in a variety of training methods; design and evaluate training programs; and explain performance improvements that occur due to chronic adaptations, depending on the type of training undertaken. To achieve this outcome, the student will draw on key knowledge and key skills outlined in Area of Study 2. strategies to monitor and record physiological, psychological and sociological training data, including training diaries, digital tools and wearable technologies components of an exercise training session, including warm up, the conditioning phase and cool down"
+		},
+		{
+			"id": 25004,
+			"curriculumSubjectId": 25000,
+			"name": "Integrated movement experiences",
+			"abbreviation": "U4AOS3",
+			"description": "In this area of study, students reflect on their participation in a practical activity and use primary data collected to demonstrate their integration of theory and practice across Units 3 and 4. Using an interdisciplinary approach, students are required to analyse the interrelationships between skill acquisition, biomechanics, energy production and training, and the impacts these have on performance. To do this, students reflect on their participation in either: a practical activity focusing on a particular movement skill, the performance of which can be compared to another individual completing the same skill a practical activity focusing on comparing their participation in 2 different movement skills. The specific practical activity can occur at any time during Unit 3 or Unit 4, as evidenced in students’ reflective folio. An extended response will be used to assess this area of study, in which students will answer a prompt(s) utilising the evidence recorded in their reflective folio. Prior to the extended response, students will use a planning tool such as a mind map to determine and explore links between theoretical concepts and the practical activity."
+		}
+	],
+	"outcomes": [
+		{
+			"id": 25000,
+			"curriculumSubjectId": 25000,
+			"number": 1,
+			"description": "On completion of this unit, the student should be able to analyse primary data collected from participation in physical activity, sport and exercise to develop and refine movement skills from an individual and coaching perspective, by applying biomechanical and skill-acquisition principles.",
+			"keyKnowledge": [
+				{
+					"id": 25000,
+					"description": "classification of movement skills, including fundamental movement skills, sport-specific skills, open and closed skills, gross and fine skills, and discrete, serial and continuous motor skills",
+					"outcomeId": 25000
+				},
+				{
+					"id": 25001,
+					"description": "the link between motor skill development, participation and performance",
+					"outcomeId": 25000
+				},
+				{
+					"id": 25002,
+					"description": "considerations when coaching to enhance participation and performance: sociocultural factors that affect skill development, characteristics of the 3 stages of learning (cognitive, associative and autonomous), theories of skill acquisition (linear vs non-linear) applied through direct and constraint-based approaches, psychological skills (confidence, motivation, optimal arousal and concentration) and accompanying strategies, scheduling of practice including type (part and whole), distribution (massed and distributed) and variability (blocked and random), frequency and type of feedback including intrinsic and augmented (knowledge of results and knowledge of performance)",
+					"outcomeId": 25000
+				},
+				{
+					"id": 25003,
+					"description": "biomechanical principles for analysis of human movement: linear and angular concepts of human movement including force/torque, momentum, impulse and speed/velocity, Newton’s 3 laws of linear motion: inertia, acceleration and action-reaction, projectile motion (height, angle and speed of release), anatomical third-class levers (axis, force, resistance and mechanical advantage), equilibrium: stability (centre of gravity, base of support and line of gravity)",
+					"outcomeId": 25000
+				},
+				{
+					"id": 25004,
+					"description": "qualitative movement analysis stages (preparation, observation, evaluation and error correction).",
+					"outcomeId": 25000
+				}
+			],
+			"keySkills": [
+				{
+					"id": 25000,
+					"description": "analyse primary data",
+					"outcomeId": 25000
+				},
+				{
+					"id": 25001,
+					"description": "analyse and classify movement skills",
+					"outcomeId": 25000
+				},
+				{
+					"id": 25002,
+					"description": "analyse the link between motor skill development, participation and performance",
+					"outcomeId": 25000
+				},
+				{
+					"id": 25003,
+					"description": "participate in, describe and develop coaching strategies to enhance participation and performance, considering the needs of the learner and the performance requirements of the skill",
+					"outcomeId": 25000
+				},
+				{
+					"id": 25004,
+					"description": "analyse, interpret and apply graphical, visual and physical representations of biomechanical principles to improve movement skills",
+					"outcomeId": 25000
+				},
+				{
+					"id": 25005,
+					"description": "perform a qualitative movement analysis of a movement skill using video and systematic observation to analyse and improve a variety of movement skills.",
+					"outcomeId": 25000
+				}
+			]
+		},
+		{
+			"id": 25001,
+			"curriculumSubjectId": 25000,
+			"number": 2,
+			"description": "On completion of this unit, the student should be able to use data collected in practical activities to analyse how the major body and energy systems work together to enable movements to occur; explain the factors causing fatigue; and recommend suitable recovery strategies.",
+			"keyKnowledge": [
+				{
+					"id": 25005,
+					"description": "oxygen uptake at rest and during physical activity and recovery, including oxygen deficit, steady state and excess post-exercise oxygen consumption (EPOC)",
+					"outcomeId": 25001
+				},
+				{
+					"id": 25006,
+					"description": "acute physiological responses to exercise in the cardiovascular, respiratory and muscular systems",
+					"outcomeId": 25001
+				},
+				{
+					"id": 25007,
+					"description": "the 3 energy systems (ATP-CP, anaerobic glycolysis and aerobic), including their fuels (chemical and food); rate and yield of each system; their contribution at rest and varying intensities; and recovery rates associated with active and passive recovery",
+					"outcomeId": 25001
+				},
+				{
+					"id": 25008,
+					"description": "the interplay of energy systems in relation to the intensity and duration of physical activity, sport and exercise",
+					"outcomeId": 25001
+				},
+				{
+					"id": 25009,
+					"description": "muscular fatigue mechanisms, including fuel depletion, accumulation of metabolic by-products and thermoregulatory fatigue linked to varied sport and exercise intensities and durations",
+					"outcomeId": 25001
+				},
+				{
+					"id": 25010,
+					"description": "nutritional and hydration strategies used to enhance performance, delay fatigue and improve recovery, including carbohydrate ingestion, protein and water.",
+					"outcomeId": 25001
+				}
+			],
+			"keySkills": [
+				{
+					"id": 25006,
+					"description": "explain the changes in oxygen supply and demand at rest, and during sub-maximal and maximal exercise",
+					"outcomeId": 25001
+				},
+				{
+					"id": 25007,
+					"description": "participate in laboratory activities to collect and analyse data on the range of physiological responses the body experiences during exercise",
+					"outcomeId": 25001
+				},
+				{
+					"id": 25008,
+					"description": "perform, observe, analyse and report on practical activities designed to explore the relationship between the energy systems during activity and recovery",
+					"outcomeId": 25001
+				},
+				{
+					"id": 25009,
+					"description": "participate in physical activity, sport and exercise to describe, using appropriate terminology, the interplay and relative contribution of the 3 energy systems",
+					"outcomeId": 25001
+				},
+				{
+					"id": 25010,
+					"description": "explain the muscular fatigue mechanisms associated with the use of the 3 energy systems and the individual and environmental factors that influence fatigue under various intensities and durations",
+					"outcomeId": 25001
+				},
+				{
+					"id": 25011,
+					"description": "describe nutritional and hydration strategies and how these are used to enhance performance, delay fatigue and improve recovery.",
+					"outcomeId": 25001
+				}
+			]
+		},
+		{
+			"id": 25002,
+			"curriculumSubjectId": 25000,
+			"number": 1,
+			"description": "On completion of this unit, the student should be able to undertake an activity analysis to justify the physiological requirements of an activity that informs an appropriate assessment of fitness.",
+			"keyKnowledge": [
+				{
+					"id": 25011,
+					"description": "types of data collected from an activity analysis, including skill frequencies, movement patterns, heart rates and work-to-rest ratios used to identify physiological requirements",
+					"outcomeId": 25002
+				},
+				{
+					"id": 25012,
+					"description": "factors affecting fitness components required in physical activity, sport or exercise (aerobic power, anaerobic capacity, muscular strength, power and endurance, flexibility, balance, coordination, speed and agility)",
+					"outcomeId": 25002
+				},
+				{
+					"id": 25013,
+					"description": "assessment of fitness for an activity: the purpose of fitness testing from physiological and psychological perspectives, pre-participation health screening and informed consent, standardised, recognised fitness tests that test appropriately identified physiological requirements, test reliability, validity and accuracy.",
+					"outcomeId": 25002
+				}
+			],
+			"keySkills": [
+				{
+					"id": 25012,
+					"description": "undertake an activity analysis and analyse associated data to justify the necessary physiological requirements",
+					"outcomeId": 25002
+				},
+				{
+					"id": 25013,
+					"description": "justify the selection of standardised, recognised fitness tests for the specific physiological requirements of the activity",
+					"outcomeId": 25002
+				},
+				{
+					"id": 25014,
+					"description": "perform and observe a reliable, valid and accurate assessment of fitness.",
+					"outcomeId": 25002
+				}
+			]
+		},
+		{
+			"id": 25003,
+			"curriculumSubjectId": 25000,
+			"number": 2,
+			"description": "On completion of this unit, the student should be able to participate in a variety of training methods; design and evaluate training programs; and explain performance improvements that occur due to chronic adaptations, depending on the type of training undertaken.",
+			"keyKnowledge": [
+				{
+					"id": 25014,
+					"description": "strategies to monitor and record physiological, psychological and sociological training data, including training diaries, digital tools and wearable technologies",
+					"outcomeId": 25003
+				},
+				{
+					"id": 25015,
+					"description": "components of an exercise training session, including warm up, the conditioning phase and cool down",
+					"outcomeId": 25003
+				},
+				{
+					"id": 25016,
+					"description": "training program principles, including frequency, intensity, time/duration, type, progression, specificity, individuality, diminishing returns, variety, maintenance, tapering, overtraining and detraining",
+					"outcomeId": 25003
+				},
+				{
+					"id": 25017,
+					"description": "training methods, including continuous, interval (short, intermediate, long and HIIT), fartlek, circuit, weight/resistance, flexibility and plyometrics",
+					"outcomeId": 25003
+				},
+				{
+					"id": 25018,
+					"description": "chronic adaptations of the cardiovascular, respiratory and muscular systems to aerobic, anaerobic and resistance training that produce improvements in: VO2 max, lactate inflection point (LIP), speed and force of muscular contraction, lactate tolerance.",
+					"outcomeId": 25003
+				}
+			],
+			"keySkills": [
+				{
+					"id": 25015,
+					"description": "participate in and reflect on training sessions by recording physiological, psychological and sociological data in a reflective folio",
+					"outcomeId": 25003
+				},
+				{
+					"id": 25016,
+					"description": "participate in and conduct components of an exercise training session",
+					"outcomeId": 25003
+				},
+				{
+					"id": 25017,
+					"description": "design a training program that demonstrates the correct application of training principles and methods to enhance and/or maintain fitness components",
+					"outcomeId": 25003
+				},
+				{
+					"id": 25018,
+					"description": "analyse training data to identify and prescribe appropriate modifications to a training program",
+					"outcomeId": 25003
+				},
+				{
+					"id": 25019,
+					"description": "evaluate and critique the effectiveness of different training programs",
+					"outcomeId": 25003
+				},
+				{
+					"id": 25020,
+					"description": "explain how the chronic adaptations of the cardiovascular, respiratory and muscular systems to training lead to improved performance.",
+					"outcomeId": 25003
+				}
+			]
+		},
+		{
+			"id": 25004,
+			"curriculumSubjectId": 25000,
+			"number": 3,
+			"description": "On completion of this unit, the student should be able to integrate theory and practice that enables them to analyse the interrelationships between skill acquisition, biomechanics, energy production and training, and the impacts these have on performance.",
+			"keyKnowledge": [
+				{
+					"id": 25019,
+					"description": "the integration of theory and practice utilised in and through participation in practical activity",
+					"outcomeId": 25004
+				},
+				{
+					"id": 25020,
+					"description": "interdisciplinary learning that connects knowledge related to skill acquisition, biomechanics, energy production and training and the impacts these have on performance.",
+					"outcomeId": 25004
+				}
+			],
+			"keySkills": [
+				{
+					"id": 25021,
+					"description": "reflect on primary data from participation in a practical activity",
+					"outcomeId": 25004
+				},
+				{
+					"id": 25022,
+					"description": "use primary data to demonstrate integration of theory and practice",
+					"outcomeId": 25004
+				},
+				{
+					"id": 25023,
+					"description": "analyse interrelationships between skill acquisition, biomechanics, energy production and training knowledge for the practical activity completed in consideration of/in relation to the impacts these have on performance between movement skills or performers.",
+					"outcomeId": 25004
+				}
+			]
+		}
+	],
+	"extraContents": []
 }

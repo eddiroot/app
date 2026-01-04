@@ -1,8 +1,7 @@
 import {
 	boolean,
 	integer,
-	pgEnum,
-	pgTable,
+	pgSchema,
 	primaryKey,
 	text,
 	timestamp,
@@ -15,12 +14,13 @@ import {
 	userHonorificEnum,
 	userTypeEnum
 } from '../../../enums';
-import { yearLevelEnumPg } from './curriculum';
 import { campus, school } from './schools';
 import { subject, subjectOffering, subjectOfferingClass } from './subjects';
-import { timestamps } from './utils';
+import { timestamps, yearLevelEnumPg } from './utils';
 
-export const userTypeEnumPg = pgEnum('enum_user_type', [
+export const userSchema = pgSchema('user');
+
+export const userTypeEnumPg = userSchema.enum('enum_user_type', [
 	userTypeEnum.none,
 	userTypeEnum.student,
 	userTypeEnum.teacher,
@@ -29,7 +29,7 @@ export const userTypeEnumPg = pgEnum('enum_user_type', [
 	userTypeEnum.schoolAdmin
 ]);
 
-export const userHonorificEnumPg = pgEnum('enum_user_honorific', [
+export const userHonorificEnumPg = userSchema.enum('enum_user_honorific', [
 	userHonorificEnum.mr,
 	userHonorificEnum.ms,
 	userHonorificEnum.mrs,
@@ -37,7 +37,7 @@ export const userHonorificEnumPg = pgEnum('enum_user_honorific', [
 	userHonorificEnum.prof
 ]);
 
-export const userGenderEnumPg = pgEnum('enum_gender', [
+export const userGenderEnumPg = userSchema.enum('enum_gender', [
 	userGenderEnum.male,
 	userGenderEnum.female,
 	userGenderEnum.nonBinary,
@@ -45,7 +45,7 @@ export const userGenderEnumPg = pgEnum('enum_gender', [
 	userGenderEnum.unspecified
 ]);
 
-export const user = pgTable('user', {
+export const user = userSchema.table('user', {
 	id: uuid('id').defaultRandom().primaryKey(),
 	email: text('email').notNull().unique(),
 	passwordHash: text('password_hash'),
@@ -65,13 +65,13 @@ export const user = pgTable('user', {
 	avatarUrl: text('avatar_url'),
 	verificationCode: text('verification_code'),
 	emailVerified: boolean('email_verified').notNull().default(false),
-	isArchived: boolean('is_archived').notNull().default(false),
+	isArchived: boolean('is_archived').default(false).notNull(),
 	...timestamps
 });
 
 export type User = typeof user.$inferSelect;
 
-export const userCampus = pgTable('user_cmps', {
+export const userCampus = userSchema.table('user_cmps', {
 	id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
 	userId: uuid('user_id')
 		.notNull()
@@ -84,7 +84,7 @@ export const userCampus = pgTable('user_cmps', {
 
 export type UserCampus = typeof userCampus.$inferSelect;
 
-export const userSubjectOffering = pgTable('user_sub_off', {
+export const userSubjectOffering = userSchema.table('user_sub_off', {
 	id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
 	userId: uuid('user_id')
 		.notNull()
@@ -93,14 +93,14 @@ export const userSubjectOffering = pgTable('user_sub_off', {
 		.notNull()
 		.references(() => subjectOffering.id, { onDelete: 'cascade' }),
 	isComplete: integer('is_complete').default(0).notNull(),
-	isArchived: integer('is_archived').default(0).notNull(),
+	isArchived: boolean('is_archived').default(false).notNull(),
 	color: integer('color').default(100).notNull(),
 	...timestamps
 });
 
 export type UserSubjectOffering = typeof userSubjectOffering.$inferSelect;
 
-export const userSubjectOfferingClass = pgTable(
+export const userSubjectOfferingClass = userSchema.table(
 	'sub_off_cls_user',
 	{
 		id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
@@ -111,7 +111,7 @@ export const userSubjectOfferingClass = pgTable(
 			.notNull()
 			.references(() => subjectOfferingClass.id, { onDelete: 'cascade' }),
 		classNote: text('class_note'),
-		isArchived: boolean('is_archived').notNull().default(false),
+		isArchived: boolean('is_archived').default(false).notNull(),
 		...timestamps
 	},
 	(self) => [unique().on(self.userId, self.subOffClassId)]
@@ -119,13 +119,13 @@ export const userSubjectOfferingClass = pgTable(
 
 export type UserSubjectOfferingClass = typeof userSubjectOfferingClass.$inferSelect;
 
-export const relationshipTypeEnumPg = pgEnum('enum_relationship_type', [
+export const relationshipTypeEnumPg = userSchema.enum('enum_relationship_type', [
 	relationshipTypeEnum.mother,
 	relationshipTypeEnum.father,
 	relationshipTypeEnum.guardian
 ]);
 
-export const userRelationship = pgTable('user_relationship', {
+export const userRelationship = userSchema.table('user_relationship', {
 	id: uuid('id').defaultRandom().primaryKey(),
 	userId: uuid('user_id')
 		.notNull()
@@ -139,7 +139,7 @@ export const userRelationship = pgTable('user_relationship', {
 
 export type UserRelationship = typeof userRelationship.$inferSelect;
 
-export const session = pgTable('session', {
+export const session = userSchema.table('session', {
 	id: text('id').primaryKey(),
 	secretHash: text('secret_hash').notNull(),
 	userId: uuid('user_id')
@@ -151,7 +151,7 @@ export const session = pgTable('session', {
 
 export type Session = typeof session.$inferSelect;
 
-export const userTeacherSpecialization = pgTable(
+export const userTeacherSpecialization = userSchema.table(
 	'user_teacher_specialization',
 	{
 		teacherId: uuid('teacher_id')
