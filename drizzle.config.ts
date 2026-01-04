@@ -17,5 +17,22 @@ export default defineConfig({
 		// @ts-expect-error - SST Resource types not available in drizzle-kit context
 		database: Resource.Database.database,
 		ssl: Resource.App.stage == 'production' ? true : false
-	}
+	},
+	// Required for drizzle-kit push to work with custom pgSchema
+	// See: https://github.com/drizzle-team/drizzle-orm/issues/3476
+	schemaFilter: [
+		'public',
+		'curriculum',
+		'course_map',
+		'events',
+		'interviews',
+		'news',
+		'resource',
+		'school',
+		'task',
+		'timetable',
+		'user',
+		'utils',
+		'subject'
+	]
 });

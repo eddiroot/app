@@ -9,8 +9,7 @@ export async function getSubjectOfferingClassDetailsById(subjectOfferingClassId:
 			subjectOfferingClass: table.subjectOfferingClass,
 			subjectOffering: table.subjectOffering,
 			subject: table.subject,
-			coreSubject: table.coreSubject,
-			electiveSubject: table.electiveSubject
+			coreSubject: table.coreSubject
 		})
 		.from(table.subjectOfferingClass)
 		.innerJoin(
@@ -19,7 +18,6 @@ export async function getSubjectOfferingClassDetailsById(subjectOfferingClassId:
 		)
 		.innerJoin(table.subject, eq(table.subject.id, table.subjectOffering.subjectId))
 		.leftJoin(table.coreSubject, eq(table.coreSubject.id, table.subject.coreSubjectId))
-		.leftJoin(table.electiveSubject, eq(table.electiveSubject.id, table.subject.electiveSubjectId))
 		.where(eq(table.subjectOfferingClass.id, subjectOfferingClassId))
 		.limit(1);
 
@@ -378,7 +376,7 @@ export async function getAllocationsBySchoolId(schoolId: number) {
 			subject: {
 				id: table.subject.id,
 				name: table.subject.name,
-				yearLevel: table.subject.yearLevel
+				yearLevel: table.yearLevel.yearLevel
 			}
 		})
 		.from(table.userSubjectOfferingClass)
@@ -392,6 +390,7 @@ export async function getAllocationsBySchoolId(schoolId: number) {
 			eq(table.subjectOfferingClass.subOfferingId, table.subjectOffering.id)
 		)
 		.innerJoin(table.subject, eq(table.subjectOffering.subjectId, table.subject.id))
+		.innerJoin(table.yearLevel, eq(table.subject.yearLevelId, table.yearLevel.id))
 		.where(
 			and(
 				eq(table.userSubjectOfferingClass.isArchived, false),
@@ -416,8 +415,7 @@ export async function createUserSubjectOfferingClass(
 		.insert(table.userSubjectOfferingClass)
 		.values({
 			userId,
-			subOffClassId: subjectOfferingClassId,
-			isArchived: false
+			subOffClassId: subjectOfferingClassId
 		})
 		.returning();
 

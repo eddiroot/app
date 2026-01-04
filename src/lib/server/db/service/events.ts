@@ -224,8 +224,7 @@ export async function createSubjectOfferingEvent(
 			name,
 			startTimestamp,
 			endTimestamp,
-			requiresRSVP,
-			isArchived: false
+			requiresRSVP
 		})
 		.returning();
 
@@ -377,8 +376,7 @@ export async function createSubjectOfferingClassEvent(
 			name,
 			startTimestamp,
 			endTimestamp,
-			requiresRSVP,
-			isArchived: false
+			requiresRSVP
 		})
 		.returning();
 

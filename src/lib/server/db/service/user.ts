@@ -18,7 +18,6 @@ export async function createUser({
 	yearLevel,
 	middleName,
 	avatarUrl,
-	isArchived = false
 }: {
 	email: string;
 	password: string;
@@ -32,7 +31,6 @@ export async function createUser({
 	yearLevel: yearLevelEnum;
 	middleName?: string;
 	avatarUrl?: string;
-	isArchived?: boolean;
 }) {
 	const passwordHash = await hash(password);
 	const verificationCode = String(randomInt(100000, 1000000));
@@ -53,7 +51,6 @@ export async function createUser({
 			middleName,
 			avatarUrl,
 			verificationCode,
-			isArchived
 		})
 		.returning();
 
@@ -192,7 +189,7 @@ export async function verifyUserAccessToSubjectOffering(
 			and(
 				eq(table.userSubjectOffering.userId, userId),
 				eq(table.userSubjectOffering.subOfferingId, subjectOfferingId),
-				eq(table.userSubjectOffering.isArchived, 0)
+				eq(table.userSubjectOffering.isArchived, false)
 			)
 		)
 		.limit(1);

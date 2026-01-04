@@ -195,8 +195,7 @@ export async function createTask(
 	description: string,
 	type: taskTypeEnum,
 	subjectOfferingId: number,
-	aiTutorEnabled: boolean = true,
-	isArchived: boolean = false
+	aiTutorEnabled: boolean = true
 ) {
 	const [task] = await db
 		.insert(table.task)
@@ -207,8 +206,7 @@ export async function createTask(
 			originalId: null,
 			version: 1,
 			subjectOfferingId,
-			aiTutorEnabled,
-			isArchived
+			aiTutorEnabled
 		})
 		.returning();
 
@@ -306,14 +304,14 @@ export async function createTaskBlocks(taskId: number, blocks: z.infer<typeof ta
 	// Insert all blocks in a single batch operation to avoid deadlocks
 	// Since we're creating fresh, we don't need to shift existing indices
 	if (blocks.length === 0) return;
-	
+
 	const blockValues = blocks.map((block, idx) => ({
 		taskId,
 		type: block.type,
 		config: block.config,
 		index: idx
 	}));
-	
+
 	await db.insert(table.taskBlock).values(blockValues);
 }
 
@@ -506,6 +504,7 @@ export async function getLearningAreaStandardByCourseMapItemId(
 			eq(table.courseMapItem.subjectOfferingId, table.subjectOffering.id)
 		)
 		.innerJoin(table.subject, eq(table.subjectOffering.subjectId, table.subject.id))
+		.innerJoin(table.yearLevel, eq(table.subject.yearLevelId, table.yearLevel.id))
 		.innerJoin(
 			table.learningArea,
 			eq(table.learningArea.id, table.learningAreaStandard.learningAreaId)
@@ -513,7 +512,7 @@ export async function getLearningAreaStandardByCourseMapItemId(
 		.where(
 			and(
 				eq(table.courseMapItemLearningArea.courseMapItemId, courseMapItemId),
-				eq(table.learningAreaStandard.yearLevel, table.subject.yearLevel)
+				eq(table.learningAreaStandard.yearLevel, table.yearLevel.yearLevel)
 			)
 		)
 		.orderBy(asc(table.learningAreaStandard.id));
@@ -539,12 +538,7 @@ export async function getLearningAreasBySubjectOfferingId(subjectOfferingId: num
 			learningArea: table.learningArea
 		})
 		.from(table.subjectOffering)
-		.innerJoin(table.subject, eq(table.subjectOffering.subjectId, table.subject.id))
-		.innerJoin(table.coreSubject, eq(table.subject.coreSubjectId, table.coreSubject.id))
-		.innerJoin(
-			table.curriculumSubject,
-			eq(table.coreSubject.curriculumSubjectId, table.curriculumSubject.id)
-		)
+		.innerJoin(table.curriculumSubject, eq(table.subjectOffering.curriculumSubjectId, table.curriculumSubject.id))
 		.innerJoin(
 			table.learningArea,
 			eq(table.learningArea.curriculumSubjectId, table.curriculumSubject.id)
@@ -564,7 +558,6 @@ export async function getStandardElaborationsByLearningAreaStandardIds(
 		.select({
 			id: table.standardElaboration.id,
 			learningAreaStandardId: table.standardElaboration.learningAreaStandardId,
-			name: table.standardElaboration.name,
 			standardElaboration: table.standardElaboration.standardElaboration
 		})
 		.from(table.standardElaboration)
@@ -627,11 +620,11 @@ export async function getCurriculumLearningAreaWithStandards(subjectOfferingId: 
 			learningAreaStandard: table.learningAreaStandard
 		})
 		.from(table.subjectOffering)
-		.innerJoin(table.subject, eq(table.subject.id, table.subjectOffering.subjectId))
-		.innerJoin(table.coreSubject, eq(table.coreSubject.id, table.subject.coreSubjectId))
+		.innerJoin(table.subject, eq(table.subjectOffering.subjectId, table.subject.id))
+		.innerJoin(table.yearLevel, eq(table.subject.yearLevelId, table.yearLevel.id))
 		.innerJoin(
 			table.curriculumSubject,
-			eq(table.curriculumSubject.id, table.coreSubject.curriculumSubjectId)
+			eq(table.curriculumSubject.id, table.subjectOffering.curriculumSubjectId)
 		)
 		.innerJoin(
 			table.learningArea,
@@ -641,7 +634,7 @@ export async function getCurriculumLearningAreaWithStandards(subjectOfferingId: 
 			table.learningAreaStandard,
 			and(
 				eq(table.learningAreaStandard.learningAreaId, table.learningArea.id),
-				eq(table.learningAreaStandard.yearLevel, table.subject.yearLevel)
+				eq(table.learningAreaStandard.yearLevel, table.yearLevel.yearLevel)
 			)
 		)
 		.where(eq(table.subjectOffering.id, subjectOfferingId))
@@ -1295,48 +1288,54 @@ export async function addResourcesToClassTaskResponse(
 	return newRelationships;
 }
 
-export async function getTaskBlockEmbeddingMetadata(record: Record<string, unknown>): Promise<EmbeddingMetadata> {
+export async function getTaskBlockEmbeddingMetadata(
+	record: Record<string, unknown>
+): Promise<EmbeddingMetadata> {
 	const taskId = record.taskId as number;
 
 	if (!taskId) {
 		return { blockType: record.type as taskBlockTypeEnum };
 	}
 
-    const [result] = await db
-        .select({
-            curriculumSubjectId: table.coreSubject.curriculumSubjectId,
+	const [result] = await db
+		.select({
+			curriculumSubjectId: table.subjectOffering.curriculumSubjectId,
 			subjectId: table.subjectOffering.subjectId,
-            yearLevel: table.subject.yearLevel
-        })
-        .from(table.task)
-        .innerJoin(table.subjectOffering, eq(table.task.subjectOfferingId, table.subjectOffering.id))
+			yearLevel: table.yearLevel.yearLevel
+		})
+		.from(table.task)
+		.innerJoin(table.subjectOffering, eq(table.task.subjectOfferingId, table.subjectOffering.id))
 		.innerJoin(table.subject, eq(table.subjectOffering.subjectId, table.subject.id))
-		.innerJoin(table.coreSubject, eq(table.subject.coreSubjectId, table.coreSubject.id))
-        .where(eq(table.task.id, taskId))
-        .limit(1);
+		.innerJoin(table.yearLevel, eq(table.subject.yearLevelId, table.yearLevel.id))
+		.where(eq(table.task.id, taskId))
+		.limit(1);
 
-    return {
-        taskId,
-        blockType: record.type as string,
-        curriculumSubjectId: result?.curriculumSubjectId,
+	return {
+		taskId,
+		blockType: record.type as string,
+		curriculumSubjectId: result?.curriculumSubjectId ?? undefined,
 		subjectId: result?.subjectId,
-        yearLevel: result?.yearLevel
-    };
+		yearLevel: result?.yearLevel
+	};
 }
 
-export async function getClassTaskBlockResponseEmbeddingMetadata(record: Record<string, unknown>): Promise<EmbeddingMetadata> {
+export async function getClassTaskBlockResponseEmbeddingMetadata(
+	record: Record<string, unknown>
+): Promise<EmbeddingMetadata> {
 	const taskBlockId = record.taskBlockId as number;
 
 	if (!taskBlockId) {
-		return { classTaskId: record.classTaskId as number,
-			blockType: record.blockType as taskBlockTypeEnum };
+		return {
+			classTaskId: record.classTaskId as number,
+			blockType: record.blockType as taskBlockTypeEnum
+		};
 	}
 
 	const [result] = await db
 		.select({
-			curriculumSubjectId: table.coreSubject.curriculumSubjectId,
+			curriculumSubjectId: table.subjectOffering.curriculumSubjectId,
 			subjectId: table.subjectOffering.subjectId,
-			yearLevel: table.subject.yearLevel,
+			yearLevel: table.yearLevel.yearLevel,
 			taskId: table.task.id
 		})
 		.from(table.classTaskBlockResponse)
@@ -1344,33 +1343,37 @@ export async function getClassTaskBlockResponseEmbeddingMetadata(record: Record<
 		.innerJoin(table.task, eq(table.taskBlock.taskId, table.task.id))
 		.innerJoin(table.subjectOffering, eq(table.task.subjectOfferingId, table.subjectOffering.id))
 		.innerJoin(table.subject, eq(table.subjectOffering.subjectId, table.subject.id))
-		.innerJoin(table.coreSubject, eq(table.subject.coreSubjectId, table.coreSubject.id))
+		.innerJoin(table.yearLevel, eq(table.subject.yearLevelId, table.yearLevel.id))
 		.where(eq(table.classTaskBlockResponse.id, record.id as number))
 		.limit(1);
 
 	return {
 		classTaskId: record.classTaskId as number,
 		blockType: record.blockType as string,
-		taskId: result?.taskId,
-		curriculumSubjectId: result?.curriculumSubjectId,
-		subjectId: result?.subjectId,
-		yearLevel: result?.yearLevel
+		taskId: result?.taskId ?? undefined,
+		curriculumSubjectId: result?.curriculumSubjectId ?? undefined,
+		subjectId: result?.subjectId ?? undefined,
+		yearLevel: result?.yearLevel ?? undefined
 	};
 }
 
-export async function getClassTaskResponseEmbeddingMetadata(record: Record<string, unknown>): Promise<EmbeddingMetadata> {
+export async function getClassTaskResponseEmbeddingMetadata(
+	record: Record<string, unknown>
+): Promise<EmbeddingMetadata> {
 	const classTaskId = record.classTaskId as number;
 
-	
 	const [result] = await db
 		.select({
-			curriculumSubjectId: table.coreSubject.curriculumSubjectId,
+			curriculumSubjectId: table.subjectOffering.curriculumSubjectId,
 			subjectId: table.subjectOffering.subjectId,
-			yearLevel: table.subject.yearLevel,
+			yearLevel: table.yearLevel.yearLevel,
 			taskId: table.task.id
 		})
 		.from(table.classTaskResponse)
-		.innerJoin(table.subjectOfferingClassTask, eq(table.classTaskResponse.classTaskId, table.subjectOfferingClassTask.id))
+		.innerJoin(
+			table.subjectOfferingClassTask,
+			eq(table.classTaskResponse.classTaskId, table.subjectOfferingClassTask.id)
+		)
 		.innerJoin(table.task, eq(table.subjectOfferingClassTask.taskId, table.task.id))
 		.innerJoin(table.subjectOffering, eq(table.task.subjectOfferingId, table.subjectOffering.id))
 		.innerJoin(table.subject, eq(table.subjectOffering.subjectId, table.subject.id))
@@ -1380,21 +1383,52 @@ export async function getClassTaskResponseEmbeddingMetadata(record: Record<strin
 
 	return {
 		classTaskId,
-		taskId: result?.taskId,
-		curriculumSubjectId: result?.curriculumSubjectId,
-		subjectId: result?.subjectId,
-		yearLevel: result?.yearLevel
+		taskId: result?.taskId ?? undefined,
+		curriculumSubjectId: result?.curriculumSubjectId ?? undefined,
+		subjectId: result?.subjectId ?? undefined,
+		yearLevel: result?.yearLevel ?? undefined
 	};
 }
 
-export async function getTaskBlockGuidanceEmbeddingMetadata(record: Record<string, unknown>): Promise<EmbeddingMetadata> {
+export async function getTaskBlockGuidanceEmbeddingMetadata(
+	record: Record<string, unknown>
+): Promise<EmbeddingMetadata> {
 	const taskBlockId = record.taskBlockId as number;
 
 	const [result] = await db
 		.select({
-			curriculumSubjectId: table.coreSubject.curriculumSubjectId,
+			curriculumSubjectId: table.subjectOffering.curriculumSubjectId,
 			subjectId: table.subjectOffering.subjectId,
-			yearLevel: table.subject.yearLevel,
+			yearLevel: table.yearLevel.yearLevel,
+			taskBlockId: table.taskBlock.id
+		})
+		.from(table.taskBlock)
+		.innerJoin(table.task, eq(table.taskBlock.taskId, table.task.id))
+		.innerJoin(table.subjectOffering, eq(table.task.subjectOfferingId, table.subjectOffering.id))
+		.innerJoin(table.subject, eq(table.subjectOffering.subjectId, table.subject.id))
+		.innerJoin(table.yearLevel, eq(table.subject.yearLevelId, table.yearLevel.id))
+		.where(eq(table.taskBlock.id, taskBlockId))
+		.limit(1);
+
+	return {
+		taskBlockId: result?.taskBlockId ?? undefined,
+		blockType: record.blockType as taskBlockTypeEnum,
+		curriculumSubjectId: result?.curriculumSubjectId ?? undefined,
+		subjectId: result?.subjectId ?? undefined,
+		yearLevel: result?.yearLevel ?? undefined
+	};
+}
+
+export async function getTaskBlockMisconceptionEmbeddingMetadata(
+	record: Record<string, unknown>
+): Promise<EmbeddingMetadata> {
+	const taskBlockId = record.taskBlockId as number;
+
+	const [result] = await db
+		.select({
+			curriculumSubjectId: table.subjectOffering.curriculumSubjectId,
+			subjectId: table.subjectOffering.subjectId,
+			yearLevel: table.yearLevel.yearLevel,
 			taskBlockId: table.taskBlock.id
 		})
 		.from(table.taskBlock)
@@ -1402,48 +1436,24 @@ export async function getTaskBlockGuidanceEmbeddingMetadata(record: Record<strin
 		.innerJoin(table.subjectOffering, eq(table.task.subjectOfferingId, table.subjectOffering.id))
 		.innerJoin(table.subject, eq(table.subjectOffering.subjectId, table.subject.id))
 		.innerJoin(table.coreSubject, eq(table.subject.coreSubjectId, table.coreSubject.id))
+		.innerJoin(table.yearLevel, eq(table.subject.yearLevelId, table.yearLevel.id))
 		.where(eq(table.taskBlock.id, taskBlockId))
 		.limit(1);
 
 	return {
 		taskBlockId: result?.taskBlockId,
 		blockType: record.blockType as taskBlockTypeEnum,
-		curriculumSubjectId: result?.curriculumSubjectId,
+		curriculumSubjectId: result?.curriculumSubjectId ?? undefined,
 		subjectId: result?.subjectId,
 		yearLevel: result?.yearLevel
 	};
 }
 
-export async function getTaskBlockMisconceptionEmbeddingMetadata(record: Record<string, unknown>): Promise<EmbeddingMetadata> {
-	const taskBlockId = record.taskBlockId as number;
-
-	const [result] = await db
-		.select({
-			curriculumSubjectId: table.coreSubject.curriculumSubjectId,
-			subjectId: table.subjectOffering.subjectId,
-			yearLevel: table.subject.yearLevel,
-			taskBlockId: table.taskBlock.id
-		})
-		.from(table.taskBlock)
-		.innerJoin(table.task, eq(table.taskBlock.taskId, table.task.id))
-		.innerJoin(table.subjectOffering, eq(table.task.subjectOfferingId, table.subjectOffering.id))
-		.innerJoin(table.subject, eq(table.subjectOffering.subjectId, table.subject.id))
-		.innerJoin(table.coreSubject, eq(table.subject.coreSubjectId, table.coreSubject.id))
-		.where(eq(table.taskBlock.id, taskBlockId))
-		.limit(1);
-
+export async function getRubricCellEmbeddingMetadata(
+	record: Record<string, unknown>
+): Promise<EmbeddingMetadata> {
 	return {
-		taskBlockId: result?.taskBlockId,
-		blockType: record.blockType as taskBlockTypeEnum,
-		curriculumSubjectId: result?.curriculumSubjectId,
-		subjectId: result?.subjectId,
-		yearLevel: result?.yearLevel
+		rubricId: record.rubricId as number,
+		criteriaId: record.criteriaId as number
 	};
-}
-
-export async function getRubricCellEmbeddingMetadata(record: Record<string, unknown>): Promise<EmbeddingMetadata> {
-    return {
-        rubricId: record.rubricId as number,
-        criteriaId: record.criteriaId as number
-    };
 }

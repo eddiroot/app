@@ -249,16 +249,14 @@ export async function unarchiveCampus(campusId: number) {
 export async function createBuilding(
 	campusId: number,
 	name: string,
-	description?: string | null,
-	isArchived: boolean = false
+	description?: string | null
 ) {
 	const [building] = await db
 		.insert(table.schoolBuilding)
 		.values({
 			campusId,
 			name,
-			description: description || null,
-			isArchived
+			description: description || null
 		})
 		.returning();
 
@@ -310,8 +308,7 @@ export async function createSpace(
 	name: string,
 	type: schoolSpaceTypeEnum,
 	capacity?: number | null,
-	description?: string | null,
-	isArchived: boolean = false
+	description?: string | null
 ) {
 	const [space] = await db
 		.insert(table.schoolSpace)
@@ -320,8 +317,7 @@ export async function createSpace(
 			name,
 			type,
 			capacity: capacity || null,
-			description: description || null,
-			isArchived
+			description: description || null
 		})
 		.returning();
 
@@ -340,7 +336,6 @@ export async function getSpacesBySchoolId(schoolId: number, includeArchived: boo
 			type: table.schoolSpace.type,
 			capacity: table.schoolSpace.capacity,
 			description: table.schoolSpace.description,
-			isArchived: table.schoolSpace.isArchived,
 			createdAt: table.schoolSpace.createdAt,
 			updatedAt: table.schoolSpace.updatedAt
 		})
@@ -356,6 +351,36 @@ export async function getSpacesBySchoolId(schoolId: number, includeArchived: boo
 		.orderBy(table.schoolSpace.name);
 
 	return spaces;
+}
+
+export async function createYearLevelsForSchool(schoolId: number, yearLevels: yearLevelEnum[]) {
+	const insertedYearLevels = [];
+
+	for (const yl of yearLevels) {
+		const [yearLevel] = await db
+			.insert(table.yearLevel)
+			.values({
+				schoolId,
+				yearLevel: yl
+			})
+			.returning();
+
+		insertedYearLevels.push(yearLevel);
+	}
+
+	return insertedYearLevels;
+}
+
+export async function setYearLevelGradeScale(yearLevelId: number, gradeScaleId: number) {
+	const [updatedYearLevel] = await db
+		.update(table.yearLevel)
+		.set({
+			gradeScaleId
+		})
+		.where(eq(table.yearLevel.id, yearLevelId))
+		.returning();
+
+	return updatedYearLevel;
 }
 
 export async function getSpacesByCampusId(campusId: number, includeArchived: boolean = false) {
@@ -398,7 +423,7 @@ export async function updateSpace(
 		type?: schoolSpaceTypeEnum;
 		capacity?: number | null;
 		description?: string | null;
-		isArchived?: boolean;
+		flags?: number;
 	}
 ) {
 	const [space] = await db
@@ -427,10 +452,11 @@ export async function getSubjectsBySchoolIdAndYearLevel(
 	const subjects = await db
 		.select()
 		.from(table.subject)
+		.innerJoin(table.yearLevel, eq(table.subject.yearLevelId, table.yearLevel.id))
 		.where(
 			and(
 				eq(table.subject.schoolId, schoolId),
-				eq(table.subject.yearLevel, yearLevel),
+				eq(table.yearLevel.yearLevel, yearLevel),
 				eq(table.subject.isArchived, false)
 			)
 		)
@@ -506,8 +532,7 @@ export async function createSchoolTerm(
 			schoolSemesterId: semesterId,
 			termNumber: termNumber,
 			startDate,
-			endDate,
-			isArchived: false
+			endDate
 		})
 		.returning();
 
