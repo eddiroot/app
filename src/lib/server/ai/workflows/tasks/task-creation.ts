@@ -1,17 +1,34 @@
-import { subjectGroupEnum, taskTypeEnum, yearLevelEnum } from "$lib/enums";
-import { assessmentTask, curriculumSubjectExtraContent, examQuestion, keyKnowledge, keySkill, learningActivity, learningArea, learningAreaStandard, outcome, standardElaboration, taskBlock, tempPool } from "$lib/server/db/schema";
-import { getLearningAreaStandardWithElaborationsByIds } from "$lib/server/db/service";
-import { Document } from "@langchain/core/documents";
-import { Annotation, END, Send, StateGraph } from "@langchain/langgraph";
-import { defaultEmbeddings } from "../../embeddings";
-import { getBaseLLM } from "../../models/base";
-import { createOptimizedSubjectGroupNode } from "../../nodes/analysis/subject";
-import { multiBlockGenerationNode, type OrderedBlock, type TaskBlock } from "../../nodes/generation/task-block";
-import { createOrchestratorNode } from "../../nodes/orchestrator-synthesiser/task";
-import { createRAGRetrievalNode } from "../../nodes/retrieval/multi-store";
-import type { ContentSection } from "../../schemas/task";
-import { createTaskTool, type TaskCreationData } from "../../tools/database/task-persistence";
-import { TableVectorStore } from "../../vector-store/base";
+import { subjectGroupEnum, taskTypeEnum, yearLevelEnum } from '$lib/enums';
+import {
+	assessmentTask,
+	curriculumSubjectExtraContent,
+	examQuestion,
+	keyKnowledge,
+	keySkill,
+	learningActivity,
+	learningArea,
+	learningAreaStandard,
+	outcome,
+	standardElaboration,
+	taskBlock,
+	tempPool
+} from '$lib/server/db/schema';
+import { getLearningAreaStandardWithElaborationsByIds } from '$lib/server/db/service';
+import { Document } from '@langchain/core/documents';
+import { Annotation, END, Send, StateGraph } from '@langchain/langgraph';
+import { defaultEmbeddings } from '../../embeddings';
+import { getBaseLLM } from '../../models/base';
+import { createOptimizedSubjectGroupNode } from '../../nodes/analysis/subject';
+import {
+	multiBlockGenerationNode,
+	type OrderedBlock,
+	type TaskBlock
+} from '../../nodes/generation/task-block';
+import { createOrchestratorNode } from '../../nodes/orchestrator-synthesiser/task';
+import { createRAGRetrievalNode } from '../../nodes/retrieval/multi-store';
+import type { ContentSection } from '../../schemas/task';
+import { createTaskTool, type TaskCreationData } from '../../tools/database/task-persistence';
+import { TableVectorStore } from '../../vector-store/base';
 
 /**
 New Workflow 
@@ -54,11 +71,11 @@ Added things to consider:
 // =============================================================================
 
 export interface TaskPlan {
-    name: string;
-    courseMapItemId: number;
-    learningAreaStandardIds: number[];
-    scopes: string[];
-    description: string;
+	name: string;
+	courseMapItemId: number;
+	learningAreaStandardIds: number[];
+	scopes: string[];
+	description: string;
 }
 
 // =============================================================================
@@ -66,50 +83,50 @@ export interface TaskPlan {
 // =============================================================================
 
 export const TaskGenerationState = Annotation.Root({
-    // Input 
-    taskType: Annotation<taskTypeEnum>,
-    title: Annotation<string>,
-    description: Annotation<string | undefined>,
-    subjectOfferingId: Annotation<number>,
-    curriculumSubjectId: Annotation<number | undefined>,
-    courseMapItemId: Annotation<number>,
-    subjectOfferingClassId: Annotation<number>,
-    author: Annotation<string>,
-    week: Annotation<number | undefined>,
-    dueDate: Annotation<Date | undefined>,
-    learningAreaStandardIds: Annotation<number[]>,
-    yearLevel: Annotation<yearLevelEnum>,
-    uploadedFiles: Annotation<string[] | undefined>,
-    aiTutorEnabled: Annotation<boolean>,
+	// Input
+	taskType: Annotation<taskTypeEnum>,
+	title: Annotation<string>,
+	description: Annotation<string | undefined>,
+	subjectOfferingId: Annotation<number>,
+	curriculumSubjectId: Annotation<number | undefined>,
+	courseMapItemId: Annotation<number>,
+	subjectOfferingClassId: Annotation<number>,
+	author: Annotation<string>,
+	week: Annotation<number | undefined>,
+	dueDate: Annotation<Date | undefined>,
+	learningAreaStandardIds: Annotation<number[]>,
+	yearLevel: Annotation<yearLevelEnum>,
+	uploadedFiles: Annotation<string[] | undefined>,
+	aiTutorEnabled: Annotation<boolean>,
 
-    // Intermediate states
-    retrievedContent: Annotation<Document[]>,
-    contentSections: Annotation<ContentSection[]>,
-    taskDescription: Annotation<string>,
-    subjectGroup: Annotation<subjectGroupEnum>,
+	// Intermediate states
+	retrievedContent: Annotation<Document[]>,
+	contentSections: Annotation<ContentSection[]>,
+	taskDescription: Annotation<string>,
+	subjectGroup: Annotation<subjectGroupEnum>,
 
-    // Blocks from parallel workers - uses reducer to combine
-    generatedBlocks: Annotation<OrderedBlock[]>({
-        default: () => [],
-        reducer: (current, update) => [...current, ...update],
-    }),
+	// Blocks from parallel workers - uses reducer to combine
+	generatedBlocks: Annotation<OrderedBlock[]>({
+		default: () => [],
+		reducer: (current, update) => [...current, ...update]
+	}),
 
-    // Output
-    taskId: Annotation<number | undefined>,
-    planId: Annotation<number | undefined>,
+	// Output
+	taskId: Annotation<number | undefined>,
+	planId: Annotation<number | undefined>
 });
 
 // Worker state - what gets sent to each block generation worker
 export const BlockWorkerState = Annotation.Root({
-    contentSection: Annotation<ContentSection>,
-    taskType: Annotation<taskTypeEnum>,
-    subjectGroup: Annotation<subjectGroupEnum>,
-    
-    // Output - reducer to collect blocks
-    generatedBlocks: Annotation<OrderedBlock[]>({
-        default: () => [],
-        reducer: (current, update) => [...current, ...update],
-    }),
+	contentSection: Annotation<ContentSection>,
+	taskType: Annotation<taskTypeEnum>,
+	subjectGroup: Annotation<subjectGroupEnum>,
+
+	// Output - reducer to collect blocks
+	generatedBlocks: Annotation<OrderedBlock[]>({
+		default: () => [],
+		reducer: (current, update) => [...current, ...update]
+	})
 });
 
 type TaskGenState = typeof TaskGenerationState.State;
@@ -120,220 +137,224 @@ type WorkerState = typeof BlockWorkerState.State;
 // =============================================================================
 
 export function createTaskGenerationGraph() {
-    const llm = getBaseLLM();
+	const llm = getBaseLLM();
 
-    // -------------------------------------------------------------------------
-    // Initialise Vector Stores
-    // -------------------------------------------------------------------------
-    const learningAreaVectorStore = new TableVectorStore(learningArea, defaultEmbeddings);
-    const learningAreaStandardVectorStore = new TableVectorStore(learningAreaStandard, defaultEmbeddings);
-    const standardElaborationVectorStore = new TableVectorStore(standardElaboration, defaultEmbeddings);
-    const outcomeVectorStore = new TableVectorStore(outcome, defaultEmbeddings);
-    const keySkillVectorStore = new TableVectorStore(keySkill, defaultEmbeddings);
-    const keyKnowledgeVectorStore = new TableVectorStore(keyKnowledge, defaultEmbeddings);
-    const examQuestionVectorStore = new TableVectorStore(examQuestion, defaultEmbeddings);
-    const learningActivityVectorStore = new TableVectorStore(learningActivity, defaultEmbeddings);
-    const assessmentTaskVectorStore = new TableVectorStore(assessmentTask, defaultEmbeddings);
-    const curriculumSubjectExtraContentVectorStore = new TableVectorStore(curriculumSubjectExtraContent, defaultEmbeddings);
-    const taskBlockVectorStore = new TableVectorStore(taskBlock, defaultEmbeddings);
-    const tempPoolVectorStore = new TableVectorStore(tempPool, defaultEmbeddings);
+	// -------------------------------------------------------------------------
+	// Initialise Vector Stores
+	// -------------------------------------------------------------------------
+	const learningAreaVectorStore = new TableVectorStore(learningArea, defaultEmbeddings);
+	const learningAreaStandardVectorStore = new TableVectorStore(
+		learningAreaStandard,
+		defaultEmbeddings
+	);
+	const standardElaborationVectorStore = new TableVectorStore(
+		standardElaboration,
+		defaultEmbeddings
+	);
+	const outcomeVectorStore = new TableVectorStore(outcome, defaultEmbeddings);
+	const keySkillVectorStore = new TableVectorStore(keySkill, defaultEmbeddings);
+	const keyKnowledgeVectorStore = new TableVectorStore(keyKnowledge, defaultEmbeddings);
+	const examQuestionVectorStore = new TableVectorStore(examQuestion, defaultEmbeddings);
+	const learningActivityVectorStore = new TableVectorStore(learningActivity, defaultEmbeddings);
+	const assessmentTaskVectorStore = new TableVectorStore(assessmentTask, defaultEmbeddings);
+	const curriculumSubjectExtraContentVectorStore = new TableVectorStore(
+		curriculumSubjectExtraContent,
+		defaultEmbeddings
+	);
+	const taskBlockVectorStore = new TableVectorStore(taskBlock, defaultEmbeddings);
+	const tempPoolVectorStore = new TableVectorStore(tempPool, defaultEmbeddings);
 
-    // -------------------------------------------------------------------------
-    // Create RAG Nodes
-    // -------------------------------------------------------------------------
-    const teachRAGNode = createRAGRetrievalNode({
-        vectorStores: [
-            learningAreaVectorStore,
-            learningAreaStandardVectorStore,
-            standardElaborationVectorStore,
-            keySkillVectorStore,
-            keyKnowledgeVectorStore,
-            learningActivityVectorStore,
-            curriculumSubjectExtraContentVectorStore,
-            taskBlockVectorStore,
-            tempPoolVectorStore
-        ] as unknown as TableVectorStore<Record<string, unknown>>[],
-        defaultK: 6
-    });
+	// -------------------------------------------------------------------------
+	// Create RAG Nodes
+	// -------------------------------------------------------------------------
+	const teachRAGNode = createRAGRetrievalNode({
+		vectorStores: [
+			learningAreaVectorStore,
+			learningAreaStandardVectorStore,
+			standardElaborationVectorStore,
+			keySkillVectorStore,
+			keyKnowledgeVectorStore,
+			learningActivityVectorStore,
+			curriculumSubjectExtraContentVectorStore,
+			taskBlockVectorStore,
+			tempPoolVectorStore
+		] as unknown as TableVectorStore<Record<string, unknown>>[],
+		defaultK: 6
+	});
 
-    const assessRAGNode = createRAGRetrievalNode({
-        vectorStores: [
-            learningAreaVectorStore,
-            learningAreaStandardVectorStore,
-            standardElaborationVectorStore,
-            outcomeVectorStore,
-            keySkillVectorStore,
-            keyKnowledgeVectorStore,
-            examQuestionVectorStore,
-            assessmentTaskVectorStore,
-            taskBlockVectorStore,
-            tempPoolVectorStore
-        ] as unknown as TableVectorStore<Record<string, unknown>>[],
-        defaultK: 6
-    });
+	const assessRAGNode = createRAGRetrievalNode({
+		vectorStores: [
+			learningAreaVectorStore,
+			learningAreaStandardVectorStore,
+			standardElaborationVectorStore,
+			outcomeVectorStore,
+			keySkillVectorStore,
+			keyKnowledgeVectorStore,
+			examQuestionVectorStore,
+			assessmentTaskVectorStore,
+			taskBlockVectorStore,
+			tempPoolVectorStore
+		] as unknown as TableVectorStore<Record<string, unknown>>[],
+		defaultK: 6
+	});
 
-    // -------------------------------------------------------------------------
-    // Create Other Nodes
-    // -------------------------------------------------------------------------
-    const orchestratorNode = createOrchestratorNode(llm);
-    const blockGeneratorNode = multiBlockGenerationNode(llm);
-    const subjectGroupNode = createOptimizedSubjectGroupNode(llm);
-    
+	// -------------------------------------------------------------------------
+	// Create Other Nodes
+	// -------------------------------------------------------------------------
+	const orchestratorNode = createOrchestratorNode(llm);
+	const blockGeneratorNode = multiBlockGenerationNode(llm);
+	const subjectGroupNode = createOptimizedSubjectGroupNode(llm);
 
-    // -------------------------------------------------------------------------
-    // Build Graph
-    // -------------------------------------------------------------------------
-    const graph = new StateGraph(TaskGenerationState)
-        // Node: Infer Subject Group (if not provided)
-        .addNode("infer_subject_group", async (state: TaskGenState) => {
-            console.log("[1/6] Infer Subject Group");
-            if (state.subjectGroup) {
-                console.log("  → Already set:", state.subjectGroup);
-                return {};
-            }
+	// -------------------------------------------------------------------------
+	// Build Graph
+	// -------------------------------------------------------------------------
+	const graph = new StateGraph(TaskGenerationState)
+		// Node: Infer Subject Group (if not provided)
+		.addNode('infer_subject_group', async (state: TaskGenState) => {
+			console.log('[1/6] Infer Subject Group');
+			if (state.subjectGroup) {
+				console.log('  → Already set:', state.subjectGroup);
+				return {};
+			}
 
-            const result = await subjectGroupNode({
-                subjectOfferingId: state.subjectOfferingId
-            });
+			const result = await subjectGroupNode({
+				subjectOfferingId: state.subjectOfferingId
+			});
 
-            console.log("  → Inferred:", result.subjectGroup);
-            return { subjectGroup: result.subjectGroup };
-        })
+			console.log('  → Inferred:', result.subjectGroup);
+			return { subjectGroup: result.subjectGroup };
+		})
 
+		// Node: RAG Retrieval
+		.addNode('retrieve_content', async (state: TaskGenState) => {
+			console.log('[3/6] RAG Retrieval');
+			const isAssessment =
+				state.taskType === taskTypeEnum.test ||
+				state.taskType === taskTypeEnum.assignment ||
+				state.taskType === taskTypeEnum.homework;
 
-        // Node: RAG Retrieval
-        .addNode("retrieve_content", async (state: TaskGenState) => {
-            console.log("[3/6] RAG Retrieval");
-            const isAssessment = state.taskType === taskTypeEnum.test || 
-                                 state.taskType === taskTypeEnum.assignment ||
-                                 state.taskType === taskTypeEnum.homework;
+			console.log('  → Type:', isAssessment ? 'assessment' : 'teaching');
+			const RAGNode = isAssessment ? assessRAGNode : teachRAGNode;
+			const query = await buildRetrievalQuery(state);
+			console.log('  → Query:', query.substring(0, 100) + (query.length > 100 ? '...' : ''));
 
-            console.log("  → Type:", isAssessment ? "assessment" : "teaching");
-            const RAGNode = isAssessment ? assessRAGNode : teachRAGNode;
-            const query = await buildRetrievalQuery(state);
-            console.log("  → Query:", query.substring(0, 100) + (query.length > 100 ? "..." : ""));
-            
-            const retrievedContent = await RAGNode({ 
-                query: query || `${state.title} ${state.description ?? ''}`, 
-                k: 15, 
-                filter: { curriculumSubjectId: state.curriculumSubjectId, yearLevel: state.yearLevel } 
-            });
-        
-            console.log("  → Retrieved", retrievedContent.length, "documents");
-            return { retrievedContent };
-        })
+			const retrievedContent = await RAGNode({
+				query: query || `${state.title} ${state.description ?? ''}`,
+				k: 15,
+				filter: { curriculumSubjectId: state.curriculumSubjectId, yearLevel: state.yearLevel }
+			});
 
-        // Node: Orchestrator - Creates content sections
-        .addNode("orchestrate_content", async (state: TaskGenState) => {
-            console.log("[4/6] Orchestrate Content");
-            console.log("  → Input docs:", state.retrievedContent.length);
-            
-            const result = await orchestratorNode({
-                taskType: state.taskType,
-                title: state.title,
-                yearLevel: state.yearLevel,
-                description: state.description,
-                retrievedContent: state.retrievedContent
-            });
+			console.log('  → Retrieved', retrievedContent.length, 'documents');
+			return { retrievedContent };
+		})
 
-            console.log("  → Generated", result.sections.length, "sections");
-            result.sections.forEach((s, i) => console.log(`    [${i}] ${s.scope.substring(0, 60)}...`));
-            return {
-                contentSections: result.sections,
-                taskDescription: result.taskDescription
-            };
-        })
+		// Node: Orchestrator - Creates content sections
+		.addNode('orchestrate_content', async (state: TaskGenState) => {
+			console.log('[4/6] Orchestrate Content');
+			console.log('  → Input docs:', state.retrievedContent.length);
 
-        // Node: Block Generation Worker (receives Send from dispatcher)
-        .addNode("generate_blocks", async (state: WorkerState) => {
-            console.log("[5/6] Generate Blocks - Section", state.contentSection.index);
-            
-            const result = await blockGeneratorNode({
-                contentSection: state.contentSection,
-                taskType: state.taskType,
-                subjectGroup: state.subjectGroup
-            });
+			const result = await orchestratorNode({
+				taskType: state.taskType,
+				title: state.title,
+				yearLevel: state.yearLevel,
+				description: state.description,
+				retrievedContent: state.retrievedContent
+			});
 
-            console.log("  → Generated", result.blocks.length, "blocks");
-            const blocksWithOrder = result.blocks.map((block, blockIndex) => ({
-                ...block,
-                _sectionIndex: result.sectionIndex,
-                _blockIndex: blockIndex
-            }));
+			console.log('  → Generated', result.sections.length, 'sections');
+			result.sections.forEach((s, i) => console.log(`    [${i}] ${s.scope.substring(0, 60)}...`));
+			return {
+				contentSections: result.sections,
+				taskDescription: result.taskDescription
+			};
+		})
 
-            return { generatedBlocks: blocksWithOrder };
-        })
+		// Node: Block Generation Worker (receives Send from dispatcher)
+		.addNode('generate_blocks', async (state: WorkerState) => {
+			console.log('[5/6] Generate Blocks - Section', state.contentSection.index);
 
-        // Node: Assemble and persist task
-        .addNode("persist_task", async (state: TaskGenState) => {
-            console.log("[6/6] Persist Task");
-            console.log("  → Total blocks:", state.generatedBlocks.length);
-            
-            // Sort blocks by section index, then block index
-            const sortedBlocks = [...state.generatedBlocks]
-                .sort((a, b) => {
-                    const sectionDiff = a._sectionIndex - b._sectionIndex;
-                    if (sectionDiff !== 0) return sectionDiff;
-                    return a._blockIndex - b._blockIndex;
-                })
-                .map((orderedBlock): TaskBlock => {
-                    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-                    const { _sectionIndex, _blockIndex, ...block } = orderedBlock;
-                    return block;
-                }); 
+			const result = await blockGeneratorNode({
+				contentSection: state.contentSection,
+				taskType: state.taskType,
+				subjectGroup: state.subjectGroup
+			});
 
-            const taskPlan: TaskPlan = {
-                name: state.title,
-                courseMapItemId: state.courseMapItemId,
-                learningAreaStandardIds: state.learningAreaStandardIds,
-                scopes: state.contentSections.map(s => s.scope),
-                description: state.taskDescription
-            };
+			console.log('  → Generated', result.blocks.length, 'blocks');
+			const blocksWithOrder = result.blocks.map((block, blockIndex) => ({
+				...block,
+				_sectionIndex: result.sectionIndex,
+				_blockIndex: blockIndex
+			}));
 
-            const taskData: TaskCreationData = {
-                title: state.title,
-                description: state.taskDescription,
-                taskType: state.taskType,
-                subjectOfferingId: state.subjectOfferingId,
-                subjectOfferingClassId: state.subjectOfferingClassId,
-                courseMapItemId: state.courseMapItemId,
-                author: state.author,
-                week: state.week,
-                dueDate: state.dueDate,
-                aiTutorEnabled: state.aiTutorEnabled,
-                blocks: sortedBlocks,
-                plan: taskPlan
-            };
+			return { generatedBlocks: blocksWithOrder };
+		})
 
-            const result = await createTaskTool.invoke(taskData);
+		// Node: Assemble and persist task
+		.addNode('persist_task', async (state: TaskGenState) => {
+			console.log('[6/6] Persist Task');
+			console.log('  → Total blocks:', state.generatedBlocks.length);
 
-            console.log("  → Task ID:", result.taskId);
-            console.log("  → Plan ID:", result.planId);
-            return {
-                taskId: result.taskId,
-                planId: result.planId
-            };
-        })
+			// Sort blocks by section index, then block index
+			const sortedBlocks = [...state.generatedBlocks]
+				.sort((a, b) => {
+					const sectionDiff = a._sectionIndex - b._sectionIndex;
+					if (sectionDiff !== 0) return sectionDiff;
+					return a._blockIndex - b._blockIndex;
+				})
+				.map((orderedBlock): TaskBlock => {
+					// eslint-disable-next-line @typescript-eslint/no-unused-vars
+					const { _sectionIndex, _blockIndex, ...block } = orderedBlock;
+					return block;
+				});
 
-        // -------------------------------------------------------------------------
-        // Edges
-        // -------------------------------------------------------------------------
-        .addEdge("__start__", "infer_subject_group")
-        .addEdge("infer_subject_group", "retrieve_content")
-        .addEdge("retrieve_content", "orchestrate_content")
-        
-        // Conditional edge: Dispatch workers for each section
-        .addConditionalEdges(
-            "orchestrate_content",
-            dispatchBlockWorkers,
-            ["generate_blocks"]
-        )
-        
-        // Workers converge to persist
-        .addEdge("generate_blocks", "persist_task")
-        .addEdge("persist_task", END);
+			const taskPlan: TaskPlan = {
+				name: state.title,
+				courseMapItemId: state.courseMapItemId,
+				learningAreaStandardIds: state.learningAreaStandardIds,
+				scopes: state.contentSections.map((s) => s.scope),
+				description: state.taskDescription
+			};
 
-    return graph.compile();
+			const taskData: TaskCreationData = {
+				title: state.title,
+				description: state.taskDescription,
+				taskType: state.taskType,
+				subjectOfferingId: state.subjectOfferingId,
+				subjectOfferingClassId: state.subjectOfferingClassId,
+				courseMapItemId: state.courseMapItemId,
+				author: state.author,
+				week: state.week,
+				dueDate: state.dueDate,
+				aiTutorEnabled: state.aiTutorEnabled,
+				blocks: sortedBlocks,
+				plan: taskPlan
+			};
+
+			const result = await createTaskTool.invoke(taskData);
+
+			console.log('  → Task ID:', result.taskId);
+			console.log('  → Plan ID:', result.planId);
+			return {
+				taskId: result.taskId,
+				planId: result.planId
+			};
+		})
+
+		// -------------------------------------------------------------------------
+		// Edges
+		// -------------------------------------------------------------------------
+		.addEdge('__start__', 'infer_subject_group')
+		.addEdge('infer_subject_group', 'retrieve_content')
+		.addEdge('retrieve_content', 'orchestrate_content')
+
+		// Conditional edge: Dispatch workers for each section
+		.addConditionalEdges('orchestrate_content', dispatchBlockWorkers, ['generate_blocks'])
+
+		// Workers converge to persist
+		.addEdge('generate_blocks', 'persist_task')
+		.addEdge('persist_task', END);
+
+	return graph.compile();
 }
 
 // =============================================================================
@@ -344,50 +365,56 @@ export function createTaskGenerationGraph() {
  * Dispatches parallel workers for each content section
  */
 function dispatchBlockWorkers(state: TaskGenState): Send[] {
-    console.log("  → Dispatching", state.contentSections.length, "parallel workers");
-    return state.contentSections.map((section) =>
-        new Send("generate_blocks", {
-            contentSection: section,
-            taskType: state.taskType,
-            subjectGroup: state.subjectGroup,
-            generatedBlocks: [] 
-        })
-    );
+	console.log('  → Dispatching', state.contentSections.length, 'parallel workers');
+	return state.contentSections.map(
+		(section) =>
+			new Send('generate_blocks', {
+				contentSection: section,
+				taskType: state.taskType,
+				subjectGroup: state.subjectGroup,
+				generatedBlocks: []
+			})
+	);
 }
 
 /**
  * Builds the retrieval query from task state
  */
 async function buildRetrievalQuery(state: TaskGenState): Promise<string> {
-    let query = state.title;
-    
-    // Add description if present
-    if (state.description) {
-        query += ' ' + state.description;
-    }
-    
-    // Add learning standards with elaborations
-    if (state.learningAreaStandardIds.length > 0) {
-        const standards = await getLearningAreaStandardWithElaborationsByIds(state.learningAreaStandardIds);
-        
-        const standardsText = standards.map(standard => {
-            const elaborationsText = standard.elaborations
-                ?.map(e => e.standardElaboration)
-                .filter(Boolean)
-                .join('; ') ?? '';
-            
-            if (elaborationsText) {
-                return `${standard.learningAreaStandard.description} (${elaborationsText})`;
-            }
-            return standard.learningAreaStandard.description;
-        }).join(' | ');
-        
-        if (standardsText) {
-            query += ' ' + standardsText;
-        }
-    }
-    
-    return query;
+	let query = state.title;
+
+	// Add description if present
+	if (state.description) {
+		query += ' ' + state.description;
+	}
+
+	// Add learning standards with elaborations
+	if (state.learningAreaStandardIds.length > 0) {
+		const standards = await getLearningAreaStandardWithElaborationsByIds(
+			state.learningAreaStandardIds
+		);
+
+		const standardsText = standards
+			.map((standard) => {
+				const elaborationsText =
+					standard.elaborations
+						?.map((e) => e.standardElaboration)
+						.filter(Boolean)
+						.join('; ') ?? '';
+
+				if (elaborationsText) {
+					return `${standard.learningAreaStandard.description} (${elaborationsText})`;
+				}
+				return standard.learningAreaStandard.description;
+			})
+			.join(' | ');
+
+		if (standardsText) {
+			query += ' ' + standardsText;
+		}
+	}
+
+	return query;
 }
 
 // =============================================================================
@@ -395,51 +422,51 @@ async function buildRetrievalQuery(state: TaskGenState): Promise<string> {
 // =============================================================================
 
 export interface TaskGenerationInput {
-    taskType: taskTypeEnum;
-    title: string;
-    description?: string;
-    subjectOfferingId: number;
-    curriculumSubjectId?: number;
-    courseMapItemId: number;
-    subjectOfferingClassId: number;
-    author: string;
-    week?: number;
-    dueDate?: Date;
-    learningAreaStandardIds: number[];
-    yearLevel: yearLevelEnum;
-    subjectGroup?: subjectGroupEnum; 
-    uploadedFiles?: string[];
-    aiTutorEnabled: boolean;
+	taskType: taskTypeEnum;
+	title: string;
+	description?: string;
+	subjectOfferingId: number;
+	curriculumSubjectId?: number;
+	courseMapItemId: number;
+	subjectOfferingClassId: number;
+	author: string;
+	week?: number;
+	dueDate?: Date;
+	learningAreaStandardIds: number[];
+	yearLevel: yearLevelEnum;
+	subjectGroup?: subjectGroupEnum;
+	uploadedFiles?: string[];
+	aiTutorEnabled: boolean;
 }
 
 export interface TaskGenerationOutput {
-    taskId: number;
-    planId: number | null;
+	taskId: number;
+	planId: number | null;
 }
 
 /**
  * Run the task generation workflow
  */
 export async function generateTask(input: TaskGenerationInput): Promise<TaskGenerationOutput> {
-    console.log("\n=== Task Generation Workflow ===");
-    console.log("Title:", input.title);
-    console.log("Type:", input.taskType);
-    console.log("Year Level:", input.yearLevel);
-    
-    const graph = createTaskGenerationGraph();
-    const result = await graph.invoke({
-        ...input,
-        retrievedContent: [],
-        contentSections: [],
-        taskDescription: '',
-        generatedBlocks: [],
-        taskId: undefined,
-        planId: undefined
-    });
+	console.log('\n=== Task Generation Workflow ===');
+	console.log('Title:', input.title);
+	console.log('Type:', input.taskType);
+	console.log('Year Level:', input.yearLevel);
 
-    console.log("=== Workflow Complete ===\n");
-    return {
-        taskId: result.taskId!,
-        planId: result.planId ?? null
-    };
+	const graph = createTaskGenerationGraph();
+	const result = await graph.invoke({
+		...input,
+		retrievedContent: [],
+		contentSections: [],
+		taskDescription: '',
+		generatedBlocks: [],
+		taskId: undefined,
+		planId: undefined
+	});
+
+	console.log('=== Workflow Complete ===\n');
+	return {
+		taskId: result.taskId!,
+		planId: result.planId ?? null
+	};
 }

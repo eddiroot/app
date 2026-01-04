@@ -3,11 +3,7 @@ import { geminiCompletion } from '$lib/server/ai/index.js';
 import {
 	createSubjectThreadResponse,
 	getSubjectThreadById,
-	getSubjectThreadLikeInfo,
-	getSubjectThreadResponseLikeCounts,
-	getSubjectThreadResponsesById,
-	toggleSubjectThreadLike,
-	toggleSubjectThreadResponseLike
+	getSubjectThreadResponsesById
 } from '$lib/server/db/service';
 import { fail, superValidate } from 'sveltekit-superforms';
 import { zod4 } from 'sveltekit-superforms/adapters';
@@ -19,32 +15,17 @@ export const load = async ({ locals: { security }, params: { threadId } }) => {
 
 	const threadIdInt = parseInt(threadId, 10);
 	if (isNaN(threadIdInt)) {
-		return {
-			thread: null,
-			responses: [],
-			form: null,
-			currentUser,
-			threadLikes: null,
-			responseLikes: []
-		};
+		return { thread: null, responses: [], form: null, currentUser };
 	}
 
 	const thread = await getSubjectThreadById(threadIdInt);
 	const responses = await getSubjectThreadResponsesById(threadIdInt);
 	const nestedResponses = getNestedResponses(responses);
-
-	// Get like information for the thread
-	const threadLikes = await getSubjectThreadLikeInfo(threadIdInt, currentUser.id);
-
-	// Get like information for all responses
-	const responseIds = responses.map((r) => r.response.id);
-	const responseLikes = await getSubjectThreadResponseLikeCounts(responseIds, currentUser.id);
-
 	const form = await superValidate(zod4(formSchema), {
 		defaults: {
 			type:
 				thread?.thread?.type == subjectThreadTypeEnum.question ||
-					thread?.thread?.type === subjectThreadTypeEnum.qanda
+				thread?.thread?.type === subjectThreadTypeEnum.qanda
 					? subjectThreadResponseTypeEnum.answer
 					: subjectThreadResponseTypeEnum.comment,
 			content: '',
@@ -52,7 +33,7 @@ export const load = async ({ locals: { security }, params: { threadId } }) => {
 		}
 	});
 
-	return { thread, nestedResponses, form, currentUser, threadLikes, responseLikes };
+	return { thread, nestedResponses, form, currentUser };
 };
 
 export const actions = {
@@ -134,44 +115,5 @@ export const actions = {
 
 		const summary = await geminiCompletion(prompt, undefined, undefined, systemInstruction);
 		return { summary };
-	},
-	toggleThreadLike: async ({ locals: { security }, params: { threadId } }) => {
-		const user = security.isAuthenticated().getUser();
-
-		const threadIdInt = parseInt(threadId, 10);
-		if (isNaN(threadIdInt)) {
-			return fail(400, { message: 'Invalid thread ID' });
-		}
-
-		try {
-			const result = await toggleSubjectThreadLike(threadIdInt, user.id);
-			return { success: true, liked: result.liked };
-		} catch (error) {
-			console.error('Error toggling thread like:', error);
-			return fail(500, { message: 'Failed to toggle like' });
-		}
-	},
-	toggleResponseLike: async ({ request, locals: { security } }) => {
-		const user = security.isAuthenticated().getUser();
-
-		const formData = await request.formData();
-		const responseId = formData.get('responseId');
-
-		if (!responseId) {
-			return fail(400, { message: 'Response ID is required' });
-		}
-
-		const responseIdInt = parseInt(responseId.toString(), 10);
-		if (isNaN(responseIdInt)) {
-			return fail(400, { message: 'Invalid response ID' });
-		}
-
-		try {
-			const result = await toggleSubjectThreadResponseLike(responseIdInt, user.id);
-			return { success: true, liked: result.liked, responseId: responseIdInt };
-		} catch (error) {
-			console.error('Error toggling response like:', error);
-			return fail(500, { message: 'Failed to toggle like' });
-		}
 	}
 };

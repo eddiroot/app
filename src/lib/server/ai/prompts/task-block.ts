@@ -1,4 +1,3 @@
-
 import { taskBlockTypeEnum, taskTypeEnum } from '$lib/enums';
 
 /**
@@ -126,14 +125,12 @@ Hints should scaffold learning, not just reveal the answer.`,
 - Final step should lead to the complete answer`
 };
 
-
 /**
  * Get the prompt description for a specific block type
  */
 export function getBlockPrompt(blockType: taskBlockTypeEnum): string {
 	return blockPrompts[blockType] || 'Generate appropriate content for this block type.';
 }
-
 
 /**
  * Build the block prompt based on the blocks being used and the content
