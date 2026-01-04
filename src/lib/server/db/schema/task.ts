@@ -24,7 +24,7 @@ import { learningAreaStandard } from './curriculum';
 import { resource } from './resource';
 import { subjectOffering, subjectOfferingClass } from './subjects';
 import { user } from './user';
-import { embeddings, flags, timestamps } from './utils';
+import { embeddings, timestamps } from './utils';
 
 export const taskSchema = pgSchema('task');
 
@@ -61,7 +61,7 @@ export const task = taskSchema.table(
 			.notNull()
 			.references(() => subjectOffering.id, { onDelete: 'cascade' }),
 		aiTutorEnabled: boolean('ai_tutor_enabled').notNull().default(true),
-		...flags,
+		isArchived: boolean('is_archived').default(false).notNull(),
 		...timestamps
 	},
 	(self) => [
@@ -154,7 +154,7 @@ export const subjectOfferingClassTask = taskSchema.table('sub_off_class_task', {
 	}),
 	week: integer('week'),
 	dueDate: timestamp({ mode: 'date' }),
-	...flags,
+	isArchived: boolean('is_archived').default(false).notNull(),
 	rubricId: integer('rubric_id').references(() => rubric.id, { onDelete: 'set null' }),
 	quizMode: quizModeEnumPg().notNull().default(quizModeEnum.none),
 	quizStartTime: timestamp({ mode: 'date' }),
@@ -207,7 +207,7 @@ export const classTaskResponse = taskSchema.table(
 			.notNull()
 			.references(() => user.id, { onDelete: 'cascade' }),
 		teacherId: uuid('teacher_id').references(() => user.id, { onDelete: 'cascade' }), // Teacher who graded the task response
-		...flags,
+		isArchived: boolean('is_archived').default(false).notNull(),
 		// Quiz session fields (moved from studentQuizSession)
 		quizStartedAt: timestamp({ mode: 'date' }), // When student started the quiz
 		quizEndedAt: timestamp({ mode: 'date' }), // When student ended/submitted the quiz
@@ -237,7 +237,7 @@ export const classTaskResponseResource = taskSchema.table('task_response_resourc
 	authorId: uuid('author_id')
 		.notNull()
 		.references(() => user.id, { onDelete: 'cascade' }),
-	...flags,
+	isArchived: boolean('is_archived').default(false).notNull(),
 	...timestamps
 });
 

@@ -1,6 +1,6 @@
-import { index, integer, pgSchema, text, uuid } from 'drizzle-orm/pg-core';
+import { boolean, index, integer, pgSchema, text, uuid } from 'drizzle-orm/pg-core';
 import { user } from './user';
-import { embeddings, flags, timestamps } from './utils';
+import { embeddings, timestamps } from './utils';
 
 export const resourceSchema = pgSchema('resource');
 
@@ -17,7 +17,7 @@ export const resource = resourceSchema.table(
 		uploadedBy: uuid('uploaded_by')
 			.notNull()
 			.references(() => user.id, { onDelete: 'cascade' }),
-		...flags,
+		isArchived: boolean('is_archived').default(false).notNull().notNull(),
 		...timestamps,
 		...embeddings
 	}, // If we want to embed resources for search as well.

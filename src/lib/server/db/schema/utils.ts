@@ -1,4 +1,5 @@
 import {
+	boolean,
 	index,
 	integer,
 	jsonb,
@@ -19,12 +20,6 @@ export const timestamps = {
 		.notNull()
 };
 
-/**
- * Standard flags column - uses bitwise RecordFlagEnum from enums.ts
- */
-export const flags = {
-	flags: integer('flags').notNull().default(0)
-};
 
 // Enums used across multiple schema files - defined here to avoid circular dependencies
 export const yearLevelEnumPg = utilsSchema.enum('enum_year_level', [
@@ -65,7 +60,7 @@ export const tempPool = utilsSchema.table(
 		id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
 		content: text('content').notNull(),
 		...embeddings,
-		...flags,
+		isArchived: boolean('is_archived').default(false).notNull(),
 		...timestamps
 	},
 	(self) => [

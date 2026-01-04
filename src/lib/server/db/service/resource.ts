@@ -1,8 +1,6 @@
-import { RecordFlagEnum } from '$lib/enums';
 import { db } from '$lib/server/db';
 import * as table from '$lib/server/db/schema';
 import { and, eq } from 'drizzle-orm';
-import { notArchived, setFlagExpr } from './utils';
 
 export async function createResource(
 	name: string,
@@ -35,7 +33,7 @@ export async function getResourceById(resourceId: number) {
 	const [resource] = await db
 		.select()
 		.from(table.resource)
-		.where(and(eq(table.resource.id, resourceId), notArchived(table.resource.flags)))
+		.where(and(eq(table.resource.id, resourceId), eq(table.resource.isArchived, false)))
 		.limit(1);
 
 	return resource || null;
@@ -44,7 +42,7 @@ export async function getResourceById(resourceId: number) {
 export async function archiveResource(resourceId: number) {
 	const [resource] = await db
 		.update(table.resource)
-		.set({ flags: setFlagExpr(table.resource.flags, RecordFlagEnum.archived) })
+		.set({ isArchived: true })
 		.where(eq(table.resource.id, resourceId))
 		.returning();
 

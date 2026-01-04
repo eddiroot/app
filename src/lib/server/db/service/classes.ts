@@ -1,8 +1,7 @@
-import { RecordFlagEnum, userTypeEnum } from '$lib/enums';
+import { userTypeEnum } from '$lib/enums';
 import { db } from '$lib/server/db';
 import * as table from '$lib/server/db/schema';
 import { and, asc, desc, eq, lte } from 'drizzle-orm';
-import { notArchived, setFlagExpr } from './utils';
 
 export async function getSubjectOfferingClassDetailsById(subjectOfferingClassId: number) {
 	const subjectOfferingClass = await db
@@ -342,8 +341,8 @@ export async function getSubjectOfferingClassesBySchoolId(schoolId: number) {
 		.where(
 			and(
 				eq(table.subject.schoolId, schoolId),
-				notArchived(table.subjectOfferingClass.flags),
-				notArchived(table.subjectOffering.flags)
+				eq(table.subjectOfferingClass.isArchived, false),
+				eq(table.subjectOffering.isArchived, false)
 			)
 		)
 		.orderBy(
@@ -394,7 +393,7 @@ export async function getAllocationsBySchoolId(schoolId: number) {
 		.innerJoin(table.yearLevel, eq(table.subject.yearLevelId, table.yearLevel.id))
 		.where(
 			and(
-				notArchived(table.userSubjectOfferingClass.flags),
+				eq(table.userSubjectOfferingClass.isArchived, false),
 				eq(table.subject.schoolId, schoolId)
 			)
 		)
@@ -416,8 +415,7 @@ export async function createUserSubjectOfferingClass(
 		.insert(table.userSubjectOfferingClass)
 		.values({
 			userId,
-			subOffClassId: subjectOfferingClassId,
-			flags: RecordFlagEnum.none
+			subOffClassId: subjectOfferingClassId
 		})
 		.returning();
 
@@ -427,7 +425,7 @@ export async function createUserSubjectOfferingClass(
 export async function deleteUserSubjectOfferingClass(allocationId: number) {
 	await db
 		.update(table.userSubjectOfferingClass)
-		.set({ flags: setFlagExpr(table.userSubjectOfferingClass.flags, RecordFlagEnum.archived) })
+		.set({ isArchived: true })
 		.where(eq(table.userSubjectOfferingClass.id, allocationId));
 }
 
@@ -492,7 +490,7 @@ export async function getStudentsBySubjectOfferingClassId(subjectOfferingClassId
 			and(
 				eq(table.userSubjectOfferingClass.subOffClassId, subjectOfferingClassId),
 				eq(table.user.type, userTypeEnum.student),
-				notArchived(table.userSubjectOfferingClass.flags)
+				eq(table.userSubjectOfferingClass.isArchived, false)
 			)
 		)
 		.orderBy(asc(table.user.lastName), asc(table.user.firstName));

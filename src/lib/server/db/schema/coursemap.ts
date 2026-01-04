@@ -1,9 +1,9 @@
-import { foreignKey, index, integer, pgSchema, text, unique } from 'drizzle-orm/pg-core';
+import { boolean, foreignKey, index, integer, pgSchema, text, unique } from 'drizzle-orm/pg-core';
 import { learningArea, learningAreaStandard } from './curriculum';
 import { resource } from './resource';
 import { subjectOffering } from './subjects';
 import { rubric, task } from './task';
-import { embeddings, flags, timestamps } from './utils';
+import { embeddings, timestamps } from './utils';
 
 export const courseMapSchema = pgSchema('course_map');
 
@@ -23,7 +23,7 @@ export const courseMapItem = courseMapSchema.table(
 		imageBase64: text('image_base64'),
 		originalId: integer('original_id'),
 		version: integer('version').notNull().default(1),
-		...flags,
+		isArchived: boolean('is_archived').default(false).notNull(),
 		...timestamps
 	},
 	(self) => [
@@ -49,7 +49,7 @@ export const courseMapItemLearningArea = courseMapSchema.table(
 			.references(() => learningArea.id, { onDelete: 'cascade' }),
 		originalId: integer('original_id'),
 		version: integer('version').notNull().default(1),
-		...flags,
+		isArchived: boolean('is_archived').default(false).notNull(),
 		...timestamps
 	},
 	(self) => [
@@ -79,7 +79,7 @@ export const courseMapItemAssessmentPlan = courseMapSchema.table(
 		imageBase64: text('image_base64'),
 		originalId: integer('original_id'),
 		version: integer('version').notNull().default(1),
-		...flags,
+		isArchived: boolean('is_archived').default(false).notNull(),
 		...timestamps,
 		...embeddings
 	},
@@ -120,7 +120,7 @@ export const courseMapItemLessonPlan = courseMapSchema.table(
 		imageBase64: text('image_base64'),
 		originalId: integer('original_id'),
 		version: integer('version').notNull().default(1),
-		...flags,
+		isArchived: boolean('is_archived').default(false).notNull(),
 		...timestamps,
 		...embeddings
 	},
@@ -158,7 +158,7 @@ export const lessonPlanLearningAreaStandard = courseMapSchema.table('cm_les_pln_
 		.notNull()
 		.references(() => learningAreaStandard.id, { onDelete: 'cascade' }),
 
-	...flags,
+	isArchived: boolean('is_archived').default(false).notNull(),
 	...timestamps
 });
 export type LessonPlanLearningAreaStandard = typeof lessonPlanLearningAreaStandard.$inferSelect;
@@ -171,7 +171,7 @@ export const assessmentPlanLearningAreaStandard = courseMapSchema.table('cm_ass_
 	learningAreaStandardId: integer('la_std_id')
 		.notNull()
 		.references(() => learningAreaStandard.id, { onDelete: 'cascade' }),
-	...flags,
+	isArchived: boolean('is_archived').default(false).notNull(),
 	...timestamps
 });
 
@@ -190,7 +190,7 @@ export const courseMapItemResource = courseMapSchema.table(
 			.references(() => resource.id, { onDelete: 'cascade' }),
 		originalId: integer('original_id'),
 		version: integer('version').notNull().default(1),
-		...flags,
+		isArchived: boolean('is_archived').default(false).notNull(),
 		...timestamps
 	},
 	(self) => [

@@ -1,8 +1,6 @@
-import { RecordFlagEnum } from '$lib/enums';
 import { db } from '$lib/server/db';
 import * as table from '$lib/server/db/schema';
 import { and, asc, desc, eq, gte, lt } from 'drizzle-orm';
-import { notArchived } from './utils';
 
 // School Event Functions
 export async function createSchoolEvent(
@@ -38,7 +36,7 @@ export async function getSchoolEventsBySchoolId(
 		.where(
 			and(
 				eq(table.schoolEvent.schoolId, schoolId),
-				includeArchived ? undefined : notArchived(table.schoolEvent.flags)
+				includeArchived ? undefined : eq(table.schoolEvent.isArchived, false)
 			)
 		)
 		.orderBy(desc(table.schoolEvent.startTimestamp));
@@ -67,7 +65,7 @@ export async function getSchoolEventsForWeekBySchoolId(
 				eq(table.schoolEvent.schoolId, schoolId),
 				gte(table.schoolEvent.startTimestamp, weekStart),
 				lt(table.schoolEvent.startTimestamp, weekEnd),
-				includeArchived ? undefined : notArchived(table.schoolEvent.flags)
+				includeArchived ? undefined : eq(table.schoolEvent.isArchived, false)
 			)
 		)
 		.orderBy(asc(table.schoolEvent.startTimestamp));
@@ -81,7 +79,7 @@ export async function updateSchoolEvent(
 		name?: string;
 		startTimestamp?: Date;
 		endTimestamp?: Date;
-		flags?: number;
+		isArchived?: boolean;
 	}
 ) {
 	const [updatedEvent] = await db
@@ -125,7 +123,7 @@ export async function getCampusEventsByCampusId(
 		.where(
 			and(
 				eq(table.campusEvent.campusId, campusId),
-				includeArchived ? undefined : notArchived(table.campusEvent.flags)
+				includeArchived ? undefined : eq(table.campusEvent.isArchived, false)
 			)
 		)
 		.orderBy(desc(table.schoolEvent.startTimestamp));
@@ -154,7 +152,7 @@ export async function getCampusEventsForWeekByCampusId(
 				eq(table.campusEvent.campusId, campusId),
 				gte(table.campusEvent.startTimestamp, weekStart),
 				lt(table.campusEvent.startTimestamp, weekEnd),
-				includeArchived ? undefined : notArchived(table.campusEvent.flags)
+				includeArchived ? undefined : eq(table.campusEvent.isArchived, false)
 			)
 		)
 		.orderBy(asc(table.campusEvent.startTimestamp));
@@ -185,7 +183,7 @@ export async function getCampusEventsForWeekByUserId(
 				eq(table.userCampus.userId, userId),
 				gte(table.campusEvent.startTimestamp, weekStart),
 				lt(table.campusEvent.startTimestamp, weekEnd),
-				includeArchived ? undefined : notArchived(table.campusEvent.flags)
+				includeArchived ? undefined : eq(table.campusEvent.isArchived, false)
 			)
 		)
 		.orderBy(asc(table.campusEvent.startTimestamp));
@@ -199,7 +197,7 @@ export async function updateCampusEvent(
 		name?: string;
 		startTimestamp?: Date;
 		endTimestamp?: Date;
-		flags?: number;
+		isArchived?: boolean;
 	}
 ) {
 	const [updatedEvent] = await db
@@ -226,8 +224,7 @@ export async function createSubjectOfferingEvent(
 			name,
 			startTimestamp,
 			endTimestamp,
-			requiresRSVP,
-			flags: RecordFlagEnum.none
+			requiresRSVP
 		})
 		.returning();
 
@@ -256,7 +253,7 @@ export async function getSubjectOfferingEventsBySchoolId(
 		.where(
 			and(
 				eq(table.subject.schoolId, schoolId),
-				includeArchived ? undefined : notArchived(table.subjectOfferingEvent.flags)
+				includeArchived ? undefined : eq(table.subjectOfferingEvent.isArchived, false)
 			)
 		)
 		.orderBy(desc(table.subjectOfferingEvent.startTimestamp));
@@ -295,7 +292,7 @@ export async function getSubjectOfferingEventsForWeekBySchoolId(
 				eq(table.subject.schoolId, schoolId),
 				gte(table.subjectOfferingEvent.startTimestamp, weekStart),
 				lt(table.subjectOfferingEvent.startTimestamp, weekEnd),
-				includeArchived ? undefined : notArchived(table.subjectOfferingEvent.flags)
+				includeArchived ? undefined : eq(table.subjectOfferingEvent.isArchived, false)
 			)
 		)
 		.orderBy(asc(table.subjectOfferingEvent.startTimestamp));
@@ -338,7 +335,7 @@ export async function getSubjectOfferingEventsForWeekByUserId(
 				eq(table.userSubjectOffering.userId, userId),
 				gte(table.subjectOfferingEvent.startTimestamp, weekStart),
 				lt(table.subjectOfferingEvent.startTimestamp, weekEnd),
-				includeArchived ? undefined : notArchived(table.subjectOfferingEvent.flags)
+				includeArchived ? undefined : eq(table.subjectOfferingEvent.isArchived, false)
 			)
 		)
 		.orderBy(asc(table.subjectOfferingEvent.startTimestamp));
@@ -352,7 +349,7 @@ export async function updateSubjectOfferingEvent(
 		name?: string;
 		startTimestamp?: Date;
 		endTimestamp?: Date;
-		flags?: number;
+		isArchived?: boolean;
 	}
 ) {
 	const [updatedEvent] = await db
@@ -379,8 +376,7 @@ export async function createSubjectOfferingClassEvent(
 			name,
 			startTimestamp,
 			endTimestamp,
-			requiresRSVP,
-			flags: RecordFlagEnum.none
+			requiresRSVP
 		})
 		.returning();
 
@@ -414,7 +410,7 @@ export async function getSubjectOfferingClassEventsBySchoolId(
 		.where(
 			and(
 				eq(table.subject.schoolId, schoolId),
-				includeArchived ? undefined : notArchived(table.subjectOfferingClassEvent.flags)
+				includeArchived ? undefined : eq(table.subjectOfferingClassEvent.isArchived, false)
 			)
 		)
 		.orderBy(desc(table.subjectOfferingClassEvent.startTimestamp));
@@ -458,7 +454,7 @@ export async function getSubjectOfferingClassEventsForWeekBySchoolId(
 				eq(table.subject.schoolId, schoolId),
 				gte(table.subjectOfferingClassEvent.startTimestamp, weekStart),
 				lt(table.subjectOfferingClassEvent.startTimestamp, weekEnd),
-				includeArchived ? undefined : notArchived(table.subjectOfferingClassEvent.flags)
+				includeArchived ? undefined : eq(table.subjectOfferingClassEvent.isArchived, false)
 			)
 		)
 		.orderBy(asc(table.subjectOfferingClassEvent.startTimestamp));
@@ -506,7 +502,7 @@ export async function getSubjectOfferingClassEventsForWeekByUserId(
 				eq(table.userSubjectOfferingClass.userId, userId),
 				gte(table.subjectOfferingClassEvent.startTimestamp, weekStart),
 				lt(table.subjectOfferingClassEvent.startTimestamp, weekEnd),
-				includeArchived ? undefined : notArchived(table.subjectOfferingClassEvent.flags)
+				includeArchived ? undefined : eq(table.subjectOfferingClassEvent.isArchived, false)
 			)
 		)
 		.orderBy(asc(table.subjectOfferingClassEvent.startTimestamp));
@@ -520,7 +516,7 @@ export async function updateSubjectOfferingClassEvent(
 		name?: string;
 		startTimestamp?: Date;
 		endTimestamp?: Date;
-		flags?: number;
+		isArchived?: boolean;
 	}
 ) {
 	const [updatedEvent] = await db

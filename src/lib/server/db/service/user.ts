@@ -4,7 +4,6 @@ import * as table from '$lib/server/db/schema';
 import { hash } from '@node-rs/argon2';
 import { randomInt } from 'crypto';
 import { and, eq } from 'drizzle-orm';
-import { notArchived } from './utils';
 
 export async function createUser({
 	email,
@@ -19,7 +18,6 @@ export async function createUser({
 	yearLevel,
 	middleName,
 	avatarUrl,
-	flags = 0
 }: {
 	email: string;
 	password: string;
@@ -33,7 +31,6 @@ export async function createUser({
 	yearLevel: yearLevelEnum;
 	middleName?: string;
 	avatarUrl?: string;
-	flags?: number;
 }) {
 	const passwordHash = await hash(password);
 	const verificationCode = String(randomInt(100000, 1000000));
@@ -54,7 +51,6 @@ export async function createUser({
 			middleName,
 			avatarUrl,
 			verificationCode,
-			flags
 		})
 		.returning();
 
@@ -175,7 +171,7 @@ export async function verifyUserAccessToClass(
 			and(
 				eq(table.userSubjectOfferingClass.userId, userId),
 				eq(table.userSubjectOfferingClass.subOffClassId, subjectOfferingClassId),
-				notArchived(table.userSubjectOfferingClass.flags)
+				eq(table.userSubjectOfferingClass.isArchived, false)
 			)
 		)
 		.limit(1);
@@ -193,7 +189,7 @@ export async function verifyUserAccessToSubjectOffering(
 			and(
 				eq(table.userSubjectOffering.userId, userId),
 				eq(table.userSubjectOffering.subOfferingId, subjectOfferingId),
-				notArchived(table.userSubjectOffering.flags)
+				eq(table.userSubjectOffering.isArchived, false)
 			)
 		)
 		.limit(1);

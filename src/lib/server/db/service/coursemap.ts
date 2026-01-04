@@ -1,10 +1,8 @@
-import { RecordFlagEnum } from '$lib/enums';
 import type { yearLevelEnum } from '$lib/enums.js';
 import { db } from '$lib/server/db';
 import * as table from '$lib/server/db/schema';
 import { and, asc, eq, inArray, max } from 'drizzle-orm';
 import type { EmbeddingMetadata } from '.';
-import { notArchived, setFlagExpr } from './utils';
 
 export async function getLatestVersionForCourseMapItemBySubjectOfferingId(
 	subjectOfferingId: number
@@ -15,7 +13,7 @@ export async function getLatestVersionForCourseMapItemBySubjectOfferingId(
 		.where(
 			and(
 				eq(table.courseMapItem.subjectOfferingId, subjectOfferingId),
-				notArchived(table.courseMapItem.flags)
+				eq(table.courseMapItem.isArchived, false)
 			)
 		)
 		.limit(1);
@@ -57,7 +55,7 @@ export async function getCourseMapItemAndLearningAreaByVersionAndBySubjectOfferi
 			and(
 				eq(table.courseMapItem.subjectOfferingId, subjectOfferingId),
 				eq(table.courseMapItem.version, version),
-				notArchived(table.courseMapItem.flags)
+				eq(table.courseMapItem.isArchived, false)
 			)
 		)
 		.orderBy(asc(table.courseMapItem.startWeek), asc(table.courseMapItem.semester));
@@ -546,8 +544,8 @@ export async function getCoursemapItemResources(courseMapItemId: number) {
 		.where(
 			and(
 				eq(table.courseMapItemResource.courseMapItemId, courseMapItemId),
-				notArchived(table.resource.flags),
-				notArchived(table.courseMapItemResource.flags)
+				eq(table.resource.isArchived, false),
+				eq(table.courseMapItemResource.isArchived, false)
 			)
 		);
 
@@ -719,7 +717,7 @@ export async function addResourceToCourseMapItem(courseMapItemId: number, resour
 export async function removeResourceFromCourseMapItem(courseMapItemId: number, resourceId: number) {
 	const [relationship] = await db
 		.update(table.courseMapItemResource)
-		.set({ flags: setFlagExpr(table.courseMapItemResource.flags, RecordFlagEnum.archived) })
+		.set({ isArchived: true })
 		.where(
 			and(
 				eq(table.courseMapItemResource.courseMapItemId, courseMapItemId),
@@ -743,7 +741,7 @@ export async function getLessonPlanResources(lessonPlanId: number) {
 		.where(
 			and(
 				eq(table.lessonPlanResource.courseMapItemLessonPlanId, lessonPlanId),
-				notArchived(table.resource.flags)
+				eq(table.resource.isArchived, false)
 			)
 		);
 

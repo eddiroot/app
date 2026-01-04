@@ -2,7 +2,6 @@ import { constraintTypeEnum, queueStatusEnum, userTypeEnum, yearLevelEnum } from
 import { db } from '$lib/server/db';
 import * as table from '$lib/server/db/schema';
 import { and, asc, count, eq, ilike, inArray, or } from 'drizzle-orm';
-import { notArchived } from './utils.js';
 
 // ============================================================================
 // TIMETABLE - Core Operations
@@ -29,7 +28,7 @@ export async function getSchoolTimetablesBySchoolId(
 		.where(
 			and(
 				eq(table.timetable.schoolId, schoolId),
-				includeArchived ? undefined : notArchived(table.timetable.flags)
+				includeArchived ? undefined : eq(table.timetable.isArchived, false)
 			)
 		)
 		.orderBy(asc(table.timetable.name));
@@ -447,7 +446,7 @@ export async function assignStudentsToGroupsRandomly(
 				eq(table.user.schoolId, schoolId),
 				eq(table.user.type, userTypeEnum.student),
 				eq(table.user.yearLevel, yearLevel),
-				notArchived(table.user.flags)
+				eq(table.user.isArchived, false)
 			)
 		);
 
@@ -549,7 +548,7 @@ export async function getStudentsWithGroupsByTimetableDraftId(
 			and(
 				eq(table.user.schoolId, schoolId),
 				eq(table.user.type, userTypeEnum.student),
-				notArchived(table.user.flags)
+				eq(table.user.isArchived, false)
 			)
 		)
 		.orderBy(
@@ -611,7 +610,7 @@ export async function getStudentsForTimetable(timetableId: number, schoolId: num
 			and(
 				eq(table.user.schoolId, schoolId),
 				eq(table.user.type, userTypeEnum.student),
-				notArchived(table.user.flags)
+				eq(table.user.isArchived, false)
 			)
 		)
 		.orderBy(asc(table.user.yearLevel), asc(table.user.lastName), asc(table.user.firstName));
@@ -1352,7 +1351,7 @@ export async function searchUsersBySchoolId(schoolId: number, searchTerm: string
 		.where(
 			and(
 				eq(table.user.schoolId, schoolId),
-				notArchived(table.user.flags),
+				eq(table.user.isArchived, false),
 				or(
 					ilike(table.user.firstName, searchPattern),
 					ilike(table.user.lastName, searchPattern),
