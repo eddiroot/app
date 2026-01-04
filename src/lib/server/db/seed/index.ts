@@ -74,7 +74,7 @@ async function seed() {
 
 	if (!existingCurriculum) {
 		throw new Error(
-			'VCAA curriculum data not found! Run `npm run db:restore -- snapshots/<snapshot>.sql.gz` first.'
+			'VCAA curriculum data not found! Run `npm run db:restore -- data/snapshots/<snapshot>.sql.gz` first.'
 		);
 	}
 

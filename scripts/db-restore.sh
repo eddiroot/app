@@ -1,14 +1,14 @@
 #!/bin/bash
 # Database Restore Script
 # Restores a PostgreSQL dump to the eddi database
-# Usage: npm run db:restore -- ./snapshots/eddi_snapshot_YYYYMMDD_HHMMSS.sql.gz
+# Usage: npm run db:restore -- ./data/snapshots/eddi_snapshot_YYYYMMDD_HHMMSS.sql.gz
 
 set -e
 
 SNAPSHOT_FILE="$1"
 
 if [ -z "$SNAPSHOT_FILE" ]; then
-  ls -la ./snapshots/*.sql.gz 2>/dev/null || echo "   No snapshots found in ./snapshots/"
+  ls -la ./data/snapshots/*.sql.gz 2>/dev/null || echo "   No snapshots found in ./data/snapshots/"
   exit 1
 fi
 

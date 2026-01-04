@@ -6,7 +6,7 @@
 set -e
 
 TIMESTAMP=$(date +%Y%m%d_%H%M%S)
-SNAPSHOT_DIR="./snapshots"
+SNAPSHOT_DIR="./data/snapshots"
 SNAPSHOT_FILE="${SNAPSHOT_DIR}/eddi_snapshot_${TIMESTAMP}.sql"
 
 # Create snapshots directory if it doesn't exist

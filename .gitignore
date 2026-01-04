@@ -7,7 +7,7 @@ node_modules
 .wrangler
 /.svelte-kit
 /build
-/snapshots
+/data/snapshots
 
 # OS
 .DS_Store
@@ -24,3 +24,4 @@ vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 
 .sst
+/migrations/meta/
