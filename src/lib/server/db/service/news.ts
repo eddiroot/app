@@ -500,7 +500,9 @@ export async function deleteNews(newsId: number) {
 	return deletedNews;
 }
 
-export async function getNewsEmbeddingMetadata(record: Record<string, unknown>): Promise<EmbeddingMetadata> {
+export async function getNewsEmbeddingMetadata(
+	record: Record<string, unknown>
+): Promise<EmbeddingMetadata> {
 	return {
 		newsId: record.newsId as number
 	};

@@ -2,6 +2,7 @@ import { db } from '$lib/server/db/index';
 import { and, eq, inArray } from 'drizzle-orm';
 import * as table from '../schema/timetables';
 import { user } from '../schema/user';
+import { notArchived } from '../service/utils';
 import type { ClassAllocation } from './student-statistics';
 
 /**
@@ -44,7 +45,7 @@ export async function getTeacherAssignmentsWithAllocations(
 		.where(
 			and(
 				eq(table.fetSubjectOfferingClass.timetableDraftId, timetableDraftId),
-				eq(table.fetSubjectOfferingClass.isArchived, false)
+				notArchived(table.fetSubjectOfferingClass.flags)
 			)
 		);
 
@@ -68,7 +69,7 @@ export async function getTeacherAssignmentsWithAllocations(
 		.where(
 			and(
 				inArray(table.fetSubjectOfferingClassUser.fetSubOffClassId, fetClassIds),
-				eq(table.fetSubjectOfferingClassUser.isArchived, false)
+				notArchived(table.fetSubjectOfferingClassUser.flags)
 			)
 		);
 
@@ -93,7 +94,7 @@ export async function getTeacherAssignmentsWithAllocations(
 		.where(
 			and(
 				inArray(table.fetSubjectClassAllocation.fetSubjectOfferingClassId, fetClassIds),
-				eq(table.fetSubjectClassAllocation.isArchived, false)
+				notArchived(table.fetSubjectClassAllocation.flags)
 			)
 		);
 

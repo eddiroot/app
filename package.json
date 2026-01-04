@@ -17,14 +17,14 @@
 		"db:generate": "sst shell drizzle-kit generate",
 		"db:migrate": "sst shell drizzle-kit migrate",
 		"db:push": "sst shell drizzle-kit push",
-		"db:seed": "sst shell tsx src/lib/server/db/seed",
-		"db:seed:fresh": "sst shell tsx src/lib/server/db/seed -- --fresh",
-		"db:seed:vcaa": "sst shell tsx src/lib/server/db/seed/VCAA",
+		"db:seed": "sst shell tsx src/lib/server/db/seed -- --fresh",
 		"db:snapshot": "bash ./scripts/db-snapshot.sh",
 		"db:restore": "bash ./scripts/db-restore.sh",
 		"db:studio": "sst shell drizzle-kit studio",
 		"db:diagram": "tsx ./src/lib/server/db/dbml.ts",
-		"sso": "aws sso login --sso-session=eddi"
+		"embed:schema": "npx sst shell -- npx vite-node src/lib/scripts/embedding/index.ts",
+		"sso": "aws sso login --sso-session=eddi",
+		"sql:export": "npx sst shell -- npx vite-node src/lib/scripts/sql/index.ts"
 	},
 	"devDependencies": {
 		"@eslint/compat": "^1.2.5",
@@ -77,6 +77,7 @@
 		"typescript-eslint": "^8.20.0",
 		"vaul-svelte": "^1.0.0-next.7",
 		"vite": "^6.2.6",
+		"vite-node": "^5.2.0",
 		"vite-plugin-devtools-json": "^0.2.0"
 	},
 	"dependencies": {

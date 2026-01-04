@@ -1,6 +1,16 @@
-import type { yearLevelEnum } from '$lib/enums';
-import { index, integer, jsonb, pgTable, text, timestamp, vector } from 'drizzle-orm/pg-core';
+import {
+	boolean,
+	index,
+	integer,
+	jsonb,
+	pgSchema,
+	text,
+	timestamp,
+	vector
+} from 'drizzle-orm/pg-core';
+import { yearLevelEnum } from '../../../enums';
 
+export const utilsSchema = pgSchema('utils');
 
 export const timestamps = {
 	createdAt: timestamp({ mode: 'date' }).defaultNow().notNull(),
@@ -9,6 +19,25 @@ export const timestamps = {
 		.$onUpdate(() => new Date())
 		.notNull()
 };
+
+
+// Enums used across multiple schema files - defined here to avoid circular dependencies
+export const yearLevelEnumPg = utilsSchema.enum('enum_year_level', [
+	yearLevelEnum.none,
+	yearLevelEnum.foundation,
+	yearLevelEnum.year1,
+	yearLevelEnum.year2,
+	yearLevelEnum.year3,
+	yearLevelEnum.year4,
+	yearLevelEnum.year5,
+	yearLevelEnum.year6,
+	yearLevelEnum.year7,
+	yearLevelEnum.year8,
+	yearLevelEnum.year9,
+	yearLevelEnum.year10,
+	yearLevelEnum.year11,
+	yearLevelEnum.year12
+]);
 
 export const embeddings = {
 	embedding: vector('embedding', { dimensions: 768 }),
@@ -25,16 +54,20 @@ export const embeddings = {
 };
 
 // Temporary pool table for documents that are not saved.
-export const tempPool = pgTable('temp_pool', {
-	id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
-	content: text('content').notNull(),
-	...embeddings,
-	...timestamps
-},
-(self)	=> [
-	index('temp_pool_embedding_idx').using('hnsw', self.embedding.op('vector_cosine_ops')),
-	index('temp_pool_metadata_idx').using('gin', self.embeddingMetadata),
-]
+export const tempPool = utilsSchema.table(
+	'temp_pool',
+	{
+		id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
+		content: text('content').notNull(),
+		...embeddings,
+		isArchived: boolean('is_archived').default(false).notNull(),
+		...timestamps
+	},
+	(self) => [
+		index('temp_pool_embedding_idx').using('hnsw', self.embedding.op('vector_cosine_ops')),
+		index('temp_pool_metadata_idx').using('gin', self.embeddingMetadata)
+	]
 );
 
 export type TempPool = typeof tempPool.$inferSelect;
+
