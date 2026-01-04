@@ -3,8 +3,7 @@ import {
 	index,
 	integer,
 	jsonb,
-	pgEnum,
-	pgTable,
+	pgSchema,
 	text,
 	timestamp,
 	unique,
@@ -16,39 +15,41 @@ import { campus, school } from './schools';
 import { user } from './user';
 import { embeddings, timestamps } from './utils';
 
-export const newsPriorityEnumPg = pgEnum('news_priority', [
+export const newsSchema = pgSchema('news');
+
+export const newsPriorityEnumPg = newsSchema.enum('news_priority', [
 	newsPriorityEnum.low,
 	newsPriorityEnum.normal,
 	newsPriorityEnum.high,
 	newsPriorityEnum.urgent
 ]);
 
-export const newsStatusEnumPg = pgEnum('news_status', [
+export const newsStatusEnumPg = newsSchema.enum('news_status', [
 	newsStatusEnum.draft,
 	newsStatusEnum.scheduled,
 	newsStatusEnum.published,
 	newsStatusEnum.archived
 ]);
 
-export const newsVisibilityEnumPg = pgEnum('news_visibility', [
+export const newsVisibilityEnumPg = newsSchema.enum('news_visibility', [
 	newsVisibilityEnum.public,
 	newsVisibilityEnum.internal,
 	newsVisibilityEnum.staff,
 	newsVisibilityEnum.students
 ]);
 
-export const newsCategory = pgTable('news_category', {
+export const newsCategory = newsSchema.table('news_category', {
 	id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
 	name: text('name').notNull().unique(),
 	description: text('description'),
 	color: text('color'), // For UI styling
-	isArchived: boolean('is_archived').notNull().default(false),
+	isArchived: boolean('is_archived').default(false).notNull(),
 	...timestamps
 });
 
 export type NewsCategory = typeof newsCategory.$inferSelect;
 
-export const news = pgTable(
+export const news = newsSchema.table(
 	'news',
 	{
 		id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
@@ -71,21 +72,21 @@ export const news = pgTable(
 		tags: jsonb('tags'),
 		isPinned: boolean('is_pinned').notNull().default(false),
 		viewCount: integer('view_count').notNull().default(0),
-		isArchived: boolean('is_archived').notNull().default(false),
+		isArchived: boolean('is_archived').default(false).notNull(),
 		...timestamps,
 		...embeddings
 	},
 	(self) => [
 		unique().on(self.schoolId, self.title), // Unique title per school
 		index('news_embedding_idx').using('hnsw', self.embedding.op('vector_cosine_ops')),
-		index('news_metadata_idx').using('gin', self.embeddingMetadata),
+		index('news_metadata_idx').using('gin', self.embeddingMetadata)
 	]
 );
 
 export type News = typeof news.$inferSelect;
 
 // Junction table for news resources (attachments, documents, etc.)
-export const newsResource = pgTable('news_resource', {
+export const newsResource = newsSchema.table('news_resource', {
 	id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
 	newsId: integer('news_id')
 		.notNull()
@@ -97,14 +98,14 @@ export const newsResource = pgTable('news_resource', {
 		.notNull()
 		.references(() => user.id, { onDelete: 'cascade' }),
 	displayOrder: integer('display_order').notNull().default(0),
-	isArchived: boolean('is_archived').notNull().default(false),
+	isArchived: boolean('is_archived').default(false).notNull(),
 	...timestamps
 });
 
 export type NewsResource = typeof newsResource.$inferSelect;
 
 // Track news views for analytics
-export const newsView = pgTable('news_view', {
+export const newsView = newsSchema.table('news_view', {
 	id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
 	newsId: integer('news_id')
 		.notNull()

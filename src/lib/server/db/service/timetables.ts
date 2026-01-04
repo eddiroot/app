@@ -62,8 +62,7 @@ export async function createSchoolTimetable(data: {
 			schoolId: data.schoolId,
 			name: data.name,
 			schoolYear: data.schoolYear,
-			schoolSemesterId: data.schoolSemesterId,
-			isArchived: false
+			schoolSemesterId: data.schoolSemesterId
 		})
 		.returning();
 

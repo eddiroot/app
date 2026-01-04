@@ -4,8 +4,7 @@ import {
 	foreignKey,
 	integer,
 	jsonb,
-	pgEnum,
-	pgTable,
+	pgSchema,
 	primaryKey,
 	text,
 	time,
@@ -13,13 +12,14 @@ import {
 	uuid
 } from 'drizzle-orm/pg-core';
 import { constraintTypeEnum, queueStatusEnum } from '../../../enums';
-import { yearLevelEnumPg } from './curriculum';
 import { school, schoolSemester, schoolSpace } from './schools';
 import { subjectOffering } from './subjects';
 import { user } from './user';
-import { timestamps } from './utils';
+import { timestamps, yearLevelEnumPg } from './utils';
 
-export const timetable = pgTable(
+export const timetableSchema = pgSchema('timetable');
+
+export const timetable = timetableSchema.table(
 	'tt',
 	{
 		id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
@@ -31,7 +31,7 @@ export const timetable = pgTable(
 			onDelete: 'set null'
 		}),
 		name: text('name').notNull(),
-		isArchived: boolean('is_archived').notNull().default(false),
+		isArchived: boolean('is_archived').default(false).notNull(),
 		...timestamps
 	},
 	(self) => [unique().on(self.schoolId, self.name)]
@@ -39,7 +39,7 @@ export const timetable = pgTable(
 
 export type Timetable = typeof timetable.$inferSelect;
 
-export const timetableDraft = pgTable('tt_draft', {
+export const timetableDraft = timetableSchema.table('tt_draft', {
 	id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
 	name: text('name').notNull(),
 	timetableId: integer('tt_id')
@@ -49,20 +49,20 @@ export const timetableDraft = pgTable('tt_draft', {
 	fetResponse: text('fet_response'),
 	errorMessage: text('error_message'), // null if successful, stores raw error
 	translatedErrorMessage: text('translated_error_message'), // null if successful or not yet translated
-	isArchived: boolean('is_archived').notNull().default(false),
+	isArchived: boolean('is_archived').default(false).notNull(),
 	...timestamps
 });
 
 export type TimetableDraft = typeof timetableDraft.$inferSelect;
 
-export const timetableQueueStatusEnumPg = pgEnum('enum_tt_queue_status', [
+export const timetableQueueStatusEnumPg = timetableSchema.enum('enum_tt_queue_status', [
 	queueStatusEnum.queued,
 	queueStatusEnum.inProgress,
 	queueStatusEnum.completed,
 	queueStatusEnum.failed
 ]);
 
-export const timetableQueue = pgTable('tt_queue', {
+export const timetableQueue = timetableSchema.table('tt_queue', {
 	id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
 	timetableId: integer('tt_id')
 		.notNull()
@@ -80,7 +80,7 @@ export const timetableQueue = pgTable('tt_queue', {
 
 export type TimetableQueue = typeof timetableQueue.$inferSelect;
 
-export const timetableDay = pgTable('tt_day', {
+export const timetableDay = timetableSchema.table('tt_day', {
 	id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
 	timetableDraftId: integer('tt_draft_id')
 		.notNull()
@@ -91,7 +91,7 @@ export const timetableDay = pgTable('tt_day', {
 
 export type TimetableDay = typeof timetableDay.$inferSelect;
 
-export const timetablePeriod = pgTable(
+export const timetablePeriod = timetableSchema.table(
 	'tt_period',
 	{
 		id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
@@ -117,7 +117,7 @@ export const timetablePeriod = pgTable(
 
 export type TimetablePeriod = typeof timetablePeriod.$inferSelect;
 
-export const timetableGroup = pgTable('tt_group', {
+export const timetableGroup = timetableSchema.table('tt_group', {
 	id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
 	timetableDraftId: integer('tt_draft_id')
 		.notNull()
@@ -129,7 +129,7 @@ export const timetableGroup = pgTable('tt_group', {
 
 export type TimetableGroup = typeof timetableGroup.$inferSelect;
 
-export const timetableGroupMember = pgTable(
+export const timetableGroupMember = timetableSchema.table(
 	'tt_group_member',
 	{
 		id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
@@ -146,7 +146,7 @@ export const timetableGroupMember = pgTable(
 
 export type TimetableGroupMember = typeof timetableGroupMember.$inferSelect;
 
-export const timetableActivity = pgTable('tt_activity', {
+export const timetableActivity = timetableSchema.table('tt_activity', {
 	id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
 	timetableDraftId: integer('tt_draft_id')
 		.notNull()
@@ -161,7 +161,7 @@ export const timetableActivity = pgTable('tt_activity', {
 
 export type TimetableActivity = typeof timetableActivity.$inferSelect;
 
-export const timetableActivityTeacherPreference = pgTable(
+export const timetableActivityTeacherPreference = timetableSchema.table(
 	'tt_activity_teacher_pref',
 	{
 		timetableActivityId: integer('tt_activity_id')
@@ -185,7 +185,7 @@ export const timetableActivityTeacherPreference = pgTable(
 export type TimetableActivityTeacherPreferences =
 	typeof timetableActivityTeacherPreference.$inferSelect;
 
-export const timetableActivityPreferredSpace = pgTable(
+export const timetableActivityPreferredSpace = timetableSchema.table(
 	'tt_activity_preferred_space',
 	{
 		timetableActivityId: integer('tt_activity_id')
@@ -208,7 +208,7 @@ export const timetableActivityPreferredSpace = pgTable(
 
 export type TimetableActivityPreferredSpaces = typeof timetableActivityPreferredSpace.$inferSelect;
 
-export const timetableActivityAssignedStudent = pgTable(
+export const timetableActivityAssignedStudent = timetableSchema.table(
 	'tt_activity_assign_stu',
 	{
 		timetableActivityId: integer('tt_activity_id')
@@ -232,7 +232,7 @@ export const timetableActivityAssignedStudent = pgTable(
 export type TimetableActivityAssignedStudents =
 	typeof timetableActivityAssignedStudent.$inferSelect;
 
-export const timetableActivityAssignedGroup = pgTable(
+export const timetableActivityAssignedGroup = timetableSchema.table(
 	'tt_activity_assign_grp',
 	{
 		timetableActivityId: integer('tt_activity_id')
@@ -255,7 +255,7 @@ export const timetableActivityAssignedGroup = pgTable(
 
 export type TimetableActivityAssignedGroup = typeof timetableActivityAssignedGroup.$inferSelect;
 
-export const timetableActivityAssignedYear = pgTable(
+export const timetableActivityAssignedYear = timetableSchema.table(
 	'tt_activity_assign_yr',
 	{
 		timetableActivityId: integer('tt_activity_id')
@@ -276,7 +276,7 @@ export const timetableActivityAssignedYear = pgTable(
 
 export type TimetableActivityAssignedYear = typeof timetableActivityAssignedYear.$inferSelect;
 
-export const timetableDraftConstraint = pgTable('tt_draft_con', {
+export const timetableDraftConstraint = timetableSchema.table('tt_draft_con', {
 	id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
 	timetableDraftId: integer('tt_draft_id')
 		.notNull()
@@ -292,12 +292,12 @@ export const timetableDraftConstraint = pgTable('tt_draft_con', {
 
 export type TimetableDraftConstraint = typeof timetableDraftConstraint.$inferSelect;
 
-export const constraintTypeEnumPg = pgEnum('enum_constraint_type', [
+export const constraintTypeEnumPg = timetableSchema.enum('enum_constraint_type', [
 	constraintTypeEnum.time,
 	constraintTypeEnum.space
 ]);
 
-export const constraint = pgTable('con', {
+export const constraint = timetableSchema.table('con', {
 	id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }), // unique identifier for the constraint
 	FETName: text('fet_name').notNull(),
 	friendlyName: text('friendly_name').notNull(),
@@ -310,7 +310,7 @@ export const constraint = pgTable('con', {
 
 export type Constraint = typeof constraint.$inferSelect;
 
-export const fetSubjectOfferingClass = pgTable('fet_sub_off_cls', {
+export const fetSubjectOfferingClass = timetableSchema.table('fet_sub_off_cls', {
 	id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
 	timetableDraftId: integer('tt_draft_id')
 		.notNull()
@@ -318,13 +318,13 @@ export const fetSubjectOfferingClass = pgTable('fet_sub_off_cls', {
 	subjectOfferingId: integer('sub_off_id')
 		.notNull()
 		.references(() => subjectOffering.id, { onDelete: 'cascade' }),
-	isArchived: boolean('is_archived').notNull().default(false),
+	isArchived: boolean('is_archived').default(false).notNull(),
 	...timestamps
 });
 
 export type FetSubjectOfferingClass = typeof fetSubjectOfferingClass.$inferSelect;
 
-export const fetSubjectClassAllocation = pgTable('fet_sub_off_cls_allo', {
+export const fetSubjectClassAllocation = timetableSchema.table('fet_sub_off_cls_allo', {
 	id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
 	fetSubjectOfferingClassId: integer('fet_sub_off_cls_id')
 		.notNull()
@@ -341,13 +341,13 @@ export const fetSubjectClassAllocation = pgTable('fet_sub_off_cls_allo', {
 	endPeriodId: integer('end_period_id')
 		.notNull()
 		.references(() => timetablePeriod.id, { onDelete: 'set null' }),
-	isArchived: boolean('is_archived').notNull().default(false),
+	isArchived: boolean('is_archived').default(false).notNull(),
 	...timestamps
 });
 
 export type FetSubjectClassAllocation = typeof fetSubjectClassAllocation.$inferSelect;
 
-export const fetSubjectOfferingClassUser = pgTable(
+export const fetSubjectOfferingClassUser = timetableSchema.table(
 	'fet_sub_off_cls_user',
 	{
 		id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
@@ -357,7 +357,7 @@ export const fetSubjectOfferingClassUser = pgTable(
 		fetSubOffClassId: integer('fet_sub_off_class_id')
 			.notNull()
 			.references(() => fetSubjectOfferingClass.id, { onDelete: 'cascade' }),
-		isArchived: boolean('is_archived').notNull().default(false),
+		isArchived: boolean('is_archived').default(false).notNull(),
 		...timestamps
 	},
 	(self) => [unique().on(self.userId, self.fetSubOffClassId)]
