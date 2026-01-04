@@ -1,848 +1,848 @@
 {
-  "id": 6000,
-  "curriculumId": 6000,
-  "name": "Physics Units 3 and 4",
-  "isArchived": false,
-  "learningAreas": [
-    {
-      "id": 6006,
-      "curriculumSubjectId": 4000,
-      "name": "How do physicists explain motion in two dimensions?",
-      "abbreviation": "U3AOS1",
-      "description": "In this area of study, students use Newton’s laws of motion to analyse linear motion, circular motion and projectile motion. Newton’s laws of motion give important insights into a range of motion both on Earth and beyond through the investigations of objects on land and in orbit. They explore the motion of objects under the influence of a gravitational field on the surface of Earth, close to Earth and above Earth. They explore the relationships between force, energy and mass. On completion of this unit the student should be able to investigate motion and related energy transformations experimentally, and analyse motion using Newton’s laws of motion in one and two dimensions."
-    },
-    {
-      "id": 6007,
-      "curriculumSubjectId": 4000,
-      "name": "How do things move without contact?",
-      "abbreviation": "U3AOS2",
-      "description": "Field models are used to explain the behaviour of objects when there is no apparent contact. In this area of study, students examine the similarities and differences between three fields: gravitational, electric and magnetic. Students explore how positions in fields determine the potential energy of, and the force on, an object. They investigate how concepts related to field models can be applied to construct motors, maintain satellite orbits and to accelerate particles including in a synchrotron. On completion of this unit the student should be able to analyse gravitational, electric and magnetic fields, and apply these to explain the operation of motors and particle accelerators, and the orbits of satellites."
-    },
-    {
-      "id": 6008,
-      "curriculumSubjectId": 4000,
-      "name": "How are fields used in electricity generation?",
-      "abbreviation": "U3AOS3",
-      "description": "The production, distribution and use of electricity has had a major impact on the way that humans live. In this area of study, students use empirical evidence and models of electric, magnetic and electromagnetic effects to explain how electricity is produced and delivered to homes. They explore the transformer as critical to the performance of electrical distribution systems in minimising power loss. On completion of this unit the student should be able to analyse and evaluate an electricity generation and distribution system."
-    },
-    {
-      "id": 6009,
-      "curriculumSubjectId": 4000,
-      "name": "How has understanding about the physical world changed?",
-      "abbreviation": "U4AOS1",
-      "description": "In this area of study, students learn how understanding of light, matter and motion have changed over time. They explore how major experiments led to the development of theories to describe these fundamental aspects of the physical world. When light and matter are probed, they appear to have remarkable similarities. Light, previously described as an electromagnetic wave, appears to exhibit both wave-like and particle-like properties. Findings that electrons behave in a wave-like manner challenged thinking about the relationship between light and matter. Students consider the limitations of classical mechanics as they explore Einstein’s view of the Universe. They consider postulates as distinct from theories and explore ideas related to objects moving at speeds approaching the speed of light. They use special relativity to explore length contraction and time dilation as observations are made by observers in different frames of reference, and the interrelationship between matter and energy."
-    },
-    {
-      "id": 6010,
-      "curriculumSubjectId": 4000,
-      "name": "How is scientific inquiry used to investigate fields, motion or light?",
-      "abbreviation": "U4AOS2",
-      "description": "Students undertake a student-designed scientific investigation in either Unit 3 or Unit 4, or across both Units 3 and 4. The investigation involves the generation of primary data relating to fields, motion or light. The investigation draws on knowledge and related key science skills developed across Units 3 and 4 and is undertaken by students in the laboratory and/or in the field. When undertaking the investigation students are required to apply the key science skills to develop a question, state an aim, formulate a hypothesis and plan a course of action to answer the question, while complying with safety and ethical guidelines. Students then undertake an investigation to generate primary quantitative data, analyse and evaluate the data, identify limitations of data and methods, link experimental results to scientific ideas, discuss implications of the results, and draw and evaluate a conclusion in response to the question. Students are expected to design and undertake an investigation involving one continuous independent variable. The presentation format for the investigation is a scientific poster constructed according to the structure outlined on page 13. A logbook is maintained by the students for record, assessment and authentication purposes."
-    }
-  ],
-  "outcomes": [
-    {
-      "id": 6006,
-      "curriculumSubjectId": 6000,
-      "number": 1,
-      "description": "On completion of this unit the student should be able to investigate motion and related energy transformations experimentally, and analyse motion using Newton’s laws of motion in one and two dimensions.",
-      "topics": [
-        {
-          "id": 6054,
-          "outcomeId": 6006,
-          "name": "Newton’s laws of motion"
-        },
-        {
-          "id": 6055,
-          "outcomeId": 6006,
-          "name": "Relationships between force, energy and mass"
-        }
-      ],
-      "keyKnowledge": [
-        {
-          "id": 6311,
-          "description": "investigate and apply theoretically and practically Newton’s three laws of motion in situations where two or more coplanar forces act along a straight line and in two dimensions",
-          "outcomeId": 6006,
-          "outcomeTopicId": 6054
-        },
-        {
-          "id": 6312,
-          "description": "investigate and analyse theoretically and practically the uniform circular motion of an object moving in a horizontal plane: , including:",
-          "outcomeId": 6006,
-          "outcomeTopicId": 6054
-        },
-        {
-          "id": 6313,
-          "description": "a vehicle moving around a circular road",
-          "outcomeId": 6006,
-          "outcomeTopicId": 6054
-        },
-        {
-          "id": 6314,
-          "description": "a vehicle moving around a banked track",
-          "outcomeId": 6006,
-          "outcomeTopicId": 6054
-        },
-        {
-          "id": 6315,
-          "description": "an object on the end of a string",
-          "outcomeId": 6006,
-          "outcomeTopicId": 6054
-        },
-        {
-          "id": 6316,
-          "description": "model natural and artificial satellite motion as uniform circular motion",
-          "outcomeId": 6006,
-          "outcomeTopicId": 6054
-        },
-        {
-          "id": 6317,
-          "description": "investigate and apply theoretically Newton’s second law to circular motion in a vertical plane (forces at the highest and lowest positions only)",
-          "outcomeId": 6006,
-          "outcomeTopicId": 6054
-        },
-        {
-          "id": 6318,
-          "description": "investigate and analyse theoretically and practically the motion of projectiles near Earth’s surface, including a qualitative description of the effects of air resistance",
-          "outcomeId": 6006,
-          "outcomeTopicId": 6054
-        },
-        {
-          "id": 6319,
-          "description": "investigate and apply theoretically and practically the laws of energy and momentum conservation in isolated systems in one dimension",
-          "outcomeId": 6006,
-          "outcomeTopicId": 6054
-        },
-        {
-          "id": 6320,
-          "description": "investigate and analyse theoretically and practically impulse in an isolated system for collisions between objects moving in a straight line: FΔt = mΔv",
-          "outcomeId": 6006,
-          "outcomeTopicId": 6055
-        },
-        {
-          "id": 6321,
-          "description": "investigate and apply theoretically and practically the concept of work done by a force using:",
-          "outcomeId": 6006,
-          "outcomeTopicId": 6055
-        },
-        {
-          "id": 6322,
-          "description": "work done = force × displacement",
-          "outcomeId": 6006,
-          "outcomeTopicId": 6055
-        },
-        {
-          "id": 6323,
-          "description": "work done = area under force vs distance graph (one dimensional only)",
-          "outcomeId": 6006,
-          "outcomeTopicId": 6055
-        },
-        {
-          "id": 6324,
-          "description": "analyse transformations of energy between kinetic energy, elastic potential energy, gravitational potential energy and energy dissipated to the environment (considered as a combination of heat, sound and deformation of material):",
-          "outcomeId": 6006,
-          "outcomeTopicId": 6055
-        },
-        {
-          "id": 6325,
-          "description": "kinetic energy at low speeds: ; elastic and inelastic collisions with reference to conservation of kinetic energy",
-          "outcomeId": 6006,
-          "outcomeTopicId": 6055
-        },
-        {
-          "id": 6326,
-          "description": "elastic potential energy: area under force-distance graph including ideal springs obeying Hooke’s Law:",
-          "outcomeId": 6006,
-          "outcomeTopicId": 6055
-        },
-        {
-          "id": 6327,
-          "description": "gravitational potential energy: Eg = mgΔh or from area under a force-distance graph and area under a field-distance graph multiplied by mass.",
-          "outcomeId": 6006,
-          "outcomeTopicId": 6055
-        }
-      ]
-    },
-    {
-      "id": 6007,
-      "curriculumSubjectId": 6000,
-      "number": 2,
-      "description": "On completion of this unit the student should be able to analyse gravitational, electric and magnetic fields, and apply these to explain the operation of motors and particle accelerators, and the orbits of satellites.",
-      "topics": [
-        {
-          "id": 6056,
-          "outcomeId": 6007,
-          "name": "Fields and interactions"
-        },
-        {
-          "id": 6057,
-          "outcomeId": 6007,
-          "name": "Effects of fields"
-        },
-        {
-          "id": 6058,
-          "outcomeId": 6007,
-          "name": "Application of field concepts"
-        }
-      ],
-      "keyKnowledge": [
-        {
-          "id": 6328,
-          "description": "describe gravitation, magnetism and electricity using a field model",
-          "outcomeId": 6007,
-          "outcomeTopicId": 6056
-        },
-        {
-          "id": 6329,
-          "description": "investigate and compare theoretically and practically gravitational, magnetic and electric fields, including directions and shapes of fields, attractive and repulsive effects, and the existence of dipoles and monopoles",
-          "outcomeId": 6007,
-          "outcomeTopicId": 6056
-        },
-        {
-          "id": 6330,
-          "description": "investigate and compare theoretically and practically gravitational fields and electrical fields about a point mass or charge (positive or negative) with reference to:",
-          "outcomeId": 6007,
-          "outcomeTopicId": 6056
-        },
-        {
-          "id": 6331,
-          "description": "the direction of the field",
-          "outcomeId": 6007,
-          "outcomeTopicId": 6056
-        },
-        {
-          "id": 6332,
-          "description": "the shape of the field",
-          "outcomeId": 6007,
-          "outcomeTopicId": 6056
-        },
-        {
-          "id": 6333,
-          "description": "the use of the inverse square law to determine the magnitude of the field",
-          "outcomeId": 6007,
-          "outcomeTopicId": 6056
-        },
-        {
-          "id": 6334,
-          "description": "potential energy changes (qualitative) associated with a point mass or charge moving in the field",
-          "outcomeId": 6007,
-          "outcomeTopicId": 6056
-        },
-        {
-          "id": 6335,
-          "description": "investigate and apply theoretically and practically a field model to magnetic phenomena, including shapes and directions of fields produced by bar magnets, and by current-carrying wires, loops and solenoids",
-          "outcomeId": 6007,
-          "outcomeTopicId": 6056
-        },
-        {
-          "id": 6336,
-          "description": "identify fields as static or changing, and as uniform or non-uniform",
-          "outcomeId": 6007,
-          "outcomeTopicId": 6056
-        },
-        {
-          "id": 6337,
-          "description": "analyse the use of an electric field to accelerate a charge, including:",
-          "outcomeId": 6007,
-          "outcomeTopicId": 6057
-        },
-        {
-          "id": 6338,
-          "description": "electric field and electric force concepts: and",
-          "outcomeId": 6007,
-          "outcomeTopicId": 6057
-        },
-        {
-          "id": 6339,
-          "description": "potential energy changes in a uniform electric field: W = qV,",
-          "outcomeId": 6007,
-          "outcomeTopicId": 6057
-        },
-        {
-          "id": 6340,
-          "description": "the magnitude of the force on a charged particle due to a uniform electric field: F = qE",
-          "outcomeId": 6007,
-          "outcomeTopicId": 6057
-        },
-        {
-          "id": 6341,
-          "description": "analyse the use of a magnetic field to change the path of a charged particle, including:",
-          "outcomeId": 6007,
-          "outcomeTopicId": 6057
-        },
-        {
-          "id": 6342,
-          "description": "the magnitude and direction of the force applied to an electron beam by a magnetic field: F = qvB, in cases where the directions of v and B are perpendicular or parallel",
-          "outcomeId": 6007,
-          "outcomeTopicId": 6057
-        },
-        {
-          "id": 6343,
-          "description": "the radius of the path followed by an electron in a magnetic field: , where v << c",
-          "outcomeId": 6007,
-          "outcomeTopicId": 6057
-        },
-        {
-          "id": 6344,
-          "description": "analyse the use of gravitational fields to accelerate mass, including:",
-          "outcomeId": 6007,
-          "outcomeTopicId": 6057
-        },
-        {
-          "id": 6345,
-          "description": "gravitational field and gravitational force concepts: and",
-          "outcomeId": 6007,
-          "outcomeTopicId": 6057
-        },
-        {
-          "id": 6346,
-          "description": "potential energy changes in a uniform gravitational field: Eg = mgΔh",
-          "outcomeId": 6007,
-          "outcomeTopicId": 6057
-        },
-        {
-          "id": 6347,
-          "description": "analyse the change in gravitational potential energy from area under a force vs distance graph and area under a field vs distance graph multiplied by mass",
-          "outcomeId": 6007,
-          "outcomeTopicId": 6057
-        },
-        {
-          "id": 6348,
-          "description": "apply the concepts of force due to gravity and normal force including in relation to satellites in orbit where the orbits are assumed to be uniform and circular",
-          "outcomeId": 6007,
-          "outcomeTopicId": 6058
-        },
-        {
-          "id": 6349,
-          "description": "model satellite motion (artificial, Moon, planet) as uniform circular orbital motion:",
-          "outcomeId": 6007,
-          "outcomeTopicId": 6058
-        },
-        {
-          "id": 6350,
-          "description": "describe the interaction of two fields, allowing that electric charges, magnetic poles and current carrying conductors can either attract or repel, whereas masses only attract each other",
-          "outcomeId": 6007,
-          "outcomeTopicId": 6058
-        },
-        {
-          "id": 6351,
-          "description": "investigate and analyse theoretically and practically the force on a current carrying conductor due to an external magnetic field, F = nIlB, where the directions of I and B are either perpendicular or parallel to each other",
-          "outcomeId": 6007,
-          "outcomeTopicId": 6058
-        },
-        {
-          "id": 6352,
-          "description": "investigate and analyse theoretically and practically the operation of simple DC motors consisting of one coil, containing a number of loops of wire, which is free to rotate about an axis in a uniform magnetic field and including the use of a split ring commutator",
-          "outcomeId": 6007,
-          "outcomeTopicId": 6058
-        },
-        {
-          "id": 6353,
-          "description": "investigate, qualitatively, the effect of current, external magnetic field and the number of loops of wire on the torque of a simple motor",
-          "outcomeId": 6007,
-          "outcomeTopicId": 6058
-        },
-        {
-          "id": 6354,
-          "description": "model the acceleration of particles in a particle accelerator (including synchrotrons) as uniform circular motion (limited to linear acceleration by a uniform electric field and direction change by a uniform magnetic field).",
-          "outcomeId": 6007,
-          "outcomeTopicId": 6058
-        }
-      ]
-    },
-    {
-      "id": 6008,
-      "curriculumSubjectId": 6000,
-      "number": 3,
-      "description": "On completion of this unit the student should be able to analyse and evaluate an electricity generation and distribution system.",
-      "topics": [
-        {
-          "id": 6059,
-          "outcomeId": 6008,
-          "name": "Generation of electricity"
-        },
-        {
-          "id": 6060,
-          "outcomeId": 6008,
-          "name": "Transmission of electricity"
-        }
-      ],
-      "keyKnowledge": [
-        {
-          "id": 6355,
-          "description": "calculate magnetic flux when the magnetic field is perpendicular to the area, and describe the qualitative effect of differing angles between the area and the field:",
-          "outcomeId": 6008,
-          "outcomeTopicId": 6059
-        },
-        {
-          "id": 6356,
-          "description": "investigate and analyse theoretically and practically the generation of electromotive force (emf) including AC voltage and calculations using induced emf: , with reference to:",
-          "outcomeId": 6008,
-          "outcomeTopicId": 6059
-        },
-        {
-          "id": 6357,
-          "description": "rate of change of magnetic flux",
-          "outcomeId": 6008,
-          "outcomeTopicId": 6059
-        },
-        {
-          "id": 6358,
-          "description": "number of loops through which the flux passes",
-          "outcomeId": 6008,
-          "outcomeTopicId": 6059
-        },
-        {
-          "id": 6359,
-          "description": "direction of induced emf in a coil",
-          "outcomeId": 6008,
-          "outcomeTopicId": 6059
-        },
-        {
-          "id": 6360,
-          "description": "explain the production of DC voltage in DC generators and AC voltage in alternators, including the use of split ring commutators and slip rings respectively",
-          "outcomeId": 6008,
-          "outcomeTopicId": 6059
-        },
-        {
-          "id": 6361,
-          "description": "describe the production of electricity using photovoltaic cells and the need for an inverter to convert power from DC to AC for use in the home (not including details of semiconductors action or inverter circuitry)",
-          "outcomeId": 6008,
-          "outcomeTopicId": 6059
-        },
-        {
-          "id": 6362,
-          "description": "compare sinusoidal AC voltages produced as a result of the uniform rotation of a loop in a constant magnetic field with reference to frequency, period, amplitude, peak-to-peak voltage (Vp–p ) and peak-to-peak current (Ip–p )",
-          "outcomeId": 6008,
-          "outcomeTopicId": 6060
-        },
-        {
-          "id": 6363,
-          "description": "compare alternating voltage expressed as the root-mean-square (rms) to a constant DC voltage developing the same power in a resistive component",
-          "outcomeId": 6008,
-          "outcomeTopicId": 6060
-        },
-        {
-          "id": 6364,
-          "description": "analyse transformer action with reference to electromagnetic induction for an ideal transformer:",
-          "outcomeId": 6008,
-          "outcomeTopicId": 6060
-        },
-        {
-          "id": 6365,
-          "description": "analyse the supply of power by considering transmission losses across transmission lines.",
-          "outcomeId": 6008,
-          "outcomeTopicId": 6060
-        }
-      ]
-    },
-    {
-      "id": 6009,
-      "curriculumSubjectId": 6000,
-      "number": 1,
-      "description": "On completion of this unit the student should be able to analyse and apply models that explain the nature of light and matter, and use special relativity to explain observations made when objects are moving at speeds approaching the speed of light.",
-      "topics": [
-        {
-          "id": 6061,
-          "outcomeId": 6009,
-          "name": "Light as a wave"
-        },
-        {
-          "id": 6062,
-          "outcomeId": 6009,
-          "name": "Light as a particle"
-        },
-        {
-          "id": 6063,
-          "outcomeId": 6009,
-          "name": "Matter as particles or waves"
-        },
-        {
-          "id": 6064,
-          "outcomeId": 6009,
-          "name": "Similarities between light and matter"
-        },
-        {
-          "id": 6065,
-          "outcomeId": 6009,
-          "name": "Einstein’s special theory of relativity"
-        },
-        {
-          "id": 6066,
-          "outcomeId": 6009,
-          "name": "Relationship between energy and mass"
-        }
-      ],
-      "keyKnowledge": [
-        {
-          "id": 6366,
-          "description": "describe light as a transverse electromagnetic wave which is produced by the acceleration of charges, which in turn produces changing electric fields and associated changing magnetic fields",
-          "outcomeId": 6009,
-          "outcomeTopicId": 6061
-        },
-        {
-          "id": 6367,
-          "description": "identify that all electromagnetic waves travel at the same speed, c, in a vacuum",
-          "outcomeId": 6009,
-          "outcomeTopicId": 6061
-        },
-        {
-          "id": 6368,
-          "description": "explain the formation of a standing wave resulting from the superposition of a travelling wave and its reflection",
-          "outcomeId": 6009,
-          "outcomeTopicId": 6061
-        },
-        {
-          "id": 6369,
-          "description": "analyse the formation of standing waves (only those with nodes at both ends is required)",
-          "outcomeId": 6009,
-          "outcomeTopicId": 6061
-        },
-        {
-          "id": 6370,
-          "description": "investigate and explain theoretically and practically diffraction as the directional spread of various frequencies with reference to different gap width or obstacle size, including the qualitative effect of changing the ratio, and apply this to limitations of imaging using electromagnetic waves",
-          "outcomeId": 6009,
-          "outcomeTopicId": 6061
-        },
-        {
-          "id": 6371,
-          "description": "explain the results of Young’s double slit experiment with reference to:",
-          "outcomeId": 6009,
-          "outcomeTopicId": 6061
-        },
-        {
-          "id": 6372,
-          "description": "evidence for the wave-like nature of light",
-          "outcomeId": 6009,
-          "outcomeTopicId": 6061
-        },
-        {
-          "id": 6373,
-          "description": "constructive and destructive interference of coherent waves in terms of path differences: nλ and respectively, where n = 0,1, 2,…",
-          "outcomeId": 6009,
-          "outcomeTopicId": 6061
-        },
-        {
-          "id": 6374,
-          "description": "effect of wavelength, distance of screen and slit separation on interference patterns: when L>>d",
-          "outcomeId": 6009,
-          "outcomeTopicId": 6061
-        },
-        {
-          "id": 6375,
-          "description": "apply the quantised energy of photons:",
-          "outcomeId": 6009,
-          "outcomeTopicId": 6062
-        },
-        {
-          "id": 6376,
-          "description": "analyse the photoelectric effect with reference to:",
-          "outcomeId": 6009,
-          "outcomeTopicId": 6062
-        },
-        {
-          "id": 6377,
-          "description": "evidence for the particle-like nature of light",
-          "outcomeId": 6009,
-          "outcomeTopicId": 6062
-        },
-        {
-          "id": 6378,
-          "description": "experimental data in the form of graphs of photocurrent versus electrode potential, and of kinetic energy of electrons versus frequency",
-          "outcomeId": 6009,
-          "outcomeTopicId": 6062
-        },
-        {
-          "id": 6379,
-          "description": "kinetic energy of emitted photoelectrons: , using energy units of joule and electron-volt",
-          "outcomeId": 6009,
-          "outcomeTopicId": 6062
-        },
-        {
-          "id": 6380,
-          "description": "effects of intensity of incident irradiation on the emission of photoelectrons",
-          "outcomeId": 6009,
-          "outcomeTopicId": 6062
-        },
-        {
-          "id": 6381,
-          "description": "describe the limitation of the wave model of light in explaining experimental results related to the photoelectric effect",
-          "outcomeId": 6009,
-          "outcomeTopicId": 6062
-        },
-        {
-          "id": 6382,
-          "description": "interpret electron diffraction patterns as evidence for the wave-like nature of matter",
-          "outcomeId": 6009,
-          "outcomeTopicId": 6063
-        },
-        {
-          "id": 6383,
-          "description": "distinguish between the diffraction patterns produced by photons and electrons",
-          "outcomeId": 6009,
-          "outcomeTopicId": 6063
-        },
-        {
-          "id": 6384,
-          "description": "calculate the de Broglie wavelength of matter:",
-          "outcomeId": 6009,
-          "outcomeTopicId": 6063
-        },
-        {
-          "id": 6385,
-          "description": "discuss the importance of the idea of quantisation in the development of knowledge about light and in explaining the nature of atoms",
-          "outcomeId": 6009,
-          "outcomeTopicId": 6064
-        },
-        {
-          "id": 6386,
-          "description": "compare the momentum of photons and of matter of the same wavelength including calculations using:",
-          "outcomeId": 6009,
-          "outcomeTopicId": 6064
-        },
-        {
-          "id": 6387,
-          "description": "explain the production of atomic absorption and emission line spectra, including those from metal vapour lamps",
-          "outcomeId": 6009,
-          "outcomeTopicId": 6064
-        },
-        {
-          "id": 6388,
-          "description": "interpret spectra and calculate the energy of absorbed or emitted photons: E = hf",
-          "outcomeId": 6009,
-          "outcomeTopicId": 6064
-        },
-        {
-          "id": 6389,
-          "description": "analyse the emission or absorption of a photon by an atom in terms of a change in the electron energy state of the atom, with the difference in the states’ energies being equal to the photon energy:",
-          "outcomeId": 6009,
-          "outcomeTopicId": 6064
-        },
-        {
-          "id": 6390,
-          "description": "interpret the single photon and the electron double slit experiment as evidence for the dual nature of light and matter",
-          "outcomeId": 6009,
-          "outcomeTopicId": 6064
-        },
-        {
-          "id": 6391,
-          "description": "describe the limitation of classical mechanics when considering motion approaching the speed of light",
-          "outcomeId": 6009,
-          "outcomeTopicId": 6065
-        },
-        {
-          "id": 6392,
-          "description": "describe Einstein’s two postulates for his special theory of relativity that:",
-          "outcomeId": 6009,
-          "outcomeTopicId": 6065
-        },
-        {
-          "id": 6393,
-          "description": "the laws of physics are the same in all inertial (non-accelerated) frames of reference",
-          "outcomeId": 6009,
-          "outcomeTopicId": 6065
-        },
-        {
-          "id": 6394,
-          "description": "the speed of light has a constant value for all observers regardless of their motion or the motion of the source",
-          "outcomeId": 6009,
-          "outcomeTopicId": 6065
-        },
-        {
-          "id": 6395,
-          "description": "interpret the null result of the Michelson-Morley experiment as evidence in support of Einstein’s special theory of relativity",
-          "outcomeId": 6009,
-          "outcomeTopicId": 6065
-        },
-        {
-          "id": 6396,
-          "description": "compare Einstein’s special theory of relativity with the principles of classical physics",
-          "outcomeId": 6009,
-          "outcomeTopicId": 6065
-        },
-        {
-          "id": 6397,
-          "description": "describe proper time (t0 ) as the time interval between two events in a reference frame where the two events occur at the same point in space",
-          "outcomeId": 6009,
-          "outcomeTopicId": 6065
-        },
-        {
-          "id": 6398,
-          "description": "describe proper length (L0 ) as the length that is measured in the frame of reference in which objects are at rest",
-          "outcomeId": 6009,
-          "outcomeTopicId": 6065
-        },
-        {
-          "id": 6399,
-          "description": "model mathematically time dilation and length contraction at speeds approaching c using the equations: and where",
-          "outcomeId": 6009,
-          "outcomeTopicId": 6065
-        },
-        {
-          "id": 6400,
-          "description": "explain and analyse examples of special relativity including that:",
-          "outcomeId": 6009,
-          "outcomeTopicId": 6065
-        },
-        {
-          "id": 6401,
-          "description": "muons can reach Earth even though their half-lives would suggest that they should decay in the upper atmosphere",
-          "outcomeId": 6009,
-          "outcomeTopicId": 6065
-        },
-        {
-          "id": 6402,
-          "description": "particle accelerator lengths must be designed to take the effects of special relativity into account",
-          "outcomeId": 6009,
-          "outcomeTopicId": 6065
-        },
-        {
-          "id": 6403,
-          "description": "time signals from GPS satellites must be corrected for the effects of special relativity due to their orbital velocity",
-          "outcomeId": 6009,
-          "outcomeTopicId": 6065
-        },
-        {
-          "id": 6404,
-          "description": "interpret Einstein’s prediction by showing that the total ‘mass-energy’ of an object is given by:",
-          "outcomeId": 6009,
-          "outcomeTopicId": 6066
-        },
-        {
-          "id": 6405,
-          "description": "Etot = Ek + E0 = γmc2 where E0 = mc2, and where kinetic energy can be calculated by: Ek = (γ – 1)mc2",
-          "outcomeId": 6009,
-          "outcomeTopicId": 6066
-        },
-        {
-          "id": 6406,
-          "description": "apply the energy-mass relationship to mass conversion in the Sun, to positron-electron annihilation and to nuclear transformations in particle accelerators (details of the particular nuclear processes are not required).",
-          "outcomeId": 6009,
-          "outcomeTopicId": 6066
-        }
-      ]
-    },
-    {
-      "id": 6010,
-      "curriculumSubjectId": 6000,
-      "number": 2,
-      "description": "On completion of this unit the student should be able to design and conduct a scientific investigation related to fields, motion or light, and present an aim, methodology and method, results, discussion and a conclusion in a scientific poster.",
-      "topics": [
-        {
-          "id": 6067,
-          "outcomeId": 6010,
-          "name": "Investigation design"
-        },
-        {
-          "id": 6068,
-          "outcomeId": 6010,
-          "name": "Scientific evidence"
-        },
-        {
-          "id": 6069,
-          "outcomeId": 6010,
-          "name": "Science communication"
-        }
-      ],
-      "keyKnowledge": [
-        {
-          "id": 6407,
-          "description": "identify the physics concepts specific to the investigation and explain their significance, including definitions of key terms and physics representations",
-          "outcomeId": 6010,
-          "outcomeTopicId": 6067
-        },
-        {
-          "id": 6408,
-          "description": "explain the characteristics of the selected scientific methodology and method including: techniques of primary qualitative and quantitative data generation relevant to the selected investigation; and appropriateness of the use of independent, dependent and controlled variables in the selected scientific investigation",
-          "outcomeId": 6010,
-          "outcomeTopicId": 6067
-        },
-        {
-          "id": 6409,
-          "description": "identify and apply concepts of accuracy, precision, repeatability, reproducibility, resolution and validity of data; and the identification of, and distinction between, error and uncertainty",
-          "outcomeId": 6010,
-          "outcomeTopicId": 6067
-        },
-        {
-          "id": 6410,
-          "description": "identify and apply health, safety and ethical guidelines relevant to the selected investigation",
-          "outcomeId": 6010,
-          "outcomeTopicId": 6067
-        },
-        {
-          "id": 6411,
-          "description": "discuss the nature of evidence that supports or refutes a hypothesis, model or theory",
-          "outcomeId": 6010,
-          "outcomeTopicId": 6068
-        },
-        {
-          "id": 6412,
-          "description": "apply methods of organising, analysing and evaluating primary data to identify patterns and relationships including: the physical significance of the gradient of linearised data; causes of uncertainty; use of uncertainty bars; and assumptions and limitations of data, methodologies and methods",
-          "outcomeId": 6010,
-          "outcomeTopicId": 6068
-        },
-        {
-          "id": 6413,
-          "description": "model the scientific practice of using a logbook to authenticate generated primary data",
-          "outcomeId": 6010,
-          "outcomeTopicId": 6068
-        },
-        {
-          "id": 6414,
-          "description": "apply the conventions of science communication: scientific terminology and representations; symbols, equations and formulas; standard abbreviations; significant figures; and units of measurement",
-          "outcomeId": 6010,
-          "outcomeTopicId": 6069
-        },
-        {
-          "id": 6415,
-          "description": "apply the conventions of scientific poster presentation, including succinct communication of the selected scientific investigation, and acknowledgement of references",
-          "outcomeId": 6010,
-          "outcomeTopicId": 6069
-        },
-        {
-          "id": 6416,
-          "description": "explain the key findings and implications of the selected investigation.",
-          "outcomeId": 6010,
-          "outcomeTopicId": 6069
-        }
-      ]
-    }
-  ],
-  "keySkills": [
-    {
-      "id": 6000,
-      "description": "Develop aims and questions, formulate hypotheses and make predictions: (identify, research and construct aims and questions for investigation, identify independent, dependent and controlled variables in experiments, formulate hypotheses to focus investigations, predict possible outcomes of investigations)",
-      "curriculumSubjectId": 6000
-    },
-    {
-      "id": 6001,
-      "description": "Plan and conduct investigations: (Determine appropriate investigation methodology: case study; classification and identification; controlled experiment; fieldwork; literature review; modelling; product, process or system development; simulation. Design and conduct investigations; select and use methods appropriate to the selected investigation methodology, including consideration of sampling technique and size, equipment and procedures, taking into account potential sources of error and causes of uncertainty; determine the type and amount of qualitative and/or quantitative data to be generated or collated. Work independently and collaboratively as appropriate and within identified research constraints, adapting or extending processes as required and recording such modifications in a logbook)",
-      "curriculumSubjectId": 6000
-    },
-    {
-      "id": 6002,
-      "description": "Comply with safety and ethical guidelines: (Demonstrate safe laboratory practices when planning and conducting investigations by using risk assessments that are informed by safety data sheets (SDS), and accounting for risks. Apply relevant occupational health and safety guidelines while undertaking practical investigations. Demonstrate ethical conduct when undertaking and reporting investigations)",
-      "curriculumSubjectId": 6000
-    },
-    {
-      "id": 6003,
-      "description": "Generate, collate and record data: (Systematically generate and record primary data, and collate secondary data, appropriate to the investigation, including use of databases and reputable online data sources. Record and summarise both qualitative and quantitative data, including use of a logbook as an authentication of generated or collated data. Organise and present data in useful and meaningful ways, including schematic diagrams, flow charts, tables, bar charts, line graphs and calibration curves)",
-      "curriculumSubjectId": 6000
-    },
-    {
-      "id": 6004,
-      "description": "Analyse and evaluate data and investigation methods: (Process quantitative data using appropriate mathematical relationships and units, including calculations of ratios, percentages, percentage change and mean. Use appropriate numbers of significant figures in calculations. Plot graphs involving two variables that show linear and non-linear relationships. Identify and analyse experimental data qualitatively, handling, where appropriate, concepts of: accuracy, precision, repeatability, reproducibility, resolution, and validity of measurements; and errors (random and systematic). Identify outliers, and contradictory, provisional or incomplete data. Repeat experiments to evaluate the precision of data. Evaluate investigation methods and suggest ways to improve precision, and to reduce the likelihood of errors)",
-      "curriculumSubjectId": 6000
-    },
-    {
-      "id": 6005,
-      "description": "Construct evidence-based arguments and draw conclusions: (Distinguish between opinion, anecdote and evidence, and between scientific and non-scientific ideas. Evaluate data to determine the degree to which the evidence supports the aim of the investigation, and make recommendations, as appropriate, for modifying or extending the investigation. Evaluate data to determine the degree to which the evidence supports or refutes the initial prediction or hypothesis. Use reasoning to construct scientific arguments, and to draw and justify conclusions consistent with evidence and relevant to the question under investigation. Identify, describe and explain the limitations of conclusions, including identification of further evidence required. Discuss the implications of research findings and proposals)",
-      "curriculumSubjectId": 6000
-    },
-    {
-      "id": 6006,
-      "description": "Analyse, evaluate and communicate scientific ideas: (Use appropriate scientific terminology, representations and conventions, including standard abbreviations, graphing conventions, algebraic equations, units of measurement and significant figures. Discuss relevant scientific information, ideas, concepts, theories and models and the connections between them. Analyse and explain how models and theories are used to organise and understand observed phenomena and concepts, identifying limitations of selected models/theories. Critically evaluate and interpret a range of scientific and media texts (including journal articles, mass media communications and opinions in the public domain), processes, claims and conclusions related to chemistry by considering the quality of available evidence. Apply sustainability concepts to analyse and evaluate responses to chemistry-based scenarios, case studies, issues and challenges. Identify and explain when judgements or decisions associated with chemistry-related issues may be based on sociocultural, economic, political, legal and/or ethical factors and not solely on scientific evidence. Use clear, coherent and concise expression to communicate to specific audiences and for specific purposes in appropriate scientific genres, including scientific reports and posters. Acknowledge sources of information and assistance, and use standard scientific referencing conventions)",
-      "curriculumSubjectId": 6000
-    }
-  ]
+	"id": 6000,
+	"curriculumId": 6000,
+	"name": "Physics Units 3 and 4",
+	"isArchived": false,
+	"learningAreas": [
+		{
+			"id": 6006,
+			"curriculumSubjectId": 4000,
+			"name": "How do physicists explain motion in two dimensions?",
+			"abbreviation": "U3AOS1",
+			"description": "In this area of study, students use Newton’s laws of motion to analyse linear motion, circular motion and projectile motion. Newton’s laws of motion give important insights into a range of motion both on Earth and beyond through the investigations of objects on land and in orbit. They explore the motion of objects under the influence of a gravitational field on the surface of Earth, close to Earth and above Earth. They explore the relationships between force, energy and mass. On completion of this unit the student should be able to investigate motion and related energy transformations experimentally, and analyse motion using Newton’s laws of motion in one and two dimensions."
+		},
+		{
+			"id": 6007,
+			"curriculumSubjectId": 4000,
+			"name": "How do things move without contact?",
+			"abbreviation": "U3AOS2",
+			"description": "Field models are used to explain the behaviour of objects when there is no apparent contact. In this area of study, students examine the similarities and differences between three fields: gravitational, electric and magnetic. Students explore how positions in fields determine the potential energy of, and the force on, an object. They investigate how concepts related to field models can be applied to construct motors, maintain satellite orbits and to accelerate particles including in a synchrotron. On completion of this unit the student should be able to analyse gravitational, electric and magnetic fields, and apply these to explain the operation of motors and particle accelerators, and the orbits of satellites."
+		},
+		{
+			"id": 6008,
+			"curriculumSubjectId": 4000,
+			"name": "How are fields used in electricity generation?",
+			"abbreviation": "U3AOS3",
+			"description": "The production, distribution and use of electricity has had a major impact on the way that humans live. In this area of study, students use empirical evidence and models of electric, magnetic and electromagnetic effects to explain how electricity is produced and delivered to homes. They explore the transformer as critical to the performance of electrical distribution systems in minimising power loss. On completion of this unit the student should be able to analyse and evaluate an electricity generation and distribution system."
+		},
+		{
+			"id": 6009,
+			"curriculumSubjectId": 4000,
+			"name": "How has understanding about the physical world changed?",
+			"abbreviation": "U4AOS1",
+			"description": "In this area of study, students learn how understanding of light, matter and motion have changed over time. They explore how major experiments led to the development of theories to describe these fundamental aspects of the physical world. When light and matter are probed, they appear to have remarkable similarities. Light, previously described as an electromagnetic wave, appears to exhibit both wave-like and particle-like properties. Findings that electrons behave in a wave-like manner challenged thinking about the relationship between light and matter. Students consider the limitations of classical mechanics as they explore Einstein’s view of the Universe. They consider postulates as distinct from theories and explore ideas related to objects moving at speeds approaching the speed of light. They use special relativity to explore length contraction and time dilation as observations are made by observers in different frames of reference, and the interrelationship between matter and energy."
+		},
+		{
+			"id": 6010,
+			"curriculumSubjectId": 4000,
+			"name": "How is scientific inquiry used to investigate fields, motion or light?",
+			"abbreviation": "U4AOS2",
+			"description": "Students undertake a student-designed scientific investigation in either Unit 3 or Unit 4, or across both Units 3 and 4. The investigation involves the generation of primary data relating to fields, motion or light. The investigation draws on knowledge and related key science skills developed across Units 3 and 4 and is undertaken by students in the laboratory and/or in the field. When undertaking the investigation students are required to apply the key science skills to develop a question, state an aim, formulate a hypothesis and plan a course of action to answer the question, while complying with safety and ethical guidelines. Students then undertake an investigation to generate primary quantitative data, analyse and evaluate the data, identify limitations of data and methods, link experimental results to scientific ideas, discuss implications of the results, and draw and evaluate a conclusion in response to the question. Students are expected to design and undertake an investigation involving one continuous independent variable. The presentation format for the investigation is a scientific poster constructed according to the structure outlined on page 13. A logbook is maintained by the students for record, assessment and authentication purposes."
+		}
+	],
+	"outcomes": [
+		{
+			"id": 6006,
+			"curriculumSubjectId": 6000,
+			"number": 1,
+			"description": "On completion of this unit the student should be able to investigate motion and related energy transformations experimentally, and analyse motion using Newton’s laws of motion in one and two dimensions.",
+			"topics": [
+				{
+					"id": 6054,
+					"outcomeId": 6006,
+					"name": "Newton’s laws of motion"
+				},
+				{
+					"id": 6055,
+					"outcomeId": 6006,
+					"name": "Relationships between force, energy and mass"
+				}
+			],
+			"keyKnowledge": [
+				{
+					"id": 6311,
+					"description": "investigate and apply theoretically and practically Newton’s three laws of motion in situations where two or more coplanar forces act along a straight line and in two dimensions",
+					"outcomeId": 6006,
+					"outcomeTopicId": 6054
+				},
+				{
+					"id": 6312,
+					"description": "investigate and analyse theoretically and practically the uniform circular motion of an object moving in a horizontal plane: , including:",
+					"outcomeId": 6006,
+					"outcomeTopicId": 6054
+				},
+				{
+					"id": 6313,
+					"description": "a vehicle moving around a circular road",
+					"outcomeId": 6006,
+					"outcomeTopicId": 6054
+				},
+				{
+					"id": 6314,
+					"description": "a vehicle moving around a banked track",
+					"outcomeId": 6006,
+					"outcomeTopicId": 6054
+				},
+				{
+					"id": 6315,
+					"description": "an object on the end of a string",
+					"outcomeId": 6006,
+					"outcomeTopicId": 6054
+				},
+				{
+					"id": 6316,
+					"description": "model natural and artificial satellite motion as uniform circular motion",
+					"outcomeId": 6006,
+					"outcomeTopicId": 6054
+				},
+				{
+					"id": 6317,
+					"description": "investigate and apply theoretically Newton’s second law to circular motion in a vertical plane (forces at the highest and lowest positions only)",
+					"outcomeId": 6006,
+					"outcomeTopicId": 6054
+				},
+				{
+					"id": 6318,
+					"description": "investigate and analyse theoretically and practically the motion of projectiles near Earth’s surface, including a qualitative description of the effects of air resistance",
+					"outcomeId": 6006,
+					"outcomeTopicId": 6054
+				},
+				{
+					"id": 6319,
+					"description": "investigate and apply theoretically and practically the laws of energy and momentum conservation in isolated systems in one dimension",
+					"outcomeId": 6006,
+					"outcomeTopicId": 6054
+				},
+				{
+					"id": 6320,
+					"description": "investigate and analyse theoretically and practically impulse in an isolated system for collisions between objects moving in a straight line: FΔt = mΔv",
+					"outcomeId": 6006,
+					"outcomeTopicId": 6055
+				},
+				{
+					"id": 6321,
+					"description": "investigate and apply theoretically and practically the concept of work done by a force using:",
+					"outcomeId": 6006,
+					"outcomeTopicId": 6055
+				},
+				{
+					"id": 6322,
+					"description": "work done = force × displacement",
+					"outcomeId": 6006,
+					"outcomeTopicId": 6055
+				},
+				{
+					"id": 6323,
+					"description": "work done = area under force vs distance graph (one dimensional only)",
+					"outcomeId": 6006,
+					"outcomeTopicId": 6055
+				},
+				{
+					"id": 6324,
+					"description": "analyse transformations of energy between kinetic energy, elastic potential energy, gravitational potential energy and energy dissipated to the environment (considered as a combination of heat, sound and deformation of material):",
+					"outcomeId": 6006,
+					"outcomeTopicId": 6055
+				},
+				{
+					"id": 6325,
+					"description": "kinetic energy at low speeds: ; elastic and inelastic collisions with reference to conservation of kinetic energy",
+					"outcomeId": 6006,
+					"outcomeTopicId": 6055
+				},
+				{
+					"id": 6326,
+					"description": "elastic potential energy: area under force-distance graph including ideal springs obeying Hooke’s Law:",
+					"outcomeId": 6006,
+					"outcomeTopicId": 6055
+				},
+				{
+					"id": 6327,
+					"description": "gravitational potential energy: Eg = mgΔh or from area under a force-distance graph and area under a field-distance graph multiplied by mass.",
+					"outcomeId": 6006,
+					"outcomeTopicId": 6055
+				}
+			]
+		},
+		{
+			"id": 6007,
+			"curriculumSubjectId": 6000,
+			"number": 2,
+			"description": "On completion of this unit the student should be able to analyse gravitational, electric and magnetic fields, and apply these to explain the operation of motors and particle accelerators, and the orbits of satellites.",
+			"topics": [
+				{
+					"id": 6056,
+					"outcomeId": 6007,
+					"name": "Fields and interactions"
+				},
+				{
+					"id": 6057,
+					"outcomeId": 6007,
+					"name": "Effects of fields"
+				},
+				{
+					"id": 6058,
+					"outcomeId": 6007,
+					"name": "Application of field concepts"
+				}
+			],
+			"keyKnowledge": [
+				{
+					"id": 6328,
+					"description": "describe gravitation, magnetism and electricity using a field model",
+					"outcomeId": 6007,
+					"outcomeTopicId": 6056
+				},
+				{
+					"id": 6329,
+					"description": "investigate and compare theoretically and practically gravitational, magnetic and electric fields, including directions and shapes of fields, attractive and repulsive effects, and the existence of dipoles and monopoles",
+					"outcomeId": 6007,
+					"outcomeTopicId": 6056
+				},
+				{
+					"id": 6330,
+					"description": "investigate and compare theoretically and practically gravitational fields and electrical fields about a point mass or charge (positive or negative) with reference to:",
+					"outcomeId": 6007,
+					"outcomeTopicId": 6056
+				},
+				{
+					"id": 6331,
+					"description": "the direction of the field",
+					"outcomeId": 6007,
+					"outcomeTopicId": 6056
+				},
+				{
+					"id": 6332,
+					"description": "the shape of the field",
+					"outcomeId": 6007,
+					"outcomeTopicId": 6056
+				},
+				{
+					"id": 6333,
+					"description": "the use of the inverse square law to determine the magnitude of the field",
+					"outcomeId": 6007,
+					"outcomeTopicId": 6056
+				},
+				{
+					"id": 6334,
+					"description": "potential energy changes (qualitative) associated with a point mass or charge moving in the field",
+					"outcomeId": 6007,
+					"outcomeTopicId": 6056
+				},
+				{
+					"id": 6335,
+					"description": "investigate and apply theoretically and practically a field model to magnetic phenomena, including shapes and directions of fields produced by bar magnets, and by current-carrying wires, loops and solenoids",
+					"outcomeId": 6007,
+					"outcomeTopicId": 6056
+				},
+				{
+					"id": 6336,
+					"description": "identify fields as static or changing, and as uniform or non-uniform",
+					"outcomeId": 6007,
+					"outcomeTopicId": 6056
+				},
+				{
+					"id": 6337,
+					"description": "analyse the use of an electric field to accelerate a charge, including:",
+					"outcomeId": 6007,
+					"outcomeTopicId": 6057
+				},
+				{
+					"id": 6338,
+					"description": "electric field and electric force concepts: and",
+					"outcomeId": 6007,
+					"outcomeTopicId": 6057
+				},
+				{
+					"id": 6339,
+					"description": "potential energy changes in a uniform electric field: W = qV,",
+					"outcomeId": 6007,
+					"outcomeTopicId": 6057
+				},
+				{
+					"id": 6340,
+					"description": "the magnitude of the force on a charged particle due to a uniform electric field: F = qE",
+					"outcomeId": 6007,
+					"outcomeTopicId": 6057
+				},
+				{
+					"id": 6341,
+					"description": "analyse the use of a magnetic field to change the path of a charged particle, including:",
+					"outcomeId": 6007,
+					"outcomeTopicId": 6057
+				},
+				{
+					"id": 6342,
+					"description": "the magnitude and direction of the force applied to an electron beam by a magnetic field: F = qvB, in cases where the directions of v and B are perpendicular or parallel",
+					"outcomeId": 6007,
+					"outcomeTopicId": 6057
+				},
+				{
+					"id": 6343,
+					"description": "the radius of the path followed by an electron in a magnetic field: , where v << c",
+					"outcomeId": 6007,
+					"outcomeTopicId": 6057
+				},
+				{
+					"id": 6344,
+					"description": "analyse the use of gravitational fields to accelerate mass, including:",
+					"outcomeId": 6007,
+					"outcomeTopicId": 6057
+				},
+				{
+					"id": 6345,
+					"description": "gravitational field and gravitational force concepts: and",
+					"outcomeId": 6007,
+					"outcomeTopicId": 6057
+				},
+				{
+					"id": 6346,
+					"description": "potential energy changes in a uniform gravitational field: Eg = mgΔh",
+					"outcomeId": 6007,
+					"outcomeTopicId": 6057
+				},
+				{
+					"id": 6347,
+					"description": "analyse the change in gravitational potential energy from area under a force vs distance graph and area under a field vs distance graph multiplied by mass",
+					"outcomeId": 6007,
+					"outcomeTopicId": 6057
+				},
+				{
+					"id": 6348,
+					"description": "apply the concepts of force due to gravity and normal force including in relation to satellites in orbit where the orbits are assumed to be uniform and circular",
+					"outcomeId": 6007,
+					"outcomeTopicId": 6058
+				},
+				{
+					"id": 6349,
+					"description": "model satellite motion (artificial, Moon, planet) as uniform circular orbital motion:",
+					"outcomeId": 6007,
+					"outcomeTopicId": 6058
+				},
+				{
+					"id": 6350,
+					"description": "describe the interaction of two fields, allowing that electric charges, magnetic poles and current carrying conductors can either attract or repel, whereas masses only attract each other",
+					"outcomeId": 6007,
+					"outcomeTopicId": 6058
+				},
+				{
+					"id": 6351,
+					"description": "investigate and analyse theoretically and practically the force on a current carrying conductor due to an external magnetic field, F = nIlB, where the directions of I and B are either perpendicular or parallel to each other",
+					"outcomeId": 6007,
+					"outcomeTopicId": 6058
+				},
+				{
+					"id": 6352,
+					"description": "investigate and analyse theoretically and practically the operation of simple DC motors consisting of one coil, containing a number of loops of wire, which is free to rotate about an axis in a uniform magnetic field and including the use of a split ring commutator",
+					"outcomeId": 6007,
+					"outcomeTopicId": 6058
+				},
+				{
+					"id": 6353,
+					"description": "investigate, qualitatively, the effect of current, external magnetic field and the number of loops of wire on the torque of a simple motor",
+					"outcomeId": 6007,
+					"outcomeTopicId": 6058
+				},
+				{
+					"id": 6354,
+					"description": "model the acceleration of particles in a particle accelerator (including synchrotrons) as uniform circular motion (limited to linear acceleration by a uniform electric field and direction change by a uniform magnetic field).",
+					"outcomeId": 6007,
+					"outcomeTopicId": 6058
+				}
+			]
+		},
+		{
+			"id": 6008,
+			"curriculumSubjectId": 6000,
+			"number": 3,
+			"description": "On completion of this unit the student should be able to analyse and evaluate an electricity generation and distribution system.",
+			"topics": [
+				{
+					"id": 6059,
+					"outcomeId": 6008,
+					"name": "Generation of electricity"
+				},
+				{
+					"id": 6060,
+					"outcomeId": 6008,
+					"name": "Transmission of electricity"
+				}
+			],
+			"keyKnowledge": [
+				{
+					"id": 6355,
+					"description": "calculate magnetic flux when the magnetic field is perpendicular to the area, and describe the qualitative effect of differing angles between the area and the field:",
+					"outcomeId": 6008,
+					"outcomeTopicId": 6059
+				},
+				{
+					"id": 6356,
+					"description": "investigate and analyse theoretically and practically the generation of electromotive force (emf) including AC voltage and calculations using induced emf: , with reference to:",
+					"outcomeId": 6008,
+					"outcomeTopicId": 6059
+				},
+				{
+					"id": 6357,
+					"description": "rate of change of magnetic flux",
+					"outcomeId": 6008,
+					"outcomeTopicId": 6059
+				},
+				{
+					"id": 6358,
+					"description": "number of loops through which the flux passes",
+					"outcomeId": 6008,
+					"outcomeTopicId": 6059
+				},
+				{
+					"id": 6359,
+					"description": "direction of induced emf in a coil",
+					"outcomeId": 6008,
+					"outcomeTopicId": 6059
+				},
+				{
+					"id": 6360,
+					"description": "explain the production of DC voltage in DC generators and AC voltage in alternators, including the use of split ring commutators and slip rings respectively",
+					"outcomeId": 6008,
+					"outcomeTopicId": 6059
+				},
+				{
+					"id": 6361,
+					"description": "describe the production of electricity using photovoltaic cells and the need for an inverter to convert power from DC to AC for use in the home (not including details of semiconductors action or inverter circuitry)",
+					"outcomeId": 6008,
+					"outcomeTopicId": 6059
+				},
+				{
+					"id": 6362,
+					"description": "compare sinusoidal AC voltages produced as a result of the uniform rotation of a loop in a constant magnetic field with reference to frequency, period, amplitude, peak-to-peak voltage (Vp–p ) and peak-to-peak current (Ip–p )",
+					"outcomeId": 6008,
+					"outcomeTopicId": 6060
+				},
+				{
+					"id": 6363,
+					"description": "compare alternating voltage expressed as the root-mean-square (rms) to a constant DC voltage developing the same power in a resistive component",
+					"outcomeId": 6008,
+					"outcomeTopicId": 6060
+				},
+				{
+					"id": 6364,
+					"description": "analyse transformer action with reference to electromagnetic induction for an ideal transformer:",
+					"outcomeId": 6008,
+					"outcomeTopicId": 6060
+				},
+				{
+					"id": 6365,
+					"description": "analyse the supply of power by considering transmission losses across transmission lines.",
+					"outcomeId": 6008,
+					"outcomeTopicId": 6060
+				}
+			]
+		},
+		{
+			"id": 6009,
+			"curriculumSubjectId": 6000,
+			"number": 1,
+			"description": "On completion of this unit the student should be able to analyse and apply models that explain the nature of light and matter, and use special relativity to explain observations made when objects are moving at speeds approaching the speed of light.",
+			"topics": [
+				{
+					"id": 6061,
+					"outcomeId": 6009,
+					"name": "Light as a wave"
+				},
+				{
+					"id": 6062,
+					"outcomeId": 6009,
+					"name": "Light as a particle"
+				},
+				{
+					"id": 6063,
+					"outcomeId": 6009,
+					"name": "Matter as particles or waves"
+				},
+				{
+					"id": 6064,
+					"outcomeId": 6009,
+					"name": "Similarities between light and matter"
+				},
+				{
+					"id": 6065,
+					"outcomeId": 6009,
+					"name": "Einstein’s special theory of relativity"
+				},
+				{
+					"id": 6066,
+					"outcomeId": 6009,
+					"name": "Relationship between energy and mass"
+				}
+			],
+			"keyKnowledge": [
+				{
+					"id": 6366,
+					"description": "describe light as a transverse electromagnetic wave which is produced by the acceleration of charges, which in turn produces changing electric fields and associated changing magnetic fields",
+					"outcomeId": 6009,
+					"outcomeTopicId": 6061
+				},
+				{
+					"id": 6367,
+					"description": "identify that all electromagnetic waves travel at the same speed, c, in a vacuum",
+					"outcomeId": 6009,
+					"outcomeTopicId": 6061
+				},
+				{
+					"id": 6368,
+					"description": "explain the formation of a standing wave resulting from the superposition of a travelling wave and its reflection",
+					"outcomeId": 6009,
+					"outcomeTopicId": 6061
+				},
+				{
+					"id": 6369,
+					"description": "analyse the formation of standing waves (only those with nodes at both ends is required)",
+					"outcomeId": 6009,
+					"outcomeTopicId": 6061
+				},
+				{
+					"id": 6370,
+					"description": "investigate and explain theoretically and practically diffraction as the directional spread of various frequencies with reference to different gap width or obstacle size, including the qualitative effect of changing the ratio, and apply this to limitations of imaging using electromagnetic waves",
+					"outcomeId": 6009,
+					"outcomeTopicId": 6061
+				},
+				{
+					"id": 6371,
+					"description": "explain the results of Young’s double slit experiment with reference to:",
+					"outcomeId": 6009,
+					"outcomeTopicId": 6061
+				},
+				{
+					"id": 6372,
+					"description": "evidence for the wave-like nature of light",
+					"outcomeId": 6009,
+					"outcomeTopicId": 6061
+				},
+				{
+					"id": 6373,
+					"description": "constructive and destructive interference of coherent waves in terms of path differences: nλ and respectively, where n = 0,1, 2,…",
+					"outcomeId": 6009,
+					"outcomeTopicId": 6061
+				},
+				{
+					"id": 6374,
+					"description": "effect of wavelength, distance of screen and slit separation on interference patterns: when L>>d",
+					"outcomeId": 6009,
+					"outcomeTopicId": 6061
+				},
+				{
+					"id": 6375,
+					"description": "apply the quantised energy of photons:",
+					"outcomeId": 6009,
+					"outcomeTopicId": 6062
+				},
+				{
+					"id": 6376,
+					"description": "analyse the photoelectric effect with reference to:",
+					"outcomeId": 6009,
+					"outcomeTopicId": 6062
+				},
+				{
+					"id": 6377,
+					"description": "evidence for the particle-like nature of light",
+					"outcomeId": 6009,
+					"outcomeTopicId": 6062
+				},
+				{
+					"id": 6378,
+					"description": "experimental data in the form of graphs of photocurrent versus electrode potential, and of kinetic energy of electrons versus frequency",
+					"outcomeId": 6009,
+					"outcomeTopicId": 6062
+				},
+				{
+					"id": 6379,
+					"description": "kinetic energy of emitted photoelectrons: , using energy units of joule and electron-volt",
+					"outcomeId": 6009,
+					"outcomeTopicId": 6062
+				},
+				{
+					"id": 6380,
+					"description": "effects of intensity of incident irradiation on the emission of photoelectrons",
+					"outcomeId": 6009,
+					"outcomeTopicId": 6062
+				},
+				{
+					"id": 6381,
+					"description": "describe the limitation of the wave model of light in explaining experimental results related to the photoelectric effect",
+					"outcomeId": 6009,
+					"outcomeTopicId": 6062
+				},
+				{
+					"id": 6382,
+					"description": "interpret electron diffraction patterns as evidence for the wave-like nature of matter",
+					"outcomeId": 6009,
+					"outcomeTopicId": 6063
+				},
+				{
+					"id": 6383,
+					"description": "distinguish between the diffraction patterns produced by photons and electrons",
+					"outcomeId": 6009,
+					"outcomeTopicId": 6063
+				},
+				{
+					"id": 6384,
+					"description": "calculate the de Broglie wavelength of matter:",
+					"outcomeId": 6009,
+					"outcomeTopicId": 6063
+				},
+				{
+					"id": 6385,
+					"description": "discuss the importance of the idea of quantisation in the development of knowledge about light and in explaining the nature of atoms",
+					"outcomeId": 6009,
+					"outcomeTopicId": 6064
+				},
+				{
+					"id": 6386,
+					"description": "compare the momentum of photons and of matter of the same wavelength including calculations using:",
+					"outcomeId": 6009,
+					"outcomeTopicId": 6064
+				},
+				{
+					"id": 6387,
+					"description": "explain the production of atomic absorption and emission line spectra, including those from metal vapour lamps",
+					"outcomeId": 6009,
+					"outcomeTopicId": 6064
+				},
+				{
+					"id": 6388,
+					"description": "interpret spectra and calculate the energy of absorbed or emitted photons: E = hf",
+					"outcomeId": 6009,
+					"outcomeTopicId": 6064
+				},
+				{
+					"id": 6389,
+					"description": "analyse the emission or absorption of a photon by an atom in terms of a change in the electron energy state of the atom, with the difference in the states’ energies being equal to the photon energy:",
+					"outcomeId": 6009,
+					"outcomeTopicId": 6064
+				},
+				{
+					"id": 6390,
+					"description": "interpret the single photon and the electron double slit experiment as evidence for the dual nature of light and matter",
+					"outcomeId": 6009,
+					"outcomeTopicId": 6064
+				},
+				{
+					"id": 6391,
+					"description": "describe the limitation of classical mechanics when considering motion approaching the speed of light",
+					"outcomeId": 6009,
+					"outcomeTopicId": 6065
+				},
+				{
+					"id": 6392,
+					"description": "describe Einstein’s two postulates for his special theory of relativity that:",
+					"outcomeId": 6009,
+					"outcomeTopicId": 6065
+				},
+				{
+					"id": 6393,
+					"description": "the laws of physics are the same in all inertial (non-accelerated) frames of reference",
+					"outcomeId": 6009,
+					"outcomeTopicId": 6065
+				},
+				{
+					"id": 6394,
+					"description": "the speed of light has a constant value for all observers regardless of their motion or the motion of the source",
+					"outcomeId": 6009,
+					"outcomeTopicId": 6065
+				},
+				{
+					"id": 6395,
+					"description": "interpret the null result of the Michelson-Morley experiment as evidence in support of Einstein’s special theory of relativity",
+					"outcomeId": 6009,
+					"outcomeTopicId": 6065
+				},
+				{
+					"id": 6396,
+					"description": "compare Einstein’s special theory of relativity with the principles of classical physics",
+					"outcomeId": 6009,
+					"outcomeTopicId": 6065
+				},
+				{
+					"id": 6397,
+					"description": "describe proper time (t0 ) as the time interval between two events in a reference frame where the two events occur at the same point in space",
+					"outcomeId": 6009,
+					"outcomeTopicId": 6065
+				},
+				{
+					"id": 6398,
+					"description": "describe proper length (L0 ) as the length that is measured in the frame of reference in which objects are at rest",
+					"outcomeId": 6009,
+					"outcomeTopicId": 6065
+				},
+				{
+					"id": 6399,
+					"description": "model mathematically time dilation and length contraction at speeds approaching c using the equations: and where",
+					"outcomeId": 6009,
+					"outcomeTopicId": 6065
+				},
+				{
+					"id": 6400,
+					"description": "explain and analyse examples of special relativity including that:",
+					"outcomeId": 6009,
+					"outcomeTopicId": 6065
+				},
+				{
+					"id": 6401,
+					"description": "muons can reach Earth even though their half-lives would suggest that they should decay in the upper atmosphere",
+					"outcomeId": 6009,
+					"outcomeTopicId": 6065
+				},
+				{
+					"id": 6402,
+					"description": "particle accelerator lengths must be designed to take the effects of special relativity into account",
+					"outcomeId": 6009,
+					"outcomeTopicId": 6065
+				},
+				{
+					"id": 6403,
+					"description": "time signals from GPS satellites must be corrected for the effects of special relativity due to their orbital velocity",
+					"outcomeId": 6009,
+					"outcomeTopicId": 6065
+				},
+				{
+					"id": 6404,
+					"description": "interpret Einstein’s prediction by showing that the total ‘mass-energy’ of an object is given by:",
+					"outcomeId": 6009,
+					"outcomeTopicId": 6066
+				},
+				{
+					"id": 6405,
+					"description": "Etot = Ek + E0 = γmc2 where E0 = mc2, and where kinetic energy can be calculated by: Ek = (γ – 1)mc2",
+					"outcomeId": 6009,
+					"outcomeTopicId": 6066
+				},
+				{
+					"id": 6406,
+					"description": "apply the energy-mass relationship to mass conversion in the Sun, to positron-electron annihilation and to nuclear transformations in particle accelerators (details of the particular nuclear processes are not required).",
+					"outcomeId": 6009,
+					"outcomeTopicId": 6066
+				}
+			]
+		},
+		{
+			"id": 6010,
+			"curriculumSubjectId": 6000,
+			"number": 2,
+			"description": "On completion of this unit the student should be able to design and conduct a scientific investigation related to fields, motion or light, and present an aim, methodology and method, results, discussion and a conclusion in a scientific poster.",
+			"topics": [
+				{
+					"id": 6067,
+					"outcomeId": 6010,
+					"name": "Investigation design"
+				},
+				{
+					"id": 6068,
+					"outcomeId": 6010,
+					"name": "Scientific evidence"
+				},
+				{
+					"id": 6069,
+					"outcomeId": 6010,
+					"name": "Science communication"
+				}
+			],
+			"keyKnowledge": [
+				{
+					"id": 6407,
+					"description": "identify the physics concepts specific to the investigation and explain their significance, including definitions of key terms and physics representations",
+					"outcomeId": 6010,
+					"outcomeTopicId": 6067
+				},
+				{
+					"id": 6408,
+					"description": "explain the characteristics of the selected scientific methodology and method including: techniques of primary qualitative and quantitative data generation relevant to the selected investigation; and appropriateness of the use of independent, dependent and controlled variables in the selected scientific investigation",
+					"outcomeId": 6010,
+					"outcomeTopicId": 6067
+				},
+				{
+					"id": 6409,
+					"description": "identify and apply concepts of accuracy, precision, repeatability, reproducibility, resolution and validity of data; and the identification of, and distinction between, error and uncertainty",
+					"outcomeId": 6010,
+					"outcomeTopicId": 6067
+				},
+				{
+					"id": 6410,
+					"description": "identify and apply health, safety and ethical guidelines relevant to the selected investigation",
+					"outcomeId": 6010,
+					"outcomeTopicId": 6067
+				},
+				{
+					"id": 6411,
+					"description": "discuss the nature of evidence that supports or refutes a hypothesis, model or theory",
+					"outcomeId": 6010,
+					"outcomeTopicId": 6068
+				},
+				{
+					"id": 6412,
+					"description": "apply methods of organising, analysing and evaluating primary data to identify patterns and relationships including: the physical significance of the gradient of linearised data; causes of uncertainty; use of uncertainty bars; and assumptions and limitations of data, methodologies and methods",
+					"outcomeId": 6010,
+					"outcomeTopicId": 6068
+				},
+				{
+					"id": 6413,
+					"description": "model the scientific practice of using a logbook to authenticate generated primary data",
+					"outcomeId": 6010,
+					"outcomeTopicId": 6068
+				},
+				{
+					"id": 6414,
+					"description": "apply the conventions of science communication: scientific terminology and representations; symbols, equations and formulas; standard abbreviations; significant figures; and units of measurement",
+					"outcomeId": 6010,
+					"outcomeTopicId": 6069
+				},
+				{
+					"id": 6415,
+					"description": "apply the conventions of scientific poster presentation, including succinct communication of the selected scientific investigation, and acknowledgement of references",
+					"outcomeId": 6010,
+					"outcomeTopicId": 6069
+				},
+				{
+					"id": 6416,
+					"description": "explain the key findings and implications of the selected investigation.",
+					"outcomeId": 6010,
+					"outcomeTopicId": 6069
+				}
+			]
+		}
+	],
+	"keySkills": [
+		{
+			"id": 6000,
+			"description": "Develop aims and questions, formulate hypotheses and make predictions: (identify, research and construct aims and questions for investigation, identify independent, dependent and controlled variables in experiments, formulate hypotheses to focus investigations, predict possible outcomes of investigations)",
+			"curriculumSubjectId": 6000
+		},
+		{
+			"id": 6001,
+			"description": "Plan and conduct investigations: (Determine appropriate investigation methodology: case study; classification and identification; controlled experiment; fieldwork; literature review; modelling; product, process or system development; simulation. Design and conduct investigations; select and use methods appropriate to the selected investigation methodology, including consideration of sampling technique and size, equipment and procedures, taking into account potential sources of error and causes of uncertainty; determine the type and amount of qualitative and/or quantitative data to be generated or collated. Work independently and collaboratively as appropriate and within identified research constraints, adapting or extending processes as required and recording such modifications in a logbook)",
+			"curriculumSubjectId": 6000
+		},
+		{
+			"id": 6002,
+			"description": "Comply with safety and ethical guidelines: (Demonstrate safe laboratory practices when planning and conducting investigations by using risk assessments that are informed by safety data sheets (SDS), and accounting for risks. Apply relevant occupational health and safety guidelines while undertaking practical investigations. Demonstrate ethical conduct when undertaking and reporting investigations)",
+			"curriculumSubjectId": 6000
+		},
+		{
+			"id": 6003,
+			"description": "Generate, collate and record data: (Systematically generate and record primary data, and collate secondary data, appropriate to the investigation, including use of databases and reputable online data sources. Record and summarise both qualitative and quantitative data, including use of a logbook as an authentication of generated or collated data. Organise and present data in useful and meaningful ways, including schematic diagrams, flow charts, tables, bar charts, line graphs and calibration curves)",
+			"curriculumSubjectId": 6000
+		},
+		{
+			"id": 6004,
+			"description": "Analyse and evaluate data and investigation methods: (Process quantitative data using appropriate mathematical relationships and units, including calculations of ratios, percentages, percentage change and mean. Use appropriate numbers of significant figures in calculations. Plot graphs involving two variables that show linear and non-linear relationships. Identify and analyse experimental data qualitatively, handling, where appropriate, concepts of: accuracy, precision, repeatability, reproducibility, resolution, and validity of measurements; and errors (random and systematic). Identify outliers, and contradictory, provisional or incomplete data. Repeat experiments to evaluate the precision of data. Evaluate investigation methods and suggest ways to improve precision, and to reduce the likelihood of errors)",
+			"curriculumSubjectId": 6000
+		},
+		{
+			"id": 6005,
+			"description": "Construct evidence-based arguments and draw conclusions: (Distinguish between opinion, anecdote and evidence, and between scientific and non-scientific ideas. Evaluate data to determine the degree to which the evidence supports the aim of the investigation, and make recommendations, as appropriate, for modifying or extending the investigation. Evaluate data to determine the degree to which the evidence supports or refutes the initial prediction or hypothesis. Use reasoning to construct scientific arguments, and to draw and justify conclusions consistent with evidence and relevant to the question under investigation. Identify, describe and explain the limitations of conclusions, including identification of further evidence required. Discuss the implications of research findings and proposals)",
+			"curriculumSubjectId": 6000
+		},
+		{
+			"id": 6006,
+			"description": "Analyse, evaluate and communicate scientific ideas: (Use appropriate scientific terminology, representations and conventions, including standard abbreviations, graphing conventions, algebraic equations, units of measurement and significant figures. Discuss relevant scientific information, ideas, concepts, theories and models and the connections between them. Analyse and explain how models and theories are used to organise and understand observed phenomena and concepts, identifying limitations of selected models/theories. Critically evaluate and interpret a range of scientific and media texts (including journal articles, mass media communications and opinions in the public domain), processes, claims and conclusions related to chemistry by considering the quality of available evidence. Apply sustainability concepts to analyse and evaluate responses to chemistry-based scenarios, case studies, issues and challenges. Identify and explain when judgements or decisions associated with chemistry-related issues may be based on sociocultural, economic, political, legal and/or ethical factors and not solely on scientific evidence. Use clear, coherent and concise expression to communicate to specific audiences and for specific purposes in appropriate scientific genres, including scientific reports and posters. Acknowledge sources of information and assistance, and use standard scientific referencing conventions)",
+			"curriculumSubjectId": 6000
+		}
+	]
 }

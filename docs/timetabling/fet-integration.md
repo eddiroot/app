@@ -48,17 +48,17 @@ docker exec eddi-fet-1 fet-cl --version
 
 ```svelte
 <script>
-  import TimetableGenerator from '$lib/components/TimetableGenerator.svelte';
-  
-  // Your timetable data
-  export let data;
-  const { timetable, fetXmlContent } = data;
+	import TimetableGenerator from '$lib/components/TimetableGenerator.svelte';
+
+	// Your timetable data
+	export let data;
+	const { timetable, fetXmlContent } = data;
 </script>
 
-<TimetableGenerator 
-  timetableId={timetable.id} 
-  fetXmlContent={fetXmlContent} 
-  fileName={`timetable_${timetable.id}.fet`}
+<TimetableGenerator
+	timetableId={timetable.id}
+	{fetXmlContent}
+	fileName={`timetable_${timetable.id}.fet`}
 />
 ```
 
@@ -67,13 +67,13 @@ docker exec eddi-fet-1 fet-cl --version
 ```javascript
 // Generate timetable
 const response = await fetch('/api/timetables/generate', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({
-    timetableId: 123,
-    fetXmlContent: '<fet>...</fet>',
-    fileName: 'school_timetable.fet'
-  })
+	method: 'POST',
+	headers: { 'Content-Type': 'application/json' },
+	body: JSON.stringify({
+		timetableId: 123,
+		fetXmlContent: '<fet>...</fet>',
+		fileName: 'school_timetable.fet'
+	})
 });
 
 // Check service status
@@ -85,6 +85,7 @@ const status = await fetch('/api/timetables/generate');
 ### 1. Queue-Based Processing
 
 When a user clicks "Generate Timetable":
+
 1. Request is validated and added to the database queue
 2. Response is returned immediately (non-blocking)
 3. Background processor picks up queued items
@@ -94,6 +95,7 @@ When a user clicks "Generate Timetable":
 ### 2. Docker Integration
 
 The `FETDockerService` class handles:
+
 - Writing input files to the container
 - Executing FET commands via `docker exec`
 - Reading output files from the container
@@ -196,7 +198,7 @@ const fetCommand = `fet-cl --inputfile="input.fet" --outputdir="/output" --htmll
 ### Adding New Features
 
 - Extend the `FETDockerService` class
-- Update the API endpoint for new parameters  
+- Update the API endpoint for new parameters
 - Modify the Svelte component for new UI elements
 
 ## Security Considerations

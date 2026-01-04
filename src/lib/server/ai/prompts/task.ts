@@ -2,38 +2,40 @@
 // Orchestrator Sythesizer
 // ============================================================================
 
-import { taskTypeEnum } from "$lib/enums";
-import type { ContentOrchestratorInput } from "../nodes/orchestrator-synthesiser/task";
+import { taskTypeEnum } from '$lib/enums';
+import type { ContentOrchestratorInput } from '../nodes/orchestrator-synthesiser/task';
 
 export function buildOrchestratorPrompt(input: ContentOrchestratorInput): string {
-    const contentStr = input.retrievedContent.map((doc, index) => `--- Content Block ${index + 1} --- ${doc.pageContent}`).join('\n');
+	const contentStr = input.retrievedContent
+		.map((doc, index) => `--- Content Block ${index + 1} --- ${doc.pageContent}`)
+		.join('\n');
 
-    const taskTypeInstructions: Record<taskTypeEnum, string> = {
-        [taskTypeEnum.lesson]: `Create a cohesive LESSON.
+	const taskTypeInstructions: Record<taskTypeEnum, string> = {
+		[taskTypeEnum.lesson]: `Create a cohesive LESSON.
         - Analyze the provided content and group it into logical learning segments.
         - Create a new section only when moving to a distinct new concept or skill.
         - Ensure a logical flow from one concept to the next.
         - Aim for 1-3 substantial sections rather than many small fragments.`,
-        
-        [taskTypeEnum.homework]: `Create a HOMEWORK task.
+
+		[taskTypeEnum.homework]: `Create a HOMEWORK task.
         - Group the content into sections based on the specific skills being practiced.
         - If the homework covers multiple distinct topics, create a section for each.
         - If it covers one main topic, a single section is sufficient.`,
-        
-        [taskTypeEnum.test]: `Create an TEST.
+
+		[taskTypeEnum.test]: `Create an TEST.
         - Group questions/content by skill area.
         - Create distinct sections for different types of analysis or topic areas.
         - Ensure the scope of each section clearly defines what is being tested.`,
-        
-        [taskTypeEnum.assignment]: `Create an ASSIGNMENT/PROJECT.
+
+		[taskTypeEnum.assignment]: `Create an ASSIGNMENT/PROJECT.
         - Structure the content into logical phases of the project (e.g., Research, Application, Reflection).
         - Or, group by the specific criteria/requirements of the task.`,
-        
-        [taskTypeEnum.module]: `Create a MODULE overview.
+
+		[taskTypeEnum.module]: `Create a MODULE overview.
         - Break down the broad topic into its major constituent themes.
         - Each section should represent a significant chunk of learning.`
-    };
-    return `You are an expert educational content orchestrator. Your goal is to synthesize the provided reference material into a structured ${input.taskType}.
+	};
+	return `You are an expert educational content orchestrator. Your goal is to synthesize the provided reference material into a structured ${input.taskType}.
 
     **Task Title:** ${input.title}
     ${input.description ? `**Description:** ${input.description}` : ''}
@@ -61,7 +63,5 @@ export function buildOrchestratorPrompt(input: ContentOrchestratorInput): string
     - The content will later be transformed into interactive blocks, so focus on the educational substance
     
     **Output:**
-    Generate the sections with their scope and full content string, and a description of the whole task`
-
-    
+    Generate the sections with their scope and full content string, and a description of the whole task`;
 }

@@ -34,15 +34,15 @@
 		updatedPairs[index] = { ...updatedPairs[index], [field]: value };
 		newConfig.pairs = updatedPairs;
 		onConfigUpdate(newConfig);
-	}	
+	}
 
 	$effect(() => {
 		if (!response || !response.matches || response.matches.length === 0) {
 			const rightItems = config.pairs.map((pair) => pair.right).sort(() => Math.random() - 0.5);
-			onResponseUpdate({ 
-				matches: config.pairs.map((pair, index) => ({ 
-					left: pair.left, 
-					right: rightItems[index] 
+			onResponseUpdate({
+				matches: config.pairs.map((pair, index) => ({
+					left: pair.left,
+					right: rightItems[index]
 				}))
 			});
 		}
@@ -53,9 +53,7 @@
 		if (!targetContainer || !targetContainer.startsWith('matching-')) return;
 
 		const targetIndex = parseInt(targetContainer.split('-')[1]);
-		const sourceIndex = response.matches.findIndex(
-			(match) => match.right === draggedItem
-		);
+		const sourceIndex = response.matches.findIndex((match) => match.right === draggedItem);
 
 		const newMatches = [...response.matches];
 		const temp = newMatches[sourceIndex].right;
@@ -166,9 +164,8 @@
 			{#if response.matches.length > 0 && response.matches.some((pair) => pair.left.trim())}
 				<div class="space-y-4">
 					{#each response.matches.filter((pair) => pair.left.trim()) as pair, pairIndex}
-						<div class="rounded-lg border-2 border-muted p-3">
+						<div class="border-muted rounded-lg border-2 p-3">
 							<div class="grid grid-cols-1 items-center gap-4 md:grid-cols-[1fr_auto_1fr] md:gap-8">
-								
 								<!-- Left Item -->
 								<div class="bg-muted/20 flex min-h-12 items-center rounded-lg border p-3">
 									<div class="flex items-center gap-3">
@@ -188,8 +185,8 @@
 								{#if response?.matches?.[pairIndex]?.right}
 									<div
 										class="rounded-md p-1 transition-colors {dndState.targetContainer ===
-										`matching-${pairIndex}` && draggedItemIndex !== pairIndex
-											? 'border-2 border-dashed border-accent-foreground bg-accent/10'
+											`matching-${pairIndex}` && draggedItemIndex !== pairIndex
+											? 'border-accent-foreground bg-accent/10 border-2 border-dashed'
 											: 'border-2 border-transparent'}"
 										use:droppable={{
 											container: `matching-${pairIndex}`,
@@ -234,7 +231,7 @@
 						</div>
 					{/each}
 				</div>
-				{:else}
+			{:else}
 				<p class="text-muted-foreground">
 					No matching pairs configured. Switch to edit mode to add pairs.
 				</p>

@@ -97,7 +97,7 @@
 
 					<div class="grid grid-cols-[0.4fr_0.6fr] gap-4 pt-2">
 						<Button variant="outline" href="/">Back</Button>
-						<Form.Button disabled={!$formData.agreeToContact}>Submit</Form.Button>
+						<Form.Button disabled={!$formData.agreeToContact}>Create Account</Form.Button>
 					</div>
 				</form>
 			</CardContent>

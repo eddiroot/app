@@ -1,651 +1,651 @@
 {
-  "id": 23000,
-  "curriculumId": 23000,
-  "name": "Economics Units 3 and 4",
-  "isArchived": false,
-  "learningAreas": [
-    {
-      "id": 23000,
-      "curriculumSubjectId": 23000,
-      "name": "An introduction to microeconomics: the market system, resource allocation and government intervention",
-      "abbreviation": "U3AOS1",
-      "description": "In this area of study students investigate the role of the market in addressing the key economic questions of what and how much to produce, how to produce and for whom to produce. Students consider the effects of decisions made by consumers and businesses on what goods and services are produced, the quantities in which they are produced, the way they are produced and to whom they are distributed. Students investigate the key factors that affect the level of demand and supply in markets and how these might lead to changing prices, as well as the movement of land, labour and capital resources to those areas of production that generate the most value for society. Students use models to make predictions and consider the role of markets in achieving economic efficiency. They discuss instances where the market fails to allocate resources efficiently and evaluate whether government intervention leads to a more efficient allocation of resources in terms of maximising society’s living standards. On completion of this unit the student should be able to analyse how markets operate to allocate resources and evaluate the role of markets and government intervention in achieving efficient outcomes. To achieve this outcome the student will draw on key knowledge and key skills outlined in Area of Study 1. the concept of relative scarcity, including needs, wants, resources, opportunity cost and the production possibility frontier (PPF) model, and the three basic economic questions the meaning and significance of economic efficiency, including allocative efficiency, productive efficiency, dynamic efficiency and intertemporal efficiency and their relationship to the PPF model"
-    },
-    {
-      "id": 23001,
-      "curriculumSubjectId": 23000,
-      "name": "Domestic macroeconomic goals",
-      "abbreviation": "U3AOS2",
-      "description": "In this area of study students investigate Australia’s domestic macroeconomic goals supporting living standards, including strong and sustainable economic growth, full employment and low and stable inflation (price stability). Using the five-sector circular flow model of the macroeconomy, students consider the role of key economic agents and examine the factors that affect the business cycle. Students examine how each of the goals is measured and the potential consequences associated with the level of achievement of each goal. Students identify and analyse contemporary aggregate demand and aggregate supply factors that may have influenced the level of achievement of domestic macroeconomic goals over the past two years and consider how the level of achievement of the goals may affect living standards. On completion of this unit the student should be able to analyse key contemporary factors that may have affected domestic macroeconomic goals over the past two years, evaluate the extent to which the goals have been achieved and discuss the effects on living standards. To achieve this outcome the student will draw on key knowledge and key skills outlined in Area of Study 2. The purpose of economic activity the difference between material and non-material living standards and factors that may affect living standards, including access to goods and services, environmental quality, physical and mental health, crime rates and literacy rates"
-    },
-    {
-      "id": 23002,
-      "curriculumSubjectId": 23000,
-      "name": "Australia and the international economy",
-      "abbreviation": "U3AOS3",
-      "description": "Australia is an open economy. Students examine the reasons for international trade, such as the exchange of goods and services and the movement of savings and investment capital, and how these transactions might affect living standards. Students describe how international transactions are recorded. Students analyse the effects of movements in the exchange rate, the terms of trade and changes in international competitiveness on the achievement of the domestic macroeconomic goals and living standards. On completion of this unit the student should be able to analyse the factors that may affect the exchange rate, terms of trade and Australia’s international competitiveness, and discuss their impact on Australia’s international transactions and the achievement of the domestic macroeconomic goals and living standards. To achieve this outcome the student will draw on key knowledge and key skills outlined in Area of Study 3. the gains from international trade, including lower prices, greater choice, access to resources, economies of scale, and increased competition and efficiency the balance of payments and its components"
-    },
-    {
-      "id": 23003,
-      "curriculumSubjectId": 23000,
-      "name": "Aggregate demand policies and domestic economic stability",
-      "abbreviation": "U4AOS1",
-      "description": "In this area of study students examine how the RBA and the Australian Government can utilise monetary and budgetary policy respectively to affect the level of aggregate demand in the economy. Students discuss the operation of aggregate demand policies, and analyse how current aggregate demand policy settings are intended to effect the achievement of the domestic macroeconomic goals and influence living standards. Students analyse the relative strengths and weaknesses of the policies in influencing the domestic macroeconomic goals and living standards. On completion of this unit the student should be able to discuss the operation of aggregate demand policies and analyse their intended effects on the achievement of the domestic macroeconomic goals and living standards. To achieve this outcome the student will draw on key knowledge and key skills outlined in Area of Study 1. the need for aggregate demand policies, including monetary policy and budgetary policy in terms of stabilising the business cycle"
-    },
-    {
-      "id": 23004,
-      "curriculumSubjectId": 23000,
-      "name": "Aggregate supply policies",
-      "abbreviation": "U4AOS2",
-      "description": "In this area of study students examine the role of aggregate supply policies in creating a stronger macroeconomic environment so that the domestic macroeconomic goals can be more easily achieved. They investigate the different approaches that policymakers may take to promote efficiency through productivity growth, reductions in the costs of production, and improvements in the quality and quantity of the factors of production. Students analyse how these policies may affect aggregate supply and Australia’s international competitiveness and draw conclusions about the effects of these policies on the domestic macroeconomic goals and living standards. On completion of this unit the student should be able to discuss the operation of aggregate supply policies and analyse the effect of these policies on the domestic macroeconomic goals and living standards. To achieve this outcome the student will draw on key knowledge and key skills outlined in Area of Study 2. the use of aggregate supply policies to complement aggregate demand policies in promoting non-inflationary economic growth over time the operation of aggregate supply policies in improving supply-side conditions through their impact on the quantity and quality of the factors of production, the costs of production and productivity, and the effect on Australia’s international competitiveness, productive capacity and aggregate supply"
-    }
-  ],
-  "outcomes": [
-    {
-      "id": 23000,
-      "curriculumSubjectId": 23000,
-      "number": 1,
-      "description": "On completion of this unit the student should be able to analyse how markets operate to allocate resources and evaluate the role of markets and government intervention in achieving efficient outcomes.",
-      "keyKnowledge": [
-        {
-          "id": 23000,
-          "description": "the concept of relative scarcity, including needs, wants, resources, opportunity cost and the production possibility frontier (PPF) model, and the three basic economic questions",
-          "outcomeId": 23000
-        },
-        {
-          "id": 23001,
-          "description": "the meaning and significance of economic efficiency, including allocative efficiency, productive efficiency, dynamic efficiency and intertemporal efficiency and their relationship to the PPF model",
-          "outcomeId": 23000
-        },
-        {
-          "id": 23002,
-          "description": "the conditions for a free and perfectly competitive market",
-          "outcomeId": 23000
-        },
-        {
-          "id": 23003,
-          "description": "the law of demand and the theory of the law of demand, including the income effect and the substitution effect",
-          "outcomeId": 23000
-        },
-        {
-          "id": 23004,
-          "description": "the demand curve, including movements along and shifts of the demand curve",
-          "outcomeId": 23000
-        },
-        {
-          "id": 23005,
-          "description": "non-price factors likely to affect demand and the position of the demand curve, including changes in disposable income, the prices of substitutes and complements, preferences and tastes, interest rates, population demographics and consumer confidence",
-          "outcomeId": 23000
-        },
-        {
-          "id": 23006,
-          "description": "the law of supply and the theory of the law of supply, including the profit motive",
-          "outcomeId": 23000
-        },
-        {
-          "id": 23007,
-          "description": "the supply curve, including movements along and shifts of the supply curve",
-          "outcomeId": 23000
-        },
-        {
-          "id": 23008,
-          "description": "non-price factors likely to affect supply and the position of the supply curve, including changes in the costs of production, number of suppliers, technology, productivity and climatic conditions",
-          "outcomeId": 23000
-        },
-        {
-          "id": 23009,
-          "description": "the effects of changes in supply and demand on equilibrium prices and quantity traded",
-          "outcomeId": 23000
-        },
-        {
-          "id": 23010,
-          "description": "the meaning and significance of price elasticity of demand and supply",
-          "outcomeId": 23000
-        },
-        {
-          "id": 23011,
-          "description": "factors affecting price elasticity of demand, including degree of necessity, availability of substitutes, proportion of income and time",
-          "outcomeId": 23000
-        },
-        {
-          "id": 23012,
-          "description": "factors affecting price elasticity of supply, including spare capacity, production period and durability of goods",
-          "outcomeId": 23000
-        },
-        {
-          "id": 23013,
-          "description": "the role of relative prices in the allocation of resources",
-          "outcomeId": 23000
-        },
-        {
-          "id": 23014,
-          "description": "the role of free and competitive markets in promoting an efficient allocation of resources and improved living standards",
-          "outcomeId": 23000
-        },
-        {
-          "id": 23015,
-          "description": "types of market failure, including public goods, externalities, asymmetric information and common access resources",
-          "outcomeId": 23000
-        },
-        {
-          "id": 23016,
-          "description": "the role and effect of indirect taxation, subsidies, regulations, advertising and direct provision as forms of government intervention in the market to address market failure",
-          "outcomeId": 23000
-        },
-        {
-          "id": 23017,
-          "description": "one example of a government intervention in markets that unintentionally leads to a decrease in one of allocative, productive, dynamic or intertemporal efficiency",
-          "outcomeId": 23000
-        }
-      ],
-      "keySkills": [
-        {
-          "id": 23000,
-          "description": "define key economic concepts and terms and use them appropriately",
-          "outcomeId": 23000
-        },
-        {
-          "id": 23001,
-          "description": "construct and interpret demand and supply diagrams and a PPF model",
-          "outcomeId": 23000
-        },
-        {
-          "id": 23002,
-          "description": "interpret and analyse statistical and graphical data",
-          "outcomeId": 23000
-        },
-        {
-          "id": 23003,
-          "description": "gather, synthesise and use economic data and information from a wide range of sources to analyse economic issues",
-          "outcomeId": 23000
-        },
-        {
-          "id": 23004,
-          "description": "analyse how the forces of demand and supply effect equilibrium price and quantity traded",
-          "outcomeId": 23000
-        },
-        {
-          "id": 23005,
-          "description": "analyse the responsiveness of the quantity demanded and the quantity supplied to changes in price",
-          "outcomeId": 23000
-        },
-        {
-          "id": 23006,
-          "description": "evaluate the role of free and competitive markets in achieving an efficient allocation of resources",
-          "outcomeId": 23000
-        }
-      ]
-    },
-    {
-      "id": 23001,
-      "curriculumSubjectId": 23000,
-      "number": 2,
-      "description": "On completion of this unit the student should be able to analyse key contemporary factors that may have affected domestic macroeconomic goals over the past two years, evaluate the extent to which the goals have been achieved and discuss the effects on living standards.",
-      "keyKnowledge": [
-        {
-          "id": 23018,
-          "description": "The purpose of economic activity",
-          "outcomeId": 23001
-        },
-        {
-          "id": 23019,
-          "description": "the difference between material and non-material living standards and factors that may affect living standards, including access to goods and services, environmental quality, physical and mental health, crime rates and literacy rates",
-          "outcomeId": 23001
-        },
-        {
-          "id": 23020,
-          "description": "the five-sector circular flow model of income, including the role of households, businesses, government, financial institutions and the external sector in an open contemporary macroeconomy",
-          "outcomeId": 23001
-        },
-        {
-          "id": 23021,
-          "description": "the business cycle and its causes",
-          "outcomeId": 23001
-        },
-        {
-          "id": 23022,
-          "description": "the meaning and importance of aggregate demand and the factors that may affect the level of aggregate demand in the economy, including disposable income, interest rates, consumer confidence, business confidence, the exchange rate and rates of economic growth overseas",
-          "outcomeId": 23001
-        },
-        {
-          "id": 23023,
-          "description": "the meaning and importance of aggregate supply and the factors that may affect the level of aggregate supply in the economy, including quantity and quality of the factors of production, costs of production, technological change, productivity growth, exchange rates and climatic conditions, and other events including government regulations and disruptions to international supply chains",
-          "outcomeId": 23001
-        },
-        {
-          "id": 23024,
-          "description": "The domestic macroeconomic goals",
-          "outcomeId": 23001
-        },
-        {
-          "id": 23025,
-          "description": "the meaning of the goal of strong and sustainable economic growth",
-          "outcomeId": 23001
-        },
-        {
-          "id": 23026,
-          "description": "measurement of the rate of economic growth using growth in real Gross Domestic Product (GDP)",
-          "outcomeId": 23001
-        },
-        {
-          "id": 23027,
-          "description": "consequences of not achieving the goal of strong and sustainable economic growth and its effect on living standards, including environmental degradation, external pressures, high inflation if growth is too high, and high unemployment if growth is too low",
-          "outcomeId": 23001
-        },
-        {
-          "id": 23028,
-          "description": "the meaning of the goal of full employment, including the NAIRU (natural rate of unemployment)",
-          "outcomeId": 23001
-        },
-        {
-          "id": 23029,
-          "description": "classifications within the labour force, including employed, unemployed, hidden unemployed, long-term unemployed, underemployed and frictional unemployment",
-          "outcomeId": 23001
-        },
-        {
-          "id": 23030,
-          "description": "measurement of the labour force, including the participation rate, the unemployment rate and the labour force under-utilisation rate",
-          "outcomeId": 23001
-        },
-        {
-          "id": 23031,
-          "description": "the difference between cyclical and structural unemployment",
-          "outcomeId": 23001
-        },
-        {
-          "id": 23032,
-          "description": "the consequences of not achieving the goal of full employment and its effect on living standards, including the impact on GDP and tax revenue if unemployment is too high and the effects on inflation if unemployment is too low",
-          "outcomeId": 23001
-        },
-        {
-          "id": 23033,
-          "description": "the meaning of the goal of low and stable inflation (price stability)",
-          "outcomeId": 23001
-        },
-        {
-          "id": 23034,
-          "description": "the distinction between inflation, disinflation and deflation",
-          "outcomeId": 23001
-        },
-        {
-          "id": 23035,
-          "description": "measurement of the inflation rate using the Consumer Price Index (CPI), including the difference between the headline and underlying (core) rate of inflation",
-          "outcomeId": 23001
-        },
-        {
-          "id": 23036,
-          "description": "causes of inflation, including demand inflation and cost inflation",
-          "outcomeId": 23001
-        },
-        {
-          "id": 23037,
-          "description": "consequences of not achieving the goal of low and stable inflation (price stability) and its effect on living standards, including erosion of purchasing power, development of a wage-price spiral, distortion of spending and investment decisions, lower returns on investment, loss of international competitiveness if it is too high, and delayed consumption and unemployment if it is too low",
-          "outcomeId": 23001
-        },
-        {
-          "id": 23038,
-          "description": "aggregate demand and aggregate supply factors that have affected the level of achievement or non- achievement of the goals of strong and sustainable economic growth, full employment and low and stable inflation over the past two years",
-          "outcomeId": 23001
-        }
-      ],
-      "keySkills": [
-        {
-          "id": 23007,
-          "description": "define key economic concepts and terms and use them appropriately",
-          "outcomeId": 23001
-        },
-        {
-          "id": 23008,
-          "description": "calculate relevant economic indicators using real or hypothetical data",
-          "outcomeId": 23001
-        },
-        {
-          "id": 23009,
-          "description": "construct, interpret and apply economic models including the five-sector circular flow model of income and the business cycle",
-          "outcomeId": 23001
-        },
-        {
-          "id": 23010,
-          "description": "explain and interpret trends and patterns in economic data and other information",
-          "outcomeId": 23001
-        },
-        {
-          "id": 23011,
-          "description": "gather, synthesise and use economic data and information from a wide range of sources to analyse economics issues",
-          "outcomeId": 23001
-        },
-        {
-          "id": 23012,
-          "description": "apply economic concepts to analyse economic relationships and make predictions",
-          "outcomeId": 23001
-        },
-        {
-          "id": 23013,
-          "description": "evaluate the extent to which the economy has achieved the domestic macroeconomic goals over the past two years and discuss the effect of this on living standards",
-          "outcomeId": 23001
-        }
-      ]
-    },
-    {
-      "id": 23002,
-      "curriculumSubjectId": 23000,
-      "number": 3,
-      "description": "On completion of this unit the student should be able to analyse the factors that may affect the exchange rate, terms of trade and Australia’s international competitiveness, and discuss their impact on Australia’s international transactions and the achievement of the domestic macroeconomic goals and living standards.",
-      "keyKnowledge": [
-        {
-          "id": 23039,
-          "description": "the gains from international trade, including lower prices, greater choice, access to resources, economies of scale, and increased competition and efficiency",
-          "outcomeId": 23002
-        },
-        {
-          "id": 23040,
-          "description": "the balance of payments and its components",
-          "outcomeId": 23002
-        },
-        {
-          "id": 23041,
-          "description": "cyclical and structural influences on Australia’s current account balance",
-          "outcomeId": 23002
-        },
-        {
-          "id": 23042,
-          "description": "the composition and cause of net foreign debt and net foreign equities",
-          "outcomeId": 23002
-        },
-        {
-          "id": 23043,
-          "description": "the exchange rate, its meaning and measurement and the factors affecting its value, including relative interest rates, commodity prices and the terms of trade, demand for exports and imports, foreign investment, relative rates of inflation, credit ratings and speculation",
-          "outcomeId": 23002
-        },
-        {
-          "id": 23044,
-          "description": "the terms of trade, its meaning and measurement and the factors that may affect the terms of trade, including commodity prices and production costs in trading partners",
-          "outcomeId": 23002
-        },
-        {
-          "id": 23045,
-          "description": "international competitiveness and the factors that may affect international competitiveness, including productivity, production costs, availability of natural resources, exchange rates and relative rates of inflation",
-          "outcomeId": 23002
-        },
-        {
-          "id": 23046,
-          "description": "the effect of movements in the terms of trade and the exchange rate, and changes in international competitiveness on the domestic macroeconomic goals and living standards",
-          "outcomeId": 23002
-        }
-      ],
-      "keySkills": [
-        {
-          "id": 23014,
-          "description": "define key economic concepts and terms and use them appropriately",
-          "outcomeId": 23002
-        },
-        {
-          "id": 23015,
-          "description": "explain key international economic relationships",
-          "outcomeId": 23002
-        },
-        {
-          "id": 23016,
-          "description": "explain and interpret trends and patterns in economic data and other information",
-          "outcomeId": 23002
-        },
-        {
-          "id": 23017,
-          "description": "apply economic concepts to analyse economic relationships and make predictions",
-          "outcomeId": 23002
-        },
-        {
-          "id": 23018,
-          "description": "calculate relevant international economic indicators using real or hypothetical data",
-          "outcomeId": 23002
-        },
-        {
-          "id": 23019,
-          "description": "gather, synthesise and use economic data and information from a wide range of sources to analyse and discuss economic issues",
-          "outcomeId": 23002
-        }
-      ]
-    },
-    {
-      "id": 23003,
-      "curriculumSubjectId": 23000,
-      "number": 4,
-      "description": "On completion of this unit the student should be able to discuss the operation of aggregate demand policies and analyse their intended effects on the achievement of the domestic macroeconomic goals and living standards.",
-      "keyKnowledge": [
-        {
-          "id": 23047,
-          "description": "the need for aggregate demand policies, including monetary policy and budgetary policy in terms of stabilising the business cycle",
-          "outcomeId": 23003
-        },
-        {
-          "id": 23048,
-          "description": "Monetary policy",
-          "outcomeId": 23003
-        },
-        {
-          "id": 23049,
-          "description": "the role of the RBA with respect to monetary policy as outlined in its charter",
-          "outcomeId": 23003
-        },
-        {
-          "id": 23050,
-          "description": "conventional monetary policy (cash rate target) and how it affects interest rates",
-          "outcomeId": 23003
-        },
-        {
-          "id": 23051,
-          "description": "one example of the operation of an unconventional monetary policy tool from the past two years",
-          "outcomeId": 23003
-        },
-        {
-          "id": 23052,
-          "description": "transmission mechanism of monetary policy and its effect on the level of aggregate demand, including the four channels of savings and investment, cash-flow, exchange rate, and asset prices and wealth",
-          "outcomeId": 23003
-        },
-        {
-          "id": 23053,
-          "description": "the stance of monetary policy: expansionary (accommodative), contractionary (restrictive) or neutral",
-          "outcomeId": 23003
-        },
-        {
-          "id": 23054,
-          "description": "the stance of monetary policy over the past two years and its likely effect on the achievement of the domestic macroeconomic goals and living standards",
-          "outcomeId": 23003
-        },
-        {
-          "id": 23055,
-          "description": "the strengths and weaknesses of using monetary policy to affect aggregate demand and influence the achievement of the domestic macroeconomic goals and living standards",
-          "outcomeId": 23003
-        },
-        {
-          "id": 23056,
-          "description": "Budgetary policy",
-          "outcomeId": 23003
-        },
-        {
-          "id": 23057,
-          "description": "sources of government revenue, including direct and indirect taxation; progressive, regressive and proportional taxes; and revenue from government businesses and the sale of government assets",
-          "outcomeId": 23003
-        },
-        {
-          "id": 23058,
-          "description": "types of government expenses, including government current and capital expenditure and transfer payments",
-          "outcomeId": 23003
-        },
-        {
-          "id": 23059,
-          "description": "the budget outcome: balanced, deficit or surplus",
-          "outcomeId": 23003
-        },
-        {
-          "id": 23060,
-          "description": "the underlying cash balance (budget outcome), including as a proportion of Gross Domestic Product (GDP)",
-          "outcomeId": 23003
-        },
-        {
-          "id": 23061,
-          "description": "methods of financing a deficit or utilising a surplus",
-          "outcomeId": 23003
-        },
-        {
-          "id": 23062,
-          "description": "the relationship between the budget outcome and the level of government (public) debt",
-          "outcomeId": 23003
-        },
-        {
-          "id": 23063,
-          "description": "the role of automatic stabilisers (cyclical component of the budget) in influencing aggregate demand and stabilising the business cycle",
-          "outcomeId": 23003
-        },
-        {
-          "id": 23064,
-          "description": "the role of discretionary stabilisers (structural component of the budget) in influencing aggregate demand and stabilising the business cycle",
-          "outcomeId": 23003
-        },
-        {
-          "id": 23065,
-          "description": "the effect of automatic and discretionary changes in the budget on the budget outcome and government (public) debt",
-          "outcomeId": 23003
-        },
-        {
-          "id": 23066,
-          "description": "the stance of budgetary policy: expansionary or contractionary",
-          "outcomeId": 23003
-        },
-        {
-          "id": 23067,
-          "description": "the effect of the budgetary policy stance and budgetary initiatives over the past two years and their likely effect on the achievement of the domestic macroeconomic goals and living standards",
-          "outcomeId": 23003
-        },
-        {
-          "id": 23068,
-          "description": "the strengths and weaknesses of using budgetary policy to affect aggregate demand and influence the achievement of the domestic macroeconomic goals and living standards",
-          "outcomeId": 23003
-        }
-      ],
-      "keySkills": [
-        {
-          "id": 23020,
-          "description": "define key economic concepts and terms and use them appropriately",
-          "outcomeId": 23003
-        },
-        {
-          "id": 23021,
-          "description": "gather, synthesise and use economic data and information from a wide range of sources to analyse economic issues and form conclusions",
-          "outcomeId": 23003
-        },
-        {
-          "id": 23022,
-          "description": "discuss the operation of aggregate demand policies",
-          "outcomeId": 23003
-        },
-        {
-          "id": 23023,
-          "description": "analyse the effect of current factors on the setting of aggregate demand policies and living standards",
-          "outcomeId": 23003
-        },
-        {
-          "id": 23024,
-          "description": "predict the impact of changes in aggregate demand policies on the achievement of the domestic macroeconomic goals and living standards",
-          "outcomeId": 23003
-        },
-        {
-          "id": 23025,
-          "description": "analyse the strengths and weaknesses of aggregate demand policies in achieving the domestic macroeconomic goals and living standards",
-          "outcomeId": 23003
-        }
-      ]
-    },
-    {
-      "id": 23004,
-      "curriculumSubjectId": 23000,
-      "number": 5,
-      "description": "On completion of this unit the student should be able to discuss the operation of aggregate supply policies and analyse the effect of these policies on the domestic macroeconomic goals and living standards.",
-      "keyKnowledge": [
-        {
-          "id": 23069,
-          "description": "the use of aggregate supply policies to complement aggregate demand policies in promoting non-inflationary economic growth over time",
-          "outcomeId": 23004
-        },
-        {
-          "id": 23070,
-          "description": "the operation of aggregate supply policies in improving supply-side conditions through their impact on the quantity and quality of the factors of production, the costs of production and productivity, and the effect on Australia’s international competitiveness, productive capacity and aggregate supply",
-          "outcomeId": 23004
-        },
-        {
-          "id": 23071,
-          "description": "how one of the following budgetary policies is designed to affect aggregate supply, Australia’s international competitiveness, the achievement of domestic macroeconomic goals, and living standards:",
-          "outcomeId": 23004
-        },
-        {
-          "id": 23072,
-          "description": "training and education",
-          "outcomeId": 23004
-        },
-        {
-          "id": 23073,
-          "description": "research and development",
-          "outcomeId": 23004
-        },
-        {
-          "id": 23074,
-          "description": "subsidies",
-          "outcomeId": 23004
-        },
-        {
-          "id": 23075,
-          "description": "infrastructure",
-          "outcomeId": 23004
-        },
-        {
-          "id": 23076,
-          "description": "tax reform",
-          "outcomeId": 23004
-        },
-        {
-          "id": 23077,
-          "description": "the effect of skilled immigration policy on population, productivity and participation and the subsequent effect on productive capacity, aggregate supply, international competitiveness, the achievement of domestic macroeconomic goals, and living standards",
-          "outcomeId": 23004
-        },
-        {
-          "id": 23078,
-          "description": "trade liberalisation and its short-term and long-term effects on Australia’s international competitiveness, the allocation of resources, aggregate supply, and the domestic macroeconomic goals and living standards",
-          "outcomeId": 23004
-        },
-        {
-          "id": 23079,
-          "description": "one market-based environmental policy and its short-term and long-term effects on aggregate supply, intertemporal efficiency and living standards",
-          "outcomeId": 23004
-        }
-      ],
-      "keySkills": [
-        {
-          "id": 23026,
-          "description": "define key economic concepts and terms and use them appropriately",
-          "outcomeId": 23004
-        },
-        {
-          "id": 23027,
-          "description": "gather, synthesise and use economic data and information from a wide range of sources to analyse economic issues and form conclusions",
-          "outcomeId": 23004
-        },
-        {
-          "id": 23028,
-          "description": "discuss the operation of aggregate supply policies",
-          "outcomeId": 23004
-        },
-        {
-          "id": 23029,
-          "description": "analyse the effect of budgetary, immigration and trade liberalisation policies on aggregate supply, international competitiveness, the achievement of the domestic macroeconomic goals and living standards",
-          "outcomeId": 23004
-        },
-        {
-          "id": 23030,
-          "description": "analyse the effect of an environmental policy on aggregate supply and living standards over time",
-          "outcomeId": 23004
-        }
-      ]
-    }
-  ],
-  "extraContents": []
+	"id": 23000,
+	"curriculumId": 23000,
+	"name": "Economics Units 3 and 4",
+	"isArchived": false,
+	"learningAreas": [
+		{
+			"id": 23000,
+			"curriculumSubjectId": 23000,
+			"name": "An introduction to microeconomics: the market system, resource allocation and government intervention",
+			"abbreviation": "U3AOS1",
+			"description": "In this area of study students investigate the role of the market in addressing the key economic questions of what and how much to produce, how to produce and for whom to produce. Students consider the effects of decisions made by consumers and businesses on what goods and services are produced, the quantities in which they are produced, the way they are produced and to whom they are distributed. Students investigate the key factors that affect the level of demand and supply in markets and how these might lead to changing prices, as well as the movement of land, labour and capital resources to those areas of production that generate the most value for society. Students use models to make predictions and consider the role of markets in achieving economic efficiency. They discuss instances where the market fails to allocate resources efficiently and evaluate whether government intervention leads to a more efficient allocation of resources in terms of maximising society’s living standards. On completion of this unit the student should be able to analyse how markets operate to allocate resources and evaluate the role of markets and government intervention in achieving efficient outcomes. To achieve this outcome the student will draw on key knowledge and key skills outlined in Area of Study 1. the concept of relative scarcity, including needs, wants, resources, opportunity cost and the production possibility frontier (PPF) model, and the three basic economic questions the meaning and significance of economic efficiency, including allocative efficiency, productive efficiency, dynamic efficiency and intertemporal efficiency and their relationship to the PPF model"
+		},
+		{
+			"id": 23001,
+			"curriculumSubjectId": 23000,
+			"name": "Domestic macroeconomic goals",
+			"abbreviation": "U3AOS2",
+			"description": "In this area of study students investigate Australia’s domestic macroeconomic goals supporting living standards, including strong and sustainable economic growth, full employment and low and stable inflation (price stability). Using the five-sector circular flow model of the macroeconomy, students consider the role of key economic agents and examine the factors that affect the business cycle. Students examine how each of the goals is measured and the potential consequences associated with the level of achievement of each goal. Students identify and analyse contemporary aggregate demand and aggregate supply factors that may have influenced the level of achievement of domestic macroeconomic goals over the past two years and consider how the level of achievement of the goals may affect living standards. On completion of this unit the student should be able to analyse key contemporary factors that may have affected domestic macroeconomic goals over the past two years, evaluate the extent to which the goals have been achieved and discuss the effects on living standards. To achieve this outcome the student will draw on key knowledge and key skills outlined in Area of Study 2. The purpose of economic activity the difference between material and non-material living standards and factors that may affect living standards, including access to goods and services, environmental quality, physical and mental health, crime rates and literacy rates"
+		},
+		{
+			"id": 23002,
+			"curriculumSubjectId": 23000,
+			"name": "Australia and the international economy",
+			"abbreviation": "U3AOS3",
+			"description": "Australia is an open economy. Students examine the reasons for international trade, such as the exchange of goods and services and the movement of savings and investment capital, and how these transactions might affect living standards. Students describe how international transactions are recorded. Students analyse the effects of movements in the exchange rate, the terms of trade and changes in international competitiveness on the achievement of the domestic macroeconomic goals and living standards. On completion of this unit the student should be able to analyse the factors that may affect the exchange rate, terms of trade and Australia’s international competitiveness, and discuss their impact on Australia’s international transactions and the achievement of the domestic macroeconomic goals and living standards. To achieve this outcome the student will draw on key knowledge and key skills outlined in Area of Study 3. the gains from international trade, including lower prices, greater choice, access to resources, economies of scale, and increased competition and efficiency the balance of payments and its components"
+		},
+		{
+			"id": 23003,
+			"curriculumSubjectId": 23000,
+			"name": "Aggregate demand policies and domestic economic stability",
+			"abbreviation": "U4AOS1",
+			"description": "In this area of study students examine how the RBA and the Australian Government can utilise monetary and budgetary policy respectively to affect the level of aggregate demand in the economy. Students discuss the operation of aggregate demand policies, and analyse how current aggregate demand policy settings are intended to effect the achievement of the domestic macroeconomic goals and influence living standards. Students analyse the relative strengths and weaknesses of the policies in influencing the domestic macroeconomic goals and living standards. On completion of this unit the student should be able to discuss the operation of aggregate demand policies and analyse their intended effects on the achievement of the domestic macroeconomic goals and living standards. To achieve this outcome the student will draw on key knowledge and key skills outlined in Area of Study 1. the need for aggregate demand policies, including monetary policy and budgetary policy in terms of stabilising the business cycle"
+		},
+		{
+			"id": 23004,
+			"curriculumSubjectId": 23000,
+			"name": "Aggregate supply policies",
+			"abbreviation": "U4AOS2",
+			"description": "In this area of study students examine the role of aggregate supply policies in creating a stronger macroeconomic environment so that the domestic macroeconomic goals can be more easily achieved. They investigate the different approaches that policymakers may take to promote efficiency through productivity growth, reductions in the costs of production, and improvements in the quality and quantity of the factors of production. Students analyse how these policies may affect aggregate supply and Australia’s international competitiveness and draw conclusions about the effects of these policies on the domestic macroeconomic goals and living standards. On completion of this unit the student should be able to discuss the operation of aggregate supply policies and analyse the effect of these policies on the domestic macroeconomic goals and living standards. To achieve this outcome the student will draw on key knowledge and key skills outlined in Area of Study 2. the use of aggregate supply policies to complement aggregate demand policies in promoting non-inflationary economic growth over time the operation of aggregate supply policies in improving supply-side conditions through their impact on the quantity and quality of the factors of production, the costs of production and productivity, and the effect on Australia’s international competitiveness, productive capacity and aggregate supply"
+		}
+	],
+	"outcomes": [
+		{
+			"id": 23000,
+			"curriculumSubjectId": 23000,
+			"number": 1,
+			"description": "On completion of this unit the student should be able to analyse how markets operate to allocate resources and evaluate the role of markets and government intervention in achieving efficient outcomes.",
+			"keyKnowledge": [
+				{
+					"id": 23000,
+					"description": "the concept of relative scarcity, including needs, wants, resources, opportunity cost and the production possibility frontier (PPF) model, and the three basic economic questions",
+					"outcomeId": 23000
+				},
+				{
+					"id": 23001,
+					"description": "the meaning and significance of economic efficiency, including allocative efficiency, productive efficiency, dynamic efficiency and intertemporal efficiency and their relationship to the PPF model",
+					"outcomeId": 23000
+				},
+				{
+					"id": 23002,
+					"description": "the conditions for a free and perfectly competitive market",
+					"outcomeId": 23000
+				},
+				{
+					"id": 23003,
+					"description": "the law of demand and the theory of the law of demand, including the income effect and the substitution effect",
+					"outcomeId": 23000
+				},
+				{
+					"id": 23004,
+					"description": "the demand curve, including movements along and shifts of the demand curve",
+					"outcomeId": 23000
+				},
+				{
+					"id": 23005,
+					"description": "non-price factors likely to affect demand and the position of the demand curve, including changes in disposable income, the prices of substitutes and complements, preferences and tastes, interest rates, population demographics and consumer confidence",
+					"outcomeId": 23000
+				},
+				{
+					"id": 23006,
+					"description": "the law of supply and the theory of the law of supply, including the profit motive",
+					"outcomeId": 23000
+				},
+				{
+					"id": 23007,
+					"description": "the supply curve, including movements along and shifts of the supply curve",
+					"outcomeId": 23000
+				},
+				{
+					"id": 23008,
+					"description": "non-price factors likely to affect supply and the position of the supply curve, including changes in the costs of production, number of suppliers, technology, productivity and climatic conditions",
+					"outcomeId": 23000
+				},
+				{
+					"id": 23009,
+					"description": "the effects of changes in supply and demand on equilibrium prices and quantity traded",
+					"outcomeId": 23000
+				},
+				{
+					"id": 23010,
+					"description": "the meaning and significance of price elasticity of demand and supply",
+					"outcomeId": 23000
+				},
+				{
+					"id": 23011,
+					"description": "factors affecting price elasticity of demand, including degree of necessity, availability of substitutes, proportion of income and time",
+					"outcomeId": 23000
+				},
+				{
+					"id": 23012,
+					"description": "factors affecting price elasticity of supply, including spare capacity, production period and durability of goods",
+					"outcomeId": 23000
+				},
+				{
+					"id": 23013,
+					"description": "the role of relative prices in the allocation of resources",
+					"outcomeId": 23000
+				},
+				{
+					"id": 23014,
+					"description": "the role of free and competitive markets in promoting an efficient allocation of resources and improved living standards",
+					"outcomeId": 23000
+				},
+				{
+					"id": 23015,
+					"description": "types of market failure, including public goods, externalities, asymmetric information and common access resources",
+					"outcomeId": 23000
+				},
+				{
+					"id": 23016,
+					"description": "the role and effect of indirect taxation, subsidies, regulations, advertising and direct provision as forms of government intervention in the market to address market failure",
+					"outcomeId": 23000
+				},
+				{
+					"id": 23017,
+					"description": "one example of a government intervention in markets that unintentionally leads to a decrease in one of allocative, productive, dynamic or intertemporal efficiency",
+					"outcomeId": 23000
+				}
+			],
+			"keySkills": [
+				{
+					"id": 23000,
+					"description": "define key economic concepts and terms and use them appropriately",
+					"outcomeId": 23000
+				},
+				{
+					"id": 23001,
+					"description": "construct and interpret demand and supply diagrams and a PPF model",
+					"outcomeId": 23000
+				},
+				{
+					"id": 23002,
+					"description": "interpret and analyse statistical and graphical data",
+					"outcomeId": 23000
+				},
+				{
+					"id": 23003,
+					"description": "gather, synthesise and use economic data and information from a wide range of sources to analyse economic issues",
+					"outcomeId": 23000
+				},
+				{
+					"id": 23004,
+					"description": "analyse how the forces of demand and supply effect equilibrium price and quantity traded",
+					"outcomeId": 23000
+				},
+				{
+					"id": 23005,
+					"description": "analyse the responsiveness of the quantity demanded and the quantity supplied to changes in price",
+					"outcomeId": 23000
+				},
+				{
+					"id": 23006,
+					"description": "evaluate the role of free and competitive markets in achieving an efficient allocation of resources",
+					"outcomeId": 23000
+				}
+			]
+		},
+		{
+			"id": 23001,
+			"curriculumSubjectId": 23000,
+			"number": 2,
+			"description": "On completion of this unit the student should be able to analyse key contemporary factors that may have affected domestic macroeconomic goals over the past two years, evaluate the extent to which the goals have been achieved and discuss the effects on living standards.",
+			"keyKnowledge": [
+				{
+					"id": 23018,
+					"description": "The purpose of economic activity",
+					"outcomeId": 23001
+				},
+				{
+					"id": 23019,
+					"description": "the difference between material and non-material living standards and factors that may affect living standards, including access to goods and services, environmental quality, physical and mental health, crime rates and literacy rates",
+					"outcomeId": 23001
+				},
+				{
+					"id": 23020,
+					"description": "the five-sector circular flow model of income, including the role of households, businesses, government, financial institutions and the external sector in an open contemporary macroeconomy",
+					"outcomeId": 23001
+				},
+				{
+					"id": 23021,
+					"description": "the business cycle and its causes",
+					"outcomeId": 23001
+				},
+				{
+					"id": 23022,
+					"description": "the meaning and importance of aggregate demand and the factors that may affect the level of aggregate demand in the economy, including disposable income, interest rates, consumer confidence, business confidence, the exchange rate and rates of economic growth overseas",
+					"outcomeId": 23001
+				},
+				{
+					"id": 23023,
+					"description": "the meaning and importance of aggregate supply and the factors that may affect the level of aggregate supply in the economy, including quantity and quality of the factors of production, costs of production, technological change, productivity growth, exchange rates and climatic conditions, and other events including government regulations and disruptions to international supply chains",
+					"outcomeId": 23001
+				},
+				{
+					"id": 23024,
+					"description": "The domestic macroeconomic goals",
+					"outcomeId": 23001
+				},
+				{
+					"id": 23025,
+					"description": "the meaning of the goal of strong and sustainable economic growth",
+					"outcomeId": 23001
+				},
+				{
+					"id": 23026,
+					"description": "measurement of the rate of economic growth using growth in real Gross Domestic Product (GDP)",
+					"outcomeId": 23001
+				},
+				{
+					"id": 23027,
+					"description": "consequences of not achieving the goal of strong and sustainable economic growth and its effect on living standards, including environmental degradation, external pressures, high inflation if growth is too high, and high unemployment if growth is too low",
+					"outcomeId": 23001
+				},
+				{
+					"id": 23028,
+					"description": "the meaning of the goal of full employment, including the NAIRU (natural rate of unemployment)",
+					"outcomeId": 23001
+				},
+				{
+					"id": 23029,
+					"description": "classifications within the labour force, including employed, unemployed, hidden unemployed, long-term unemployed, underemployed and frictional unemployment",
+					"outcomeId": 23001
+				},
+				{
+					"id": 23030,
+					"description": "measurement of the labour force, including the participation rate, the unemployment rate and the labour force under-utilisation rate",
+					"outcomeId": 23001
+				},
+				{
+					"id": 23031,
+					"description": "the difference between cyclical and structural unemployment",
+					"outcomeId": 23001
+				},
+				{
+					"id": 23032,
+					"description": "the consequences of not achieving the goal of full employment and its effect on living standards, including the impact on GDP and tax revenue if unemployment is too high and the effects on inflation if unemployment is too low",
+					"outcomeId": 23001
+				},
+				{
+					"id": 23033,
+					"description": "the meaning of the goal of low and stable inflation (price stability)",
+					"outcomeId": 23001
+				},
+				{
+					"id": 23034,
+					"description": "the distinction between inflation, disinflation and deflation",
+					"outcomeId": 23001
+				},
+				{
+					"id": 23035,
+					"description": "measurement of the inflation rate using the Consumer Price Index (CPI), including the difference between the headline and underlying (core) rate of inflation",
+					"outcomeId": 23001
+				},
+				{
+					"id": 23036,
+					"description": "causes of inflation, including demand inflation and cost inflation",
+					"outcomeId": 23001
+				},
+				{
+					"id": 23037,
+					"description": "consequences of not achieving the goal of low and stable inflation (price stability) and its effect on living standards, including erosion of purchasing power, development of a wage-price spiral, distortion of spending and investment decisions, lower returns on investment, loss of international competitiveness if it is too high, and delayed consumption and unemployment if it is too low",
+					"outcomeId": 23001
+				},
+				{
+					"id": 23038,
+					"description": "aggregate demand and aggregate supply factors that have affected the level of achievement or non- achievement of the goals of strong and sustainable economic growth, full employment and low and stable inflation over the past two years",
+					"outcomeId": 23001
+				}
+			],
+			"keySkills": [
+				{
+					"id": 23007,
+					"description": "define key economic concepts and terms and use them appropriately",
+					"outcomeId": 23001
+				},
+				{
+					"id": 23008,
+					"description": "calculate relevant economic indicators using real or hypothetical data",
+					"outcomeId": 23001
+				},
+				{
+					"id": 23009,
+					"description": "construct, interpret and apply economic models including the five-sector circular flow model of income and the business cycle",
+					"outcomeId": 23001
+				},
+				{
+					"id": 23010,
+					"description": "explain and interpret trends and patterns in economic data and other information",
+					"outcomeId": 23001
+				},
+				{
+					"id": 23011,
+					"description": "gather, synthesise and use economic data and information from a wide range of sources to analyse economics issues",
+					"outcomeId": 23001
+				},
+				{
+					"id": 23012,
+					"description": "apply economic concepts to analyse economic relationships and make predictions",
+					"outcomeId": 23001
+				},
+				{
+					"id": 23013,
+					"description": "evaluate the extent to which the economy has achieved the domestic macroeconomic goals over the past two years and discuss the effect of this on living standards",
+					"outcomeId": 23001
+				}
+			]
+		},
+		{
+			"id": 23002,
+			"curriculumSubjectId": 23000,
+			"number": 3,
+			"description": "On completion of this unit the student should be able to analyse the factors that may affect the exchange rate, terms of trade and Australia’s international competitiveness, and discuss their impact on Australia’s international transactions and the achievement of the domestic macroeconomic goals and living standards.",
+			"keyKnowledge": [
+				{
+					"id": 23039,
+					"description": "the gains from international trade, including lower prices, greater choice, access to resources, economies of scale, and increased competition and efficiency",
+					"outcomeId": 23002
+				},
+				{
+					"id": 23040,
+					"description": "the balance of payments and its components",
+					"outcomeId": 23002
+				},
+				{
+					"id": 23041,
+					"description": "cyclical and structural influences on Australia’s current account balance",
+					"outcomeId": 23002
+				},
+				{
+					"id": 23042,
+					"description": "the composition and cause of net foreign debt and net foreign equities",
+					"outcomeId": 23002
+				},
+				{
+					"id": 23043,
+					"description": "the exchange rate, its meaning and measurement and the factors affecting its value, including relative interest rates, commodity prices and the terms of trade, demand for exports and imports, foreign investment, relative rates of inflation, credit ratings and speculation",
+					"outcomeId": 23002
+				},
+				{
+					"id": 23044,
+					"description": "the terms of trade, its meaning and measurement and the factors that may affect the terms of trade, including commodity prices and production costs in trading partners",
+					"outcomeId": 23002
+				},
+				{
+					"id": 23045,
+					"description": "international competitiveness and the factors that may affect international competitiveness, including productivity, production costs, availability of natural resources, exchange rates and relative rates of inflation",
+					"outcomeId": 23002
+				},
+				{
+					"id": 23046,
+					"description": "the effect of movements in the terms of trade and the exchange rate, and changes in international competitiveness on the domestic macroeconomic goals and living standards",
+					"outcomeId": 23002
+				}
+			],
+			"keySkills": [
+				{
+					"id": 23014,
+					"description": "define key economic concepts and terms and use them appropriately",
+					"outcomeId": 23002
+				},
+				{
+					"id": 23015,
+					"description": "explain key international economic relationships",
+					"outcomeId": 23002
+				},
+				{
+					"id": 23016,
+					"description": "explain and interpret trends and patterns in economic data and other information",
+					"outcomeId": 23002
+				},
+				{
+					"id": 23017,
+					"description": "apply economic concepts to analyse economic relationships and make predictions",
+					"outcomeId": 23002
+				},
+				{
+					"id": 23018,
+					"description": "calculate relevant international economic indicators using real or hypothetical data",
+					"outcomeId": 23002
+				},
+				{
+					"id": 23019,
+					"description": "gather, synthesise and use economic data and information from a wide range of sources to analyse and discuss economic issues",
+					"outcomeId": 23002
+				}
+			]
+		},
+		{
+			"id": 23003,
+			"curriculumSubjectId": 23000,
+			"number": 4,
+			"description": "On completion of this unit the student should be able to discuss the operation of aggregate demand policies and analyse their intended effects on the achievement of the domestic macroeconomic goals and living standards.",
+			"keyKnowledge": [
+				{
+					"id": 23047,
+					"description": "the need for aggregate demand policies, including monetary policy and budgetary policy in terms of stabilising the business cycle",
+					"outcomeId": 23003
+				},
+				{
+					"id": 23048,
+					"description": "Monetary policy",
+					"outcomeId": 23003
+				},
+				{
+					"id": 23049,
+					"description": "the role of the RBA with respect to monetary policy as outlined in its charter",
+					"outcomeId": 23003
+				},
+				{
+					"id": 23050,
+					"description": "conventional monetary policy (cash rate target) and how it affects interest rates",
+					"outcomeId": 23003
+				},
+				{
+					"id": 23051,
+					"description": "one example of the operation of an unconventional monetary policy tool from the past two years",
+					"outcomeId": 23003
+				},
+				{
+					"id": 23052,
+					"description": "transmission mechanism of monetary policy and its effect on the level of aggregate demand, including the four channels of savings and investment, cash-flow, exchange rate, and asset prices and wealth",
+					"outcomeId": 23003
+				},
+				{
+					"id": 23053,
+					"description": "the stance of monetary policy: expansionary (accommodative), contractionary (restrictive) or neutral",
+					"outcomeId": 23003
+				},
+				{
+					"id": 23054,
+					"description": "the stance of monetary policy over the past two years and its likely effect on the achievement of the domestic macroeconomic goals and living standards",
+					"outcomeId": 23003
+				},
+				{
+					"id": 23055,
+					"description": "the strengths and weaknesses of using monetary policy to affect aggregate demand and influence the achievement of the domestic macroeconomic goals and living standards",
+					"outcomeId": 23003
+				},
+				{
+					"id": 23056,
+					"description": "Budgetary policy",
+					"outcomeId": 23003
+				},
+				{
+					"id": 23057,
+					"description": "sources of government revenue, including direct and indirect taxation; progressive, regressive and proportional taxes; and revenue from government businesses and the sale of government assets",
+					"outcomeId": 23003
+				},
+				{
+					"id": 23058,
+					"description": "types of government expenses, including government current and capital expenditure and transfer payments",
+					"outcomeId": 23003
+				},
+				{
+					"id": 23059,
+					"description": "the budget outcome: balanced, deficit or surplus",
+					"outcomeId": 23003
+				},
+				{
+					"id": 23060,
+					"description": "the underlying cash balance (budget outcome), including as a proportion of Gross Domestic Product (GDP)",
+					"outcomeId": 23003
+				},
+				{
+					"id": 23061,
+					"description": "methods of financing a deficit or utilising a surplus",
+					"outcomeId": 23003
+				},
+				{
+					"id": 23062,
+					"description": "the relationship between the budget outcome and the level of government (public) debt",
+					"outcomeId": 23003
+				},
+				{
+					"id": 23063,
+					"description": "the role of automatic stabilisers (cyclical component of the budget) in influencing aggregate demand and stabilising the business cycle",
+					"outcomeId": 23003
+				},
+				{
+					"id": 23064,
+					"description": "the role of discretionary stabilisers (structural component of the budget) in influencing aggregate demand and stabilising the business cycle",
+					"outcomeId": 23003
+				},
+				{
+					"id": 23065,
+					"description": "the effect of automatic and discretionary changes in the budget on the budget outcome and government (public) debt",
+					"outcomeId": 23003
+				},
+				{
+					"id": 23066,
+					"description": "the stance of budgetary policy: expansionary or contractionary",
+					"outcomeId": 23003
+				},
+				{
+					"id": 23067,
+					"description": "the effect of the budgetary policy stance and budgetary initiatives over the past two years and their likely effect on the achievement of the domestic macroeconomic goals and living standards",
+					"outcomeId": 23003
+				},
+				{
+					"id": 23068,
+					"description": "the strengths and weaknesses of using budgetary policy to affect aggregate demand and influence the achievement of the domestic macroeconomic goals and living standards",
+					"outcomeId": 23003
+				}
+			],
+			"keySkills": [
+				{
+					"id": 23020,
+					"description": "define key economic concepts and terms and use them appropriately",
+					"outcomeId": 23003
+				},
+				{
+					"id": 23021,
+					"description": "gather, synthesise and use economic data and information from a wide range of sources to analyse economic issues and form conclusions",
+					"outcomeId": 23003
+				},
+				{
+					"id": 23022,
+					"description": "discuss the operation of aggregate demand policies",
+					"outcomeId": 23003
+				},
+				{
+					"id": 23023,
+					"description": "analyse the effect of current factors on the setting of aggregate demand policies and living standards",
+					"outcomeId": 23003
+				},
+				{
+					"id": 23024,
+					"description": "predict the impact of changes in aggregate demand policies on the achievement of the domestic macroeconomic goals and living standards",
+					"outcomeId": 23003
+				},
+				{
+					"id": 23025,
+					"description": "analyse the strengths and weaknesses of aggregate demand policies in achieving the domestic macroeconomic goals and living standards",
+					"outcomeId": 23003
+				}
+			]
+		},
+		{
+			"id": 23004,
+			"curriculumSubjectId": 23000,
+			"number": 5,
+			"description": "On completion of this unit the student should be able to discuss the operation of aggregate supply policies and analyse the effect of these policies on the domestic macroeconomic goals and living standards.",
+			"keyKnowledge": [
+				{
+					"id": 23069,
+					"description": "the use of aggregate supply policies to complement aggregate demand policies in promoting non-inflationary economic growth over time",
+					"outcomeId": 23004
+				},
+				{
+					"id": 23070,
+					"description": "the operation of aggregate supply policies in improving supply-side conditions through their impact on the quantity and quality of the factors of production, the costs of production and productivity, and the effect on Australia’s international competitiveness, productive capacity and aggregate supply",
+					"outcomeId": 23004
+				},
+				{
+					"id": 23071,
+					"description": "how one of the following budgetary policies is designed to affect aggregate supply, Australia’s international competitiveness, the achievement of domestic macroeconomic goals, and living standards:",
+					"outcomeId": 23004
+				},
+				{
+					"id": 23072,
+					"description": "training and education",
+					"outcomeId": 23004
+				},
+				{
+					"id": 23073,
+					"description": "research and development",
+					"outcomeId": 23004
+				},
+				{
+					"id": 23074,
+					"description": "subsidies",
+					"outcomeId": 23004
+				},
+				{
+					"id": 23075,
+					"description": "infrastructure",
+					"outcomeId": 23004
+				},
+				{
+					"id": 23076,
+					"description": "tax reform",
+					"outcomeId": 23004
+				},
+				{
+					"id": 23077,
+					"description": "the effect of skilled immigration policy on population, productivity and participation and the subsequent effect on productive capacity, aggregate supply, international competitiveness, the achievement of domestic macroeconomic goals, and living standards",
+					"outcomeId": 23004
+				},
+				{
+					"id": 23078,
+					"description": "trade liberalisation and its short-term and long-term effects on Australia’s international competitiveness, the allocation of resources, aggregate supply, and the domestic macroeconomic goals and living standards",
+					"outcomeId": 23004
+				},
+				{
+					"id": 23079,
+					"description": "one market-based environmental policy and its short-term and long-term effects on aggregate supply, intertemporal efficiency and living standards",
+					"outcomeId": 23004
+				}
+			],
+			"keySkills": [
+				{
+					"id": 23026,
+					"description": "define key economic concepts and terms and use them appropriately",
+					"outcomeId": 23004
+				},
+				{
+					"id": 23027,
+					"description": "gather, synthesise and use economic data and information from a wide range of sources to analyse economic issues and form conclusions",
+					"outcomeId": 23004
+				},
+				{
+					"id": 23028,
+					"description": "discuss the operation of aggregate supply policies",
+					"outcomeId": 23004
+				},
+				{
+					"id": 23029,
+					"description": "analyse the effect of budgetary, immigration and trade liberalisation policies on aggregate supply, international competitiveness, the achievement of the domestic macroeconomic goals and living standards",
+					"outcomeId": 23004
+				},
+				{
+					"id": 23030,
+					"description": "analyse the effect of an environmental policy on aggregate supply and living standards over time",
+					"outcomeId": 23004
+				}
+			]
+		}
+	],
+	"extraContents": []
 }

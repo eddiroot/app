@@ -87,7 +87,7 @@ function createChatModel(config: Required<ModelConfig>): BaseChatModel {
 /**
  * Get the base LLM instance
  * This is the primary model used throughout the application
- * 
+ *
  */
 export function getBaseLLM(overrides?: Partial<ModelConfig>): BaseChatModel {
 	const config = {

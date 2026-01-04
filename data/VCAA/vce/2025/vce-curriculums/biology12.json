@@ -1,573 +1,573 @@
 {
-  "id": 4000,
-  "curriculumId": 4000,
-  "name": "Biology Units 1 and 2",
-  "isArchived": false,
-  "learningAreas": [
-    {
-      "id": 4000,
-      "curriculumSubjectId": 4000,
-      "name": "How do cells function?",
-      "abbreviation": "U1AOS1",
-      "description": "In this area of study students examine the structure and functioning of prokaryotic and eukaryotic cells, and how the plasma membrane contributes to survival by controlling the movement of substances into and out of the cell. Students explore cellular growth, replacement and death. They become familiar with the key events and regulation of the cell cycle and the processes for cell division, including disruptions to the cell cycle and deviant cell behaviour. Students consider the properties of stem cells and their role in differentiation, specialisation and renewal of cells and tissues. On completion of this unit the student should be able to explain and compare cellular structure and function and analyse the cell cycle and cell growth, death and differentiation."
-    },
-    {
-      "id": 4001,
-      "curriculumSubjectId": 4000,
-      "name": "How do plant and animal systems function?",
-      "abbreviation": "U1AOS2",
-      "description": "In this area of study students explore how systems function through cell specialisation in vascular plants and in digestive, endocrine and excretory systems in animals, focusing on regulation of water balance in plants, and temperature, blood glucose and water balance in animals. Students examine how homeostatic mechanisms in animals help maintain their internal environment within a narrow range of tolerance levels, and consider malfunctions in homeostatic mechanisms. On completion of this unit the student should be able to explain and compare how cells are specialised and organised in plants and animals, and analyse how specific systems in plants and animals are regulated."
-    },
-    {
-      "id": 4002,
-      "curriculumSubjectId": 4000,
-      "name": "How do scientific investigations develop understanding of how organisms regulate their functions?",
-      "abbreviation": "U1AOS3",
-      "description": "Survival of organisms requires control and regulation of factors within an organism and often outside an organism. Different types of cells and adaptations enhance an organism’s survival in a particular environment, while homeostatic mechanisms maintain the internal environment. In this area of study students adapt or design and then conduct a scientific investigation to generate appropriate qualitative and/or quantitative data, organise and interpret the data, and reach a conclusion in response to the research question. The student-adapted or student-designed scientific investigation relates to knowledge and skills developed in Area of Study 1 and/or Area of Study 2."
-    },
-    {
-      "id": 4003,
-      "curriculumSubjectId": 4000,
-      "name": "How is inheritance explained?",
-      "abbreviation": "U2AOS1",
-      "description": "In this area of study students describe the production of gametes in sexual reproduction through the key events in meiosis. They explore the nature of chromosomes and the use of genetic language to read and interpret patterns of inheritance and predict outcomes of genetic crosses. Students explain how a characteristic or trait can be influenced by one gene, many genes acting together, and genes interacting with external environmental or epigenetic factors. They apply their genetic knowledge to analyse pedigree charts, determine patterns of inheritance and predict outcomes of genetic crosses."
-    },
-    {
-      "id": 4004,
-      "curriculumSubjectId": 4000,
-      "name": "How do inherited adaptations impact on diversity?",
-      "abbreviation": "U2AOS2",
-      "description": "In this area of study students analyse the advantages and disadvantages of asexual and sexual reproduction and investigate the use and application of reproductive cloning technologies. Students explore the biological importance of genetic diversity and the structural, physiological and behavioural adaptations that enable species to survive in an ecosystem. Students explore the interdependencies between species, including the importance and impact of keystone species and top predators. They consider the contributions of Aboriginal and Torres Strait Islander knowledge and perspectives to the understanding of the adaptations of, and interdependencies between, species in Australian ecosystems."
-    },
-    {
-      "id": 4005,
-      "curriculumSubjectId": 4000,
-      "name": "How do humans use science to explore and communicate contemporary bioethical issues?",
-      "abbreviation": "U2AOS3",
-      "description": "In this area of study students explore a contemporary bioethical issue relating to the application of genetic knowledge, reproductive science, inheritance or adaptations and interdependencies beneficial for survival. Examples of investigation topics include, but are not limited to: genomic and epigenetic research; cloning for agriculture, horticulture or other purposes; assisted reproductive technologies; prenatal and predictive genetic testing; strategies for maintaining genetic diversity within a species or population; the impact of introduced species; changes to specific keystone species on populations and ecosystems; or the use of biomimicry to solve human challenges or biopiracy of Indigenous knowledge. Students may develop a research question related to the applications included above or, in conjunction with their teacher, they may develop their own research question related to Area of Study 1 and/or Area of Study 2. Possible starting points when developing a research question may include stimulus material such as announcements of recent discoveries, an expert’s published point of view, a TED talk or a YouTube presentation, an article from a scientific publication, public concern about an issue, changes in government funding or new government initiatives."
-    }
-  ],
-  "outcomes": [
-    {
-      "id": 4000,
-      "curriculumSubjectId": 4000,
-      "number": 2001,
-      "description": "On completion of this unit the student should be able to explain and compare cellular structure and function and analyse the cell cycle and cell growth, death and differentiation.",
-      "topics": [
-        {
-          "id": 4000,
-          "outcomeId": 4000,
-          "name": "Cellular structure and function"
-        },
-        {
-          "id": 4001,
-          "outcomeId": 4000,
-          "name": "The cell cycle and cell growth, death and differentiation"
-        }
-      ],
-      "keyKnowledge": [
-        {
-          "id": 4000,
-          "description": "cells as the basic structural feature of life on Earth, including the distinction between prokaryotic and eukaryotic cells",
-          "outcomeId": 4000,
-          "outcomeTopicId": 4000
-        },
-        {
-          "id": 4001,
-          "description": "surface area to volume ratio as an important factor in the limitations of cell size and the need for internal compartments (organelles) with specific cellular functions",
-          "outcomeId": 4000,
-          "outcomeTopicId": 4000
-        },
-        {
-          "id": 4002,
-          "description": "the structure and specialisation of plant and animal cell organelles for distinct functions, including chloroplasts and mitochondria",
-          "outcomeId": 4000,
-          "outcomeTopicId": 4000
-        },
-        {
-          "id": 4003,
-          "description": "the structure and function of the plasma membrane in the passage of water, hydrophilic and hydrophobic substances via osmosis, facilitated diffusion and active transport",
-          "outcomeId": 4000,
-          "outcomeTopicId": 4000
-        },
-        {
-          "id": 4004,
-          "description": "binary fission in prokaryotic cells",
-          "outcomeId": 4000,
-          "outcomeTopicId": 4001
-        },
-        {
-          "id": 4005,
-          "description": "the eukaryotic cell cycle, including the characteristics of each of the sub-phases of mitosis and cytokinesis in plant and animal cells",
-          "outcomeId": 4000,
-          "outcomeTopicId": 4001
-        },
-        {
-          "id": 4006,
-          "description": "apoptosis as a regulated process of programmed cell death",
-          "outcomeId": 4000,
-          "outcomeTopicId": 4001
-        },
-        {
-          "id": 4007,
-          "description": "disruption to the regulation of the cell cycle and malfunctions in apoptosis that may result in deviant cell behaviour: cancer and the characteristics of cancer cells",
-          "outcomeId": 4000,
-          "outcomeTopicId": 4001
-        },
-        {
-          "id": 4008,
-          "description": "properties of stem cells that allow for differentiation, specialisation and renewal of cells and tissues, including the concepts of pluripotency and totipotency.",
-          "outcomeId": 4000,
-          "outcomeTopicId": 4001
-        }
-      ]
-    },
-    {
-      "id": 4001,
-      "curriculumSubjectId": 4000,
-      "number": 2002,
-      "description": "On completion of this unit the student should be able to explain and compare how cells are specialised and organised in plants and animals, and analyse how specific systems in plants and animals are regulated.",
-      "topics": [
-        {
-          "id": 4002,
-          "outcomeId": 4001,
-          "name": "Functioning systems"
-        },
-        {
-          "id": 4003,
-          "outcomeId": 4001,
-          "name": "Regulation of systems"
-        }
-      ],
-      "keyKnowledge": [
-        {
-          "id": 4009,
-          "description": "specialisation and organisation of plant cells into tissues for specific functions in vascular plants, including intake, movement and loss of water",
-          "outcomeId": 4001,
-          "outcomeTopicId": 4002
-        },
-        {
-          "id": 4010,
-          "description": "specialisation and organisation of animal cells into tissues, organs and systems with specific functions: digestive, endocrine and excretory",
-          "outcomeId": 4001,
-          "outcomeTopicId": 4002
-        },
-        {
-          "id": 4011,
-          "description": "regulation of water balance in vascular plants",
-          "outcomeId": 4001,
-          "outcomeTopicId": 4003
-        },
-        {
-          "id": 4012,
-          "description": "regulation of body temperature, blood glucose and water balance in animals by homeostatic mechanisms, including stimulus-response models, feedback loops and associated organ structures",
-          "outcomeId": 4001,
-          "outcomeTopicId": 4003
-        },
-        {
-          "id": 4013,
-          "description": "malfunctions in homeostatic mechanisms: type 1 diabetes, hypoglycaemia, hyperthyroidism.",
-          "outcomeId": 4001,
-          "outcomeTopicId": 4003
-        }
-      ]
-    },
-    {
-      "id": 4002,
-      "curriculumSubjectId": 4000,
-      "number": 2003,
-      "description": "On completion of this unit the student should be able to adapt or design and then conduct a scientific investigation related to function and/or regulation of cells or systems, and draw a conclusion based on evidence from generated primary data.",
-      "topics": [
-        {
-          "id": 4004,
-          "outcomeId": 4002,
-          "name": "Investigation design"
-        },
-        {
-          "id": 4005,
-          "outcomeId": 4002,
-          "name": "Scientific evidence"
-        },
-        {
-          "id": 4006,
-          "outcomeId": 4002,
-          "name": "Science communication"
-        }
-      ],
-      "keyKnowledge": [
-        {
-          "id": 4014,
-          "description": "biological science concepts specific to the selected scientific investigation and their significance, including the definition of key terms",
-          "outcomeId": 4002,
-          "outcomeTopicId": 4004
-        },
-        {
-          "id": 4015,
-          "description": "scientific methodology relevant to the selected scientific investigation, selected from: classification and identification; controlled experiment; correlational study; fieldwork; modelling; product, process or system development; or simulation",
-          "outcomeId": 4002,
-          "outcomeTopicId": 4004
-        },
-        {
-          "id": 4016,
-          "description": "techniques of primary qualitative and quantitative data generation relevant to the investigation",
-          "outcomeId": 4002,
-          "outcomeTopicId": 4004
-        },
-        {
-          "id": 4017,
-          "description": "accuracy, precision, reproducibility, repeatability and validity of measurements in relation to the investigation",
-          "outcomeId": 4002,
-          "outcomeTopicId": 4004
-        },
-        {
-          "id": 4018,
-          "description": "health, safety and ethical guidelines relevant to the selected scientific investigation",
-          "outcomeId": 4002,
-          "outcomeTopicId": 4004
-        },
-        {
-          "id": 4019,
-          "description": "the distinction between an aim, a hypothesis, a model, a theory and a law",
-          "outcomeId": 4002,
-          "outcomeTopicId": 4005
-        },
-        {
-          "id": 4020,
-          "description": "observations and investigations that are consistent with, or challenge, current scientific models or theories",
-          "outcomeId": 4002,
-          "outcomeTopicId": 4005
-        },
-        {
-          "id": 4021,
-          "description": "the characteristics of primary data",
-          "outcomeId": 4002,
-          "outcomeTopicId": 4005
-        },
-        {
-          "id": 4022,
-          "description": "ways of organising, analysing and evaluating generated primary data to identify patterns and relationships including sources of error",
-          "outcomeId": 4002,
-          "outcomeTopicId": 4005
-        },
-        {
-          "id": 4023,
-          "description": "use of a logbook to authenticate generated primary data",
-          "outcomeId": 4002,
-          "outcomeTopicId": 4005
-        },
-        {
-          "id": 4024,
-          "description": "the limitations of investigation methodologies and methods, and of data generation and/or analysis",
-          "outcomeId": 4002,
-          "outcomeTopicId": 4005
-        },
-        {
-          "id": 4025,
-          "description": "the conventions of scientific report writing including scientific terminology and representations, standard abbreviations and units of measurement",
-          "outcomeId": 4002,
-          "outcomeTopicId": 4006
-        },
-        {
-          "id": 4026,
-          "description": "ways of presenting key findings and implications of the selected scientific investigation.",
-          "outcomeId": 4002,
-          "outcomeTopicId": 4006
-        }
-      ]
-    },
-    {
-      "id": 4003,
-      "curriculumSubjectId": 4000,
-      "number": 2004,
-      "description": "On completion of this unit the student should be able to explain and compare chromosomes, genomes, genotypes and phenotypes, and analyse and predict patterns of inheritance.",
-      "topics": [
-        {
-          "id": 4007,
-          "outcomeId": 4003,
-          "name": "From chromosomes to genomes"
-        },
-        {
-          "id": 4008,
-          "outcomeId": 4003,
-          "name": "Genotypes and phenotypes"
-        },
-        {
-          "id": 4009,
-          "outcomeId": 4003,
-          "name": "Patterns of inheritance"
-        }
-      ],
-      "keyKnowledge": [
-        {
-          "id": 4027,
-          "description": "the distinction between genes, alleles and a genome",
-          "outcomeId": 4003,
-          "outcomeTopicId": 4007
-        },
-        {
-          "id": 4028,
-          "description": "the nature of a pair of homologous chromosomes carrying the same gene loci and the distinction between autosomes and sex chromosomes",
-          "outcomeId": 4003,
-          "outcomeTopicId": 4007
-        },
-        {
-          "id": 4029,
-          "description": "variability of chromosomes in terms of size and number in different organisms",
-          "outcomeId": 4003,
-          "outcomeTopicId": 4007
-        },
-        {
-          "id": 4030,
-          "description": "karyotypes as a visual representation that can be used to identify chromosome abnormalities",
-          "outcomeId": 4003,
-          "outcomeTopicId": 4007
-        },
-        {
-          "id": 4031,
-          "description": "the production of haploid gametes from diploid cells by meiosis, including the significance of crossing over of chromatids and independent assortment for genetic diversity",
-          "outcomeId": 4003,
-          "outcomeTopicId": 4007
-        },
-        {
-          "id": 4032,
-          "description": "the use of symbols in the writing of genotypes for the alleles present at a particular gene locus",
-          "outcomeId": 4003,
-          "outcomeTopicId": 4008
-        },
-        {
-          "id": 4033,
-          "description": "the expression of dominant and recessive phenotypes, including codominance and incomplete dominance",
-          "outcomeId": 4003,
-          "outcomeTopicId": 4008
-        },
-        {
-          "id": 4034,
-          "description": "proportionate influences of genetic material, and environmental and epigenetic factors, on phenotypes",
-          "outcomeId": 4003,
-          "outcomeTopicId": 4008
-        },
-        {
-          "id": 4035,
-          "description": "pedigree charts and patterns of inheritance, including autosomal and sex-linked inheritance",
-          "outcomeId": 4003,
-          "outcomeTopicId": 4009
-        },
-        {
-          "id": 4036,
-          "description": "predicted genetic outcomes for a monohybrid cross and a monohybrid test cross",
-          "outcomeId": 4003,
-          "outcomeTopicId": 4009
-        },
-        {
-          "id": 4037,
-          "description": "predicted genetic outcomes for two genes that are either linked or assort independently.",
-          "outcomeId": 4003,
-          "outcomeTopicId": 4009
-        }
-      ]
-    },
-    {
-      "id": 4004,
-      "curriculumSubjectId": 4000,
-      "number": 2005,
-      "description": "On completion of this unit the student should be able to analyse advantages and disadvantages of reproductive strategies, and evaluate how adaptations and interdependencies enhance survival of species within an ecosystem.",
-      "topics": [
-        {
-          "id": 4010,
-          "outcomeId": 4004,
-          "name": "Reproductive strategies"
-        },
-        {
-          "id": 4011,
-          "outcomeId": 4004,
-          "name": "Adaptations and diversity"
-        }
-      ],
-      "keyKnowledge": [
-        {
-          "id": 4038,
-          "description": "biological advantages and disadvantages of asexual reproduction",
-          "outcomeId": 4004,
-          "outcomeTopicId": 4010
-        },
-        {
-          "id": 4039,
-          "description": "biological advantages of sexual reproduction in terms of genetic diversity of offspring",
-          "outcomeId": 4004,
-          "outcomeTopicId": 4010
-        },
-        {
-          "id": 4040,
-          "description": "the process and application of reproductive cloning technologies",
-          "outcomeId": 4004,
-          "outcomeTopicId": 4010
-        },
-        {
-          "id": 4041,
-          "description": "the biological importance of genetic diversity within a species or population",
-          "outcomeId": 4004,
-          "outcomeTopicId": 4011
-        },
-        {
-          "id": 4042,
-          "description": "structural, physiological and behavioural adaptations that enhance an organism’s survival and enable life to exist in a wide range of environments",
-          "outcomeId": 4004,
-          "outcomeTopicId": 4011
-        },
-        {
-          "id": 4043,
-          "description": "survival through interdependencies between species, including impact of changes to keystone species and predators and their ecological roles in structuring and maintaining the distribution, density and size of a population in an ecosystem",
-          "outcomeId": 4004,
-          "outcomeTopicId": 4011
-        },
-        {
-          "id": 4044,
-          "description": "the contribution of Aboriginal and Torres Strait Islander peoples’ knowledge and perspectives in understanding adaptations of, and interdependencies between, species in Australian ecosystems.",
-          "outcomeId": 4004,
-          "outcomeTopicId": 4011
-        }
-      ]
-    },
-    {
-      "id": 4005,
-      "curriculumSubjectId": 4000,
-      "number": 2006,
-      "description": "On completion of this unit the student should be able to identify, analyse and evaluate a bioethical issue in genetics, reproductive science or adaptations beneficial for survival.",
-      "topics": [
-        {
-          "id": 4012,
-          "outcomeId": 4005,
-          "name": "Scientific evidence"
-        },
-        {
-          "id": 4013,
-          "outcomeId": 4005,
-          "name": "Scientific communication"
-        },
-        {
-          "id": 4014,
-          "outcomeId": 4005,
-          "name": "Analysis and evaluation of bioethical issues"
-        }
-      ],
-      "keyKnowledge": [
-        {
-          "id": 4045,
-          "description": "the distinction between primary and secondary data",
-          "outcomeId": 4005,
-          "outcomeTopicId": 4012
-        },
-        {
-          "id": 4046,
-          "description": "the nature of evidence and information: distinction between opinion, anecdote and evidence, and scientific and non-scientific ideas",
-          "outcomeId": 4005,
-          "outcomeTopicId": 4012
-        },
-        {
-          "id": 4047,
-          "description": "the quality of evidence, including validity and authority of data and sources of possible errors or bias",
-          "outcomeId": 4005,
-          "outcomeTopicId": 4012
-        },
-        {
-          "id": 4048,
-          "description": "methods of organising, analysing and evaluating secondary data",
-          "outcomeId": 4005,
-          "outcomeTopicId": 4012
-        },
-        {
-          "id": 4049,
-          "description": "the use of a logbook to authenticate collated secondary data",
-          "outcomeId": 4005,
-          "outcomeTopicId": 4012
-        },
-        {
-          "id": 4050,
-          "description": "biological concepts specific to the investigation: definitions of key terms; use of appropriate biological terminology, conventions and representations",
-          "outcomeId": 4005,
-          "outcomeTopicId": 4013
-        },
-        {
-          "id": 4051,
-          "description": "characteristics of effective science communication: accuracy of biological information; clarity of explanation of biological concepts, ideas and models; contextual clarity with reference to importance and implications of findings; conciseness and coherence; and appropriateness for purpose and audience",
-          "outcomeId": 4005,
-          "outcomeTopicId": 4013
-        },
-        {
-          "id": 4052,
-          "description": "the use of data representations, models and theories in organising and explaining observed phenomena and biological concepts, and their limitations",
-          "outcomeId": 4005,
-          "outcomeTopicId": 4013
-        },
-        {
-          "id": 4053,
-          "description": "the influence of social, economic, legal and political factors relevant to the selected research question",
-          "outcomeId": 4005,
-          "outcomeTopicId": 4013
-        },
-        {
-          "id": 4054,
-          "description": "conventions for referencing and acknowledging sources of information",
-          "outcomeId": 4005,
-          "outcomeTopicId": 4013
-        },
-        {
-          "id": 4055,
-          "description": "ways of identifying bioethical issues",
-          "outcomeId": 4005,
-          "outcomeTopicId": 4014
-        },
-        {
-          "id": 4056,
-          "description": "characteristics of effective analysis of bioethical issues",
-          "outcomeId": 4005,
-          "outcomeTopicId": 4014
-        },
-        {
-          "id": 4057,
-          "description": "approaches to bioethics and ethical concepts as they apply to the bioethical issue being investigated.",
-          "outcomeId": 4005,
-          "outcomeTopicId": 4014
-        }
-      ]
-    }
-  ],
-  "keySkills": [
-    {
-      "id": 4000,
-      "description": "Develop aims and questions, formulate hypotheses and make predictions: (identify, research and construct aims and questions for investigation, identify independent, dependent and controlled variables in experiments, formulate hypotheses to focus investigations, predict possible outcomes of investigations)",
-      "curriculumSubjectId": 4000
-    },
-    {
-      "id": 4001,
-      "description": "Plan and conduct investigations: (Determine appropriate investigation methodology: case study; classification and identification; controlled experiment; fieldwork; literature review; modelling; product, process or system development; simulation. Design and conduct investigations; select and use methods appropriate to the selected investigation methodology, including consideration of sampling technique and size, equipment and procedures, taking into account potential sources of error and causes of uncertainty; determine the type and amount of qualitative and/or quantitative data to be generated or collated. Work independently and collaboratively as appropriate and within identified research constraints, adapting or extending processes as required and recording such modifications in a logbook)",
-      "curriculumSubjectId": 4000
-    },
-    {
-      "id": 4002,
-      "description": "Comply with safety and ethical guidelines: (Demonstrate safe laboratory practices when planning and conducting investigations by using risk assessments that are informed by safety data sheets (SDS), and accounting for risks. Apply relevant occupational health and safety guidelines while undertaking practical investigations. Demonstrate ethical conduct when undertaking and reporting investigations)",
-      "curriculumSubjectId": 4000
-    },
-    {
-      "id": 4003,
-      "description": "Generate, collate and record data: (Systematically generate and record primary data, and collate secondary data, appropriate to the investigation, including use of databases and reputable online data sources. Record and summarise both qualitative and quantitative data, including use of a logbook as an authentication of generated or collated data. Organise and present data in useful and meaningful ways, including schematic diagrams, flow charts, tables, bar charts, line graphs and calibration curves)",
-      "curriculumSubjectId": 4000
-    },
-    {
-      "id": 4004,
-      "description": "Analyse and evaluate data and investigation methods: (Process quantitative data using appropriate mathematical relationships and units, including calculations of ratios, percentages, percentage change and mean. Use appropriate numbers of significant figures in calculations. Plot graphs involving two variables that show linear and non-linear relationships. Identify and analyse experimental data qualitatively, handling, where appropriate, concepts of: accuracy, precision, repeatability, reproducibility, resolution, and validity of measurements; and errors (random and systematic). Identify outliers, and contradictory, provisional or incomplete data. Repeat experiments to evaluate the precision of data. Evaluate investigation methods and suggest ways to improve precision, and to reduce the likelihood of errors)",
-      "curriculumSubjectId": 4000
-    },
-    {
-      "id": 4005,
-      "description": "Construct evidence-based arguments and draw conclusions: (Distinguish between opinion, anecdote and evidence, and between scientific and non-scientific ideas. Evaluate data to determine the degree to which the evidence supports the aim of the investigation, and make recommendations, as appropriate, for modifying or extending the investigation. Evaluate data to determine the degree to which the evidence supports or refutes the initial prediction or hypothesis. Use reasoning to construct scientific arguments, and to draw and justify conclusions consistent with evidence and relevant to the question under investigation. Identify, describe and explain the limitations of conclusions, including identification of further evidence required. Discuss the implications of research findings and proposals)",
-      "curriculumSubjectId": 4000
-    },
-    {
-      "id": 4006,
-      "description": "Analyse, evaluate and communicate scientific ideas: (Use appropriate scientific terminology, representations and conventions, including standard abbreviations, graphing conventions, algebraic equations, units of measurement and significant figures. Discuss relevant scientific information, ideas, concepts, theories and models and the connections between them. Analyse and explain how models and theories are used to organise and understand observed phenomena and concepts, identifying limitations of selected models/theories. Critically evaluate and interpret a range of scientific and media texts (including journal articles, mass media communications and opinions in the public domain), processes, claims and conclusions related to chemistry by considering the quality of available evidence. Apply sustainability concepts to analyse and evaluate responses to chemistry-based scenarios, case studies, issues and challenges. Identify and explain when judgements or decisions associated with chemistry-related issues may be based on sociocultural, economic, political, legal and/or ethical factors and not solely on scientific evidence. Use clear, coherent and concise expression to communicate to specific audiences and for specific purposes in appropriate scientific genres, including scientific reports and posters. Acknowledge sources of information and assistance, and use standard scientific referencing conventions)",
-      "curriculumSubjectId": 4000
-    }
-  ],
-  "extraContents": []
+	"id": 4000,
+	"curriculumId": 4000,
+	"name": "Biology Units 1 and 2",
+	"isArchived": false,
+	"learningAreas": [
+		{
+			"id": 4000,
+			"curriculumSubjectId": 4000,
+			"name": "How do cells function?",
+			"abbreviation": "U1AOS1",
+			"description": "In this area of study students examine the structure and functioning of prokaryotic and eukaryotic cells, and how the plasma membrane contributes to survival by controlling the movement of substances into and out of the cell. Students explore cellular growth, replacement and death. They become familiar with the key events and regulation of the cell cycle and the processes for cell division, including disruptions to the cell cycle and deviant cell behaviour. Students consider the properties of stem cells and their role in differentiation, specialisation and renewal of cells and tissues. On completion of this unit the student should be able to explain and compare cellular structure and function and analyse the cell cycle and cell growth, death and differentiation."
+		},
+		{
+			"id": 4001,
+			"curriculumSubjectId": 4000,
+			"name": "How do plant and animal systems function?",
+			"abbreviation": "U1AOS2",
+			"description": "In this area of study students explore how systems function through cell specialisation in vascular plants and in digestive, endocrine and excretory systems in animals, focusing on regulation of water balance in plants, and temperature, blood glucose and water balance in animals. Students examine how homeostatic mechanisms in animals help maintain their internal environment within a narrow range of tolerance levels, and consider malfunctions in homeostatic mechanisms. On completion of this unit the student should be able to explain and compare how cells are specialised and organised in plants and animals, and analyse how specific systems in plants and animals are regulated."
+		},
+		{
+			"id": 4002,
+			"curriculumSubjectId": 4000,
+			"name": "How do scientific investigations develop understanding of how organisms regulate their functions?",
+			"abbreviation": "U1AOS3",
+			"description": "Survival of organisms requires control and regulation of factors within an organism and often outside an organism. Different types of cells and adaptations enhance an organism’s survival in a particular environment, while homeostatic mechanisms maintain the internal environment. In this area of study students adapt or design and then conduct a scientific investigation to generate appropriate qualitative and/or quantitative data, organise and interpret the data, and reach a conclusion in response to the research question. The student-adapted or student-designed scientific investigation relates to knowledge and skills developed in Area of Study 1 and/or Area of Study 2."
+		},
+		{
+			"id": 4003,
+			"curriculumSubjectId": 4000,
+			"name": "How is inheritance explained?",
+			"abbreviation": "U2AOS1",
+			"description": "In this area of study students describe the production of gametes in sexual reproduction through the key events in meiosis. They explore the nature of chromosomes and the use of genetic language to read and interpret patterns of inheritance and predict outcomes of genetic crosses. Students explain how a characteristic or trait can be influenced by one gene, many genes acting together, and genes interacting with external environmental or epigenetic factors. They apply their genetic knowledge to analyse pedigree charts, determine patterns of inheritance and predict outcomes of genetic crosses."
+		},
+		{
+			"id": 4004,
+			"curriculumSubjectId": 4000,
+			"name": "How do inherited adaptations impact on diversity?",
+			"abbreviation": "U2AOS2",
+			"description": "In this area of study students analyse the advantages and disadvantages of asexual and sexual reproduction and investigate the use and application of reproductive cloning technologies. Students explore the biological importance of genetic diversity and the structural, physiological and behavioural adaptations that enable species to survive in an ecosystem. Students explore the interdependencies between species, including the importance and impact of keystone species and top predators. They consider the contributions of Aboriginal and Torres Strait Islander knowledge and perspectives to the understanding of the adaptations of, and interdependencies between, species in Australian ecosystems."
+		},
+		{
+			"id": 4005,
+			"curriculumSubjectId": 4000,
+			"name": "How do humans use science to explore and communicate contemporary bioethical issues?",
+			"abbreviation": "U2AOS3",
+			"description": "In this area of study students explore a contemporary bioethical issue relating to the application of genetic knowledge, reproductive science, inheritance or adaptations and interdependencies beneficial for survival. Examples of investigation topics include, but are not limited to: genomic and epigenetic research; cloning for agriculture, horticulture or other purposes; assisted reproductive technologies; prenatal and predictive genetic testing; strategies for maintaining genetic diversity within a species or population; the impact of introduced species; changes to specific keystone species on populations and ecosystems; or the use of biomimicry to solve human challenges or biopiracy of Indigenous knowledge. Students may develop a research question related to the applications included above or, in conjunction with their teacher, they may develop their own research question related to Area of Study 1 and/or Area of Study 2. Possible starting points when developing a research question may include stimulus material such as announcements of recent discoveries, an expert’s published point of view, a TED talk or a YouTube presentation, an article from a scientific publication, public concern about an issue, changes in government funding or new government initiatives."
+		}
+	],
+	"outcomes": [
+		{
+			"id": 4000,
+			"curriculumSubjectId": 4000,
+			"number": 2001,
+			"description": "On completion of this unit the student should be able to explain and compare cellular structure and function and analyse the cell cycle and cell growth, death and differentiation.",
+			"topics": [
+				{
+					"id": 4000,
+					"outcomeId": 4000,
+					"name": "Cellular structure and function"
+				},
+				{
+					"id": 4001,
+					"outcomeId": 4000,
+					"name": "The cell cycle and cell growth, death and differentiation"
+				}
+			],
+			"keyKnowledge": [
+				{
+					"id": 4000,
+					"description": "cells as the basic structural feature of life on Earth, including the distinction between prokaryotic and eukaryotic cells",
+					"outcomeId": 4000,
+					"outcomeTopicId": 4000
+				},
+				{
+					"id": 4001,
+					"description": "surface area to volume ratio as an important factor in the limitations of cell size and the need for internal compartments (organelles) with specific cellular functions",
+					"outcomeId": 4000,
+					"outcomeTopicId": 4000
+				},
+				{
+					"id": 4002,
+					"description": "the structure and specialisation of plant and animal cell organelles for distinct functions, including chloroplasts and mitochondria",
+					"outcomeId": 4000,
+					"outcomeTopicId": 4000
+				},
+				{
+					"id": 4003,
+					"description": "the structure and function of the plasma membrane in the passage of water, hydrophilic and hydrophobic substances via osmosis, facilitated diffusion and active transport",
+					"outcomeId": 4000,
+					"outcomeTopicId": 4000
+				},
+				{
+					"id": 4004,
+					"description": "binary fission in prokaryotic cells",
+					"outcomeId": 4000,
+					"outcomeTopicId": 4001
+				},
+				{
+					"id": 4005,
+					"description": "the eukaryotic cell cycle, including the characteristics of each of the sub-phases of mitosis and cytokinesis in plant and animal cells",
+					"outcomeId": 4000,
+					"outcomeTopicId": 4001
+				},
+				{
+					"id": 4006,
+					"description": "apoptosis as a regulated process of programmed cell death",
+					"outcomeId": 4000,
+					"outcomeTopicId": 4001
+				},
+				{
+					"id": 4007,
+					"description": "disruption to the regulation of the cell cycle and malfunctions in apoptosis that may result in deviant cell behaviour: cancer and the characteristics of cancer cells",
+					"outcomeId": 4000,
+					"outcomeTopicId": 4001
+				},
+				{
+					"id": 4008,
+					"description": "properties of stem cells that allow for differentiation, specialisation and renewal of cells and tissues, including the concepts of pluripotency and totipotency.",
+					"outcomeId": 4000,
+					"outcomeTopicId": 4001
+				}
+			]
+		},
+		{
+			"id": 4001,
+			"curriculumSubjectId": 4000,
+			"number": 2002,
+			"description": "On completion of this unit the student should be able to explain and compare how cells are specialised and organised in plants and animals, and analyse how specific systems in plants and animals are regulated.",
+			"topics": [
+				{
+					"id": 4002,
+					"outcomeId": 4001,
+					"name": "Functioning systems"
+				},
+				{
+					"id": 4003,
+					"outcomeId": 4001,
+					"name": "Regulation of systems"
+				}
+			],
+			"keyKnowledge": [
+				{
+					"id": 4009,
+					"description": "specialisation and organisation of plant cells into tissues for specific functions in vascular plants, including intake, movement and loss of water",
+					"outcomeId": 4001,
+					"outcomeTopicId": 4002
+				},
+				{
+					"id": 4010,
+					"description": "specialisation and organisation of animal cells into tissues, organs and systems with specific functions: digestive, endocrine and excretory",
+					"outcomeId": 4001,
+					"outcomeTopicId": 4002
+				},
+				{
+					"id": 4011,
+					"description": "regulation of water balance in vascular plants",
+					"outcomeId": 4001,
+					"outcomeTopicId": 4003
+				},
+				{
+					"id": 4012,
+					"description": "regulation of body temperature, blood glucose and water balance in animals by homeostatic mechanisms, including stimulus-response models, feedback loops and associated organ structures",
+					"outcomeId": 4001,
+					"outcomeTopicId": 4003
+				},
+				{
+					"id": 4013,
+					"description": "malfunctions in homeostatic mechanisms: type 1 diabetes, hypoglycaemia, hyperthyroidism.",
+					"outcomeId": 4001,
+					"outcomeTopicId": 4003
+				}
+			]
+		},
+		{
+			"id": 4002,
+			"curriculumSubjectId": 4000,
+			"number": 2003,
+			"description": "On completion of this unit the student should be able to adapt or design and then conduct a scientific investigation related to function and/or regulation of cells or systems, and draw a conclusion based on evidence from generated primary data.",
+			"topics": [
+				{
+					"id": 4004,
+					"outcomeId": 4002,
+					"name": "Investigation design"
+				},
+				{
+					"id": 4005,
+					"outcomeId": 4002,
+					"name": "Scientific evidence"
+				},
+				{
+					"id": 4006,
+					"outcomeId": 4002,
+					"name": "Science communication"
+				}
+			],
+			"keyKnowledge": [
+				{
+					"id": 4014,
+					"description": "biological science concepts specific to the selected scientific investigation and their significance, including the definition of key terms",
+					"outcomeId": 4002,
+					"outcomeTopicId": 4004
+				},
+				{
+					"id": 4015,
+					"description": "scientific methodology relevant to the selected scientific investigation, selected from: classification and identification; controlled experiment; correlational study; fieldwork; modelling; product, process or system development; or simulation",
+					"outcomeId": 4002,
+					"outcomeTopicId": 4004
+				},
+				{
+					"id": 4016,
+					"description": "techniques of primary qualitative and quantitative data generation relevant to the investigation",
+					"outcomeId": 4002,
+					"outcomeTopicId": 4004
+				},
+				{
+					"id": 4017,
+					"description": "accuracy, precision, reproducibility, repeatability and validity of measurements in relation to the investigation",
+					"outcomeId": 4002,
+					"outcomeTopicId": 4004
+				},
+				{
+					"id": 4018,
+					"description": "health, safety and ethical guidelines relevant to the selected scientific investigation",
+					"outcomeId": 4002,
+					"outcomeTopicId": 4004
+				},
+				{
+					"id": 4019,
+					"description": "the distinction between an aim, a hypothesis, a model, a theory and a law",
+					"outcomeId": 4002,
+					"outcomeTopicId": 4005
+				},
+				{
+					"id": 4020,
+					"description": "observations and investigations that are consistent with, or challenge, current scientific models or theories",
+					"outcomeId": 4002,
+					"outcomeTopicId": 4005
+				},
+				{
+					"id": 4021,
+					"description": "the characteristics of primary data",
+					"outcomeId": 4002,
+					"outcomeTopicId": 4005
+				},
+				{
+					"id": 4022,
+					"description": "ways of organising, analysing and evaluating generated primary data to identify patterns and relationships including sources of error",
+					"outcomeId": 4002,
+					"outcomeTopicId": 4005
+				},
+				{
+					"id": 4023,
+					"description": "use of a logbook to authenticate generated primary data",
+					"outcomeId": 4002,
+					"outcomeTopicId": 4005
+				},
+				{
+					"id": 4024,
+					"description": "the limitations of investigation methodologies and methods, and of data generation and/or analysis",
+					"outcomeId": 4002,
+					"outcomeTopicId": 4005
+				},
+				{
+					"id": 4025,
+					"description": "the conventions of scientific report writing including scientific terminology and representations, standard abbreviations and units of measurement",
+					"outcomeId": 4002,
+					"outcomeTopicId": 4006
+				},
+				{
+					"id": 4026,
+					"description": "ways of presenting key findings and implications of the selected scientific investigation.",
+					"outcomeId": 4002,
+					"outcomeTopicId": 4006
+				}
+			]
+		},
+		{
+			"id": 4003,
+			"curriculumSubjectId": 4000,
+			"number": 2004,
+			"description": "On completion of this unit the student should be able to explain and compare chromosomes, genomes, genotypes and phenotypes, and analyse and predict patterns of inheritance.",
+			"topics": [
+				{
+					"id": 4007,
+					"outcomeId": 4003,
+					"name": "From chromosomes to genomes"
+				},
+				{
+					"id": 4008,
+					"outcomeId": 4003,
+					"name": "Genotypes and phenotypes"
+				},
+				{
+					"id": 4009,
+					"outcomeId": 4003,
+					"name": "Patterns of inheritance"
+				}
+			],
+			"keyKnowledge": [
+				{
+					"id": 4027,
+					"description": "the distinction between genes, alleles and a genome",
+					"outcomeId": 4003,
+					"outcomeTopicId": 4007
+				},
+				{
+					"id": 4028,
+					"description": "the nature of a pair of homologous chromosomes carrying the same gene loci and the distinction between autosomes and sex chromosomes",
+					"outcomeId": 4003,
+					"outcomeTopicId": 4007
+				},
+				{
+					"id": 4029,
+					"description": "variability of chromosomes in terms of size and number in different organisms",
+					"outcomeId": 4003,
+					"outcomeTopicId": 4007
+				},
+				{
+					"id": 4030,
+					"description": "karyotypes as a visual representation that can be used to identify chromosome abnormalities",
+					"outcomeId": 4003,
+					"outcomeTopicId": 4007
+				},
+				{
+					"id": 4031,
+					"description": "the production of haploid gametes from diploid cells by meiosis, including the significance of crossing over of chromatids and independent assortment for genetic diversity",
+					"outcomeId": 4003,
+					"outcomeTopicId": 4007
+				},
+				{
+					"id": 4032,
+					"description": "the use of symbols in the writing of genotypes for the alleles present at a particular gene locus",
+					"outcomeId": 4003,
+					"outcomeTopicId": 4008
+				},
+				{
+					"id": 4033,
+					"description": "the expression of dominant and recessive phenotypes, including codominance and incomplete dominance",
+					"outcomeId": 4003,
+					"outcomeTopicId": 4008
+				},
+				{
+					"id": 4034,
+					"description": "proportionate influences of genetic material, and environmental and epigenetic factors, on phenotypes",
+					"outcomeId": 4003,
+					"outcomeTopicId": 4008
+				},
+				{
+					"id": 4035,
+					"description": "pedigree charts and patterns of inheritance, including autosomal and sex-linked inheritance",
+					"outcomeId": 4003,
+					"outcomeTopicId": 4009
+				},
+				{
+					"id": 4036,
+					"description": "predicted genetic outcomes for a monohybrid cross and a monohybrid test cross",
+					"outcomeId": 4003,
+					"outcomeTopicId": 4009
+				},
+				{
+					"id": 4037,
+					"description": "predicted genetic outcomes for two genes that are either linked or assort independently.",
+					"outcomeId": 4003,
+					"outcomeTopicId": 4009
+				}
+			]
+		},
+		{
+			"id": 4004,
+			"curriculumSubjectId": 4000,
+			"number": 2005,
+			"description": "On completion of this unit the student should be able to analyse advantages and disadvantages of reproductive strategies, and evaluate how adaptations and interdependencies enhance survival of species within an ecosystem.",
+			"topics": [
+				{
+					"id": 4010,
+					"outcomeId": 4004,
+					"name": "Reproductive strategies"
+				},
+				{
+					"id": 4011,
+					"outcomeId": 4004,
+					"name": "Adaptations and diversity"
+				}
+			],
+			"keyKnowledge": [
+				{
+					"id": 4038,
+					"description": "biological advantages and disadvantages of asexual reproduction",
+					"outcomeId": 4004,
+					"outcomeTopicId": 4010
+				},
+				{
+					"id": 4039,
+					"description": "biological advantages of sexual reproduction in terms of genetic diversity of offspring",
+					"outcomeId": 4004,
+					"outcomeTopicId": 4010
+				},
+				{
+					"id": 4040,
+					"description": "the process and application of reproductive cloning technologies",
+					"outcomeId": 4004,
+					"outcomeTopicId": 4010
+				},
+				{
+					"id": 4041,
+					"description": "the biological importance of genetic diversity within a species or population",
+					"outcomeId": 4004,
+					"outcomeTopicId": 4011
+				},
+				{
+					"id": 4042,
+					"description": "structural, physiological and behavioural adaptations that enhance an organism’s survival and enable life to exist in a wide range of environments",
+					"outcomeId": 4004,
+					"outcomeTopicId": 4011
+				},
+				{
+					"id": 4043,
+					"description": "survival through interdependencies between species, including impact of changes to keystone species and predators and their ecological roles in structuring and maintaining the distribution, density and size of a population in an ecosystem",
+					"outcomeId": 4004,
+					"outcomeTopicId": 4011
+				},
+				{
+					"id": 4044,
+					"description": "the contribution of Aboriginal and Torres Strait Islander peoples’ knowledge and perspectives in understanding adaptations of, and interdependencies between, species in Australian ecosystems.",
+					"outcomeId": 4004,
+					"outcomeTopicId": 4011
+				}
+			]
+		},
+		{
+			"id": 4005,
+			"curriculumSubjectId": 4000,
+			"number": 2006,
+			"description": "On completion of this unit the student should be able to identify, analyse and evaluate a bioethical issue in genetics, reproductive science or adaptations beneficial for survival.",
+			"topics": [
+				{
+					"id": 4012,
+					"outcomeId": 4005,
+					"name": "Scientific evidence"
+				},
+				{
+					"id": 4013,
+					"outcomeId": 4005,
+					"name": "Scientific communication"
+				},
+				{
+					"id": 4014,
+					"outcomeId": 4005,
+					"name": "Analysis and evaluation of bioethical issues"
+				}
+			],
+			"keyKnowledge": [
+				{
+					"id": 4045,
+					"description": "the distinction between primary and secondary data",
+					"outcomeId": 4005,
+					"outcomeTopicId": 4012
+				},
+				{
+					"id": 4046,
+					"description": "the nature of evidence and information: distinction between opinion, anecdote and evidence, and scientific and non-scientific ideas",
+					"outcomeId": 4005,
+					"outcomeTopicId": 4012
+				},
+				{
+					"id": 4047,
+					"description": "the quality of evidence, including validity and authority of data and sources of possible errors or bias",
+					"outcomeId": 4005,
+					"outcomeTopicId": 4012
+				},
+				{
+					"id": 4048,
+					"description": "methods of organising, analysing and evaluating secondary data",
+					"outcomeId": 4005,
+					"outcomeTopicId": 4012
+				},
+				{
+					"id": 4049,
+					"description": "the use of a logbook to authenticate collated secondary data",
+					"outcomeId": 4005,
+					"outcomeTopicId": 4012
+				},
+				{
+					"id": 4050,
+					"description": "biological concepts specific to the investigation: definitions of key terms; use of appropriate biological terminology, conventions and representations",
+					"outcomeId": 4005,
+					"outcomeTopicId": 4013
+				},
+				{
+					"id": 4051,
+					"description": "characteristics of effective science communication: accuracy of biological information; clarity of explanation of biological concepts, ideas and models; contextual clarity with reference to importance and implications of findings; conciseness and coherence; and appropriateness for purpose and audience",
+					"outcomeId": 4005,
+					"outcomeTopicId": 4013
+				},
+				{
+					"id": 4052,
+					"description": "the use of data representations, models and theories in organising and explaining observed phenomena and biological concepts, and their limitations",
+					"outcomeId": 4005,
+					"outcomeTopicId": 4013
+				},
+				{
+					"id": 4053,
+					"description": "the influence of social, economic, legal and political factors relevant to the selected research question",
+					"outcomeId": 4005,
+					"outcomeTopicId": 4013
+				},
+				{
+					"id": 4054,
+					"description": "conventions for referencing and acknowledging sources of information",
+					"outcomeId": 4005,
+					"outcomeTopicId": 4013
+				},
+				{
+					"id": 4055,
+					"description": "ways of identifying bioethical issues",
+					"outcomeId": 4005,
+					"outcomeTopicId": 4014
+				},
+				{
+					"id": 4056,
+					"description": "characteristics of effective analysis of bioethical issues",
+					"outcomeId": 4005,
+					"outcomeTopicId": 4014
+				},
+				{
+					"id": 4057,
+					"description": "approaches to bioethics and ethical concepts as they apply to the bioethical issue being investigated.",
+					"outcomeId": 4005,
+					"outcomeTopicId": 4014
+				}
+			]
+		}
+	],
+	"keySkills": [
+		{
+			"id": 4000,
+			"description": "Develop aims and questions, formulate hypotheses and make predictions: (identify, research and construct aims and questions for investigation, identify independent, dependent and controlled variables in experiments, formulate hypotheses to focus investigations, predict possible outcomes of investigations)",
+			"curriculumSubjectId": 4000
+		},
+		{
+			"id": 4001,
+			"description": "Plan and conduct investigations: (Determine appropriate investigation methodology: case study; classification and identification; controlled experiment; fieldwork; literature review; modelling; product, process or system development; simulation. Design and conduct investigations; select and use methods appropriate to the selected investigation methodology, including consideration of sampling technique and size, equipment and procedures, taking into account potential sources of error and causes of uncertainty; determine the type and amount of qualitative and/or quantitative data to be generated or collated. Work independently and collaboratively as appropriate and within identified research constraints, adapting or extending processes as required and recording such modifications in a logbook)",
+			"curriculumSubjectId": 4000
+		},
+		{
+			"id": 4002,
+			"description": "Comply with safety and ethical guidelines: (Demonstrate safe laboratory practices when planning and conducting investigations by using risk assessments that are informed by safety data sheets (SDS), and accounting for risks. Apply relevant occupational health and safety guidelines while undertaking practical investigations. Demonstrate ethical conduct when undertaking and reporting investigations)",
+			"curriculumSubjectId": 4000
+		},
+		{
+			"id": 4003,
+			"description": "Generate, collate and record data: (Systematically generate and record primary data, and collate secondary data, appropriate to the investigation, including use of databases and reputable online data sources. Record and summarise both qualitative and quantitative data, including use of a logbook as an authentication of generated or collated data. Organise and present data in useful and meaningful ways, including schematic diagrams, flow charts, tables, bar charts, line graphs and calibration curves)",
+			"curriculumSubjectId": 4000
+		},
+		{
+			"id": 4004,
+			"description": "Analyse and evaluate data and investigation methods: (Process quantitative data using appropriate mathematical relationships and units, including calculations of ratios, percentages, percentage change and mean. Use appropriate numbers of significant figures in calculations. Plot graphs involving two variables that show linear and non-linear relationships. Identify and analyse experimental data qualitatively, handling, where appropriate, concepts of: accuracy, precision, repeatability, reproducibility, resolution, and validity of measurements; and errors (random and systematic). Identify outliers, and contradictory, provisional or incomplete data. Repeat experiments to evaluate the precision of data. Evaluate investigation methods and suggest ways to improve precision, and to reduce the likelihood of errors)",
+			"curriculumSubjectId": 4000
+		},
+		{
+			"id": 4005,
+			"description": "Construct evidence-based arguments and draw conclusions: (Distinguish between opinion, anecdote and evidence, and between scientific and non-scientific ideas. Evaluate data to determine the degree to which the evidence supports the aim of the investigation, and make recommendations, as appropriate, for modifying or extending the investigation. Evaluate data to determine the degree to which the evidence supports or refutes the initial prediction or hypothesis. Use reasoning to construct scientific arguments, and to draw and justify conclusions consistent with evidence and relevant to the question under investigation. Identify, describe and explain the limitations of conclusions, including identification of further evidence required. Discuss the implications of research findings and proposals)",
+			"curriculumSubjectId": 4000
+		},
+		{
+			"id": 4006,
+			"description": "Analyse, evaluate and communicate scientific ideas: (Use appropriate scientific terminology, representations and conventions, including standard abbreviations, graphing conventions, algebraic equations, units of measurement and significant figures. Discuss relevant scientific information, ideas, concepts, theories and models and the connections between them. Analyse and explain how models and theories are used to organise and understand observed phenomena and concepts, identifying limitations of selected models/theories. Critically evaluate and interpret a range of scientific and media texts (including journal articles, mass media communications and opinions in the public domain), processes, claims and conclusions related to chemistry by considering the quality of available evidence. Apply sustainability concepts to analyse and evaluate responses to chemistry-based scenarios, case studies, issues and challenges. Identify and explain when judgements or decisions associated with chemistry-related issues may be based on sociocultural, economic, political, legal and/or ethical factors and not solely on scientific evidence. Use clear, coherent and concise expression to communicate to specific audiences and for specific purposes in appropriate scientific genres, including scientific reports and posters. Acknowledge sources of information and assistance, and use standard scientific referencing conventions)",
+			"curriculumSubjectId": 4000
+		}
+	],
+	"extraContents": []
 }

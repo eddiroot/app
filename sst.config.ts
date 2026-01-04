@@ -1,6 +1,8 @@
 // eslint-disable-next-line @typescript-eslint/triple-slash-reference
 /// <reference path="./.sst/platform/config.d.ts" />
 
+// Make sure to run sudo npx sst tunnel install to setup the SST Tunnel locally
+
 export default $config({
 	app(input) {
 		const isProd = ['production'].includes(input?.stage);
@@ -17,12 +19,7 @@ export default $config({
 		};
 	},
 	async run() {
-		const isDev = $app.stage === 'dev';
-		const isProd = $app.stage === 'production';
-		if (!isDev && !isProd) {
-			throw new Error(`Invalid stage: ${$app.stage}. Must be 'dev' or 'production'.`);
-		}
-
+		const isProd = ['production'].includes($app.stage);
 		const vpc = new sst.aws.Vpc('VPC', { bastion: true });
 
 		// pgvector is built in
@@ -129,14 +126,14 @@ export default $config({
 
 		const router = isProd
 			? new sst.aws.Router('DomainRedirects', {
-				routes: {
-					'/*': app.url
-				},
-				domain: {
-					name: 'www.eddi.com.au',
-					aliases: ['eddi.au', 'www.eddi.au']
-				}
-			})
+					routes: {
+						'/*': app.url
+					},
+					domain: {
+						name: 'www.eddi.com.au',
+						aliases: ['eddi.au', 'www.eddi.au']
+					}
+				})
 			: null;
 
 		return {

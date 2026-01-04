@@ -1,608 +1,608 @@
 {
-  "id": 26000,
-  "curriculumId": 26000,
-  "name": "Legal Studies Units 1 and 2",
-  "isArchived": false,
-  "learningAreas": [
-    {
-      "id": 26000,
-      "curriculumSubjectId": 26000,
-      "name": "Legal foundations",
-      "abbreviation": "U1AOS1",
-      "description": "This area of study provides students with foundational knowledge of laws and the Australian legal system. Students explore the role of individuals, laws and the legal system in achieving social cohesion and protecting the rights of individuals. Students consider the characteristics of an effective law, and sources and types of law. They examine the relationship between parliament and the courts in law-making, and the reasons for a court hierarchy in Victoria, they also develop an understanding of the principles of justice. On completion of this unit the student should be able to describe the main sources and types of law, and evaluate the effectiveness of laws. To achieve this outcome the student will draw on key knowledge and key skills outlined in Area of Study 1. the role of individuals, laws and the legal system in achieving social cohesion and protecting the rights of individuals the principles of justice: fairness, equality and access"
-    },
-    {
-      "id": 26001,
-      "curriculumSubjectId": 26000,
-      "name": "Proving guilt",
-      "abbreviation": "U1AOS2",
-      "description": "The presumption of innocence is a fundamental principle of criminal law and provides a guarantee that an accused is presumed innocent until proven guilty beyond reasonable doubt. In this area of study, students develop an understanding of the purposes of and key concepts in criminal law, as well as the types of crime. They also investigate two criminal offences in detail. For each offence, students consider actual and/or hypothetical scenarios in which an accused has been charged with the offence, use legal reasoning to determine possible culpability and explain the impact of the offence on individuals and society. On completion of this unit the student should be able to explain the purposes and key concepts of criminal law, and use legal reasoning to argue the criminal culpability of an accused based on actual and/or hypothetical scenarios. To achieve this outcome the student will draw on key knowledge and key skills outlined in Area of Study 2. the purposes of criminal law the presumption of innocence"
-    },
-    {
-      "id": 26002,
-      "curriculumSubjectId": 26000,
-      "name": "Area of Study 3",
-      "abbreviation": "U1AOS3",
-      "description": "The criminal justice system determines the guilt of an accused, and imposes sanctions on offenders. In this area of study, students investigate key concepts in the determination of a criminal case, including the institutions that enforce criminal law, the purposes and types of sanctions, and alternative approaches to sentencing such as the Drug Court, Koori Courts and diversion programs. Students compare approaches to sentencing in Victoria to one other Australian jurisdiction. Through an investigation of criminal cases from the past four years, students apply their knowledge to discuss the effectiveness of sanctions and the ability of the Victorian criminal justice system to achieve the principles of justice. On completion of this unit the student should be able to explain the key concepts in the determination of a criminal case, discuss the principles of justice in relation to experiences of the criminal justice system, and discuss the ability of sanctions to achieve their purposes. To achieve this outcome the student will draw on key knowledge and key skills outlined in Area of Study 3. The principles of justice and experiences of the Victorian criminal justice system the principles of justice: fairness, equality and access institutions that enforce criminal law, such as the police and delegated bodies"
-    },
-    {
-      "id": 26003,
-      "curriculumSubjectId": 26000,
-      "name": "Civil liability",
-      "abbreviation": "U2AOS1",
-      "description": "Civil law aims to protect the rights of individuals, groups and organisations, and provide opportunities for a wronged party to seek redress for a breach. In this area of study, students develop an understanding of key concepts in civil law and investigate two areas of civil law in detail. Possible areas of civil law could include negligence, defamation, nuisance, trespass and contracts. For each area of civil law, students consider actual and/or hypothetical scenarios giving rise to a civil claim, apply legal reasoning to determine possible liability for a breach of civil law and explain the impact of a breach of civil law on the parties. On completion of this unit the student should be able to explain the purposes and key concepts of civil law, and apply legal reasoning to argue the liability of a party in civil law based on actual and/or hypothetical scenarios. To achieve this outcome the student will draw on key knowledge and key skills outlined in Area of Study 1. the purposes and types of civil law key concepts of civil law, including: breach, causation, loss, limitation of actions, the burden of proof, the standard of proof"
-    },
-    {
-      "id": 26004,
-      "curriculumSubjectId": 26000,
-      "name": "Area of Study 2",
-      "abbreviation": "U2AOS2",
-      "description": "Remedies may be available to a wronged party where there has been a breach of civil law. In this area of study, students develop an appreciation of how civil disputes are resolved, including the methods and institutions available to resolve disputes, and the purposes and types of remedies. Through an investigation of civil cases from the past four years, students apply their knowledge to discuss the effectiveness of remedies and the ability of the civil justice system to achieve the principles of justice. On completion of this unit the student should be able to explain the key concepts in the resolution of a civil dispute, discuss the principles of justice in relation to experiences of the civil justice system, and discuss the ability of remedies to achieve their purposes. To achieve this outcome the student will draw on key knowledge and key skills outlined in Area of Study 2. The principles of justice and experiences of the civil justice system the principles of justice: fairness, equality and access methods used to resolve a civil dispute such as mediation, conciliation and arbitration"
-    },
-    {
-      "id": 26005,
-      "curriculumSubjectId": 26000,
-      "name": "Human rights",
-      "abbreviation": "U2AOS3",
-      "description": "The protection of rights is fundamental to a democratic society. Rights are protected in Australia through the Australian Constitution, the Victorian Charter of Human Rights and Responsibilities and through common law and statute law, including in relation to discrimination and equal opportunity. In this area of study, students examine the ways in which human rights are protected in Australia and consider possible reforms to the protection of human rights. Students investigate one human rights issue in Australia, such as in relation to the right to vote, the right to freedom of religion, or the rights of First Nations peoples. On completion of this unit the student should be able to explain one contemporary human rights issue in Australia, and evaluate the ways in which rights are protected in Australia. To achieve this outcome the student will draw on key knowledge and key skills outlined in Area of Study 3. the meaning and development of human rights, including the significance of the Universal Declaration of Human Rights an overview of the ways in which human rights are protected in Australia, such as through the Australian Constitution, the Victorian Charter of Human Rights and Responsibilities, statute law and common law"
-    }
-  ],
-  "outcomes": [
-    {
-      "id": 26000,
-      "curriculumSubjectId": 26000,
-      "number": 1,
-      "description": "On completion of this unit the student should be able to describe the main sources and types of law, and evaluate the effectiveness of laws.",
-      "keyKnowledge": [
-        {
-          "id": 26000,
-          "description": "the role of individuals, laws and the legal system in achieving social cohesion and protecting the rights of individuals",
-          "outcomeId": 26000
-        },
-        {
-          "id": 26001,
-          "description": "the principles of justice: fairness, equality and access",
-          "outcomeId": 26000
-        },
-        {
-          "id": 26002,
-          "description": "characteristics of an effective law, such as reflecting society’s values; is enforceable; is known; is clear and understood; and is stable",
-          "outcomeId": 26000
-        },
-        {
-          "id": 26003,
-          "description": "an overview of the roles of the parliament and the courts and their relationship in law-making",
-          "outcomeId": 26000
-        },
-        {
-          "id": 26004,
-          "description": "sources of law such as common law and statute law",
-          "outcomeId": 26000
-        },
-        {
-          "id": 26005,
-          "description": "an overview of, and reasons for, the Victorian court hierarchy",
-          "outcomeId": 26000
-        },
-        {
-          "id": 26006,
-          "description": "types of law such as criminal law and civil law",
-          "outcomeId": 26000
-        },
-        {
-          "id": 26007,
-          "description": "the distinction and relationship between criminal law and civil law.",
-          "outcomeId": 26000
-        }
-      ],
-      "keySkills": [
-        {
-          "id": 26000,
-          "description": "define key legal terminology",
-          "outcomeId": 26000
-        },
-        {
-          "id": 26001,
-          "description": "research and analyse relevant information about the sources and types of laws",
-          "outcomeId": 26000
-        },
-        {
-          "id": 26002,
-          "description": "classify a law according to its source and type",
-          "outcomeId": 26000
-        },
-        {
-          "id": 26003,
-          "description": "explain the role of individuals, laws and the legal system in achieving social cohesion and protecting the rights of individuals",
-          "outcomeId": 26000
-        },
-        {
-          "id": 26004,
-          "description": "explain the role of and relationship between parliament and the courts",
-          "outcomeId": 26000
-        },
-        {
-          "id": 26005,
-          "description": "justify the existence of the Victorian court hierarchy",
-          "outcomeId": 26000
-        },
-        {
-          "id": 26006,
-          "description": "discuss the principles of justice",
-          "outcomeId": 26000
-        },
-        {
-          "id": 26007,
-          "description": "evaluate the effectiveness of laws.",
-          "outcomeId": 26000
-        }
-      ]
-    },
-    {
-      "id": 26001,
-      "curriculumSubjectId": 26000,
-      "number": 2,
-      "description": "On completion of this unit the student should be able to explain the purposes and key concepts of criminal law, and use legal reasoning to argue the criminal culpability of an accused based on actual and/or hypothetical scenarios.",
-      "keyKnowledge": [
-        {
-          "id": 26008,
-          "description": "the purposes of criminal law",
-          "outcomeId": 26001
-        },
-        {
-          "id": 26009,
-          "description": "the presumption of innocence",
-          "outcomeId": 26001
-        },
-        {
-          "id": 26010,
-          "description": "key concepts of criminal law, including:",
-          "outcomeId": 26001
-        },
-        {
-          "id": 26011,
-          "description": "the elements of a crime: actus reus and mens rea",
-          "outcomeId": 26001
-        },
-        {
-          "id": 26012,
-          "description": "strict liability",
-          "outcomeId": 26001
-        },
-        {
-          "id": 26013,
-          "description": "the age of criminal responsibility",
-          "outcomeId": 26001
-        },
-        {
-          "id": 26014,
-          "description": "the burden of proof",
-          "outcomeId": 26001
-        },
-        {
-          "id": 26015,
-          "description": "the standard of proof",
-          "outcomeId": 26001
-        },
-        {
-          "id": 26016,
-          "description": "types of crime, such as crimes against the person and crimes against property",
-          "outcomeId": 26001
-        },
-        {
-          "id": 26017,
-          "description": "the distinction between summary offences and indictable offences",
-          "outcomeId": 26001
-        },
-        {
-          "id": 26018,
-          "description": "possible participants in a crime such as principal offenders and accessories",
-          "outcomeId": 26001
-        },
-        {
-          "id": 26019,
-          "description": "two criminal offences and for each offence:",
-          "outcomeId": 26001
-        },
-        {
-          "id": 26020,
-          "description": "the elements of the offence",
-          "outcomeId": 26001
-        },
-        {
-          "id": 26021,
-          "description": "possible defences",
-          "outcomeId": 26001
-        },
-        {
-          "id": 26022,
-          "description": "possible sanctions",
-          "outcomeId": 26001
-        },
-        {
-          "id": 26023,
-          "description": "trends and statistics in relation to the offence in Victoria and in one other Australian jurisdiction",
-          "outcomeId": 26001
-        },
-        {
-          "id": 26024,
-          "description": "the possible impact of the offence on individuals and society.",
-          "outcomeId": 26001
-        }
-      ],
-      "keySkills": [
-        {
-          "id": 26008,
-          "description": "define and use legal terminology",
-          "outcomeId": 26001
-        },
-        {
-          "id": 26009,
-          "description": "research and analyse relevant information about criminal law and offences",
-          "outcomeId": 26001
-        },
-        {
-          "id": 26010,
-          "description": "distinguish between types of crime, and summary and indictable offences, using examples",
-          "outcomeId": 26001
-        },
-        {
-          "id": 26011,
-          "description": "explain the purposes and key concepts of criminal law",
-          "outcomeId": 26001
-        },
-        {
-          "id": 26012,
-          "description": "use legal reasoning and principles to identify and argue the elements of an offence, possible defences and culpability in relation to actual and/or hypothetical scenarios",
-          "outcomeId": 26001
-        },
-        {
-          "id": 26013,
-          "description": "synthesise and apply legal information to actual and/or hypothetical scenarios in relation to two criminal offences.",
-          "outcomeId": 26001
-        }
-      ]
-    },
-    {
-      "id": 26002,
-      "curriculumSubjectId": 26000,
-      "number": 3,
-      "description": "On completion of this unit the student should be able to explain the key concepts in the determination of a criminal case, discuss the principles of justice in relation to experiences of the criminal justice system, and discuss the ability of sanctions to achieve their purposes.",
-      "keyKnowledge": [
-        {
-          "id": 26025,
-          "description": "The principles of justice and experiences of the Victorian criminal justice system",
-          "outcomeId": 26002
-        },
-        {
-          "id": 26026,
-          "description": "the principles of justice: fairness, equality and access",
-          "outcomeId": 26002
-        },
-        {
-          "id": 26027,
-          "description": "institutions that enforce criminal law, such as the police and delegated bodies",
-          "outcomeId": 26002
-        },
-        {
-          "id": 26028,
-          "description": "the balance between institutional powers and individual rights",
-          "outcomeId": 26002
-        },
-        {
-          "id": 26029,
-          "description": "an overview of the role and criminal jurisdictions of the Victorian courts",
-          "outcomeId": 26002
-        },
-        {
-          "id": 26030,
-          "description": "the role of the jury in a criminal trial",
-          "outcomeId": 26002
-        },
-        {
-          "id": 26031,
-          "description": "the difficulties faced by different groups in the criminal justice system, such as First Nations people, young people, culturally and linguistically diverse people, people with mental health issues, and people with disabilities",
-          "outcomeId": 26002
-        },
-        {
-          "id": 26032,
-          "description": "Sentencing",
-          "outcomeId": 26002
-        },
-        {
-          "id": 26033,
-          "description": "the purposes of sanctions: punishment, deterrence, denunciation, protection and rehabilitation",
-          "outcomeId": 26002
-        },
-        {
-          "id": 26034,
-          "description": "types of sanctions such as fines, community correction orders and imprisonment",
-          "outcomeId": 26002
-        },
-        {
-          "id": 26035,
-          "description": "factors considered in sentencing",
-          "outcomeId": 26002
-        },
-        {
-          "id": 26036,
-          "description": "alternative approaches to sentencing, such as the use of the Drug Court, Koori Courts and diversion programs",
-          "outcomeId": 26002
-        },
-        {
-          "id": 26037,
-          "description": "sentencing practices in one other Australian jurisdiction.",
-          "outcomeId": 26002
-        }
-      ],
-      "keySkills": [
-        {
-          "id": 26014,
-          "description": "define and use legal terminology",
-          "outcomeId": 26002
-        },
-        {
-          "id": 26015,
-          "description": "research and analyse relevant information about criminal law and recent criminal cases",
-          "outcomeId": 26002
-        },
-        {
-          "id": 26016,
-          "description": "describe the institutions that enforce criminal law",
-          "outcomeId": 26002
-        },
-        {
-          "id": 26017,
-          "description": "explain the role of the Victorian courts and juries in criminal cases",
-          "outcomeId": 26002
-        },
-        {
-          "id": 26018,
-          "description": "compare approaches to sentencing in Victoria to those in one other Australian jurisdiction",
-          "outcomeId": 26002
-        },
-        {
-          "id": 26019,
-          "description": "discuss the principles of justice in relation to experiences of the criminal justice system",
-          "outcomeId": 26002
-        },
-        {
-          "id": 26020,
-          "description": "discuss the ability of sanctions to achieve their purposes",
-          "outcomeId": 26002
-        },
-        {
-          "id": 26021,
-          "description": "discuss alternative approaches to sentencing",
-          "outcomeId": 26002
-        },
-        {
-          "id": 26022,
-          "description": "synthesise and apply legal information to actual and/or hypothetical scenarios.",
-          "outcomeId": 26002
-        }
-      ]
-    },
-    {
-      "id": 26003,
-      "curriculumSubjectId": 26000,
-      "number": 1,
-      "description": "On completion of this unit the student should be able to explain the purposes and key concepts of civil law, and apply legal reasoning to argue the liability of a party in civil law based on actual and/or hypothetical scenarios.",
-      "keyKnowledge": [
-        {
-          "id": 26038,
-          "description": "the purposes and types of civil law",
-          "outcomeId": 26003
-        },
-        {
-          "id": 26039,
-          "description": "key concepts of civil law, including: breach, causation, loss, limitation of actions, the burden of proof, the standard of proof",
-          "outcomeId": 26003
-        },
-        {
-          "id": 26040,
-          "description": "possible plaintiffs and defendants to a civil dispute",
-          "outcomeId": 26003
-        },
-        {
-          "id": 26041,
-          "description": "two areas of civil law and for each area of law: the rights protected by the law, the elements required to establish liability, the limitation of actions, possible defences, possible remedies, the impact of the breach on the parties.",
-          "outcomeId": 26003
-        }
-      ],
-      "keySkills": [
-        {
-          "id": 26023,
-          "description": "define and use legal terminology",
-          "outcomeId": 26003
-        },
-        {
-          "id": 26024,
-          "description": "research and analyse relevant information about civil law",
-          "outcomeId": 26003
-        },
-        {
-          "id": 26025,
-          "description": "classify civil law according to its type",
-          "outcomeId": 26003
-        },
-        {
-          "id": 26026,
-          "description": "explain the purposes and key concepts of civil law",
-          "outcomeId": 26003
-        },
-        {
-          "id": 26027,
-          "description": "apply legal reasoning and principles to identify and argue the elements, possible defences and civil liability in relation to actual and/or hypothetical scenarios",
-          "outcomeId": 26003
-        },
-        {
-          "id": 26028,
-          "description": "synthesise and apply legal information to actual and/or hypothetical scenarios in relation to two areas of civil law.",
-          "outcomeId": 26003
-        }
-      ]
-    },
-    {
-      "id": 26004,
-      "curriculumSubjectId": 26000,
-      "number": 2,
-      "description": "On completion of this unit the student should be able to explain the key concepts in the resolution of a civil dispute, discuss the principles of justice in relation to experiences of the civil justice system, and discuss the ability of remedies to achieve their purposes.",
-      "keyKnowledge": [
-        {
-          "id": 26042,
-          "description": "The principles of justice and experiences of the civil justice system",
-          "outcomeId": 26004
-        },
-        {
-          "id": 26043,
-          "description": "the principles of justice: fairness, equality and access",
-          "outcomeId": 26004
-        },
-        {
-          "id": 26044,
-          "description": "methods used to resolve a civil dispute such as mediation, conciliation and arbitration",
-          "outcomeId": 26004
-        },
-        {
-          "id": 26045,
-          "description": "institutions that resolve civil disputes such as tribunals, ombudsmen and complaints bodies",
-          "outcomeId": 26004
-        },
-        {
-          "id": 26046,
-          "description": "an overview of the role and civil jurisdictions of the Victorian courts",
-          "outcomeId": 26004
-        },
-        {
-          "id": 26047,
-          "description": "the role of the jury in a civil trial",
-          "outcomeId": 26004
-        },
-        {
-          "id": 26048,
-          "description": "the difficulties faced by different groups in the civil justice system, such as First Nations people, people of low socioeconomic status, young people, and people in regional, rural and remote areas",
-          "outcomeId": 26004
-        },
-        {
-          "id": 26049,
-          "description": "Remedies",
-          "outcomeId": 26004
-        },
-        {
-          "id": 26050,
-          "description": "the purposes of remedies",
-          "outcomeId": 26004
-        },
-        {
-          "id": 26051,
-          "description": "types of remedies, such as damages and injunctions.",
-          "outcomeId": 26004
-        }
-      ],
-      "keySkills": [
-        {
-          "id": 26029,
-          "description": "define and use legal terminology",
-          "outcomeId": 26004
-        },
-        {
-          "id": 26030,
-          "description": "research and analyse relevant information about civil law and recent civil cases",
-          "outcomeId": 26004
-        },
-        {
-          "id": 26031,
-          "description": "describe the institutions that resolve civil disputes",
-          "outcomeId": 26004
-        },
-        {
-          "id": 26032,
-          "description": "explain the role of the Victorian courts and juries in civil disputes",
-          "outcomeId": 26004
-        },
-        {
-          "id": 26033,
-          "description": "discuss the principles of justice in relation to experiences of the civil justice system",
-          "outcomeId": 26004
-        },
-        {
-          "id": 26034,
-          "description": "discuss the ability of remedies to achieve their purposes",
-          "outcomeId": 26004
-        },
-        {
-          "id": 26035,
-          "description": "synthesise and apply legal information to actual and/or hypothetical scenarios.",
-          "outcomeId": 26004
-        }
-      ]
-    },
-    {
-      "id": 26005,
-      "curriculumSubjectId": 26000,
-      "number": 3,
-      "description": "On completion of this unit the student should be able to explain one contemporary human rights issue in Australia, and evaluate the ways in which rights are protected in Australia.",
-      "keyKnowledge": [
-        {
-          "id": 26052,
-          "description": "the meaning and development of human rights, including the significance of the Universal Declaration of Human Rights",
-          "outcomeId": 26005
-        },
-        {
-          "id": 26053,
-          "description": "an overview of the ways in which human rights are protected in Australia, such as through the Australian Constitution, the Victorian Charter of Human Rights and Responsibilities, statute law and common law",
-          "outcomeId": 26005
-        },
-        {
-          "id": 26054,
-          "description": "one human rights issue in Australia and in relation to that human rights issue: the nature and development of the human right, the laws that apply to the human right in Australia, possible conflicting attitudes, possible reforms to the protection of the human right in Australia, one case study in relation to the human rights issue, in which an individual or group has influenced the protection of the right.",
-          "outcomeId": 26005
-        }
-      ],
-      "keySkills": [
-        {
-          "id": 26036,
-          "description": "define and use legal terminology",
-          "outcomeId": 26005
-        },
-        {
-          "id": 26037,
-          "description": "research and analyse relevant information about the protection of rights",
-          "outcomeId": 26005
-        },
-        {
-          "id": 26038,
-          "description": "describe the role of individuals in bringing about changes in the protection of rights through cases",
-          "outcomeId": 26005
-        },
-        {
-          "id": 26039,
-          "description": "explain the meaning and development of human rights",
-          "outcomeId": 26005
-        },
-        {
-          "id": 26040,
-          "description": "analyse the impact of a case study on the human rights of individuals and on the legal system",
-          "outcomeId": 26005
-        },
-        {
-          "id": 26041,
-          "description": "discuss possible reforms to the protection of rights in Australia",
-          "outcomeId": 26005
-        },
-        {
-          "id": 26042,
-          "description": "evaluate the ways in which rights are protected in Australia",
-          "outcomeId": 26005
-        },
-        {
-          "id": 26043,
-          "description": "apply legal principles to actual and/or hypothetical scenarios.",
-          "outcomeId": 26005
-        }
-      ]
-    }
-  ],
-  "extraContents": []
+	"id": 26000,
+	"curriculumId": 26000,
+	"name": "Legal Studies Units 1 and 2",
+	"isArchived": false,
+	"learningAreas": [
+		{
+			"id": 26000,
+			"curriculumSubjectId": 26000,
+			"name": "Legal foundations",
+			"abbreviation": "U1AOS1",
+			"description": "This area of study provides students with foundational knowledge of laws and the Australian legal system. Students explore the role of individuals, laws and the legal system in achieving social cohesion and protecting the rights of individuals. Students consider the characteristics of an effective law, and sources and types of law. They examine the relationship between parliament and the courts in law-making, and the reasons for a court hierarchy in Victoria, they also develop an understanding of the principles of justice. On completion of this unit the student should be able to describe the main sources and types of law, and evaluate the effectiveness of laws. To achieve this outcome the student will draw on key knowledge and key skills outlined in Area of Study 1. the role of individuals, laws and the legal system in achieving social cohesion and protecting the rights of individuals the principles of justice: fairness, equality and access"
+		},
+		{
+			"id": 26001,
+			"curriculumSubjectId": 26000,
+			"name": "Proving guilt",
+			"abbreviation": "U1AOS2",
+			"description": "The presumption of innocence is a fundamental principle of criminal law and provides a guarantee that an accused is presumed innocent until proven guilty beyond reasonable doubt. In this area of study, students develop an understanding of the purposes of and key concepts in criminal law, as well as the types of crime. They also investigate two criminal offences in detail. For each offence, students consider actual and/or hypothetical scenarios in which an accused has been charged with the offence, use legal reasoning to determine possible culpability and explain the impact of the offence on individuals and society. On completion of this unit the student should be able to explain the purposes and key concepts of criminal law, and use legal reasoning to argue the criminal culpability of an accused based on actual and/or hypothetical scenarios. To achieve this outcome the student will draw on key knowledge and key skills outlined in Area of Study 2. the purposes of criminal law the presumption of innocence"
+		},
+		{
+			"id": 26002,
+			"curriculumSubjectId": 26000,
+			"name": "Area of Study 3",
+			"abbreviation": "U1AOS3",
+			"description": "The criminal justice system determines the guilt of an accused, and imposes sanctions on offenders. In this area of study, students investigate key concepts in the determination of a criminal case, including the institutions that enforce criminal law, the purposes and types of sanctions, and alternative approaches to sentencing such as the Drug Court, Koori Courts and diversion programs. Students compare approaches to sentencing in Victoria to one other Australian jurisdiction. Through an investigation of criminal cases from the past four years, students apply their knowledge to discuss the effectiveness of sanctions and the ability of the Victorian criminal justice system to achieve the principles of justice. On completion of this unit the student should be able to explain the key concepts in the determination of a criminal case, discuss the principles of justice in relation to experiences of the criminal justice system, and discuss the ability of sanctions to achieve their purposes. To achieve this outcome the student will draw on key knowledge and key skills outlined in Area of Study 3. The principles of justice and experiences of the Victorian criminal justice system the principles of justice: fairness, equality and access institutions that enforce criminal law, such as the police and delegated bodies"
+		},
+		{
+			"id": 26003,
+			"curriculumSubjectId": 26000,
+			"name": "Civil liability",
+			"abbreviation": "U2AOS1",
+			"description": "Civil law aims to protect the rights of individuals, groups and organisations, and provide opportunities for a wronged party to seek redress for a breach. In this area of study, students develop an understanding of key concepts in civil law and investigate two areas of civil law in detail. Possible areas of civil law could include negligence, defamation, nuisance, trespass and contracts. For each area of civil law, students consider actual and/or hypothetical scenarios giving rise to a civil claim, apply legal reasoning to determine possible liability for a breach of civil law and explain the impact of a breach of civil law on the parties. On completion of this unit the student should be able to explain the purposes and key concepts of civil law, and apply legal reasoning to argue the liability of a party in civil law based on actual and/or hypothetical scenarios. To achieve this outcome the student will draw on key knowledge and key skills outlined in Area of Study 1. the purposes and types of civil law key concepts of civil law, including: breach, causation, loss, limitation of actions, the burden of proof, the standard of proof"
+		},
+		{
+			"id": 26004,
+			"curriculumSubjectId": 26000,
+			"name": "Area of Study 2",
+			"abbreviation": "U2AOS2",
+			"description": "Remedies may be available to a wronged party where there has been a breach of civil law. In this area of study, students develop an appreciation of how civil disputes are resolved, including the methods and institutions available to resolve disputes, and the purposes and types of remedies. Through an investigation of civil cases from the past four years, students apply their knowledge to discuss the effectiveness of remedies and the ability of the civil justice system to achieve the principles of justice. On completion of this unit the student should be able to explain the key concepts in the resolution of a civil dispute, discuss the principles of justice in relation to experiences of the civil justice system, and discuss the ability of remedies to achieve their purposes. To achieve this outcome the student will draw on key knowledge and key skills outlined in Area of Study 2. The principles of justice and experiences of the civil justice system the principles of justice: fairness, equality and access methods used to resolve a civil dispute such as mediation, conciliation and arbitration"
+		},
+		{
+			"id": 26005,
+			"curriculumSubjectId": 26000,
+			"name": "Human rights",
+			"abbreviation": "U2AOS3",
+			"description": "The protection of rights is fundamental to a democratic society. Rights are protected in Australia through the Australian Constitution, the Victorian Charter of Human Rights and Responsibilities and through common law and statute law, including in relation to discrimination and equal opportunity. In this area of study, students examine the ways in which human rights are protected in Australia and consider possible reforms to the protection of human rights. Students investigate one human rights issue in Australia, such as in relation to the right to vote, the right to freedom of religion, or the rights of First Nations peoples. On completion of this unit the student should be able to explain one contemporary human rights issue in Australia, and evaluate the ways in which rights are protected in Australia. To achieve this outcome the student will draw on key knowledge and key skills outlined in Area of Study 3. the meaning and development of human rights, including the significance of the Universal Declaration of Human Rights an overview of the ways in which human rights are protected in Australia, such as through the Australian Constitution, the Victorian Charter of Human Rights and Responsibilities, statute law and common law"
+		}
+	],
+	"outcomes": [
+		{
+			"id": 26000,
+			"curriculumSubjectId": 26000,
+			"number": 1,
+			"description": "On completion of this unit the student should be able to describe the main sources and types of law, and evaluate the effectiveness of laws.",
+			"keyKnowledge": [
+				{
+					"id": 26000,
+					"description": "the role of individuals, laws and the legal system in achieving social cohesion and protecting the rights of individuals",
+					"outcomeId": 26000
+				},
+				{
+					"id": 26001,
+					"description": "the principles of justice: fairness, equality and access",
+					"outcomeId": 26000
+				},
+				{
+					"id": 26002,
+					"description": "characteristics of an effective law, such as reflecting society’s values; is enforceable; is known; is clear and understood; and is stable",
+					"outcomeId": 26000
+				},
+				{
+					"id": 26003,
+					"description": "an overview of the roles of the parliament and the courts and their relationship in law-making",
+					"outcomeId": 26000
+				},
+				{
+					"id": 26004,
+					"description": "sources of law such as common law and statute law",
+					"outcomeId": 26000
+				},
+				{
+					"id": 26005,
+					"description": "an overview of, and reasons for, the Victorian court hierarchy",
+					"outcomeId": 26000
+				},
+				{
+					"id": 26006,
+					"description": "types of law such as criminal law and civil law",
+					"outcomeId": 26000
+				},
+				{
+					"id": 26007,
+					"description": "the distinction and relationship between criminal law and civil law.",
+					"outcomeId": 26000
+				}
+			],
+			"keySkills": [
+				{
+					"id": 26000,
+					"description": "define key legal terminology",
+					"outcomeId": 26000
+				},
+				{
+					"id": 26001,
+					"description": "research and analyse relevant information about the sources and types of laws",
+					"outcomeId": 26000
+				},
+				{
+					"id": 26002,
+					"description": "classify a law according to its source and type",
+					"outcomeId": 26000
+				},
+				{
+					"id": 26003,
+					"description": "explain the role of individuals, laws and the legal system in achieving social cohesion and protecting the rights of individuals",
+					"outcomeId": 26000
+				},
+				{
+					"id": 26004,
+					"description": "explain the role of and relationship between parliament and the courts",
+					"outcomeId": 26000
+				},
+				{
+					"id": 26005,
+					"description": "justify the existence of the Victorian court hierarchy",
+					"outcomeId": 26000
+				},
+				{
+					"id": 26006,
+					"description": "discuss the principles of justice",
+					"outcomeId": 26000
+				},
+				{
+					"id": 26007,
+					"description": "evaluate the effectiveness of laws.",
+					"outcomeId": 26000
+				}
+			]
+		},
+		{
+			"id": 26001,
+			"curriculumSubjectId": 26000,
+			"number": 2,
+			"description": "On completion of this unit the student should be able to explain the purposes and key concepts of criminal law, and use legal reasoning to argue the criminal culpability of an accused based on actual and/or hypothetical scenarios.",
+			"keyKnowledge": [
+				{
+					"id": 26008,
+					"description": "the purposes of criminal law",
+					"outcomeId": 26001
+				},
+				{
+					"id": 26009,
+					"description": "the presumption of innocence",
+					"outcomeId": 26001
+				},
+				{
+					"id": 26010,
+					"description": "key concepts of criminal law, including:",
+					"outcomeId": 26001
+				},
+				{
+					"id": 26011,
+					"description": "the elements of a crime: actus reus and mens rea",
+					"outcomeId": 26001
+				},
+				{
+					"id": 26012,
+					"description": "strict liability",
+					"outcomeId": 26001
+				},
+				{
+					"id": 26013,
+					"description": "the age of criminal responsibility",
+					"outcomeId": 26001
+				},
+				{
+					"id": 26014,
+					"description": "the burden of proof",
+					"outcomeId": 26001
+				},
+				{
+					"id": 26015,
+					"description": "the standard of proof",
+					"outcomeId": 26001
+				},
+				{
+					"id": 26016,
+					"description": "types of crime, such as crimes against the person and crimes against property",
+					"outcomeId": 26001
+				},
+				{
+					"id": 26017,
+					"description": "the distinction between summary offences and indictable offences",
+					"outcomeId": 26001
+				},
+				{
+					"id": 26018,
+					"description": "possible participants in a crime such as principal offenders and accessories",
+					"outcomeId": 26001
+				},
+				{
+					"id": 26019,
+					"description": "two criminal offences and for each offence:",
+					"outcomeId": 26001
+				},
+				{
+					"id": 26020,
+					"description": "the elements of the offence",
+					"outcomeId": 26001
+				},
+				{
+					"id": 26021,
+					"description": "possible defences",
+					"outcomeId": 26001
+				},
+				{
+					"id": 26022,
+					"description": "possible sanctions",
+					"outcomeId": 26001
+				},
+				{
+					"id": 26023,
+					"description": "trends and statistics in relation to the offence in Victoria and in one other Australian jurisdiction",
+					"outcomeId": 26001
+				},
+				{
+					"id": 26024,
+					"description": "the possible impact of the offence on individuals and society.",
+					"outcomeId": 26001
+				}
+			],
+			"keySkills": [
+				{
+					"id": 26008,
+					"description": "define and use legal terminology",
+					"outcomeId": 26001
+				},
+				{
+					"id": 26009,
+					"description": "research and analyse relevant information about criminal law and offences",
+					"outcomeId": 26001
+				},
+				{
+					"id": 26010,
+					"description": "distinguish between types of crime, and summary and indictable offences, using examples",
+					"outcomeId": 26001
+				},
+				{
+					"id": 26011,
+					"description": "explain the purposes and key concepts of criminal law",
+					"outcomeId": 26001
+				},
+				{
+					"id": 26012,
+					"description": "use legal reasoning and principles to identify and argue the elements of an offence, possible defences and culpability in relation to actual and/or hypothetical scenarios",
+					"outcomeId": 26001
+				},
+				{
+					"id": 26013,
+					"description": "synthesise and apply legal information to actual and/or hypothetical scenarios in relation to two criminal offences.",
+					"outcomeId": 26001
+				}
+			]
+		},
+		{
+			"id": 26002,
+			"curriculumSubjectId": 26000,
+			"number": 3,
+			"description": "On completion of this unit the student should be able to explain the key concepts in the determination of a criminal case, discuss the principles of justice in relation to experiences of the criminal justice system, and discuss the ability of sanctions to achieve their purposes.",
+			"keyKnowledge": [
+				{
+					"id": 26025,
+					"description": "The principles of justice and experiences of the Victorian criminal justice system",
+					"outcomeId": 26002
+				},
+				{
+					"id": 26026,
+					"description": "the principles of justice: fairness, equality and access",
+					"outcomeId": 26002
+				},
+				{
+					"id": 26027,
+					"description": "institutions that enforce criminal law, such as the police and delegated bodies",
+					"outcomeId": 26002
+				},
+				{
+					"id": 26028,
+					"description": "the balance between institutional powers and individual rights",
+					"outcomeId": 26002
+				},
+				{
+					"id": 26029,
+					"description": "an overview of the role and criminal jurisdictions of the Victorian courts",
+					"outcomeId": 26002
+				},
+				{
+					"id": 26030,
+					"description": "the role of the jury in a criminal trial",
+					"outcomeId": 26002
+				},
+				{
+					"id": 26031,
+					"description": "the difficulties faced by different groups in the criminal justice system, such as First Nations people, young people, culturally and linguistically diverse people, people with mental health issues, and people with disabilities",
+					"outcomeId": 26002
+				},
+				{
+					"id": 26032,
+					"description": "Sentencing",
+					"outcomeId": 26002
+				},
+				{
+					"id": 26033,
+					"description": "the purposes of sanctions: punishment, deterrence, denunciation, protection and rehabilitation",
+					"outcomeId": 26002
+				},
+				{
+					"id": 26034,
+					"description": "types of sanctions such as fines, community correction orders and imprisonment",
+					"outcomeId": 26002
+				},
+				{
+					"id": 26035,
+					"description": "factors considered in sentencing",
+					"outcomeId": 26002
+				},
+				{
+					"id": 26036,
+					"description": "alternative approaches to sentencing, such as the use of the Drug Court, Koori Courts and diversion programs",
+					"outcomeId": 26002
+				},
+				{
+					"id": 26037,
+					"description": "sentencing practices in one other Australian jurisdiction.",
+					"outcomeId": 26002
+				}
+			],
+			"keySkills": [
+				{
+					"id": 26014,
+					"description": "define and use legal terminology",
+					"outcomeId": 26002
+				},
+				{
+					"id": 26015,
+					"description": "research and analyse relevant information about criminal law and recent criminal cases",
+					"outcomeId": 26002
+				},
+				{
+					"id": 26016,
+					"description": "describe the institutions that enforce criminal law",
+					"outcomeId": 26002
+				},
+				{
+					"id": 26017,
+					"description": "explain the role of the Victorian courts and juries in criminal cases",
+					"outcomeId": 26002
+				},
+				{
+					"id": 26018,
+					"description": "compare approaches to sentencing in Victoria to those in one other Australian jurisdiction",
+					"outcomeId": 26002
+				},
+				{
+					"id": 26019,
+					"description": "discuss the principles of justice in relation to experiences of the criminal justice system",
+					"outcomeId": 26002
+				},
+				{
+					"id": 26020,
+					"description": "discuss the ability of sanctions to achieve their purposes",
+					"outcomeId": 26002
+				},
+				{
+					"id": 26021,
+					"description": "discuss alternative approaches to sentencing",
+					"outcomeId": 26002
+				},
+				{
+					"id": 26022,
+					"description": "synthesise and apply legal information to actual and/or hypothetical scenarios.",
+					"outcomeId": 26002
+				}
+			]
+		},
+		{
+			"id": 26003,
+			"curriculumSubjectId": 26000,
+			"number": 1,
+			"description": "On completion of this unit the student should be able to explain the purposes and key concepts of civil law, and apply legal reasoning to argue the liability of a party in civil law based on actual and/or hypothetical scenarios.",
+			"keyKnowledge": [
+				{
+					"id": 26038,
+					"description": "the purposes and types of civil law",
+					"outcomeId": 26003
+				},
+				{
+					"id": 26039,
+					"description": "key concepts of civil law, including: breach, causation, loss, limitation of actions, the burden of proof, the standard of proof",
+					"outcomeId": 26003
+				},
+				{
+					"id": 26040,
+					"description": "possible plaintiffs and defendants to a civil dispute",
+					"outcomeId": 26003
+				},
+				{
+					"id": 26041,
+					"description": "two areas of civil law and for each area of law: the rights protected by the law, the elements required to establish liability, the limitation of actions, possible defences, possible remedies, the impact of the breach on the parties.",
+					"outcomeId": 26003
+				}
+			],
+			"keySkills": [
+				{
+					"id": 26023,
+					"description": "define and use legal terminology",
+					"outcomeId": 26003
+				},
+				{
+					"id": 26024,
+					"description": "research and analyse relevant information about civil law",
+					"outcomeId": 26003
+				},
+				{
+					"id": 26025,
+					"description": "classify civil law according to its type",
+					"outcomeId": 26003
+				},
+				{
+					"id": 26026,
+					"description": "explain the purposes and key concepts of civil law",
+					"outcomeId": 26003
+				},
+				{
+					"id": 26027,
+					"description": "apply legal reasoning and principles to identify and argue the elements, possible defences and civil liability in relation to actual and/or hypothetical scenarios",
+					"outcomeId": 26003
+				},
+				{
+					"id": 26028,
+					"description": "synthesise and apply legal information to actual and/or hypothetical scenarios in relation to two areas of civil law.",
+					"outcomeId": 26003
+				}
+			]
+		},
+		{
+			"id": 26004,
+			"curriculumSubjectId": 26000,
+			"number": 2,
+			"description": "On completion of this unit the student should be able to explain the key concepts in the resolution of a civil dispute, discuss the principles of justice in relation to experiences of the civil justice system, and discuss the ability of remedies to achieve their purposes.",
+			"keyKnowledge": [
+				{
+					"id": 26042,
+					"description": "The principles of justice and experiences of the civil justice system",
+					"outcomeId": 26004
+				},
+				{
+					"id": 26043,
+					"description": "the principles of justice: fairness, equality and access",
+					"outcomeId": 26004
+				},
+				{
+					"id": 26044,
+					"description": "methods used to resolve a civil dispute such as mediation, conciliation and arbitration",
+					"outcomeId": 26004
+				},
+				{
+					"id": 26045,
+					"description": "institutions that resolve civil disputes such as tribunals, ombudsmen and complaints bodies",
+					"outcomeId": 26004
+				},
+				{
+					"id": 26046,
+					"description": "an overview of the role and civil jurisdictions of the Victorian courts",
+					"outcomeId": 26004
+				},
+				{
+					"id": 26047,
+					"description": "the role of the jury in a civil trial",
+					"outcomeId": 26004
+				},
+				{
+					"id": 26048,
+					"description": "the difficulties faced by different groups in the civil justice system, such as First Nations people, people of low socioeconomic status, young people, and people in regional, rural and remote areas",
+					"outcomeId": 26004
+				},
+				{
+					"id": 26049,
+					"description": "Remedies",
+					"outcomeId": 26004
+				},
+				{
+					"id": 26050,
+					"description": "the purposes of remedies",
+					"outcomeId": 26004
+				},
+				{
+					"id": 26051,
+					"description": "types of remedies, such as damages and injunctions.",
+					"outcomeId": 26004
+				}
+			],
+			"keySkills": [
+				{
+					"id": 26029,
+					"description": "define and use legal terminology",
+					"outcomeId": 26004
+				},
+				{
+					"id": 26030,
+					"description": "research and analyse relevant information about civil law and recent civil cases",
+					"outcomeId": 26004
+				},
+				{
+					"id": 26031,
+					"description": "describe the institutions that resolve civil disputes",
+					"outcomeId": 26004
+				},
+				{
+					"id": 26032,
+					"description": "explain the role of the Victorian courts and juries in civil disputes",
+					"outcomeId": 26004
+				},
+				{
+					"id": 26033,
+					"description": "discuss the principles of justice in relation to experiences of the civil justice system",
+					"outcomeId": 26004
+				},
+				{
+					"id": 26034,
+					"description": "discuss the ability of remedies to achieve their purposes",
+					"outcomeId": 26004
+				},
+				{
+					"id": 26035,
+					"description": "synthesise and apply legal information to actual and/or hypothetical scenarios.",
+					"outcomeId": 26004
+				}
+			]
+		},
+		{
+			"id": 26005,
+			"curriculumSubjectId": 26000,
+			"number": 3,
+			"description": "On completion of this unit the student should be able to explain one contemporary human rights issue in Australia, and evaluate the ways in which rights are protected in Australia.",
+			"keyKnowledge": [
+				{
+					"id": 26052,
+					"description": "the meaning and development of human rights, including the significance of the Universal Declaration of Human Rights",
+					"outcomeId": 26005
+				},
+				{
+					"id": 26053,
+					"description": "an overview of the ways in which human rights are protected in Australia, such as through the Australian Constitution, the Victorian Charter of Human Rights and Responsibilities, statute law and common law",
+					"outcomeId": 26005
+				},
+				{
+					"id": 26054,
+					"description": "one human rights issue in Australia and in relation to that human rights issue: the nature and development of the human right, the laws that apply to the human right in Australia, possible conflicting attitudes, possible reforms to the protection of the human right in Australia, one case study in relation to the human rights issue, in which an individual or group has influenced the protection of the right.",
+					"outcomeId": 26005
+				}
+			],
+			"keySkills": [
+				{
+					"id": 26036,
+					"description": "define and use legal terminology",
+					"outcomeId": 26005
+				},
+				{
+					"id": 26037,
+					"description": "research and analyse relevant information about the protection of rights",
+					"outcomeId": 26005
+				},
+				{
+					"id": 26038,
+					"description": "describe the role of individuals in bringing about changes in the protection of rights through cases",
+					"outcomeId": 26005
+				},
+				{
+					"id": 26039,
+					"description": "explain the meaning and development of human rights",
+					"outcomeId": 26005
+				},
+				{
+					"id": 26040,
+					"description": "analyse the impact of a case study on the human rights of individuals and on the legal system",
+					"outcomeId": 26005
+				},
+				{
+					"id": 26041,
+					"description": "discuss possible reforms to the protection of rights in Australia",
+					"outcomeId": 26005
+				},
+				{
+					"id": 26042,
+					"description": "evaluate the ways in which rights are protected in Australia",
+					"outcomeId": 26005
+				},
+				{
+					"id": 26043,
+					"description": "apply legal principles to actual and/or hypothetical scenarios.",
+					"outcomeId": 26005
+				}
+			]
+		}
+	],
+	"extraContents": []
 }
