@@ -4,7 +4,6 @@ import { schoolSpace } from '../schema/schools';
 import { subject, subjectOffering, subjectOfferingClass } from '../schema/subjects';
 import * as table from '../schema/timetables';
 import { user } from '../schema/user';
-import { notArchived } from '../service/utils';
 
 /**
  * Represents a single class session in the timetable
@@ -77,8 +76,8 @@ async function getUserFetClasses(userId: string, timetableDraftId: number) {
 			and(
 				eq(table.fetSubjectOfferingClassUser.userId, userId),
 				eq(table.fetSubjectOfferingClass.timetableDraftId, timetableDraftId),
-				notArchived(table.fetSubjectOfferingClassUser.flags),
-				notArchived(table.fetSubjectOfferingClass.flags)
+				eq(table.fetSubjectOfferingClassUser.isArchived, false),
+				eq(table.fetSubjectOfferingClass.isArchived, false)
 			)
 		);
 	return userClasses.map((c) => c.fetSubOffClassId);
@@ -112,7 +111,7 @@ async function getClassAllocations(fetClassIds: number[]) {
 		.where(
 			and(
 				inArray(table.fetSubjectClassAllocation.fetSubjectOfferingClassId, fetClassIds),
-				notArchived(table.fetSubjectClassAllocation.flags)
+				eq(table.fetSubjectClassAllocation.isArchived, false)
 			)
 		);
 

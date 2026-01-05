@@ -1,12 +1,12 @@
 import { NomicEmbeddings } from '$lib/server/ai/embeddings/nomic';
 import { TableVectorStore, type EmbeddableTable } from '$lib/server/ai/vector-store/base';
 import * as schema from '$lib/server/db/schema';
+import { AVAILABLE_SCHEMAS, type SchemaModule } from '$lib/server/db/schema/index';
 import { getTableName, isNull, sql } from 'drizzle-orm';
 import { drizzle } from 'drizzle-orm/node-postgres';
-import type { PgTable } from 'drizzle-orm/pg-core';
 import pg from 'pg';
 import { Resource } from 'sst';
-import { AVAILABLE_SCHEMAS, type SchemaModule } from '../consts';
+import * as helpers from '../helpers';
 // ============================================================================
 // DATABASE CONNECTION (standalone - avoids $app/environment)
 // ============================================================================
@@ -43,43 +43,6 @@ interface EmbedSchemaResult {
 	duration: number;
 }
 
-// ============================================================================
-// HELPERS
-// ============================================================================
-
-/**
- * Check if a value is a Drizzle table
- */
-function isTable(value: unknown): value is PgTable {
-	try {
-		return typeof getTableName(value as PgTable) === 'string';
-	} catch {
-		return false;
-	}
-}
-
-/**
- * Check if a table has embedding columns (is embeddable)
- */
-function isEmbeddableTable(table: PgTable): table is EmbeddableTable {
-	const tableObj = table as unknown as Record<string, unknown>;
-	return 'embedding' in tableObj && 'id' in tableObj && 'embeddingMetadata' in tableObj;
-}
-
-/**
- * Get all embeddable tables from a schema module's exports
- */
-function getEmbeddableTablesFromModule(schemaModule: SchemaModule): EmbeddableTable[] {
-	const tables: EmbeddableTable[] = [];
-
-	for (const value of Object.values(schemaModule)) {
-		if (isTable(value) && isEmbeddableTable(value)) {
-			tables.push(value);
-		}
-	}
-
-	return tables;
-}
 
 /**
  * Get records missing embeddings in batches
@@ -210,7 +173,7 @@ export async function embedSchemaModule(
 	console.log(`${'═'.repeat(70)}\n`);
 
 	const embeddings = new NomicEmbeddings();
-	const embeddableTables = getEmbeddableTablesFromModule(schemaModule);
+	const embeddableTables = helpers.getEmbeddableTablesFromModule(schemaModule);
 
 	if (embeddableTables.length === 0) {
 		console.log(`  No embeddable tables found in schema "${schemaName}"`);

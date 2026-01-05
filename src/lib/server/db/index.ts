@@ -1,4 +1,10 @@
-import { building } from '$app/environment';
+let building = false;
+try {
+	const appEnv = await import('$app/environment');
+	building = appEnv.building;
+} catch {
+	building = false;
+}
 import { drizzle, type NodePgDatabase } from 'drizzle-orm/node-postgres';
 import { Pool } from 'pg';
 import { Resource } from 'sst';

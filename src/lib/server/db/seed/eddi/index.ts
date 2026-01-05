@@ -12,24 +12,24 @@ export async function seedEddi(context: SeedContext) {
 
 	// Check if Eddi data already exists (unless fresh mode)
 	if (!fresh) {
-		const [existingEddiSchool] = await db
+		const [eddi] = await db
 			.select()
 			.from(schema.school)
 			.where(eq(schema.school.name, 'eddi.edu.au'))
 			.limit(1);
 
-		if (existingEddiSchool) {
-			return { eddiSchool: existingEddiSchool };
+		if (eddi) {
+		return { eddi: eddi };
 		}
 	}
 
 	// Create eddi.edu.au school
 	logSubsection('Creating eddi.edu.au school');
-	const eddiSchool = await seedEddiSchool(db);
+	const eddi = await seedEddiSchool(db);
 
 	// Seed curriculum
 	logSubsection('Seeding Curriculum');
-	await seedCurriculum(pool, db, eddiSchool.id);
+	await seedCurriculum(pool, db, eddi.id);
 
-	return { eddiSchool };
+	return { eddi };
 }

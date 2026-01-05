@@ -25,5 +25,6 @@ vite.config.ts.timestamp-*
 
 .sst
 
-# Seed data
-*.sql
+# SQL seed files
+/src/**.sql
+/data/**.sql

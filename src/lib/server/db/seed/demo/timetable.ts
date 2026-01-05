@@ -15,14 +15,14 @@ export async function seedDemoTimetable(
 	const { year9Offerings, subjects, classes: subjectOfferingClasses } = subjectData;
 	const { teachers, students } = userData;
 
-	// Get semester 1 for 2025
+	const currentYear = new Date().getFullYear();
 	const [semester1] = await db
 		.select()
 		.from(schema.schoolSemester)
 		.where(
 			and(
 				eq(schema.schoolSemester.schoolId, school.id),
-				eq(schema.schoolSemester.schoolYear, 2025),
+				eq(schema.schoolSemester.schoolYear, currentYear),
 				eq(schema.schoolSemester.semNumber, 1)
 			)
 		)
@@ -33,8 +33,8 @@ export async function seedDemoTimetable(
 		.insert(schema.timetable)
 		.values({
 			schoolId: school.id,
-			name: 'Main School Timetable 2025',
-			schoolYear: 2025,
+			name: `Main School Timetable ${currentYear}`,
+			schoolYear: currentYear,
 			schoolSemesterId: semester1?.id,
 		})
 		.returning();
@@ -46,7 +46,7 @@ export async function seedDemoTimetable(
 		.insert(schema.timetableDraft)
 		.values({
 			timetableId: timetable.id,
-			name: 'Draft for Main School Timetable 2025'
+			name: `Draft for Main School Timetable ${currentYear}`
 		})
 		.returning();
 

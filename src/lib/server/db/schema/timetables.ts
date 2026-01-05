@@ -31,7 +31,7 @@ export const timetable = timetableSchema.table(
 			onDelete: 'set null'
 		}),
 		name: text('name').notNull(),
-		isArchived: boolean('is_archived').default(false).notNull(),
+		isArchived: boolean('is_archived').notNull().default(false),
 		...timestamps
 	},
 	(self) => [unique().on(self.schoolId, self.name)]
@@ -49,7 +49,7 @@ export const timetableDraft = timetableSchema.table('tt_draft', {
 	fetResponse: text('fet_response'),
 	errorMessage: text('error_message'), // null if successful, stores raw error
 	translatedErrorMessage: text('translated_error_message'), // null if successful or not yet translated
-	isArchived: boolean('is_archived').default(false).notNull(),
+	isArchived: boolean('is_archived').notNull().default(false),
 	...timestamps
 });
 
@@ -318,7 +318,7 @@ export const fetSubjectOfferingClass = timetableSchema.table('fet_sub_off_cls', 
 	subjectOfferingId: integer('sub_off_id')
 		.notNull()
 		.references(() => subjectOffering.id, { onDelete: 'cascade' }),
-	isArchived: boolean('is_archived').default(false).notNull(),
+	isArchived: boolean('is_archived').notNull().default(false),
 	...timestamps
 });
 
@@ -341,7 +341,7 @@ export const fetSubjectClassAllocation = timetableSchema.table('fet_sub_off_cls_
 	endPeriodId: integer('end_period_id')
 		.notNull()
 		.references(() => timetablePeriod.id, { onDelete: 'set null' }),
-	isArchived: boolean('is_archived').default(false).notNull(),
+	isArchived: boolean('is_archived').notNull().default(false),
 	...timestamps
 });
 
@@ -357,7 +357,7 @@ export const fetSubjectOfferingClassUser = timetableSchema.table(
 		fetSubOffClassId: integer('fet_sub_off_class_id')
 			.notNull()
 			.references(() => fetSubjectOfferingClass.id, { onDelete: 'cascade' }),
-		isArchived: boolean('is_archived').default(false).notNull(),
+		isArchived: boolean('is_archived').notNull().default(false),
 		...timestamps
 	},
 	(self) => [unique().on(self.userId, self.fetSubOffClassId)]
