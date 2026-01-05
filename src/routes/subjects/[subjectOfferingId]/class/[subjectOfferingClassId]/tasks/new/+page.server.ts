@@ -2,6 +2,8 @@ import { taskTypeEnum } from '$lib/enums';
 import { generateTask } from '$lib/server/ai/workflows/tasks/task-creation';
 import {
 	createCourseMapItem,
+	createSubjectOfferingClassTask,
+	createTask,
 	getCurriculumLearningAreaWithStandards,
 	getSubjectOfferingMetadataByOfferingId,
 	getTopics
@@ -106,7 +108,7 @@ export const actions = {
 					// Clean up temp files
 					if (tempFilePaths.length > 0) {
 						try {
-							await Promise.all(tempFilePaths.map(path => fsPromises.unlink(path)));
+							await Promise.all(tempFilePaths.map((path) => fsPromises.unlink(path)));
 						} catch {
 							// Ignore cleanup errors
 						}
@@ -119,15 +121,42 @@ export const actions = {
 					);
 				} catch (workflowError) {
 					// Re-throw redirects
-					if (workflowError && typeof workflowError === 'object' && 'status' in workflowError && workflowError.status === 303) {
+					if (
+						workflowError &&
+						typeof workflowError === 'object' &&
+						'status' in workflowError &&
+						workflowError.status === 303
+					) {
 						throw workflowError;
 					}
 
-					throw new Error(`AI generation failed: ${workflowError instanceof Error ? workflowError.message : String(workflowError)}`);
+					throw new Error(
+						`AI generation failed: ${workflowError instanceof Error ? workflowError.message : String(workflowError)}`
+					);
 				}
 			} else {
-				// Manual creation - not yet implemented
-				throw error(400, 'Manual creation not yet implemented with new workflow');
+				// Manual creation - create task without AI workflow
+				const task = await createTask(
+					form.data.title,
+					form.data.description || '',
+					taskTypeEnum[form.data.type],
+					subjectOfferingIdInt,
+					form.data.aiTutorEnabled
+				);
+
+				await createSubjectOfferingClassTask(
+					task.id,
+					subjectOfferingClassIdInt,
+					user.id,
+					courseMapItemId,
+					form.data.week ?? null,
+					form.data.dueDate ?? null
+				);
+
+				throw redirect(
+					303,
+					`/subjects/${subjectOfferingId}/class/${subjectOfferingClassId}/tasks/${task.id}`
+				);
 			}
 		} catch (err) {
 			// Re-throw redirects

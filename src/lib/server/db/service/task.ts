@@ -195,7 +195,8 @@ export async function createTask(
 	description: string,
 	type: taskTypeEnum,
 	subjectOfferingId: number,
-	aiTutorEnabled: boolean = true
+	aiTutorEnabled: boolean = true,
+	isArchived: boolean = false
 ) {
 	const [task] = await db
 		.insert(table.task)
@@ -206,7 +207,8 @@ export async function createTask(
 			originalId: null,
 			version: 1,
 			subjectOfferingId,
-			aiTutorEnabled
+			aiTutorEnabled,
+			isArchived,
 		})
 		.returning();
 

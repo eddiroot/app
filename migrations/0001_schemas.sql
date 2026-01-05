@@ -1,6 +1,3 @@
--- Custom SQL migration file, put your code below! --
-CREATE EXTENSION IF NOT EXISTS vector;
-
 -- Create all PostgreSQL schemas
 CREATE SCHEMA IF NOT EXISTS curriculum;
 CREATE SCHEMA IF NOT EXISTS course_map;

@@ -11,7 +11,7 @@ npm run db:seed
 This will:
 
 1. Truncate all existing tables (fresh start)
-2. Seed Eddi platform data (curriculum, etc.)
+2. Seed eddi platform data (curriculum, etc.)
 3. Seed Demo school data (users, subjects, timetable, news)
 
 ## Options

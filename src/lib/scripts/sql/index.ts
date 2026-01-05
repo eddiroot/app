@@ -1,11 +1,10 @@
 import * as schema from '$lib/server/db/schema';
 import { getTableName } from 'drizzle-orm';
 import { drizzle } from 'drizzle-orm/node-postgres';
-import type { PgTable } from 'drizzle-orm/pg-core';
 import pg from 'pg';
 import { Resource } from 'sst';
-import { AVAILABLE_SCHEMAS } from '../consts';
 // Import schema modules
+import * as helpers from '../helpers';
 import { exportSchemaToFile, exportTableToFile } from './sql-generator';
 
 // ============================================================================
@@ -24,58 +23,6 @@ const pool = new Pool({
 
 const db = drizzle(pool, { schema });
 
-// ============================================================================
-// TYPES
-// ============================================================================
-
-type SchemaModule = Record<string, unknown>;
-
-// ============================================================================
-// HELPERS
-// ============================================================================
-
-/**
- * Check if a value is a Drizzle table
- */
-function isTable(value: unknown): value is PgTable {
-	try {
-		return typeof getTableName(value as PgTable) === 'string';
-	} catch {
-		return false;
-	}
-}
-
-/**
- * Get all tables from a schema module
- */
-function getTablesFromModule(schemaModule: SchemaModule): PgTable[] {
-	const tables: PgTable[] = [];
-
-	for (const value of Object.values(schemaModule)) {
-		if (isTable(value)) {
-			tables.push(value);
-		}
-	}
-
-	return tables;
-}
-
-/**
- * Find a table by name across all schema modules
- */
-function findTableByName(tableName: string): PgTable | null {
-	for (const schemaModule of Object.values(AVAILABLE_SCHEMAS)) {
-		for (const value of Object.values(schemaModule)) {
-			if (isTable(value)) {
-				const name = getTableName(value);
-				if (name === tableName) {
-					return value;
-				}
-			}
-		}
-	}
-	return null;
-}
 
 // ============================================================================
 // CLI
@@ -95,8 +42,8 @@ function printHelp() {
 	console.log('  list            List all available schemas and tables');
 	console.log('');
 	console.log('Available schemas:');
-	for (const name of Object.keys(AVAILABLE_SCHEMAS)) {
-		const tables = getTablesFromModule(AVAILABLE_SCHEMAS[name]);
+	for (const name of Object.keys(schema.AVAILABLE_SCHEMAS)) {
+		const tables = helpers.getTablesFromModule(schema.AVAILABLE_SCHEMAS[name]);
 		console.log(`  - ${name} (${tables.length} tables)`);
 	}
 	console.log('');
@@ -139,15 +86,15 @@ async function exportSchema(schemaName: string, options: {
 	omitIds?: boolean;
 	idOffset?: number;
 }) {
-	const schemaModule = AVAILABLE_SCHEMAS[schemaName];
+	const schemaModule = schema.AVAILABLE_SCHEMAS[schemaName];
 
 	if (!schemaModule) {
 		console.error(` Schema "${schemaName}" not found.`);
-		console.log(`Available schemas: ${Object.keys(AVAILABLE_SCHEMAS).join(', ')}`);
+		console.log(`Available schemas: ${Object.keys(schema.AVAILABLE_SCHEMAS).join(', ')}`);
 		process.exit(1);
 	}
 
-	const tables = getTablesFromModule(schemaModule);
+	const tables = helpers.getTablesFromModule(schemaModule);
 
 	if (tables.length === 0) {
 		return;
@@ -175,7 +122,7 @@ async function exportTable(tableName: string, options: {
 	omitIds?: boolean;
 	idOffset?: number;
 }) {
-	const table = findTableByName(tableName);
+	const table = helpers.findTableByName(tableName);
 
 	if (!table) {
 		console.error(`Table "${tableName}" not found.`);
@@ -198,8 +145,8 @@ async function exportTable(tableName: string, options: {
 
 function listSchemas() {
 	console.log('\nAvailable Schemas and Tables:\n');
-	for (const [schemaName, schemaModule] of Object.entries(AVAILABLE_SCHEMAS)) {
-		const tables = getTablesFromModule(schemaModule);
+	for (const [schemaName, schemaModule] of Object.entries(schema.AVAILABLE_SCHEMAS)) {
+		const tables = helpers.getTablesFromModule(schemaModule);
 		console.log(`${schemaName}/ (${tables.length} tables)`);
 
 		for (const table of tables) {

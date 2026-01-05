@@ -53,14 +53,19 @@ export const embeddings = {
 	}>()
 };
 
-// Temporary pool table for documents that are not saved.
+/**
+ * When a user partially links or uploads a document that is not stored permanently.
+ * These can be cleaned up periodically.
+ * 
+ * For example, if a user attaches a video or a document to use when creating a task but does not want to permanently store it.
+ */
 export const tempPool = utilsSchema.table(
 	'temp_pool',
 	{
 		id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
 		content: text('content').notNull(),
 		...embeddings,
-		isArchived: boolean('is_archived').default(false).notNull(),
+		isArchived: boolean('is_archived').notNull().default(false),
 		...timestamps
 	},
 	(self) => [

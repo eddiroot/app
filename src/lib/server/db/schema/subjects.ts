@@ -44,7 +44,7 @@ export const coreSubject = subjectSchema.table('sub_core', {
 		.notNull()
 		.references(() => school.id, { onDelete: 'cascade' }),
 	subjectGroup: subjectGroupEnumPg().notNull(),
-	isArchived: boolean('is_archived').default(false).notNull(),
+	isArchived: boolean('is_archived').notNull().default(false),
 	...timestamps
 });
 
@@ -61,7 +61,7 @@ export const subject = subjectSchema.table('sub', {
 		.notNull()
 		.references(() => yearLevel.id, { onDelete: 'cascade' }),
 	description: text('description'),
-	isArchived: boolean('is_archived').default(false).notNull(),
+	isArchived: boolean('is_archived').notNull().default(false),
 	...timestamps
 });
 
@@ -79,7 +79,7 @@ export const subjectOffering = subjectSchema.table('sub_off', {
 		.references(() => campus.id, { onDelete: 'cascade' }),
 	curriculumSubjectId: integer('cur_sub_id').references(() => curriculumSubject.id, {onDelete: 'set null'}),
 	gradeScaleId: integer('grade_scale_id').references(() => gradeScale.id, { onDelete: 'set null' }),
-	isArchived: boolean('is_archived').default(false).notNull(),
+	isArchived: boolean('is_archived').notNull().default(false),
 	...timestamps
 });
 
@@ -96,7 +96,7 @@ export const subjectOfferingClass = subjectSchema.table(
 		subOfferingId: integer('sub_off_id')
 			.notNull()
 			.references(() => subjectOffering.id, { onDelete: 'cascade' }),
-		isArchived: boolean('is_archived').default(false).notNull(),
+		isArchived: boolean('is_archived').notNull().default(false),
 		...timestamps
 	},
 	(self) => [unique().on(self.subOfferingId, self.name)]
@@ -115,7 +115,7 @@ export const subjectClassAllocation = subjectSchema.table('sub_off_cls_allo', {
 	date: date('date').notNull(),
 	startTime: time('start_time').notNull(),
 	endTime: time('end_time').notNull(),
-	isArchived: boolean('is_archived').default(false).notNull(),
+	isArchived: boolean('is_archived').notNull().default(false),
 	...timestamps
 });
 
@@ -139,7 +139,7 @@ export const subjectClassAllocationAttendance = subjectSchema.table(
 		status: subjectClassAllocationAttendanceStatusEnumPg().notNull(),
 		noteGuardian: text('note_guardian'),
 		noteTeacher: text('note_teacher'),
-		isArchived: boolean('is_archived').default(false).notNull(),
+		isArchived: boolean('is_archived').notNull().default(false),
 		...timestamps
 	},
 	(self) => [unique().on(self.subjectClassAllocationId, self.userId)]
@@ -183,7 +183,7 @@ export const behaviourQuickAction = subjectSchema.table(
 			.references(() => school.id, { onDelete: 'cascade' }),
 		name: text('name').notNull(),
 		description: text('description'),
-		isArchived: boolean('is_archived').default(false).notNull(),
+		isArchived: boolean('is_archived').notNull().default(false),
 		...timestamps
 	},
 	(self) => [unique().on(self.schoolId, self.name)]
@@ -229,7 +229,7 @@ export const subjectThread = subjectSchema.table(
 		title: text('title').notNull(),
 		content: text('content').notNull(),
 		isAnonymous: boolean('is_anonymous').notNull(),
-		isArchived: boolean('is_archived').default(false).notNull(),
+		isArchived: boolean('is_archived').notNull().default(false),
 		...timestamps,
 		...embeddings
 	},
@@ -260,7 +260,7 @@ export const subjectThreadResponse = subjectSchema.table(
 		content: text('content').notNull(),
 		parentResponseId: integer('parent_id').references((): AnyPgColumn => subjectThreadResponse.id),
 		isAnonymous: boolean('is_anonymous').notNull().default(false),
-		isArchived: boolean('is_archived').default(false).notNull(),
+		isArchived: boolean('is_archived').notNull().default(false),
 		...timestamps,
 		...embeddings
 	},
@@ -326,7 +326,7 @@ export const subjectOfferingClassResource = subjectSchema.table('sub_off_cls_res
 	authorId: uuid('author_id')
 		.notNull()
 		.references(() => user.id, { onDelete: 'cascade' }),
-	isArchived: boolean('is_archived').default(false).notNull(),
+	isArchived: boolean('is_archived').notNull().default(false),
 	...timestamps
 });
 
