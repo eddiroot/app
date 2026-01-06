@@ -16,10 +16,9 @@ interface SeedOptions {
 }
 
 async function seed(options: SeedOptions = {}): Promise<void> {
-	const { fresh = false, eddi = true, demo = true } = options;
+	const { eddi = true, demo = true } = options;
 
 	console.log('\n🌱 Starting database seeding...');
-	console.log(`   Fresh: ${fresh}`);
 	console.log(`   Eddi data: ${eddi}`);
 	console.log(`   Demo school: ${demo}`);
 
@@ -33,14 +32,13 @@ async function seed(options: SeedOptions = {}): Promise<void> {
 
 	const db = drizzle(pool, { schema });
 
-	const context: SeedContext = { db, pool, fresh };
+	const context: SeedContext = { db, pool };
 
 	try {
 		// Truncate tables if fresh mode
-		if (fresh) {
-			logSection('Truncating Tables');
-			await truncateAllTables(pool);
-		}
+		logSection('Truncating Tables');
+		await truncateAllTables(pool);
+		
 
 		// Seed Eddi platform data (curriculum, etc.)
 		if (eddi) {
@@ -64,7 +62,6 @@ async function seed(options: SeedOptions = {}): Promise<void> {
 // Parse command line arguments
 const args = process.argv.slice(2);
 const options: SeedOptions = {
-	fresh: args.includes('--fresh'),
 	eddi: !args.includes('--no-eddi'),
 	demo: !args.includes('--no-demo')
 };

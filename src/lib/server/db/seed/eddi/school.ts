@@ -5,7 +5,7 @@ export async function seedEddiSchool(db: Database) {
 	const [eddiSchool] = await db
 		.insert(schema.school)
 		.values({
-			name: 'eddi.edu.au',
+			name: 'eddi',
 			countryCode: 'AU',
 			stateCode: 'VIC'
 		})

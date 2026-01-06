@@ -1,10 +1,6 @@
 import {
-	boolean,
-	index,
-	integer,
 	jsonb,
 	pgSchema,
-	text,
 	timestamp,
 	vector
 } from 'drizzle-orm/pg-core';
@@ -52,27 +48,3 @@ export const embeddings = {
 		[key: string]: unknown;
 	}>()
 };
-
-/**
- * When a user partially links or uploads a document that is not stored permanently.
- * These can be cleaned up periodically.
- * 
- * For example, if a user attaches a video or a document to use when creating a task but does not want to permanently store it.
- */
-export const tempPool = utilsSchema.table(
-	'temp_pool',
-	{
-		id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
-		content: text('content').notNull(),
-		...embeddings,
-		isArchived: boolean('is_archived').notNull().default(false),
-		...timestamps
-	},
-	(self) => [
-		index('temp_pool_embedding_idx').using('hnsw', self.embedding.op('vector_cosine_ops')),
-		index('temp_pool_metadata_idx').using('gin', self.embeddingMetadata)
-	]
-);
-
-export type TempPool = typeof tempPool.$inferSelect;
-
