@@ -53,6 +53,7 @@ npm run db:seed
 ```bash
 docker compose down --volumes
 docker compose up -d
+npm run sso
 npx sst dev --stage dev
 ```
 

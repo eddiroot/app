@@ -1,4 +1,4 @@
-import type { yearLevelEnum } from '$lib/enums.js';
+import { userTypeEnum, type yearLevelEnum } from '$lib/enums.js';
 import { db } from '$lib/server/db';
 import * as table from '$lib/server/db/schema';
 import { and, asc, eq, inArray, max } from 'drizzle-orm';

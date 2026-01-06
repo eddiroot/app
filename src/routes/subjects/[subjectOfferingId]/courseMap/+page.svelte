@@ -8,7 +8,7 @@
 		LearningArea,
 		LearningAreaStandard
 	} from '$lib/server/db/schema';
-	import Brain from '@lucide/svelte/icons/brain';
+	import List from '@lucide/svelte/icons/list';
 	import Map from '@lucide/svelte/icons/map';
 	import NotebookText from '@lucide/svelte/icons/notebook-text';
 	import Plus from '@lucide/svelte/icons/plus';
@@ -211,9 +211,9 @@
 						<!-- Display current topic name -->
 						<div class="mb-3 flex items-center gap-2">
 							<div class="flex h-8 w-8 items-center justify-center rounded-lg bg-purple-100">
-								<Brain class="h-5 w-5 text-purple-600" />
+								<List class="h-5 w-5 text-purple-600" />
 							</div>
-							<h3 class="text-lg font-bold">{currentTopic.topic}</h3>
+							<h3 class="text-lg font-bold">Topics</h3>
 						</div>
 						<!-- Tasks Section -->
 						<div class="mb-4">
@@ -236,7 +236,7 @@
 						<!-- No topics - show create option -->
 						<div class="mb-3 flex items-center gap-2">
 							<div class="flex h-8 w-8 items-center justify-center rounded-lg bg-purple-100">
-								<Brain class="h-5 w-5 text-purple-600" />
+								<List class="h-5 w-5 text-purple-600" />
 							</div>
 							<h3 class="text-lg font-bold">Current Topic</h3>
 						</div>
