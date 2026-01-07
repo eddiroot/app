@@ -1,25 +1,25 @@
 import { XMLBuilder } from 'fast-xml-parser';
 
 import {
-	getActiveTimetableDraftConstraintsByTimetableDraftId,
-	getAllStudentGroupsByTimetableDraftId,
-	getAllStudentsWithYearLevelsBySchoolId,
-	getBuildingsBySchoolId,
-	getEnhancedTimetableDraftActivitiesByTimetableDraftId,
-	getSchoolById,
-	getSpacesBySchoolId,
-	getSubjectsBySchoolId,
-	getTeacherSpecializationsByTeacherId,
-	getTimetableDraftDaysByTimetableDraftId,
-	getTimetableDraftPeriodsByTimetableDraftId,
-	getUsersBySchoolIdAndType
+    getActiveTimetableDraftConstraintsByTimetableDraftId,
+    getAllStudentGroupsByTimetableDraftId,
+    getAllStudentsGroupedByYearLevelsBySchoolId,
+    getBuildingsBySchoolId,
+    getEnhancedTimetableDraftActivitiesByTimetableDraftId,
+    getSchoolById,
+    getSpacesBySchoolId,
+    getSubjectsBySchoolId,
+    getTeacherSpecializationsByTeacherId,
+    getTimetableDraftDaysByTimetableDraftId,
+    getTimetableDraftPeriodsByTimetableDraftId,
+    getUsersBySchoolIdAndType
 } from '$lib/server/db/service';
 
 export type TimetableData = {
 	timetableDays: Awaited<ReturnType<typeof getTimetableDraftDaysByTimetableDraftId>>;
 	timetablePeriods: Awaited<ReturnType<typeof getTimetableDraftPeriodsByTimetableDraftId>>;
 	studentGroups: Awaited<ReturnType<typeof getAllStudentGroupsByTimetableDraftId>>;
-	studentsByYear: Awaited<ReturnType<typeof getAllStudentsWithYearLevelsBySchoolId>>;
+	studentsByYear: Awaited<ReturnType<typeof getAllStudentsGroupedByYearLevelsBySchoolId>>;
 	activities: Awaited<ReturnType<typeof getEnhancedTimetableDraftActivitiesByTimetableDraftId>>;
 	buildings: Awaited<ReturnType<typeof getBuildingsBySchoolId>>;
 	spaces: Awaited<ReturnType<typeof getSpacesBySchoolId>>;

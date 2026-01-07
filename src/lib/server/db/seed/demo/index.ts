@@ -1,5 +1,6 @@
 import type { SeedContext } from '../types';
 import { logSection, logSubsection } from '../utils';
+import { seedDemoEvents } from './events';
 import { seedDemoNews } from './news';
 import { seedDemoSchool } from './school';
 import { seedDemoSubjects } from './subjects';
@@ -30,6 +31,10 @@ export async function seedDemo(context: SeedContext): Promise<void> {
 	// 5. Create news
 	logSubsection('Creating Demo News');
 	await seedDemoNews(db, schoolData, userData);
+
+	// 6. Create events
+	logSubsection('Creating Demo Events');
+	await seedDemoEvents(db, schoolData, userData, subjectData);
 
 	console.log('Completed Demo school seeding.');
 }

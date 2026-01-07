@@ -246,6 +246,8 @@ When including @lucide/svelte icons, you do not need to apply h-4 w-4 as that is
 
 You do not need to add the LoaderData and Action types to Svelte pages, as Svelte does this out of the box from v5.
 
+When referencing other tables use onDelete 'cascade' by default
+
 #fetch https://shadcn-svelte.com/docs/components
 
 #fetch https://svelte.dev/llms-full.txt

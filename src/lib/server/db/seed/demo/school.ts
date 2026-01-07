@@ -1,7 +1,8 @@
-import { schoolSpaceTypeEnum, yearLevelEnum } from '$lib/enums';
+import { schoolSpaceTypeEnum } from '$lib/enums';
 import { getTermsByYear } from '$lib/server/vic-school-terms';
 import * as schema from '../../schema';
 import type { Database } from '../types';
+import { DEMO_YEAR_LEVELS, type DemoYearLevelIds } from './consts';
 import type { DemoSchoolData } from './types';
 
 export async function seedDemoSchool(db: Database): Promise<DemoSchoolData> {
@@ -218,7 +219,7 @@ export async function seedDemoSchool(db: Database): Promise<DemoSchoolData> {
 
 	// Create year levels (Foundation to Year 12)
 	const yearLevels = await seedYearLevels(db, school.id);
-	console.log(`  Created ${yearLevels.length} year levels`);
+	console.log(`  Created ${Object.keys(yearLevels).length} year levels`);
 
 	// Create semesters and terms
 	await seedSchoolTerms(db, school.id);
@@ -232,34 +233,26 @@ export async function seedDemoSchool(db: Database): Promise<DemoSchoolData> {
 	};
 }
 
-async function seedYearLevels(db: Database, schoolId: number) {
-	const yearLevelValues = [
-		yearLevelEnum.foundation,
-		yearLevelEnum.year1,
-		yearLevelEnum.year2,
-		yearLevelEnum.year3,
-		yearLevelEnum.year4,
-		yearLevelEnum.year5,
-		yearLevelEnum.year6,
-		yearLevelEnum.year7,
-		yearLevelEnum.year8,
-		yearLevelEnum.year9,
-		yearLevelEnum.year10,
-		yearLevelEnum.year11,
-		yearLevelEnum.year12
-	];
+async function seedYearLevels(db: Database, schoolId: number): Promise<DemoYearLevelIds> {
 
-	const yearLevels = await db
+	const [none, seven, eight, nine, ten] = await db
 		.insert(schema.yearLevel)
 		.values(
-			yearLevelValues.map((level) => ({
+			DEMO_YEAR_LEVELS.map((level) => ({
 				schoolId,
 				yearLevel: level
 			}))
 		)
 		.returning();
-
-	return yearLevels;
+	return {
+		none: none.id,
+		7: seven.id,
+		8: eight.id,
+		9: nine.id,
+		10: ten.id
+	}
+	
+	
 }
 
 async function seedSchoolTerms(db: Database, schoolId: number) {
