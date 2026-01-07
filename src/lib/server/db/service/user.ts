@@ -15,7 +15,7 @@ export async function createUser({
 	gender,
 	dateOfBirth,
 	honorific,
-	yearLevel,
+	yearLevelId,
 	middleName,
 	avatarUrl,
 }: {
@@ -28,12 +28,13 @@ export async function createUser({
 	gender?: userGenderEnum;
 	dateOfBirth?: Date;
 	honorific?: userHonorificEnum;
-	yearLevel: yearLevelEnum;
+	yearLevelId: number;
 	middleName?: string;
 	avatarUrl?: string;
 }) {
 	const passwordHash = await hash(password);
 	const verificationCode = String(randomInt(100000, 1000000));
+	
 
 	const [user] = await db
 		.insert(table.user)
@@ -47,7 +48,7 @@ export async function createUser({
 			gender,
 			dateOfBirth,
 			honorific,
-			yearLevel,
+			yearLevelId,
 			middleName,
 			avatarUrl,
 			verificationCode,
@@ -63,7 +64,8 @@ export async function createGoogleUser({
 	schoolId,
 	firstName,
 	lastName,
-	avatarUrl
+	avatarUrl,
+	yearLevelId
 }: {
 	email: string;
 	googleId: string;
@@ -71,6 +73,7 @@ export async function createGoogleUser({
 	firstName: string;
 	lastName: string;
 	avatarUrl: string;
+	yearLevelId: number;
 }) {
 	const [user] = await db
 		.insert(table.user)
@@ -81,7 +84,7 @@ export async function createGoogleUser({
 			firstName,
 			lastName,
 			avatarUrl,
-			yearLevel: yearLevelEnum.none
+			yearLevelId
 		})
 		.returning();
 
@@ -93,13 +96,15 @@ export async function createMicrosoftUser({
 	microsoftId,
 	schoolId,
 	firstName,
-	lastName
+	lastName,
+	yearLevelId
 }: {
 	email: string;
 	microsoftId: string;
 	schoolId: number;
 	firstName: string;
 	lastName: string;
+	yearLevelId: number;
 }) {
 	const [user] = await db
 		.insert(table.user)
@@ -109,7 +114,7 @@ export async function createMicrosoftUser({
 			schoolId,
 			firstName,
 			lastName,
-			yearLevel: yearLevelEnum.none
+			yearLevelId
 		})
 		.returning();
 
@@ -232,13 +237,14 @@ export async function getUserProfileById(userId: string) {
 			dateOfBirth: table.user.dateOfBirth,
 			gender: table.user.gender,
 			honorific: table.user.honorific,
-			yearLevel: table.user.yearLevel,
+			yearLevel: table.yearLevel.yearLevel,
 			type: table.user.type,
 			schoolId: table.user.schoolId,
 			emailVerified: table.user.emailVerified,
 			createdAt: table.user.createdAt
 		})
 		.from(table.user)
+		.leftJoin(table.yearLevel, eq(table.yearLevel.id, table.user.yearLevelId))
 		.where(eq(table.user.id, userId))
 		.limit(1);
 	return user.length > 0 ? user[0] : null;
@@ -265,16 +271,17 @@ export async function getAllStudentsBySchoolId(schoolId: number) {
 			firstName: table.user.firstName,
 			middleName: table.user.middleName,
 			lastName: table.user.lastName,
-			yearLevel: table.user.yearLevel
+			yearLevel: table.yearLevel.yearLevel
 		})
 		.from(table.user)
+		.innerJoin(table.yearLevel, eq(table.yearLevel.id, table.user.yearLevelId))
 		.where(and(eq(table.user.schoolId, schoolId), eq(table.user.type, userTypeEnum.student)));
 
 	return students;
 }
 
 // Group students by year level
-export async function getAllStudentsWithYearLevelsBySchoolId(schoolId: number) {
+export async function getAllStudentsGroupedByYearLevelsBySchoolId(schoolId: number) {
 	const students = await getAllStudentsBySchoolId(schoolId);
 
 	type StudentInfo = Pick<

@@ -14,9 +14,9 @@ import {
 	userHonorificEnum,
 	userTypeEnum
 } from '../../../enums';
-import { campus, school } from './schools';
+import { campus, school, yearLevel } from './schools';
 import { subject, subjectOffering, subjectOfferingClass } from './subjects';
-import { timestamps, yearLevelEnumPg } from './utils';
+import { timestamps } from './utils';
 
 export const userSchema = pgSchema('user');
 
@@ -58,7 +58,7 @@ export const user = userSchema.table('user', {
 	gender: userGenderEnumPg().notNull().default(userGenderEnum.unspecified),
 	dateOfBirth: timestamp('date_of_birth', { withTimezone: true, mode: 'date' }),
 	honorific: userHonorificEnumPg(),
-	yearLevel: yearLevelEnumPg().notNull(),
+	yearLevelId: integer('year_level_id').notNull().references(() => yearLevel.id, { onDelete: 'cascade' }),
 	firstName: text('first_name').notNull(),
 	middleName: text('middle_name'),
 	lastName: text('last_name').notNull(),

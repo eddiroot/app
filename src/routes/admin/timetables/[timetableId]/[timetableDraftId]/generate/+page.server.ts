@@ -1,18 +1,18 @@
 import { userTypeEnum } from '$lib/enums.js';
 import {
-	getActiveTimetableDraftConstraintsByTimetableDraftId,
-	getAllStudentGroupsByTimetableDraftId,
-	getAllStudentsWithYearLevelsBySchoolId,
-	getBuildingsBySchoolId,
-	getEnhancedTimetableDraftActivitiesByTimetableDraftId,
-	getSchoolById,
-	getSpacesBySchoolId,
-	getSubjectsBySchoolId,
-	getTimetableDraftById,
-	getTimetableDraftDaysByTimetableDraftId,
-	getTimetableDraftPeriodsByTimetableDraftId,
-	getTimetableQueueByTimetableId,
-	getUsersBySchoolIdAndType
+    getActiveTimetableDraftConstraintsByTimetableDraftId,
+    getAllStudentGroupsByTimetableDraftId,
+    getAllStudentsGroupedByYearLevelsBySchoolId,
+    getBuildingsBySchoolId,
+    getEnhancedTimetableDraftActivitiesByTimetableDraftId,
+    getSchoolById,
+    getSpacesBySchoolId,
+    getSubjectsBySchoolId,
+    getTimetableDraftById,
+    getTimetableDraftDaysByTimetableDraftId,
+    getTimetableDraftPeriodsByTimetableDraftId,
+    getTimetableQueueByTimetableId,
+    getUsersBySchoolIdAndType
 } from '$lib/server/db/service';
 import { fail } from '@sveltejs/kit';
 import { processTimetableQueue } from '../../../../../../scripts/process/timetable.js';
@@ -59,7 +59,7 @@ export const actions = {
 				getTimetableDraftDaysByTimetableDraftId(draft.id),
 				getTimetableDraftPeriodsByTimetableDraftId(draft.id),
 				getAllStudentGroupsByTimetableDraftId(draft.id),
-				getAllStudentsWithYearLevelsBySchoolId(user.schoolId),
+				getAllStudentsGroupedByYearLevelsBySchoolId(user.schoolId),
 				getEnhancedTimetableDraftActivitiesByTimetableDraftId(draft.id),
 				getBuildingsBySchoolId(user.schoolId),
 				getSpacesBySchoolId(user.schoolId),

@@ -13,10 +13,11 @@ export async function getUsersBySchoolId(schoolId: number, includeArchived: bool
 			firstName: table.user.firstName,
 			middleName: table.user.middleName,
 			lastName: table.user.lastName,
-			yearLevel: table.user.yearLevel,
+			yearLevel: table.yearLevel.yearLevel,
 			avatarUrl: table.user.avatarUrl
 		})
 		.from(table.user)
+		.leftJoin(table.yearLevel, eq(table.user.yearLevelId, table.yearLevel.id))
 		.where(
 			and(
 				eq(table.user.schoolId, schoolId),
@@ -41,10 +42,11 @@ export async function getUsersBySchoolIdAndTypes(
 			firstName: table.user.firstName,
 			middleName: table.user.middleName,
 			lastName: table.user.lastName,
-			yearLevel: table.user.yearLevel,
+			yearLevel: table.yearLevel.yearLevel,
 			avatarUrl: table.user.avatarUrl
 		})
 		.from(table.user)
+		.leftJoin(table.yearLevel, eq(table.user.yearLevelId, table.yearLevel.id))
 		.where(
 			and(
 				eq(table.user.schoolId, schoolId),
@@ -69,10 +71,11 @@ export async function getUsersBySchoolIdAndType(
 			firstName: table.user.firstName,
 			middleName: table.user.middleName,
 			lastName: table.user.lastName,
-			yearLevel: table.user.yearLevel,
+			yearLevel: table.yearLevel.yearLevel,
 			avatarUrl: table.user.avatarUrl
 		})
 		.from(table.user)
+		.leftJoin(table.yearLevel, eq(table.user.yearLevelId, table.yearLevel.id))
 		.where(
 			and(
 				eq(table.user.schoolId, schoolId),
