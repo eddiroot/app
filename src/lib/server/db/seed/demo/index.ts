@@ -4,6 +4,8 @@ import { seedDemoEvents } from './events';
 import { seedDemoNews } from './news';
 import { seedDemoSchool } from './school';
 import { seedDemoSubjects } from './subjects';
+import { seedDemoTasks } from './tasks';
+import { seedDemoThreads } from './threads';
 import { seedDemoTimetable } from './timetable';
 import { seedDemoUsers } from './users';
 
@@ -35,6 +37,14 @@ export async function seedDemo(context: SeedContext): Promise<void> {
 	// 6. Create events
 	logSubsection('Creating Demo Events');
 	await seedDemoEvents(db, schoolData, userData, subjectData);
+
+	// 7. Create discussion threads
+	logSubsection('Creating Demo Discussion Threads');
+	await seedDemoThreads(db, schoolData, userData, subjectData);
+
+	// 8. Create tasks
+	logSubsection('Creating Demo Tasks');
+	await seedDemoTasks(db, schoolData, userData, subjectData);
 
 	console.log('Completed Demo school seeding.');
 }
