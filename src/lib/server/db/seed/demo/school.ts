@@ -1,4 +1,4 @@
-import { schoolSpaceTypeEnum } from '$lib/enums';
+import { schoolSpaceTypeEnum, yearLevelEnum } from '$lib/enums';
 import { getTermsByYear } from '$lib/server/vic-school-terms';
 import * as schema from '../../schema';
 import type { Database } from '../types';
@@ -234,8 +234,7 @@ export async function seedDemoSchool(db: Database): Promise<DemoSchoolData> {
 }
 
 async function seedYearLevels(db: Database, schoolId: number): Promise<DemoYearLevelIds> {
-
-	const [none, seven, eight, nine, ten] = await db
+	const yearLevels = await db
 		.insert(schema.yearLevel)
 		.values(
 			DEMO_YEAR_LEVELS.map((level) => ({
@@ -244,15 +243,17 @@ async function seedYearLevels(db: Database, schoolId: number): Promise<DemoYearL
 			}))
 		)
 		.returning();
+
+	// DEMO_YEAR_LEVELS order is: [year7, year8, year9, year10, none]
+	const yearLevelMap = new Map(yearLevels.map((yl) => [yl.yearLevel, yl.id]));
+
 	return {
-		none: none.id,
-		7: seven.id,
-		8: eight.id,
-		9: nine.id,
-		10: ten.id
-	}
-	
-	
+		none: yearLevelMap.get(yearLevelEnum.none)!,
+		7: yearLevelMap.get(yearLevelEnum.year7)!,
+		8: yearLevelMap.get(yearLevelEnum.year8)!,
+		9: yearLevelMap.get(yearLevelEnum.year9)!,
+		10: yearLevelMap.get(yearLevelEnum.year10)!
+	};
 }
 
 async function seedSchoolTerms(db: Database, schoolId: number) {

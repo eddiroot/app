@@ -52,18 +52,20 @@ export async function seedDemoSubjects(
 	// Create subjects for each year level
 	const subjects: (typeof schema.subject.$inferSelect)[] = [];
 
-	// Year 7 to Year 10
-	for (const coreSubject of coreSubjects) {
-		for (const [yearLevel, yearLevelId] of Object.entries(yearLevels)) {
-			if (yearLevel === 'none') continue;
+	// Year 7 to Year 10 (exclude 'none')
+	const activeYearLevelEntries = Object.entries(yearLevels).filter(
+		([key]) => key !== 'none'
+	) as [string, number][];
 
+	for (const coreSubject of coreSubjects) {
+		for (const [yearLevel, yearLevelId] of activeYearLevelEntries) {
 			const [subject] = await db
 				.insert(schema.subject)
 				.values({
 					name: `Year ${yearLevel} ${coreSubject.name}`,
 					schoolId: school.id,
 					coreSubjectId: coreSubject.id,
-					yearLevelId
+					yearLevelId: yearLevelId
 				})
 				.returning();
 

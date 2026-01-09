@@ -1,8 +1,9 @@
 import {
-	relationshipTypeEnum,
-	userGenderEnum,
-	userHonorificEnum,
-	userTypeEnum
+    relationshipTypeEnum,
+    userGenderEnum,
+    userHonorificEnum,
+    userTypeEnum,
+    yearLevelEnum
 } from '$lib/enums';
 import * as schema from '../../schema';
 import type { Database } from '../types';
@@ -193,18 +194,32 @@ export async function seedDemoUsers(
 
 	console.log(`  Created admin: ${admin.email}`);
 
-	// Generate a year level coordinator for years 7-10 
+	// Generate a year level coordinator for years 7-10 (exclude 'none')
 	const coordinators = [];
-	for (const yearLevel of DEMO_YEAR_LEVELS) {
+	const activeYearLevels = DEMO_YEAR_LEVELS.filter((yl) => yl !== yearLevelEnum.none);
+	
+	// Map enum values to yearLevels keys
+	const yearLevelKeyMap: Record<string, keyof typeof yearLevels> = {
+		[yearLevelEnum.year7]: '7',
+		[yearLevelEnum.year8]: '8',
+		[yearLevelEnum.year9]: '9',
+		[yearLevelEnum.year10]: '10',
+		[yearLevelEnum.none]: 'none'
+	};
+
+	for (const yearLevel of activeYearLevels) {
+		const yearLevelKey = yearLevelKeyMap[yearLevel];
+		const yearLevelId = yearLevels[yearLevelKey];
+		
 		const [coordinator] = await db
 			.insert(schema.user)
 			.values({
-				email: `${yearLevel}coordinator@demo.edu.au`,
+				email: `year${yearLevelKey}coordinator@demo.edu.au`,
 				passwordHash,
 				schoolId: school.id,
 				type: userTypeEnum.teacher,
-				yearLevelId: yearLevels[yearLevel as keyof typeof yearLevels],
-				firstName: yearLevel,
+				yearLevelId,
+				firstName: `Year ${yearLevelKey}`,
 				lastName: 'Coordinator',
 				emailVerified: true
 			})
@@ -227,9 +242,21 @@ export async function seedDemoUsers(
 		emailVerified: boolean;
 	}> = [];
 
+	// Map year level enum values to numeric years for birth date calculation
+	const yearLevelToAge: Record<string, number> = {
+		[yearLevelEnum.year7]: 12,
+		[yearLevelEnum.year8]: 13,
+		[yearLevelEnum.year9]: 14,
+		[yearLevelEnum.year10]: 15
+	};
+
 	let studentIndex = 1;
-	for (const yearLevel of DEMO_YEAR_LEVELS) {
-		const birthYear = new Date().getFullYear() - (parseInt(yearLevel.replace('year', '')) + 5);
+	for (const yearLevel of activeYearLevels) {
+		const yearLevelKey = yearLevelKeyMap[yearLevel];
+		const yearLevelId = yearLevels[yearLevelKey];
+		const studentAge = yearLevelToAge[yearLevel] || 12;
+		const birthYear = new Date().getFullYear() - studentAge;
+		
 		for (let i = 0; i < STUDENTS_PER_YEAR_LEVEL; i++) {
 			const { name: firstName, gender } = FIRST_NAMES[Math.floor(random() * FIRST_NAMES.length)];
 			const lastName = LAST_NAMES[Math.floor(random() * LAST_NAMES.length)];
@@ -241,7 +268,7 @@ export async function seedDemoUsers(
 				schoolId: school.id,
 				type: userTypeEnum.student,
 				gender,
-				yearLevelId: yearLevels[yearLevel as keyof typeof yearLevels],
+				yearLevelId,
 				firstName,
 				lastName,
 				dateOfBirth: randomDateInYear(birthYear),

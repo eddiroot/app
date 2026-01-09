@@ -1,8 +1,8 @@
 import { subjectGroupEnum, yearLevelEnum } from "$lib/enums";
 
 
-// Student year levels: Foundation through Year 7 - 10
-export const DEMO_YEAR_LEVELS: yearLevelEnum[] = [...Object.values(yearLevelEnum).slice(8,11), yearLevelEnum.none];
+// Student year levels: Year 7 - 10
+export const DEMO_YEAR_LEVELS: yearLevelEnum[] = [...Object.values(yearLevelEnum).slice(8,12), yearLevelEnum.none];
 
 export type DemoYearLevelIds = {
     'none': number;
