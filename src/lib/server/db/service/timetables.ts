@@ -441,7 +441,7 @@ export async function assignStudentsToGroupsRandomly(
 			id: table.user.id
 		})
 		.from(table.user)
-		.leftJoin(table.yearLevel, eq(table.user.yearLevelId, table.yearLevel.id))
+		.innerJoin(table.yearLevel, eq(table.user.yearLevelId, table.yearLevel.id))
 		.where(
 			and(
 				eq(table.user.schoolId, schoolId),
@@ -545,7 +545,7 @@ export async function getStudentsWithGroupsByTimetableDraftId(
 				eq(table.timetableGroup.timetableDraftId, timetableDraftId)
 			)
 		)
-		.leftJoin(table.yearLevel, eq(table.user.yearLevelId, table.yearLevel.id))
+		.innerJoin(table.yearLevel, eq(table.user.yearLevelId, table.yearLevel.id))
 		.where(
 			and(
 				eq(table.user.schoolId, schoolId),
@@ -576,7 +576,7 @@ export async function getStudentsByGroupId(groupId: number) {
 		})
 		.from(table.timetableGroupMember)
 		.innerJoin(table.user, eq(table.timetableGroupMember.userId, table.user.id))
-		.leftJoin(table.yearLevel, eq(table.user.yearLevelId, table.yearLevel.id))
+		.innerJoin(table.yearLevel, eq(table.user.yearLevelId, table.yearLevel.id))
 		.where(eq(table.timetableGroupMember.groupId, groupId))
 		.orderBy(asc(table.user.lastName), asc(table.user.firstName));
 
@@ -609,7 +609,7 @@ export async function getStudentsForTimetable(timetableId: number, schoolId: num
 			yearLevel: table.yearLevel.yearLevel
 		})
 		.from(table.user)
-		.leftJoin(table.yearLevel, eq(table.user.yearLevelId, table.yearLevel.id))
+		.innerJoin(table.yearLevel, eq(table.user.yearLevelId, table.yearLevel.id))
 		.where(
 			and(
 				eq(table.user.schoolId, schoolId),
@@ -985,7 +985,7 @@ export async function getActivityStudentsByActivityId(activityId: number) {
 		})
 		.from(table.timetableActivityAssignedStudent)
 		.innerJoin(table.user, eq(table.timetableActivityAssignedStudent.userId, table.user.id))
-		.leftJoin(table.yearLevel, eq(table.user.yearLevelId, table.yearLevel.id))
+		.innerJoin(table.yearLevel, eq(table.user.yearLevelId, table.yearLevel.id))
 		.where(eq(table.timetableActivityAssignedStudent.timetableActivityId, activityId))
 		.orderBy(asc(table.user.lastName), asc(table.user.firstName));
 

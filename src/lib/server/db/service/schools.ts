@@ -17,7 +17,7 @@ export async function getUsersBySchoolId(schoolId: number, includeArchived: bool
 			avatarUrl: table.user.avatarUrl
 		})
 		.from(table.user)
-		.leftJoin(table.yearLevel, eq(table.user.yearLevelId, table.yearLevel.id))
+		.innerJoin(table.yearLevel, eq(table.user.yearLevelId, table.yearLevel.id))
 		.where(
 			and(
 				eq(table.user.schoolId, schoolId),
@@ -46,7 +46,7 @@ export async function getUsersBySchoolIdAndTypes(
 			avatarUrl: table.user.avatarUrl
 		})
 		.from(table.user)
-		.leftJoin(table.yearLevel, eq(table.user.yearLevelId, table.yearLevel.id))
+		.innerJoin(table.yearLevel, eq(table.user.yearLevelId, table.yearLevel.id))
 		.where(
 			and(
 				eq(table.user.schoolId, schoolId),
@@ -75,7 +75,7 @@ export async function getUsersBySchoolIdAndType(
 			avatarUrl: table.user.avatarUrl
 		})
 		.from(table.user)
-		.leftJoin(table.yearLevel, eq(table.user.yearLevelId, table.yearLevel.id))
+		.innerJoin(table.yearLevel, eq(table.user.yearLevelId, table.yearLevel.id))
 		.where(
 			and(
 				eq(table.user.schoolId, schoolId),
@@ -249,11 +249,7 @@ export async function unarchiveCampus(campusId: number) {
 	return unarchivedCampus;
 }
 
-export async function createBuilding(
-	campusId: number,
-	name: string,
-	description?: string | null
-) {
+export async function createBuilding(campusId: number, name: string, description?: string | null) {
 	const [building] = await db
 		.insert(table.schoolBuilding)
 		.values({
