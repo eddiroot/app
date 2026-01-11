@@ -16,6 +16,7 @@
 	import CalendarDaysIcon from '@lucide/svelte/icons/calendar-days';
 	import ChevronDownIcon from '@lucide/svelte/icons/chevron-down';
 	import ChevronsUpDownIcon from '@lucide/svelte/icons/chevrons-up-down';
+	import DoorClosed from '@lucide/svelte/icons/door-closed';
 	import FileQuestionIcon from '@lucide/svelte/icons/file-question';
 	import FlaskConicalIcon from '@lucide/svelte/icons/flask-conical';
 	import HomeIcon from '@lucide/svelte/icons/home';
@@ -104,6 +105,11 @@
 	];
 
 	const classItems = [
+		{
+			title: 'Home',
+			url: '',
+			icon: HomeIcon
+		},
 		{
 			title: 'Attendance',
 			url: 'attendance',
@@ -352,8 +358,8 @@
 														)}
 														{...props}
 													>
-														<HomeIcon />
-														<span>{classItem.name}</span>
+														<DoorClosed />
+														<span>Class {classItem.name}</span>
 														<ChevronDownIcon
 															class="ml-auto transition-transform group-data-[state=open]/collapsible-class:rotate-180"
 														/>
