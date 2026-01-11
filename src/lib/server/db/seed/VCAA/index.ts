@@ -1,3 +1,4 @@
+import { env } from '$env/dynamic/private';
 import { VCAAF10SubjectEnum, VCAAVCESubjectEnum, yearLevelEnum } from '$lib/enums';
 import * as schema from '$lib/server/db/schema';
 import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
@@ -856,15 +857,14 @@ if (isMainModule) {
 	// Create a standalone database connection for VCAA seeding only
 	const { drizzle } = await import('drizzle-orm/node-postgres');
 	const { Pool } = await import('pg');
-	const { Resource } = await import('sst');
 	const schema = await import('../../schema/index.js');
 
 	const pool = new Pool({
-		host: Resource.Database.host,
-		port: Resource.Database.port,
-		user: Resource.Database.username,
-		password: Resource.Database.password,
-		database: Resource.Database.database
+		host: env.DB_HOST,
+		port: parseInt(env.DB_PORT || '5432', 10),
+		user: env.DB_USER,
+		password: env.DB_PASSWORD,
+		database: env.DB_NAME,
 	});
 	const standaloneDb = drizzle(pool, { schema });
 
