@@ -781,7 +781,7 @@ export async function upsertSubjectClassAllocationAttendance(
 	status: subjectClassAllocationAttendanceStatus,
 	noteGuardian?: string | undefined | null,
 	noteTeacher?: string | undefined | null,
-	behaviourQuickActionIds?: number[]
+	behaviourIds?: number[]
 ) {
 	return await db.transaction(async (tx) => {
 		// Get class allocation details for time calculation
@@ -883,16 +883,16 @@ export async function upsertSubjectClassAllocationAttendance(
 			}
 		}
 
-		if (behaviourQuickActionIds !== undefined) {
+		if (behaviourIds !== undefined) {
 			await tx
-				.delete(table.attendanceBehaviourQuickAction)
-				.where(eq(table.attendanceBehaviourQuickAction.attendanceId, attendance.id));
+				.delete(table.attendanceBehaviour)
+				.where(eq(table.attendanceBehaviour.attendanceId, attendance.id));
 
-			if (behaviourQuickActionIds.length > 0) {
-				await tx.insert(table.attendanceBehaviourQuickAction).values(
-					behaviourQuickActionIds.map((behaviourQuickActionId) => ({
+			if (behaviourIds.length > 0) {
+				await tx.insert(table.attendanceBehaviour).values(
+					behaviourIds.map((behaviourId) => ({
 						attendanceId: attendance.id,
-						behaviourQuickActionId
+						behaviourId
 					}))
 				);
 			}
@@ -1371,93 +1371,213 @@ export async function deleteSubjectSelectionConstraint(constraintId: number) {
 }
 
 /**
- * Get all behaviour quick actions for a school
+ * Get all behaviours for a school
  */
-export async function getBehaviourQuickActionsBySchoolId(schoolId: number) {
-	const behaviourQuickActions = await db
-		.select()
-		.from(table.behaviourQuickAction)
-		.where(
-			and(
-				eq(table.behaviourQuickAction.schoolId, schoolId),
-				eq(table.behaviourQuickAction.isArchived, false)
-			)
-		)
-		.orderBy(asc(table.behaviourQuickAction.name));
+export async function getBehavioursBySchoolId(schoolId: number) {
+	const results = await db
+		.select({
+			behaviour: table.behaviour,
+			behaviourLevel: table.behaviourLevel
+		})
+		.from(table.behaviour)
+		.leftJoin(table.behaviourLevel, eq(table.behaviour.levelId, table.behaviourLevel.id))
+		.where(and(eq(table.behaviour.schoolId, schoolId), eq(table.behaviour.isArchived, false)))
+		.orderBy(asc(table.behaviourLevel.level), asc(table.behaviour.name));
 
-	return behaviourQuickActions;
+	return results.map((row) => ({
+		...row.behaviour,
+		level: row.behaviourLevel
+	}));
 }
 
 /**
- * Create a new behaviour quick action
+ * Get all behaviour levels for a school
  */
-export async function createBehaviourQuickAction(
+export async function getBehaviourLevelsBySchoolId(schoolId: number) {
+	const levels = await db
+		.select()
+		.from(table.behaviourLevel)
+		.where(eq(table.behaviourLevel.schoolId, schoolId))
+		.orderBy(asc(table.behaviourLevel.level));
+
+	return levels;
+}
+
+/**
+ * Get all behaviour levels with their nested behaviours for a school
+ */
+export async function getLevelsWithBehaviours(schoolId: number) {
+	const results = await db
+		.select({
+			level: table.behaviourLevel,
+			behaviour: table.behaviour
+		})
+		.from(table.behaviourLevel)
+		.leftJoin(
+			table.behaviour,
+			and(
+				eq(table.behaviour.levelId, table.behaviourLevel.id),
+				eq(table.behaviour.isArchived, false)
+			)
+		)
+		.where(eq(table.behaviourLevel.schoolId, schoolId))
+		.orderBy(asc(table.behaviourLevel.level), asc(table.behaviour.name));
+
+	const levelMap = new Map<
+		number,
+		{
+			levelId: number;
+			levelName: string;
+			levelNumber: number;
+			behaviours: Array<{ value: string; label: string }>;
+		}
+	>();
+
+	for (const row of results) {
+		if (!levelMap.has(row.level.id)) {
+			levelMap.set(row.level.id, {
+				levelId: row.level.id,
+				levelName: row.level.name,
+				levelNumber: row.level.level,
+				behaviours: []
+			});
+		}
+
+		if (row.behaviour) {
+			levelMap.get(row.level.id)!.behaviours.push({
+				value: row.behaviour.id.toString(),
+				label: row.behaviour.name
+			});
+		}
+	}
+
+	return Array.from(levelMap.values());
+}
+
+/**
+ * Create a new behaviour level
+ */
+export async function createBehaviourLevel(schoolId: number, name: string) {
+	// Get the next level number
+	const existingLevels = await db
+		.select({ level: table.behaviourLevel.level })
+		.from(table.behaviourLevel)
+		.where(eq(table.behaviourLevel.schoolId, schoolId))
+		.orderBy(desc(table.behaviourLevel.level))
+		.limit(1);
+
+	const nextLevel = existingLevels.length > 0 ? existingLevels[0].level + 1 : 0;
+
+	if (nextLevel > 10) {
+		throw new Error('Maximum of 10 behaviour levels allowed');
+	}
+
+	const [behaviourLevel] = await db
+		.insert(table.behaviourLevel)
+		.values({
+			schoolId,
+			level: nextLevel,
+			name
+		})
+		.returning();
+
+	return behaviourLevel;
+}
+
+/**
+ * Update a behaviour level
+ */
+export async function updateBehaviourLevel(id: number, name: string) {
+	const [behaviourLevel] = await db
+		.update(table.behaviourLevel)
+		.set({
+			name,
+			updatedAt: new Date()
+		})
+		.where(eq(table.behaviourLevel.id, id))
+		.returning();
+
+	return behaviourLevel;
+}
+
+/**
+ * Delete a behaviour level
+ */
+export async function deleteBehaviourLevel(id: number) {
+	await db.delete(table.behaviourLevel).where(eq(table.behaviourLevel.id, id));
+}
+
+/**
+ * Create a new behaviour
+ */
+export async function createBehaviour(
 	schoolId: number,
 	name: string,
+	levelId: number,
 	description?: string | null
 ) {
-	const [behaviourQuickAction] = await db
-		.insert(table.behaviourQuickAction)
+	const [behaviour] = await db
+		.insert(table.behaviour)
 		.values({
 			schoolId,
 			name,
-			description: description || null
+			description: description || null,
+			levelId
 		})
 		.returning();
 
-	return behaviourQuickAction;
+	return behaviour;
 }
 
 /**
- * Update a behaviour quick action
+ * Update a behaviour
  */
-export async function updateBehaviourQuickAction(
+export async function updateBehaviour(
 	id: number,
 	name: string,
+	levelId?: number | undefined,
 	description?: string | null
 ) {
-	const [behaviourQuickAction] = await db
-		.update(table.behaviourQuickAction)
+	const [behaviour] = await db
+		.update(table.behaviour)
 		.set({
 			name,
 			description: description || null,
+			levelId,
 			updatedAt: new Date()
 		})
-		.where(eq(table.behaviourQuickAction.id, id))
+		.where(eq(table.behaviour.id, id))
 		.returning();
 
-	return behaviourQuickAction;
+	return behaviour;
 }
 
 /**
- * Delete (archive) a behaviour quick action
+ * Delete (archive) a behaviour
  */
-export async function deleteBehaviourQuickAction(id: number) {
+export async function deleteBehaviour(id: number) {
 	await db
-		.update(table.behaviourQuickAction)
+		.update(table.behaviour)
 		.set({
 			isArchived: true,
 			updatedAt: new Date()
 		})
-		.where(eq(table.behaviourQuickAction.id, id));
+		.where(eq(table.behaviour.id, id));
 }
 
 /**
- * Get behaviour quick actions for an attendance record
+ * Get behaviours for an attendance record
  */
-export async function getBehaviourQuickActionsByAttendanceId(attendanceId: number) {
-	const behaviourQuickActions = await db
+export async function getBehavioursByAttendanceId(attendanceId: number) {
+	const behaviours = await db
 		.select({
-			behaviourQuickAction: table.behaviourQuickAction
+			behaviour: table.behaviour
 		})
-		.from(table.attendanceBehaviourQuickAction)
-		.innerJoin(
-			table.behaviourQuickAction,
-			eq(table.attendanceBehaviourQuickAction.behaviourQuickActionId, table.behaviourQuickAction.id)
-		)
-		.where(eq(table.attendanceBehaviourQuickAction.attendanceId, attendanceId));
+		.from(table.attendanceBehaviour)
+		.innerJoin(table.behaviour, eq(table.attendanceBehaviour.behaviourId, table.behaviour.id))
+		.where(eq(table.attendanceBehaviour.attendanceId, attendanceId));
 
-	return behaviourQuickActions.map((row) => row.behaviourQuickAction);
+	return behaviours.map((row) => row.behaviour);
 }
 export async function getSubjectOfferingMetadataByOfferingId(subjectOfferingId: number): Promise<{
 	curriculumSubjectId: number | undefined;

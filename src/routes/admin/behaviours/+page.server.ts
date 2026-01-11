@@ -1,27 +1,35 @@
 import {
-	createBehaviourQuickAction,
-	getBehaviourQuickActionsBySchoolId,
-	updateBehaviourQuickAction
+	createBehaviour,
+	createBehaviourLevel,
+	getLevelsWithBehaviours,
+	updateBehaviour,
+	updateBehaviourLevel
 } from '$lib/server/db/service';
 import { fail } from '@sveltejs/kit';
 import { superValidate } from 'sveltekit-superforms';
 import { zod4 } from 'sveltekit-superforms/adapters';
 import { z } from 'zod';
 
+const levelSchema = z.object({
+	id: z.number().optional(),
+	name: z.string().min(1, 'Name is required')
+});
+
 const behaviourSchema = z.object({
 	id: z.number().optional(),
 	name: z.string().min(1, 'Name is required'),
+	levelId: z.string().min(1, 'Level is required'),
 	description: z.string().optional()
 });
 
 export const load = async ({ locals: { security } }) => {
 	const user = security.isAuthenticated().getUser();
-
-	const behaviourQuickActions = await getBehaviourQuickActionsBySchoolId(user.schoolId);
+	const levelsWithBehaviours = await getLevelsWithBehaviours(user.schoolId);
 
 	return {
-		behaviourQuickActions,
-		form: await superValidate(zod4(behaviourSchema))
+		levelsWithBehaviours,
+		form: await superValidate(zod4(behaviourSchema)),
+		levelForm: await superValidate(zod4(levelSchema))
 	};
 };
 
@@ -35,11 +43,16 @@ export const actions = {
 		}
 
 		try {
-			await createBehaviourQuickAction(user.schoolId, form.data.name, form.data.description);
+			await createBehaviour(
+				user.schoolId,
+				form.data.name,
+				parseInt(form.data.levelId, 10),
+				form.data.description
+			);
 			return { form, success: true };
 		} catch (error) {
-			console.error('Error creating behaviour quick action:', error);
-			return fail(500, { form, error: 'Failed to create behaviour quick action' });
+			console.error('Error creating behaviour:', error);
+			return fail(500, { form, error: 'Failed to create behaviour' });
 		}
 	},
 
@@ -52,11 +65,47 @@ export const actions = {
 		}
 
 		try {
-			await updateBehaviourQuickAction(form.data.id, form.data.name, form.data.description);
+			const levelId =
+				form.data.levelId && form.data.levelId !== '' ? parseInt(form.data.levelId, 10) : undefined;
+			await updateBehaviour(form.data.id, form.data.name, levelId, form.data.description);
 			return { form, success: true };
 		} catch (error) {
-			console.error('Error updating behaviour quick action:', error);
-			return fail(500, { form, error: 'Failed to update behaviour quick action' });
+			console.error('Error updating behaviour:', error);
+			return fail(500, { form, error: 'Failed to update behaviour' });
+		}
+	},
+
+	createLevel: async ({ request, locals: { security } }) => {
+		const user = security.isAuthenticated().getUser();
+		const form = await superValidate(request, zod4(levelSchema));
+
+		if (!form.valid) {
+			return fail(400, { form });
+		}
+
+		try {
+			await createBehaviourLevel(user.schoolId, form.data.name);
+			return { form, success: true };
+		} catch (error) {
+			console.error('Error creating behaviour level:', error);
+			return fail(500, { form, error: 'Failed to create behaviour level' });
+		}
+	},
+
+	updateLevel: async ({ request, locals: { security } }) => {
+		security.isAuthenticated();
+		const form = await superValidate(request, zod4(levelSchema));
+
+		if (!form.valid || !form.data.id) {
+			return fail(400, { form });
+		}
+
+		try {
+			await updateBehaviourLevel(form.data.id, form.data.name);
+			return { form, success: true };
+		} catch (error) {
+			console.error('Error updating behaviour level:', error);
+			return fail(500, { form, error: 'Failed to update behaviour level' });
 		}
 	}
 };
