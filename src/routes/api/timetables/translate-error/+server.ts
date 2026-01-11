@@ -1,6 +1,6 @@
+import { env } from '$env/dynamic/private';
 import { updateTimetableDraftTranslatedError } from '$lib/server/db/service';
 import { error, json } from '@sveltejs/kit';
-import { Resource } from 'sst';
 
 const FET_EXPERTISE_PROMPT = `You are an expert in FET (Free/Libre Educational Timetabling) software, a sophisticated timetabling application that uses recursive swapping algorithms to schedule activities for schools, high schools, and universities.
 
@@ -134,13 +134,13 @@ export async function POST({ request, locals: { security } }) {
 		}
 
 		// Check if we have the Gemini API key
-		if (!process.env.GEMINI_API_KEY) {
+		if (!env.GEMINI_API_KEY) {
 			throw error(500, 'Gemini API key not configured');
 		}
 
 		// Make the API call to Gemini
 		const response = await fetch(
-			`https://generativelanguage.googleapis.com/v1beta/models/${process.env.GEMINI_DEFAULT_MODEL}:generateContent?key=${Resource.GeminiAPIKey.value}`,
+			`https://generativelanguage.googleapis.com/v1beta/models/${env.GEMINI_DEFAULT_MODEL}:generateContent?key=${env.GEMINI_API_KEY}`,
 			{
 				method: 'POST',
 				headers: {

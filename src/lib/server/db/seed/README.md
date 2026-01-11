@@ -10,20 +10,10 @@ npm run db:seed
 
 This will:
 
-1. Truncate all existing tables (fresh start)
+1. Truncate all existing tables
 2. Seed eddi platform data (curriculum, etc.)
 3. Seed Demo school data (users, subjects, timetable, news)
 
-## Options
-
-Run with custom options:
-
-```bash
-# Skip demo school data
-sst shell tsx src/lib/server/db/seed -- --fresh --no-demo
-
-# Skip eddi platform data
-sst shell tsx src/lib/server/db/seed -- --fresh --no-eddi
 ```
 
 ## SQL File Convention
@@ -37,11 +27,13 @@ If a `.sql` file exists with the same name as the `.ts` seeder in the same direc
 **Example:**
 
 ```
+
 src/lib/server/db/seed/eddi/curriculum/VCAA/
-├── vc2.ts      # TypeScript seeder (fallback)
-├── vc2.sql     # SQL file (used if present)
+├── vc2.ts # TypeScript seeder (fallback)
+├── vc2.sql # SQL file (used if present)
 └── index.ts
-```
+
+````
 
 When `vc2.sql` exists, it will be executed directly. If it doesn't exist, `vc2.ts` will run instead.
 
@@ -51,6 +43,6 @@ Use the SQL export script to generate seed files. Include `--override-id` to han
 
 ```bash
 npm run sql:export -- schema curriculum --override-id --output=./src/lib/server/db/seed/eddi/curriculum/VCAA
-```
+````
 
 This creates a `curriculum.sql` file. Rename it to match the seeder (e.g., `vc2.sql`) to use it.

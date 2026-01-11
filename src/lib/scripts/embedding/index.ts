@@ -1,3 +1,4 @@
+import { env } from '$env/dynamic/private';
 import { NomicEmbeddings } from '$lib/server/ai/embeddings/nomic';
 import { TableVectorStore, type EmbeddableTable } from '$lib/server/ai/vector-store/base';
 import * as schema from '$lib/server/db/schema';
@@ -5,7 +6,6 @@ import { AVAILABLE_SCHEMAS, type SchemaModule } from '$lib/server/db/schema/inde
 import { getTableName, isNull, sql } from 'drizzle-orm';
 import { drizzle } from 'drizzle-orm/node-postgres';
 import pg from 'pg';
-import { Resource } from 'sst';
 import * as helpers from '../helpers';
 // ============================================================================
 // DATABASE CONNECTION (standalone - avoids $app/environment)
@@ -13,12 +13,18 @@ import * as helpers from '../helpers';
 
 const { Pool } = pg;
 
+if (!env.DB_HOST) throw new Error('DB_HOST is not set');
+if (!env.DB_PORT) throw new Error('DB_PORT is not set');
+if (!env.DB_USER) throw new Error('DB_USER is not set');
+if (!env.DB_PASSWORD) throw new Error('DB_PASSWORD is not set');
+if (!env.DB_NAME) throw new Error('DB_NAME is not set');
+
 const pool = new Pool({
-	host: Resource.Database.host,
-	port: Resource.Database.port,
-	user: Resource.Database.username,
-	password: Resource.Database.password,
-	database: Resource.Database.database
+	host: env.DB_HOST,
+	port: parseInt(env.DB_PORT, 10),
+	user: env.DB_USER,
+	password: env.DB_PASSWORD,
+	database: env.DB_NAME
 });
 
 const db = drizzle(pool, { schema });
@@ -42,7 +48,6 @@ interface EmbedSchemaResult {
 	totalSkipped: number;
 	duration: number;
 }
-
 
 /**
  * Get records missing embeddings in batches

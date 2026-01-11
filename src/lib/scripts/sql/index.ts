@@ -1,9 +1,8 @@
+import { env } from '$env/dynamic/private';
 import * as schema from '$lib/server/db/schema';
 import { getTableName } from 'drizzle-orm';
 import { drizzle } from 'drizzle-orm/node-postgres';
 import pg from 'pg';
-import { Resource } from 'sst';
-// Import schema modules
 import * as helpers from '../helpers';
 import { exportSchemaToFile, exportTableToFile } from './sql-generator';
 
@@ -14,15 +13,14 @@ import { exportSchemaToFile, exportTableToFile } from './sql-generator';
 const { Pool } = pg;
 
 const pool = new Pool({
-	host: Resource.Database.host,
-	port: Resource.Database.port,
-	user: Resource.Database.username,
-	password: Resource.Database.password,
-	database: Resource.Database.database
+	host: env.DB_HOST,
+	port: parseInt(env.DB_PORT || '5432', 10),
+	user: env.DB_USER,
+	password: env.DB_PASSWORD,
+	database: env.DB_NAME
 });
 
 const db = drizzle(pool, { schema });
-
 
 // ============================================================================
 // CLI
@@ -78,14 +76,17 @@ function printHelp() {
 	console.log('  npm run sql:export list');
 }
 
-async function exportSchema(schemaName: string, options: {
-	outputDir?: string;
-	wrapInTransaction?: boolean;
-	overrideIdentity?: boolean;
-	includeHeader?: boolean;
-	omitIds?: boolean;
-	idOffset?: number;
-}) {
+async function exportSchema(
+	schemaName: string,
+	options: {
+		outputDir?: string;
+		wrapInTransaction?: boolean;
+		overrideIdentity?: boolean;
+		includeHeader?: boolean;
+		omitIds?: boolean;
+		idOffset?: number;
+	}
+) {
 	const schemaModule = schema.AVAILABLE_SCHEMAS[schemaName];
 
 	if (!schemaModule) {
@@ -114,14 +115,17 @@ async function exportSchema(schemaName: string, options: {
 	console.log(`\nExported to: ${filePath}`);
 }
 
-async function exportTable(tableName: string, options: {
-	outputDir?: string;
-	wrapInTransaction?: boolean;
-	overrideIdentity?: boolean;
-	includeHeader?: boolean;
-	omitIds?: boolean;
-	idOffset?: number;
-}) {
+async function exportTable(
+	tableName: string,
+	options: {
+		outputDir?: string;
+		wrapInTransaction?: boolean;
+		overrideIdentity?: boolean;
+		includeHeader?: boolean;
+		omitIds?: boolean;
+		idOffset?: number;
+	}
+) {
 	const table = helpers.findTableByName(tableName);
 
 	if (!table) {
@@ -178,7 +182,9 @@ async function main() {
 
 	// Warn if both omitIds and idOffset are set
 	if (omitIds && idOffset) {
-		console.warn('Warning: --omit-ids and --id-offset are both set. --omit-ids will take precedence for primary keys.');
+		console.warn(
+			'Warning: --omit-ids and --id-offset are both set. --omit-ids will take precedence for primary keys.'
+		);
 	}
 
 	const options = {

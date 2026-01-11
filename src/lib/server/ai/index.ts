@@ -1,12 +1,12 @@
+import { env } from '$env/dynamic/private';
 import { getMimeType } from '$lib/server/ai/utils';
 import { GoogleGenAI, type Part } from '@google/genai';
 import fs from 'fs';
-import { Resource } from 'sst';
 
 let _ai: GoogleGenAI | null = null;
 function getAI(): GoogleGenAI {
 	if (!_ai) {
-		_ai = new GoogleGenAI({ apiKey: Resource.GeminiAPIKey.value });
+		_ai = new GoogleGenAI({ apiKey: env.GEMINI_API_KEY });
 	}
 	return _ai;
 }

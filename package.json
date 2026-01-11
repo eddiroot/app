@@ -13,18 +13,16 @@
 		"format": "prettier --write .",
 		"lint": "prettier --check . && eslint .",
 		"curriculum:update": "npx tsx ./src/lib/server/db/seed/data/generate-curriculum-data.ts",
-		"db": "sst shell drizzle-kit",
-		"db:generate": "sst shell drizzle-kit generate",
-		"db:migrate": "sst shell drizzle-kit migrate",
-		"db:push": "sst shell drizzle-kit push",
-		"db:seed": "sst shell tsx src/lib/server/db/seed",
+		"db:generate": "npx drizzle-kit generate",
+		"db:migrate": "npx drizzle-kit migrate",
+		"db:push": "npx drizzle-kit push",
+		"db:seed": "npx tsx src/lib/server/db/seed",
 		"db:snapshot": "bash ./scripts/db-snapshot.sh",
 		"db:restore": "bash ./scripts/db-restore.sh",
-		"db:studio": "sst shell drizzle-kit studio",
+		"db:studio": "npx drizzle-kit studio",
 		"db:diagram": "tsx ./src/lib/server/db/dbml.ts",
-		"embed:schema": "npx sst shell -- npx tsx src/lib/scripts/embedding/index.ts",
-		"sso": "aws sso login --sso-session=eddi",
-		"sql:export": "npx sst shell -- npx tsx src/lib/scripts/sql/index.ts"
+		"embed:schema": "npx tsx src/lib/scripts/embedding/index.ts",
+		"sql:export": "npx tsx src/lib/scripts/sql/index.ts"
 	},
 	"devDependencies": {
 		"@eslint/compat": "^1.2.5",
@@ -80,8 +78,6 @@
 		"vite-plugin-devtools-json": "^0.2.0"
 	},
 	"dependencies": {
-		"@aws-sdk/client-s3": "^3.936.0",
-		"@aws-sdk/s3-request-presigner": "^3.936.0",
 		"@google/genai": "^1.5.1",
 		"@langchain/core": "^0.3.40",
 		"@langchain/google-genai": "^0.2.12",
@@ -93,7 +89,6 @@
 		"@tiptap/pm": "^3.1.0",
 		"@tiptap/starter-kit": "^3.1.0",
 		"arctic": "^3.7.0",
-		"chromadb": "^3.0.15",
 		"date-fns": "^4.1.0",
 		"date-holidays": "^3.26.5",
 		"drizzle-orm": "^0.44.2",
