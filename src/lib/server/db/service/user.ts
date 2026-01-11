@@ -17,7 +17,7 @@ export async function createUser({
 	honorific,
 	yearLevelId,
 	middleName,
-	avatarUrl,
+	avatarUrl
 }: {
 	email: string;
 	password: string;
@@ -34,7 +34,6 @@ export async function createUser({
 }) {
 	const passwordHash = await hash(password);
 	const verificationCode = String(randomInt(100000, 1000000));
-	
 
 	const [user] = await db
 		.insert(table.user)
@@ -51,7 +50,7 @@ export async function createUser({
 			yearLevelId,
 			middleName,
 			avatarUrl,
-			verificationCode,
+			verificationCode
 		})
 		.returning();
 
@@ -244,7 +243,7 @@ export async function getUserProfileById(userId: string) {
 			createdAt: table.user.createdAt
 		})
 		.from(table.user)
-		.leftJoin(table.yearLevel, eq(table.yearLevel.id, table.user.yearLevelId))
+		.innerJoin(table.yearLevel, eq(table.yearLevel.id, table.user.yearLevelId))
 		.where(eq(table.user.id, userId))
 		.limit(1);
 	return user.length > 0 ? user[0] : null;
