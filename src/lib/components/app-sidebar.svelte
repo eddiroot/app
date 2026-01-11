@@ -9,7 +9,7 @@
 	import type { Campus, School, Subject, SubjectOffering } from '$lib/server/db/schema';
 	import { convertToFullName, getPermissions, userPermissions } from '$lib/utils';
 	import BarChart3Icon from '@lucide/svelte/icons/bar-chart-3';
-	import { default as BookOpen, default as BookOpenIcon } from '@lucide/svelte/icons/book-open';
+	import BookOpenIcon from '@lucide/svelte/icons/book-open';
 	import BookOpenCheckIcon from '@lucide/svelte/icons/book-open-check';
 	import BookOpenTextIcon from '@lucide/svelte/icons/book-open-text';
 	import BowArrowIcon from '@lucide/svelte/icons/bow-arrow';
@@ -57,7 +57,7 @@
 		campuses: Campus[];
 	} = $props();
 
-	const items = [
+	const headerItems = [
 		{
 			title: 'Dashboard',
 			url: '/dashboard',
@@ -84,56 +84,49 @@
 		}
 	];
 
-	const nestedItems = [
+	const subjectItems = [
 		{
 			title: 'Home',
 			url: '',
-			icon: HomeIcon,
-			classLevel: true
-		},
-		{
-			title: 'Attendance',
-			url: 'attendance',
-			icon: UsersIcon,
-			classLevel: true,
-			requiredPermission: userPermissions.viewClassAttendance
+			icon: HomeIcon
 		},
 		{
 			title: 'Discussion',
 			url: 'discussion',
-			icon: MessagesSquareIcon,
-			classLevel: false
-		},
-		{
-			title: 'Tasks',
-			url: 'tasks',
-			icon: BookOpenCheckIcon,
-			classLevel: true
+			icon: MessagesSquareIcon
 		},
 		{
 			title: 'Course Map',
 			url: 'curriculum',
 			icon: RouteIcon,
-			classLevel: false,
 			requiredPermission: userPermissions.viewCourseMap
+		}
+	];
+
+	const classItems = [
+		{
+			title: 'Attendance',
+			url: 'attendance',
+			icon: UsersIcon,
+			requiredPermission: userPermissions.viewClassAttendance
+		},
+		{
+			title: 'Tasks',
+			url: 'tasks',
+			icon: BookOpenCheckIcon
 		},
 		{
 			title: 'Analytics',
 			url: 'analytics',
 			icon: BarChart3Icon,
-			classLevel: true,
 			requiredPermission: userPermissions.viewAnalytics
 		},
 		{
 			title: 'Grades',
 			url: 'grades',
-			icon: BookOpenIcon,
-			classLevel: true
+			icon: BookOpenIcon
 		}
 	];
-
-	const classItems = nestedItems.filter((item) => item.classLevel);
-	const subjectItems = nestedItems.filter((item) => !item.classLevel);
 
 	const subjectNameToIcon = (name: string) => {
 		if (name.toLowerCase().includes('math')) {
@@ -206,7 +199,7 @@
 
 	const campusesData = () => campuses;
 	let currentCampus = $state(campusesData().length > 0 ? campusesData()[0] : null);
-	const permissions = $state(getPermissions(userData()?.type || ''));
+	const permissions = $state(getPermissions(userData()?.type));
 </script>
 
 <Sidebar.Root
@@ -262,7 +255,7 @@
 		<Sidebar.Group>
 			<Sidebar.GroupContent>
 				<Sidebar.Menu>
-					{#each items as item (item.url)}
+					{#each headerItems as item (item.url)}
 						{#if !item.requiredPermission || permissions.includes(item.requiredPermission)}
 							<Sidebar.MenuItem>
 								<Sidebar.MenuButton
@@ -288,7 +281,6 @@
 				<Sidebar.GroupLabel>
 					<a href="/subjects" class="text-lg font-semibold">Subjects</a>
 				</Sidebar.GroupLabel>
-
 				<Sidebar.Menu>
 					{#each subjects as subject (subject.subject.id)}
 						<Collapsible.Root
@@ -297,31 +289,14 @@
 						>
 							<Collapsible.Trigger>
 								{#snippet child({ props })}
-									{#if sidebar.leftOpen == false}
-										<a
-											href="/subjects/{subject.subjectOffering.id}"
-											onclick={() => {
-												if (!sidebar.leftOpen) {
-													sidebar.setLeftOpen(true);
-												}
-											}}
-										>
-											<Sidebar.MenuButton
-												side="left"
-												tooltipContent={subject.subject.name}
-												isActive={isSubjectActive(subject.subjectOffering.id.toString())}
-												{...props}
-											>
-												{@const IconComponent = subjectNameToIcon(subject.subject.name)}
-												<IconComponent class="mr-2" />
-
-												<span>{subject.subject.name}</span>
-												<ChevronDownIcon
-													class="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-180"
-												/>
-											</Sidebar.MenuButton>
-										</a>
-									{:else}
+									<a
+										href={sidebar.leftOpen ? undefined : `/subjects/${subject.subjectOffering.id}`}
+										onclick={() => {
+											if (!sidebar.leftOpen) {
+												sidebar.setLeftOpen(true);
+											}
+										}}
+									>
 										<Sidebar.MenuButton
 											side="left"
 											tooltipContent={subject.subject.name}
@@ -336,98 +311,84 @@
 												class="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-180"
 											/>
 										</Sidebar.MenuButton>
-									{/if}
+									</a>
 								{/snippet}
 							</Collapsible.Trigger>
 							<Collapsible.Content>
 								<Sidebar.MenuSub>
-									{#if subject.classes.length === 1}
-										<!-- Single class: show ALL nested items under the subject dropdown -->
-										{@const singleClass = subject.classes[0]}
-										{#each nestedItems as item (item.url)}
-											{#if !item.requiredPermission || permissions.includes(item.requiredPermission)}
-												<Sidebar.MenuSubItem>
-													<Sidebar.MenuSubButton
-														isActive={item.classLevel
-															? isClassSubItemActive(
-																	subject.subjectOffering.id.toString(),
-																	singleClass.id.toString(),
-																	item.url
-																)
-															: isSubjectSubItemActive(
-																	subject.subjectOffering.id.toString(),
-																	item.url
-																)}
-													>
-														{#snippet child({ props })}
-															<a
-																href={item.classLevel
-																	? `/subjects/${subject.subjectOffering.id}/class/${singleClass.id}/${item.url}`
-																	: `/subjects/${subject.subjectOffering.id}/${item.url}`}
-																{...props}
-															>
-																<item.icon />
-																<span>{item.title}</span>
-															</a>
-														{/snippet}
-													</Sidebar.MenuSubButton>
-												</Sidebar.MenuSubItem>
-											{/if}
-										{/each}
-									{:else}
-										<!-- Multiple classes: show collapsible classes with only class-level items -->
-										{#each subject.classes as classItem (classItem.id)}
-											<Collapsible.Root
-												class="group/collapsible-class"
-												open={isSubjectActive(subject.subjectOffering.id.toString())}
-											>
-												<Collapsible.Trigger>
+									{#each subjectItems as item (item.url)}
+										{#if !item.requiredPermission || permissions.includes(item.requiredPermission)}
+											<Sidebar.MenuSubItem>
+												<Sidebar.MenuSubButton
+													isActive={isSubjectSubItemActive(
+														subject.subjectOffering.id.toString(),
+														item.url
+													)}
+												>
 													{#snippet child({ props })}
-														<Sidebar.MenuSubButton
-															isActive={isClassActive(
-																subject.subjectOffering.id.toString(),
-																classItem.id.toString()
-															)}
+														<a
+															href={`/subjects/${subject.subjectOffering.id}/${item.url}`}
 															{...props}
 														>
-															<HomeIcon />
-															<span>{classItem.name}</span>
-															<ChevronDownIcon
-																class="ml-auto transition-transform group-data-[state=open]/collapsible-class:rotate-180"
-															/>
-														</Sidebar.MenuSubButton>
+															<item.icon />
+															<span>{item.title}</span>
+														</a>
 													{/snippet}
-												</Collapsible.Trigger>
-												<Collapsible.Content>
-													<Sidebar.MenuSub>
-														{#each classItems as item (item.url)}
-															{#if !item.requiredPermission || permissions.includes(item.requiredPermission)}
-																<Sidebar.MenuSubItem>
-																	<Sidebar.MenuSubButton
-																		isActive={isClassSubItemActive(
-																			subject.subjectOffering.id.toString(),
-																			classItem.id.toString(),
-																			item.url
-																		)}
-																	>
-																		{#snippet child({ props })}
-																			<a
-																				href={`/subjects/${subject.subjectOffering.id}/class/${classItem.id}/${item.url}`}
-																				{...props}
-																			>
-																				<item.icon />
-																				<span>{item.title}</span>
-																			</a>
-																		{/snippet}
-																	</Sidebar.MenuSubButton>
-																</Sidebar.MenuSubItem>
-															{/if}
-														{/each}
-													</Sidebar.MenuSub>
-												</Collapsible.Content>
-											</Collapsible.Root>
-										{/each}
-									{/if}
+												</Sidebar.MenuSubButton>
+											</Sidebar.MenuSubItem>
+										{/if}
+									{/each}
+									{#each subject.classes as classItem (classItem.id)}
+										<Collapsible.Root
+											class="group/collapsible-class"
+											open={isSubjectActive(subject.subjectOffering.id.toString())}
+										>
+											<Collapsible.Trigger>
+												{#snippet child({ props })}
+													<Sidebar.MenuSubButton
+														isActive={isClassActive(
+															subject.subjectOffering.id.toString(),
+															classItem.id.toString()
+														)}
+														{...props}
+													>
+														<HomeIcon />
+														<span>{classItem.name}</span>
+														<ChevronDownIcon
+															class="ml-auto transition-transform group-data-[state=open]/collapsible-class:rotate-180"
+														/>
+													</Sidebar.MenuSubButton>
+												{/snippet}
+											</Collapsible.Trigger>
+											<Collapsible.Content>
+												<Sidebar.MenuSub>
+													{#each classItems as item (item.url)}
+														{#if !item.requiredPermission || permissions.includes(item.requiredPermission)}
+															<Sidebar.MenuSubItem>
+																<Sidebar.MenuSubButton
+																	isActive={isClassSubItemActive(
+																		subject.subjectOffering.id.toString(),
+																		classItem.id.toString(),
+																		item.url
+																	)}
+																>
+																	{#snippet child({ props })}
+																		<a
+																			href={`/subjects/${subject.subjectOffering.id}/class/${classItem.id}/${item.url}`}
+																			{...props}
+																		>
+																			<item.icon />
+																			<span>{item.title}</span>
+																		</a>
+																	{/snippet}
+																</Sidebar.MenuSubButton>
+															</Sidebar.MenuSubItem>
+														{/if}
+													{/each}
+												</Sidebar.MenuSub>
+											</Collapsible.Content>
+										</Collapsible.Root>
+									{/each}
 								</Sidebar.MenuSub>
 							</Collapsible.Content>
 						</Collapsible.Root>
@@ -467,12 +428,6 @@
 							<UserIcon />
 							Profile
 						</DropdownMenu.Item>
-						{#if user?.type === 'student'}
-							<DropdownMenu.Item class="cursor-pointer" onclick={() => goto(`/grades/${user?.id}`)}>
-								<BookOpen />
-								Grades
-							</DropdownMenu.Item>
-						{/if}
 						<DropdownMenu.Separator />
 						<form method="post" action="/?/logout" bind:this={form}>
 							<DropdownMenu.Item class="cursor-pointer" onclick={() => form!.submit()}>
