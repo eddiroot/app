@@ -9,13 +9,13 @@ export const attendanceSchema = z.object({
 		subjectClassAllocationAttendanceStatus.present
 	]),
 	noteTeacher: z.string().optional(),
-	behaviourQuickActionIds: z.array(z.string()).optional().default([])
+	behaviourIds: z.array(z.string()).optional().default([])
 });
 
 export const bulkApplyBehavioursSchema = z.object({
 	subjectClassAllocationId: z.number().min(1, 'Subject Class Allocation ID is required'),
 	userIds: z.array(z.string()).min(1, 'At least one user must be selected'),
-	behaviourQuickActionIds: z.array(z.string()).min(1, 'At least one behaviour must be selected')
+	behaviourIds: z.array(z.string()).min(1, 'At least one behaviour must be selected')
 });
 
 export const classPassSchema = z.object({

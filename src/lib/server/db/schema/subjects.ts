@@ -77,7 +77,9 @@ export const subjectOffering = subjectSchema.table('sub_off', {
 	campusId: integer('campus_id')
 		.notNull()
 		.references(() => campus.id, { onDelete: 'cascade' }),
-	curriculumSubjectId: integer('cur_sub_id').references(() => curriculumSubject.id, {onDelete: 'set null'}),
+	curriculumSubjectId: integer('cur_sub_id').references(() => curriculumSubject.id, {
+		onDelete: 'set null'
+	}),
 	gradeScaleId: integer('grade_scale_id').references(() => gradeScale.id, { onDelete: 'set null' }),
 	isArchived: boolean('is_archived').notNull().default(false),
 	...timestamps
@@ -174,13 +176,35 @@ export const subjectClassAllocationAttendanceComponent = subjectSchema.table(
 export type SubjectClassAllocationAttendanceComponent =
 	typeof subjectClassAllocationAttendanceComponent.$inferSelect;
 
-export const behaviourQuickAction = subjectSchema.table(
-	'behaviour_quick_action',
+export const behaviourLevel = subjectSchema.table(
+	'behaviour_level',
 	{
 		id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
 		schoolId: integer('sch_id')
 			.notNull()
 			.references(() => school.id, { onDelete: 'cascade' }),
+		level: integer('level').notNull(),
+		name: text('name').notNull(),
+		...timestamps
+	},
+	(self) => [
+		unique().on(self.schoolId, self.level),
+		check('valid_level_range', sql`${self.level} >= 0 AND ${self.level} <= 10`)
+	]
+);
+
+export type BehaviourLevel = typeof behaviourLevel.$inferSelect;
+
+export const behaviour = subjectSchema.table(
+	'behaviour',
+	{
+		id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
+		schoolId: integer('sch_id')
+			.notNull()
+			.references(() => school.id, { onDelete: 'cascade' }),
+		levelId: integer('level_id')
+			.references(() => behaviourLevel.id, { onDelete: 'cascade' })
+			.notNull(),
 		name: text('name').notNull(),
 		description: text('description'),
 		isArchived: boolean('is_archived').notNull().default(false),
@@ -189,24 +213,24 @@ export const behaviourQuickAction = subjectSchema.table(
 	(self) => [unique().on(self.schoolId, self.name)]
 );
 
-export type BehaviourQuickAction = typeof behaviourQuickAction.$inferSelect;
+export type Behaviour = typeof behaviour.$inferSelect;
 
-export const attendanceBehaviourQuickAction = subjectSchema.table(
-	'att_behaviour_quick_action',
+export const attendanceBehaviour = subjectSchema.table(
+	'att_behaviour',
 	{
 		id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
 		attendanceId: integer('att_id')
 			.notNull()
 			.references(() => subjectClassAllocationAttendance.id, { onDelete: 'cascade' }),
-		behaviourQuickActionId: integer('behaviour_quick_action_id')
+		behaviourId: integer('behaviour_id')
 			.notNull()
-			.references(() => behaviourQuickAction.id, { onDelete: 'cascade' }),
+			.references(() => behaviour.id, { onDelete: 'cascade' }),
 		...timestamps
 	},
-	(self) => [unique().on(self.attendanceId, self.behaviourQuickActionId)]
+	(self) => [unique().on(self.attendanceId, self.behaviourId)]
 );
 
-export type AttendanceBehaviourQuickAction = typeof attendanceBehaviourQuickAction.$inferSelect;
+export type AttendanceBehaviour = typeof attendanceBehaviour.$inferSelect;
 
 export const subjectThreadTypeEnumPg = subjectSchema.enum('enum_sub_thread_type', [
 	subjectThreadTypeEnum.discussion,

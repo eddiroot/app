@@ -14,7 +14,6 @@
 	} from '$lib/enums';
 	import type { SubjectClassAllocationAttendanceComponent } from '$lib/server/db/schema';
 	import {
-		type BehaviourQuickAction,
 		type SubjectClassAllocation,
 		type SubjectClassAllocationAttendance,
 		type User
@@ -34,14 +33,21 @@
 		user: Pick<User, 'id' | 'firstName' | 'middleName' | 'lastName'>;
 		attendance?: SubjectClassAllocationAttendance | null;
 		subjectClassAllocation: Pick<SubjectClassAllocation, 'id' | 'startTime' | 'endTime'>;
-		behaviourQuickActionIds?: number[];
+		behaviourIds?: number[];
 		attendanceComponents?: SubjectClassAllocationAttendanceComponent[];
 		classNote?: string | null;
 	};
 
+	type GroupedBehaviours = Array<{
+		levelId: number | null;
+		levelName: string;
+		levelNumber: number;
+		behaviours: Array<{ value: string; label: string }>;
+	}>;
+
 	let {
 		attendanceRecord,
-		behaviourQuickActions = [],
+		groupedBehaviours = [],
 		type = 'unmarked',
 		bulkApplyMode = false,
 		isSelected = false,
@@ -49,7 +55,7 @@
 		onStartBulkApply
 	}: {
 		attendanceRecord: AttendanceRecord;
-		behaviourQuickActions?: BehaviourQuickAction[];
+		groupedBehaviours?: GroupedBehaviours;
 		type?: 'unmarked' | 'marked';
 		bulkApplyMode?: boolean;
 		isSelected?: boolean;
@@ -65,7 +71,7 @@
 			status:
 				attendanceRecordData().attendance?.status || subjectClassAllocationAttendanceStatus.present,
 			noteTeacher: attendanceRecordData().attendance?.noteTeacher || '',
-			behaviourQuickActionIds: (attendanceRecordData().behaviourQuickActionIds ?? []).map(String)
+			behaviourIds: (attendanceRecordData().behaviourIds ?? []).map(String)
 		},
 		{
 			validators: zod4Client(attendanceSchema),
@@ -87,16 +93,7 @@
 	let classPassDialogOpen = $state(false);
 
 	const selectedBehavioursLabel = $derived(
-		$formData.behaviourQuickActionIds.length === 0
-			? 'Behaviours'
-			: `${$formData.behaviourQuickActionIds.length} selected`
-	);
-
-	const behaviourOptions = $derived(
-		behaviourQuickActions.map((behaviour) => ({
-			value: behaviour.id.toString(),
-			label: behaviour.name
-		}))
+		$formData.behaviourIds.length === 0 ? 'Behaviours' : `${$formData.behaviourIds.length} selected`
 	);
 
 	const classStartTime = $derived(attendanceRecord.subjectClassAllocation.startTime);
@@ -140,9 +137,7 @@
 	});
 
 	$effect(() => {
-		$formData.behaviourQuickActionIds = (attendanceRecordData().behaviourQuickActionIds || []).map(
-			String
-		);
+		$formData.behaviourIds = (attendanceRecordData().behaviourIds || []).map(String);
 	});
 
 	let components = $derived(attendanceRecord.attendanceComponents || []);
@@ -225,14 +220,14 @@
 					</Form.Control>
 				</Form.Field>
 
-				<Form.Field {form} name="behaviourQuickActionIds" class="space-y-0">
+				<Form.Field {form} name="behaviourIds" class="space-y-0">
 					<Form.Control>
 						{#snippet children({ props })}
 							<Select.Root
 								type="multiple"
 								{...props}
 								disabled={!isClassActive || bulkApplyMode}
-								bind:value={$formData.behaviourQuickActionIds}
+								bind:value={$formData.behaviourIds}
 								onValueChange={async () => {
 									await tick();
 									form.submit();
@@ -242,12 +237,19 @@
 									{selectedBehavioursLabel}
 								</Select.Trigger>
 								<Select.Content>
-									{#each behaviourOptions as option}
-										<Select.Item value={option.value}>
-											{option.label}
-										</Select.Item>
+									{#each groupedBehaviours as group}
+										<Select.Group>
+											<Select.Label>
+												Level {group.levelNumber}: {group.levelName}
+											</Select.Label>
+											{#each group.behaviours as behaviour}
+												<Select.Item value={behaviour.value}>
+													{behaviour.label}
+												</Select.Item>
+											{/each}
+										</Select.Group>
 									{/each}
-									{#if $formData.behaviourQuickActionIds.length > 0 && !bulkApplyMode && isClassActive}
+									{#if $formData.behaviourIds.length > 0 && !bulkApplyMode && isClassActive}
 										<Select.Separator />
 										<div class="p-1">
 											<Button
@@ -256,7 +258,7 @@
 												class="w-full justify-start"
 												onclick={(e) => {
 													e.preventDefault();
-													const behaviourIds = $formData.behaviourQuickActionIds
+													const behaviourIds = $formData.behaviourIds
 														.map((id) => parseInt(id, 10))
 														.filter((id) => !isNaN(id));
 													onStartBulkApply?.(user.id, behaviourIds);
