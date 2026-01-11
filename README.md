@@ -14,58 +14,33 @@ We currently don't expect contributions from members outside of the core team. T
 
 # Developing
 
-**IMPORTANT: Ensure you remove your dev environment from AWS when you have finished testing to avoid unnecessary costs.**
-
-The command to do so is:
-
-```bash
-npx sst remove
-```
-
 ## Setup
 
-1. Paste the profiles into your `~/.aws/config`
-
-2. Run the following commands one-by-one
+1. Paste the following commands
 
 ```bash
 docker compose up -d
 npm install
-sudo npx sst tunnel install
-npm run sso
-npx sst dev --stage dev
-```
-
-3. In a new terminal, run these commands
-
-```bash
-npx sst secret set SecretName secret-value
-# repeat for each secret in sst.config.ts
 npm run db:migrate
 npm run db:push
 npm run db:seed
+npm run dev
 ```
 
 ## Cleaning schema
 
-2. Run the following commands
+1. Paste the following commands
 
 ```bash
 docker compose down --volumes
-docker compose up -d
-npm run sso
-npx sst dev --stage dev
-```
-
-3. In a new terminal, run these commands
-
-```bash
+docker compose up --detach
 npm run db:migrate
 npm run db:push
 npm run db:seed
+npm run dev
 ```
 
-## git stuff
+## Common Git Tricks
 
 If you need to clear all local branches except main:
 
@@ -79,21 +54,4 @@ To add new [shadcn-svelte components](https://www.shadcn-svelte.com/docs/compone
 
 ```bash
 npx shadcn-svelte@latest add component-name-here
-```
-
-# Deploying
-
-## Everything
-
-```bash
-npx sst deploy --stage production
-```
-
-## DB Updates
-
-```bash
-# run the below command in its own terminal
-npx sst tunnel --stage production
-# in a new terminal, run:
-npx sst shell --stage production -- npx drizzle-kit push
 ```

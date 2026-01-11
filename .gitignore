@@ -23,8 +23,6 @@ Thumbs.db
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 
-.sst
-
 # SQL seed files
 /src/**.sql
 /data/**.sql
