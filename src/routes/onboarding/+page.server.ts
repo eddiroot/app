@@ -1,5 +1,5 @@
+import { env } from '$env/dynamic/private';
 import { checkSchoolExistence, checkUserExistence } from '$lib/server/db/service';
-import { Resource } from 'sst';
 import { fail, setError, superValidate } from 'sveltekit-superforms';
 import { zod4 } from 'sveltekit-superforms/adapters';
 import { formSchema } from './schema';
@@ -50,7 +50,7 @@ export const actions = {
 		};
 
 		try {
-			await fetch(Resource.WebhookNotificationsOnboarding.value, {
+			await fetch(env.WEBHOOK_NOTIFICATIONS_ONBOARDING, {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify({ embeds: [embed] })
