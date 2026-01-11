@@ -10,7 +10,7 @@ services:
       POSTGRES_PASSWORD: postgres123
       POSTGRES_DB: eddi
     volumes:
-      - dbdata:/var/lib/postgresql/data
+      - dbdata:/var/lib/postgresql
 
   obj:
     image: minio/minio

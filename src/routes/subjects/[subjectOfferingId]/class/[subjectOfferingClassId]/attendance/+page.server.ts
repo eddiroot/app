@@ -2,9 +2,9 @@ import { subjectClassAllocationAttendanceStatus } from '$lib/enums';
 import {
 	endClassPass,
 	getAttendanceComponentsByAttendanceId,
-	getBehaviourQuickActionsByAttendanceId,
-	getBehaviourQuickActionsBySchoolId,
+	getBehavioursByAttendanceId,
 	getGuardiansForStudent,
+	getLevelsWithBehaviours,
 	getSubjectClassAllocationAndStudentAttendancesByClassIdForToday,
 	getSubjectOfferingClassByAllocationId,
 	getUserById,
@@ -33,7 +33,7 @@ export const load = async ({ locals: { security }, params: { subjectOfferingClas
 			subjectOfferingClassIdInt
 		);
 
-	const behaviourQuickActions = await getBehaviourQuickActionsBySchoolId(user.schoolId);
+	const groupedBehaviours = await getLevelsWithBehaviours(user.schoolId);
 
 	const attendancesWithBehaviours = await Promise.all(
 		attendances.map(async (attendance) => {
@@ -42,25 +42,25 @@ export const load = async ({ locals: { security }, params: { subjectOfferingClas
 				attendance.subjectClassAllocation.subjectOfferingClassId
 			);
 			if (attendance.attendance?.id) {
-				const behaviours = await getBehaviourQuickActionsByAttendanceId(attendance.attendance.id);
+				const behaviours = await getBehavioursByAttendanceId(attendance.attendance.id);
 				const components = await getAttendanceComponentsByAttendanceId(attendance.attendance.id);
 				return {
 					...attendance,
-					behaviourQuickActionIds: behaviours.map((b) => b.id),
+					behaviourIds: behaviours.map((b) => b.id),
 					attendanceComponents: components,
 					classNote: userClass?.classNote || null
 				};
 			}
 			return {
 				...attendance,
-				behaviourQuickActionIds: [],
+				behaviourIds: [],
 				attendanceComponents: [],
 				classNote: userClass?.classNote || null
 			};
 		})
 	);
 
-	return { attendances: attendancesWithBehaviours, behaviourQuickActions };
+	return { attendances: attendancesWithBehaviours, groupedBehaviours };
 };
 
 export const actions = {
@@ -73,7 +73,7 @@ export const actions = {
 		}
 
 		try {
-			const behaviourIds = (form.data.behaviourQuickActionIds ?? [])
+			const behaviourIds = (form.data.behaviourIds ?? [])
 				.filter((id) => id !== '')
 				.map((id) => parseInt(id, 10))
 				.filter((id) => !isNaN(id));
@@ -125,7 +125,7 @@ export const actions = {
 		}
 
 		try {
-			const behaviourIds = (form.data.behaviourQuickActionIds ?? [])
+			const behaviourIds = (form.data.behaviourIds ?? [])
 				.filter((id) => id !== '')
 				.map((id) => parseInt(id, 10))
 				.filter((id) => !isNaN(id));

@@ -10,7 +10,7 @@
 
 	const { data } = $props();
 	const attendances = $derived(data.attendances || []);
-	const behaviourQuickActions = $derived(data.behaviourQuickActions || []);
+	const groupedBehaviours = $derived(data.groupedBehaviours || []);
 
 	let searchTerm = $state('');
 	let bulkApplyMode = $state(false);
@@ -103,7 +103,7 @@
 						<input type="hidden" name="userIds" value={userId} />
 					{/each}
 					{#each bulkApplyBehaviourIds as behaviourId}
-						<input type="hidden" name="behaviourQuickActionIds" value={behaviourId.toString()} />
+						<input type="hidden" name="behaviourIds" value={behaviourId.toString()} />
 					{/each}
 					<div class="flex items-center gap-2">
 						<Button type="button" variant="outline" onclick={cancelBulkApply}>Cancel</Button>
@@ -129,7 +129,7 @@
 					<div animate:flip={{ duration: 400 }} in:fade={{ duration: 200 }}>
 						<StudentAttendanceListItem
 							{attendanceRecord}
-							{behaviourQuickActions}
+							{groupedBehaviours}
 							type="unmarked"
 							{bulkApplyMode}
 							isSelected={selectedUserIds.has(attendanceRecord.user.id)}
@@ -153,7 +153,7 @@
 					<div animate:flip={{ duration: 400 }} in:fade={{ duration: 200 }}>
 						<StudentAttendanceListItem
 							{attendanceRecord}
-							{behaviourQuickActions}
+							{groupedBehaviours}
 							type="marked"
 							{bulkApplyMode}
 							isSelected={selectedUserIds.has(attendanceRecord.user.id)}
