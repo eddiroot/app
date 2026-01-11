@@ -1,6 +1,6 @@
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
-import { yearLevelEnum } from './enums';
+import { userTypeEnum, yearLevelEnum } from './enums';
 
 export function cn(...inputs: ClassValue[]) {
 	return twMerge(clsx(inputs));
@@ -22,16 +22,19 @@ export enum userPermissions {
 	viewCourseMap = 'view_course_map'
 }
 
-export function getPermissions(userType: string): string[] {
+export function getPermissions(userType: userTypeEnum | undefined): string[] {
+	if (!userType) {
+		return [];
+	}
 	switch (userType) {
-		case 'student':
+		case userTypeEnum.student:
 			return [
 				userPermissions.viewLessons,
 				userPermissions.viewDashboard,
 				userPermissions.viewCalendar,
 				userPermissions.viewNews
 			];
-		case 'teacher':
+		case userTypeEnum.teacher:
 			return [
 				userPermissions.viewLessons,
 				userPermissions.createTasks,
@@ -43,7 +46,7 @@ export function getPermissions(userType: string): string[] {
 				userPermissions.createNews,
 				userPermissions.viewCourseMap
 			];
-		case 'guardian':
+		case userTypeEnum.guardian:
 			return [
 				userPermissions.viewChildGrades,
 				userPermissions.viewLessons,
@@ -52,7 +55,7 @@ export function getPermissions(userType: string): string[] {
 				userPermissions.viewGuardianAttendance,
 				userPermissions.viewNews
 			];
-		case 'principal':
+		case userTypeEnum.principal:
 			return [
 				userPermissions.manageTeachers,
 				userPermissions.viewAnalytics,
@@ -63,7 +66,7 @@ export function getPermissions(userType: string): string[] {
 				userPermissions.createNews,
 				userPermissions.viewCourseMap
 			];
-		case 'schoolAdmin':
+		case userTypeEnum.schoolAdmin:
 			return [
 				userPermissions.viewAdmin,
 				userPermissions.viewDashboard,
