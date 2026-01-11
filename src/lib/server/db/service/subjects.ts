@@ -596,7 +596,7 @@ export async function getSubjectsWithClassesByUserId(userId: string) {
 		)
 		.innerJoin(table.subject, eq(table.subjectOffering.subjectId, table.subject.id))
 		.where(eq(table.userSubjectOffering.userId, userId));
-
+	console.log('userSubjectOfferings', userSubjectOfferings.length);
 	// Get all classes for the user
 	const userClasses = await db
 		.select({
@@ -616,7 +616,7 @@ export async function getSubjectsWithClassesByUserId(userId: string) {
 		.innerJoin(table.subject, eq(table.subjectOffering.subjectId, table.subject.id))
 		.where(eq(table.userSubjectOfferingClass.userId, userId))
 		.orderBy(asc(table.subjectOfferingClass.id));
-
+	console.log('userClasses', userClasses.length);
 	// Group classes by subject offering
 	const subjectsWithClasses = userSubjectOfferings.map((subjectOffering) => {
 		const classes = userClasses.filter(
