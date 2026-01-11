@@ -283,37 +283,6 @@
 				</Sidebar.Menu>
 			</Sidebar.GroupContent>
 		</Sidebar.Group>
-		{#if subjects.some((subject) => subject.classes.length > 1) && subjectItems.length > 0}
-			<Sidebar.Group>
-				<Sidebar.GroupContent>
-					<Sidebar.Menu>
-						{#each subjectItems as item (item.url)}
-							{#if !item.requiredPermission || permissions.includes(item.requiredPermission)}
-								{#each subjects.filter((subject) => subject.classes.length > 1) as subject (subject.subject.id)}
-									<Sidebar.MenuItem>
-										<Sidebar.MenuButton
-											side="left"
-											isActive={isSubjectSubItemActive(
-												subject.subjectOffering.id.toString(),
-												item.url
-											)}
-											tooltipContent={`${subject.subject.name} - ${item.title}`}
-										>
-											{#snippet child({ props })}
-												<a href={`/subjects/${subject.subjectOffering.id}/${item.url}`} {...props}>
-													<item.icon />
-													<span>{subject.subject.name} - {item.title}</span>
-												</a>
-											{/snippet}
-										</Sidebar.MenuButton>
-									</Sidebar.MenuItem>
-								{/each}
-							{/if}
-						{/each}
-					</Sidebar.Menu>
-				</Sidebar.GroupContent>
-			</Sidebar.Group>
-		{/if}
 		{#if subjects.length > 0}
 			<Sidebar.Group>
 				<Sidebar.GroupLabel>

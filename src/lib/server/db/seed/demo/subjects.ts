@@ -84,16 +84,10 @@ export async function seedDemoSubjects(
 		campusId: campus.id
 	}));
 
-	const offeringsSem2 = subjects.map((subject) => ({
-		subjectId: subject.id,
-		year: currentYear,
-		semester: 2,
-		campusId: campus.id
-	}));
 
 	const offerings = await db
 		.insert(schema.subjectOffering)
-		.values([...offeringsSem1, ...offeringsSem2])
+		.values([...offeringsSem1])
 		.returning();
 
 	console.log(`  Created ${offerings.length} subject offerings`);
