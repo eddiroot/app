@@ -1,33 +1,21 @@
+import { env } from '$env/dynamic/private';
 import { drizzle } from 'drizzle-orm/node-postgres';
 import pg from 'pg';
-import { Resource } from 'sst';
 import * as schema from '../schema';
 import { seedDemo } from './demo';
 import { seedEddi } from './eddi';
 import type { SeedContext } from './types';
-import { logSection, truncateAllTables } from './utils';
+import { truncateAllTables } from './utils';
 
 const { Pool } = pg;
 
-interface SeedOptions {
-	fresh?: boolean;
-	eddi?: boolean;
-	demo?: boolean;
-}
-
-async function seed(options: SeedOptions = {}): Promise<void> {
-	const { eddi = true, demo = true } = options;
-
-	console.log('\n🌱 Starting database seeding...');
-	console.log(`   Eddi data: ${eddi}`);
-	console.log(`   Demo school: ${demo}`);
-
+async function seed(): Promise<void> {
 	const pool = new Pool({
-		host: Resource.Database.host,
-		port: Resource.Database.port,
-		user: Resource.Database.username,
-		password: Resource.Database.password,
-		database: Resource.Database.database
+		host: env.DB_HOST,
+		port: parseInt(env.DB_PORT || '5432', 10),
+		user: env.DB_USER,
+		password: env.DB_PASSWORD,
+		database: env.DB_NAME
 	});
 
 	const db = drizzle(pool, { schema });
@@ -35,21 +23,9 @@ async function seed(options: SeedOptions = {}): Promise<void> {
 	const context: SeedContext = { db, pool };
 
 	try {
-		// Truncate tables if fresh mode
-		logSection('Truncating Tables');
 		await truncateAllTables(pool);
-		
-
-		// Seed Eddi platform data (curriculum, etc.)
-		if (eddi) {
-			await seedEddi(context);
-		}
-
-		// Seed Demo school data
-		if (demo) {
-			await seedDemo(context);
-		}
-
+		await seedEddi(context);
+		await seedDemo(context);
 		console.log('\n✅ Seeding completed successfully!\n');
 	} catch (error) {
 		console.error('\n❌ Seeding failed:', error);
@@ -59,14 +35,7 @@ async function seed(options: SeedOptions = {}): Promise<void> {
 	}
 }
 
-// Parse command line arguments
-const args = process.argv.slice(2);
-const options: SeedOptions = {
-	eddi: !args.includes('--no-eddi'),
-	demo: !args.includes('--no-demo')
-};
-
-seed(options)
+seed()
 	.then(() => {
 		process.exit(0);
 	})

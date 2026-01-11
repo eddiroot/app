@@ -1,22 +1,22 @@
 import { defineConfig } from 'drizzle-kit';
-import { Resource } from 'sst';
+
+if (!process.env.DB_HOST) throw new Error('DB_HOST is not set');
+if (!process.env.DB_PORT) throw new Error('DB_PORT is not set');
+if (!process.env.DB_USER) throw new Error('DB_USER is not set');
+if (!process.env.DB_PASSWORD) throw new Error('DB_PASSWORD is not set');
+if (!process.env.DB_NAME) throw new Error('DB_NAME is not set');
 
 export default defineConfig({
 	dialect: 'postgresql',
 	schema: './src/lib/server/db/schema',
 	out: './migrations',
 	dbCredentials: {
-		// @ts-expect-error - SST Resource types not available in drizzle-kit context
-		host: Resource.Database.host,
-		// @ts-expect-error - SST Resource types not available in drizzle-kit context
-		port: Resource.Database.port,
-		// @ts-expect-error - SST Resource types not available in drizzle-kit context
-		user: Resource.Database.username,
-		// @ts-expect-error - SST Resource types not available in drizzle-kit context
-		password: Resource.Database.password,
-		// @ts-expect-error - SST Resource types not available in drizzle-kit context
-		database: Resource.Database.database,
-		ssl: Resource.App.stage == 'production' ? true : false
+		host: process.env.DB_HOST || '',
+		port: process.env.DB_PORT ? parseInt(process.env.DB_PORT, 10) : 5432,
+		user: process.env.DB_USER || '',
+		password: process.env.DB_PASSWORD || '',
+		database: process.env.DB_NAME || '',
+		ssl: false
 	},
 	// Required for drizzle-kit push to work with custom pgSchema
 	// See: https://github.com/drizzle-team/drizzle-orm/issues/3476

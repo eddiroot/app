@@ -1,27 +1,32 @@
-import { building } from '$app/environment';
-import {
-	DeleteObjectCommand,
-	GetObjectCommand,
-	ListObjectsV2Command,
-	PutObjectCommand,
-	S3Client
-} from '@aws-sdk/client-s3';
-import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
-import { Resource } from 'sst';
-import { Readable } from 'stream';
+import { env } from '$env/dynamic/private';
+import * as Minio from 'minio';
 
-const client = new S3Client({});
-const bucketName = building ? '' : Resource.BucketSchools.name;
+if (!env.OBJ_URL_PREFIX) throw new Error('OBJ_URL_PREFIX is not set');
+if (!env.OBJ_ENDPOINT) throw new Error('OBJ_ENDPOINT is not set');
+if (!env.OBJ_PORT) throw new Error('OBJ_PORT is not set');
+if (!env.OBJ_USE_SSL) throw new Error('OBJ_USE_SSL is not set');
+if (!env.OBJ_ACCESS_KEY) throw new Error('OBJ_ACCESS_KEY is not set');
+if (!env.OBJ_SECRET_KEY) throw new Error('OBJ_SECRET_KEY is not set');
+
+const minioClient = new Minio.Client({
+	endPoint: env.OBJ_ENDPOINT,
+	port: parseInt(env.OBJ_PORT, 10),
+	useSSL: env.OBJ_USE_SSL === 'true',
+	accessKey: env.OBJ_ACCESS_KEY,
+	secretKey: env.OBJ_SECRET_KEY
+});
+
+const BUCKET_NAME = 'schools';
 
 async function uploadBuffer(objectName: string, buffer: Buffer, contentType?: string) {
 	try {
-		const res = await client.send(
-			new PutObjectCommand({
-				Bucket: bucketName,
-				Key: objectName,
-				Body: buffer,
-				ContentType: contentType
-			})
+		const metaData = contentType ? { 'Content-Type': contentType } : {};
+		const res = await minioClient.putObject(
+			BUCKET_NAME,
+			objectName,
+			buffer,
+			buffer.length,
+			metaData
 		);
 		return res;
 	} catch (error) {
@@ -36,49 +41,32 @@ export async function uploadBufferHelper(
 	contentType?: string
 ): Promise<string> {
 	await uploadBuffer(objectName, buffer, contentType);
-	return `https://${bucketName}.s3.amazonaws.com/${objectName}`;
+	return `${env.OBJ_URL_PREFIX}/${BUCKET_NAME}/${objectName}`;
 }
 
 export async function deleteFile(objectName: string): Promise<void> {
 	try {
-		await client.send(
-			new DeleteObjectCommand({
-				Bucket: bucketName,
-				Key: objectName
-			})
-		);
+		await minioClient.removeObject(BUCKET_NAME, objectName);
 	} catch (error) {
 		console.error('Error deleting file:', error);
 		throw error;
 	}
 }
 
-export async function listFiles(prefix?: string): Promise<string[]> {
+export async function listFiles(bucketName: string, prefix?: string): Promise<string[]> {
 	try {
 		const objects: string[] = [];
-		let continuationToken: string | undefined;
+		const stream = minioClient.listObjects(bucketName, prefix, true);
 
-		do {
-			const response = await client.send(
-				new ListObjectsV2Command({
-					Bucket: bucketName,
-					Prefix: prefix,
-					ContinuationToken: continuationToken
-				})
-			);
-
-			if (response.Contents) {
-				for (const obj of response.Contents) {
-					if (obj.Key) {
-						objects.push(obj.Key);
-					}
+		return new Promise((resolve, reject) => {
+			stream.on('data', (obj) => {
+				if (obj.name) {
+					objects.push(obj.name);
 				}
-			}
-
-			continuationToken = response.NextContinuationToken;
-		} while (continuationToken);
-
-		return objects;
+			});
+			stream.on('error', reject);
+			stream.on('end', () => resolve(objects));
+		});
 	} catch (error) {
 		console.error('Error listing files:', error);
 		throw error;
@@ -88,57 +76,15 @@ export async function listFiles(prefix?: string): Promise<string[]> {
 export async function getPresignedUrl(
 	schoolId: string,
 	objectName: string,
-	expiry: number = 7 * 24 * 60 * 60 // 7 days in seconds
+	expiry: number = 5 * 60 // 5 minutes in seconds
 ): Promise<string> {
 	const fullObjectName = `${schoolId}/${objectName}`;
 
 	try {
-		const command = new GetObjectCommand({
-			Bucket: bucketName,
-			Key: fullObjectName
-		});
-		const url = await getSignedUrl(client, command, { expiresIn: expiry });
+		const url = await minioClient.presignedGetObject(BUCKET_NAME, fullObjectName, expiry);
 		return url;
 	} catch (error) {
 		console.error('Error generating presigned URL:', error);
-		throw error;
-	}
-}
-
-export async function getFileFromStorage(
-	schoolId: string,
-	timetableId: string,
-	timetableDraftId: string,
-	objectName: string,
-	input: boolean
-) {
-	const dir = input ? 'input' : 'output';
-
-	// Use draft structure if provided, otherwise fall back to old structure
-	const fullObjectName = timetableDraftId
-		? `${schoolId}/${timetableId}/${timetableDraftId}/${dir}/${objectName}`
-		: `${schoolId}/${timetableId}/${dir}/${objectName}`;
-
-	try {
-		const response = await client.send(
-			new GetObjectCommand({
-				Bucket: bucketName,
-				Key: fullObjectName
-			})
-		);
-
-		if (!response.Body) {
-			throw new Error('No body in response');
-		}
-
-		const stream = response.Body as Readable;
-		const chunks: Uint8Array[] = [];
-		for await (const chunk of stream) {
-			chunks.push(chunk);
-		}
-		return Buffer.concat(chunks);
-	} catch (error) {
-		console.error('Error getting file from storage:', error);
 		throw error;
 	}
 }

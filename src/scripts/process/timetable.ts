@@ -7,7 +7,7 @@ import {
 	updateTimetableQueueStatus
 } from '$lib/server/db/service/index.js';
 import { FETDockerService } from '$lib/server/fet.js';
-import { getFileFromStorage, uploadBufferHelper } from '$lib/server/obj.js';
+import { getPresignedUrl, uploadBufferHelper } from '$lib/server/obj.js';
 import { parseTimetableCSVAndPopulateClasses } from '../utils';
 
 const fetService = new FETDockerService();
@@ -43,13 +43,18 @@ export async function processTimetableQueue() {
 			const timetableDraftId = queueEntry.timetableDraftId.toString();
 			const fileName = queueEntry.fileName;
 
-			const fileBuffer = await getFileFromStorage(
+			// Retrieve the timetable file from object storage
+			const fileUrl = await getPresignedUrl(
 				schoolId,
-				timetableId,
-				timetableDraftId,
-				fileName,
-				true
+				`${timetableId}/${timetableDraftId}/input/${fileName}`,
+				15 * 60 // 15 minutes
 			);
+
+			const response = await fetch(fileUrl);
+			if (!response.ok) {
+				throw new Error(`Failed to fetch timetable file: ${response.statusText}`);
+			}
+			const fileBuffer = Buffer.from(await response.arrayBuffer());
 
 			console.log(
 				`📥 [TIMETABLE PROCESSOR] Retrieved file from storage: ${schoolId}/${timetableId}/${timetableDraftId}/input/${fileName} (${fileBuffer.length} bytes)`

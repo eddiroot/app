@@ -7,10 +7,45 @@ services:
       - 5432:5432
     environment:
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: password
+      POSTGRES_PASSWORD: postgres123
       POSTGRES_DB: eddi
     volumes:
-      - dbdata:/var/lib/postgresql
+      - dbdata:/var/lib/postgresql/data
+
+  obj:
+    image: minio/minio
+    restart: unless-stopped
+    ports:
+      - 9000:9000
+      - 9001:9001
+    environment:
+      MINIO_ACCESS_KEY: minio
+      MINIO_SECRET_KEY: minio123
+      MINIO_ROOT_USER: minio
+      MINIO_ROOT_PASSWORD: minio123
+    volumes:
+      - objdata:/data
+    command: server /data --console-address ":9001"
+
+  obj_buckets:
+    image: minio/mc
+    depends_on:
+      - obj
+    restart: unless-stopped
+    entrypoint: >
+      /bin/sh -c "
+      sleep 10;
+      /usr/bin/mc alias set myminio http://obj:9000 minio minio123;
+      /usr/bin/mc mb myminio/schools;
+      exit 0;
+      "
+
+  fet:
+    build:
+      context: ./infra/fet
+      dockerfile: Dockerfile
+    restart: unless-stopped
 
 volumes:
   dbdata:
+  objdata:
