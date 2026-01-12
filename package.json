@@ -20,7 +20,7 @@
 		"db:snapshot": "bash ./scripts/db-snapshot.sh",
 		"db:restore": "bash ./scripts/db-restore.sh",
 		"db:studio": "npx drizzle-kit studio",
-		"db:diagram": "tsx ./src/lib/server/db/dbml.ts",
+		"db:diagram": "npx tsx ./src/lib/server/db/dbml.ts",
 		"embed:schema": "npx tsx src/lib/scripts/embedding/index.ts",
 		"sql:export": "npx tsx src/lib/scripts/sql/index.ts"
 	},
