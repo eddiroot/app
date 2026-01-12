@@ -91,6 +91,7 @@
 		"arctic": "^3.7.0",
 		"date-fns": "^4.1.0",
 		"date-holidays": "^3.26.5",
+		"dotenv": "^17.2.3",
 		"drizzle-orm": "^0.44.2",
 		"fabric": "^6.7.0",
 		"fast-xml-parser": "^5.2.5",
