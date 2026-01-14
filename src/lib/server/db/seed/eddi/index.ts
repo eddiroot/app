@@ -4,7 +4,7 @@ import { seedCurriculum } from './curriculum';
 import { seedEddiSchool } from './school';
 
 export async function seedEddi(context: SeedContext) {
-	logSection('Seeding Eddi Platform Data');
+	logSection('Seeding eddi Platform Data');
 
 	const { db, pool } = context;
 

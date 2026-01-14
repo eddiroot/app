@@ -3,7 +3,6 @@ import { and, eq } from 'drizzle-orm';
 import * as schema from '../../schema';
 import type { Database } from '../types';
 import { ALL_CONSTRAINTS } from './FET-mapping/constraints';
-import { DEMO_YEAR_LEVELS } from './consts';
 import type { DemoSchoolData, DemoSubjectData, DemoUserData } from './types';
 
 // Map year level enum values to display names
@@ -105,10 +104,10 @@ export async function seedDemoTimetable(
 
 	console.log('  Created timetable structure (days and periods)');
 
-	// Get active year levels (exclude 'none')
-	const activeYearLevels = DEMO_YEAR_LEVELS.filter((yl) => yl !== yearLevelEnum.none);
+	// Get active year levels - only year 9
+	const activeYearLevels = [yearLevelEnum.year9];
 
-	// Create timetable groups and activities for ALL year levels
+	// Create timetable groups and activities for year 9 only
 	const allTimetableGroups: (typeof schema.timetableGroup.$inferSelect)[] = [];
 	let totalActivities = 0;
 
@@ -264,8 +263,20 @@ export async function seedDemoTimetable(
 	// Seed constraints
 	await seedTimetableConstraints(db, draft.id);
 
-	// Create timetable allocations for all classes
-	await seedTimetableAllocations(db, subjectOfferingClasses, spaces, subjects, yearLevels);
+	// Filter for year 9 semester 1 classes only
+	const year9YearLevelId = yearLevels['9'];
+	const year9Subjects = subjects.filter((s) => s.yearLevelId === year9YearLevelId);
+	const year9SubjectIds = year9Subjects.map((s) => s.id);
+	const year9Sem1Offerings = offerings.filter(
+		(o) => year9SubjectIds.includes(o.subjectId) && o.semester === 1
+	);
+	const year9Sem1OfferingIds = year9Sem1Offerings.map((o) => o.id);
+	const year9Classes = subjectOfferingClasses.filter((cls) => {
+		return year9Sem1OfferingIds.includes(cls.subOfferingId);
+	});
+
+	// Create timetable allocations for year 9 classes only
+	await seedTimetableAllocations(db, year9Classes, spaces);
 }
 
 async function seedTimetableConstraints(db: Database, draftId: number) {
@@ -315,9 +326,7 @@ async function seedTimetableConstraints(db: Database, draftId: number) {
 async function seedTimetableAllocations(
 	db: Database,
 	subjectOfferingClasses: (typeof schema.subjectOfferingClass.$inferSelect)[],
-	spaces: (typeof schema.schoolSpace.$inferSelect)[],
-	subjects: (typeof schema.subject.$inferSelect)[],
-	yearLevels: { none: number; 7: number; 8: number; 9: number; 10: number }
+	spaces: (typeof schema.schoolSpace.$inferSelect)[]
 ) {
 	// Calculate the most recent Monday
 	const today = new Date();
@@ -355,7 +364,7 @@ async function seedTimetableAllocations(
 	];
 
 	// Define weekly patterns for 6 subjects (indices 0-5)
-	const weeklyPatterns = [
+	const patterns = [
 		// Week 1 Pattern - Standard Schedule
 		[
 			[0, 1, 2, 3, 4, 5],
@@ -371,22 +380,6 @@ async function seedTimetableAllocations(
 			[3, 2, 0, 1, 4, 5],
 			[4, 5, 3, 2, 0, 1],
 			[1, 0, 4, 5, 2, 3]
-		],
-		// Week 3 Pattern
-		[
-			[2, 2, 0, 1, 3, 5],
-			[0, 1, 3, 2, 4, 5],
-			[1, 3, 2, 0, 5, 4],
-			[5, 0, 1, 3, 2, 4],
-			[3, 4, 5, 2, 1, 0]
-		],
-		// Week 4 Pattern
-		[
-			[1, 3, 0, 2, 5, 4],
-			[5, 0, 2, 1, 4, 3],
-			[4, 1, 3, 5, 0, 2],
-			[0, 2, 5, 4, 1, 3],
-			[2, 4, 1, 3, 0, 5]
 		]
 	];
 
@@ -398,55 +391,40 @@ async function seedTimetableAllocations(
 		endTime: string;
 	}> = [];
 
-	// Get active year level IDs (exclude 'none')
-	const activeYearLevelIds = [yearLevels['7'], yearLevels['8'], yearLevels['9'], yearLevels['10']];
+	// Create timetable data for year 9 classes only
+	for (let week = 0; week < 6; week++) {
+		const pattern = patterns[week % 2];
 
-	// Create 4 weeks of timetable data for ALL year levels
-	for (let week = 0; week < 4; week++) {
-		const pattern = weeklyPatterns[week];
+		// Use the already filtered year 9 classes
+		const yearLevelSem1Classes = subjectOfferingClasses;
 
-		// For each year level
-		for (let yearLevelIdx = 0; yearLevelIdx < activeYearLevelIds.length; yearLevelIdx++) {
-			// Calculate class range for this year level
-			// Structure: 6 subjects * 4 year levels * 2 semesters * 3 classes = 144 total classes
-			// Per year level: 6 subjects * 2 semesters * 3 classes = 36 classes
-			// Semester 1 per year level: 6 subjects * 3 classes = 18 classes
-			const classesPerYearLevel = 36; // 6 subjects * 2 semesters * 3 classes
-			const classesPerSemester = 18; // 6 subjects * 3 classes
-			const startIdx = yearLevelIdx * classesPerYearLevel;
-			const endIdx = startIdx + classesPerSemester;
+		// Create entries for each day of the week
+		for (let day = 0; day < 5; day++) {
+			const dayPattern = pattern[day];
 
-			// Get semester 1 classes for this year level
-			const yearLevelSem1Classes = subjectOfferingClasses.slice(startIdx, endIdx);
+			// Create 6 periods per day
+			for (let period = 0; period < 6; period++) {
+				const subjectIndex = dayPattern[period];
 
-			// Create entries for each day of the week
-			for (let day = 0; day < 5; day++) {
-				const dayPattern = pattern[day];
+				// Each subject has 3 classes (A, B, C), rotate through them
+				const classOffset = (week + day + period) % 3;
+				const classIndex = subjectIndex * 3 + classOffset;
 
-				// Create 6 periods per day
-				for (let period = 0; period < 6; period++) {
-					const subjectIndex = dayPattern[period];
+				if (classIndex >= yearLevelSem1Classes.length) continue;
 
-					// Each subject has 3 classes (A, B, C), rotate through them
-					const classOffset = (week + day + period) % 3;
-					const classIndex = subjectIndex * 3 + classOffset;
+				const cls = yearLevelSem1Classes[classIndex];
+				const { hour, minute } = periodTimes[period];
 
-					if (classIndex >= yearLevelSem1Classes.length) continue;
+				// Assign spaces based on subject (year 9 only)
+				const spaceIndex = subjectIndex % spaces.length;
 
-					const cls = yearLevelSem1Classes[classIndex];
-					const { hour, minute } = periodTimes[period];
-
-					// Assign spaces based on year level and subject
-					const spaceIndex = (yearLevelIdx * 6 + subjectIndex) % spaces.length;
-
-					timetableEntries.push({
-						subjectOfferingClassId: cls.id,
-						schoolSpaceId: spaces[spaceIndex].id,
-						date: createDate(week, day),
-						startTime: createTime(hour, minute),
-						endTime: createTime(hour, minute + 50) // 50 minute periods
-					});
-				}
+				timetableEntries.push({
+					subjectOfferingClassId: cls.id,
+					schoolSpaceId: spaces[spaceIndex].id,
+					date: createDate(week, day),
+					startTime: createTime(hour, minute),
+					endTime: createTime(hour, minute + 50) // 50 minute periods
+				});
 			}
 		}
 	}
@@ -458,7 +436,5 @@ async function seedTimetableAllocations(
 		await db.insert(schema.subjectClassAllocation).values(batch);
 	}
 
-	console.log(
-		`  Created ${timetableEntries.length} class allocations (${Math.ceil(timetableEntries.length / (5 * 6 * 4))} year levels × 4 weeks)`
-	);
+	console.log(`  Created ${timetableEntries.length} class allocations for Year 9 (2 weeks)`);
 }
