@@ -49,7 +49,7 @@ export async function getSubjectOfferingById(subjectOfferingId: number) {
 		.select({
 			subjectOffering: table.subjectOffering,
 			subject: table.subject,
-			coreSubject: table.coreSubject,
+			coreSubject: table.coreSubject
 		})
 		.from(table.subjectOffering)
 		.innerJoin(table.subject, eq(table.subject.id, table.subjectOffering.subjectId))
@@ -596,7 +596,7 @@ export async function getSubjectsWithClassesByUserId(userId: string) {
 		)
 		.innerJoin(table.subject, eq(table.subjectOffering.subjectId, table.subject.id))
 		.where(eq(table.userSubjectOffering.userId, userId));
-	console.log('userSubjectOfferings', userSubjectOfferings.length);
+
 	// Get all classes for the user
 	const userClasses = await db
 		.select({
@@ -616,7 +616,7 @@ export async function getSubjectsWithClassesByUserId(userId: string) {
 		.innerJoin(table.subject, eq(table.subjectOffering.subjectId, table.subject.id))
 		.where(eq(table.userSubjectOfferingClass.userId, userId))
 		.orderBy(asc(table.subjectOfferingClass.id));
-	console.log('userClasses', userClasses.length);
+
 	// Group classes by subject offering
 	const subjectsWithClasses = userSubjectOfferings.map((subjectOffering) => {
 		const classes = userClasses.filter(
@@ -734,7 +734,7 @@ export async function addResourceToSubjectOfferingClass(
 			authorId,
 			title: title || null,
 			description: description || null,
-			coursemapItemId: coursemapItemId || null,
+			coursemapItemId: coursemapItemId || null
 		})
 		.returning();
 

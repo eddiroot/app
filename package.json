@@ -12,17 +12,17 @@
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
 		"format": "prettier --write .",
 		"lint": "prettier --check . && eslint .",
-		"curriculum:update": "npx tsx ./src/lib/server/db/seed/data/generate-curriculum-data.ts",
+		"curriculum:update": "tsx ./src/lib/server/db/seed/data/generate-curriculum-data.ts",
 		"db:generate": "drizzle-kit generate",
 		"db:migrate": "drizzle-kit migrate",
 		"db:push": "drizzle-kit push",
-		"db:seed": "npx tsx --env-file=.env src/lib/server/db/seed",
+		"db:seed": "tsx --env-file=.env src/lib/server/db/seed",
 		"db:snapshot": "bash ./scripts/db-snapshot.sh",
 		"db:restore": "bash ./scripts/db-restore.sh",
 		"db:studio": "drizzle-kit studio",
 		"db:diagram": "tsx ./src/lib/server/db/dbml.ts",
-		"embed:schema": "npx tsx src/lib/scripts/embedding/index.ts",
-		"sql:export": "npx tsx src/lib/scripts/sql/index.ts"
+		"embed:schema": "tsx src/lib/scripts/embedding/index.ts",
+		"sql:export": "tsx src/lib/scripts/sql/index.ts"
 	},
 	"devDependencies": {
 		"@eslint/compat": "^1.2.5",

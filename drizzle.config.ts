@@ -8,7 +8,7 @@ if (!process.env.DB_NAME) throw new Error('DB_NAME is not set');
 
 export default defineConfig({
 	dialect: 'postgresql',
-	schema: './src/lib/server/db/schema',
+	schema: './src/lib/server/db/schema/**/*.ts',
 	out: './migrations',
 	dbCredentials: {
 		host: process.env.DB_HOST || '',
