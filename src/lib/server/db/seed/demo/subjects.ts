@@ -53,9 +53,10 @@ export async function seedDemoSubjects(
 	const subjects: (typeof schema.subject.$inferSelect)[] = [];
 
 	// Year 7 to Year 10 (exclude 'none')
-	const activeYearLevelEntries = Object.entries(yearLevels).filter(
-		([key]) => key !== 'none'
-	) as [string, number][];
+	const activeYearLevelEntries = Object.entries(yearLevels).filter(([key]) => key !== 'none') as [
+		string,
+		number
+	][];
 
 	for (const coreSubject of coreSubjects) {
 		for (const [yearLevel, yearLevelId] of activeYearLevelEntries) {
@@ -83,7 +84,6 @@ export async function seedDemoSubjects(
 		semester: 1,
 		campusId: campus.id
 	}));
-
 
 	const offerings = await db
 		.insert(schema.subjectOffering)
@@ -114,10 +114,10 @@ export async function seedDemoSubjects(
 	// ============================================================================
 	const TEACHERS_PER_SUBJECT = 5;
 	const shuffledTeachers = shuffle(userData.teachers, random);
-	
+
 	// Map to track which teachers are assigned to which core subjects
 	const coreSubjectTeachers: Map<number, typeof userData.teachers> = new Map();
-	
+
 	// Assign 5 teachers to each core subject (teachers can overlap across subjects)
 	for (let i = 0; i < coreSubjects.length; i++) {
 		const coreSubject = coreSubjects[i];
@@ -125,12 +125,12 @@ export async function seedDemoSubjects(
 		// but allows overlap since we have 6 subjects and 30 teachers
 		const startIndex = (i * TEACHERS_PER_SUBJECT) % shuffledTeachers.length;
 		const assignedTeachers: typeof userData.teachers = [];
-		
+
 		for (let j = 0; j < TEACHERS_PER_SUBJECT; j++) {
 			const teacherIndex = (startIndex + j) % shuffledTeachers.length;
 			assignedTeachers.push(shuffledTeachers[teacherIndex]);
 		}
-		
+
 		coreSubjectTeachers.set(coreSubject.id, assignedTeachers);
 	}
 
@@ -140,14 +140,12 @@ export async function seedDemoSubjects(
 
 	for (const coreSubject of coreSubjects) {
 		const teachers = coreSubjectTeachers.get(coreSubject.id) || [];
-		
+
 		// Get all offerings for this core subject (across all year levels and semesters)
-		const subjectIds = subjects
-			.filter((s) => s.coreSubjectId === coreSubject.id)
-			.map((s) => s.id);
-		
+		const subjectIds = subjects.filter((s) => s.coreSubjectId === coreSubject.id).map((s) => s.id);
+
 		const coreSubjectOfferings = offerings.filter((o) => subjectIds.includes(o.subjectId));
-		
+
 		// Assign all teachers to all offerings for this core subject
 		for (const teacher of teachers) {
 			for (const offering of coreSubjectOfferings) {
@@ -158,16 +156,16 @@ export async function seedDemoSubjects(
 				teacherOfferingCount++;
 			}
 		}
-		
+
 		// Distribute classes among the 5 teachers (each teacher gets ~equal classes)
-		const coreSubjectClasses = allClasses.filter((c) => 
+		const coreSubjectClasses = allClasses.filter((c) =>
 			coreSubjectOfferings.some((o) => o.id === c.subOfferingId)
 		);
-		
+
 		for (let i = 0; i < coreSubjectClasses.length; i++) {
 			const cls = coreSubjectClasses[i];
 			const teacher = teachers[i % teachers.length];
-			
+
 			await db.insert(schema.userSubjectOfferingClass).values({
 				userId: teacher.id,
 				subOffClassId: cls.id
@@ -183,7 +181,7 @@ export async function seedDemoSubjects(
 	// ASSIGN STUDENTS TO SUBJECT OFFERINGS AND CLASSES
 	// ============================================================================
 	const activeYearLevels = DEMO_YEAR_LEVELS.filter((yl) => yl !== yearLevelEnum.none);
-	
+
 	for (const yearLevel of activeYearLevels) {
 		const yearLevelId = yearLevels[yearLevel as keyof typeof yearLevels];
 		const studentsInYearLevel = userData.students.filter((s) => s.yearLevelId === yearLevelId);
@@ -207,9 +205,9 @@ export async function seedDemoSubjects(
 		for (const offering of offeringsForYearLevel) {
 			const classesForOffering = allClasses.filter((c) => c.subOfferingId === offering.id);
 			const shuffledStudents = shuffle(studentsInYearLevel, random);
-			
+
 			const studentsPerClass = Math.ceil(shuffledStudents.length / classesForOffering.length);
-			
+
 			for (let i = 0; i < classesForOffering.length; i++) {
 				const cls = classesForOffering[i];
 				const startIdx = i * studentsPerClass;
@@ -233,6 +231,14 @@ export async function seedDemoSubjects(
 		await db.insert(schema.userSubjectOffering).values({
 			userId: userData.admin.id,
 			subOfferingId: offering.id
+		});
+	}
+
+	// Assign admin to all classes so they can see all timetable allocations
+	for (const cls of allClasses) {
+		await db.insert(schema.userSubjectOfferingClass).values({
+			userId: userData.admin.id,
+			subOffClassId: cls.id
 		});
 	}
 
@@ -262,7 +268,6 @@ export async function seedDemoSubjects(
 
 	// Create course map items for all offerings
 	await seedCourseMapItems(db, offerings, subjects, coreSubjects);
-
 
 	return {
 		coreSubjects,
@@ -326,7 +331,6 @@ function getBaseTopicsForSubject(subjectName: string): string[] {
 			'Linear Equations',
 			'Quadratic Functions',
 			'Data Analysis'
-
 		],
 		English: [
 			'Reading Comprehension',
