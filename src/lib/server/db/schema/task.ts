@@ -316,6 +316,7 @@ export const whiteboard = taskSchema.table(
 			.unique()
 			.references(() => taskBlock.id, { onDelete: 'cascade' }),
 		title: text('title'),
+		isLocked: boolean('is_locked').notNull().default(false),
 		...timestamps,
 		...embeddings
 	},

@@ -1,16 +1,17 @@
 <script lang="ts">
-	import { browser } from '$app/environment'
-	import { goto } from '$app/navigation'
-	import { page } from '$app/state'
-	import Button from '$lib/components/ui/button/button.svelte'
-	import * as Card from '$lib/components/ui/card'
-	import Input from '$lib/components/ui/input/input.svelte'
-	import Label from '$lib/components/ui/label/label.svelte'
-	import * as Tooltip from '$lib/components/ui/tooltip/index.js'
-	import { ViewMode, type WhiteboardBlockProps } from '$lib/schema/task'
-	import PresentationIcon from '@lucide/svelte/icons/presentation'
-	import { onDestroy, onMount } from 'svelte'
-	import { toast } from 'svelte-sonner'
+	import { browser } from '$app/environment';
+	import { goto } from '$app/navigation';
+	import { page } from '$app/state';
+	import Button from '$lib/components/ui/button/button.svelte';
+	import * as Card from '$lib/components/ui/card';
+	import Input from '$lib/components/ui/input/input.svelte';
+	import Label from '$lib/components/ui/label/label.svelte';
+	import * as Tooltip from '$lib/components/ui/tooltip/index.js';
+	import { ViewMode, type WhiteboardBlockProps } from '$lib/schema/task';
+	import PresentationIcon from '@lucide/svelte/icons/presentation';
+	import { io, type Socket } from 'socket.io-client';
+	import { onDestroy, onMount } from 'svelte';
+	import { toast } from 'svelte-sonner';
 
 	let {
 		blockId,
@@ -21,77 +22,69 @@
 		whiteboardLockStates,
 		isTeacher
 	}: WhiteboardBlockProps & {
-		whiteboardMap?: Record<number, number>
-		whiteboardLockStates?: Record<number, boolean>
-		isTeacher?: boolean
-	} = $props()
+		whiteboardMap?: Record<number, number>;
+		whiteboardLockStates?: Record<number, boolean>;
+		isTeacher?: boolean;
+	} = $props();
 
-	const { taskId, subjectOfferingId, subjectOfferingClassId } = $derived(page.params)
+	const { taskId, subjectOfferingId, subjectOfferingClassId } = $derived(page.params);
 
-	const whiteboardId = $derived(whiteboardMap?.[blockId] ?? null)
-	let isLocked = $state(false)
-	let isTogglingLock = $state(false)
-	let socket: WebSocket | null = $state(null)
+	const whiteboardId = $derived(whiteboardMap?.[blockId] ?? null);
+	let isLocked = $state(false);
+	let isTogglingLock = $state(false);
+	let socket: Socket | null = $state(null);
 
 	// Update isLocked when whiteboardId or lockStates change
 	$effect(() => {
 		if (whiteboardId && whiteboardLockStates) {
-			isLocked = whiteboardLockStates[whiteboardId] ?? false
+			isLocked = whiteboardLockStates[whiteboardId] ?? false;
 		}
-	})
+	});
 
-	// Setup WebSocket connection for broadcasting lock changes
+	// Setup Socket.IO connection for broadcasting lock changes
 	onMount(() => {
-		if (!browser || !whiteboardId) return
+		if (!browser || !whiteboardId) return;
 
-		// Connect to the whiteboard WebSocket
-		const wsUrl = `/subjects/${subjectOfferingId}/class/${subjectOfferingClassId}/tasks/${taskId}/whiteboard/ws`
-		const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:'
-		const wsFullUrl = `${protocol}//${window.location.host}${wsUrl}`
+		// Connect to Socket.IO server
+		socket = io({
+			path: '/socket.io/',
+			transports: ['websocket', 'polling']
+		});
 
-		socket = new WebSocket(wsFullUrl)
-
-		socket.onopen = () => {
+		socket.on('connect', () => {
 			// Initialize with whiteboardId
-			if (socket && socket.readyState === WebSocket.OPEN) {
-				socket.send(
-					JSON.stringify({
-						type: 'init',
-						whiteboardId: whiteboardId
-					})
-				)
-			}
-		}
+			socket?.emit('init', { whiteboardId });
+		});
 
-		socket.onerror = (error) => {
-			console.error('WebSocket error:', error)
-		}
-	})
+		socket.on('connect_error', (error) => {
+			console.error('Socket.IO connection error:', error);
+		});
+	});
 
 	onDestroy(() => {
-		if (socket && socket.readyState === WebSocket.OPEN) {
-			socket.close()
+		if (socket) {
+			socket.disconnect();
 		}
-	})
+	});
 
 	const openWhiteboard = () => {
 		if (!whiteboardId) {
-			console.error('No whiteboard ID available')
-			return
+			console.error('No whiteboard ID available');
+			return;
 		}
 
-		const url = `/subjects/${subjectOfferingId}/class/${subjectOfferingClassId}/tasks/${taskId}/whiteboard/${whiteboardId}`
-		goto(url)
-	}
+		const url = `/subjects/${subjectOfferingId}/class/${subjectOfferingClassId}/tasks/${taskId}/whiteboard/${whiteboardId}`;
+		goto(url);
+	};
 
 	const toggleLock = async () => {
-		if (!whiteboardId || isTogglingLock) return
+		if (!whiteboardId || isTogglingLock) return;
 
-		isTogglingLock = true
+		isTogglingLock = true;
 
 		try {
-			const formData = new FormData()
-			formData.append('whiteboardId', whiteboardId.toString())
+			const formData = new FormData();
+			formData.append('whiteboardId', whiteboardId.toString());
 
 			const response = await fetch(
 				`/subjects/${subjectOfferingId}/class/${subjectOfferingClassId}/tasks/${taskId}?/toggleWhiteboardLock`,
@@ -99,12 +92,12 @@
 					method: 'POST',
 					body: formData
 				}
-			)
+			);
 
-			const result = await response.json()
+			const result = await response.json();
 
 			if (result.type === 'success' && result.data) {
-				let actionData = typeof result.data === 'string' ? JSON.parse(result.data) : result.data
+				let actionData = typeof result.data === 'string' ? JSON.parse(result.data) : result.data;
 
 				// Handle devalue format
 				if (Array.isArray(actionData)) {
@@ -113,54 +106,51 @@
 						data: {
 							isLocked: actionData[3]
 						}
-					}
-					actionData = reconstructed
+					};
+					actionData = reconstructed;
 				}
 
 				if (actionData.type === 'success' && actionData.data?.isLocked !== undefined) {
-					const newLockState = actionData.data.isLocked
+					const newLockState = actionData.data.isLocked;
 
 					// Update local state immediately for reactivity
-					isLocked = newLockState
+					isLocked = newLockState;
 
 					// Also update the shared state
 					if (whiteboardLockStates) {
-						whiteboardLockStates[whiteboardId] = newLockState
+						whiteboardLockStates[whiteboardId] = newLockState;
 					}
 
-					// Broadcast lock state change via WebSocket to all connected clients
-					if (socket && socket.readyState === WebSocket.OPEN) {
-						const lockMessage = newLockState ? 'lock' : 'unlock'
-						socket.send(
-							JSON.stringify({
-								type: lockMessage,
-								isLocked: newLockState,
-								whiteboardId: whiteboardId
-							})
-						)
+					// Broadcast lock state change via Socket.IO to all connected clients
+					if (socket && socket.connected) {
+						const lockMessage = newLockState ? 'lock' : 'unlock';
+						socket.emit(lockMessage, {
+							isLocked: newLockState,
+							whiteboardId: whiteboardId
+						});
 					}
 
 					// Show toast notification
 					if (newLockState) {
 						toast.success('Whiteboard locked', {
 							description: 'Students can now only view and pan the whiteboard'
-						})
+						});
 					} else {
 						toast.success('Whiteboard unlocked', {
 							description: 'Students can now edit the whiteboard'
-						})
+						});
 					}
 				}
 			}
 		} catch (err) {
-			console.error('Lock toggle failed:', err)
+			console.error('Lock toggle failed:', err);
 			toast.error('Failed to toggle lock', {
 				description: 'Please try again'
-			})
+			});
 		} finally {
-			isTogglingLock = false
+			isTogglingLock = false;
 		}
-	}
+	};
 </script>
 
 <div class="flex w-full flex-col gap-4">
@@ -179,10 +169,10 @@
 						id="whiteboard-title"
 						value={config.title}
 						oninput={(e) => {
-							const value = (e.target as HTMLInputElement)?.value
+							const value = (e.target as HTMLInputElement)?.value;
 							if (value !== undefined) {
-								const newConfig = { ...config, title: value }
-								onConfigUpdate(newConfig)
+								const newConfig = { ...config, title: value };
+								onConfigUpdate(newConfig);
 							}
 						}}
 						placeholder="Enter a title here"

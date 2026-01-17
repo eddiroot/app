@@ -1,4 +1,4 @@
-import { building } from '$app/environment';
+import { building, dev } from '$app/environment';
 import * as auth from '$lib/server/auth.js';
 import { Security } from '$lib/server/security';
 import type { Handle } from '@sveltejs/kit';
@@ -7,8 +7,16 @@ import type { Handle } from '@sveltejs/kit';
 
 if (!building) {
 	// cron.schedule('* * * * *', () => {
-	// 	processTimetableQueue();
+	// processTimetableQueue();
 	// });
+}
+
+// Initialize Socket.IO in production (dev mode is handled by Vite plugin)
+if (!building && !dev) {
+	// In production, we need to get the HTTP server from the adapter
+	// This will be set up when the server starts
+	// The adapter will need to expose the HTTP server for Socket.IO to attach
+	console.log('Production mode: Socket.IO will be initialized by the adapter');
 }
 
 const handleAuth: Handle = async ({ event, resolve }) => {
