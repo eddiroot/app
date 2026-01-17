@@ -290,16 +290,18 @@
 		CanvasActions.handleImageUpload(event, {
 			canvas,
 			sendCanvasUpdate,
+			socket,
 			onImageAdded: (img) => {
 				// Auto-switch to selection tool and show image options menu
-				// Use setTimeout to ensure state updates happen after the object is properly selected
-				setTimeout(() => {
-					selectedTool = 'select';
-					canvas.isDrawingMode = false;
-					canvas.selection = true;
-					showFloatingMenu = true;
+				// The selection:created handler will automatically create control points
+				selectedTool = 'select';
+				canvas.isDrawingMode = false;
+				canvas.selection = true;
+				showFloatingMenu = true;
 
-					// Show image options in floating menu
+				// Show image options in floating menu
+				// Use setTimeout to ensure the selection:created handler runs first
+				setTimeout(() => {
 					floatingMenuRef?.setActiveMenuPanel?.('image');
 					floatingMenuRef?.updateShapeOptions?.({
 						strokeWidth: 0,
@@ -308,7 +310,7 @@
 						strokeDashArray: [],
 						opacity: img.opacity || 1
 					});
-				}, 0);
+				}, 100); // Small delay to ensure selection:created runs first
 			}
 		});
 	};
@@ -403,6 +405,16 @@
 				textAlign: options.textAlign,
 				opacity: options.opacity
 			});
+
+			// Recalculate textbox dimensions to fit the text with new font size
+			activeObject.initDimensions();
+			activeObject.setCoords();
+
+			// Update control points if they exist
+			if (controlPointManager) {
+				controlPointManager.updateControlPoints((activeObject as any).id, activeObject);
+			}
+
 			canvas.renderAll();
 			const objData = activeObject.toObject();
 			(objData as any).id = (activeObject as any).id;
@@ -824,6 +836,9 @@
 					}
 				}
 			);
+
+			// Expose socket on sendCanvasUpdate for access by event handlers (after socket is created)
+			(sendCanvasUpdate as any).socket = socket;
 
 			// Add lock/unlock message handlers for Socket.IO
 			socket.on('lock', (data: any) => {

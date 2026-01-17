@@ -56,6 +56,20 @@ interface WebSocketOptions {
 	controlPointManager?: ControlPointManager;
 }
 
+// Track recently created object IDs to prevent echo
+const recentlyCreatedObjects = new Set<string>();
+const ECHO_PREVENTION_TIMEOUT = 1000; // 1 second
+
+/**
+ * Mark an object as recently created locally to prevent echo
+ */
+function markAsRecentlyCreated(objectId: string) {
+	recentlyCreatedObjects.add(objectId);
+	setTimeout(() => {
+		recentlyCreatedObjects.delete(objectId);
+	}, ECHO_PREVENTION_TIMEOUT);
+}
+
 /**
  * Creates a Socket.IO connection and sets up message handlers for whiteboard synchronization
  */
@@ -70,6 +84,9 @@ export function setupWebSocket(
 		path: '/socket.io/',
 		transports: ['websocket', 'polling']
 	});
+
+	// Expose the markAsRecentlyCreated function on the socket for external use
+	(socket as any).markAsRecentlyCreated = markAsRecentlyCreated;
 
 	socket.on('connect', () => {
 		console.log('Socket.IO connected:', socket.id);
@@ -173,6 +190,13 @@ async function handleLoadMessage(
 			// Custom control points will be shown on selection
 			fabricObj.hasControls = false;
 			fabricObj.hasBorders = false;
+			// Ensure images use center origin
+			if (fabricObj.type === 'image') {
+				fabricObj.set({
+					originX: 'center',
+					originY: 'center'
+				});
+			}
 			canvas.add(fabricObj);
 			fabricObjects.push(fabricObj);
 			// DO NOT create control points automatically - they'll be created on user selection
@@ -196,14 +220,26 @@ async function handleAddMessage(
 	controlPointManager?: ControlPointManager
 ): Promise<void> {
 	if (messageData.object) {
+		// Check if this is an echo of an object we just created
+		if (recentlyCreatedObjects.has(messageData.object.id!)) {
+			console.log('Ignoring echo of locally created object:', messageData.object.id);
+			return;
+		}
+
 		const objects = await fabric.util.enlivenObjects([messageData.object]);
 		const obj = objects[0] as fabric.FabricObject & { id?: string };
 		obj.id = messageData.object.id;
-		// For polylines, disable fabric.js controls since we use custom control points
-		if (obj.type === 'polyline') {
+		// Disable fabric.js default controls and borders for all objects
+		// Custom control points will be shown on selection
+		obj.set({
+			hasControls: false,
+			hasBorders: false
+		});
+		// Ensure images use center origin
+		if (obj.type === 'image') {
 			obj.set({
-				hasControls: false,
-				hasBorders: false
+				originX: 'center',
+				originY: 'center'
 			});
 		}
 		canvas.add(obj);
@@ -322,12 +358,15 @@ function handleModifyMessage(
 			return; // Skip the normal update path
 		}
 
-		// For polylines being moved normally, ONLY update control points if they already exist
-		if (obj.type === 'polyline' && controlPointManager) {
+		// For polylines and images being moved normally, ONLY update control points if they already exist
+		if ((obj.type === 'polyline' || obj.type === 'image') && controlPointManager) {
 			// @ts-expect-error - Custom id property
 			const objId = obj.id;
-			const existingPoints = controlPointManager.getLineHandler().getControlPointsForObject(objId);
-			// Only update if control points already exist (user has selected this line)
+			const existingPoints =
+				obj.type === 'polyline'
+					? controlPointManager.getLineHandler().getControlPointsForObject(objId)
+					: controlPointManager.getAllControlPoints().filter((cp) => cp.objectId === objId);
+			// Only update if control points already exist (user has selected this object)
 			if (existingPoints.length > 0) {
 				controlPointManager.updateControlPoints(objId, obj);
 			}

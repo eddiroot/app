@@ -8,6 +8,7 @@ export interface CanvasActionContext {
 	canvas: fabric.Canvas;
 	sendCanvasUpdate: (data: Record<string, unknown>) => void;
 	onImageAdded?: (img: fabric.FabricImage) => void;
+	socket?: any;
 }
 
 /**
@@ -47,8 +48,12 @@ export function handleImageUpload(event: Event, context: CanvasActionContext): v
 
 				// Center the image
 				img.set({
-					left: context.canvas.width! / 2 - (img.width! * scale) / 2,
-					top: context.canvas.height! / 2 - (img.height! * scale) / 2
+					left: context.canvas.width! / 2,
+					top: context.canvas.height! / 2,
+					originX: 'center',
+					originY: 'center',
+					hasControls: false,
+					hasBorders: false
 				});
 
 				context.canvas.add(img);
@@ -58,6 +63,12 @@ export function handleImageUpload(event: Event, context: CanvasActionContext): v
 				const objData = img.toObject();
 				// @ts-expect-error - Custom id property
 				objData.id = img.id;
+				// Mark as recently created to prevent echo
+				const socket = (context as any).socket;
+				if (socket && socket.markAsRecentlyCreated) {
+					// @ts-expect-error - Custom id property
+					socket.markAsRecentlyCreated(img.id);
+				}
 				context.sendCanvasUpdate({
 					type: 'add',
 					object: objData
@@ -255,6 +266,25 @@ export function moveBackward(context: CanvasActionContext): void {
 	context.sendCanvasUpdate({
 		type: 'layer',
 		action: 'moveBackward',
+		object: objData
+	});
+}
+
+/**
+ * Applies opacity to the selected object
+ */
+export function applyOpacityToSelected(context: CanvasActionContext, opacity: number): void {
+	const activeObject = context.canvas.getActiveObject();
+	if (!activeObject) return;
+
+	activeObject.set({ opacity });
+	context.canvas.renderAll();
+
+	const objData = activeObject.toObject();
+	// @ts-expect-error - Custom id property
+	objData.id = activeObject.id;
+	context.sendCanvasUpdate({
+		type: 'modify',
 		object: objData
 	});
 }

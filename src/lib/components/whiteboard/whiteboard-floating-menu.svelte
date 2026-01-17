@@ -344,6 +344,12 @@
 		}
 	});
 
+	$effect(() => {
+		if (!isSyncingFromObject && activeMenuPanel === 'image' && onShapeOptionsChange) {
+			onShapeOptionsChange(shapeOptions);
+		}
+	});
+
 	const shouldShowMenu = $derived(
 		visible &&
 			selectedTool !== 'pan' &&

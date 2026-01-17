@@ -89,19 +89,22 @@ export const createObjectMovingHandler = (ctx: CanvasEventContext) => {
 	return ({ target }: { target: fabric.Object }) => {
 		// Handle control point movement - don't sync the control point itself
 		if (ctx.controlPointManager?.isControlPoint(target)) {
-			// This is a control point circle, update the associated line
+			// This is a control point circle, update the associated line/shape
 			const center = target.getCenterPoint();
 			// @ts-expect-error - custom id property
-			ctx.controlPointManager.updateObjectFromControlPoint(target.id, center.x, center.y);
+			ctx.controlPointManager.updateObjectFromControlPoint(target.id, center.x, center.y, true); // true = isLive
 			return; // Don't proceed to sync - control points are client-side only
 		}
 
-		// If moving a polyline, rectangle, ellipse, or triangle, update its control points and keep them visible
+		// If moving objects with control points, update them and keep them visible
 		if (
 			(target.type === 'polyline' ||
 				target.type === 'rect' ||
 				target.type === 'ellipse' ||
-				target.type === 'triangle') &&
+				target.type === 'triangle' ||
+				target.type === 'textbox' ||
+				target.type === 'image' ||
+				target.type === 'path') &&
 			ctx.controlPointManager
 		) {
 			// @ts-expect-error - custom id property
@@ -114,37 +117,37 @@ export const createObjectMovingHandler = (ctx: CanvasEventContext) => {
 		// @ts-expect-error - custom id property
 		const objectId = target.id;
 
-		// For images, use existing throttle mechanism
+		// Use unified throttle for all objects including images
+		const objData = target.type === 'textbox' ? target.toObject(['text']) : target.toObject();
+		objData.id = objectId;
+
+		// For images, mark that we're moving one
 		if (target.type === 'image') {
-			const objData = target.toObject();
-			objData.id = objectId;
 			ctx.setIsMovingImage(true);
-			ctx.sendImageUpdate(objectId, objData, false);
-		} else {
-			// For other objects, throttle live updates to reduce network traffic
-			const objData = target.type === 'textbox' ? target.toObject(['text']) : target.toObject();
-			objData.id = objectId;
-			// Remove type property to avoid fabric.js warning
+		}
+
+		// Remove type property to avoid fabric.js warning (except for images which need it)
+		if (target.type !== 'image') {
 			delete objData.type;
+		}
 
-			// Store the latest state for this object
-			pendingMoveUpdates.set(objectId, objData);
+		// Store the latest state for this object
+		pendingMoveUpdates.set(objectId, objData);
 
-			// Throttle live updates - send every 16ms (60 updates per second)
-			if (moveThrottleTimeout === null) {
-				moveThrottleTimeout = setTimeout(() => {
-					// Send all pending updates
-					pendingMoveUpdates.forEach((data, id) => {
-						ctx.sendCanvasUpdate({
-							type: 'modify',
-							object: data,
-							live: true
-						});
+		// Throttle live updates - send every 16ms (60 updates per second)
+		if (moveThrottleTimeout === null) {
+			moveThrottleTimeout = setTimeout(() => {
+				// Send all pending updates
+				pendingMoveUpdates.forEach((data, id) => {
+					ctx.sendCanvasUpdate({
+						type: 'modify',
+						object: data,
+						live: true
 					});
-					pendingMoveUpdates.clear();
-					moveThrottleTimeout = null;
-				}, 16);
-			}
+				});
+				pendingMoveUpdates.clear();
+				moveThrottleTimeout = null;
+			}, 16);
 		}
 	};
 };
@@ -191,6 +194,20 @@ export const createObjectScalingHandler = (ctx: CanvasEventContext) => {
  */
 export const createObjectRotatingHandler = (ctx: CanvasEventContext) => {
 	return ({ target }: { target: fabric.Object }) => {
+		// Skip if this is being rotated by control points
+		// Control points handle their own websocket updates
+		if (ctx.controlPointManager) {
+			// @ts-expect-error - custom id property
+			const objId = target.id;
+			const controlPoints = ctx.controlPointManager.getAllControlPoints();
+			const hasControlPoints = controlPoints.some((cp) => cp.objectId === objId);
+			if (hasControlPoints) {
+				// This object has control points, so rotation is handled by control point manager
+				// Don't send duplicate updates
+				return;
+			}
+		}
+
 		const objData = target.type === 'textbox' ? target.toObject(['text']) : target.toObject();
 		// @ts-expect-error - custom id property
 		const objectId = target.id;
@@ -228,8 +245,12 @@ export const createObjectRotatingHandler = (ctx: CanvasEventContext) => {
  */
 export const createObjectModifiedHandler = (ctx: CanvasEventContext) => {
 	return ({ target }: { target: fabric.Object }) => {
-		// Skip control points - they are client-side only
+		// Handle control point final update (when drag ends)
 		if (ctx.controlPointManager?.isControlPoint(target)) {
+			// Send final update with isLive=false to persist to database
+			const center = target.getCenterPoint();
+			// @ts-expect-error - custom id property
+			ctx.controlPointManager.updateObjectFromControlPoint(target.id, center.x, center.y, false); // false = not live, persist to DB
 			return;
 		}
 
@@ -307,6 +328,11 @@ export const createMouseUpHandler = (canvas: fabric.Canvas, ctx: CanvasEventCont
 			const objData = tempText.toObject(['text']);
 			// @ts-expect-error - custom id property
 			objData.id = tempText.id;
+			// @ts-expect-error - custom markAsRecentlyCreated property added by websocket
+			if (ctx.sendCanvasUpdate.socket?.markAsRecentlyCreated) {
+				// @ts-expect-error - custom markAsRecentlyCreated property
+				ctx.sendCanvasUpdate.socket.markAsRecentlyCreated(tempText.id);
+			}
 			ctx.sendCanvasUpdate({
 				type: 'add',
 				object: objData
@@ -352,6 +378,11 @@ export const createMouseUpHandler = (canvas: fabric.Canvas, ctx: CanvasEventCont
 			const objData = tempShape.toObject();
 			// @ts-expect-error - custom id property
 			objData.id = tempShape.id;
+			// @ts-expect-error - custom markAsRecentlyCreated property added by websocket
+			if (ctx.sendCanvasUpdate.socket?.markAsRecentlyCreated) {
+				// @ts-expect-error - custom markAsRecentlyCreated property
+				ctx.sendCanvasUpdate.socket.markAsRecentlyCreated(tempShape.id);
+			}
 			ctx.sendCanvasUpdate({
 				type: 'add',
 				object: objData
@@ -527,7 +558,7 @@ export const createTextChangedHandler = (ctx: CanvasEventContext) => {
 			clearTimeout(textChangeTimeout);
 		}
 
-		// Throttle text updates - send after 500ms of no typing
+		// Throttle text updates - send after 150ms of no typing for faster feedback
 		textChangeTimeout = setTimeout(() => {
 			const objData = target.toObject(['text']);
 			// @ts-expect-error - custom id property
@@ -538,7 +569,7 @@ export const createTextChangedHandler = (ctx: CanvasEventContext) => {
 				live: false // Not live, should persist
 			});
 			textChangeTimeout = null;
-		}, 500);
+		}, 150);
 
 		// Also send a live update immediately (won't be persisted to DB)
 		const objData = target.toObject(['text']);
@@ -594,12 +625,15 @@ export const createSelectionCreatedHandler = (ctx: CanvasEventContext) => {
 				// Hide all control points first
 				ctx.controlPointManager.hideAllControlPoints();
 
-				// For polylines, rectangles, ellipses, and triangles, create control points if they don't exist, or show if they do
+				// For supported object types, create control points if they don't exist, or show if they do
 				if (
 					obj.type === 'polyline' ||
 					obj.type === 'rect' ||
 					obj.type === 'ellipse' ||
-					obj.type === 'triangle'
+					obj.type === 'triangle' ||
+					obj.type === 'textbox' ||
+					obj.type === 'image' ||
+					obj.type === 'path'
 				) {
 					// @ts-expect-error - custom id property
 					const objId = obj.id;
@@ -715,30 +749,27 @@ export const createSelectionUpdatedHandler = (ctx: CanvasEventContext) => {
 
 			// Only hide/show control points if this is not a control point itself
 			if (ctx.controlPointManager) {
-				// Hide all control points first
-				ctx.controlPointManager.hideAllControlPoints();
+				// Remove all control points from previously selected objects
+				const allControlPoints = ctx.controlPointManager.getAllControlPoints();
+				const objectIds = new Set(allControlPoints.map((cp) => cp.objectId));
+				objectIds.forEach((objectId) => {
+					ctx.controlPointManager?.removeControlPoints(objectId);
+				});
 
-				// For polylines, rectangles, ellipses, and triangles, create control points if they don't exist, or show if they do
+				// For all supported object types, create control points
 				if (
 					obj.type === 'polyline' ||
 					obj.type === 'rect' ||
 					obj.type === 'ellipse' ||
-					obj.type === 'triangle'
+					obj.type === 'triangle' ||
+					obj.type === 'textbox' ||
+					obj.type === 'image' ||
+					obj.type === 'path'
 				) {
 					// @ts-expect-error - custom id property
 					const objId = obj.id;
-					// Check if control points already exist for this object
-					const handler = obj.type === 'polyline' ? ctx.controlPointManager.getLineHandler() : null;
-					const existingPoints = handler
-						? handler.getControlPointsForObject(objId)
-						: ctx.controlPointManager.getAllControlPoints().filter((cp) => cp.objectId === objId);
-					if (existingPoints.length === 0) {
-						// Create control points for this object (visible by default)
-						ctx.controlPointManager.addControlPoints(objId, obj, true);
-					} else {
-						// Show existing control points
-						ctx.controlPointManager.showControlPoints(objId);
-					}
+					// Always create fresh control points for the newly selected object
+					ctx.controlPointManager.addControlPoints(objId, obj, true);
 				}
 			}
 
@@ -829,9 +860,15 @@ export const createSelectionUpdatedHandler = (ctx: CanvasEventContext) => {
  */
 export const createSelectionClearedHandler = (ctx: CanvasEventContext) => {
 	return () => {
-		// Hide all control points when selection is cleared
+		// Remove all control points when selection is cleared (not just hide)
+		// This ensures stale control points from deselected objects are cleaned up
 		if (ctx.controlPointManager) {
-			ctx.controlPointManager.hideAllControlPoints();
+			// Get all objects with control points and remove their control points
+			const allControlPoints = ctx.controlPointManager.getAllControlPoints();
+			const objectIds = new Set(allControlPoints.map((cp) => cp.objectId));
+			objectIds.forEach((objectId) => {
+				ctx.controlPointManager?.removeControlPoints(objectId);
+			});
 		}
 
 		// Close floating menu when clicking on empty space in select mode

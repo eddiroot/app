@@ -83,8 +83,10 @@ export const createShapeFromPoints = (
 				strokeWidth: options.strokeWidth,
 				strokeDashArray: options.strokeDashArray,
 				opacity: options.opacity,
-				left: left,
-				top: top,
+				left: left + width / 2,
+				top: top + height / 2,
+				originX: 'center',
+				originY: 'center',
 				hasControls: false,
 				hasBorders: false,
 				strokeUniform: true
@@ -146,7 +148,9 @@ export const createTextFromPoints = (
 		// Fixed height behavior - let text wrap and expand vertically naturally
 		// but constrain width
 		textAlign: options.textAlign,
-		hasControls: false
+		hasControls: false,
+		hasBorders: false
+		// Textboxes use top-left origin by default (no originX/originY)
 	});
 
 	return text;
