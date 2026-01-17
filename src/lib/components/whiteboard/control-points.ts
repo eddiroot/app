@@ -2214,17 +2214,26 @@ export class TextboxControlPoints extends BoundingBoxControlPoints {
 		const height = textbox.height || 0;
 		const left = textbox.left || 0;
 		const top = textbox.top || 0;
+		const angle = textbox.angle || 0;
+		const angleRad = (angle * Math.PI) / 180;
 
-		// Get transformation matrix for handling rotations/scaling
-		const matrix = textbox.calcTransformMatrix();
+		// Calculate the four corners by rotating around top-left origin
+		const cos = Math.cos(angleRad);
+		const sin = Math.sin(angleRad);
 
-		// Calculate bounding box corners (textbox uses top-left origin by default)
-		const corners = [
-			{ x: left, y: top }, // Top-left
-			{ x: left + width, y: top }, // Top-right
-			{ x: left + width, y: top + height }, // Bottom-right
-			{ x: left, y: top + height } // Bottom-left
+		// Define corners in local space (before rotation)
+		const localCorners = [
+			{ x: 0, y: 0 }, // Top-left
+			{ x: width, y: 0 }, // Top-right
+			{ x: width, y: height }, // Bottom-right
+			{ x: 0, y: height } // Bottom-left
 		];
+
+		// Rotate each corner around the origin (top-left) and add the textbox position
+		const corners = localCorners.map((corner) => ({
+			x: left + corner.x * cos - corner.y * sin,
+			y: top + corner.x * sin + corner.y * cos
+		}));
 
 		// Create control points at corners (indices 0-3)
 		corners.forEach((corner, index) => {
@@ -2400,14 +2409,26 @@ export class TextboxControlPoints extends BoundingBoxControlPoints {
 		const height = textbox.height || 0;
 		const left = textbox.left || 0;
 		const top = textbox.top || 0;
+		const angle = textbox.angle || 0;
+		const angleRad = (angle * Math.PI) / 180;
 
-		// Calculate corners (textboxes use top-left origin by default)
-		const corners = [
-			{ x: left, y: top }, // Top-left
-			{ x: left + width, y: top }, // Top-right
-			{ x: left + width, y: top + height }, // Bottom-right
-			{ x: left, y: top + height } // Bottom-left
+		// Calculate the four corners by rotating around top-left origin
+		const cos = Math.cos(angleRad);
+		const sin = Math.sin(angleRad);
+
+		// Define corners in local space (before rotation)
+		const localCorners = [
+			{ x: 0, y: 0 }, // Top-left
+			{ x: width, y: 0 }, // Top-right
+			{ x: width, y: height }, // Bottom-right
+			{ x: 0, y: height } // Bottom-left
 		];
+
+		// Rotate each corner around the origin (top-left) and add the textbox position
+		const corners = localCorners.map((corner) => ({
+			x: left + corner.x * cos - corner.y * sin,
+			y: top + corner.x * sin + corner.y * cos
+		}));
 
 		// Update corner control points
 		controlPoints.forEach((cp) => {

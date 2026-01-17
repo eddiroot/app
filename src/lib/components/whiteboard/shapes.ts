@@ -144,13 +144,15 @@ export const createTextFromPoints = (
 		fill: options.colour,
 		opacity: options.opacity,
 		// Text wrapping settings
-		splitByGrapheme: false, // Split by words, not characters
+		splitByGrapheme: false, // Split by words (spaces) first, only break long words if needed
 		// Fixed height behavior - let text wrap and expand vertically naturally
 		// but constrain width
 		textAlign: options.textAlign,
 		hasControls: false,
-		hasBorders: false
-		// Textboxes use top-left origin by default (no originX/originY)
+		hasBorders: false,
+		// Use top-left origin (default for textboxes)
+		originX: 'left',
+		originY: 'top'
 	});
 
 	return text;

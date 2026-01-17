@@ -311,60 +311,7 @@ export const createMouseUpHandler = (canvas: fabric.Canvas, ctx: CanvasEventCont
 			}
 		}
 
-		// Handle text completion
-		const tempText = ctx.getTempText();
-		if (ctx.getIsDrawingText() && tempText) {
-			// Finalize the text
-			tempText.set({ selectable: true });
-			canvas.setActiveObject(tempText);
-
-			// Enter edit mode immediately after creation
-			tempText.enterEditing();
-			tempText.selectAll();
-
-			canvas.renderAll();
-
-			// Send the completed text to other users
-			const objData = tempText.toObject(['text']);
-			// @ts-expect-error - custom id property
-			objData.id = tempText.id;
-			// @ts-expect-error - custom markAsRecentlyCreated property added by websocket
-			if (ctx.sendCanvasUpdate.socket?.markAsRecentlyCreated) {
-				// @ts-expect-error - custom markAsRecentlyCreated property
-				ctx.sendCanvasUpdate.socket.markAsRecentlyCreated(tempText.id);
-			}
-			ctx.sendCanvasUpdate({
-				type: 'add',
-				object: objData
-			});
-
-			// Auto-switch to selection tool while keeping floating menu open
-			ctx.setSelectedTool('select');
-			canvas.isDrawingMode = false;
-			canvas.selection = true;
-			canvas.defaultCursor = 'default';
-			canvas.hoverCursor = 'move';
-
-			// Show text options in floating menu
-			// Use setTimeout to ensure state updates happen after the object is properly selected
-			setTimeout(() => {
-				ctx.setShowFloatingMenu(true);
-				ctx.floatingMenuRef?.setActiveMenuPanel?.('text');
-				ctx.floatingMenuRef?.updateTextOptions?.({
-					fontSize: tempText.fontSize,
-					fontFamily: tempText.fontFamily,
-					fontWeight: String(tempText.fontWeight || 'normal'),
-					colour: tempText.fill as string,
-					textAlign: tempText.textAlign,
-					opacity: tempText.opacity || 1
-				});
-			}, 0);
-
-			// Reset text drawing state
-			ctx.setIsDrawingText(false);
-			ctx.setTempText(null);
-			ctx.setIsDrawingObject?.(false); // Re-enable history recording
-		}
+		// Text creation is now handled in mouse:down (single click), no mouse:up handling needed
 
 		// Handle shape completion
 		const tempShape = ctx.getTempShape();
@@ -995,26 +942,89 @@ export const createMouseDownHandler = (canvas: fabric.Canvas, ctx: CanvasEventCo
 
 				opt.e.preventDefault();
 				opt.e.stopPropagation();
-			} else if (!ctx.getIsDrawingText()) {
-				// Start drawing a new text box
+			} else {
+				// Create textbox instantly with fixed default size on single click
 				const pointer = canvas.getScenePoint(opt.e);
-				ctx.setStartPoint({ x: pointer.x, y: pointer.y });
-				ctx.setIsDrawingText(true);
-				ctx.setIsDrawingObject?.(true); // Prevent history recording during drawing
+				const DEFAULT_TEXTBOX_WIDTH = 200;
+				const DEFAULT_FONT_SIZE = 16;
 
-				// Create initial text with minimum width
-				const tempText = Shapes.createTextFromPoints(
-					pointer.x,
-					pointer.y,
-					pointer.x + 50,
-					pointer.y,
-					ctx.getCurrentTextOptions()
-				);
-				if (tempText) {
-					canvas.add(tempText);
+				// Create textbox with fixed defaults - ignore current text options for size
+				const textbox = new fabric.Textbox('Click to edit text', {
+					id: uuidv4(),
+					left: pointer.x,
+					top: pointer.y,
+					width: DEFAULT_TEXTBOX_WIDTH,
+					fontSize: DEFAULT_FONT_SIZE,
+					fontFamily: ctx.getCurrentTextOptions().fontFamily,
+					fontWeight: ctx.getCurrentTextOptions().fontWeight,
+					fill: ctx.getCurrentTextOptions().colour,
+					opacity: ctx.getCurrentTextOptions().opacity,
+					splitByGrapheme: false, // Break at word boundaries (spaces) first
+					breakWords: true, // But break long words if they don't fit
+					textAlign: ctx.getCurrentTextOptions().textAlign,
+					hasControls: false,
+					hasBorders: false,
+					originX: 'left',
+					originY: 'top',
+					selectable: true
+				});
+
+				// Ensure dimensions are calculated correctly
+				textbox.initDimensions();
+
+				canvas.add(textbox);
+				canvas.setActiveObject(textbox);
+
+				// Add listener to update control points when textbox dimensions change
+				textbox.on('changed', () => {
+					textbox.initDimensions(); // Recalculate height when text changes
+					if (ctx.controlPointManager) {
+						// @ts-expect-error - custom id property
+						ctx.controlPointManager.updateControlPoints(textbox.id, textbox);
+					}
 					canvas.renderAll();
+				});
+
+				// Enter edit mode immediately
+				textbox.enterEditing();
+				textbox.selectAll();
+
+				canvas.renderAll();
+
+				// Send the created textbox to other users
+				const objData = textbox.toObject(['text']);
+				// @ts-expect-error - custom id property
+				objData.id = textbox.id;
+				// @ts-expect-error - custom markAsRecentlyCreated property added by websocket
+				if (ctx.sendCanvasUpdate.socket?.markAsRecentlyCreated) {
+					// @ts-expect-error - custom markAsRecentlyCreated property
+					ctx.sendCanvasUpdate.socket.markAsRecentlyCreated(textbox.id);
 				}
-				ctx.setTempText(tempText);
+				ctx.sendCanvasUpdate({
+					type: 'add',
+					object: objData
+				});
+
+				// Auto-switch to selection tool while keeping floating menu open
+				ctx.setSelectedTool('select');
+				canvas.isDrawingMode = false;
+				canvas.selection = true;
+				canvas.defaultCursor = 'default';
+				canvas.hoverCursor = 'move';
+
+				// Show text options in floating menu
+				setTimeout(() => {
+					ctx.setShowFloatingMenu(true);
+					ctx.floatingMenuRef?.setActiveMenuPanel?.('text');
+					ctx.floatingMenuRef?.updateTextOptions?.({
+						fontSize: textbox.fontSize,
+						fontFamily: textbox.fontFamily,
+						fontWeight: String(textbox.fontWeight || 'normal'),
+						colour: textbox.fill as string,
+						textAlign: textbox.textAlign,
+						opacity: textbox.opacity || 1
+					});
+				}, 0);
 
 				opt.e.preventDefault();
 				opt.e.stopPropagation();
@@ -1126,30 +1136,6 @@ export const createMouseMoveHandler = (canvas: fabric.Canvas, ctx: CanvasEventCo
 				ctx.setTempShape(tempShape);
 				canvas.renderAll();
 			}
-		} else if (ctx.getIsDrawingText() && ctx.getTempText()) {
-			// Update the text box being drawn (only horizontally)
-			const pointer = canvas.getScenePoint(opt.e);
-
-			// Remove the old temp text
-			const oldTempText = ctx.getTempText();
-			if (oldTempText) {
-				canvas.remove(oldTempText);
-			}
-
-			// Create new text with updated width (only expand horizontally)
-			const startPoint = ctx.getStartPoint();
-			const tempText = Shapes.createTextFromPoints(
-				startPoint.x,
-				startPoint.y,
-				pointer.x,
-				startPoint.y,
-				ctx.getCurrentTextOptions()
-			);
-			if (tempText) {
-				canvas.add(tempText);
-				canvas.renderAll();
-			}
-			ctx.setTempText(tempText);
 		} else if (ctx.getIsDrawingLine() && ctx.getTempLine()) {
 			// Update the temporary line/arrow while dragging
 			const pointer = canvas.getScenePoint(opt.e);
