@@ -2,17 +2,13 @@
 	import { goto } from '$app/navigation';
 	import * as Avatar from '$lib/components/ui/avatar/index.js';
 	import * as Card from '$lib/components/ui/card';
+	import * as Item from '$lib/components/ui/item/index.js';
 	import type {
 		CourseMapItem,
 		CourseMapItemAssessmentPlan,
 		LearningArea,
 		LearningAreaStandard
 	} from '$lib/server/db/schema';
-	import List from '@lucide/svelte/icons/list';
-	import Map from '@lucide/svelte/icons/map';
-	import NotebookText from '@lucide/svelte/icons/notebook-text';
-	import Plus from '@lucide/svelte/icons/plus';
-	import User from '@lucide/svelte/icons/user';
 	import CourseMapItemDrawer from './components/CourseMapItemDrawer.svelte';
 	import CourseMapTable from './components/CourseMapTable.svelte';
 
@@ -173,17 +169,10 @@
 		goto(`/subjects/${data.subjectOfferingId}/courseMap/fullYear`);
 	}
 
-	// Open drawer to create a new topic
-	function handleCreateTopicClick() {
-		selectedCourseMapItem = null;
-		courseMapItemLearningAreas = [];
-		learningAreaContent = {};
-		assessmentPlans = [];
-		isCreateMode = true;
-		createWeek = 1;
-		createSemester = 1;
-		drawerOpen = true;
+	function handleTopicItemClick(item: CourseMapItem) {
+		goto(`/subjects/${data.subjectOfferingId}/courseMap/${item.id}/planning`);
 	}
+
 </script>
 
 <svelte:head>
@@ -191,11 +180,11 @@
 </svelte:head>
 
 <!-- Full-width Hero Bar -->
-<div class="w-full bg-blue-500 px-6 py-26 relative">
-	<div class="absolute inset-0 bg-linear-to-br from-black/20 via-black/30 to-black/50"></div>
-	<h1 class="text-center text-4xl font-bold text-white relative">
-		{data.subjectOffering?.subject?.name || 'Subject'}: Course Map
-	</h1>
+<div class="w-full px-6 py-18 relative bg-cover bg-center" style="background-image: url('/hero-coursemap.jpg');">
+    <div class="absolute inset-0 bg-linear-to-br from-black/20 via-black/30 to-black/50"></div>
+    <h1 class="text-center text-4xl font-bold text-white relative">
+        {data.subjectOffering?.subject?.name || 'Subject'}: Course Map
+    </h1>
 </div>
 
 
@@ -207,51 +196,39 @@
 		<div class="min-h-0 lg:col-span-1">
 			<Card.Root class="flex h-full flex-col overflow-hidden">
 				<Card.Content class="flex-1 overflow-auto px-4 pb-4">
-					{#if currentTopic}
-						<!-- Display current topic name -->
-						<div class="mb-3 flex items-center gap-2">
-							<div class="flex h-8 w-8 items-center justify-center rounded-lg bg-purple-100">
-								<List class="h-5 w-5 text-purple-600" />
-							</div>
-							<h3 class="text-lg font-bold">Topics</h3>
-						</div>
-						<!-- Tasks Section -->
-						<div class="mb-4">
-							<h4 class="text-muted-foreground mb-2 text-sm font-medium">Tasks</h4>
-							<p class="text-muted-foreground text-sm">No tasks yet</p>
-						</div>
-
-						<!-- Task Plans Section -->
-						<div class="mb-4">
-							<h4 class="text-muted-foreground mb-2 text-sm font-medium">Task Plans</h4>
-							<p class="text-muted-foreground text-sm">No task plans yet</p>
-						</div>
-
-						<!-- Resources Section -->
-						<div>
-							<h4 class="text-muted-foreground mb-2 text-sm font-medium">Resources</h4>
-							<p class="text-muted-foreground text-sm">No resources yet</p>
-						</div>
-					{:else}
-						<!-- No topics - show create option -->
-						<div class="mb-3 flex items-center gap-2">
-							<div class="flex h-8 w-8 items-center justify-center rounded-lg bg-purple-100">
-								<List class="h-5 w-5 text-purple-600" />
-							</div>
-							<h3 class="text-lg font-bold">Current Topic</h3>
-						</div>
-						<div class="flex items-center justify-between">
-							<p class="text-base font-semibold">Create a Topic</p>
-							<button
-								type="button"
-								class="hover:bg-muted rounded-full p-2 transition-colors"
-								onclick={handleCreateTopicClick}
-								aria-label="Create new topic"
-							>
-								<Plus />
-							</button>
-						</div>
-					{/if}
+					<!-- Display current topic name -->
+					<div class="mb-3 flex items-center gap-2">
+						<h3 class="text-lg font-bold">Topics</h3>
+					</div>
+					<div class="flex w-full max-w-md flex-col gap-6">
+					<div class="flex w-full max-w-md flex-col gap-4">
+					{#each courseMapItems as item (item.id)}
+					<Item.Root variant="outline"
+						onclick={() => handleTopicItemClick(item)}>
+						{#snippet child({ props })}
+						<a href="#/" {...props}>
+						<Item.Media variant="image">
+						<img
+							src={`https://avatar.vercel.sh/${item.topic}`}
+							alt={item.topic}
+							width="32"
+							height="32"
+							class="size-8 rounded object-cover grayscale"
+						/>
+						</Item.Media>
+						<Item.Content>
+						<Item.Title class="line-clamp-1">
+							{item.topic}
+						</Item.Title>
+						<Item.Description class="line-clamp-1">{item.description}</Item.Description>
+						</Item.Content>
+						</a>
+						{/snippet}
+					</Item.Root>
+					{/each}
+					</div>
+					</div>
+						
 				</Card.Content>
 			</Card.Root>
 		</div>
@@ -265,9 +242,6 @@
 			>
 				<Card.Content class="flex min-h-0 flex-1 flex-col px-4 ">
 					<div class="mb-4 flex items-center gap-2">
-						<div class="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-100">
-							<Map class="h-5 w-5 text-blue-600" />
-						</div>
 						<h3 class="text-lg font-bold">Full Course Map</h3>
 					</div>
 				<div class="curriculum-view-container min-h-0 flex-1 rounded-lg">
@@ -287,15 +261,12 @@
 			<div class="grid shrink-0 grid-cols-1 gap-3 md:grid-cols-2">
 				<!-- Teachers Card -->
 				<Card.Root>
-					<Card.Content class="px-4 pb-3">
-						<div class="mb-2 flex items-center gap-2">
-							<div class="flex h-8 w-8 items-center justify-center rounded-lg bg-green-100">
-								<User class="h-5 w-5 text-green-600" />
-							</div>
+					<Card.Content class="px-4">
+						<div class="mb-2 flex items-center">
 							<h3 class="text-lg font-bold">Teachers</h3>
 						</div>
 						{#if data.teachers && data.teachers.length > 0}
-							<div class="flex flex-wrap gap-2 ml-4 pt-2">
+							<div class="flex flex-wrap gap-2">
 								{#each data.teachers as teacher}
 									<Avatar.Root class="h-10 w-10 rounded-lg">
 										{#if teacher.avatarUrl}
@@ -314,20 +285,17 @@
 				</Card.Root>
 
 				<!-- Curriculum Card -->
-				<Card.Root>
-					<Card.Content class="px-4 pb-3">
-						<div class="mb-2 flex items-center gap-2">
-							<div class="flex h-8 w-8 items-center justify-center rounded-lg bg-orange-100">
-								<NotebookText class="h-5 w-5 text-orange-600" />
-							</div>
+				<Card.Root onclick={() => goto(`/subjects/${data.subjectOfferingId}/curriculum`)}>
+					<Card.Content class="px-4">
+						<div class="flex items-center">
 							<h3 class="text-lg font-bold">Curriculum</h3>
 						</div>
 						{#if data.curriculumSubjectInfo}
-							<div class="flex items-center gap-2 ml-4 pt-2">
+							<div class="flex items-center gap-2 pt-2">
 								<span>{data.curriculumSubjectInfo.curriculum.name} {data.curriculumSubjectInfo.curriculumSubject.name}</span>
 							</div>
 						{:else}
-							<p class="text-muted-foreground text-m ml-4 pt-2">No curriculum assigned</p>
+							<p class="text-muted-foreground text-m pt-2">Assign a curriculum</p>
 						{/if}
 					</Card.Content>
 				</Card.Root>
