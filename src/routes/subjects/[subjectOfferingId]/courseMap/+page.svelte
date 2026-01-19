@@ -194,13 +194,14 @@
 	<div class="grid min-h-0 flex-1 grid-cols-1 gap-3 lg:grid-cols-3">
 		<!-- Left Column - Current Topic Card (Full Height) -->
 		<div class="min-h-0 lg:col-span-1">
-			<Card.Root class="flex h-full flex-col overflow-hidden">
-				<Card.Content class="flex-1 overflow-auto px-4 pb-4">
-					<!-- Display current topic name -->
-					<div class="mb-3 flex items-center gap-2">
-						<h3 class="text-lg font-bold">Topics</h3>
-					</div>
-					<div class="flex w-full max-w-md flex-col gap-6">
+			<Card.Root class="flex h-full flex-col overflow-hidden gap-3 py-4">
+				<Card.Header class="gap-0">
+					<Card.Title class ="text-lg font-bold">
+						Topic
+					</Card.Title>
+				</Card.Header>
+				<Card.Content class="flex-1 overflow-auto px-4 pb-4 py-0">
+					<div class="flex w-full max-w-md flex-col  gap-6">
 					<div class="flex w-full max-w-md flex-col gap-4">
 					{#each courseMapItems as item (item.id)}
 					<Item.Root variant="outline"
@@ -237,13 +238,15 @@
 		<div class="flex min-h-0 flex-col gap-3 lg:col-span-2">
 			<!-- Full Course Map Card -->
 			<Card.Root
-				class="flex min-h-0 flex-1 cursor-pointer flex-col overflow-hidden transition-shadow hover:shadow-md"
+				class="flex min-h-0 flex-1 cursor-pointer flex-col overflow-hidden transition-shadow hover:shadow-md gap-3 py-4"
 				onclick={handleFullCourseMapCardClick}
 			>
+			<Card.Header>
+					<Card.Title class ="text-lg font-bold">
+						Course Map
+					</Card.Title>
+				</Card.Header>
 				<Card.Content class="flex min-h-0 flex-1 flex-col px-4 ">
-					<div class="mb-4 flex items-center gap-2">
-						<h3 class="text-lg font-bold">Full Course Map</h3>
-					</div>
 				<div class="curriculum-view-container min-h-0 flex-1 rounded-lg">
 						<CourseMapTable
 							{courseMapItems}
@@ -260,11 +263,13 @@
 			<!-- Bottom Row - Teachers and Curriculum Cards -->
 			<div class="grid shrink-0 grid-cols-1 gap-3 md:grid-cols-2">
 				<!-- Teachers Card -->
-				<Card.Root>
+				<Card.Root class= " gap-3 py-4">
+					<Card.Header>
+						<Card.Title class ="text-lg font-bold">
+							Teachers
+						</Card.Title>
+					</Card.Header>
 					<Card.Content class="px-4">
-						<div class="mb-2 flex items-center">
-							<h3 class="text-lg font-bold">Teachers</h3>
-						</div>
 						{#if data.teachers && data.teachers.length > 0}
 							<div class="flex flex-wrap gap-2">
 								{#each data.teachers as teacher}
@@ -285,14 +290,16 @@
 				</Card.Root>
 
 				<!-- Curriculum Card -->
-				<Card.Root onclick={() => goto(`/subjects/${data.subjectOfferingId}/curriculum`)}>
-					<Card.Content class="px-4">
-						<div class="flex items-center">
-							<h3 class="text-lg font-bold">Curriculum</h3>
-						</div>
+				<Card.Root onclick={() => goto(`/subjects/${data.subjectOfferingId}/courseMap/curriculum`)} class=" gap-3 py-4">
+					<Card.Header>
+						<Card.Title class ="text-lg font-bold">
+							Curriculum
+						</Card.Title>
+					</Card.Header>
+					<Card.Content class="pl-4">
 						{#if data.curriculumSubjectInfo}
-							<div class="flex items-center gap-2 pt-2">
-								<span>{data.curriculumSubjectInfo.curriculum.name} {data.curriculumSubjectInfo.curriculumSubject.name}</span>
+							<div class="flex items-center gap-2 ">
+								<span>{data.curriculumSubjectInfo.curriculum.name} {data.curriculumSubjectInfo.curriculumSubject.name} </span>
 							</div>
 						{:else}
 							<p class="text-muted-foreground text-m pt-2">Assign a curriculum</p>

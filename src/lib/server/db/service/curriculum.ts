@@ -15,13 +15,50 @@ import type { EmbeddingMetadata } from './vector';
 // CRUD METHODS
 // ============================================================================
 
+export async function getAllCurriculums() {
+	const results = await db
+		.select()
+		.from(table.curriculum)
+		.where(eq(table.curriculum.isArchived, false));
+
+	return results;
+}
+
+export async function getCurriculumById(curriculumId: number) {
+	const [result] = await db
+		.select()
+		.from(table.curriculum)
+		.where(eq(table.curriculum.id, curriculumId))
+		.limit(1);
+
+	return result;
+}
+
 export async function getCurriculumSubjectsByCurriculumId(curriculumId: number) {
 	const results = await db
 		.select()
 		.from(table.curriculumSubject)
-		.where(eq(table.curriculumSubject.curriculumId, curriculumId));
+		.where(
+			and(
+				eq(table.curriculumSubject.curriculumId, curriculumId),
+				eq(table.curriculumSubject.isArchived, false)
+			)
+		);
 
 	return results;
+}
+
+export async function assignCurriculumSubjectToSubjectOffering(
+	subjectOfferingId: number,
+	curriculumSubjectId: number | null
+) {
+	const [result] = await db
+		.update(table.subjectOffering)
+		.set({ curriculumSubjectId })
+		.where(eq(table.subjectOffering.id, subjectOfferingId))
+		.returning();
+
+	return result;
 }
 
 export interface LearningStandardsWithElaborations {
@@ -124,12 +161,12 @@ export async function getCurriculumDataForCurriculumSubjectId(
 					topic,
 					standardsWithElaborations: standardsForTopic.map(buildStandardWithElaborations)
 				};
-			}),
+			}).filter((t) => t.standardsWithElaborations.length > 0), // Only include topics with standards
 			orphanStandards: standardsForArea
 				.filter((s) => s.learningAreaTopicId === null)
 				.map(buildStandardWithElaborations)
 		};
-	});
+	}).filter((la) => la.topics.length > 0 || la.orphanStandards.length > 0); // Only include learning areas with content
 
 	return {
 		curriculumSubject,

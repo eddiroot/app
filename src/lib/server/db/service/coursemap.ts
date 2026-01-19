@@ -942,3 +942,95 @@ export async function getCurriculumSubjectBySubjectOfferingId(subjectOfferingId:
 		curriculumSubject: result.curriculumSubject
 	};
 }
+
+// CourseMapItemStandard functions
+
+export async function getCourseMapItemStandardsBySubjectOfferingId(subjectOfferingId: number) {
+	const standards = await db
+		.select({
+			courseMapItemStandard: table.courseMapItemStandard,
+			courseMapItem: table.courseMapItem
+		})
+		.from(table.courseMapItemStandard)
+		.innerJoin(
+			table.courseMapItem,
+			eq(table.courseMapItem.id, table.courseMapItemStandard.courseMapItemId)
+		)
+		.where(
+			and(
+				eq(table.courseMapItem.subjectOfferingId, subjectOfferingId),
+				eq(table.courseMapItemStandard.isArchived, false)
+			)
+		);
+
+	return standards;
+}
+
+export async function setCourseMapItemStandard(
+	courseMapItemId: number,
+	learningAreaStandardId: number,
+	subjectOfferingId: number
+) {
+	return await db.transaction(async (tx) => {
+		// First, remove any existing mapping for this standard across all courseMapItems in this subject
+		// This ensures a standard can only be mapped to one topic at a time
+		const existingMappings = await tx
+			.select({ id: table.courseMapItemStandard.id })
+			.from(table.courseMapItemStandard)
+			.innerJoin(
+				table.courseMapItem,
+				eq(table.courseMapItem.id, table.courseMapItemStandard.courseMapItemId)
+			)
+			.where(
+				and(
+					eq(table.courseMapItemStandard.learningAreaStandardId, learningAreaStandardId),
+					eq(table.courseMapItem.subjectOfferingId, subjectOfferingId)
+				)
+			);
+
+		if (existingMappings.length > 0) {
+			await tx
+				.delete(table.courseMapItemStandard)
+				.where(
+					inArray(
+						table.courseMapItemStandard.id,
+						existingMappings.map((m) => m.id)
+					)
+				);
+		}
+
+		// Now create the new mapping
+		const [newStandard] = await tx
+			.insert(table.courseMapItemStandard)
+			.values({
+				courseMapItemId,
+				learningAreaStandardId
+			})
+			.returning();
+
+		return newStandard;
+	});
+}
+
+export async function removeCourseMapItemStandard(
+	learningAreaStandardId: number,
+	subjectOfferingId: number
+) {
+	const deleted = await db
+		.delete(table.courseMapItemStandard)
+		.where(
+			and(
+				eq(table.courseMapItemStandard.learningAreaStandardId, learningAreaStandardId),
+				inArray(
+					table.courseMapItemStandard.courseMapItemId,
+					db
+						.select({ id: table.courseMapItem.id })
+						.from(table.courseMapItem)
+						.where(eq(table.courseMapItem.subjectOfferingId, subjectOfferingId))
+				)
+			)
+		)
+		.returning();
+
+	return deleted;
+}

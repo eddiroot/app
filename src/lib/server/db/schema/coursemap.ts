@@ -37,6 +37,24 @@ export const courseMapItem = courseMapSchema.table(
 
 export type CourseMapItem = typeof courseMapItem.$inferSelect;
 
+export const courseMapItemStandard = courseMapSchema.table(
+	'cm_itm_std',
+	{
+		id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
+		courseMapItemId: integer('cm_itm_id')
+			.notNull()
+			.references(() => courseMapItem.id, { onDelete: 'cascade' }),
+		learningAreaStandardId: integer('la_std_id')
+			.notNull()
+			.references(() => learningAreaStandard.id, { onDelete: 'cascade' }),
+		isArchived: boolean('is_archived').notNull().default(false),
+		...timestamps
+	}
+);
+
+export type CourseMapItemStandard = typeof courseMapItemStandard.$inferSelect;
+
+
 export const courseMapItemLearningArea = courseMapSchema.table(
 	'cm_itm_la',
 	{
