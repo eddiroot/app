@@ -1,14 +1,16 @@
 <script lang="ts">
-	import { Button, buttonVariants } from '$lib/components/ui/button/index.js';
+	import { Button } from '$lib/components/ui/button/index.js';
 	import * as Card from '$lib/components/ui/card/index.js';
 	import * as Dialog from '$lib/components/ui/dialog/index.js';
 	import * as Form from '$lib/components/ui/form/index.js';
 	import { Input } from '$lib/components/ui/input/index.js';
+	import * as ScrollArea from '$lib/components/ui/scroll-area/index.js';
 	import * as Select from '$lib/components/ui/select/index.js';
 	import { Textarea } from '$lib/components/ui/textarea/index.js';
 	import * as Tooltip from '$lib/components/ui/tooltip/index.js';
-	import Pencil from '@lucide/svelte/icons/pencil';
+	import PencilIcon from '@lucide/svelte/icons/pencil';
 	import Plus from '@lucide/svelte/icons/plus';
+	import WorkflowIcon from '@lucide/svelte/icons/workflow';
 	import { superForm } from 'sveltekit-superforms';
 	import { zod4Client } from 'sveltekit-superforms/adapters';
 	import { z } from 'zod';
@@ -44,6 +46,8 @@
 	let levelDialogOpen = $state(false);
 	let editingBehaviour = $state<BehaviourItem | null>(null);
 	let editingLevel = $state<LevelItem | null>(null);
+	let workflowDialogOpen = $state(false);
+	let workflowLevelNumber = $state<number | null>(null);
 
 	const dataForm = () => data.form;
 	const form = superForm(dataForm(), {
@@ -72,9 +76,9 @@
 	const { form: formData, enhance } = form;
 	const { form: levelFormData, enhance: levelEnhance } = levelForm;
 
-	function openCreateDialog() {
+	function openCreateDialog(levelId?: number) {
 		editingBehaviour = null;
-		$formData = { name: '', description: '', levelId: '' };
+		$formData = { name: '', description: '', levelId: levelId?.toString() ?? '' };
 		dialogOpen = true;
 	}
 
@@ -102,6 +106,11 @@
 			name: level.name
 		};
 		levelDialogOpen = true;
+	}
+
+	function openWorkflowDialog(levelNumber: number) {
+		workflowLevelNumber = levelNumber;
+		workflowDialogOpen = true;
 	}
 
 	const canCreateLevel = $derived(data.levelsWithBehaviours.length < 10);
@@ -143,129 +152,113 @@
 	);
 </script>
 
-<div class="container mx-auto space-y-6 p-8">
-	<div class="flex items-center justify-between">
-		<div>
-			<h1 class="text-3xl font-bold tracking-tight">Behaviour Quick Actions</h1>
-			<p class="text-muted-foreground mt-2">
-				Manage quick action behaviours for marking student attendance
-			</p>
-		</div>
-		<div class="flex gap-2">
-			<Tooltip.Provider>
-				<Tooltip.Root>
-					<Tooltip.Trigger
-						class={buttonVariants({ variant: 'outline' })}
-						onclick={openCreateLevelDialog}
-						disabled={!canCreateLevel}
-					>
-						<Plus class="mr-2" />
-						Add Level
-					</Tooltip.Trigger>
-					{#if !canCreateLevel}
-						<Tooltip.Content>
-							<p>Only 10 levels are allowed</p>
-						</Tooltip.Content>
-					{/if}
-				</Tooltip.Root>
-			</Tooltip.Provider>
-			<Button onclick={openCreateDialog}>
-				<Plus class="mr-2" />
-				Add Behaviour
-			</Button>
-		</div>
+<div class="space-y-6">
+	<div>
+		<h1 class="text-3xl font-bold tracking-tight">Behaviours</h1>
+		<p class="text-muted-foreground mt-2">Manage behaviours for classroom incident reporting</p>
 	</div>
 
 	<!-- Behaviours grouped by level -->
-	{#each data.levelsWithBehaviours as level}
-		<div class="space-y-4">
-			<div class="flex items-center justify-between">
-				<div>
-					<h2 class="text-xl font-semibold">
-						Level {level.levelNumber}: {level.levelName}
-					</h2>
-					<p class="text-muted-foreground text-sm">{level.behaviours.length} behaviour(s)</p>
-				</div>
-				<div class="flex gap-2">
-					<Button
-						variant="ghost"
-						size="sm"
-						onclick={() =>
-							openEditLevelDialog({
-								id: level.levelId,
-								name: level.levelName,
-								level: level.levelNumber
-							})}
-					>
-						<Pencil />
-					</Button>
-				</div>
-			</div>
-
-			<!-- Mock Action UI -->
-			<Card.Root class="border-warning/50">
+	<div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+		{#each data.levelsWithBehaviours as level}
+			<Card.Root>
 				<Card.Header>
-					<Card.Title class="text-sm font-medium">
-						Actions for Level {level.levelNumber}
+					<Card.Title>
+						Level {level.levelNumber}: {level.levelName}
 					</Card.Title>
-					<Card.Description class="text-xs">
-						Configure what happens when a behaviour at this level is recorded
+					<Card.Description class="mt-1">
+						{level.behaviours.length} behaviour(s), {actionTypes.length} action(s)
 					</Card.Description>
+					<Card.Action>
+						<Button
+							variant="ghost"
+							size="icon"
+							onclick={() =>
+								openEditLevelDialog({
+									id: level.levelId,
+									name: level.levelName,
+									level: level.levelNumber
+								})}
+						>
+							<PencilIcon class="h-4 w-4" />
+						</Button>
+						<Button
+							size="icon"
+							variant="ghost"
+							onclick={() => openWorkflowDialog(level.levelNumber)}
+						>
+							<WorkflowIcon class="h-4 w-4" />
+						</Button>
+						<Button size="icon" onclick={() => openCreateDialog(level.levelId)}>
+							<Plus />
+						</Button>
+					</Card.Action>
 				</Card.Header>
-				<Card.Content class="flex gap-2">
-					<Select.Root type="single" bind:value={mockActionType}>
-						<Select.Trigger class="w-[180px]">
-							{actionTypeLabel}
-						</Select.Trigger>
-						<Select.Content>
-							{#each actionTypes as actionType}
-								<Select.Item value={actionType.value}>{actionType.label}</Select.Item>
+				<Card.Content>
+					<ScrollArea.Root class="h-60 w-full rounded-md border">
+						<ul class="divide-y">
+							{#each level.behaviours as behaviour}
+								<li class="hover:bg-accent/50 flex items-center justify-between p-2">
+									<span class="text-sm">{behaviour.label}</span>
+									<Button
+										variant="ghost"
+										size="icon"
+										onclick={() =>
+											openEditDialog({
+												id: parseInt(behaviour.value),
+												name: behaviour.label,
+												description: null,
+												levelId: level.levelId
+											})}
+									>
+										<PencilIcon />
+									</Button>
+								</li>
 							{/each}
-						</Select.Content>
-					</Select.Root>
-
-					{#if mockActionType}
-						<Select.Root type="single" bind:value={mockActionTarget}>
-							<Select.Trigger class="w-[220px]">
-								{actionTargetLabel}
-							</Select.Trigger>
-							<Select.Content>
-								{#each actionTargetOptions() as option}
-									<Select.Item value={option.value}>{option.label}</Select.Item>
-								{/each}
-							</Select.Content>
-						</Select.Root>
-					{/if}
+						</ul>
+					</ScrollArea.Root>
 				</Card.Content>
 			</Card.Root>
+		{/each}
 
-			<!-- Behaviours for this level -->
-			<div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-				{#each level.behaviours as behaviour}
-					<Card.Root>
-						<Card.Header>
-							<Card.Title class="flex items-center justify-between">
-								<span>{behaviour.label}</span>
-								<Button
-									variant="ghost"
-									size="icon"
-									onclick={() =>
-										openEditDialog({
-											id: parseInt(behaviour.value),
-											name: behaviour.label,
-											description: null,
-											levelId: level.levelId
-										})}
-								>
-									<Pencil />
-								</Button>
-							</Card.Title>
-						</Card.Header>
-					</Card.Root>
-				{/each}
-			</div>
-		</div>
-	{/each}
+		{#if canCreateLevel}
+			<Card.Root
+				class="hover:border-primary hover:bg-accent/50 cursor-pointer border-2 border-dashed transition-colors"
+				onclick={openCreateLevelDialog}
+			>
+				<Card.Content class="flex h-full min-h-[200px] items-center justify-center p-6">
+					<div class="flex flex-col items-center gap-2 text-center">
+						<Plus class="text-muted-foreground h-8 w-8" />
+						<div>
+							<p class="font-semibold">Add Level</p>
+							<p class="text-muted-foreground text-sm">Create a new behaviour level</p>
+						</div>
+					</div>
+				</Card.Content>
+			</Card.Root>
+		{:else}
+			<Tooltip.Provider>
+				<Tooltip.Root>
+					<Tooltip.Trigger
+						class="border-border bg-card text-card-foreground w-full cursor-not-allowed rounded-lg border-2 border-dashed opacity-50 shadow-sm"
+					>
+						<div class="flex h-full min-h-[200px] items-center justify-center p-6">
+							<div class="flex flex-col items-center gap-2 text-center">
+								<Plus class="text-muted-foreground h-8 w-8" />
+								<div>
+									<p class="font-semibold">Add Level</p>
+									<p class="text-muted-foreground text-sm">Create a new behaviour level</p>
+								</div>
+							</div>
+						</div>
+					</Tooltip.Trigger>
+					<Tooltip.Content>
+						<p>Only 10 levels are allowed</p>
+					</Tooltip.Content>
+				</Tooltip.Root>
+			</Tooltip.Provider>
+		{/if}
+	</div>
 
 	{#if data.levelsWithBehaviours.length === 0}
 		<Card.Root>
@@ -279,7 +272,6 @@
 	{/if}
 </div>
 
-<!-- Behaviour Dialog -->
 <Dialog.Root bind:open={dialogOpen}>
 	<Dialog.Content>
 		<Dialog.Header>
@@ -394,5 +386,48 @@
 				<Button type="submit">{editingLevel ? 'Update' : 'Create'}</Button>
 			</Dialog.Footer>
 		</form>
+	</Dialog.Content>
+</Dialog.Root>
+
+<Dialog.Root bind:open={workflowDialogOpen}>
+	<Dialog.Content>
+		<Dialog.Header>
+			<Dialog.Title>
+				Actions for Level {workflowLevelNumber}
+			</Dialog.Title>
+		</Dialog.Header>
+		<Card.Description class="mb-2 text-xs">
+			Configure what happens when a behaviour at this level is recorded
+		</Card.Description>
+		<div class="flex gap-2">
+			<Select.Root type="single" bind:value={mockActionType}>
+				<Select.Trigger class="w-[180px]">
+					{actionTypeLabel}
+				</Select.Trigger>
+				<Select.Content>
+					{#each actionTypes as actionType}
+						<Select.Item value={actionType.value}>{actionType.label}</Select.Item>
+					{/each}
+				</Select.Content>
+			</Select.Root>
+
+			{#if mockActionType}
+				<Select.Root type="single" bind:value={mockActionTarget}>
+					<Select.Trigger class="w-[220px]">
+						{actionTargetLabel}
+					</Select.Trigger>
+					<Select.Content>
+						{#each actionTargetOptions() as option}
+							<Select.Item value={option.value}>{option.label}</Select.Item>
+						{/each}
+					</Select.Content>
+				</Select.Root>
+			{/if}
+		</div>
+		<Dialog.Footer>
+			<Button type="button" variant="outline" onclick={() => (workflowDialogOpen = false)}>
+				Close
+			</Button>
+		</Dialog.Footer>
 	</Dialog.Content>
 </Dialog.Root>
