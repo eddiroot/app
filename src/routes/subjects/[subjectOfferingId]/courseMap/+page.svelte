@@ -9,6 +9,7 @@
 		LearningArea,
 		LearningAreaStandard
 	} from '$lib/server/db/schema';
+	import NoteBookText from '@lucide/svelte/icons/notebook-text';
 	import CourseMapItemDrawer from './components/CourseMapItemDrawer.svelte';
 	import CourseMapTable from './components/CourseMapTable.svelte';
 
@@ -271,7 +272,7 @@
 					</Card.Header>
 					<Card.Content class="px-4">
 						{#if data.teachers && data.teachers.length > 0}
-							<div class="flex flex-wrap gap-2">
+							<div class="flex flex-wrap gap-2  px-4">
 								{#each data.teachers as teacher}
 									<Avatar.Root class="h-10 w-10 rounded-lg">
 										{#if teacher.avatarUrl}
@@ -298,7 +299,8 @@
 					</Card.Header>
 					<Card.Content class="pl-4">
 						{#if data.curriculumSubjectInfo}
-							<div class="flex items-center gap-2 ">
+							<div class="flex items-center gap-2 px-4">
+								<NoteBookText class="h-4 w-4 "/>
 								<span>{data.curriculumSubjectInfo.curriculum.name} {data.curriculumSubjectInfo.curriculumSubject.name} </span>
 							</div>
 						{:else}

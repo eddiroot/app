@@ -96,7 +96,7 @@
 							<span class="whitespace-normal">{learningAreaData.learningArea.name}</span>
 						</div>
 					</Table.Cell>
-					<Table.Cell class="border-r border-border align-top text-center">Learning Area</Table.Cell>
+					<Table.Cell class="border-r border-border align-center text-center">Learning Area</Table.Cell>
 					<Table.Cell class="border-r border-border align-top"></Table.Cell>
 					<Table.Cell class="align-top"></Table.Cell>
 				</Table.Row>
