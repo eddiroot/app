@@ -146,7 +146,7 @@
 </script>
 
 <div class="flex h-full flex-col space-y-2">
-	<h1 class="text-3xl font-bold tracking-tight">All Users</h1>
+	<h1 class="text-3xl font-bold tracking-tight">Users</h1>
 	<div class="flex min-h-0 flex-1 flex-col">
 		<div class="flex items-center py-4">
 			<Input
