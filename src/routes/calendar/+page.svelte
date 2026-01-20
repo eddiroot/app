@@ -8,27 +8,24 @@
 	import ChevronRight from '@lucide/svelte/icons/chevron-right';
 	import { generateTimeslots, getClassPosition, getEventPosition } from './utils.js';
 
-	let { data, form } = $props();
+	let { data } = $props();
 
-	let classAllocation = $state(form?.classAllocation || data.classAllocation);
-	let schoolEvents = $state(form?.schoolEvents || data.schoolEvents || []);
-	let campusEvents = $state(form?.campusEvents || data.campusEvents || []);
-	let subjectOfferingEvents = $state(
-		form?.subjectOfferingEvents || data.subjectOfferingEvents || []
-	);
-	let subjectOfferingClassEvents = $state(
-		form?.subjectOfferingClassEvents || data.subjectOfferingClassEvents || []
-	);
-	let userRSVPs = $state(form?.userRSVPs || data.userRSVPs || []);
-	let currentWeekStart = $state(form?.currentWeekStart || data.currentWeekStart);
+	let schoolEvents = $derived(data.schoolEvents);
+	let campusEvents = $derived(data.campusEvents);
+	let subjectOfferingEvents = $derived(data.subjectOfferingEvents);
+	let subjectOfferingClassEvents = $derived(data.subjectOfferingClassEvents);
+	let userRSVPs = $derived(data.userRSVPs);
+	let currentWeekStart = $derived(data.currentWeekStart);
+	let classAllocation = $derived(data.classAllocation);
 
-	let timeslots = generateTimeslots(8, 17);
-	const slotHeightPx = 60; // Static height for each time slot
+	const dayStartHour = 8;
+	let timeslots = generateTimeslots(dayStartHour, 22);
+	const slotHeightPx = 60;
 
 	function formatWeekDisplay(weekStart: string): string {
 		const startDate = new Date(weekStart);
 		const endDate = new Date(startDate);
-		endDate.setDate(startDate.getDate() + 6); // Add 6 days to get Sunday
+		endDate.setDate(startDate.getDate() + 6);
 
 		const formatOptions: Intl.DateTimeFormatOptions = {
 			month: 'short',
@@ -107,7 +104,7 @@
 	}
 </script>
 
-<div class="h-full space-y-4 p-8">
+<div class="bg-background sticky top-0 z-50 space-y-4 p-8">
 	<!-- Week Navigation -->
 	<div class="flex items-center justify-between">
 		<form
@@ -201,73 +198,75 @@
 			</div>
 		{/each}
 	</div>
+</div>
 
-	<!-- Timetable grid -->
-	<div
-		class="relative grid grid-cols-[50px_1fr_1fr_1fr_1fr_1fr] overflow-auto pt-3"
-		style="height: {timeslots.length * slotHeightPx + 12}px;"
-	>
-		<!-- Time legend column -->
-		<div class="bg-background relative">
-			{#each timeslots as slot}
-				<div
-					class="text-muted-foreground flex items-start justify-start pr-4 text-xs"
-					style="height: {slotHeightPx}px; transform: translateY(-8px);"
-				>
-					{slot}
-				</div>
-			{/each}
-		</div>
-
-		{#each days as day}
-			<div class="border-border relative border-r last:border-r-0">
-				<!-- Background timeslot lines -->
-				{#each timeslots}
-					<div class="border-border border-t" style="height: {slotHeightPx}px;"></div>
-				{/each}
-
-				<!-- Classes for this day -->
-				{#each (classAllocation ?? []).filter((c) => {
-					const classDate = new Date(c.classAllocation.date);
-					const dayOfWeek = classDate.getDay();
-					const dayIndex = dayOfWeek === 0 ? -1 : dayOfWeek - 1;
-					return dayIndex >= 0 && dayIndex < days.length && days[dayIndex].value === day.value;
-				}) as cls}
-					{@const position = getClassPosition(
-						8,
-						cls.classAllocation.startTime,
-						cls.classAllocation.endTime,
-						60
-					)}
-					<div
-						style="position: absolute; top: {position.top}; height: {position.height}; left: 4px; right: 4px; z-index: 20;"
-					>
-						<TimetableCard {cls} href="/subjects/{cls.subjectOffering.id}" />
-					</div>
-				{/each}
-				<!-- Events for this day -->
-				{#each getEventsForDay(day.value) as event, eventIndex}
-					{@const position = getEventPosition(
-						8,
-						event.startTimestamp,
-						event.endTimestamp,
-						eventIndex,
-						60
-					)}
-					{@const rsvpStatus = getRSVPStatus(event, event.type)}
-					<div
-						style="position: absolute; top: {position.top}; height: {position.height}; left: 60%; right: 4px; z-index: 30;"
-					>
-						<EventCard
-							{event}
-							eventType={event.type}
-							subjectInfo={event.subject}
-							subjectColor={getSubjectColor(event.subjectOfferingId)}
-							{rsvpStatus}
-						/>
-					</div>
-				{/each}
+<!-- Timetable grid -->
+<div
+	class="relative mt-4 grid grid-cols-[50px_1fr_1fr_1fr_1fr_1fr] p-8 pt-0"
+	style="height: {timeslots.length * slotHeightPx + 12}px;"
+>
+	<!-- Time legend column -->
+	<div class="bg-background relative">
+		{#each timeslots as slot}
+			<div
+				class="text-muted-foreground flex items-start justify-start pr-4 text-xs"
+				style="height: {slotHeightPx}px; transform: translateY(-8px);"
+			>
+				{slot}
 			</div>
 		{/each}
 	</div>
+
+	{#each days as day}
+		<div class="border-border relative border-r last:border-r-0">
+			<!-- Background timeslot lines -->
+			{#each timeslots}
+				<div class="border-border border-t" style="height: {slotHeightPx}px;"></div>
+			{/each}
+
+			<!-- Classes for this day -->
+			{#each classAllocation.filter((c) => {
+				const classDate = new Date(c.classAllocation.date);
+				const dayOfWeek = classDate.getDay();
+				const dayIndex = dayOfWeek === 0 ? -1 : dayOfWeek - 1;
+				return dayIndex >= 0 && dayIndex < days.length && days[dayIndex].value === day.value;
+			}) as cls}
+				{@const position = getClassPosition(
+					dayStartHour,
+					cls.classAllocation.startTime,
+					cls.classAllocation.endTime,
+					60
+				)}
+				<div
+					class="absolute right-1 left-1 hover:z-10"
+					style="top: {position.top}; height: {position.height};"
+				>
+					<TimetableCard {cls} href="/subjects/{cls.subjectOffering.id}" />
+				</div>
+			{/each}
+			<!-- Events for this day -->
+			{#each getEventsForDay(day.value) as event, eventIndex}
+				{@const position = getEventPosition(
+					8,
+					event.startTimestamp,
+					event.endTimestamp,
+					eventIndex,
+					60
+				)}
+				{@const rsvpStatus = getRSVPStatus(event, event.type)}
+				<div
+					class="absolute right-1 left-[60%] hover:z-10"
+					style="top: {position.top}; height: {position.height};"
+				>
+					<EventCard
+						{event}
+						eventType={event.type}
+						subjectInfo={event.subject}
+						subjectColor={getSubjectColor(event.subjectOfferingId)}
+						{rsvpStatus}
+					/>
+				</div>
+			{/each}
+		</div>
+	{/each}
 </div>
