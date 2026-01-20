@@ -327,21 +327,25 @@
 
 	const zoomIn = () => {
 		if (!canvas) return;
-		CanvasActions.zoomIn({ canvas, sendCanvasUpdate }, ZOOM_LIMITS, (zoom) => {
+		CanvasActions.zoomIn({ canvas, sendCanvasUpdate, controlPointManager }, ZOOM_LIMITS, (zoom) => {
 			currentZoom = zoom;
 		});
 	};
 
 	const zoomOut = () => {
 		if (!canvas) return;
-		CanvasActions.zoomOut({ canvas, sendCanvasUpdate }, ZOOM_LIMITS, (zoom) => {
-			currentZoom = zoom;
-		});
+		CanvasActions.zoomOut(
+			{ canvas, sendCanvasUpdate, controlPointManager },
+			ZOOM_LIMITS,
+			(zoom) => {
+				currentZoom = zoom;
+			}
+		);
 	};
 
 	const resetZoom = () => {
 		if (!canvas) return;
-		CanvasActions.resetZoom({ canvas, sendCanvasUpdate }, (zoom) => {
+		CanvasActions.resetZoom({ canvas, sendCanvasUpdate, controlPointManager }, (zoom) => {
 			currentZoom = zoom;
 		});
 	};
@@ -1169,6 +1173,11 @@
 						const point = new fabric.Point(centerX - rect.left, centerY - rect.top);
 						canvas.zoomToPoint(point, constrainedZoom);
 						currentZoom = constrainedZoom; // Update zoom state
+
+						// Update control point sizes to maintain constant visual size
+						if (controlPointManager) {
+							controlPointManager.updateAllControlPointSizes();
+						}
 					}
 
 					e.preventDefault();
@@ -1179,6 +1188,29 @@
 				if (e.touches.length < 2) {
 					initialPinchDistance = 0;
 				}
+			});
+
+			// Add mouse wheel zoom support
+			canvas.on('mouse:wheel', (opt: any) => {
+				const delta = opt.e.deltaY;
+				let zoom = canvas.getZoom();
+				zoom *= 0.999 ** delta;
+
+				// Constrain zoom level
+				if (zoom > ZOOM_LIMITS.max) zoom = ZOOM_LIMITS.max;
+				if (zoom < ZOOM_LIMITS.min) zoom = ZOOM_LIMITS.min;
+
+				// Zoom at pointer position
+				canvas.zoomToPoint({ x: opt.e.offsetX, y: opt.e.offsetY }, zoom);
+				currentZoom = zoom;
+
+				// Update control point sizes to maintain constant visual size
+				if (controlPointManager) {
+					controlPointManager.updateAllControlPointSizes();
+				}
+
+				opt.e.preventDefault();
+				opt.e.stopPropagation();
 			});
 		})(); // Close async IIFE
 

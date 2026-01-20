@@ -144,6 +144,11 @@ export function zoomIn(
 	const center = new fabric.Point(context.canvas.width! / 2, context.canvas.height! / 2)
 	context.canvas.zoomToPoint(center, newZoom)
 	setCurrentZoom(newZoom)
+
+	// Update control point sizes to maintain constant visual size
+	if (context.controlPointManager) {
+		context.controlPointManager.updateAllControlPointSizes()
+	}
 }
 
 /**
@@ -158,6 +163,11 @@ export function zoomOut(
 	const center = new fabric.Point(context.canvas.width! / 2, context.canvas.height! / 2)
 	context.canvas.zoomToPoint(center, newZoom)
 	setCurrentZoom(newZoom)
+
+	// Update control point sizes to maintain constant visual size
+	if (context.controlPointManager) {
+		context.controlPointManager.updateAllControlPointSizes()
+	}
 }
 
 /**
@@ -171,6 +181,12 @@ export function resetZoom(
 	const center = new fabric.Point(context.canvas.width! / 2, context.canvas.height! / 2)
 	context.canvas.zoomToPoint(center, 1)
 	setCurrentZoom(1)
+
+	// Update control point sizes to maintain constant visual size
+	if (context.controlPointManager) {
+		context.controlPointManager.updateAllControlPointSizes()
+	}
+
 	context.canvas.renderAll()
 }
 

@@ -23,6 +23,22 @@ export abstract class ControlPointHandler {
 	}
 
 	/**
+	 * Update the visual size of control points based on zoom level
+	 */
+	updateControlPointSizes(): void {
+		const zoom = this.canvas.getZoom()
+		const scale = 1 / zoom // Inverse scale to maintain constant visual size
+
+		this.controlPoints.forEach((cp) => {
+			cp.circle.set({
+				radius: 6 * scale,
+				strokeWidth: 2 * scale
+			})
+			cp.circle.setCoords()
+		})
+	}
+
+	/**
 	 * Add control points for an object
 	 */
 	abstract addControlPoints(objectId: string, obj: fabric.Object, visible?: boolean): void
@@ -122,11 +138,15 @@ export abstract class ControlPointHandler {
 		pointIndex: number,
 		selectable: boolean = true
 	): fabric.Circle {
+		// Get current zoom to size control points correctly from the start
+		const zoom = this.canvas.getZoom()
+		const scale = 1 / zoom
+
 		const circle = new fabric.Circle({
-			radius: 6,
+			radius: 6 * scale,
 			fill: 'oklch(0.6171 0.1375 39.0427)',
 			stroke: 'oklch(0.5171 0.1375 39.0427)',
-			strokeWidth: 2,
+			strokeWidth: 2 * scale,
 			left: x,
 			top: y,
 			originX: 'center',
@@ -334,6 +354,14 @@ export abstract class BoundingBoxControlPoints extends ControlPointHandler {
 	protected edgeLines: Map<string, fabric.Line> = new Map()
 
 	/**
+	 * Get the zoom-adjusted distance for the rotation handle
+	 */
+	protected getRotationHandleDistance(): number {
+		const zoom = this.canvas.getZoom()
+		return 30 / zoom // Scale inversely with zoom to maintain constant visual distance
+	}
+
+	/**
 	 * Override to also bring edge lines to front
 	 */
 	bringControlPointsToFront(): void {
@@ -344,6 +372,70 @@ export abstract class BoundingBoxControlPoints extends ControlPointHandler {
 		// Then bring control point circles to front (so they're on top of the lines)
 		this.controlPoints.forEach((cp) => {
 			this.canvas.bringObjectToFront(cp.circle)
+		})
+	}
+
+	/**
+	 * Override to also update edge line sizes and rotation handle position
+	 */
+	updateControlPointSizes(): void {
+		const zoom = this.canvas.getZoom()
+		const scale = 1 / zoom
+
+		// Update control point circles
+		this.controlPoints.forEach((cp) => {
+			cp.circle.set({
+				radius: 6 * scale,
+				strokeWidth: 2 * scale
+			})
+			cp.circle.setCoords()
+		})
+
+		// Update edge lines
+		this.edgeLines.forEach((line) => {
+			line.set({
+				strokeWidth: 1.5 * scale
+			})
+			line.setCoords()
+		})
+
+		// Update rotation handle positions (index 12) for all objects with rotation handles
+		const objectsWithRotation = new Set<string>()
+		this.controlPoints.forEach((cp) => {
+			if (cp.pointIndex === 12) {
+				objectsWithRotation.add(cp.objectId)
+			}
+		})
+
+		objectsWithRotation.forEach((objectId) => {
+			// Find the object
+			const obj = this.canvas.getObjects().find((o: any) => o.id === objectId)
+			if (obj) {
+				// Update just the rotation handle position
+				const rotationCp = this.controlPoints.find(
+					(cp) => cp.objectId === objectId && cp.pointIndex === 12
+				)
+				const topMidpointCp = this.controlPoints.find(
+					(cp) => cp.objectId === objectId && cp.pointIndex === 8
+				)
+
+				if (rotationCp && topMidpointCp) {
+					const center = obj.getCenterPoint()
+					const topMidpoint = topMidpointCp.circle.getCenterPoint()
+					const vectorX = topMidpoint.x - center.x
+					const vectorY = topMidpoint.y - center.y
+					const vectorLength = Math.sqrt(vectorX * vectorX + vectorY * vectorY)
+					const normalizedX = vectorX / vectorLength
+					const normalizedY = vectorY / vectorLength
+					const rotationDistance = this.getRotationHandleDistance()
+
+					rotationCp.circle.set({
+						left: center.x + normalizedX * (vectorLength + rotationDistance),
+						top: center.y + normalizedY * (vectorLength + rotationDistance)
+					})
+					rotationCp.circle.setCoords()
+				}
+			}
 		})
 	}
 }
@@ -477,8 +569,9 @@ export class RectangleControlPoints extends BoundingBoxControlPoints {
 		const vectorLength = Math.sqrt(vectorX * vectorX + vectorY * vectorY)
 		const normalizedX = vectorX / vectorLength
 		const normalizedY = vectorY / vectorLength
-		const rotationX = center.x + normalizedX * (vectorLength + 30)
-		const rotationY = center.y + normalizedY * (vectorLength + 30)
+		const rotationDistance = this.getRotationHandleDistance()
+		const rotationX = center.x + normalizedX * (vectorLength + rotationDistance)
+		const rotationY = center.y + normalizedY * (vectorLength + rotationDistance)
 		const rotationControlPointId = `${objectId}-cp-12`
 		const rotationCircle = this.createControlPointCircle(
 			rotationX,
@@ -654,11 +747,12 @@ export class RectangleControlPoints extends BoundingBoxControlPoints {
 			const vectorY = topMidpoint.y - center.y
 			const vectorLength = Math.sqrt(vectorX * vectorX + vectorY * vectorY)
 
-			// Normalize and extend by 30px
+			// Normalize and extend by zoom-adjusted distance
 			const normalizedX = vectorX / vectorLength
 			const normalizedY = vectorY / vectorLength
-			const rotationX = center.x + normalizedX * (vectorLength + 30)
-			const rotationY = center.y + normalizedY * (vectorLength + 30)
+			const rotationDistance = this.getRotationHandleDistance()
+			const rotationX = center.x + normalizedX * (vectorLength + rotationDistance)
+			const rotationY = center.y + normalizedY * (vectorLength + rotationDistance)
 
 			rotationCp.circle.set({
 				left: rotationX,
@@ -1031,16 +1125,20 @@ export class EllipseControlPoints extends BoundingBoxControlPoints {
 		const ellipse = obj as fabric.Ellipse
 		const rx = ellipse.rx || 0
 		const ry = ellipse.ry || 0
+		const strokeWidth = ellipse.strokeWidth || 0
+
+		// Add padding to account for stroke width - half extends outside
+		const padding = strokeWidth / 2
 
 		// Get transformation matrix for handling rotations/scaling
 		const matrix = ellipse.calcTransformMatrix()
 
-		// Define the 4 corners of the bounding rectangle in local coordinates
+		// Define the 4 corners of the bounding rectangle in local coordinates with padding
 		const corners = [
-			{ x: -rx, y: -ry }, // Top-left
-			{ x: rx, y: -ry }, // Top-right
-			{ x: rx, y: ry }, // Bottom-right
-			{ x: -rx, y: ry } // Bottom-left
+			{ x: -(rx + padding), y: -(ry + padding) }, // Top-left
+			{ x: rx + padding, y: -(ry + padding) }, // Top-right
+			{ x: rx + padding, y: ry + padding }, // Bottom-right
+			{ x: -(rx + padding), y: ry + padding } // Bottom-left
 		]
 
 		// Transform corners to absolute coordinates
@@ -1113,7 +1211,7 @@ export class EllipseControlPoints extends BoundingBoxControlPoints {
 			})
 		})
 
-		// Create rotation handle (index 12) - floating, 30px above the top edge in rotated space
+		// Create rotation handle (index 12) - floating, zoom-adjusted distance above the top edge in rotated space
 		const topMidpoint = edgeMidpoints[0] // Top edge midpoint
 		const center = ellipse.getCenterPoint()
 		const vectorX = topMidpoint.x - center.x
@@ -1121,8 +1219,9 @@ export class EllipseControlPoints extends BoundingBoxControlPoints {
 		const vectorLength = Math.sqrt(vectorX * vectorX + vectorY * vectorY)
 		const normalizedX = vectorX / vectorLength
 		const normalizedY = vectorY / vectorLength
-		const rotationX = center.x + normalizedX * (vectorLength + 30)
-		const rotationY = center.y + normalizedY * (vectorLength + 30)
+		const rotationDistance = this.getRotationHandleDistance()
+		const rotationX = center.x + normalizedX * (vectorLength + rotationDistance)
+		const rotationY = center.y + normalizedY * (vectorLength + rotationDistance)
 		const rotationControlPointId = `${objectId}-cp-12`
 		const rotationCircle = this.createControlPointCircle(
 			rotationX,
@@ -1143,6 +1242,10 @@ export class EllipseControlPoints extends BoundingBoxControlPoints {
 		// No connector line - rotation handle is floating
 
 		// Create light solid border lines (4 edges)
+		// Get current zoom to size edge lines correctly from the start
+		const zoom = this.canvas.getZoom()
+		const scale = 1 / zoom
+
 		const edges = [
 			{ start: 0, end: 1 }, // Top
 			{ start: 1, end: 2 }, // Right
@@ -1156,7 +1259,7 @@ export class EllipseControlPoints extends BoundingBoxControlPoints {
 			const endCorner = absoluteCorners[end]
 			const edgeLine = new fabric.Line([startCorner.x, startCorner.y, endCorner.x, endCorner.y], {
 				stroke: 'oklch(0.8 0.05 39.0427)', // Light orange, reduced saturation
-				strokeWidth: 1.5,
+				strokeWidth: 1.5 * scale,
 				selectable: false,
 				evented: false,
 				excludeFromExport: true,
@@ -1244,16 +1347,20 @@ export class EllipseControlPoints extends BoundingBoxControlPoints {
 
 		const rx = ellipse.rx || 0
 		const ry = ellipse.ry || 0
+		const strokeWidth = ellipse.strokeWidth || 0
+
+		// Add padding to account for stroke width
+		const padding = strokeWidth / 2
 
 		// Get transformation matrix
 		const matrix = ellipse.calcTransformMatrix()
 
-		// Define corners in local coordinates
+		// Define corners in local coordinates with padding
 		const corners = [
-			{ x: -rx, y: -ry }, // Top-left
-			{ x: rx, y: -ry }, // Top-right
-			{ x: rx, y: ry }, // Bottom-right
-			{ x: -rx, y: ry } // Bottom-left
+			{ x: -(rx + padding), y: -(ry + padding) }, // Top-left
+			{ x: rx + padding, y: -(ry + padding) }, // Top-right
+			{ x: rx + padding, y: ry + padding }, // Bottom-right
+			{ x: -(rx + padding), y: ry + padding } // Bottom-left
 		]
 
 		// Transform to absolute coordinates
@@ -1318,11 +1425,12 @@ export class EllipseControlPoints extends BoundingBoxControlPoints {
 			const vectorY = topMidpoint.y - center.y
 			const vectorLength = Math.sqrt(vectorX * vectorX + vectorY * vectorY)
 
-			// Normalize and extend by 30px
+			// Normalize and extend by zoom-adjusted distance
 			const normalizedX = vectorX / vectorLength
 			const normalizedY = vectorY / vectorLength
-			const rotationX = center.x + normalizedX * (vectorLength + 30)
-			const rotationY = center.y + normalizedY * (vectorLength + 30)
+			const rotationDistance = this.getRotationHandleDistance()
+			const rotationX = center.x + normalizedX * (vectorLength + rotationDistance)
+			const rotationY = center.y + normalizedY * (vectorLength + rotationDistance)
 
 			rotationCp.circle.set({
 				left: rotationX,
@@ -1632,16 +1740,20 @@ export class TriangleControlPoints extends BoundingBoxControlPoints {
 		const triangle = obj as fabric.Triangle
 		const width = triangle.width || 0
 		const height = triangle.height || 0
+		const strokeWidth = triangle.strokeWidth || 0
+
+		// Add padding to account for stroke width
+		const padding = strokeWidth / 2
 
 		// Get transformation matrix for handling rotations/scaling
 		const matrix = triangle.calcTransformMatrix()
 
-		// Define the 4 corners of the bounding rectangle in local coordinates
+		// Define the 4 corners of the bounding rectangle in local coordinates with padding
 		const corners = [
-			{ x: -width / 2, y: -height / 2 }, // Top-left
-			{ x: width / 2, y: -height / 2 }, // Top-right
-			{ x: width / 2, y: height / 2 }, // Bottom-right
-			{ x: -width / 2, y: height / 2 } // Bottom-left
+			{ x: -(width / 2 + padding), y: -(height / 2 + padding) }, // Top-left
+			{ x: width / 2 + padding, y: -(height / 2 + padding) }, // Top-right
+			{ x: width / 2 + padding, y: height / 2 + padding }, // Bottom-right
+			{ x: -(width / 2 + padding), y: height / 2 + padding } // Bottom-left
 		]
 
 		// Transform corners to absolute coordinates
@@ -1714,7 +1826,7 @@ export class TriangleControlPoints extends BoundingBoxControlPoints {
 			})
 		})
 
-		// Create rotation handle (index 12) - floating, 30px above the top edge in rotated space
+		// Create rotation handle (index 12) - floating, zoom-adjusted distance above the top edge in rotated space
 		const topMidpoint = edgeMidpoints[0] // Top edge midpoint
 		const center = triangle.getCenterPoint()
 		const vectorX = topMidpoint.x - center.x
@@ -1722,8 +1834,9 @@ export class TriangleControlPoints extends BoundingBoxControlPoints {
 		const vectorLength = Math.sqrt(vectorX * vectorX + vectorY * vectorY)
 		const normalizedX = vectorX / vectorLength
 		const normalizedY = vectorY / vectorLength
-		const rotationX = center.x + normalizedX * (vectorLength + 30)
-		const rotationY = center.y + normalizedY * (vectorLength + 30)
+		const rotationDistance = this.getRotationHandleDistance()
+		const rotationX = center.x + normalizedX * (vectorLength + rotationDistance)
+		const rotationY = center.y + normalizedY * (vectorLength + rotationDistance)
 		const rotationControlPointId = `${objectId}-cp-12`
 		const rotationCircle = this.createControlPointCircle(
 			rotationX,
@@ -1743,6 +1856,10 @@ export class TriangleControlPoints extends BoundingBoxControlPoints {
 		})
 
 		// Create light solid border lines (4 edges)
+		// Get current zoom to size edge lines correctly from the start
+		const zoom = this.canvas.getZoom()
+		const scale = 1 / zoom
+
 		const edges = [
 			{ start: 0, end: 1 }, // Top
 			{ start: 1, end: 2 }, // Right
@@ -1756,7 +1873,7 @@ export class TriangleControlPoints extends BoundingBoxControlPoints {
 			const endCorner = absoluteCorners[end]
 			const edgeLine = new fabric.Line([startCorner.x, startCorner.y, endCorner.x, endCorner.y], {
 				stroke: 'oklch(0.8 0.05 39.0427)', // Light orange, reduced saturation
-				strokeWidth: 1.5,
+				strokeWidth: 1.5 * scale,
 				selectable: false,
 				evented: false,
 				excludeFromExport: true,
@@ -1844,16 +1961,20 @@ export class TriangleControlPoints extends BoundingBoxControlPoints {
 
 		const width = triangle.width || 0
 		const height = triangle.height || 0
+		const strokeWidth = triangle.strokeWidth || 0
+
+		// Add padding to account for stroke width
+		const padding = strokeWidth / 2
 
 		// Get transformation matrix
 		const matrix = triangle.calcTransformMatrix()
 
-		// Define corners in local coordinates
+		// Define corners in local coordinates with padding
 		const corners = [
-			{ x: -width / 2, y: -height / 2 }, // Top-left
-			{ x: width / 2, y: -height / 2 }, // Top-right
-			{ x: width / 2, y: height / 2 }, // Bottom-right
-			{ x: -width / 2, y: height / 2 } // Bottom-left
+			{ x: -(width / 2 + padding), y: -(height / 2 + padding) }, // Top-left
+			{ x: width / 2 + padding, y: -(height / 2 + padding) }, // Top-right
+			{ x: width / 2 + padding, y: height / 2 + padding }, // Bottom-right
+			{ x: -(width / 2 + padding), y: height / 2 + padding } // Bottom-left
 		]
 
 		// Transform to absolute coordinates
@@ -2231,16 +2352,19 @@ export class TextboxControlPoints extends BoundingBoxControlPoints {
 		const angle = textbox.angle || 0
 		const angleRad = (angle * Math.PI) / 180
 
+		// Add padding to account for text overflow (descenders, etc.)
+		const padding = 3
+
 		// Calculate the four corners by rotating around top-left origin
 		const cos = Math.cos(angleRad)
 		const sin = Math.sin(angleRad)
 
-		// Define corners in local space (before rotation)
+		// Define corners in local space (before rotation) with padding
 		const localCorners = [
-			{ x: 0, y: 0 }, // Top-left
-			{ x: width, y: 0 }, // Top-right
-			{ x: width, y: height }, // Bottom-right
-			{ x: 0, y: height } // Bottom-left
+			{ x: -padding, y: -padding }, // Top-left
+			{ x: width + padding, y: -padding }, // Top-right
+			{ x: width + padding, y: height + padding }, // Bottom-right
+			{ x: -padding, y: height + padding } // Bottom-left
 		]
 
 		// Rotate each corner around the origin (top-left) and add the textbox position
@@ -2336,6 +2460,9 @@ export class TextboxControlPoints extends BoundingBoxControlPoints {
 		})
 
 		// Create border lines
+		const zoom = this.canvas.getZoom()
+		const scale = 1 / zoom
+
 		const edges = [
 			{ start: 0, end: 1 }, // Top
 			{ start: 1, end: 2 }, // Right
@@ -2349,7 +2476,7 @@ export class TextboxControlPoints extends BoundingBoxControlPoints {
 			const endCorner = corners[end]
 			const edgeLine = new fabric.Line([startCorner.x, startCorner.y, endCorner.x, endCorner.y], {
 				stroke: 'oklch(0.8 0.05 39.0427)',
-				strokeWidth: 1.5,
+				strokeWidth: 1.5 * scale,
 				selectable: false,
 				evented: false,
 				excludeFromExport: true,
@@ -2426,16 +2553,19 @@ export class TextboxControlPoints extends BoundingBoxControlPoints {
 		const angle = textbox.angle || 0
 		const angleRad = (angle * Math.PI) / 180
 
+		// Add padding to account for text overflow
+		const padding = 3
+
 		// Calculate the four corners by rotating around top-left origin
 		const cos = Math.cos(angleRad)
 		const sin = Math.sin(angleRad)
 
-		// Define corners in local space (before rotation)
+		// Define corners in local space (before rotation) with padding
 		const localCorners = [
-			{ x: 0, y: 0 }, // Top-left
-			{ x: width, y: 0 }, // Top-right
-			{ x: width, y: height }, // Bottom-right
-			{ x: 0, y: height } // Bottom-left
+			{ x: -padding, y: -padding }, // Top-left
+			{ x: width + padding, y: -padding }, // Top-right
+			{ x: width + padding, y: height + padding }, // Bottom-right
+			{ x: -padding, y: height + padding } // Bottom-left
 		]
 
 		// Rotate each corner around the origin (top-left) and add the textbox position
@@ -2790,7 +2920,7 @@ export class ImageControlPoints extends BoundingBoxControlPoints {
 			})
 		})
 
-		// Create rotation handle (index 12) - floating, 30px above the top edge in rotated space
+		// Create rotation handle (index 12) - floating, zoom-adjusted distance above the top edge in rotated space
 		const topMidpoint = edgeMidpoints[0]
 		const center = image.getCenterPoint()
 		const vectorX = topMidpoint.x - center.x
@@ -2798,8 +2928,9 @@ export class ImageControlPoints extends BoundingBoxControlPoints {
 		const vectorLength = Math.sqrt(vectorX * vectorX + vectorY * vectorY)
 		const normalizedX = vectorX / vectorLength
 		const normalizedY = vectorY / vectorLength
-		const rotationX = center.x + normalizedX * (vectorLength + 30)
-		const rotationY = center.y + normalizedY * (vectorLength + 30)
+		const rotationDistance = this.getRotationHandleDistance()
+		const rotationX = center.x + normalizedX * (vectorLength + rotationDistance)
+		const rotationY = center.y + normalizedY * (vectorLength + rotationDistance)
 		const rotationControlPointId = `${objectId}-cp-12`
 		const rotationCircle = this.createControlPointCircle(
 			rotationX,
@@ -2819,6 +2950,9 @@ export class ImageControlPoints extends BoundingBoxControlPoints {
 		})
 
 		// Create border lines
+		const zoom = this.canvas.getZoom()
+		const scale = 1 / zoom
+
 		const edges = [
 			{ start: 0, end: 1 },
 			{ start: 1, end: 2 },
@@ -2837,7 +2971,7 @@ export class ImageControlPoints extends BoundingBoxControlPoints {
 				],
 				{
 					stroke: 'oklch(0.8 0.05 39.0427)',
-					strokeWidth: 1.5,
+					strokeWidth: 1.5 * scale,
 					selectable: false,
 					evented: false,
 					excludeFromExport: true,
@@ -3273,12 +3407,21 @@ export class PathControlPoints extends BoundingBoxControlPoints {
 			})
 		})
 
-		// Create rotation handle
+		// Create rotation handle with zoom-adjusted distance
 		const topMidpoint = edgeMidpoints[0]
+		const center = path.getCenterPoint()
+		const vectorX = topMidpoint.x - center.x
+		const vectorY = topMidpoint.y - center.y
+		const vectorLength = Math.sqrt(vectorX * vectorX + vectorY * vectorY)
+		const normalizedX = vectorX / vectorLength
+		const normalizedY = vectorY / vectorLength
+		const rotationDistance = this.getRotationHandleDistance()
+		const rotationX = center.x + normalizedX * (vectorLength + rotationDistance)
+		const rotationY = center.y + normalizedY * (vectorLength + rotationDistance)
 		const rotationControlPointId = `${objectId}-cp-12`
 		const rotationCircle = this.createControlPointCircle(
-			topMidpoint.x,
-			topMidpoint.y - 30,
+			rotationX,
+			rotationY,
 			rotationControlPointId,
 			objectId,
 			12,
@@ -3294,6 +3437,9 @@ export class PathControlPoints extends BoundingBoxControlPoints {
 		})
 
 		// Create border lines
+		const zoom = this.canvas.getZoom()
+		const scale = 1 / zoom
+
 		const edges = [
 			{ start: 0, end: 1 },
 			{ start: 1, end: 2 },
@@ -3307,7 +3453,7 @@ export class PathControlPoints extends BoundingBoxControlPoints {
 				[corners[start].x, corners[start].y, corners[end].x, corners[end].y],
 				{
 					stroke: 'oklch(0.8 0.05 39.0427)',
-					strokeWidth: 1.5,
+					strokeWidth: 1.5 * scale,
 					selectable: false,
 					evented: false,
 					excludeFromExport: true,
@@ -3399,7 +3545,7 @@ export class PathControlPoints extends BoundingBoxControlPoints {
 			}
 		})
 
-		// Update rotation handle
+		// Update rotation handle with zoom-adjusted distance
 		const topMidpoint = edgeMidpoints[0]
 		const rotationCp = controlPoints.find((cp) => cp.pointIndex === 12)
 		if (rotationCp) {
@@ -3409,9 +3555,10 @@ export class PathControlPoints extends BoundingBoxControlPoints {
 			const vectorLength = Math.sqrt(vectorX * vectorX + vectorY * vectorY)
 			const normalizedX = vectorX / vectorLength
 			const normalizedY = vectorY / vectorLength
+			const rotationDistance = this.getRotationHandleDistance()
 			rotationCp.circle.set({
-				left: center.x + normalizedX * (vectorLength + 30),
-				top: center.y + normalizedY * (vectorLength + 30)
+				left: center.x + normalizedX * (vectorLength + rotationDistance),
+				top: center.y + normalizedY * (vectorLength + rotationDistance)
 			})
 			rotationCp.circle.setCoords()
 		}
@@ -3852,5 +3999,35 @@ export class ControlPointManager {
 			allPoints.push(...handler.getAllControlPoints())
 		})
 		return allPoints
+	}
+
+	/**
+	 * Update all control point and border sizes based on current zoom level
+	 * Also updates positions to match the current object coordinates
+	 */
+	updateAllControlPointSizes(): void {
+		// First, update sizes
+		this.handlers.forEach((handler) => {
+			handler.updateControlPointSizes()
+		})
+
+		// Then, update positions for all objects with control points
+		// This ensures control points stay aligned with their objects at the new zoom level
+		const processedObjects = new Set<string>()
+		this.handlers.forEach((handler) => {
+			const allPoints = handler.getAllControlPoints()
+			allPoints.forEach((cp) => {
+				if (!processedObjects.has(cp.objectId)) {
+					processedObjects.add(cp.objectId)
+					// Find the object and update its control points
+					const obj = this.canvas.getObjects().find((o: any) => o.id === cp.objectId)
+					if (obj) {
+						handler.updateControlPoints(cp.objectId, obj)
+					}
+				}
+			})
+		})
+
+		this.canvas.renderAll()
 	}
 }
