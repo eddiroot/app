@@ -1,9 +1,11 @@
 <script lang="ts">
+	import { dev } from '$app/environment';
 	import { page } from '$app/state';
 	import AiSidebar from '$lib/components/ai-sidebar.svelte';
 	import AppSidebar from '$lib/components/app-sidebar.svelte';
 	import ThemeToggle from '$lib/components/theme-toggle.svelte';
 	import * as Breadcrumb from '$lib/components/ui/breadcrumb/index.js';
+	import Button from '$lib/components/ui/button/button.svelte';
 	import * as Resizable from '$lib/components/ui/resizable';
 	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
 	import { Toaster } from '$lib/components/ui/sonner/index.js';
@@ -130,6 +132,8 @@
 								}
 							}}
 						/>
+					{:else if !user() && !page.url.pathname.startsWith('/login') && dev}
+						<Button href="/login">Login</Button>
 					{/if}
 				</div>
 			</nav>
