@@ -11,6 +11,12 @@ export interface CanvasActionContext {
 	onImageAdded?: (img: fabric.FabricImage) => void
 	socket?: any
 	controlPointManager?: ControlPointManager
+	// Callback for batch clear operations (for history recording)
+	onClearComplete?: (deletedObjects: Array<{ id: string; data: Record<string, unknown> }>) => void
+	// Callback to set flag before clearing (to prevent individual history recording)
+	setClearingCanvas?: (value: boolean) => void
+	// Callback for layer changes (for history recording)
+	onLayerChange?: (objectId: string, previousIndex: number, newIndex: number) => void
 }
 
 /**
@@ -95,7 +101,36 @@ export function handleImageUpload(event: Event, context: CanvasActionContext): v
  * Clears all objects from the canvas
  */
 export function clearCanvas(context: CanvasActionContext): void {
+	// Collect all objects for batch history recording (exclude control points)
+	const allObjects = context.canvas.getObjects()
+	const objectsToDelete: Array<{ id: string; data: Record<string, unknown> }> = []
+
+	allObjects.forEach((obj) => {
+		// Skip control points
+		if (context.controlPointManager?.isControlPoint(obj)) return
+		// @ts-expect-error - Custom id property
+		const objectId = obj.id
+		if (objectId) {
+			const objData = obj.toObject()
+			objData.id = objectId
+			objectsToDelete.push({ id: objectId, data: objData })
+		}
+	})
+
+	// Set flag to prevent individual history recording
+	context.setClearingCanvas?.(true)
+
+	// Clear the canvas
 	context.canvas.clear()
+
+	// Reset flag
+	context.setClearingCanvas?.(false)
+
+	// Record batch delete for history
+	if (objectsToDelete.length > 0) {
+		context.onClearComplete?.(objectsToDelete)
+	}
+
 	context.sendCanvasUpdate({
 		type: 'clear'
 	})
@@ -215,7 +250,19 @@ export function bringToFront(context: CanvasActionContext): void {
 	const activeObject = context.canvas.getActiveObject()
 	if (!activeObject) return
 
+	// Capture the previous index for history
+	const objects = context.canvas.getObjects()
+	const previousIndex = objects.indexOf(activeObject)
+
 	context.canvas.bringObjectToFront(activeObject)
+
+	// Capture the new index
+	const newObjects = context.canvas.getObjects()
+	const newIndex = newObjects.indexOf(activeObject)
+
+	// Record layer change for history
+	// @ts-expect-error - Custom id property
+	context.onLayerChange?.(activeObject.id, previousIndex, newIndex)
 
 	// Ensure control points and borders stay on top of the object
 	if (context.controlPointManager) {
@@ -241,7 +288,19 @@ export function sendToBack(context: CanvasActionContext): void {
 	const activeObject = context.canvas.getActiveObject()
 	if (!activeObject) return
 
+	// Capture the previous index for history
+	const objects = context.canvas.getObjects()
+	const previousIndex = objects.indexOf(activeObject)
+
 	context.canvas.sendObjectToBack(activeObject)
+
+	// Capture the new index
+	const newObjects = context.canvas.getObjects()
+	const newIndex = newObjects.indexOf(activeObject)
+
+	// Record layer change for history
+	// @ts-expect-error - Custom id property
+	context.onLayerChange?.(activeObject.id, previousIndex, newIndex)
 
 	// Ensure control points and borders stay on top of the object
 	if (context.controlPointManager) {
@@ -267,7 +326,19 @@ export function moveForward(context: CanvasActionContext): void {
 	const activeObject = context.canvas.getActiveObject()
 	if (!activeObject) return
 
+	// Capture the previous index for history
+	const objects = context.canvas.getObjects()
+	const previousIndex = objects.indexOf(activeObject)
+
 	context.canvas.bringObjectForward(activeObject)
+
+	// Capture the new index
+	const newObjects = context.canvas.getObjects()
+	const newIndex = newObjects.indexOf(activeObject)
+
+	// Record layer change for history
+	// @ts-expect-error - Custom id property
+	context.onLayerChange?.(activeObject.id, previousIndex, newIndex)
 
 	// Ensure control points and borders stay on top of the object
 	if (context.controlPointManager) {
@@ -293,7 +364,19 @@ export function moveBackward(context: CanvasActionContext): void {
 	const activeObject = context.canvas.getActiveObject()
 	if (!activeObject) return
 
+	// Capture the previous index for history
+	const objects = context.canvas.getObjects()
+	const previousIndex = objects.indexOf(activeObject)
+
 	context.canvas.sendObjectBackwards(activeObject)
+
+	// Capture the new index
+	const newObjects = context.canvas.getObjects()
+	const newIndex = newObjects.indexOf(activeObject)
+
+	// Record layer change for history
+	// @ts-expect-error - Custom id property
+	context.onLayerChange?.(activeObject.id, previousIndex, newIndex)
 
 	// Ensure control points and borders stay on top of the object
 	if (context.controlPointManager) {

@@ -65,6 +65,8 @@ export interface CanvasEventContext {
 		immediate: boolean
 	) => void
 	clearEraserState: () => void
+	// Callback for batch eraser deletions (for history recording)
+	onEraserComplete?: (deletedObjects: Array<{ id: string; data: Record<string, unknown> }>) => void
 	floatingMenuRef?: {
 		updateTextOptions?: (options: Partial<TextOptions>) => void
 		updateShapeOptions?: (options: Partial<ShapeOptions>) => void
@@ -335,6 +337,14 @@ export const createMouseUpHandler = (canvas: fabric.Canvas, ctx: CanvasEventCont
 				object: objData
 			})
 
+			// Re-enable history recording AFTER shape is finalized
+			// The page component will detect this and record the add action
+			ctx.setIsDrawingObject?.(false)
+
+			// Dispatch a custom event to signal that the shape is finalized and should be recorded
+			// @ts-expect-error - custom id property
+			canvas.fire('object:finalized', { target: tempShape })
+
 			// Auto-switch to selection tool while keeping floating menu open
 			ctx.setSelectedTool('select')
 			canvas.isDrawingMode = false
@@ -360,7 +370,6 @@ export const createMouseUpHandler = (canvas: fabric.Canvas, ctx: CanvasEventCont
 			ctx.setIsDrawingShape(false)
 			ctx.setCurrentShapeType('')
 			ctx.setTempShape(null)
-			ctx.setIsDrawingObject?.(false) // Re-enable history recording
 		}
 
 		// Handle line completion
@@ -380,6 +389,13 @@ export const createMouseUpHandler = (canvas: fabric.Canvas, ctx: CanvasEventCont
 				type: 'add',
 				object: objData
 			})
+
+			// Re-enable history recording AFTER line is finalized
+			ctx.setIsDrawingObject?.(false)
+
+			// Dispatch a custom event to signal that the line is finalized and should be recorded
+			// @ts-expect-error - custom id property
+			canvas.fire('object:finalized', { target: tempLine })
 
 			// Auto-switch to selection tool while keeping floating menu open
 			ctx.setSelectedTool('select')
@@ -433,26 +449,52 @@ export const createMouseUpHandler = (canvas: fabric.Canvas, ctx: CanvasEventCont
 			// Reset drawing state
 			ctx.setIsDrawingLine(false)
 			ctx.setTempLine(null)
-			ctx.setIsDrawingObject?.(false) // Re-enable history recording
 		}
 
 		// Handle eraser completion
 		if (ctx.getIsErasing()) {
 			ctx.setIsErasing(false)
 
-			// Delete all objects that were marked for deletion
-			ctx.getHoveredObjectsForDeletion().forEach((obj) => {
+			const objectsToDelete = ctx.getHoveredObjectsForDeletion()
+			const originalOpacities = ctx.getOriginalOpacities()
+
+			// Collect all objects for batch history recording (with original opacity restored)
+			const batchDeletedObjects: Array<{ id: string; data: Record<string, unknown> }> = []
+
+			// First pass: collect all object data with original opacity restored
+			objectsToDelete.forEach((obj) => {
+				// @ts-expect-error - custom id property
+				const objectId = obj.id
+				// Get the original opacity before the eraser changed it
+				const originalOpacity = originalOpacities.get(obj) || obj.opacity || 1
+
+				// Store object data with original opacity restored for history
+				const objData = obj.toObject()
+				objData.id = objectId
+				objData.opacity = originalOpacity // Restore original opacity in saved data
+				batchDeletedObjects.push({ id: objectId, data: objData })
+			})
+
+			// Call the batch delete callback BEFORE removing objects
+			// This marks the IDs so object:removed events are skipped
+			if (batchDeletedObjects.length > 0 && ctx.onEraserComplete) {
+				ctx.onEraserComplete(batchDeletedObjects)
+			}
+
+			// Second pass: now remove the objects (object:removed will skip these)
+			objectsToDelete.forEach((obj) => {
+				// @ts-expect-error - custom id property
+				const objectId = obj.id
+
 				// Remove control points if this is a polyline
 				if (obj.type === 'polyline' && ctx.controlPointManager) {
-					// @ts-expect-error - custom id property
-					ctx.controlPointManager.removeControlPoints(obj.id)
+					ctx.controlPointManager.removeControlPoints(objectId)
 				}
 				canvas.remove(obj)
 				// Send delete message to other users
 				ctx.sendCanvasUpdate({
 					type: 'delete',
-					// @ts-expect-error - custom id property
-					object: { id: obj.id }
+					object: { id: objectId }
 				})
 			})
 
@@ -954,6 +996,9 @@ export const createMouseDownHandler = (canvas: fabric.Canvas, ctx: CanvasEventCo
 				const DEFAULT_TEXTBOX_WIDTH = 200
 				const DEFAULT_FONT_SIZE = 16
 
+				// Mark that we're creating an object temporarily (will be finalized when user finishes editing)
+				ctx.setIsDrawingObject?.(true)
+
 				// Create textbox with fixed defaults - ignore current text options for size
 				const textbox = new fabric.Textbox('Click to edit text', {
 					id: uuidv4(),
@@ -1010,6 +1055,9 @@ export const createMouseDownHandler = (canvas: fabric.Canvas, ctx: CanvasEventCo
 					type: 'add',
 					object: objData
 				})
+
+				// Re-enable history recording after text is created and sent
+				ctx.setIsDrawingObject?.(false)
 
 				// Auto-switch to selection tool while keeping floating menu open
 				ctx.setSelectedTool('select')

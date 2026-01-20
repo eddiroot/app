@@ -83,6 +83,30 @@
 	let isDrawingObject = false; // Flag to prevent recording temporary objects during drawing
 	let isControlPointModifying = false; // Flag to prevent history recording during control point modifications
 
+	// Track temporary object IDs to prevent history recording
+	let temporaryObjectIds = new Set<string>();
+	// Track remote object modifications to prevent duplicate history recording
+	let remoteModificationIds = new Set<string>();
+	// Track objects that were finalized via object:finalized to prevent double recording
+	let finalizedObjectIds = new Set<string>();
+	// Flag to track if eraser is actively deleting (to batch deletions)
+	let isEraserDeleting = false;
+	// Set of object IDs being deleted by eraser (to prevent individual history recording)
+	let eraserDeletedObjectIds = new Set<string>();
+	// Flag to track if clear all is happening (to batch deletions)
+	let isClearingCanvas = false;
+	// Batch storage for clear all deletions
+	let clearAllDeletedObjects: Array<{ id: string; data: Record<string, unknown> }> = [];
+
+	// Helper function to mark objects as remotely modified (prevents history recording)
+	const markRemoteModification = (objectId: string) => {
+		remoteModificationIds.add(objectId);
+		// Clear after a short timeout to avoid permanent blocking
+		setTimeout(() => {
+			remoteModificationIds.delete(objectId);
+		}, 500);
+	};
+
 	// Current tool options - updated when menu changes
 	let currentTextOptions = $state<TextOptions>({ ...DEFAULT_TEXT_OPTIONS });
 	let currentShapeOptions = $state<ShapeOptions>({ ...DEFAULT_SHAPE_OPTIONS });
@@ -316,8 +340,22 @@
 	};
 
 	const clearCanvas = () => {
-		if (!canvas) return;
-		CanvasActions.clearCanvas({ canvas, sendCanvasUpdate });
+		if (!canvas || !history || !data.user?.id) return;
+		CanvasActions.clearCanvas({
+			canvas,
+			sendCanvasUpdate,
+			controlPointManager,
+			setClearingCanvas: (value) => {
+				isClearingCanvas = value;
+			},
+			onClearComplete: (deletedObjects) => {
+				if (deletedObjects.length > 0) {
+					history.recordBatchDelete(deletedObjects, data.user!.id);
+					canUndo = history.canUndo();
+					canRedo = history.canRedo();
+				}
+			}
+		});
 	};
 
 	const deleteSelected = () => {
@@ -669,25 +707,54 @@
 		}
 	};
 
-	// Layering handlers
+	// Layering handlers with history tracking
+	const layerChangeCallback = (objectId: string, previousIndex: number, newIndex: number) => {
+		if (!history || !data.user?.id) return;
+		if (previousIndex !== newIndex) {
+			history.recordLayer(objectId, previousIndex, newIndex, data.user.id);
+			canUndo = history.canUndo();
+			canRedo = history.canRedo();
+		}
+	};
+
 	const handleBringToFront = () => {
 		if (!canvas) return;
-		CanvasActions.bringToFront({ canvas, sendCanvasUpdate, controlPointManager });
+		CanvasActions.bringToFront({
+			canvas,
+			sendCanvasUpdate,
+			controlPointManager,
+			onLayerChange: layerChangeCallback
+		});
 	};
 
 	const handleSendToBack = () => {
 		if (!canvas) return;
-		CanvasActions.sendToBack({ canvas, sendCanvasUpdate, controlPointManager });
+		CanvasActions.sendToBack({
+			canvas,
+			sendCanvasUpdate,
+			controlPointManager,
+			onLayerChange: layerChangeCallback
+		});
 	};
 
 	const handleMoveForward = () => {
 		if (!canvas) return;
-		CanvasActions.moveForward({ canvas, sendCanvasUpdate, controlPointManager });
+		CanvasActions.moveForward({
+			canvas,
+			sendCanvasUpdate,
+			controlPointManager,
+			onLayerChange: layerChangeCallback
+		});
 	};
 
 	const handleMoveBackward = () => {
 		if (!canvas) return;
-		CanvasActions.moveBackward({ canvas, sendCanvasUpdate, controlPointManager });
+		CanvasActions.moveBackward({
+			canvas,
+			sendCanvasUpdate,
+			controlPointManager,
+			onLayerChange: layerChangeCallback
+		});
 	};
 
 	// Undo/Redo handlers
@@ -697,7 +764,7 @@
 		isApplyingHistory = true;
 		const action = history.undo();
 		if (action) {
-			await applyUndo(canvas, action, sendCanvasUpdate);
+			await applyUndo(canvas, action, sendCanvasUpdate, controlPointManager);
 		}
 
 		// Update button states
@@ -712,7 +779,7 @@
 		isApplyingHistory = true;
 		const action = history.redo();
 		if (action) {
-			await applyRedo(canvas, action, sendCanvasUpdate);
+			await applyRedo(canvas, action, sendCanvasUpdate, controlPointManager);
 		}
 
 		// Update button states
@@ -958,6 +1025,23 @@
 				sendImageUpdate,
 				clearEraserState,
 
+				// Eraser batch delete callback
+				onEraserComplete: (
+					deletedObjects: Array<{ id: string; data: Record<string, unknown> }>
+				) => {
+					if (!history || !data.user?.id || deletedObjects.length === 0) return;
+					// Mark all deleted object IDs so object:removed doesn't double-record them
+					deletedObjects.forEach((obj) => eraserDeletedObjectIds.add(obj.id));
+					// Record as batch delete
+					history.recordBatchDelete(deletedObjects, data.user.id);
+					canUndo = history.canUndo();
+					canRedo = history.canRedo();
+					// Clear after a short delay
+					setTimeout(() => {
+						deletedObjects.forEach((obj) => eraserDeletedObjectIds.delete(obj.id));
+					}, 100);
+				},
+
 				// Refs
 				floatingMenuRef: floatingMenuRef || undefined,
 
@@ -994,6 +1078,13 @@
 
 				const objectId = e.target.id;
 				if (!objectId) return;
+
+				// Skip if this object was already recorded via object:finalized (prevents double recording)
+				if (finalizedObjectIds.has(objectId)) {
+					// Still bring control points to front
+					controlPointManager.bringAllControlPointsToFront();
+					return;
+				}
 
 				// Bring control points to front when any non-control-point object is added
 				controlPointManager.bringAllControlPointsToFront();
@@ -1103,6 +1194,28 @@
 				}
 			});
 
+			// Track finalized objects (shapes/lines that were being drawn and are now complete)
+			canvas.on('object:finalized', (e: any) => {
+				if (isApplyingHistory || isLoadingFromServer || !e.target || !history) return;
+				// Skip control points
+				if (controlPointManager.isControlPoint(e.target)) return;
+				const objectId = e.target.id;
+				if (objectId && data.user?.id) {
+					// Mark this object as finalized so object:added doesn't double-record it
+					finalizedObjectIds.add(objectId);
+					// Clear after a short delay
+					setTimeout(() => {
+						finalizedObjectIds.delete(objectId);
+					}, 100);
+
+					const objectData = e.target.toObject();
+					objectData.id = objectId;
+					history.recordAdd(objectId, objectData, data.user.id);
+					canUndo = history.canUndo();
+					canRedo = history.canRedo();
+				}
+			});
+
 			// Track object removals
 			canvas.on('object:removed', (e: any) => {
 				// Skip if applying history, loading from server, actively drawing, control point modifying, or missing data
@@ -1120,6 +1233,10 @@
 				// Skip temporary objects (selectable: false) - these are being removed during drawing
 				if (e.target.selectable === false) return;
 				const objectId = e.target.id;
+				// Skip if this object is being deleted by the eraser (batch delete handles this)
+				if (eraserDeletedObjectIds.has(objectId)) return;
+				// Skip if this is part of a clear all operation (batch delete handles this)
+				if (isClearingCanvas) return;
 				if (objectId && data.user?.id) {
 					const objectData = e.target.toObject();
 					objectData.id = objectId;
