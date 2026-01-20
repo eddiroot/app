@@ -10,18 +10,9 @@ import {
 export const load = async ({ locals: { security }, url }) => {
 	const user = security.isAuthenticated().getUser();
 
-	// Get week parameter from URL, default to current week
 	const weekParam = url.searchParams.get('week');
-	let weekStartDate: Date;
+	const weekStartDate = new Date(weekParam ?? new Date().toISOString().split('T')[0]);
 
-	if (weekParam) {
-		weekStartDate = new Date(weekParam);
-	} else {
-		// Default to current week
-		weekStartDate = new Date();
-	}
-
-	// Get class allocations and events for the week
 	const [
 		classAllocation,
 		schoolEvents,
