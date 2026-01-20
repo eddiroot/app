@@ -20,7 +20,7 @@
 
 	const dayStartHour = 8;
 	let timeslots = generateTimeslots(dayStartHour, 22);
-	const slotHeightPx = 60;
+	const slotHeightPx = 90;
 
 	function formatWeekDisplay(weekStart: string): string {
 		const startDate = new Date(weekStart);
@@ -235,7 +235,7 @@
 					dayStartHour,
 					cls.classAllocation.startTime,
 					cls.classAllocation.endTime,
-					60
+					slotHeightPx
 				)}
 				<div
 					class="absolute right-1 left-1 hover:z-10"
@@ -247,15 +247,15 @@
 			<!-- Events for this day -->
 			{#each getEventsForDay(day.value) as event, eventIndex}
 				{@const position = getEventPosition(
-					8,
+					dayStartHour,
 					event.startTimestamp,
 					event.endTimestamp,
 					eventIndex,
-					60
+					slotHeightPx
 				)}
 				{@const rsvpStatus = getRSVPStatus(event, event.type)}
 				<div
-					class="absolute right-1 left-[60%] hover:z-10"
+					class="absolute right-3 left-1 hover:z-10"
 					style="top: {position.top}; height: {position.height};"
 				>
 					<EventCard
