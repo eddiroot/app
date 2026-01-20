@@ -668,22 +668,22 @@
 	// Layering handlers
 	const handleBringToFront = () => {
 		if (!canvas) return;
-		CanvasActions.bringToFront({ canvas, sendCanvasUpdate });
+		CanvasActions.bringToFront({ canvas, sendCanvasUpdate, controlPointManager });
 	};
 
 	const handleSendToBack = () => {
 		if (!canvas) return;
-		CanvasActions.sendToBack({ canvas, sendCanvasUpdate });
+		CanvasActions.sendToBack({ canvas, sendCanvasUpdate, controlPointManager });
 	};
 
 	const handleMoveForward = () => {
 		if (!canvas) return;
-		CanvasActions.moveForward({ canvas, sendCanvasUpdate });
+		CanvasActions.moveForward({ canvas, sendCanvasUpdate, controlPointManager });
 	};
 
 	const handleMoveBackward = () => {
 		if (!canvas) return;
-		CanvasActions.moveBackward({ canvas, sendCanvasUpdate });
+		CanvasActions.moveBackward({ canvas, sendCanvasUpdate, controlPointManager });
 	};
 
 	// Undo/Redo handlers
