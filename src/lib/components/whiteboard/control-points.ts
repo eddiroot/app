@@ -358,7 +358,7 @@ export abstract class BoundingBoxControlPoints extends ControlPointHandler {
 	 */
 	protected getRotationHandleDistance(): number {
 		const zoom = this.canvas.getZoom()
-		return 30 / zoom // Scale inversely with zoom to maintain constant visual distance
+		return 20 / zoom // Scale inversely with zoom to maintain constant visual distance
 	}
 
 	/**
