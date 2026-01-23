@@ -33,22 +33,35 @@
 		uploading = true;
 
 		try {
-			// Create a data URL for immediate preview
-			const reader = new FileReader();
-			reader.onload = function (e) {
-				if (e.target && e.target.result && typeof e.target.result === 'string') {
-					const newConfig = {
-						...config,
-						path: e.target.result,
-						altText: config.altText || file.name.replace(/\.[^/.]+$/, '')
-					};
-					onConfigUpdate(newConfig);
-				}
+			const formData = new FormData();
+			formData.append('file', file);
+
+			const uploadResponse = await fetch('?/uploadFile', {
+				method: 'POST',
+				body: formData
+			});
+
+			const result = await uploadResponse.json();
+
+			if (result.type === 'failure') {
+				throw new Error(result.data?.error || 'Upload failed');
+			}
+
+			const data = result.type === 'success' ? result.data : result;
+
+			if (!data.url) {
+				throw new Error('No URL returned from upload');
+			}
+
+			const newConfig = {
+				...config,
+				path: data.url,
+				altText: config.altText || file.name.replace(/\.[^/.]+$/, '')
 			};
-			reader.readAsDataURL(file);
+			await onConfigUpdate(newConfig);
 		} catch (error) {
 			console.error('Upload error:', error);
-			alert('Failed to process image. Please try again.');
+			alert(error instanceof Error ? error.message : 'Failed to upload image. Please try again.');
 		} finally {
 			uploading = false;
 			// Clear the input

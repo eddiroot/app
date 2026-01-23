@@ -10,6 +10,7 @@
 
 	let files = $state<FileList | undefined>(undefined);
 	let uploading = $state(false);
+	let uploadError = $state<string | null>(null);
 
 	// Watch for file changes and handle upload
 	$effect(() => {
@@ -25,25 +26,43 @@
 		const maxSize = 10 * 1024 * 1024; // 10MB
 
 		if (file.size > maxSize) {
-			alert('File size must be less than 10MB');
+			uploadError = 'File size must be less than 10MB';
 			files = undefined;
 			return;
 		}
 
 		uploading = true;
+		uploadError = null;
 
 		try {
-			const reader = new FileReader();
-			reader.onload = function (e) {
-				if (e.target && e.target.result && typeof e.target.result === 'string') {
-					onResponseUpdate({
-						path: e.target.result
-					});
-				}
-			};
-			reader.readAsDataURL(file);
+			const formData = new FormData();
+			formData.append('file', file);
+
+			const uploadResponse = await fetch('?/uploadFile', {
+				method: 'POST',
+				body: formData
+			});
+
+			const result = await uploadResponse.json();
+
+			if (result.type === 'failure') {
+				throw new Error(result.data?.error || 'Upload failed');
+			}
+
+			const data = result.type === 'success' ? result.data : result;
+
+			if (!data.url) {
+				throw new Error('No URL returned from upload');
+			}
+
+			await onResponseUpdate({
+				path: data.url
+			});
 		} catch (error) {
-			alert('Failed to process upload. Please try again.');
+			console.error('Upload error:', error);
+			uploadError =
+				error instanceof Error ? error.message : 'Failed to upload file. Please try again.';
+			files = undefined;
 		} finally {
 			uploading = false;
 		}
@@ -92,11 +111,17 @@
 						<p class="text-muted-foreground text-sm">Uploading file...</p>
 					{/if}
 
-					{#if response?.path}
-						<div class="rounded-lg border border-green-500/20 bg-green-500/10 p-4">
-							<p class="text-sm font-medium text-green-700 dark:text-green-400">
-								File uploaded successfully!
+					{#if uploadError}
+						<div class="rounded-lg border p-4">
+							<p class="text-destructive text-sm font-medium">
+								{uploadError}
 							</p>
+						</div>
+					{/if}
+
+					{#if response?.path}
+						<div class="rounded-lg border p-4">
+							<p class="text-sm font-medium">File uploaded successfully!</p>
 							<a
 								href={response.path}
 								target="_blank"
