@@ -1,15 +1,21 @@
-import { building } from '$app/environment';
 import * as auth from '$lib/server/auth.js';
+import { db } from '$lib/server/db';
+import * as table from '$lib/server/db/schema';
 import { Security } from '$lib/server/security';
-import type { Handle } from '@sveltejs/kit';
+import type { Handle, ServerInit } from '@sveltejs/kit';
 // import cron from 'node-cron';
 // import { processTimetableQueue } from './scripts/processTimetable';
 
-if (!building) {
+export const init: ServerInit = async () => {
 	// cron.schedule('* * * * *', () => {
 	// 	processTimetableQueue();
 	// });
-}
+
+    db.select().from(table.school).limit(1).catch(() => {
+		console.error('Database appears to be offline. Exiting...');
+		process.exit(1);
+	});
+};
 
 const handleAuth: Handle = async ({ event, resolve }) => {
 	const sessionToken = event.cookies.get(auth.sessionCookieName);
