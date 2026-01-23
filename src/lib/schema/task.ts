@@ -671,6 +671,29 @@ export type BlockAudioConfig = {
 	altText: string;
 };
 
+export const blockSubmission = {
+	type: 'object',
+	properties: {
+		type: { type: 'string', enum: [taskBlockTypeEnum.submission] },
+		config: {
+			type: 'object',
+			properties: {
+				instructions: { type: 'string' },
+			},
+			required: ['instructions']
+		}
+	},
+	required: ['type', 'config']
+}
+
+export type BlockSubmissionConfig = {
+	instructions: string;
+};
+
+export type BlockSubmissionResponse = {
+	path: string;
+};
+
 export const taskBlocks = [
 	blockHeading,
 	blockRichText,
@@ -686,7 +709,8 @@ export const taskBlocks = [
 	blockBalancingEquations,
 	blockImage,
 	blockVideo,
-	blockAudio
+	blockAudio,
+	blockSubmission
 ];
 
 export const layoutTwoColumns = {
@@ -751,7 +775,8 @@ export type BlockConfig =
 	| BlockGraphConfig
 	| BlockImageConfig
 	| BlockVideoConfig
-	| BlockAudioConfig;
+	| BlockAudioConfig
+	| BlockSubmissionConfig;
 
 export type BlockResponse =
 	| BlockChoiceResponse
@@ -762,7 +787,8 @@ export type BlockResponse =
 	| BlockShortAnswerResponse
 	| BlockCloseResponse
 	| BlockHighlightTextResponse
-	| BlockGraphResponse;
+	| BlockGraphResponse
+	| BlockSubmissionResponse;
 
 export type BlockProps<T extends BlockConfig = BlockConfig, Q extends BlockResponse = never> = {
 	config: T;
@@ -798,8 +824,9 @@ export type TableBlockProps = BlockProps<BlockTableConfig>;
 export type GraphBlockProps = BlockProps<BlockGraphConfig, BlockGraphResponse>;
 export type VideoBlockProps = BlockProps<BlockVideoConfig>;
 export type AudioBlockProps = BlockProps<BlockAudioConfig>;
+export type SubmissionBlockProps = BlockProps<BlockSubmissionConfig, BlockSubmissionResponse>;
 
-import type { Icon } from '@lucide/svelte';
+import { type Icon } from '@lucide/svelte';
 import AudioIcon from '@lucide/svelte/icons/audio-lines';
 import FlaskConicalIcon from '@lucide/svelte/icons/flask-conical';
 import HeadingIcon from '@lucide/svelte/icons/heading';
@@ -815,6 +842,7 @@ import MathIcon from '@lucide/svelte/icons/sigma';
 import TableIcon from '@lucide/svelte/icons/table';
 import TrendingUpIcon from '@lucide/svelte/icons/trending-up';
 import VideoIcon from '@lucide/svelte/icons/video';
+import UploadIcon from '@lucide/svelte/icons/upload';
 
 export enum ViewMode {
 	CONFIGURE = 'configure',
@@ -982,6 +1010,14 @@ export const blockTypes: {
 			answer: '2'
 		},
 		icon: MathIcon
+	},
+	{
+		type: taskBlockTypeEnum.submission,
+		name: 'File Submission',
+		initialConfig: {
+			instructions: 'Please upload your assignment file. If there are multiple files, compress them into a single .zip file before uploading.'
+		},
+		icon: UploadIcon
 	}
 ];
 

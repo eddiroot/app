@@ -80,7 +80,7 @@
 							}
 						}}
 						placeholder="Enter your multiple choice question..."
-						class="min-h-[80px] resize-none"
+						class="min-h-20 resize-none"
 					/>
 				</div>
 
