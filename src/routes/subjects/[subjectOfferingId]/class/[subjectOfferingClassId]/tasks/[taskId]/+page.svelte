@@ -25,6 +25,7 @@
 	import BlockMathInput from './components/block-math-input.svelte';
 	import BlockRichText from './components/block-rich-text-editor.svelte';
 	import BlockShortAnswer from './components/block-short-answer.svelte';
+	import BlockSubmission from './components/block-submission.svelte';
 	import BlockTable from './components/block-table.svelte';
 	import BlockVideo from './components/block-video.svelte';
 	import BlockWhiteboard from './components/block-whiteboard.svelte';
@@ -66,6 +67,7 @@
 		type BlockResponse,
 		type BlockRichTextConfig,
 		type BlockShortAnswerConfig,
+		type BlockSubmissionConfig,
 		type BlockTableConfig,
 		type BlockVideoConfig,
 		type BlockWhiteboardConfig
@@ -730,6 +732,15 @@
 									<BlockVideo
 										config={block.config as BlockVideoConfig}
 										onConfigUpdate={async (config) => await handleConfigUpdate(block, config)}
+										{viewMode}
+									/>
+								{:else if block.type === taskBlockTypeEnum.submission}
+									<BlockSubmission
+										config={block.config as BlockSubmissionConfig}
+										onConfigUpdate={async (config) => await handleConfigUpdate(block, config)}
+										response={getCurrentResponse(block.id, block.type)}
+										onResponseUpdate={async (response) =>
+											await handleResponseUpdate(block.id, response)}
 										{viewMode}
 									/>
 								{:else}

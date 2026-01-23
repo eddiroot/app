@@ -103,7 +103,8 @@ export const taskBlockTypeEnumPg = taskSchema.enum('enum_task_block_type', [
 	taskBlockTypeEnum.highlightText,
 	taskBlockTypeEnum.table,
 	taskBlockTypeEnum.graph,
-	taskBlockTypeEnum.balancingEquations
+	taskBlockTypeEnum.balancingEquations,
+	taskBlockTypeEnum.submission
 ]);
 
 export const taskBlock = taskSchema.table(
