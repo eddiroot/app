@@ -11,6 +11,7 @@ import {
 	updateSubjectOfferingClassTaskStatus,
 	upsertClassTaskResponse
 } from '$lib/server/db/service';
+import { generateUniqueFileName, uploadBufferHelper } from '$lib/server/obj';
 import { fail, redirect } from '@sveltejs/kit';
 import { superValidate } from 'sveltekit-superforms';
 import { zod4 } from 'sveltekit-superforms/adapters';
@@ -228,6 +229,46 @@ export const actions = {
 		} catch (error) {
 			console.error('Error starting quiz session:', error);
 			return fail(500, { form, message: 'Failed to start quiz session' });
+		}
+	},
+
+	uploadFile: async ({ request, locals: { security } }) => {
+		const user = security.isAuthenticated().getUser();
+
+		try {
+			const formData = await request.formData();
+			const file = formData.get('file') as File;
+
+			if (!file) {
+				return fail(400, { error: 'No file provided' });
+			}
+
+			// Validate file size (max 10MB)
+			const maxSize = 10 * 1024 * 1024; // 10MB
+			if (file.size > maxSize) {
+				return fail(400, { error: 'File size must be less than 10MB' });
+			}
+
+			// Generate unique filename
+			const uniqueFileName = generateUniqueFileName(file.name);
+			const objectName = `${user.schoolId}/tasks/${uniqueFileName}`;
+
+			// Convert file to buffer
+			const arrayBuffer = await file.arrayBuffer();
+			const buffer = Buffer.from(arrayBuffer);
+
+			// Upload to object storage
+			const url = await uploadBufferHelper(buffer, objectName, file.type);
+
+			return {
+				success: true,
+				url,
+				fileName: file.name,
+				objectName
+			};
+		} catch (error) {
+			console.error('Upload error:', error);
+			return fail(500, { error: 'Failed to upload file. Please try again.' });
 		}
 	}
 };
