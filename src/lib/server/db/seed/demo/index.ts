@@ -1,3 +1,4 @@
+import type { School } from '../../schema';
 import type { SeedContext } from '../types';
 import { logSection, logSubsection } from '../utils';
 import { seedDemoEvents } from './events';
@@ -9,14 +10,14 @@ import { seedDemoThreads } from './threads';
 import { seedDemoTimetable } from './timetable';
 import { seedDemoUsers } from './users';
 
-export async function seedDemo(context: SeedContext): Promise<void> {
+export async function seedDemo(context: SeedContext, eddiSchool: School): Promise<void> {
 	logSection('Seeding Demo School Data');
 
 	const { db } = context;
 
 	// 1. Create school infrastructure
 	logSubsection('Creating Demo School Infrastructure');
-	const schoolData = await seedDemoSchool(db);
+	const schoolData = await seedDemoSchool(db, eddiSchool);
 
 	// 2. Create users
 	logSubsection('Creating Demo Users');
