@@ -23,8 +23,8 @@ async function seed(): Promise<void> {
 
 	try {
 		await truncateAllTables(pool);
-		await seedEddi(context);
-		await seedDemo(context);
+		const { eddi } = await seedEddi(context);
+		await seedDemo(context, eddi);
 		console.log('\n✅ Seeding completed successfully!\n');
 	} catch (error) {
 		console.error('\n❌ Seeding failed:', error);
