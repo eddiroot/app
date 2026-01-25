@@ -1790,6 +1790,7 @@
 			{#if !(isLocked && !isTeacher)}
 				<WhiteboardToolbar
 					{selectedTool}
+					{currentShapeType}
 					onSelectTool={setSelectTool}
 					onPanTool={setPanTool}
 					onDrawTool={setDrawTool}
