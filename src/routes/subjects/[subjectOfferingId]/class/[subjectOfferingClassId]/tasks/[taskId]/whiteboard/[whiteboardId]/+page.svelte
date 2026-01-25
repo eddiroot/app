@@ -42,6 +42,7 @@
 	let WebSocketHandler: typeof import('$lib/components/whiteboard/websocket-socketio');
 	let ControlPointManager: typeof import('$lib/components/whiteboard/control-points').ControlPointManager;
 	let KeyboardShortcuts: typeof import('$lib/components/whiteboard/keyboard-shortcuts');
+	let CropOverlayClass: typeof import('$lib/components/whiteboard/control-points').CropOverlay;
 
 	let { data } = $props();
 
@@ -77,6 +78,10 @@
 
 	// Control point manager instance
 	let controlPointManager: any; // Will be ControlPointManager once loaded
+
+	// Crop overlay instance
+	let cropOverlay: any; // Will be CropOverlay once loaded
+	let isCropping = $state(false);
 
 	// History management for undo/redo
 	let history: any; // Will be CanvasHistory instance once loaded
@@ -761,6 +766,78 @@
 		});
 	};
 
+	// Crop handlers
+	const handleStartCrop = () => {
+		if (!canvas || !CropOverlayClass) return;
+		const activeObject = canvas.getActiveObject();
+		if (!activeObject || activeObject.type !== 'image') return;
+
+		// Hide regular control points during crop
+		const imageId = (activeObject as any).id;
+		if (controlPointManager) {
+			controlPointManager.hideControlPoints(imageId);
+		}
+
+		// Create crop overlay
+		cropOverlay = new CropOverlayClass(canvas);
+		cropOverlay.startCrop(activeObject as any);
+		isCropping = true;
+		canvas.discardActiveObject();
+		canvas.renderAll();
+
+		// Keep the floating menu visible and on image panel
+		showFloatingMenu = true;
+	};
+
+	const handleApplyCrop = () => {
+		if (!cropOverlay || !canvas) return;
+
+		const result = cropOverlay.applyCrop();
+		isCropping = false;
+
+		if (result.success && result.imageId) {
+			// Remove old control points and create new ones for cropped size
+			if (controlPointManager) {
+				const image = canvas.getObjects().find((o: any) => o.id === result.imageId);
+				if (image) {
+					controlPointManager.removeControlPoints(result.imageId);
+					controlPointManager.addControlPoints(result.imageId, image, true);
+					canvas.setActiveObject(image);
+				}
+			}
+
+			// Sync crop to other users
+			sendCanvasUpdate({
+				type: 'modify',
+				object: {
+					id: result.imageId,
+					...result.cropData
+				}
+			});
+		}
+		canvas.renderAll();
+		cropOverlay = null;
+	};
+
+	const handleCancelCrop = () => {
+		if (!cropOverlay || !canvas) return;
+
+		const imageId = cropOverlay.getImageId();
+		cropOverlay.cancelCrop();
+		isCropping = false;
+
+		// Show control points again
+		if (controlPointManager && imageId) {
+			const image = canvas.getObjects().find((o: any) => o.id === imageId);
+			if (image) {
+				controlPointManager.showControlPoints(imageId);
+				canvas.setActiveObject(image);
+			}
+		}
+		canvas.renderAll();
+		cropOverlay = null;
+	};
+
 	// Undo/Redo handlers
 	const handleUndo = async () => {
 		if (!canvas || !history || !history.canUndo()) return;
@@ -989,6 +1066,7 @@
 			WebSocketHandler = await import('$lib/components/whiteboard/websocket-socketio');
 			const ControlPointsModule = await import('$lib/components/whiteboard/control-points');
 			ControlPointManager = ControlPointsModule.ControlPointManager;
+			CropOverlayClass = ControlPointsModule.CropOverlay;
 			KeyboardShortcuts = await import('$lib/components/whiteboard/keyboard-shortcuts');
 
 			// Initialize history
@@ -1095,6 +1173,7 @@
 				// State getters
 				getSelectedTool: () => selectedTool,
 				getShowFloatingMenu: () => showFloatingMenu,
+				getIsCropping: () => isCropping,
 				getIsPanMode: () => isPanMode,
 				getIsDrawingText: () => isDrawingText,
 				getIsDrawingShape: () => isDrawingShape,
@@ -1336,6 +1415,16 @@
 					const state = e.target.toObject();
 					state.id = objectId;
 					objectStates.set(objectId, state);
+				}
+			});
+
+			// Handle crop handle dragging
+			canvas.on('object:moving', (e: any) => {
+				if (cropOverlay && e.target && cropOverlay.isCropHandle(e.target)) {
+					const handleIndex = cropOverlay.getHandleIndex(e.target);
+					if (handleIndex >= 0) {
+						cropOverlay.updateFromHandle(handleIndex, e.target.left, e.target.top);
+					}
 				}
 			});
 
@@ -1739,6 +1828,10 @@
 				onSendToBack={handleSendToBack}
 				onMoveForward={handleMoveForward}
 				onMoveBackward={handleMoveBackward}
+				onStartCrop={handleStartCrop}
+				onApplyCrop={handleApplyCrop}
+				onCancelCrop={handleCancelCrop}
+				{isCropping}
 			/>
 
 			<!-- Zoom Controls - Disable undo/redo for locked students -->

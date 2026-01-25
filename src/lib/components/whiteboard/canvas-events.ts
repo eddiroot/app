@@ -14,6 +14,7 @@ export interface CanvasEventContext {
 	setSelectedTool: (tool: WhiteboardTool) => void
 	getShowFloatingMenu: () => boolean
 	setShowFloatingMenu: (value: boolean) => void
+	getIsCropping: () => boolean
 	getIsMovingImage: () => boolean
 	setIsMovingImage: (value: boolean) => void
 	getIsPanMode: () => boolean
@@ -614,6 +615,11 @@ export const createSelectionCreatedHandler = (ctx: CanvasEventContext) => {
 		if (selected && selected.length === 1) {
 			const obj = selected[0]
 
+			// If we're in cropping mode, don't change menu or control points
+			if (ctx.getIsCropping()) {
+				return
+			}
+
 			// If a control point is selected, don't change anything - keep existing menu
 			if (ctx.controlPointManager?.isControlPoint(obj)) {
 				return // Don't update menu, don't hide control points
@@ -740,6 +746,11 @@ export const createSelectionUpdatedHandler = (ctx: CanvasEventContext) => {
 	return ({ selected }: { selected: fabric.Object[] }) => {
 		if (selected && selected.length === 1) {
 			const obj = selected[0]
+
+			// If we're in cropping mode, don't change menu or control points
+			if (ctx.getIsCropping()) {
+				return
+			}
 
 			// If a control point is selected, don't change anything - keep existing menu
 			if (ctx.controlPointManager?.isControlPoint(obj)) {

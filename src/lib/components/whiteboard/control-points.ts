@@ -3697,6 +3697,575 @@ export class PathControlPoints extends BoundingBoxControlPoints {
 }
 
 /**
+ * Crop overlay manager for image cropping
+ * Creates a darkened overlay with crop handles
+ */
+export class CropOverlay {
+	private canvas: fabric.Canvas
+	private overlayGroup: fabric.Group | null = null
+	private cropRect: fabric.Rect | null = null
+	private handles: fabric.Circle[] = []
+	private imageId: string | null = null
+	private originalImage: fabric.Image | null = null
+	private cropBounds: { left: number; top: number; width: number; height: number } | null = null
+	private isDragging = false
+	private dragStartPoint: { x: number; y: number } | null = null
+	private activeHandle: number = -1 // -1 = none, 0-3 = corners, 4-7 = edges
+	private onCropChange?: (bounds: {
+		left: number
+		top: number
+		width: number
+		height: number
+	}) => void
+
+	constructor(canvas: fabric.Canvas) {
+		this.canvas = canvas
+	}
+
+	/**
+	 * Start crop mode for an image
+	 */
+	startCrop(
+		image: fabric.Image,
+		onCropChange?: (bounds: { left: number; top: number; width: number; height: number }) => void
+	): void {
+		this.imageId = (image as any).id
+		this.originalImage = image
+		this.onCropChange = onCropChange
+
+		// Get the image's current visible bounds
+		const width = (image.width || 0) * (image.scaleX || 1)
+		const height = (image.height || 0) * (image.scaleY || 1)
+		const center = image.getCenterPoint()
+
+		// Initialize crop bounds to full image
+		this.cropBounds = {
+			left: center.x - width / 2,
+			top: center.y - height / 2,
+			width: width,
+			height: height
+		}
+
+		// Make image non-selectable during crop
+		image.selectable = false
+		image.evented = false
+
+		this.createOverlay()
+		this.canvas.renderAll()
+	}
+
+	/**
+	 * Create the crop overlay and handles
+	 */
+	private createOverlay(): void {
+		if (!this.cropBounds || !this.originalImage) return
+
+		const zoom = this.canvas.getZoom()
+		const scale = 1 / zoom
+
+		// Create the crop rectangle (the visible area)
+		this.cropRect = new fabric.Rect({
+			left: this.cropBounds.left,
+			top: this.cropBounds.top,
+			width: this.cropBounds.width,
+			height: this.cropBounds.height,
+			fill: 'transparent',
+			stroke: '#ffffff',
+			strokeWidth: 2 * scale,
+			strokeDashArray: [5 * scale, 5 * scale],
+			selectable: false,
+			evented: false,
+			excludeFromExport: true
+		})
+		;(this.cropRect as any).isCropElement = true
+
+		this.canvas.add(this.cropRect)
+
+		// Create dark overlay outside crop area (4 rectangles)
+		this.createDarkOverlay()
+
+		// Create corner handles (0-3)
+		const corners = [
+			{ x: this.cropBounds.left, y: this.cropBounds.top }, // Top-left
+			{ x: this.cropBounds.left + this.cropBounds.width, y: this.cropBounds.top }, // Top-right
+			{
+				x: this.cropBounds.left + this.cropBounds.width,
+				y: this.cropBounds.top + this.cropBounds.height
+			}, // Bottom-right
+			{ x: this.cropBounds.left, y: this.cropBounds.top + this.cropBounds.height } // Bottom-left
+		]
+
+		corners.forEach((corner, index) => {
+			const handle = new fabric.Circle({
+				left: corner.x,
+				top: corner.y,
+				radius: 8 * scale,
+				fill: '#ffffff',
+				stroke: '#0066cc',
+				strokeWidth: 2 * scale,
+				originX: 'center',
+				originY: 'center',
+				selectable: true,
+				hasControls: false,
+				hasBorders: false,
+				hoverCursor: this.getCornerCursor(index),
+				excludeFromExport: true
+			})
+			;(handle as any).isCropHandle = true
+			;(handle as any).handleIndex = index
+			;(handle as any).isCropElement = true
+			this.handles.push(handle)
+			this.canvas.add(handle)
+		})
+
+		// Create edge midpoint handles (4-7)
+		const edgeMidpoints = [
+			{ x: this.cropBounds.left + this.cropBounds.width / 2, y: this.cropBounds.top }, // Top
+			{
+				x: this.cropBounds.left + this.cropBounds.width,
+				y: this.cropBounds.top + this.cropBounds.height / 2
+			}, // Right
+			{
+				x: this.cropBounds.left + this.cropBounds.width / 2,
+				y: this.cropBounds.top + this.cropBounds.height
+			}, // Bottom
+			{ x: this.cropBounds.left, y: this.cropBounds.top + this.cropBounds.height / 2 } // Left
+		]
+
+		edgeMidpoints.forEach((point, index) => {
+			const handle = new fabric.Circle({
+				left: point.x,
+				top: point.y,
+				radius: 6 * scale,
+				fill: '#ffffff',
+				stroke: '#0066cc',
+				strokeWidth: 2 * scale,
+				originX: 'center',
+				originY: 'center',
+				selectable: true,
+				hasControls: false,
+				hasBorders: false,
+				hoverCursor: this.getEdgeCursor(index),
+				excludeFromExport: true
+			})
+			;(handle as any).isCropHandle = true
+			;(handle as any).handleIndex = 4 + index
+			;(handle as any).isCropElement = true
+			this.handles.push(handle)
+			this.canvas.add(handle)
+		})
+
+		// Bring all crop elements to front
+		this.bringToFront()
+	}
+
+	private darkOverlays: Array<fabric.Rect | fabric.Path> = []
+
+	/**
+	 * Create dark overlay rectangles outside the crop area
+	 */
+	private createDarkOverlay(): void {
+		if (!this.cropBounds || !this.originalImage) return
+
+		// Remove existing overlays
+		this.darkOverlays.forEach((overlay) => this.canvas.remove(overlay))
+		this.darkOverlays = []
+
+		// Get canvas dimensions
+		const canvasWidth = this.canvas.getWidth()
+		const canvasHeight = this.canvas.getHeight()
+
+		// Get viewport transform to calculate visible area
+		const vpt = this.canvas.viewportTransform || [1, 0, 0, 1, 0, 0]
+		const zoom = this.canvas.getZoom()
+
+		// Calculate visible area in canvas coordinates
+		const visibleLeft = -vpt[4] / zoom
+		const visibleTop = -vpt[5] / zoom
+		const visibleWidth = canvasWidth / zoom
+		const visibleHeight = canvasHeight / zoom
+
+		// Expand visible area for safety
+		const padding = 2000
+		const left = visibleLeft - padding
+		const top = visibleTop - padding
+		const right = visibleLeft + visibleWidth + padding
+		const bottom = visibleTop + visibleHeight + padding
+
+		const cropLeft = this.cropBounds.left
+		const cropTop = this.cropBounds.top
+		const cropRight = this.cropBounds.left + this.cropBounds.width
+		const cropBottom = this.cropBounds.top + this.cropBounds.height
+
+		// Create a single large overlay with a hole cut out for the crop area
+		// This avoids the visible horizontal/vertical lines at crop boundaries
+		const overlayPath = `
+M ${left} ${top}
+L ${right} ${top}
+L ${right} ${bottom}
+L ${left} ${bottom}
+Z
+M ${cropLeft} ${cropTop}
+L ${cropLeft} ${cropBottom}
+L ${cropRight} ${cropBottom}
+L ${cropRight} ${cropTop}
+Z
+`
+
+		const overlay = new fabric.Path(overlayPath, {
+			fill: 'rgba(0, 0, 0, 0.5)',
+			selectable: false,
+			evented: false,
+			excludeFromExport: true,
+			fillRule: 'evenodd' // This creates the hole effect
+		})
+		;(overlay as any).isCropElement = true
+
+		this.darkOverlays = [overlay]
+		this.canvas.add(overlay)
+	}
+
+	private getCornerCursor(index: number): string {
+		const cursors = ['nw-resize', 'ne-resize', 'se-resize', 'sw-resize']
+		return cursors[index] || 'pointer'
+	}
+
+	private getEdgeCursor(index: number): string {
+		const cursors = ['n-resize', 'e-resize', 's-resize', 'w-resize']
+		return cursors[index] || 'pointer'
+	}
+
+	/**
+	 * Update crop bounds when a handle is dragged
+	 */
+	updateFromHandle(handleIndex: number, newX: number, newY: number): void {
+		if (!this.cropBounds || !this.originalImage) return
+
+		const minSize = 20
+		let { left, top, width, height } = this.cropBounds
+
+		// Get image bounds for constraining
+		const imgWidth = (this.originalImage.width || 0) * (this.originalImage.scaleX || 1)
+		const imgHeight = (this.originalImage.height || 0) * (this.originalImage.scaleY || 1)
+		const center = this.originalImage.getCenterPoint()
+		const imgLeft = center.x - imgWidth / 2
+		const imgTop = center.y - imgHeight / 2
+		const imgRight = imgLeft + imgWidth
+		const imgBottom = imgTop + imgHeight
+
+		// Constrain to image bounds
+		newX = Math.max(imgLeft, Math.min(imgRight, newX))
+		newY = Math.max(imgTop, Math.min(imgBottom, newY))
+
+		switch (handleIndex) {
+			case 0: // Top-left corner
+				const newWidth0 = left + width - newX
+				const newHeight0 = top + height - newY
+				if (newWidth0 >= minSize && newHeight0 >= minSize) {
+					width = newWidth0
+					height = newHeight0
+					left = newX
+					top = newY
+				}
+				break
+			case 1: // Top-right corner
+				const newWidth1 = newX - left
+				const newHeight1 = top + height - newY
+				if (newWidth1 >= minSize && newHeight1 >= minSize) {
+					width = newWidth1
+					height = newHeight1
+					top = newY
+				}
+				break
+			case 2: // Bottom-right corner
+				const newWidth2 = newX - left
+				const newHeight2 = newY - top
+				if (newWidth2 >= minSize && newHeight2 >= minSize) {
+					width = newWidth2
+					height = newHeight2
+				}
+				break
+			case 3: // Bottom-left corner
+				const newWidth3 = left + width - newX
+				const newHeight3 = newY - top
+				if (newWidth3 >= minSize && newHeight3 >= minSize) {
+					width = newWidth3
+					height = newHeight3
+					left = newX
+				}
+				break
+			case 4: // Top edge
+				const newHeight4 = top + height - newY
+				if (newHeight4 >= minSize) {
+					height = newHeight4
+					top = newY
+				}
+				break
+			case 5: // Right edge
+				const newWidth5 = newX - left
+				if (newWidth5 >= minSize) {
+					width = newWidth5
+				}
+				break
+			case 6: // Bottom edge
+				const newHeight6 = newY - top
+				if (newHeight6 >= minSize) {
+					height = newHeight6
+				}
+				break
+			case 7: // Left edge
+				const newWidth7 = left + width - newX
+				if (newWidth7 >= minSize) {
+					width = newWidth7
+					left = newX
+				}
+				break
+		}
+
+		this.cropBounds = { left, top, width, height }
+		this.updateOverlay()
+
+		if (this.onCropChange) {
+			this.onCropChange(this.cropBounds)
+		}
+	}
+
+	/**
+	 * Update the overlay and handles to match current crop bounds
+	 */
+	private updateOverlay(): void {
+		if (!this.cropBounds || !this.cropRect) return
+
+		const zoom = this.canvas.getZoom()
+		const scale = 1 / zoom
+
+		// Update crop rectangle
+		this.cropRect.set({
+			left: this.cropBounds.left,
+			top: this.cropBounds.top,
+			width: this.cropBounds.width,
+			height: this.cropBounds.height,
+			strokeWidth: 2 * scale,
+			strokeDashArray: [5 * scale, 5 * scale]
+		})
+		this.cropRect.setCoords()
+
+		// Update dark overlays
+		this.createDarkOverlay()
+
+		// Update corner handles
+		const corners = [
+			{ x: this.cropBounds.left, y: this.cropBounds.top },
+			{ x: this.cropBounds.left + this.cropBounds.width, y: this.cropBounds.top },
+			{
+				x: this.cropBounds.left + this.cropBounds.width,
+				y: this.cropBounds.top + this.cropBounds.height
+			},
+			{ x: this.cropBounds.left, y: this.cropBounds.top + this.cropBounds.height }
+		]
+
+		// Update edge midpoints
+		const edgeMidpoints = [
+			{ x: this.cropBounds.left + this.cropBounds.width / 2, y: this.cropBounds.top },
+			{
+				x: this.cropBounds.left + this.cropBounds.width,
+				y: this.cropBounds.top + this.cropBounds.height / 2
+			},
+			{
+				x: this.cropBounds.left + this.cropBounds.width / 2,
+				y: this.cropBounds.top + this.cropBounds.height
+			},
+			{ x: this.cropBounds.left, y: this.cropBounds.top + this.cropBounds.height / 2 }
+		]
+
+		this.handles.forEach((handle, index) => {
+			const point = index < 4 ? corners[index] : edgeMidpoints[index - 4]
+			handle.set({
+				left: point.x,
+				top: point.y,
+				radius: (index < 4 ? 8 : 6) * scale,
+				strokeWidth: 2 * scale
+			})
+			handle.setCoords()
+		})
+
+		this.bringToFront()
+		this.canvas.renderAll()
+	}
+
+	/**
+	 * Check if an object is a crop handle
+	 */
+	isCropHandle(obj: fabric.Object): boolean {
+		return (obj as any).isCropHandle === true
+	}
+
+	/**
+	 * Check if an object is any crop element
+	 */
+	isCropElement(obj: fabric.Object): boolean {
+		return (obj as any).isCropElement === true
+	}
+
+	/**
+	 * Get the handle index for a crop handle object
+	 */
+	getHandleIndex(obj: fabric.Object): number {
+		return (obj as any).handleIndex ?? -1
+	}
+
+	/**
+	 * Bring all crop elements to front
+	 */
+	bringToFront(): void {
+		// Bring dark overlays first
+		this.darkOverlays.forEach((overlay) => {
+			this.canvas.bringObjectToFront(overlay)
+		})
+		// Then crop rect
+		if (this.cropRect) {
+			this.canvas.bringObjectToFront(this.cropRect)
+		}
+		// Finally handles on top
+		this.handles.forEach((handle) => {
+			this.canvas.bringObjectToFront(handle)
+		})
+	}
+
+	/**
+	 * Get current crop bounds
+	 */
+	getCropBounds(): { left: number; top: number; width: number; height: number } | null {
+		return this.cropBounds
+	}
+
+	/**
+	 * Get the image being cropped
+	 */
+	getImage(): fabric.Image | null {
+		return this.originalImage
+	}
+
+	/**
+	 * Get the image ID being cropped
+	 */
+	getImageId(): string | null {
+		return this.imageId
+	}
+
+	/**
+	 * End crop mode and cleanup
+	 */
+	endCrop(): void {
+		// Remove all crop elements
+		this.handles.forEach((handle) => this.canvas.remove(handle))
+		this.handles = []
+
+		this.darkOverlays.forEach((overlay) => this.canvas.remove(overlay))
+		this.darkOverlays = []
+
+		if (this.cropRect) {
+			this.canvas.remove(this.cropRect)
+			this.cropRect = null
+		}
+
+		// Restore image selectability
+		if (this.originalImage) {
+			this.originalImage.selectable = true
+			this.originalImage.evented = true
+		}
+
+		this.imageId = null
+		this.originalImage = null
+		this.cropBounds = null
+		this.onCropChange = undefined
+
+		this.canvas.renderAll()
+	}
+
+	/**
+	 * Apply the crop to the image using clipPath
+	 */
+	applyCrop(): { success: boolean; imageId: string | null; cropData: any } {
+		if (!this.originalImage || !this.cropBounds) {
+			return { success: false, imageId: null, cropData: null }
+		}
+
+		const image = this.originalImage
+		const imageId = this.imageId
+
+		// Get image properties
+		const center = image.getCenterPoint()
+		const scaleX = image.scaleX || 1
+		const scaleY = image.scaleY || 1
+		const angle = image.angle || 0
+		const imgWidth = (image.width || 0) * scaleX
+		const imgHeight = (image.height || 0) * scaleY
+		const imgLeft = center.x - imgWidth / 2
+		const imgTop = center.y - imgHeight / 2
+
+		// Calculate crop bounds relative to image (in unscaled image coordinates)
+		const cropLeft = (this.cropBounds.left - imgLeft) / scaleX
+		const cropTop = (this.cropBounds.top - imgTop) / scaleY
+		const cropWidth = this.cropBounds.width / scaleX
+		const cropHeight = this.cropBounds.height / scaleY
+
+		// Create a clip path in image's local coordinates
+		const clipRect = new fabric.Rect({
+			left: cropLeft - (image.width || 0) / 2,
+			top: cropTop - (image.height || 0) / 2,
+			width: cropWidth,
+			height: cropHeight,
+			absolutePositioned: false
+		})
+
+		// Apply the clip path
+		image.clipPath = clipRect
+
+		// Adjust image position so the visible part is centered where it was
+		const newCenterX = this.cropBounds.left + this.cropBounds.width / 2
+		const newCenterY = this.cropBounds.top + this.cropBounds.height / 2
+		image.set({
+			left: newCenterX,
+			top: newCenterY
+		})
+		image.setCoords()
+
+		const cropData = {
+			clipPath: {
+				left: clipRect.left,
+				top: clipRect.top,
+				width: clipRect.width,
+				height: clipRect.height
+			},
+			position: {
+				left: newCenterX,
+				top: newCenterY
+			}
+		}
+
+		this.endCrop()
+
+		return { success: true, imageId, cropData }
+	}
+
+	/**
+	 * Cancel crop and restore original state
+	 */
+	cancelCrop(): void {
+		this.endCrop()
+	}
+
+	/**
+	 * Update sizes based on zoom level
+	 */
+	updateSizes(): void {
+		if (!this.cropBounds) return
+		this.updateOverlay()
+	}
+}
+
+/**
  * Central manager for all control points on the canvas
  */
 export class ControlPointManager {

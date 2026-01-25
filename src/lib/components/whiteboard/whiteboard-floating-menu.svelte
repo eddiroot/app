@@ -9,6 +9,8 @@
 	import ArrowDownToLineIcon from '@lucide/svelte/icons/arrow-down-to-line';
 	import ArrowUpIcon from '@lucide/svelte/icons/arrow-up';
 	import ArrowUpToLineIcon from '@lucide/svelte/icons/arrow-up-to-line';
+	import CheckIcon from '@lucide/svelte/icons/check';
+	import CropIcon from '@lucide/svelte/icons/crop';
 	import Heading1Icon from '@lucide/svelte/icons/heading-1';
 	import Heading2Icon from '@lucide/svelte/icons/heading-2';
 	import Heading3Icon from '@lucide/svelte/icons/heading-3';
@@ -18,6 +20,7 @@
 	import PaletteIcon from '@lucide/svelte/icons/palette';
 	import SlidersIcon from '@lucide/svelte/icons/sliders';
 	import TypeIcon from '@lucide/svelte/icons/type';
+	import XIcon from '@lucide/svelte/icons/x';
 	import WhiteboardLayeringControls from './whiteboard-layering-controls.svelte';
 
 	interface Props {
@@ -32,6 +35,10 @@
 		onSendToBack?: () => void;
 		onMoveForward?: () => void;
 		onMoveBackward?: () => void;
+		onStartCrop?: () => void;
+		onApplyCrop?: () => void;
+		onCancelCrop?: () => void;
+		isCropping?: boolean;
 	}
 
 	interface TextOptions {
@@ -77,7 +84,11 @@
 		onBringToFront,
 		onSendToBack,
 		onMoveForward,
-		onMoveBackward
+		onMoveBackward,
+		onStartCrop,
+		onApplyCrop,
+		onCancelCrop,
+		isCropping = false
 	}: Props = $props();
 
 	// Track which menu panel to show (independent of selectedTool for editing existing objects)
@@ -1035,6 +1046,51 @@
 					</Card.Title>
 				</Card.Header>
 				<Card.Content class="space-y-4">
+					<!-- Crop Controls -->
+					{#if isCropping}
+						<div class="space-y-2">
+							<Label class="text-xs font-medium">Crop Mode</Label>
+							<p class="text-muted-foreground text-xs">Drag the handles to adjust the crop area.</p>
+							<div class="flex gap-2">
+								<Button
+									variant="default"
+									size="sm"
+									onclick={onApplyCrop}
+									class="flex flex-1 items-center justify-center gap-2"
+								>
+									<CheckIcon class="h-4 w-4" />
+									<span>Apply</span>
+								</Button>
+								<Button
+									variant="outline"
+									size="sm"
+									onclick={onCancelCrop}
+									class="flex flex-1 items-center justify-center gap-2"
+								>
+									<XIcon class="h-4 w-4" />
+									<span>Cancel</span>
+								</Button>
+							</div>
+						</div>
+					{:else}
+						<!-- Crop Button -->
+						<div class="space-y-2">
+							<Label class="text-xs font-medium">Crop</Label>
+							<Button
+								variant="outline"
+								size="sm"
+								onclick={onStartCrop}
+								class="flex w-full items-center justify-center gap-2"
+								disabled={!onStartCrop}
+							>
+								<CropIcon class="h-4 w-4" />
+								<span>Crop Image</span>
+							</Button>
+						</div>
+					{/if}
+
+					<Separator />
+
 					<!-- Opacity -->
 					<div class="space-y-2">
 						<Label class="text-xs font-medium">Opacity</Label>
