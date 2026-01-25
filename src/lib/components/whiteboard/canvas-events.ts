@@ -520,7 +520,7 @@ export const createMouseUpHandler = (canvas: fabric.Canvas, ctx: CanvasEventCont
 /**
  * Creates path:created event handler
  */
-export const createPathCreatedHandler = (ctx: CanvasEventContext) => {
+export const createPathCreatedHandler = (canvas: fabric.Canvas, ctx: CanvasEventContext) => {
 	return ({ path }: { path: fabric.Path }) => {
 		// @ts-expect-error - custom id property
 		path.id = uuidv4()
@@ -538,6 +538,10 @@ export const createPathCreatedHandler = (ctx: CanvasEventContext) => {
 			type: 'add',
 			object: objData
 		})
+
+		// Fire object:finalized event so history is recorded
+		// @ts-expect-error - custom event
+		canvas.fire('object:finalized', { target: path })
 	}
 }
 
@@ -1017,7 +1021,7 @@ export const createMouseDownHandler = (canvas: fabric.Canvas, ctx: CanvasEventCo
 					hasBorders: false,
 					originX: 'left',
 					originY: 'top',
-					selectable: true
+					selectable: false // Start as non-selectable, will be set to true after finalized event
 				})
 
 				// Ensure dimensions are calculated correctly
@@ -1058,6 +1062,13 @@ export const createMouseDownHandler = (canvas: fabric.Canvas, ctx: CanvasEventCo
 
 				// Re-enable history recording after text is created and sent
 				ctx.setIsDrawingObject?.(false)
+
+				// Make textbox selectable before firing finalized event
+				textbox.set({ selectable: true })
+
+				// Fire object:finalized event so history is recorded
+				// @ts-expect-error - custom event
+				canvas.fire('object:finalized', { target: textbox })
 
 				// Auto-switch to selection tool while keeping floating menu open
 				ctx.setSelectedTool('select')
@@ -1311,7 +1322,7 @@ export const setupCanvasEvents = (canvas: fabric.Canvas, ctx: CanvasEventContext
 	canvas.on('object:rotating', createObjectRotatingHandler(ctx))
 	canvas.on('object:modified', createObjectModifiedHandler(ctx))
 	canvas.on('mouse:up', createMouseUpHandler(canvas, ctx))
-	canvas.on('path:created', createPathCreatedHandler(ctx))
+	canvas.on('path:created', createPathCreatedHandler(canvas, ctx))
 	canvas.on('text:changed', createTextChangedHandler(ctx))
 	canvas.on('text:editing:exited', createTextEditingExitedHandler(ctx))
 	canvas.on('selection:created', createSelectionCreatedHandler(ctx))

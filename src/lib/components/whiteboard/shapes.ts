@@ -1,7 +1,7 @@
-import * as fabric from 'fabric';
-import { v4 as uuidv4 } from 'uuid';
-import { MIN_TEXT_WIDTH } from './constants';
-import type { LineOptions, ShapeOptions, TextOptions } from './types';
+import * as fabric from 'fabric'
+import { v4 as uuidv4 } from 'uuid'
+import { MIN_TEXT_WIDTH } from './constants'
+import type { LineOptions, ShapeOptions, TextOptions } from './types'
 
 /**
  * Create a line object with the given options
@@ -24,15 +24,15 @@ export const createLine = (
 			strokeWidth: options.strokeWidth,
 			strokeDashArray: options.strokeDashArray,
 			opacity: options.opacity,
-			selectable: true,
+			selectable: false, // Start as non-selectable during drawing, set to true when finalized
 			hasControls: false,
 			hasBorders: false,
 			strokeUniform: true
 		}
-	);
+	)
 
-	return line;
-};
+	return line
+}
 
 /**
  * Create a shape (circle, rectangle, or triangle) from two points
@@ -46,10 +46,10 @@ export const createShapeFromPoints = (
 	options: ShapeOptions
 ) => {
 	// Calculate dimensions from the two points
-	const left = Math.min(x1, x2);
-	const top = Math.min(y1, y2);
-	const width = Math.abs(x2 - x1);
-	const height = Math.abs(y2 - y1);
+	const left = Math.min(x1, x2)
+	const top = Math.min(y1, y2)
+	const width = Math.abs(x2 - x1)
+	const height = Math.abs(y2 - y1)
 
 	switch (shapeType) {
 		case 'circle': {
@@ -67,11 +67,12 @@ export const createShapeFromPoints = (
 				top: top + height / 2,
 				originX: 'center',
 				originY: 'center',
+				selectable: false, // Start as non-selectable during drawing, set to true when finalized
 				hasControls: false,
 				hasBorders: false,
 				strokeUniform: true
-			});
-			return ellipse;
+			})
+			return ellipse
 		}
 		case 'rectangle': {
 			const rect = new fabric.Rect({
@@ -87,11 +88,12 @@ export const createShapeFromPoints = (
 				top: top + height / 2,
 				originX: 'center',
 				originY: 'center',
+				selectable: false, // Start as non-selectable during drawing, set to true when finalized
 				hasControls: false,
 				hasBorders: false,
 				strokeUniform: true
-			});
-			return rect;
+			})
+			return rect
 		}
 		case 'triangle': {
 			const triangle = new fabric.Triangle({
@@ -107,16 +109,17 @@ export const createShapeFromPoints = (
 				top: top + height / 2,
 				originX: 'center',
 				originY: 'center',
+				selectable: false, // Start as non-selectable during drawing, set to true when finalized
 				hasControls: false,
 				hasBorders: false,
 				strokeUniform: true
-			});
-			return triangle;
+			})
+			return triangle
 		}
 		default:
-			return null;
+			return null
 	}
-};
+}
 
 /**
  * Create a text box from two points
@@ -129,9 +132,9 @@ export const createTextFromPoints = (
 	options: TextOptions
 ) => {
 	// Calculate dimensions from the two points
-	const left = Math.min(x1, x2);
-	const top = Math.min(y1, y2);
-	const width = Math.max(Math.abs(x2 - x1), MIN_TEXT_WIDTH);
+	const left = Math.min(x1, x2)
+	const top = Math.min(y1, y2)
+	const width = Math.max(Math.abs(x2 - x1), MIN_TEXT_WIDTH)
 
 	const text = new fabric.Textbox('Click to edit text', {
 		id: uuidv4(),
@@ -148,12 +151,13 @@ export const createTextFromPoints = (
 		// Fixed height behavior - let text wrap and expand vertically naturally
 		// but constrain width
 		textAlign: options.textAlign,
+		selectable: false, // Start as non-selectable during creation, set to true when finalized
 		hasControls: false,
 		hasBorders: false,
 		// Use top-left origin (default for textboxes)
 		originX: 'left',
 		originY: 'top'
-	});
+	})
 
-	return text;
-};
+	return text
+}

@@ -1070,6 +1070,16 @@
 					return;
 				}
 
+				// Skip edge lines (bounding box lines for control points) - they are client-side only
+				if ((e.target as any).linkedObjectId && e.target.id?.includes('-edge-')) {
+					return;
+				}
+
+				// Skip objects marked as excludeFromExport (like edge lines) - they are client-side only
+				if ((e.target as any).excludeFromExport === true) {
+					return;
+				}
+
 				// Skip temporary objects that are being drawn (they have selectable: false until finalized)
 				// Only record when selectable is true, meaning the object has been finalized
 				if (e.target.selectable === false) {
@@ -1230,6 +1240,10 @@
 					return;
 				// Skip control points - they are client-side only
 				if (controlPointManager.isControlPoint(e.target)) return;
+				// Skip edge lines (bounding box lines for control points) - they are client-side only
+				if ((e.target as any).linkedObjectId && e.target.id?.includes('-edge-')) return;
+				// Skip objects marked as excludeFromExport (like edge lines) - they are client-side only
+				if ((e.target as any).excludeFromExport === true) return;
 				// Skip temporary objects (selectable: false) - these are being removed during drawing
 				if (e.target.selectable === false) return;
 				const objectId = e.target.id;
