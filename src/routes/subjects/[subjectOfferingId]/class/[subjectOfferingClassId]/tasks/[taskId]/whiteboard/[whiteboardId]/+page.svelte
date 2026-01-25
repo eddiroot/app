@@ -41,6 +41,7 @@
 	let Tools: typeof import('$lib/components/whiteboard/tools');
 	let WebSocketHandler: typeof import('$lib/components/whiteboard/websocket-socketio');
 	let ControlPointManager: typeof import('$lib/components/whiteboard/control-points').ControlPointManager;
+	let KeyboardShortcuts: typeof import('$lib/components/whiteboard/keyboard-shortcuts');
 
 	let { data } = $props();
 
@@ -70,6 +71,9 @@
 	let tempShape: any = null;
 	let tempText: any = null;
 	let floatingMenuRef: WhiteboardFloatingMenu;
+
+	// Track mouse position for paste operations
+	let lastMousePosition = { x: 0, y: 0 };
 
 	// Control point manager instance
 	let controlPointManager: any; // Will be ControlPointManager once loaded
@@ -788,24 +792,179 @@
 		isApplyingHistory = false;
 	};
 
-	const handleKeyDown = (event: KeyboardEvent) => {
+	const handleKeyDown = async (event: KeyboardEvent) => {
 		if (!canvas) return;
+
+		// Check if we're in a locked state for students
+		const isEditingDisabled = isLocked && !isTeacher;
+
+		// Get modifier key (Cmd on Mac, Ctrl on Windows/Linux)
+		const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
+		const modifierKey = isMac ? event.metaKey : event.ctrlKey;
+
+		// Check if currently editing text
+		const activeObject = canvas.getActiveObject();
+		const isEditingText = activeObject?.isType('textbox') && (activeObject as any).isEditing;
 
 		// Escape key switches to select mode
 		if (event.key === 'Escape') {
-			const activeObject = canvas.getActiveObject();
 			// Don't switch to select if editing text
-			if (!activeObject || !activeObject.isType('textbox') || !activeObject.isEditing) {
+			if (!isEditingText) {
 				event.preventDefault();
 				setSelectTool();
 			}
+			return;
 		}
 
+		// Delete/Backspace - delete selected objects
 		if (event.key === 'Backspace' || event.key === 'Delete') {
-			const activeObject = canvas.getActiveObject();
-			if (activeObject && (!activeObject.isType('textbox') || !activeObject.isEditing)) {
+			if (!isEditingDisabled && activeObject && !isEditingText) {
 				event.preventDefault();
 				deleteSelected();
+			}
+			return;
+		}
+
+		// Skip keyboard shortcuts if editing text (except for Escape and modifier combos)
+		if (isEditingText && !modifierKey) return;
+
+		// Create keyboard shortcut context
+		const shortcutContext = {
+			canvas,
+			sendCanvasUpdate,
+			controlPointManager,
+			history,
+			userId: data.user?.id,
+			updateHistoryState: () => {
+				canUndo = history?.canUndo() || false;
+				canRedo = history?.canRedo() || false;
+			},
+			mousePosition: lastMousePosition
+		};
+
+		// Ctrl/Cmd + Z - Undo
+		if (modifierKey && event.key === 'z' && !event.shiftKey) {
+			if (!isEditingDisabled) {
+				event.preventDefault();
+				await handleUndo();
+			}
+			return;
+		}
+
+		// Ctrl/Cmd + Shift + Z or Ctrl/Cmd + Y - Redo
+		if (
+			(modifierKey && event.key === 'z' && event.shiftKey) ||
+			(modifierKey && event.key === 'y')
+		) {
+			if (!isEditingDisabled) {
+				event.preventDefault();
+				await handleRedo();
+			}
+			return;
+		}
+
+		// Ctrl/Cmd + C - Copy
+		if (modifierKey && event.key === 'c') {
+			if (!isEditingText && KeyboardShortcuts) {
+				event.preventDefault();
+				KeyboardShortcuts.copySelected(shortcutContext);
+			}
+			return;
+		}
+
+		// Ctrl/Cmd + V - Paste
+		if (modifierKey && event.key === 'v') {
+			if (!isEditingDisabled && KeyboardShortcuts) {
+				event.preventDefault();
+				await KeyboardShortcuts.pasteFromClipboard(shortcutContext);
+			}
+			return;
+		}
+
+		// Ctrl/Cmd + X - Cut
+		if (modifierKey && event.key === 'x') {
+			if (!isEditingDisabled && !isEditingText && KeyboardShortcuts) {
+				event.preventDefault();
+				await KeyboardShortcuts.cutSelected(shortcutContext);
+			}
+			return;
+		}
+
+		// Ctrl/Cmd + D - Duplicate
+		if (modifierKey && event.key === 'd') {
+			if (!isEditingDisabled && !isEditingText && KeyboardShortcuts) {
+				event.preventDefault();
+				await KeyboardShortcuts.duplicateSelected(shortcutContext);
+			}
+			return;
+		}
+
+		// Ctrl/Cmd + A - Select All
+		if (modifierKey && event.key === 'a') {
+			if (!isEditingText && KeyboardShortcuts) {
+				event.preventDefault();
+				KeyboardShortcuts.selectAll(shortcutContext);
+			}
+			return;
+		}
+
+		// Ctrl/Cmd + + or Ctrl/Cmd + = - Zoom In
+		if (modifierKey && (event.key === '+' || event.key === '=')) {
+			event.preventDefault();
+			zoomIn();
+			return;
+		}
+
+		// Ctrl/Cmd + - - Zoom Out
+		if (modifierKey && event.key === '-') {
+			event.preventDefault();
+			zoomOut();
+			return;
+		}
+
+		// Ctrl/Cmd + 0 - Reset Zoom
+		if (modifierKey && event.key === '0') {
+			event.preventDefault();
+			resetZoom();
+			return;
+		}
+
+		// Single key shortcuts (only when not editing text and not using modifier)
+		if (!modifierKey && !isEditingText && !isEditingDisabled) {
+			switch (event.key.toLowerCase()) {
+				case 'v':
+					event.preventDefault();
+					setSelectTool();
+					break;
+				case 'h':
+					event.preventDefault();
+					setPanTool();
+					break;
+				case 'p':
+				case 'b':
+					event.preventDefault();
+					setDrawTool();
+					break;
+				case 'l':
+					event.preventDefault();
+					setLineTool();
+					break;
+				case 't':
+					event.preventDefault();
+					addText();
+					break;
+				case 'e':
+					event.preventDefault();
+					setEraserTool();
+					break;
+				case 'r':
+					event.preventDefault();
+					addShape('rectangle');
+					break;
+				case 'o':
+					event.preventDefault();
+					addShape('circle');
+					break;
 			}
 		}
 	};
@@ -814,6 +973,7 @@
 		if (!whiteboardCanvas) return;
 
 		let resizeCanvas: (() => void) | undefined;
+		let handleMouseMove: ((e: MouseEvent) => void) | undefined;
 
 		// Async initialization
 		(async () => {
@@ -829,6 +989,7 @@
 			WebSocketHandler = await import('$lib/components/whiteboard/websocket-socketio');
 			const ControlPointsModule = await import('$lib/components/whiteboard/control-points');
 			ControlPointManager = ControlPointsModule.ControlPointManager;
+			KeyboardShortcuts = await import('$lib/components/whiteboard/keyboard-shortcuts');
 
 			// Initialize history
 			history = new CanvasHistory();
@@ -1262,6 +1423,12 @@
 
 			window.addEventListener('keydown', handleKeyDown);
 
+			// Track mouse position for paste operations
+			handleMouseMove = (e: MouseEvent) => {
+				lastMousePosition = { x: e.clientX, y: e.clientY };
+			};
+			window.addEventListener('mousemove', handleMouseMove);
+
 			// Add pinch-to-zoom for touch devices
 			let initialPinchDistance = 0;
 			let initialZoom = 1;
@@ -1349,6 +1516,10 @@
 		return () => {
 			if (resizeCanvas) {
 				window.removeEventListener('resize', resizeCanvas);
+			}
+			window.removeEventListener('keydown', handleKeyDown);
+			if (handleMouseMove) {
+				window.removeEventListener('mousemove', handleMouseMove);
 			}
 		};
 	});
