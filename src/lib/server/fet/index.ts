@@ -49,7 +49,7 @@ export class FETDockerService {
 				this.containerName,
 				'sh',
 				'-c',
-				`cat > '${escapedPath}'`
+				`cat > '${escapedPath}'`,
 			]);
 
 			let stderr = '';
@@ -73,8 +73,8 @@ export class FETDockerService {
 				} else {
 					reject(
 						new Error(
-							`Docker process exited with code ${code}. Path: ${targetPath}, stderr: ${stderr}, stdout: ${stdout}`
-						)
+							`Docker process exited with code ${code}. Path: ${targetPath}, stderr: ${stderr}, stdout: ${stdout}`,
+						),
 					);
 				}
 			});
@@ -89,7 +89,7 @@ export class FETDockerService {
 	 */
 	async createDirectory(dirPath: string): Promise<void> {
 		await execAsync(`docker exec ${this.containerName} mkdir -p ${dirPath}`, {
-			timeout: 60000
+			timeout: 60000,
 		});
 	}
 
@@ -99,7 +99,7 @@ export class FETDockerService {
 	async executeFET(
 		inputFilePath: string,
 		outputDir: string,
-		params: FETProcessingParams = {}
+		params: FETProcessingParams = {},
 	): Promise<FETExecutionResult> {
 		const startTime = Date.now();
 
@@ -122,7 +122,7 @@ export class FETDockerService {
 			writetimetablesactivitytags: true,
 			writetimetablesactivities: true,
 			exportcsv: true,
-			...params
+			...params,
 		};
 
 		const cmdStr = Object.entries(defaultParams)
@@ -133,20 +133,16 @@ export class FETDockerService {
 
 		try {
 			const { stdout } = await execAsync(command, {
-				timeout: 20 * 60 * 1000 // 20 minutes
+				timeout: 20 * 60 * 1000, // 20 minutes
 			});
 
-			return {
-				success: true,
-				stdout,
-				executionTime: Date.now() - startTime
-			};
+			return { success: true, stdout, executionTime: Date.now() - startTime };
 		} catch (error) {
 			const execError = error as { stdout?: string; message?: string };
 			return {
 				success: false,
 				error: execError?.stdout || 'Unknown error',
-				executionTime: Date.now() - startTime
+				executionTime: Date.now() - startTime,
 			};
 		}
 	}
@@ -157,7 +153,7 @@ export class FETDockerService {
 	async listFiles(dirPath: string): Promise<string[]> {
 		const { stdout } = await execAsync(
 			`docker exec ${this.containerName} find ${dirPath} -type f`,
-			{ timeout: 60000 }
+			{ timeout: 60000 },
 		);
 		return stdout.trim().split('\n').filter(Boolean);
 	}
@@ -166,9 +162,10 @@ export class FETDockerService {
 	 * Read file content from container
 	 */
 	async readFile(filePath: string): Promise<string> {
-		const { stdout } = await execAsync(`docker exec ${this.containerName} cat "${filePath}"`, {
-			timeout: 2 * 60 * 1000
-		});
+		const { stdout } = await execAsync(
+			`docker exec ${this.containerName} cat "${filePath}"`,
+			{ timeout: 2 * 60 * 1000 },
+		);
 		return stdout;
 	}
 
@@ -178,7 +175,7 @@ export class FETDockerService {
 	async removeFile(filePath: string): Promise<void> {
 		try {
 			await execAsync(`docker exec ${this.containerName} rm -f ${filePath}`, {
-				timeout: 60000
+				timeout: 60000,
 			});
 		} catch (error) {
 			console.warn(`⚠️  Failed to remove file ${filePath}:`, error);
@@ -191,7 +188,7 @@ export class FETDockerService {
 	async removeDirectory(dirPath: string): Promise<void> {
 		try {
 			await execAsync(`docker exec ${this.containerName} rm -rf ${dirPath}`, {
-				timeout: 60000
+				timeout: 60000,
 			});
 		} catch (error) {
 			console.warn(`⚠️  Failed to remove directory ${dirPath}:`, error);
@@ -204,7 +201,7 @@ export class FETDockerService {
 	async isContainerRunning(): Promise<boolean> {
 		try {
 			const { stdout } = await execAsync(
-				`docker inspect -f '{{.State.Running}}' ${this.containerName}`
+				`docker inspect -f '{{.State.Running}}' ${this.containerName}`,
 			);
 			return stdout.trim() === 'true';
 		} catch (error) {
@@ -218,9 +215,10 @@ export class FETDockerService {
 	 */
 	async cleanupTimetableWorkspace(): Promise<void> {
 		try {
-			await execAsync(`docker exec ${this.containerName} rm -rf /app/timetables/*`, {
-				timeout: 60000
-			});
+			await execAsync(
+				`docker exec ${this.containerName} rm -rf /app/timetables/*`,
+				{ timeout: 60000 },
+			);
 		} catch (error) {
 			console.warn(`⚠️  Failed to cleanup timetable workspace:`, error);
 		}

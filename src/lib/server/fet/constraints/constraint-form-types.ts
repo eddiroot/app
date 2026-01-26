@@ -1,4 +1,4 @@
-import type { AutocompleteOption } from '$lib/constraint-data-fetchers';
+import type { AutocompleteOption } from '$lib/server/fet/constraints/constraint-data-fetchers';
 
 /**
  * Enhanced constraint form component that provides data for autocomplete

@@ -13,12 +13,16 @@ const minioClient = new Minio.Client({
 	port: parseInt(env.OBJ_PORT, 10),
 	useSSL: env.OBJ_USE_SSL === 'true',
 	accessKey: env.OBJ_ACCESS_KEY,
-	secretKey: env.OBJ_SECRET_KEY
+	secretKey: env.OBJ_SECRET_KEY,
 });
 
 const BUCKET_NAME = 'schools';
 
-async function uploadBuffer(objectName: string, buffer: Buffer, contentType?: string) {
+async function uploadBuffer(
+	objectName: string,
+	buffer: Buffer,
+	contentType?: string,
+) {
 	try {
 		const metaData = contentType ? { 'Content-Type': contentType } : {};
 		const res = await minioClient.putObject(
@@ -26,7 +30,7 @@ async function uploadBuffer(objectName: string, buffer: Buffer, contentType?: st
 			objectName,
 			buffer,
 			buffer.length,
-			metaData
+			metaData,
 		);
 		return res;
 	} catch (error) {
@@ -38,7 +42,7 @@ async function uploadBuffer(objectName: string, buffer: Buffer, contentType?: st
 export async function uploadBufferHelper(
 	buffer: Buffer,
 	objectName: string,
-	contentType?: string
+	contentType?: string,
 ): Promise<string> {
 	await uploadBuffer(objectName, buffer, contentType);
 	return `${env.OBJ_URL_PREFIX}/${BUCKET_NAME}/${objectName}`;
@@ -53,7 +57,10 @@ export async function deleteFile(objectName: string): Promise<void> {
 	}
 }
 
-export async function listFiles(bucketName: string, prefix?: string): Promise<string[]> {
+export async function listFiles(
+	bucketName: string,
+	prefix?: string,
+): Promise<string[]> {
 	try {
 		const objects: string[] = [];
 		const stream = minioClient.listObjects(bucketName, prefix, true);
@@ -76,12 +83,16 @@ export async function listFiles(bucketName: string, prefix?: string): Promise<st
 export async function getPresignedUrl(
 	schoolId: string,
 	objectName: string,
-	expiry: number = 5 * 60 // 5 minutes in seconds
+	expiry: number = 5 * 60, // 5 minutes in seconds
 ): Promise<string> {
 	const fullObjectName = `${schoolId}/${objectName}`;
 
 	try {
-		const url = await minioClient.presignedGetObject(BUCKET_NAME, fullObjectName, expiry);
+		const url = await minioClient.presignedGetObject(
+			BUCKET_NAME,
+			fullObjectName,
+			expiry,
+		);
 		return url;
 	} catch (error) {
 		console.error('Error generating presigned URL:', error);

@@ -18,7 +18,7 @@ export const implementedConstraints = [
 	'ConstraintTeachersMaxGapsPerWeek',
 	'ConstraintMinDaysBetweenActivities',
 	'ConstraintBasicCompulsoryTime',
-	'ConstraintBasicCompulsorySpace'
+	'ConstraintBasicCompulsorySpace',
 ];
 
 /**
@@ -64,6 +64,6 @@ export function requiresEnhancedProps(FETName: string): boolean {
 	return [
 		'ConstraintSubjectPreferredRooms',
 		'ConstraintMinDaysBetweenActivities',
-		'ConstraintRoomNotAvailableTimes'
+		'ConstraintRoomNotAvailableTimes',
 	].includes(FETName);
 }

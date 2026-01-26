@@ -4,7 +4,7 @@ import { error, redirect, type RequestEvent } from '@sveltejs/kit';
 export class Security {
 	private readonly user?: import('$lib/server/auth').SessionValidationResult['user'];
 
-	constructor(private readonly event: RequestEvent) {
+	constructor(event: RequestEvent) {
 		this.user = event.locals.user;
 	}
 
@@ -43,8 +43,8 @@ export class Security {
 		return this;
 	}
 
-	isSchoolAdmin() {
-		if (!this.user?.type || this.user.type !== userTypeEnum.schoolAdmin) {
+	isAdmin() {
+		if (!this.user?.type || this.user.type !== userTypeEnum.admin) {
 			error(403, 'not school admin');
 		}
 		return this;

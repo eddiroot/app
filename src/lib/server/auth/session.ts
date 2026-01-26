@@ -54,16 +54,18 @@ export async function createSession(userId: string) {
 		userId,
 		token,
 		createdAt: now,
-		lastVerifiedAt: now
+		lastVerifiedAt: now,
 	};
 
-	await db.insert(table.session).values({
-		id: session.id,
-		secretHash: session.secretHash,
-		userId: session.userId,
-		createdAt: session.createdAt,
-		lastVerifiedAt: session.lastVerifiedAt
-	});
+	await db
+		.insert(table.session)
+		.values({
+			id: session.id,
+			secretHash: session.secretHash,
+			userId: session.userId,
+			createdAt: session.createdAt,
+			lastVerifiedAt: session.lastVerifiedAt,
+		});
 
 	return session;
 }
@@ -92,7 +94,10 @@ export async function validateSessionToken(token: string) {
 		return { session: null, user: null };
 	}
 
-	if (now.getTime() - session.lastVerifiedAt.getTime() >= activityCheckIntervalSeconds * 1000) {
+	if (
+		now.getTime() - session.lastVerifiedAt.getTime() >=
+		activityCheckIntervalSeconds * 1000
+	) {
 		session.lastVerifiedAt = now;
 		await db
 			.update(table.session)
@@ -103,7 +108,9 @@ export async function validateSessionToken(token: string) {
 	return { session, user };
 }
 
-export type SessionValidationResult = Awaited<ReturnType<typeof validateSessionToken>>;
+export type SessionValidationResult = Awaited<
+	ReturnType<typeof validateSessionToken>
+>;
 
 export async function getSessionAndUser(sessionId: string) {
 	const now = new Date();
@@ -118,9 +125,9 @@ export async function getSessionAndUser(sessionId: string) {
 				type: table.user.type,
 				firstName: table.user.firstName,
 				middleName: table.user.middleName,
-				lastName: table.user.lastName
+				lastName: table.user.lastName,
 			},
-			session: table.session
+			session: table.session,
 		})
 		.from(table.session)
 		.innerJoin(table.user, eq(table.session.userId, table.user.id))
@@ -133,7 +140,10 @@ export async function getSessionAndUser(sessionId: string) {
 	const session = results[0].session;
 	const user = results[0].user;
 
-	if (now.getTime() - session.lastVerifiedAt.getTime() >= inactivityTimeoutSeconds * 1000) {
+	if (
+		now.getTime() - session.lastVerifiedAt.getTime() >=
+		inactivityTimeoutSeconds * 1000
+	) {
 		await deleteSession(sessionId);
 		return null;
 	}
@@ -150,12 +160,10 @@ export function setSessionTokenCookie(event: RequestEvent, token: string) {
 		path: '/',
 		httpOnly: true,
 		secure: true,
-		sameSite: 'lax'
+		sameSite: 'lax',
 	});
 }
 
 export function deleteSessionTokenCookie(event: RequestEvent) {
-	event.cookies.delete(sessionCookieName, {
-		path: '/'
-	});
+	event.cookies.delete(sessionCookieName, { path: '/' });
 }

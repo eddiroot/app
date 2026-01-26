@@ -7,7 +7,7 @@ import { z } from 'zod';
 export const basicCompulsoryTimeSchema = z.object({
 	Weight_Percentage: z.number().min(1).max(100),
 	Active: z.boolean().default(true),
-	Comments: z.string().nullable().optional()
+	Comments: z.string().nullable().optional(),
 });
 
 export type BasicCompulsoryTimeForm = z.infer<typeof basicCompulsoryTimeSchema>;
@@ -19,10 +19,12 @@ export type BasicCompulsoryTimeForm = z.infer<typeof basicCompulsoryTimeSchema>;
 export const basicCompulsorySpaceSchema = z.object({
 	Weight_Percentage: z.number().min(1).max(100),
 	Active: z.boolean().default(true),
-	Comments: z.string().nullable().optional()
+	Comments: z.string().nullable().optional(),
 });
 
-export type BasicCompulsorySpaceForm = z.infer<typeof basicCompulsorySpaceSchema>;
+export type BasicCompulsorySpaceForm = z.infer<
+	typeof basicCompulsorySpaceSchema
+>;
 
 /**
  * Teachers Max Gaps Per Week Constraint
@@ -32,7 +34,7 @@ export const teachersMaxGapsSchema = z.object({
 	Weight_Percentage: z.number().min(1).max(100),
 	Max_Gaps: z.number().min(0).max(20),
 	Active: z.boolean().default(true),
-	Comments: z.string().nullable().optional()
+	Comments: z.string().nullable().optional(),
 });
 
 export type TeachersMaxGapsForm = z.infer<typeof teachersMaxGapsSchema>;
@@ -48,10 +50,12 @@ export const minDaysBetweenActivitiesSchema = z.object({
 	Number_of_Activities: z.number().min(2),
 	Activity_Id: z.array(z.union([z.string(), z.number()])).min(2),
 	Active: z.boolean().default(true),
-	Comments: z.string().nullable().optional()
+	Comments: z.string().nullable().optional(),
 });
 
-export type MinDaysBetweenActivitiesForm = z.infer<typeof minDaysBetweenActivitiesSchema>;
+export type MinDaysBetweenActivitiesForm = z.infer<
+	typeof minDaysBetweenActivitiesSchema
+>;
 
 /**
  * Subject Preferred Rooms Constraint
@@ -61,19 +65,23 @@ export const subjectPreferredRoomsSchema = z.object({
 	Weight_Percentage: z.number().min(1).max(100),
 	Subject: z
 		.union([z.string(), z.number()])
-		.refine((val) => val !== '' && val !== 0, { message: 'Subject is required' }),
+		.refine((val) => val !== '' && val !== 0, {
+			message: 'Subject is required',
+		}),
 	Number_of_Preferred_Rooms: z.number().min(1),
 	Preferred_Room: z
 		.array(z.union([z.string(), z.number()]))
 		.min(1, { message: 'At least one room is required' })
 		.refine((rooms) => rooms.every((room) => room !== '' && room !== 0), {
-			message: 'All rooms must be selected'
+			message: 'All rooms must be selected',
 		}),
 	Active: z.boolean().default(true),
-	Comments: z.string().nullable().optional()
+	Comments: z.string().nullable().optional(),
 });
 
-export type SubjectPreferredRoomsForm = z.infer<typeof subjectPreferredRoomsSchema>;
+export type SubjectPreferredRoomsForm = z.infer<
+	typeof subjectPreferredRoomsSchema
+>;
 
 /**
  * Room Not Available Times Constraint
@@ -89,8 +97,8 @@ export const roomNotAvailableTimesSchema = z.object({
 		.array(
 			z.object({
 				Day: z.number().min(1, { message: 'Day is required' }),
-				Period: z.number().min(1, { message: 'Period is required' })
-			})
+				Period: z.number().min(1, { message: 'Period is required' }),
+			}),
 		)
 		.min(1, { message: 'At least one time slot is required' })
 		.refine(
@@ -103,13 +111,15 @@ export const roomNotAvailableTimesSchema = z.object({
 					return true;
 				});
 			},
-			{ message: 'Duplicate time slots are not allowed' }
+			{ message: 'Duplicate time slots are not allowed' },
 		),
 	Active: z.boolean().default(true),
-	Comments: z.string().nullable().optional()
+	Comments: z.string().nullable().optional(),
 });
 
-export type RoomNotAvailableTimesForm = z.infer<typeof roomNotAvailableTimesSchema>;
+export type RoomNotAvailableTimesForm = z.infer<
+	typeof roomNotAvailableTimesSchema
+>;
 
 /**
  * Map constraint FET names to their schemas
@@ -120,7 +130,7 @@ export const constraintSchemas = {
 	ConstraintTeachersMaxGapsPerWeek: teachersMaxGapsSchema,
 	ConstraintMinDaysBetweenActivities: minDaysBetweenActivitiesSchema,
 	ConstraintSubjectPreferredRooms: subjectPreferredRoomsSchema,
-	ConstraintRoomNotAvailableTimes: roomNotAvailableTimesSchema
+	ConstraintRoomNotAvailableTimes: roomNotAvailableTimesSchema,
 } as const;
 
 /**
@@ -135,7 +145,7 @@ export function getConstraintSchema(FETName: string): z.ZodSchema | null {
  */
 export function validateConstraintParameters(
 	FETName: string,
-	parameters: unknown
+	parameters: unknown,
 ): { success: true; data: unknown } | { success: false; errors: z.ZodError } {
 	const schema = getConstraintSchema(FETName);
 	if (!schema) {
@@ -145,9 +155,9 @@ export function validateConstraintParameters(
 				{
 					code: 'custom',
 					message: `No schema found for constraint: ${FETName}`,
-					path: []
-				}
-			])
+					path: [],
+				},
+			]),
 		};
 	}
 

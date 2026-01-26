@@ -19,10 +19,7 @@ export type FETOutput = {
 			}[];
 		};
 		Space_Constraints_List: {
-			ConstraintActivityPreferredRoom: {
-				Activity_Id: number;
-				Room: number;
-			}[];
+			ConstraintActivityPreferredRoom: { Activity_Id: number; Room: number }[];
 		};
 	};
 };
@@ -61,10 +58,7 @@ export type ConstraintMinDaysBetweenActivities = BaseConstraint & {
 export type ConstraintTeacherNotAvailableTimes = BaseConstraint & {
 	Teacher: string;
 	Number_of_Not_Available_Times: number;
-	Not_Available_Time: {
-		Day: string;
-		Hour: number;
-	}[];
+	Not_Available_Time: { Day: string; Hour: number }[];
 };
 
 export type ConstraintTeacherMaxDaysPerWeek = BaseConstraint & {
@@ -89,10 +83,7 @@ export type ConstraintBasicCompulsorySpace = BaseConstraint;
 export type ConstraintRoomNotAvailableTimes = BaseConstraint & {
 	Room: string;
 	Number_of_Not_Available_Times: number;
-	Not_Available_Time: {
-		Day: string;
-		Hour: number;
-	}[];
+	Not_Available_Time: { Day: string; Hour: number }[];
 };
 
 export type ConstraintSubjectPreferredRoom = BaseConstraint & {

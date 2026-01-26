@@ -8,7 +8,7 @@ export const google = new Google(
 	env.GOOGLE_CLIENT_SECRET,
 	isProd
 		? 'https://eddi.com.au/login/google/callback'
-		: 'http://localhost:5173/login/google/callback'
+		: 'http://localhost:5173/login/google/callback',
 );
 
 export const microsoft = new MicrosoftEntraId(
@@ -17,5 +17,5 @@ export const microsoft = new MicrosoftEntraId(
 	env.MICROSOFT_CLIENT_SECRET,
 	isProd
 		? 'https://eddi.com.au/login/microsoft/callback'
-		: 'http://localhost:5173/login/microsoft/callback'
+		: 'http://localhost:5173/login/microsoft/callback',
 );

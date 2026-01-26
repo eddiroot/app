@@ -1,166 +1,9 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { taskBlockTypeEnum } from '$lib/enums';
-
-export const taskCreationPrompts = {
-	lesson: (
-		title: string,
-		description: string = ''
-	) => `Use the following as background context to help generate an educational lesson:
-Title: ${title}
-${description ? `Description: ${description}` : ''}
-
-Analyse the attached documents/images and create a comprehensive lesson with:
-    1. A subtitle as a h2. Do not include a title.
-    2. A number of sections matching the complexity of the content. Sections shouldn't be too long. Sections should have appropriate headers (h1, h2, h3)
-    3. Explanatory content using paragraphs and markdown
-    4. Interactive elements to engage students including:
-        - Multiple choice questions (both single and multiple answer), and answers are string of options (not a,b,c or 1,2,3) - component type: multiple_choice
-        - Fill in the blank questions (use the format "_____" for blanks, 5 underscores) limit to maximum 3 - component type: fill_in_blank
-				- Math input problems (if applicable) for calculation practice - component type: math_input
-    5. A good balance of explanation and interactive practice
-Each component should be structured according to the provided schema. Ignore the short answer component type as it is not needed for lessons.`,
-
-	homework: (
-		title: string,
-		description: string = ''
-	) => `Use the following as background context to help generate homework assignments:
-Title: ${title}
-${description ? `Description: ${description}` : ''}
-
-Analyse the attached documents/images and create homework that reinforces learning with:
-    - Focus primarily on these question components: short_answer, matching, fill_in_blank, multiple_choice, and math_input. Use headers and paragraphs only when introducing or explaining questions.
-    - Ensure you include at least one \`short_answer\` component for open-ended written responses.
-    1. A subtitle as a h2 about the homework. Do not include a title.
-    2. Brief instructions or review sections with headers (h2, h3, h4, h5, h6)
-    3. Practice problems and exercises including:
-        - Multiple choice questions for self-assessment (make sure answers are string of options (not a,b,c or 1,2,3))
-        - Fill in the blank exercises for key concepts (use the format "_____" for blanks, 5 underscores) limit to maximum 3
-        - Math input problems (if applicable) for calculation practice
-        - Text input questions for written responses
-        - Matching activities to connect concepts
-    4. Focus primarily on practice questions rather than lengthy explanations
-    5. Progressive difficulty from basic recall to application
-    6. Clear instructions for each section
-    - For every block that has an **answer**, also include a **marks** field (number ≥ 1).
-    - If a block includes **criteria**, provide one or more criteria objects:
-        • Each object needs { description, marks }
-        • The sum of criteria.marks must equal the block's marks.
-    - In lessons, you may leave marks blank or 0; in homework and assessments, marks are required.
-Each component should be structured according to the provided schema. Prioritize interactive practice over explanatory content.`,
-
-	test: (
-		title: string,
-		description: string = ''
-	) => `Use the following as background context to help generate a comprehensive assessment:
-Title: ${title}
-${description ? `Description: ${description}` : ''}
-
-Analyse the attached documents/images and create an assessment that evaluates student understanding with:
-    - Focus primarily on these question components: short_answer, matching, fill_in_blank, multiple_choice, and math_input. Use headers and paragraphs only when introducing or explaining questions.
-    - Ensure you include at least one \`short_answer\` component for open-ended evaluation.
-    1. A clear assessment subtitle and brief instructions. Do not include a title.
-    2. Varied question types to test different skill levels:
-        - Multiple choice questions (both single and multiple answer) for knowledge and comprehension (make sure answers are string of options (not a,b,c or 1,2,3))
-        - Fill in the blank questions for key terminology and concepts (use the format "_____" for blanks, 5 underscores) limit to maximum 3
-        - Math input questions (if applicable) for problem-solving skills
-        - Text input questions for analysis and evaluation
-        - Matching activities for concept connections
-    3. Questions that progress from basic recall to higher-order thinking
-    4. Clear, unambiguous question wording
-    5. Comprehensive coverage of the topic material
-    6. Minimal explanatory content - focus on evaluation questions
-    - For every block that has an **answer**, also include a **marks** field (number ≥ 1).
-    - If a block includes **criteria**, provide one or more criteria objects:
-        • Each object needs { description, marks }
-        • The sum of criteria.marks must equal the block's marks.
-    - In lessons, you may leave marks blank or 0; in homework and assessments, marks are required.
-Each component should be structured according to the provided schema. Prioritize assessment questions over instructional content.`,
-
-	assignment: (
-		title: string,
-		description: string = ''
-	) => `Use the following as background context to help generate a comprehensive assessment:
-Title: ${title}
-${description ? `Description: ${description}` : ''}
-
-Analyse the attached documents/images and create an assessment that evaluates student understanding with:
-    - Focus primarily on these question components: short_answer, matching, fill_in_blank, multiple_choice, and math_input. Use headers and paragraphs only when introducing or explaining questions.
-    - Ensure you include at least one \`short_answer\` component for open-ended evaluation.
-    1. A clear assessment subtitle and brief instructions. Do not include a title.
-    2. Varied question types to test different skill levels:
-        - Multiple choice questions (both single and multiple answer) for knowledge and comprehension (make sure answers are string of options (not a,b,c or 1,2,3))
-        - Fill in the blank questions for key terminology and concepts (use the format "_____" for blanks, 5 underscores) limit to maximum 3
-        - Math input questions (if applicable) for problem-solving skills
-        - Text input questions for analysis and evaluation
-        - Matching activities for concept connections
-    3. Questions that progress from basic recall to higher-order thinking
-    4. Clear, unambiguous question wording
-    5. Comprehensive coverage of the topic material
-    6. Minimal explanatory content - focus on evaluation questions
-    - For every block that has an **answer**, also include a **marks** field (number ≥ 1).
-    - If a block includes **criteria**, provide one or more criteria objects:
-        • Each object needs { description, marks }
-        • The sum of criteria.marks must equal the block's marks.
-    - In lessons, you may leave marks blank or 0; in homework and assessments, marks are required.
-Each component should be structured according to the provided schema. Prioritize assessment questions over instructional content.`,
-
-	module: (
-		title: string,
-		description: string = ''
-	) => `Use the following as background context to help generate a comprehensive assessment:
-Title: ${title}
-${description ? `Description: ${description}` : ''}
-
-Analyse the attached documents/images and create an assessment that evaluates student understanding with:
-    - Focus primarily on these question components: short_answer, matching, fill_in_blank, multiple_choice, and math_input. Use headers and paragraphs only when introducing or explaining questions.
-    - Ensure you include at least one \`short_answer\` component for open-ended evaluation.
-    1. A clear assessment subtitle and brief instructions. Do not include a title.
-    2. Varied question types to test different skill levels:
-        - Multiple choice questions (both single and multiple answer) for knowledge and comprehension (make sure answers are string of options (not a,b,c or 1,2,3))
-        - Fill in the blank questions for key terminology and concepts (use the format "_____" for blanks, 5 underscores) limit to maximum 3
-        - Math input questions (if applicable) for problem-solving skills
-        - Text input questions for analysis and evaluation
-        - Matching activities for concept connections
-    3. Questions that progress from basic recall to higher-order thinking
-    4. Clear, unambiguous question wording
-    5. Comprehensive coverage of the topic material
-    6. Minimal explanatory content - focus on evaluation questions
-    - For every block that has an **answer**, also include a **marks** field (number ≥ 1).
-    - If a block includes **criteria**, provide one or more criteria objects:
-        • Each object needs { description, marks }
-        • The sum of criteria.marks must equal the block's marks.
-    - In lessons, you may leave marks blank or 0; in homework and assessments, marks are required.
-Each component should be structured according to the provided schema. Prioritize assessment questions over instructional content.`
-};
 
 const criteriaItem = {
 	type: 'object',
-	properties: {
-		description: { type: 'string' },
-		marks: { type: 'number' }
-	},
-	required: ['description', 'marks']
-};
-
-const difficultyItem = {
-	type: 'string',
-	enum: ['beginner', 'intermediate', 'advanced'],
-	description: 'Difficulty level for the task block'
-};
-
-const hintsItem = {
-	type: 'array',
-	items: { type: 'string' },
-	minItems: 3,
-	maxItems: 3,
-	description: 'Array of exactly 3 progressive hints to help students'
-};
-
-const stepsItem = {
-	type: 'array',
-	items: { type: 'string' },
-	minItems: 1,
-	description: 'Array of step-by-step solution breakdown'
+	properties: { description: { type: 'string' }, marks: { type: 'number' } },
+	required: ['description', 'marks'],
 };
 
 export const blockHeading = {
@@ -169,20 +12,14 @@ export const blockHeading = {
 		type: { type: 'string', enum: [taskBlockTypeEnum.heading] },
 		config: {
 			type: 'object',
-			properties: {
-				text: { type: 'string' },
-				size: { type: 'number' }
-			},
-			required: ['text', 'size']
-		}
+			properties: { text: { type: 'string' }, size: { type: 'number' } },
+			required: ['text', 'size'],
+		},
 	},
-	required: ['type', 'config']
+	required: ['type', 'config'],
 };
 
-export type BlockHeadingConfig = {
-	text: string;
-	size: number;
-};
+export type BlockHeadingConfig = { text: string; size: number };
 
 export const blockRichText = {
 	type: 'object',
@@ -190,18 +27,14 @@ export const blockRichText = {
 		type: { type: 'string', enum: [taskBlockTypeEnum.richText] },
 		config: {
 			type: 'object',
-			properties: {
-				html: { type: 'string' }
-			},
-			required: ['html']
-		}
+			properties: { html: { type: 'string' } },
+			required: ['html'],
+		},
 	},
-	required: ['type', 'config']
+	required: ['type', 'config'],
 };
 
-export type BlockRichTextConfig = {
-	html: string;
-};
+export type BlockRichTextConfig = { html: string };
 
 export const blockMathInput = {
 	type: 'object',
@@ -212,18 +45,14 @@ export const blockMathInput = {
 			properties: {
 				text: { type: 'string' },
 				question: { type: 'string' },
-				answer: { type: 'string' }
+				answer: { type: 'string' },
 			},
-			required: ['text', 'question', 'answer']
+			required: ['text', 'question', 'answer'],
 		},
-		criteria: {
-			type: 'array',
-			items: criteriaItem,
-			minItems: 1
-		},
-		marks: { type: 'number' }
+		criteria: { type: 'array', items: criteriaItem, minItems: 1 },
+		marks: { type: 'number' },
 	},
-	required: ['type', 'config', 'criteria']
+	required: ['type', 'config', 'criteria'],
 };
 
 export type BlockMathInputConfig = {
@@ -233,9 +62,7 @@ export type BlockMathInputConfig = {
 	advancedMathSymbols: boolean;
 };
 
-export type BlockMathInputResponse = {
-	answer: string;
-};
+export type BlockMathInputResponse = { answer: string };
 
 export const blockChoice = {
 	type: 'object',
@@ -251,31 +78,26 @@ export const blockChoice = {
 						type: 'object',
 						properties: {
 							text: { type: 'string' },
-							isAnswer: { type: 'boolean' }
+							isAnswer: { type: 'boolean' },
 						},
 						description:
-							'Array of objects containing the choices and whether that choice is an answer. To make only a single answer valid, the array should contain only one item with isAnswer as true.'
-					}
-				}
+							'Array of objects containing the choices and whether that choice is an answer. To make only a single answer valid, the array should contain only one item with isAnswer as true.',
+					},
+				},
 			},
-			required: ['question', 'options']
+			required: ['question', 'options'],
 		},
-		marks: { type: 'number' }
+		marks: { type: 'number' },
 	},
-	required: ['type', 'config']
+	required: ['type', 'config'],
 };
 
 export type BlockChoiceConfig = {
 	question: string;
-	options: {
-		text: string;
-		isAnswer: boolean;
-	}[];
+	options: { text: string; isAnswer: boolean }[];
 };
 
-export type BlockChoiceResponse = {
-	answers: string[];
-};
+export type BlockChoiceResponse = { answers: string[] };
 
 export const blockFillBlank = {
 	type: 'object',
@@ -285,26 +107,18 @@ export const blockFillBlank = {
 			type: 'object',
 			properties: {
 				sentence: { type: 'string' },
-				answers: {
-					type: 'array',
-					items: { type: 'string' }
-				}
+				answers: { type: 'array', items: { type: 'string' } },
 			},
-			required: ['sentence', 'answers']
+			required: ['sentence', 'answers'],
 		},
-		marks: { type: 'number' }
+		marks: { type: 'number' },
 	},
-	required: ['type', 'config']
+	required: ['type', 'config'],
 };
 
-export type BlockFillBlankConfig = {
-	sentence: string;
-	answers: string[];
-};
+export type BlockFillBlankConfig = { sentence: string; answers: string[] };
 
-export type BlockFillBlankResponse = {
-	answers: string[];
-};
+export type BlockFillBlankResponse = { answers: string[] };
 
 export const blockMatching = {
 	type: 'object',
@@ -318,19 +132,16 @@ export const blockMatching = {
 					type: 'array',
 					items: {
 						type: 'object',
-						properties: {
-							left: { type: 'string' },
-							right: { type: 'string' }
-						},
-						required: ['left', 'right']
-					}
-				}
+						properties: { left: { type: 'string' }, right: { type: 'string' } },
+						required: ['left', 'right'],
+					},
+				},
 			},
-			required: ['instructions', 'pairs']
+			required: ['instructions', 'pairs'],
 		},
-		marks: { type: 'number' }
+		marks: { type: 'number' },
 	},
-	required: ['type', 'config']
+	required: ['type', 'config'],
 };
 
 export type BlockMatchingConfig = {
@@ -348,28 +159,18 @@ export const blockShortAnswer = {
 		type: { type: 'string', enum: [taskBlockTypeEnum.shortAnswer] },
 		config: {
 			type: 'object',
-			properties: {
-				question: { type: 'string' }
-			},
-			required: ['question']
+			properties: { question: { type: 'string' } },
+			required: ['question'],
 		},
-		criteria: {
-			type: 'array',
-			items: criteriaItem,
-			minItems: 1
-		},
-		marks: { type: 'number' }
+		criteria: { type: 'array', items: criteriaItem, minItems: 1 },
+		marks: { type: 'number' },
 	},
-	required: ['type', 'config', 'criteria']
+	required: ['type', 'config', 'criteria'],
 };
 
-export type BlockShortAnswerConfig = {
-	question: string;
-};
+export type BlockShortAnswerConfig = { question: string };
 
-export type BlockShortAnswerResponse = {
-	answer: string;
-};
+export type BlockShortAnswerResponse = { answer: string };
 
 export const blockClose = {
 	type: 'object',
@@ -377,28 +178,18 @@ export const blockClose = {
 		type: { type: 'string', enum: [taskBlockTypeEnum.close] },
 		config: {
 			type: 'object',
-			properties: {
-				text: { type: 'string' }
-			},
-			required: ['text']
+			properties: { text: { type: 'string' } },
+			required: ['text'],
 		},
-		criteria: {
-			type: 'array',
-			items: criteriaItem,
-			minItems: 1
-		},
-		marks: { type: 'number' }
+		criteria: { type: 'array', items: criteriaItem, minItems: 1 },
+		marks: { type: 'number' },
 	},
-	required: ['type', 'config', 'criteria']
+	required: ['type', 'config', 'criteria'],
 };
 
-export type BlockCloseConfig = {
-	text: string;
-};
+export type BlockCloseConfig = { text: string };
 
-export type BlockCloseResponse = {
-	answers: string[];
-};
+export type BlockCloseResponse = { answers: string[] };
 
 export const blockHighlightText = {
 	type: 'object',
@@ -408,23 +199,18 @@ export const blockHighlightText = {
 			type: 'object',
 			properties: {
 				text: { type: 'string' },
-				instructions: { type: 'string' }
+				instructions: { type: 'string' },
 			},
-			required: ['text', 'instructions']
+			required: ['text', 'instructions'],
 		},
-		marks: { type: 'number' }
+		marks: { type: 'number' },
 	},
-	required: ['type', 'config']
+	required: ['type', 'config'],
 };
 
-export type BlockHighlightTextConfig = {
-	text: string;
-	instructions: string;
-};
+export type BlockHighlightTextConfig = { text: string; instructions: string };
 
-export type BlockHighlightTextResponse = {
-	selectedText: string[];
-};
+export type BlockHighlightTextResponse = { selectedText: string[] };
 
 export const blockTable = {
 	type: 'object',
@@ -438,16 +224,13 @@ export const blockTable = {
 				columns: { type: 'number' },
 				data: {
 					type: 'array',
-					items: {
-						type: 'array',
-						items: { type: 'string' }
-					}
-				}
+					items: { type: 'array', items: { type: 'string' } },
+				},
 			},
-			required: ['title', 'rows', 'columns', 'data']
-		}
+			required: ['title', 'rows', 'columns', 'data'],
+		},
 	},
-	required: ['type', 'config']
+	required: ['type', 'config'],
 };
 
 export type BlockTableConfig = {
@@ -465,13 +248,13 @@ export const blockWhiteboard = {
 			type: 'object',
 			properties: {
 				title: { type: 'string' },
-				whiteboardId: { type: 'number', nullable: true }
+				whiteboardId: { type: 'number', nullable: true },
 			},
-			required: ['data', 'width', 'height']
+			required: ['data', 'width', 'height'],
 		},
-		marks: { type: 'number' }
+		marks: { type: 'number' },
 	},
-	required: ['type', 'config']
+	required: ['type', 'config'],
 };
 
 export type BlockWhiteboardConfig = {
@@ -491,19 +274,13 @@ export const blockGraph = {
 				yAxisLabel: { type: 'string' },
 				xRange: {
 					type: 'object',
-					properties: {
-						min: { type: 'number' },
-						max: { type: 'number' }
-					},
-					required: ['min', 'max']
+					properties: { min: { type: 'number' }, max: { type: 'number' } },
+					required: ['min', 'max'],
 				},
 				yRange: {
 					type: 'object',
-					properties: {
-						min: { type: 'number' },
-						max: { type: 'number' }
-					},
-					required: ['min', 'max']
+					properties: { min: { type: 'number' }, max: { type: 'number' } },
+					required: ['min', 'max'],
 				},
 				staticPlots: {
 					type: 'array',
@@ -513,16 +290,23 @@ export const blockGraph = {
 							id: { type: 'string' },
 							equation: { type: 'string' },
 							color: { type: 'string' },
-							label: { type: 'string' }
+							label: { type: 'string' },
 						},
-						required: ['id', 'equation', 'color', 'label']
-					}
-				}
+						required: ['id', 'equation', 'color', 'label'],
+					},
+				},
 			},
-			required: ['title', 'xAxisLabel', 'yAxisLabel', 'xRange', 'yRange', 'staticPlots']
-		}
+			required: [
+				'title',
+				'xAxisLabel',
+				'yAxisLabel',
+				'xRange',
+				'yRange',
+				'staticPlots',
+			],
+		},
 	},
-	required: ['type', 'config']
+	required: ['type', 'config'],
 };
 
 export type BlockGraphConfig = {
@@ -531,12 +315,7 @@ export type BlockGraphConfig = {
 	yAxisLabel: string;
 	xRange: { min: number; max: number };
 	yRange: { min: number; max: number };
-	staticPlots: {
-		id: string;
-		equation: string;
-		color: string;
-		label: string;
-	}[];
+	staticPlots: { id: string; equation: string; color: string; label: string }[];
 };
 
 export type BlockGraphResponse = {
@@ -562,10 +341,10 @@ export const blockBalancingEquations = {
 						properties: {
 							formula: { type: 'string' },
 							coefficient: { type: 'number' },
-							given: { type: 'boolean' }
+							given: { type: 'boolean' },
 						},
-						required: ['formula', 'coefficient', 'given']
-					}
+						required: ['formula', 'coefficient', 'given'],
+					},
 				},
 				products: {
 					type: 'array',
@@ -574,38 +353,27 @@ export const blockBalancingEquations = {
 						properties: {
 							formula: { type: 'string' },
 							coefficient: { type: 'number' },
-							given: { type: 'boolean' }
+							given: { type: 'boolean' },
 						},
-						required: ['formula', 'coefficient', 'given']
-					}
-				}
+						required: ['formula', 'coefficient', 'given'],
+					},
+				},
 			},
-			required: ['reactants', 'products']
+			required: ['reactants', 'products'],
 		},
-		marks: { type: 'number' }
+		marks: { type: 'number' },
 	},
-	required: ['type', 'config']
+	required: ['type', 'config'],
 };
 
 export type BlockBalancingEquationsConfig = {
 	question?: string;
-	reactants: Array<{
-		formula: string;
-		coefficient: number;
-		given: boolean;
-	}>;
-	products: Array<{
-		formula: string;
-		coefficient: number;
-		given: boolean;
-	}>;
+	reactants: Array<{ formula: string; coefficient: number; given: boolean }>;
+	products: Array<{ formula: string; coefficient: number; given: boolean }>;
 };
 
 export type BlockBalancingEquationsResponse = {
-	coefficients: {
-		reactants: number[];
-		products: number[];
-	};
+	coefficients: { reactants: number[]; products: number[] };
 };
 
 export const blockImage = {
@@ -614,20 +382,14 @@ export const blockImage = {
 		type: { type: 'string', enum: [taskBlockTypeEnum.image] },
 		config: {
 			type: 'object',
-			properties: {
-				path: { type: 'string' },
-				altText: { type: 'string' }
-			},
-			required: ['path', 'altText']
-		}
+			properties: { path: { type: 'string' }, altText: { type: 'string' } },
+			required: ['path', 'altText'],
+		},
 	},
-	required: ['type', 'config']
+	required: ['type', 'config'],
 };
 
-export type BlockImageConfig = {
-	path: string;
-	altText: string;
-};
+export type BlockImageConfig = { path: string; altText: string };
 
 export const blockVideo = {
 	type: 'object',
@@ -635,20 +397,14 @@ export const blockVideo = {
 		type: { type: 'string', enum: [taskBlockTypeEnum.video] },
 		config: {
 			type: 'object',
-			properties: {
-				url: { type: 'string' },
-				altText: { type: 'string' }
-			},
-			required: ['url', 'altText']
-		}
+			properties: { url: { type: 'string' }, altText: { type: 'string' } },
+			required: ['url', 'altText'],
+		},
 	},
-	required: ['type', 'config']
+	required: ['type', 'config'],
 };
 
-export type BlockVideoConfig = {
-	url: string;
-	altText: string;
-};
+export type BlockVideoConfig = { url: string; altText: string };
 
 export const blockAudio = {
 	type: 'object',
@@ -656,20 +412,14 @@ export const blockAudio = {
 		type: { type: 'string', enum: [taskBlockTypeEnum.audio] },
 		config: {
 			type: 'object',
-			properties: {
-				path: { type: 'string' },
-				altText: { type: 'string' }
-			},
-			required: ['path', 'altText']
-		}
+			properties: { path: { type: 'string' }, altText: { type: 'string' } },
+			required: ['path', 'altText'],
+		},
 	},
-	required: ['type', 'config']
+	required: ['type', 'config'],
 };
 
-export type BlockAudioConfig = {
-	path: string;
-	altText: string;
-};
+export type BlockAudioConfig = { path: string; altText: string };
 
 export const blockSubmission = {
 	type: 'object',
@@ -677,22 +427,16 @@ export const blockSubmission = {
 		type: { type: 'string', enum: [taskBlockTypeEnum.submission] },
 		config: {
 			type: 'object',
-			properties: {
-				instructions: { type: 'string' },
-			},
-			required: ['instructions']
-		}
+			properties: { instructions: { type: 'string' } },
+			required: ['instructions'],
+		},
 	},
-	required: ['type', 'config']
-}
-
-export type BlockSubmissionConfig = {
-	instructions: string;
+	required: ['type', 'config'],
 };
 
-export type BlockSubmissionResponse = {
-	path: string;
-};
+export type BlockSubmissionConfig = { instructions: string };
+
+export type BlockSubmissionResponse = { path: string };
 
 export const taskBlocks = [
 	blockHeading,
@@ -710,52 +454,13 @@ export const taskBlocks = [
 	blockImage,
 	blockVideo,
 	blockAudio,
-	blockSubmission
+	blockSubmission,
 ];
-
-export const layoutTwoColumns = {
-	type: 'object',
-	properties: {
-		type: { type: 'string', enum: ['col_2'] },
-		config: {
-			type: 'object',
-			properties: {
-				leftColumn: {
-					type: 'array',
-					items: {
-						anyOf: taskBlocks
-					}
-				},
-				rightColumn: {
-					type: 'array',
-					items: {
-						anyOf: taskBlocks
-					}
-				}
-			},
-			required: ['leftColumn', 'rightColumn']
-		}
-	},
-	required: ['type', 'config']
-};
-
-export const taskLayouts = [layoutTwoColumns];
-
-// Combined schema for all task items (components + layouts)
-export const taskBlocksAndLayouts = [...taskBlocks, ...taskLayouts];
 
 export const taskSchema = {
 	type: 'object',
-	properties: {
-		blocks: {
-			type: 'array',
-			items: {
-				// TODO: Change to taskBlocksAndLayouts once layouts are implemented
-				anyOf: taskBlocks
-			}
-		}
-	},
-	required: ['task']
+	properties: { blocks: { type: 'array', items: { anyOf: taskBlocks } } },
+	required: ['task'],
 };
 
 // Union type for all possible block configs
@@ -790,29 +495,44 @@ export type BlockResponse =
 	| BlockGraphResponse
 	| BlockSubmissionResponse;
 
-export type BlockProps<T extends BlockConfig = BlockConfig, Q extends BlockResponse = never> = {
+export type BlockProps<
+	T extends BlockConfig = BlockConfig,
+	Q extends BlockResponse = never,
+> = {
 	config: T;
 	onConfigUpdate: (config: T) => Promise<void>;
 	viewMode: ViewMode;
 } & ([Q] extends [never]
 	? object
-	: {
-			response: Q;
-			onResponseUpdate: (response: Q) => Promise<void>;
-		});
+	: { response: Q; onResponseUpdate: (response: Q) => Promise<void> });
 
 // Specific prop types for each block type
 export type HeadingBlockProps = BlockProps<BlockHeadingConfig>;
 export type RichTextBlockProps = BlockProps<BlockRichTextConfig>;
-export type MathInputBlockProps = BlockProps<BlockMathInputConfig, BlockMathInputResponse>;
-export type ChoiceBlockProps = BlockProps<BlockChoiceConfig, BlockChoiceResponse>;
-export type FillBlankBlockProps = BlockProps<BlockFillBlankConfig, BlockFillBlankResponse>;
+export type MathInputBlockProps = BlockProps<
+	BlockMathInputConfig,
+	BlockMathInputResponse
+>;
+export type ChoiceBlockProps = BlockProps<
+	BlockChoiceConfig,
+	BlockChoiceResponse
+>;
+export type FillBlankBlockProps = BlockProps<
+	BlockFillBlankConfig,
+	BlockFillBlankResponse
+>;
 export type BalancingEquationsBlockProps = BlockProps<
 	BlockBalancingEquationsConfig,
 	BlockBalancingEquationsResponse
 >;
-export type MatchingBlockProps = BlockProps<BlockMatchingConfig, BlockMatchingResponse>;
-export type ShortAnswerBlockProps = BlockProps<BlockShortAnswerConfig, BlockShortAnswerResponse>;
+export type MatchingBlockProps = BlockProps<
+	BlockMatchingConfig,
+	BlockMatchingResponse
+>;
+export type ShortAnswerBlockProps = BlockProps<
+	BlockShortAnswerConfig,
+	BlockShortAnswerResponse
+>;
 export type WhiteboardBlockProps = BlockProps<BlockWhiteboardConfig>;
 export type CloseBlockProps = BlockProps<BlockCloseConfig, BlockCloseResponse>;
 export type HighlightTextBlockProps = BlockProps<
@@ -824,7 +544,10 @@ export type TableBlockProps = BlockProps<BlockTableConfig>;
 export type GraphBlockProps = BlockProps<BlockGraphConfig, BlockGraphResponse>;
 export type VideoBlockProps = BlockProps<BlockVideoConfig>;
 export type AudioBlockProps = BlockProps<BlockAudioConfig>;
-export type SubmissionBlockProps = BlockProps<BlockSubmissionConfig, BlockSubmissionResponse>;
+export type SubmissionBlockProps = BlockProps<
+	BlockSubmissionConfig,
+	BlockSubmissionResponse
+>;
 
 import { type Icon } from '@lucide/svelte';
 import AudioIcon from '@lucide/svelte/icons/audio-lines';
@@ -841,14 +564,14 @@ import PresentationIcon from '@lucide/svelte/icons/presentation';
 import MathIcon from '@lucide/svelte/icons/sigma';
 import TableIcon from '@lucide/svelte/icons/table';
 import TrendingUpIcon from '@lucide/svelte/icons/trending-up';
-import VideoIcon from '@lucide/svelte/icons/video';
 import UploadIcon from '@lucide/svelte/icons/upload';
+import VideoIcon from '@lucide/svelte/icons/video';
 
 export enum ViewMode {
 	CONFIGURE = 'configure',
 	ANSWER = 'answer',
 	REVIEW = 'review',
-	PRESENT = 'present'
+	PRESENT = 'present',
 }
 
 export const blockTypes: {
@@ -861,19 +584,19 @@ export const blockTypes: {
 		type: taskBlockTypeEnum.heading,
 		name: 'Heading',
 		initialConfig: { text: 'Heading', size: 2 },
-		icon: HeadingIcon
+		icon: HeadingIcon,
 	},
 	{
 		type: taskBlockTypeEnum.richText,
 		name: 'Rich Text',
 		initialConfig: { html: 'This is a rich text block' },
-		icon: PilcrowIcon
+		icon: PilcrowIcon,
 	},
 	{
 		type: taskBlockTypeEnum.whiteboard,
 		name: 'Whiteboard',
 		initialConfig: { data: '', width: 800, height: 600 },
-		icon: PresentationIcon
+		icon: PresentationIcon,
 	},
 	{
 		type: taskBlockTypeEnum.choice,
@@ -882,56 +605,53 @@ export const blockTypes: {
 			question: 'Sample multiple choice question?',
 			options: [
 				{ text: 'Option 1', isAnswer: false },
-				{ text: 'Option 2', isAnswer: true }
-			]
+				{ text: 'Option 2', isAnswer: true },
+			],
 		},
-		icon: List
+		icon: List,
 	},
 	{
 		type: taskBlockTypeEnum.fillBlank,
 		name: 'Fill Blank',
 		initialConfig: {
 			sentence: 'Fill in the _____ and _____.',
-			answers: ['first', 'second']
+			answers: ['first', 'second'],
 		},
-		icon: PenToolIcon
+		icon: PenToolIcon,
 	},
 	{
 		type: taskBlockTypeEnum.close,
 		name: 'Answer Blank',
-		initialConfig: {
-			text: 'Complete this sentence with _____ and _____.'
-		},
-		icon: PenToolIcon
+		initialConfig: { text: 'Complete this sentence with _____ and _____.' },
+		icon: PenToolIcon,
 	},
 	{
 		type: taskBlockTypeEnum.shortAnswer,
 		name: 'Short Answer',
-		initialConfig: {
-			question: 'Question'
-		},
-		icon: MessageSquareTextIcon
+		initialConfig: { question: 'Question' },
+		icon: MessageSquareTextIcon,
 	},
 	{
 		type: taskBlockTypeEnum.highlightText,
 		name: 'Highlight',
 		initialConfig: {
 			text: 'The big brown fox jumps over the lazy dog.',
-			instructions: 'Highlight the words that start with the letter "b".'
+			instructions: 'Highlight the words that start with the letter "b".',
 		},
-		icon: HighlighterIcon
+		icon: HighlighterIcon,
 	},
 	{
 		type: taskBlockTypeEnum.matching,
 		name: 'Matching Pairs',
 		initialConfig: {
-			instructions: 'Match the items on the left with the correct answers on the right.',
+			instructions:
+				'Match the items on the left with the correct answers on the right.',
 			pairs: [
 				{ left: 'Item 1', right: 'Answer 1' },
-				{ left: 'Item 2', right: 'Answer 2' }
-			]
+				{ left: 'Item 2', right: 'Answer 2' },
+			],
 		},
-		icon: LinkIcon
+		icon: LinkIcon,
 	},
 	{
 		type: taskBlockTypeEnum.table,
@@ -943,10 +663,10 @@ export const blockTypes: {
 			data: [
 				['Header 1', 'Header 2', 'Header 3'],
 				['Row 1 Col 1', 'Row 1 Col 2', 'Row 1 Col 3'],
-				['Row 2 Col 1', 'Row 2 Col 2', 'Row 2 Col 3']
-			]
+				['Row 2 Col 1', 'Row 2 Col 2', 'Row 2 Col 3'],
+			],
 		},
-		icon: TableIcon
+		icon: TableIcon,
 	},
 	{
 		type: taskBlockTypeEnum.graph,
@@ -957,9 +677,9 @@ export const blockTypes: {
 			yAxisLabel: 'y',
 			xRange: { min: -10, max: 10 },
 			yRange: { min: -10, max: 10 },
-			staticPlots: []
+			staticPlots: [],
 		},
-		icon: TrendingUpIcon
+		icon: TrendingUpIcon,
 	},
 	{
 		type: taskBlockTypeEnum.balancingEquations,
@@ -968,38 +688,29 @@ export const blockTypes: {
 			question: 'Balance the following chemical equation:',
 			reactants: [
 				{ formula: 'H2', coefficient: 2, given: false },
-				{ formula: 'O2', coefficient: 1, given: false }
+				{ formula: 'O2', coefficient: 1, given: false },
 			],
-			products: [{ formula: 'H2O', coefficient: 2, given: true }]
+			products: [{ formula: 'H2O', coefficient: 2, given: true }],
 		},
-		icon: FlaskConicalIcon
+		icon: FlaskConicalIcon,
 	},
 	{
 		type: taskBlockTypeEnum.image,
 		name: 'Image',
-		initialConfig: {
-			path: '',
-			altText: ''
-		},
-		icon: ImageIcon
+		initialConfig: { path: '', altText: '' },
+		icon: ImageIcon,
 	},
 	{
 		type: taskBlockTypeEnum.video,
 		name: 'Video',
-		initialConfig: {
-			url: '',
-			altText: ''
-		},
-		icon: VideoIcon
+		initialConfig: { url: '', altText: '' },
+		icon: VideoIcon,
 	},
 	{
 		type: taskBlockTypeEnum.audio,
 		name: 'Audio',
-		initialConfig: {
-			path: '',
-			altText: ''
-		},
-		icon: AudioIcon
+		initialConfig: { path: '', altText: '' },
+		icon: AudioIcon,
 	},
 	{
 		type: taskBlockTypeEnum.mathInput,
@@ -1007,106 +718,17 @@ export const blockTypes: {
 		initialConfig: {
 			text: 'Solve this equation',
 			question: '2x+7=11',
-			answer: '2'
+			answer: '2',
 		},
-		icon: MathIcon
+		icon: MathIcon,
 	},
 	{
 		type: taskBlockTypeEnum.submission,
 		name: 'File Submission',
 		initialConfig: {
-			instructions: 'Please upload your assignment file. If there are multiple files, compress them into a single .zip file before uploading.'
+			instructions:
+				'Please upload your assignment file. If there are multiple files, compress them into a single .zip file before uploading.',
 		},
-		icon: UploadIcon
-	}
+		icon: UploadIcon,
+	},
 ];
-
-export const interactiveBlockWithOptionals = (
-	interactiveBlock: any,
-	options: {
-		includeHints?: boolean;
-		includeDifficulty?: boolean;
-		includeSteps?: boolean;
-		makeRequired?: boolean;
-	} = {}
-) => {
-	const {
-		includeHints = true,
-		includeDifficulty = true,
-		includeSteps = true,
-		makeRequired = true
-	} = options;
-
-	const additionalProperties: any = {};
-	const additionalRequired: string[] = [];
-
-	if (includeHints) {
-		additionalProperties.hints = hintsItem;
-		if (makeRequired) additionalRequired.push('hints');
-	}
-
-	if (includeDifficulty) {
-		additionalProperties.difficulty = difficultyItem;
-		if (makeRequired) additionalRequired.push('difficulty');
-	}
-
-	if (includeSteps) {
-		additionalProperties.steps = stepsItem;
-		if (makeRequired) additionalRequired.push('steps');
-	}
-
-	return {
-		...interactiveBlock,
-		properties: {
-			...interactiveBlock.properties,
-			...additionalProperties
-		},
-		required: [...(interactiveBlock.required || []), ...additionalRequired]
-	};
-};
-
-export function getBlockTypesForSubject(subjectType: string): any[] {
-	const typeMap: Record<string, any[]> = {
-		mathematics: [blockChoice, blockShortAnswer, blockFillBlank],
-		science: [blockFillBlank, blockChoice, blockShortAnswer],
-		english: [blockShortAnswer, blockClose, blockHighlightText],
-		default: [blockChoice, blockShortAnswer, blockMatching, blockFillBlank]
-	};
-
-	return typeMap[subjectType.toLowerCase()] || typeMap.default;
-}
-
-export function getInteractiveSchema(subjectType: string): any {
-	const blockTypes = getBlockTypesForSubject(subjectType);
-
-	const interactiveBlockSchema = interactiveBlockWithOptionals(
-		{
-			type: 'object',
-			properties: {
-				taskBlock: {
-					anyOf: blockTypes
-				}
-			},
-			required: ['taskBlock']
-		},
-		{
-			includeHints: true,
-			includeDifficulty: true,
-			includeSteps: true,
-			makeRequired: true
-		}
-	);
-
-	return {
-		type: 'object',
-		properties: {
-			interactiveBlocks: {
-				type: 'array',
-				items: interactiveBlockSchema,
-				minItems: 1,
-				maxItems: 5
-			}
-		},
-		required: ['interactiveBlocks']
-	};
-}
