@@ -16,23 +16,22 @@ export default defineConfig({
 		user: process.env.DB_USER || '',
 		password: process.env.DB_PASSWORD || '',
 		database: process.env.DB_NAME || '',
-		ssl: false
+		ssl: false,
 	},
 	// Required for drizzle-kit push to work with custom pgSchema
 	// See: https://github.com/drizzle-team/drizzle-orm/issues/3476
 	schemaFilter: [
 		'public',
+		'coursemap',
 		'curriculum',
-		'course_map',
-		'events',
-		'interviews',
+		'event',
+		'global',
 		'news',
 		'resource',
 		'school',
+		'subject',
 		'task',
 		'timetable',
 		'user',
-		'utils',
-		'subject'
-	]
+	],
 });
