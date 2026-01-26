@@ -19,15 +19,3 @@
 
 - [ ] If we split announcements with other make it so only teacher can write announcements and rename other to something else
 - [ ] Maybe post announcement on class home page
-
-## Lesson Building
-
-- [ ] Title too big
-- [ ] Move switch mode button out of the lesson section
-- [ ] When in preview mode, hide blocks section and expend lesson section
-- [ ] Add tool tip with block name when hovering over it
-- [ ] Space that is above the contents, lesson and blocks section should be the same below them
-
-## Lesson Generation
-
-- [ ] Need equal margin at the top and bottom of the page

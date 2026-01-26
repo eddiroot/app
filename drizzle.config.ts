@@ -26,7 +26,6 @@ export default defineConfig({
 		'coursemap',
 		'curriculum',
 		'event',
-		'global',
 		'news',
 		'resource',
 		'school',
