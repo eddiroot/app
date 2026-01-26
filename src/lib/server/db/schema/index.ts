@@ -5,13 +5,13 @@
 export * from './task';
 
 // School schemas
-export * from './schools';
+export * from './school';
 
 // Timetable schemas
-export * from './timetables';
+export * from './timetable';
 
 // Subject schemas
-export * from './subjects';
+export * from './subject';
 
 // User schemas
 export * from './user';
@@ -29,37 +29,7 @@ export * from './curriculum';
 export * from './resource';
 
 // Event schemas
-export * from './events';
+export * from './event';
 
 // News schemas
 export * from './news';
-
-// ============================================================================
-// SCHEMA REGISTRY
-// ============================================================================
-
-import * as coursemapModule from './coursemap';
-import * as curriculumModule from './curriculum';
-import * as eventsModule from './events';
-import * as newsModule from './news';
-import * as resourceModule from './resource';
-import * as schoolModule from './schools';
-import * as subjectsModule from './subjects';
-import * as taskModule from './task';
-import * as timetableModule from './timetables';
-import * as userModule from './user';
-
-export type SchemaModule = Record<string, unknown>;
-
-export const AVAILABLE_SCHEMAS: Record<string, SchemaModule> = {
-	curriculum: curriculumModule,
-	task: taskModule,
-	school: schoolModule,
-	user: userModule,
-	news: newsModule,
-	subjects: subjectsModule,
-	timetable: timetableModule,
-	events: eventsModule,
-	resource: resourceModule,
-	coursemap: coursemapModule
-};

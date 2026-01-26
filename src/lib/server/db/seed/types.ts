@@ -8,5 +8,4 @@ export interface SeedContext {
 	db: Database;
 	/** Raw pg Pool for executing SQL files */
 	pool: pg.Pool;
-	/** If true, truncate tables before seeding */
 }

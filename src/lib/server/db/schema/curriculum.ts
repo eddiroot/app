@@ -1,341 +1,325 @@
 import {
-	boolean,
 	doublePrecision,
 	index,
 	integer,
 	pgSchema,
 	text,
 	unique,
-	varchar
+	varchar,
 } from 'drizzle-orm/pg-core';
 import { gradeScaleEnum } from '../../../enums';
-import { school } from './schools';
-import { embeddings, timestamps, yearLevelEnumPg } from './utils';
+import { school, schoolYearLevel } from './school';
+import { enumToPgEnum, essentials } from './utils';
 
 export const curriculumSchema = pgSchema('curriculum');
 
-export const curriculum = curriculumSchema.table('crclm', {
-	id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
-	name: text('name').notNull(),
-	version: text('version').notNull(),
-	schoolId: integer('school_id').references(() => school.id, { onDelete: 'cascade' }),
-	countryCode: varchar('country_code', { length: 2 }).notNull(),
-	stateCode: varchar('state_code', { length: 3 }).notNull(),
-	...timestamps,
-	isArchived: boolean('is_archived').default(false).notNull()
-});
+export const curriculum = curriculumSchema.table(
+	'crclm',
+	{
+		...essentials,
+		name: text().notNull(),
+		schoolId: integer().references(() => school.id, { onDelete: 'cascade' }),
+		// eddi school will have curriculums from multiple countries and states
+		// so we need to define at this level too
+		// Optional: if not provided, assume the school's country and state
+		countryCode: varchar({ length: 2 }),
+		stateCode: varchar({ length: 3 }),
+	},
+	(self) => [index().on(self.schoolId)],
+);
 
 export type Curriculum = typeof curriculum.$inferSelect;
 
-export const curriculumSubject = curriculumSchema.table('crclm_sub', {
-	id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
-	name: text('name').notNull(),
-	curriculumId: integer('cur_id')
-		.notNull()
-		.references(() => curriculum.id, { onDelete: 'cascade' }),
-	isArchived: boolean('is_archived').notNull().default(false),
-	...timestamps
-});
+export const curriculumSubject = curriculumSchema.table(
+	'crclm_sub',
+	{
+		...essentials,
+		name: text().notNull(),
+		curriculumId: integer('crclm_id')
+			.notNull()
+			.references(() => curriculum.id, { onDelete: 'cascade' }),
+	},
+	(self) => [index().on(self.curriculumId)],
+);
 
 export type CurriculumSubject = typeof curriculumSubject.$inferSelect;
 
-export const learningArea = curriculumSchema.table(
+export const curriculumSubjectLearningArea = curriculumSchema.table(
 	'crclm_sub_la',
 	{
-		id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
-		curriculumSubjectId: integer('cur_sub_id')
+		...essentials,
+		curriculumSubjectId: integer('crclm_sub_id')
 			.notNull()
 			.references(() => curriculumSubject.id, { onDelete: 'cascade' }),
-		name: text('name').notNull(),
-		isArchived: boolean('is_archived').notNull().default(false),
-		...timestamps,
-		...embeddings
+		name: text().notNull(),
+	},
+	(self) => [index().on(self.curriculumSubjectId)],
+);
+
+export type CurriculumSubjectLearningArea =
+	typeof curriculumSubjectLearningArea.$inferSelect;
+
+export const curriculumSubjectLearningAreaContent = curriculumSchema.table(
+	'crclm_sub_la_cnt',
+	{
+		...essentials,
+		curriculumSubjectLearningAreaId: integer('crclm_sub_la_id')
+			.notNull()
+			.references(() => curriculumSubjectLearningArea.id, {
+				onDelete: 'cascade',
+			}),
+		description: text().notNull(),
+		number: integer().notNull(),
+	},
+	(self) => [index().on(self.curriculumSubjectLearningAreaId)],
+);
+
+export type CurriculumSubjectLearningAreaContent =
+	typeof curriculumSubjectLearningAreaContent.$inferSelect;
+
+export const curriculumSubjectLearningAreaTopic = curriculumSchema.table(
+	'crclm_sub_la_tpc',
+	{
+		...essentials,
+		curriculumSubjectLearningAreaId: integer('crclm_sub_la_id')
+			.notNull()
+			.references(() => curriculumSubjectLearningArea.id, {
+				onDelete: 'cascade',
+			}),
+		name: text().notNull(),
 	},
 	(self) => [
-		index('crclm_sub_la_embedding_idx').using('hnsw', self.embedding.op('vector_cosine_ops')),
-		index('crclm_sub_la_metadata_idx').using('gin', self.embeddingMetadata)
-	]
+		unique().on(self.curriculumSubjectLearningAreaId, self.name),
+		index().on(self.curriculumSubjectLearningAreaId),
+	],
 );
 
-export type LearningArea = typeof learningArea.$inferSelect;
+export type CurriculumSubjectLearningAreaTopic =
+	typeof curriculumSubjectLearningAreaTopic.$inferSelect;
 
-export const learningAreaContent = curriculumSchema.table(
-	'lrn_a_cont',
+export const curriculumSubjectLearningAreaStandard = curriculumSchema.table(
+	'crclm_sub_la_std',
 	{
-		id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
-		learningAreaId: integer('lrn_a_id')
+		...essentials,
+		curriculumSubjectLearningAreaId: integer('crclm_sub_la_id')
 			.notNull()
-			.references(() => learningArea.id, { onDelete: 'cascade' }),
-		description: text('description').notNull(),
-		number: integer('number').notNull(),
-		isArchived: boolean('is_archived').notNull().default(false),
-		...timestamps,
-		...embeddings
-	},
-	(self) => [
-		index('lrn_a_cont_embedding_idx').using('hnsw', self.embedding.op('vector_cosine_ops')),
-		index('lrn_a_cont_metadata_idx').using('gin', self.embeddingMetadata)
-	]
-);
-
-export type LearningAreaContent = typeof learningAreaContent.$inferSelect;
-
-export const learningAreaTopic = curriculumSchema.table(
-	'lrn_a_topic',
-	{
-		id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
-		learningAreaId: integer('lrn_a_id')
-			.notNull()
-			.references(() => learningArea.id, { onDelete: 'cascade' }),
-		name: text('name').notNull(),
-		isArchived: boolean('is_archived').notNull().default(false),
-		...timestamps,
-		...embeddings
-	},
-	(self) => [unique().on(self.learningAreaId, self.name)]
-);
-
-export type LearningAreaTopic = typeof learningAreaTopic.$inferSelect;
-
-export const learningAreaStandard = curriculumSchema.table(
-	'lrn_a_std',
-	{
-		id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
-		learningAreaId: integer('lrn_a_id')
-			.notNull()
-			.references(() => learningArea.id, { onDelete: 'cascade' }),
-		learningAreaTopicId: integer('lrn_a_topic_id').references(() => learningAreaTopic.id, {
-			onDelete: 'cascade'
+			.references(() => curriculumSubjectLearningArea.id, {
+				onDelete: 'cascade',
+			}),
+		curriculumSubjectLearningAreaTopicId: integer(
+			'crclm_sub_la_tpc_id',
+		).references(() => curriculumSubjectLearningAreaTopic.id, {
+			onDelete: 'cascade',
 		}),
-		code: varchar('code', { length: 20 }).notNull(),
-		description: text('description'),
-		yearLevel: yearLevelEnumPg().notNull(),
-		isArchived: boolean('is_archived').notNull().default(false),
-		...timestamps,
-		...embeddings
-	},
-	(self) => [
-		index('lrn_a_std_embedding_idx').using('hnsw', self.embedding.op('vector_cosine_ops')),
-		index('lrn_a_std_metadata_idx').using('gin', self.embeddingMetadata)
-	]
-);
-
-export type LearningAreaStandard = typeof learningAreaStandard.$inferSelect;
-
-export const standardElaboration = curriculumSchema.table(
-	'lrn_a_std_elab',
-	{
-		id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
-		learningAreaStandardId: integer('lrn_a_std_id')
+		code: varchar({ length: 20 }).notNull(),
+		description: text(),
+		yearLevel: integer()
 			.notNull()
-			.references(() => learningAreaStandard.id, { onDelete: 'cascade' }),
-		standardElaboration: text('std_elab').notNull(),
-		isArchived: boolean('is_archived').notNull().default(false),
-		...timestamps,
-		...embeddings
+			.references(() => schoolYearLevel.id, { onDelete: 'cascade' }),
 	},
 	(self) => [
-		index('lrn_a_std_elab_embedding_idx').using('hnsw', self.embedding.op('vector_cosine_ops')),
-		index('lrn_a_std_elab_metadata_idx').using('gin', self.embeddingMetadata)
-	]
+		index().on(self.curriculumSubjectLearningAreaId),
+		index().on(self.curriculumSubjectLearningAreaTopicId),
+		index().on(self.yearLevel),
+	],
 );
 
-export type StandardElaboration = typeof standardElaboration.$inferSelect;
+export type LearningAreaStandard =
+	typeof curriculumSubjectLearningAreaStandard.$inferSelect;
 
-export const outcome = curriculumSchema.table(
-	'outcome',
+export const curriculumSubjectLearningAreaStandardElaboration =
+	curriculumSchema.table(
+		'crclm_sub_la_std_elab',
+		{
+			...essentials,
+			curriculumSubjectLearningAreaStandardId: integer('crclm_sub_la_std_id')
+				.notNull()
+				.references(() => curriculumSubjectLearningAreaStandard.id, {
+					onDelete: 'cascade',
+				}),
+			standardElaboration: text().notNull(),
+		},
+		(self) => [index().on(self.curriculumSubjectLearningAreaStandardId)],
+	);
+
+export type CurriculumSubjectLearningAreaStandardElaboration =
+	typeof curriculumSubjectLearningAreaStandardElaboration.$inferSelect;
+
+export const curriculumSubjectOutcome = curriculumSchema.table(
+	'crclm_sub_out',
 	{
-		id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
-		curriculumSubjectId: integer('cur_sub_id')
-			.notNull()
-			.references(() => curriculumSubject.id, { onDelete: 'cascade' }),
-		number: integer('number').notNull(),
-		description: text('description').notNull(),
-		isArchived: boolean('is_archived').notNull().default(false),
-		...timestamps,
-		...embeddings
-	},
-	(self) => [
-		index('outcome_embedding_idx').using('hnsw', self.embedding.op('vector_cosine_ops')),
-		index('outcome_metadata_idx').using('gin', self.embeddingMetadata)
-	]
-);
-
-export type Outcome = typeof outcome.$inferSelect;
-
-export const learningAreaOutcome = curriculumSchema.table('lrn_a_outcome', {
-	id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
-	learningAreaId: integer('lrn_a_id')
-		.notNull()
-		.references(() => learningArea.id, { onDelete: 'cascade' }),
-	outcomeId: integer('out_id')
-		.notNull()
-		.references(() => outcome.id, { onDelete: 'cascade' }),
-	isArchived: boolean('is_archived').notNull().default(false),
-	...timestamps
-});
-
-export type LearningAreaOutcome = typeof learningAreaOutcome.$inferSelect;
-
-export const keySkill = curriculumSchema.table(
-	'key_skill',
-	{
-		id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
-		description: text('description').notNull(),
-		outcomeId: integer('out_id').references(() => outcome.id, { onDelete: 'cascade' }),
-		curriculumSubjectId: integer('cur_sub_id').references(() => curriculumSubject.id, {
-			onDelete: 'cascade'
-		}),
-		number: integer('number').notNull(), // e.g. 1/2/3
-		topicName: text('topic_name'),
-		isArchived: boolean('is_archived').notNull().default(false),
-		...timestamps,
-		...embeddings
-	},
-	(self) => [
-		index('key_skill_embedding_idx').using('hnsw', self.embedding.op('vector_cosine_ops')),
-		index('key_skill_metadata_idx').using('gin', self.embeddingMetadata)
-	]
-);
-
-export type KeySkill = typeof keySkill.$inferSelect;
-
-export const keyKnowledge = curriculumSchema.table(
-	'key_knowledge',
-	{
-		id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
-		description: text('description').notNull(),
-		outcomeId: integer('out_id').references(() => outcome.id, { onDelete: 'cascade' }),
-		topicName: text('topic_name'),
-		curriculumSubjectId: integer('cur_sub_id').references(() => curriculumSubject.id, {
-			onDelete: 'cascade'
-		}),
-		number: integer('number').notNull(),
-		isArchived: boolean('is_archived').notNull().default(false),
-		...timestamps,
-		...embeddings
-	},
-	(self) => [
-		index('key_knowledge_embedding_idx').using('hnsw', self.embedding.op('vector_cosine_ops')),
-		index('key_knowledge_metadata_idx').using('gin', self.embeddingMetadata)
-	]
-);
-
-export type KeyKnowledge = typeof keyKnowledge.$inferSelect;
-
-export const examQuestion = curriculumSchema.table(
-	'exam_question',
-	{
-		id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
-		question: text('question').notNull(),
-		answer: text('answer').notNull(),
-		curriculumSubjectId: integer('cur_sub_id')
+		...essentials,
+		curriculumSubjectId: integer('crclm_sub_id')
 			.notNull()
 			.references(() => curriculumSubject.id, { onDelete: 'cascade' }),
-		yearLevel: yearLevelEnumPg().notNull(),
-		...timestamps,
-		...embeddings
+		number: integer().notNull(),
+		description: text().notNull(),
 	},
-	(self) => [
-		index('exam_question_embedding_idx').using('hnsw', self.embedding.op('vector_cosine_ops')),
-		index('exam_question_metadata_idx').using('gin', self.embeddingMetadata)
-	]
+	(self) => [index().on(self.curriculumSubjectId)],
 );
 
-export type ExamQuestion = typeof examQuestion.$inferSelect;
+export type CurriculumSubjectOutcome =
+	typeof curriculumSubjectOutcome.$inferSelect;
 
-export const learningActivity = curriculumSchema.table(
-	'lrn_activity',
+export const curriculumSubjectLearningAreaOutcome = curriculumSchema.table(
+	'crclm_sub_la_out',
 	{
-		id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
-		content: text('content').notNull(),
-		curriculumSubjectId: integer('cur_sub_id')
+		curriculumSubjectLearningAreaId: integer('crclm_sub_la_id')
+			.notNull()
+			.references(() => curriculumSubjectLearningArea.id, {
+				onDelete: 'cascade',
+			}),
+		curriculumSubjectOutcomeId: integer('crclm_sub_out_id')
+			.notNull()
+			.references(() => curriculumSubjectOutcome.id, { onDelete: 'cascade' }),
+	},
+	(self) => [
+		index().on(self.curriculumSubjectLearningAreaId),
+		index().on(self.curriculumSubjectOutcomeId),
+	],
+);
+
+export type CurriculumSubjectLearningAreaOutcome =
+	typeof curriculumSubjectLearningAreaOutcome.$inferSelect;
+
+export const curriculumSubjectKeySkill = curriculumSchema.table(
+	'crclm_sub_key_skl',
+	{
+		...essentials,
+		description: text().notNull(),
+		curriculumSubjectOutcomeId: integer('crclm_sub_out_id').references(
+			() => curriculumSubjectOutcome.id,
+			{ onDelete: 'cascade' },
+		),
+		curriculumSubjectId: integer('crclm_sub_id').references(
+			() => curriculumSubject.id,
+			{ onDelete: 'cascade' },
+		),
+		number: integer().notNull(),
+		topicName: text(),
+	},
+	(self) => [
+		index().on(self.curriculumSubjectOutcomeId),
+		index().on(self.curriculumSubjectId),
+	],
+);
+
+export type CurriculumSubjectKeySkill =
+	typeof curriculumSubjectKeySkill.$inferSelect;
+
+export const curriculumSubjectKeyKnowledge = curriculumSchema.table(
+	'crclm_sub_key_know',
+	{
+		...essentials,
+		description: text().notNull(),
+		curriculumSubjectOutcomeId: integer('crclm_sub_out_id').references(
+			() => curriculumSubjectOutcome.id,
+			{ onDelete: 'cascade' },
+		),
+		topicName: text(),
+		curriculumSubjectId: integer('crclm_sub_id').references(
+			() => curriculumSubject.id,
+			{ onDelete: 'cascade' },
+		),
+		number: integer().notNull(),
+	},
+	(self) => [
+		index().on(self.curriculumSubjectOutcomeId),
+		index().on(self.curriculumSubjectId),
+	],
+);
+
+export type CurriculumSubjectKeyKnowledge =
+	typeof curriculumSubjectKeyKnowledge.$inferSelect;
+
+export const curriculumSubjectExamQuestion = curriculumSchema.table(
+	'crclm_sub_exam_q',
+	{
+		...essentials,
+		question: text().notNull(),
+		answer: text().notNull(),
+		curriculumSubjectId: integer('crclm_sub_id')
 			.notNull()
 			.references(() => curriculumSubject.id, { onDelete: 'cascade' }),
-		yearLevel: yearLevelEnumPg().notNull(),
-		...timestamps,
-		...embeddings
 	},
-	(self) => [
-		index('learning_activity_embedding_idx').using('hnsw', self.embedding.op('vector_cosine_ops')),
-		index('learning_activity_metadata_idx').using('gin', self.embeddingMetadata)
-	]
+	(self) => [index().on(self.curriculumSubjectId)],
 );
 
-export type LearningActivity = typeof learningActivity.$inferSelect;
+export type CurriculumSubjectExamQuestion =
+	typeof curriculumSubjectExamQuestion.$inferSelect;
 
-export const assessmentTask = curriculumSchema.table(
-	'assess_task',
+export const curriculumSubjectLearningActivity = curriculumSchema.table(
+	'crclm_sub_lrn_act',
 	{
-		id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
-		content: text('content').notNull(),
-		curriculumSubjectId: integer('cur_sub_id')
+		...essentials,
+		content: text().notNull(),
+		curriculumSubjectId: integer('crclm_sub_id')
 			.notNull()
 			.references(() => curriculumSubject.id, { onDelete: 'cascade' }),
-		yearLevel: yearLevelEnumPg().notNull(),
-		...timestamps,
-		...embeddings
 	},
-	(self) => [
-		index('assessment_task_embedding_idx').using('hnsw', self.embedding.op('vector_cosine_ops')),
-		index('assessment_task_metadata_idx').using('gin', self.embeddingMetadata)
-	]
+	(self) => [index().on(self.curriculumSubjectId)],
 );
 
-export type AssessmentTask = typeof assessmentTask.$inferSelect;
+export type CurriculumSubjectLearningActivity =
+	typeof curriculumSubjectLearningActivity.$inferSelect;
+
+export const curriculumSubjectAssessmentTask = curriculumSchema.table(
+	'crclm_sub_ass_task',
+	{
+		...essentials,
+		content: text().notNull(),
+		curriculumSubjectId: integer('crclm_sub_id')
+			.notNull()
+			.references(() => curriculumSubject.id, { onDelete: 'cascade' }),
+	},
+	(self) => [index().on(self.curriculumSubjectId)],
+);
+
+export type CurriculumSubjectAssessmentTask =
+	typeof curriculumSubjectAssessmentTask.$inferSelect;
 
 export const curriculumSubjectExtraContent = curriculumSchema.table(
-	'crclm_sub_cont',
+	'crclm_sub_extra_cont',
 	{
-		id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
-		curriculumSubjectId: integer('cur_sub_id')
+		...essentials,
+		curriculumSubjectId: integer('crclm_sub_id')
 			.notNull()
 			.references(() => curriculumSubject.id, { onDelete: 'cascade' }),
-		content: text('content').notNull(),
-		isArchived: boolean('is_archived').notNull().default(false),
-		...timestamps,
-		...embeddings
+		content: text().notNull(),
 	},
-	(self) => [
-		index('crclm_sub_cont_embedding_idx').using('hnsw', self.embedding.op('vector_cosine_ops')),
-		index('crclm_sub_cont_metadata_idx').using('gin', self.embeddingMetadata)
-	]
+	(self) => [index().on(self.curriculumSubjectId)],
 );
 
-export type CurriculumSubjectExtraContent = typeof curriculumSubjectExtraContent.$inferSelect;
+export type CurriculumSubjectExtraContent =
+	typeof curriculumSubjectExtraContent.$inferSelect;
 
-export const gradeScaleEnumPg = curriculumSchema.enum('enum_grade_scale', [
-	gradeScaleEnum.IB_CP,
-	gradeScaleEnum.IB_DP,
-	gradeScaleEnum.IB_MYP,
-	gradeScaleEnum.IB_PYP,
-	gradeScaleEnum.GPA,
-	gradeScaleEnum.percentage,
-	gradeScaleEnum.custom
-]);
+export const gradeScaleEnumPg = curriculumSchema.enum(
+	'enum_grade_scale',
+	enumToPgEnum(gradeScaleEnum),
+);
 
 export const gradeScale = curriculumSchema.table('grade_scale', {
-	id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
-	name: text('name').notNull(),
+	...essentials,
+	name: text().notNull(),
 	gradeScaleType: gradeScaleEnumPg().notNull(),
-	isArchived: boolean('is_archived').notNull().default(false),
-	...timestamps
 });
 
 export type GradeScale = typeof gradeScale.$inferSelect;
 
-export const gradeScaleLevel = curriculumSchema.table('grade_scale_level', {
-	id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
-	gradeScaleId: integer('grade_scale_id')
-		.notNull()
-		.references(() => gradeScale.id, { onDelete: 'cascade' }),
-	name: text('name').notNull(),
-	color: text('color').notNull(),
-	minimumScore: doublePrecision('minimum_score').notNull(),
-	maximumScore: doublePrecision('maximum_score').notNull(),
-	gradeValue: doublePrecision('grade_value'),
-	isArchived: boolean('is_archived').notNull().default(false),
-	...timestamps
-});
+export const gradeScaleLevel = curriculumSchema.table(
+	'grade_scale_level',
+	{
+		...essentials,
+		gradeScaleId: integer('grade_scale_id')
+			.notNull()
+			.references(() => gradeScale.id, { onDelete: 'cascade' }),
+		name: text().notNull(),
+		color: text().notNull(),
+		minimumScore: doublePrecision().notNull(),
+		maximumScore: doublePrecision().notNull(),
+		gradeValue: doublePrecision(),
+	},
+	(self) => [index().on(self.gradeScaleId)],
+);
 
 export type GradeScaleLevel = typeof gradeScaleLevel.$inferSelect;

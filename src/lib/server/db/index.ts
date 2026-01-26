@@ -14,7 +14,7 @@ const pool = new Pool({
 	port: parseInt(env.DB_PORT, 10),
 	user: env.DB_USER,
 	password: env.DB_PASSWORD,
-	database: env.DB_NAME
+	database: env.DB_NAME,
 });
 
 export const db = drizzle(pool, { schema });

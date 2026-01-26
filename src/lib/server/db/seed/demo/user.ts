@@ -1,16 +1,15 @@
 import {
-    relationshipTypeEnum,
-    userGenderEnum,
-    userHonorificEnum,
-    userTypeEnum,
-    yearLevelEnum
+	relationshipTypeEnum,
+	userGenderEnum,
+	userHonorificEnum,
+	userTypeEnum,
+	yearLevelEnum,
 } from '$lib/enums';
 import * as schema from '../../schema';
 import type { Database } from '../types';
 import { getDefaultPasswordHash } from '../utils';
-import { DEMO_YEAR_LEVELS, STUDENTS_PER_YEAR_LEVEL, TOTAL_TEACHERS } from './consts';
+import { STUDENTS_PER_YEAR_LEVEL, TOTAL_TEACHERS } from './constants';
 import type { DemoSchoolData, DemoUserData } from './types';
-
 
 // First names for generating realistic student names (with gender)
 const FIRST_NAMES: Array<{ name: string; gender: userGenderEnum }> = [
@@ -95,15 +94,60 @@ const FIRST_NAMES: Array<{ name: string; gender: userGenderEnum }> = [
 	{ name: 'Skylar', gender: userGenderEnum.female },
 	{ name: 'Lucy', gender: userGenderEnum.female },
 	{ name: 'Paisley', gender: userGenderEnum.female },
-	{ name: 'Everly', gender: userGenderEnum.female }
+	{ name: 'Everly', gender: userGenderEnum.female },
 ];
 
 const LAST_NAMES = [
-	'Smith', 'Johnson', 'Williams', 'Brown', 'Jones', 'Garcia', 'Miller', 'Davis', 'Rodriguez', 'Martinez',
-	'Hernandez', 'Lopez', 'Gonzalez', 'Wilson', 'Anderson', 'Thomas', 'Taylor', 'Moore', 'Jackson', 'Martin',
-	'Lee', 'Perez', 'Thompson', 'White', 'Harris', 'Sanchez', 'Clark', 'Ramirez', 'Lewis', 'Robinson',
-	'Walker', 'Young', 'Allen', 'King', 'Wright', 'Scott', 'Torres', 'Nguyen', 'Hill', 'Flores',
-	'Green', 'Adams', 'Nelson', 'Baker', 'Hall', 'Rivera', 'Campbell', 'Mitchell', 'Carter', 'Roberts'
+	'Smith',
+	'Johnson',
+	'Williams',
+	'Brown',
+	'Jones',
+	'Garcia',
+	'Miller',
+	'Davis',
+	'Rodriguez',
+	'Martinez',
+	'Hernandez',
+	'Lopez',
+	'Gonzalez',
+	'Wilson',
+	'Anderson',
+	'Thomas',
+	'Taylor',
+	'Moore',
+	'Jackson',
+	'Martin',
+	'Lee',
+	'Perez',
+	'Thompson',
+	'White',
+	'Harris',
+	'Sanchez',
+	'Clark',
+	'Ramirez',
+	'Lewis',
+	'Robinson',
+	'Walker',
+	'Young',
+	'Allen',
+	'King',
+	'Wright',
+	'Scott',
+	'Torres',
+	'Nguyen',
+	'Hill',
+	'Flores',
+	'Green',
+	'Adams',
+	'Nelson',
+	'Baker',
+	'Hall',
+	'Rivera',
+	'Campbell',
+	'Mitchell',
+	'Carter',
+	'Roberts',
 ];
 
 // Teacher first names (with gender)
@@ -137,7 +181,7 @@ const TEACHER_FIRST_NAMES: Array<{ name: string; gender: userGenderEnum }> = [
 	{ name: 'Katherine', gender: userGenderEnum.female },
 	{ name: 'Steven', gender: userGenderEnum.male },
 	{ name: 'Brittany', gender: userGenderEnum.female },
-	{ name: 'Kevin', gender: userGenderEnum.male }
+	{ name: 'Kevin', gender: userGenderEnum.male },
 ];
 
 // Generate a random date within a year
@@ -157,7 +201,7 @@ function seededRandom(seed: number): () => number {
 
 export async function seedDemoUsers(
 	db: Database,
-	schoolData: DemoSchoolData
+	schoolData: DemoSchoolData,
 ): Promise<DemoUserData> {
 	const { school, campus, yearLevels } = schoolData;
 	const passwordHash = await getDefaultPasswordHash();
@@ -169,11 +213,11 @@ export async function seedDemoUsers(
 			email: 'admin@demo.edu.au',
 			passwordHash,
 			schoolId: school.id,
-			type: userTypeEnum.schoolAdmin,
-			yearLevelId: yearLevels.none,
+			type: userTypeEnum.admin,
+			schoolYearLevelId: yearLevels.none.id,
 			firstName: 'School',
 			lastName: 'Admin',
-			emailVerified: true
+			emailVerified: true,
 		})
 		.returning();
 
@@ -185,10 +229,10 @@ export async function seedDemoUsers(
 			passwordHash,
 			schoolId: school.id,
 			type: userTypeEnum.principal,
-			yearLevelId: yearLevels.none,
+			schoolYearLevelId: yearLevels.none.id,
 			firstName: 'School',
 			lastName: 'Principal',
-			emailVerified: true
+			emailVerified: true,
 		})
 		.returning();
 
@@ -196,32 +240,22 @@ export async function seedDemoUsers(
 
 	// Generate a year level coordinator for years 7-10 (exclude 'none')
 	const coordinators = [];
-	const activeYearLevels = DEMO_YEAR_LEVELS.filter((yl) => yl !== yearLevelEnum.none);
-	
-	// Map enum values to yearLevels keys
-	const yearLevelKeyMap: Record<string, keyof typeof yearLevels> = {
-		[yearLevelEnum.year7]: '7',
-		[yearLevelEnum.year8]: '8',
-		[yearLevelEnum.year9]: '9',
-		[yearLevelEnum.year10]: '10',
-		[yearLevelEnum.none]: 'none'
-	};
+	const activeYearLevels = Object.values(yearLevels).filter(
+		(yl) => yl.code !== yearLevelEnum.none,
+	);
 
 	for (const yearLevel of activeYearLevels) {
-		const yearLevelKey = yearLevelKeyMap[yearLevel];
-		const yearLevelId = yearLevels[yearLevelKey];
-		
 		const [coordinator] = await db
 			.insert(schema.user)
 			.values({
-				email: `year${yearLevelKey}coordinator@demo.edu.au`,
+				email: `year${yearLevel.code}coordinator@demo.edu.au`,
 				passwordHash,
 				schoolId: school.id,
 				type: userTypeEnum.teacher,
-				yearLevelId,
-				firstName: `Year ${yearLevelKey}`,
+				schoolYearLevelId: yearLevel.id,
+				firstName: `Year ${yearLevel.code}`,
 				lastName: 'Coordinator',
-				emailVerified: true
+				emailVerified: true,
 			})
 			.returning();
 		coordinators.push(coordinator);
@@ -235,7 +269,7 @@ export async function seedDemoUsers(
 		schoolId: number;
 		type: userTypeEnum;
 		gender: userGenderEnum;
-		yearLevelId: number;
+		schoolYearLevelId: number;
 		firstName: string;
 		lastName: string;
 		dateOfBirth: Date;
@@ -247,18 +281,17 @@ export async function seedDemoUsers(
 		[yearLevelEnum.year7]: 12,
 		[yearLevelEnum.year8]: 13,
 		[yearLevelEnum.year9]: 14,
-		[yearLevelEnum.year10]: 15
+		[yearLevelEnum.year10]: 15,
 	};
 
 	let studentIndex = 1;
 	for (const yearLevel of activeYearLevels) {
-		const yearLevelKey = yearLevelKeyMap[yearLevel];
-		const yearLevelId = yearLevels[yearLevelKey];
-		const studentAge = yearLevelToAge[yearLevel] || 12;
+		const studentAge = yearLevelToAge[yearLevel.code] || 12;
 		const birthYear = new Date().getFullYear() - studentAge;
-		
+
 		for (let i = 0; i < STUDENTS_PER_YEAR_LEVEL; i++) {
-			const { name: firstName, gender } = FIRST_NAMES[Math.floor(random() * FIRST_NAMES.length)];
+			const { name: firstName, gender } =
+				FIRST_NAMES[Math.floor(random() * FIRST_NAMES.length)];
 			const lastName = LAST_NAMES[Math.floor(random() * LAST_NAMES.length)];
 			const paddedIndex = String(studentIndex).padStart(4, '0');
 
@@ -268,18 +301,20 @@ export async function seedDemoUsers(
 				schoolId: school.id,
 				type: userTypeEnum.student,
 				gender,
-				yearLevelId,
+				schoolYearLevelId: yearLevel.id,
 				firstName,
 				lastName,
 				dateOfBirth: randomDateInYear(birthYear),
-				emailVerified: true
+				emailVerified: true,
 			});
 			studentIndex++;
 		}
 	}
 
-	const students = await db.insert(schema.user).values(studentValues).returning();
-	console.log(`  Created ${students.length} students (${STUDENTS_PER_YEAR_LEVEL} per year level, ${DEMO_YEAR_LEVELS.length} year levels)`);
+	const students = await db
+		.insert(schema.user)
+		.values(studentValues)
+		.returning();
 
 	// Create Parents (2 parents per student)
 	const parentValues: Array<{
@@ -289,7 +324,7 @@ export async function seedDemoUsers(
 		type: userTypeEnum;
 		gender: userGenderEnum;
 		honorific: userHonorificEnum;
-		yearLevelId: number;
+		schoolYearLevelId: number;
 		firstName: string;
 		lastName: string;
 		dateOfBirth: Date;
@@ -297,7 +332,9 @@ export async function seedDemoUsers(
 	}> = [];
 
 	// Filter names by gender for parents
-	const femaleNames = FIRST_NAMES.filter((n) => n.gender === userGenderEnum.female);
+	const femaleNames = FIRST_NAMES.filter(
+		(n) => n.gender === userGenderEnum.female,
+	);
 	const maleNames = FIRST_NAMES.filter((n) => n.gender === userGenderEnum.male);
 
 	for (let i = 0; i < students.length; i++) {
@@ -312,11 +349,11 @@ export async function seedDemoUsers(
 			type: userTypeEnum.guardian,
 			gender: userGenderEnum.female,
 			honorific: random() > 0.5 ? userHonorificEnum.mrs : userHonorificEnum.ms,
-			yearLevelId: yearLevels.none,
+			schoolYearLevelId: yearLevels.none.id,
 			firstName: femaleNames[Math.floor(random() * femaleNames.length)].name,
 			lastName: student.lastName,
 			dateOfBirth: randomDateInYear(1975 + Math.floor(random() * 15)),
-			emailVerified: true
+			emailVerified: true,
 		});
 
 		// Father
@@ -327,11 +364,11 @@ export async function seedDemoUsers(
 			type: userTypeEnum.guardian,
 			gender: userGenderEnum.male,
 			honorific: userHonorificEnum.mr,
-			yearLevelId: yearLevels.none,
+			schoolYearLevelId: yearLevels.none.id,
 			firstName: maleNames[Math.floor(random() * maleNames.length)].name,
 			lastName: student.lastName,
 			dateOfBirth: randomDateInYear(1973 + Math.floor(random() * 15)),
-			emailVerified: true
+			emailVerified: true,
 		});
 	}
 
@@ -348,13 +385,14 @@ export async function seedDemoUsers(
 		type: userTypeEnum;
 		gender: userGenderEnum;
 		honorific: userHonorificEnum;
-		yearLevelId: number;
+		schoolYearLevelId: number;
 		dateOfBirth: Date;
 		emailVerified: boolean;
 	}> = [];
 
 	for (let i = 0; i < TOTAL_TEACHERS; i++) {
-		const { name: firstName, gender } = TEACHER_FIRST_NAMES[i % TEACHER_FIRST_NAMES.length];
+		const { name: firstName, gender } =
+			TEACHER_FIRST_NAMES[i % TEACHER_FIRST_NAMES.length];
 		const lastName = LAST_NAMES[Math.floor(random() * LAST_NAMES.length)];
 		const honorific =
 			gender === userGenderEnum.male
@@ -375,13 +413,16 @@ export async function seedDemoUsers(
 			type: userTypeEnum.teacher,
 			gender,
 			honorific,
-			yearLevelId: yearLevels.none,
+			schoolYearLevelId: yearLevels.none.id,
 			dateOfBirth: randomDateInYear(1965 + Math.floor(random() * 30)),
-			emailVerified: true
+			emailVerified: true,
 		});
 	}
 
-	const teachers = await db.insert(schema.user).values(teacherValues).returning();
+	const teachers = await db
+		.insert(schema.user)
+		.values(teacherValues)
+		.returning();
 	console.log(`  Created ${teachers.length} teachers`);
 
 	// Assign all users to campus
@@ -391,19 +432,16 @@ export async function seedDemoUsers(
 		...coordinators.map((c) => c.id),
 		...students.map((s) => s.id),
 		...parents.map((p) => p.id),
-		...teachers.map((t) => t.id)
+		...teachers.map((t) => t.id),
 	];
 
 	// Insert in batches to avoid hitting database limits
 	const BATCH_SIZE = 500;
 	for (let i = 0; i < allUserIds.length; i += BATCH_SIZE) {
 		const batch = allUserIds.slice(i, i + BATCH_SIZE);
-		await db.insert(schema.userCampus).values(
-			batch.map((userId) => ({
-				userId,
-				campusId: campus.id
-			}))
-		);
+		await db
+			.insert(schema.userCampus)
+			.values(batch.map((userId) => ({ userId, schoolCampusId: campus.id })));
 	}
 
 	console.log(`  Assigned ${allUserIds.length} users to campus`);
@@ -424,12 +462,12 @@ export async function seedDemoUsers(
 		relationshipValues.push({
 			userId: student.id,
 			relatedUserId: parents[motherIndex].id,
-			relationshipType: relationshipTypeEnum.mother
+			relationshipType: relationshipTypeEnum.mother,
 		});
 		relationshipValues.push({
 			userId: student.id,
 			relatedUserId: parents[fatherIndex].id,
-			relationshipType: relationshipTypeEnum.father
+			relationshipType: relationshipTypeEnum.father,
 		});
 	}
 
@@ -439,14 +477,9 @@ export async function seedDemoUsers(
 		await db.insert(schema.userRelationship).values(batch);
 	}
 
-	console.log(`  Created ${relationshipValues.length} parent-child relationships`);
+	console.log(
+		`  Created ${relationshipValues.length} parent-child relationships`,
+	);
 
-	return {
-		admin,
-		principal,
-		coordinators,
-		teachers,
-		students,
-		parents
-	};
+	return { admin, principal, coordinators, teachers, students, parents };
 }

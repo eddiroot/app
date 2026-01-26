@@ -1,23 +1,31 @@
 import { userTypeEnum } from '$lib/enums';
 import { db } from '$lib/server/db';
 import * as table from '$lib/server/db/schema';
-import { and, asc, desc, eq, lte } from 'drizzle-orm';
+import { and, asc, desc, eq, gte, lte } from 'drizzle-orm';
 
-export async function getSubjectOfferingClassDetailsById(subjectOfferingClassId: number) {
+export async function getSubjectOfferingClassDetailsById(
+	subjectOfferingClassId: number,
+) {
 	const subjectOfferingClass = await db
 		.select({
 			subjectOfferingClass: table.subjectOfferingClass,
 			subjectOffering: table.subjectOffering,
 			subject: table.subject,
-			coreSubject: table.coreSubject
+			subjectGroup: table.subjectGroup,
 		})
 		.from(table.subjectOfferingClass)
 		.innerJoin(
 			table.subjectOffering,
-			eq(table.subjectOffering.id, table.subjectOfferingClass.subOfferingId)
+			eq(table.subjectOffering.id, table.subjectOfferingClass.subOfferingId),
 		)
-		.innerJoin(table.subject, eq(table.subject.id, table.subjectOffering.subjectId))
-		.leftJoin(table.coreSubject, eq(table.coreSubject.id, table.subject.coreSubjectId))
+		.innerJoin(
+			table.subject,
+			eq(table.subject.id, table.subjectOffering.subjectId),
+		)
+		.leftJoin(
+			table.subjectGroup,
+			eq(table.subjectGroup.id, table.subject.subjectGroupId),
+		)
 		.where(eq(table.subjectOfferingClass.id, subjectOfferingClassId))
 		.limit(1);
 
@@ -29,129 +37,150 @@ export async function getSubjectClassAllocationsByUserId(userId: string) {
 		.select({
 			classAllocation: table.subjectClassAllocation,
 			schoolSpace: table.schoolSpace,
-			subjectOffering: {
-				id: table.subjectOffering.id
-			},
-			subject: {
-				id: table.subject.id,
-				name: table.subject.name
-			},
-			userSubjectOffering: table.userSubjectOffering
+			subjectOffering: { id: table.subjectOffering.id },
+			subject: { id: table.subject.id, name: table.subject.name },
+			userSubjectOffering: table.userSubjectOffering,
 		})
 		.from(table.userSubjectOfferingClass)
 		.innerJoin(
 			table.subjectOfferingClass,
-			eq(table.userSubjectOfferingClass.subOffClassId, table.subjectOfferingClass.id)
+			eq(
+				table.userSubjectOfferingClass.subOffClassId,
+				table.subjectOfferingClass.id,
+			),
 		)
 		.innerJoin(
 			table.subjectClassAllocation,
-			eq(table.subjectClassAllocation.subjectOfferingClassId, table.subjectOfferingClass.id)
+			eq(
+				table.subjectClassAllocation.subjectOfferingClassId,
+				table.subjectOfferingClass.id,
+			),
 		)
 		.innerJoin(
 			table.schoolSpace,
-			eq(table.subjectClassAllocation.schoolSpaceId, table.schoolSpace.id)
+			eq(table.subjectClassAllocation.schoolSpaceId, table.schoolSpace.id),
 		)
 		.innerJoin(
 			table.subjectOffering,
-			eq(table.subjectOfferingClass.subOfferingId, table.subjectOffering.id)
+			eq(table.subjectOfferingClass.subOfferingId, table.subjectOffering.id),
 		)
-		.innerJoin(table.subject, eq(table.subjectOffering.subjectId, table.subject.id))
+		.innerJoin(
+			table.subject,
+			eq(table.subjectOffering.subjectId, table.subject.id),
+		)
 		.innerJoin(
 			table.userSubjectOffering,
 			and(
 				eq(table.userSubjectOffering.subOfferingId, table.subjectOffering.id),
-				eq(table.userSubjectOffering.userId, userId)
-			)
+				eq(table.userSubjectOffering.userId, userId),
+			),
 		)
 		.where(eq(table.userSubjectOfferingClass.userId, userId))
-		.orderBy(desc(table.subjectClassAllocation.date), asc(table.subjectClassAllocation.startTime));
+		.orderBy(desc(table.subjectClassAllocation.start));
 
 	return classAllocations;
 }
 
-export async function getSubjectClassAllocationsByUserIdForToday(userId: string) {
-	const today = new Date();
-	const todayStr = today.toISOString().split('T')[0];
+export async function getSubjectClassAllocationsByUserIdForToday(
+	userId: string,
+) {
+	const startOfDay = new Date();
+	startOfDay.setHours(0, 0, 0, 0);
+	const endOfDay = new Date();
+	endOfDay.setHours(23, 59, 59, 999);
 	const classAllocation = await db
 		.select({
 			classAllocation: table.subjectClassAllocation,
 			schoolSpace: table.schoolSpace,
-			subjectOffering: {
-				id: table.subjectOffering.id
-			},
-			subject: {
-				id: table.subject.id,
-				name: table.subject.name
-			},
-			userSubjectOffering: table.userSubjectOffering
+			subjectOffering: { id: table.subjectOffering.id },
+			subject: { id: table.subject.id, name: table.subject.name },
+			userSubjectOffering: table.userSubjectOffering,
 		})
 		.from(table.userSubjectOfferingClass)
 		.innerJoin(
 			table.subjectOfferingClass,
-			eq(table.userSubjectOfferingClass.subOffClassId, table.subjectOfferingClass.id)
+			eq(
+				table.userSubjectOfferingClass.subOffClassId,
+				table.subjectOfferingClass.id,
+			),
 		)
 		.innerJoin(
 			table.subjectClassAllocation,
-			eq(table.subjectClassAllocation.subjectOfferingClassId, table.subjectOfferingClass.id)
+			eq(
+				table.subjectClassAllocation.subjectOfferingClassId,
+				table.subjectOfferingClass.id,
+			),
 		)
 		.innerJoin(
 			table.schoolSpace,
-			eq(table.subjectClassAllocation.schoolSpaceId, table.schoolSpace.id)
+			eq(table.subjectClassAllocation.schoolSpaceId, table.schoolSpace.id),
 		)
 		.innerJoin(
 			table.subjectOffering,
-			eq(table.subjectOfferingClass.subOfferingId, table.subjectOffering.id)
+			eq(table.subjectOfferingClass.subOfferingId, table.subjectOffering.id),
 		)
-		.innerJoin(table.subject, eq(table.subjectOffering.subjectId, table.subject.id))
+		.innerJoin(
+			table.subject,
+			eq(table.subjectOffering.subjectId, table.subject.id),
+		)
 		.innerJoin(
 			table.userSubjectOffering,
 			and(
 				eq(table.userSubjectOffering.subOfferingId, table.subjectOffering.id),
-				eq(table.userSubjectOffering.userId, userId)
-			)
+				eq(table.userSubjectOffering.userId, userId),
+			),
 		)
 		.where(
 			and(
 				eq(table.userSubjectOfferingClass.userId, userId),
-				eq(table.subjectClassAllocation.date, todayStr)
-			)
+				gte(table.subjectClassAllocation.start, startOfDay),
+				lte(table.subjectClassAllocation.start, endOfDay),
+			),
 		)
-		.orderBy(table.subjectClassAllocation.startTime); // Order by start time (earliest first) for today's schedule
+		.orderBy(table.subjectClassAllocation.start); // Order by start time (earliest first) for today's schedule
 
 	return classAllocation;
 }
 
-export async function getAttendanceComponentsByAttendanceId(attendanceId: number) {
+export async function getAttendanceComponentsByAttendanceId(
+	attendanceId: number,
+) {
 	const components = await db
 		.select()
 		.from(table.subjectClassAllocationAttendanceComponent)
-		.where(eq(table.subjectClassAllocationAttendanceComponent.attendanceId, attendanceId))
-		.orderBy(table.subjectClassAllocationAttendanceComponent.startTime);
+		.where(
+			eq(
+				table.subjectClassAllocationAttendanceComponent.attendanceId,
+				attendanceId,
+			),
+		)
+		.orderBy(table.subjectClassAllocationAttendanceComponent.start);
 
 	return components;
 }
 
 export async function updateAttendanceComponents(
-	components: Array<{ id: number; startTime: string; endTime: string }>
+	components: Array<{ id: number; start: Date; end: Date }>,
 ) {
 	return await db.transaction(async (tx) => {
 		for (const component of components) {
 			await tx
 				.update(table.subjectClassAllocationAttendanceComponent)
-				.set({
-					startTime: component.startTime,
-					endTime: component.endTime
-				})
-				.where(eq(table.subjectClassAllocationAttendanceComponent.id, component.id));
+				.set({ start: component.start, end: component.end })
+				.where(
+					eq(table.subjectClassAllocationAttendanceComponent.id, component.id),
+				);
 		}
 	});
 }
 
 export async function getSubjectClassAllocationAndStudentAttendancesByClassIdForToday(
-	subjectOfferingClassId: number
+	subjectOfferingClassId: number,
 ) {
-	const today = new Date();
-	const todayStr = today.toISOString().split('T')[0];
+	const startOfDay = new Date();
+	startOfDay.setHours(0, 0, 0, 0);
+	const endOfDay = new Date();
+	endOfDay.setHours(23, 59, 59, 999);
 
 	const attendances = await db
 		.select({
@@ -161,40 +190,48 @@ export async function getSubjectClassAllocationAndStudentAttendancesByClassIdFor
 				firstName: table.user.firstName,
 				middleName: table.user.middleName,
 				lastName: table.user.lastName,
-				avatarUrl: table.user.avatarUrl
+				avatarPath: table.user.avatarPath,
 			},
 			subjectClassAllocation: {
 				id: table.subjectClassAllocation.id,
-				subjectOfferingClassId: table.subjectClassAllocation.subjectOfferingClassId,
-				startTime: table.subjectClassAllocation.startTime,
-				endTime: table.subjectClassAllocation.endTime
-			}
+				subjectOfferingClassId:
+					table.subjectClassAllocation.subjectOfferingClassId,
+				start: table.subjectClassAllocation.start,
+				end: table.subjectClassAllocation.end,
+			},
 		})
 		.from(table.userSubjectOfferingClass)
-		.innerJoin(table.user, eq(table.user.id, table.userSubjectOfferingClass.userId))
+		.innerJoin(
+			table.user,
+			eq(table.user.id, table.userSubjectOfferingClass.userId),
+		)
 		.innerJoin(
 			table.subjectClassAllocation,
 			eq(
 				table.subjectClassAllocation.subjectOfferingClassId,
-				table.userSubjectOfferingClass.subOffClassId
-			)
+				table.userSubjectOfferingClass.subOffClassId,
+			),
 		)
 		.leftJoin(
 			table.subjectClassAllocationAttendance,
 			and(
 				eq(
 					table.subjectClassAllocationAttendance.subjectClassAllocationId,
-					table.subjectClassAllocation.id
+					table.subjectClassAllocation.id,
 				),
-				eq(table.subjectClassAllocationAttendance.userId, table.user.id)
-			)
+				eq(table.subjectClassAllocationAttendance.userId, table.user.id),
+			),
 		)
 		.where(
 			and(
-				eq(table.userSubjectOfferingClass.subOffClassId, subjectOfferingClassId),
-				eq(table.subjectClassAllocation.date, todayStr),
-				eq(table.user.type, userTypeEnum.student)
-			)
+				eq(
+					table.userSubjectOfferingClass.subOffClassId,
+					subjectOfferingClassId,
+				),
+				eq(table.user.type, userTypeEnum.student),
+				gte(table.subjectClassAllocation.start, startOfDay),
+				lte(table.subjectClassAllocation.start, endOfDay),
+			),
 		)
 		.orderBy(table.user.lastName, table.user.firstName);
 
@@ -203,38 +240,46 @@ export async function getSubjectClassAllocationAndStudentAttendancesByClassIdFor
 
 export async function getClassesForUserInSubjectOffering(
 	userId: string,
-	subjectOfferingId: number
+	subjectOfferingId: number,
 ) {
 	const classes = await db
 		.select({
 			classAllocation: table.subjectClassAllocation,
-			schoolSpace: table.schoolSpace
+			schoolSpace: table.schoolSpace,
 		})
 		.from(table.userSubjectOfferingClass)
 		.innerJoin(
 			table.subjectOfferingClass,
-			eq(table.userSubjectOfferingClass.subOffClassId, table.subjectOfferingClass.id)
+			eq(
+				table.userSubjectOfferingClass.subOffClassId,
+				table.subjectOfferingClass.id,
+			),
 		)
 		.innerJoin(
 			table.subjectClassAllocation,
-			eq(table.subjectClassAllocation.subjectOfferingClassId, table.subjectOfferingClass.id)
+			eq(
+				table.subjectClassAllocation.subjectOfferingClassId,
+				table.subjectOfferingClass.id,
+			),
 		)
 		.innerJoin(
 			table.schoolSpace,
-			eq(table.subjectClassAllocation.schoolSpaceId, table.schoolSpace.id)
+			eq(table.subjectClassAllocation.schoolSpaceId, table.schoolSpace.id),
 		)
 		.where(
 			and(
 				eq(table.userSubjectOfferingClass.userId, userId),
-				eq(table.subjectOfferingClass.subOfferingId, subjectOfferingId)
-			)
+				eq(table.subjectOfferingClass.subOfferingId, subjectOfferingId),
+			),
 		)
-		.orderBy(desc(table.subjectClassAllocation.date), desc(table.subjectClassAllocation.startTime));
+		.orderBy(desc(table.subjectClassAllocation.start));
 
 	return classes;
 }
 
-export async function getGuardiansChildrensScheduleWithAttendanceByUserId(userId: string) {
+export async function getGuardiansChildrensScheduleWithAttendanceByUserId(
+	userId: string,
+) {
 	const scheduleWithAttendance = await db
 		.select({
 			user: {
@@ -242,78 +287,89 @@ export async function getGuardiansChildrensScheduleWithAttendanceByUserId(userId
 				firstName: table.user.firstName,
 				middleName: table.user.middleName,
 				lastName: table.user.lastName,
-				avatarUrl: table.user.avatarUrl
+				avatarPath: table.user.avatarPath,
 			},
 			subjectClassAllocation: {
 				id: table.subjectClassAllocation.id,
-				date: table.subjectClassAllocation.date,
-				startTime: table.subjectClassAllocation.startTime,
-				endTime: table.subjectClassAllocation.endTime
+				start: table.subjectClassAllocation.start,
+				end: table.subjectClassAllocation.end,
 			},
 			subjectOfferingClass: {
 				id: table.subjectOfferingClass.id,
-				name: table.subjectOfferingClass.name
+				name: table.subjectOfferingClass.name,
 			},
-			subject: {
-				name: table.subject.name
-			},
-			attendance: table.subjectClassAllocationAttendance
+			subject: { name: table.subject.name },
+			attendance: table.subjectClassAllocationAttendance,
 		})
 		.from(table.userRelationship)
 		.innerJoin(table.user, eq(table.user.id, table.userRelationship.userId))
 		.innerJoin(
 			table.userSubjectOfferingClass,
-			eq(table.userSubjectOfferingClass.userId, table.user.id)
+			eq(table.userSubjectOfferingClass.userId, table.user.id),
 		)
 		.innerJoin(
 			table.subjectOfferingClass,
-			eq(table.userSubjectOfferingClass.subOffClassId, table.subjectOfferingClass.id)
+			eq(
+				table.userSubjectOfferingClass.subOffClassId,
+				table.subjectOfferingClass.id,
+			),
 		)
 		.innerJoin(
 			table.subjectOffering,
-			eq(table.subjectOfferingClass.subOfferingId, table.subjectOffering.id)
+			eq(table.subjectOfferingClass.subOfferingId, table.subjectOffering.id),
 		)
-		.innerJoin(table.subject, eq(table.subjectOffering.subjectId, table.subject.id))
+		.innerJoin(
+			table.subject,
+			eq(table.subjectOffering.subjectId, table.subject.id),
+		)
 		.innerJoin(
 			table.subjectClassAllocation,
 			eq(
 				table.subjectClassAllocation.subjectOfferingClassId,
-				table.userSubjectOfferingClass.subOffClassId
-			)
+				table.userSubjectOfferingClass.subOffClassId,
+			),
 		)
 		.leftJoin(
 			table.subjectClassAllocationAttendance,
 			and(
 				eq(
 					table.subjectClassAllocationAttendance.subjectClassAllocationId,
-					table.subjectClassAllocation.id
+					table.subjectClassAllocation.id,
 				),
-				eq(table.subjectClassAllocationAttendance.userId, table.user.id)
-			)
+				eq(table.subjectClassAllocationAttendance.userId, table.user.id),
+			),
 		)
 		.where(eq(table.userRelationship.relatedUserId, userId))
-		.orderBy(table.subjectClassAllocation.date, table.subjectClassAllocation.startTime);
+		.orderBy(desc(table.subjectClassAllocation.start));
 
 	return scheduleWithAttendance;
 }
 
-export async function getSubjectOfferingClassByAllocationId(allocationId: number) {
+export async function getSubjectOfferingClassByAllocationId(
+	allocationId: number,
+) {
 	const result = await db
 		.select({
 			subjectOfferingClass: table.subjectOfferingClass,
 			subjectOffering: table.subjectOffering,
-			subject: table.subject
+			subject: table.subject,
 		})
 		.from(table.subjectClassAllocation)
 		.innerJoin(
 			table.subjectOfferingClass,
-			eq(table.subjectClassAllocation.subjectOfferingClassId, table.subjectOfferingClass.id)
+			eq(
+				table.subjectClassAllocation.subjectOfferingClassId,
+				table.subjectOfferingClass.id,
+			),
 		)
 		.innerJoin(
 			table.subjectOffering,
-			eq(table.subjectOfferingClass.subOfferingId, table.subjectOffering.id)
+			eq(table.subjectOfferingClass.subOfferingId, table.subjectOffering.id),
 		)
-		.innerJoin(table.subject, eq(table.subjectOffering.subjectId, table.subject.id))
+		.innerJoin(
+			table.subject,
+			eq(table.subjectOffering.subjectId, table.subject.id),
+		)
 		.where(eq(table.subjectClassAllocation.id, allocationId))
 		.limit(1);
 
@@ -329,27 +385,28 @@ export async function getSubjectOfferingClassesBySchoolId(schoolId: number) {
 			subjectOffering: {
 				id: table.subjectOffering.id,
 				year: table.subjectOffering.year,
-				semester: table.subjectOffering.semester
-			}
+			},
 		})
 		.from(table.subjectOfferingClass)
 		.innerJoin(
 			table.subjectOffering,
-			eq(table.subjectOfferingClass.subOfferingId, table.subjectOffering.id)
+			eq(table.subjectOfferingClass.subOfferingId, table.subjectOffering.id),
 		)
-		.innerJoin(table.subject, eq(table.subjectOffering.subjectId, table.subject.id))
+		.innerJoin(
+			table.subject,
+			eq(table.subjectOffering.subjectId, table.subject.id),
+		)
 		.where(
 			and(
 				eq(table.subject.schoolId, schoolId),
 				eq(table.subjectOfferingClass.isArchived, false),
-				eq(table.subjectOffering.isArchived, false)
-			)
+				eq(table.subjectOffering.isArchived, false),
+			),
 		)
 		.orderBy(
 			asc(table.subject.name),
 			asc(table.subjectOfferingClass.name),
 			asc(table.subjectOffering.year),
-			asc(table.subjectOffering.semester)
 		);
 
 	return classes;
@@ -364,65 +421,61 @@ export async function getAllocationsBySchoolId(schoolId: number) {
 				middleName: table.user.middleName,
 				lastName: table.user.lastName,
 				email: table.user.email,
-				type: table.user.type
+				type: table.user.type,
 			},
 			userSubjectOfferingClass: table.userSubjectOfferingClass,
 			subjectOfferingClass: table.subjectOfferingClass,
 			subjectOffering: {
 				id: table.subjectOffering.id,
 				year: table.subjectOffering.year,
-				semester: table.subjectOffering.semester
 			},
 			subject: {
 				id: table.subject.id,
 				name: table.subject.name,
-				yearLevel: table.yearLevel.yearLevel
-			}
+				yearLevel: table.schoolYearLevel.code,
+			},
 		})
 		.from(table.userSubjectOfferingClass)
-		.innerJoin(table.user, eq(table.user.id, table.userSubjectOfferingClass.userId))
+		.innerJoin(
+			table.user,
+			eq(table.user.id, table.userSubjectOfferingClass.userId),
+		)
 		.innerJoin(
 			table.subjectOfferingClass,
-			eq(table.userSubjectOfferingClass.subOffClassId, table.subjectOfferingClass.id)
+			eq(
+				table.userSubjectOfferingClass.subOffClassId,
+				table.subjectOfferingClass.id,
+			),
 		)
 		.innerJoin(
 			table.subjectOffering,
-			eq(table.subjectOfferingClass.subOfferingId, table.subjectOffering.id)
+			eq(table.subjectOfferingClass.subOfferingId, table.subjectOffering.id),
 		)
-		.innerJoin(table.subject, eq(table.subjectOffering.subjectId, table.subject.id))
-		.innerJoin(table.yearLevel, eq(table.subject.yearLevelId, table.yearLevel.id))
+		.innerJoin(
+			table.subject,
+			eq(table.subjectOffering.subjectId, table.subject.id),
+		)
+		.innerJoin(
+			table.schoolYearLevel,
+			eq(table.subject.schoolYearLevelId, table.schoolYearLevel.id),
+		)
 		.where(
 			and(
 				eq(table.userSubjectOfferingClass.isArchived, false),
-				eq(table.subject.schoolId, schoolId)
-			)
+				eq(table.subject.schoolId, schoolId),
+			),
 		)
 		.orderBy(
 			asc(table.subject.name),
 			asc(table.subjectOfferingClass.name),
 			asc(table.user.lastName),
-			asc(table.user.firstName)
+			asc(table.user.firstName),
 		);
 
 	return allocations;
 }
 
-export async function createUserSubjectOfferingClass(
-	userId: string,
-	subjectOfferingClassId: number
-) {
-	const [allocation] = await db
-		.insert(table.userSubjectOfferingClass)
-		.values({
-			userId,
-			subOffClassId: subjectOfferingClassId
-		})
-		.returning();
-
-	return allocation;
-}
-
-export async function deleteUserSubjectOfferingClass(allocationId: number) {
+export async function archiveUserSubjectOfferingClass(allocationId: number) {
 	await db
 		.update(table.userSubjectOfferingClass)
 		.set({ isArchived: true })
@@ -431,23 +484,20 @@ export async function deleteUserSubjectOfferingClass(allocationId: number) {
 
 export async function getStudentAttendanceHistoryForClass(
 	studentId: string,
-	subjectOfferingClassId: number
+	subjectOfferingClassId: number,
 ) {
-	const today = new Date();
-	const todayStr = today.toISOString().split('T')[0];
+	const endOfDay = new Date();
+	endOfDay.setHours(23, 59, 59, 999);
 
 	const attendanceHistory = await db
 		.select({
 			attendance: table.subjectClassAllocationAttendance,
 			subjectClassAllocation: {
 				id: table.subjectClassAllocation.id,
-				date: table.subjectClassAllocation.date,
-				startTime: table.subjectClassAllocation.startTime,
-				endTime: table.subjectClassAllocation.endTime
+				start: table.subjectClassAllocation.start,
+				end: table.subjectClassAllocation.end,
 			},
-			schoolSpace: {
-				name: table.schoolSpace.name
-			}
+			schoolSpace: { name: table.schoolSpace.name },
 		})
 		.from(table.subjectClassAllocation)
 		.leftJoin(
@@ -455,43 +505,54 @@ export async function getStudentAttendanceHistoryForClass(
 			and(
 				eq(
 					table.subjectClassAllocationAttendance.subjectClassAllocationId,
-					table.subjectClassAllocation.id
+					table.subjectClassAllocation.id,
 				),
-				eq(table.subjectClassAllocationAttendance.userId, studentId)
-			)
+				eq(table.subjectClassAllocationAttendance.userId, studentId),
+			),
 		)
 		.leftJoin(
 			table.schoolSpace,
-			eq(table.subjectClassAllocation.schoolSpaceId, table.schoolSpace.id)
+			eq(table.subjectClassAllocation.schoolSpaceId, table.schoolSpace.id),
 		)
 		.where(
 			and(
-				eq(table.subjectClassAllocation.subjectOfferingClassId, subjectOfferingClassId),
-				lte(table.subjectClassAllocation.date, todayStr)
-			)
+				eq(
+					table.subjectClassAllocation.subjectOfferingClassId,
+					subjectOfferingClassId,
+				),
+				lte(table.subjectClassAllocation.start, endOfDay),
+			),
 		)
-		.orderBy(desc(table.subjectClassAllocation.date), desc(table.subjectClassAllocation.startTime));
+		.orderBy(desc(table.subjectClassAllocation.start));
 
 	return attendanceHistory;
 }
 
-export async function getStudentsBySubjectOfferingClassId(subjectOfferingClassId: number) {
+export async function getStudentsBySubjectOfferingClassId(
+	subjectOfferingClassId: number,
+) {
 	const students = await db
 		.select({
 			id: table.user.id,
 			firstName: table.user.firstName,
 			lastName: table.user.lastName,
 			email: table.user.email,
-			avatarUrl: table.user.avatarUrl
+			avatarPath: table.user.avatarPath,
 		})
 		.from(table.userSubjectOfferingClass)
-		.innerJoin(table.user, eq(table.user.id, table.userSubjectOfferingClass.userId))
+		.innerJoin(
+			table.user,
+			eq(table.user.id, table.userSubjectOfferingClass.userId),
+		)
 		.where(
 			and(
-				eq(table.userSubjectOfferingClass.subOffClassId, subjectOfferingClassId),
+				eq(
+					table.userSubjectOfferingClass.subOffClassId,
+					subjectOfferingClassId,
+				),
 				eq(table.user.type, userTypeEnum.student),
-				eq(table.userSubjectOfferingClass.isArchived, false)
-			)
+				eq(table.userSubjectOfferingClass.isArchived, false),
+			),
 		)
 		.orderBy(asc(table.user.lastName), asc(table.user.firstName));
 
@@ -500,7 +561,7 @@ export async function getStudentsBySubjectOfferingClassId(subjectOfferingClassId
 
 export async function getUserSubjectOfferingClassByUserAndClass(
 	userId: string,
-	subjectOfferingClassId: number
+	subjectOfferingClassId: number,
 ) {
 	const [userClass] = await db
 		.select()
@@ -508,8 +569,11 @@ export async function getUserSubjectOfferingClassByUserAndClass(
 		.where(
 			and(
 				eq(table.userSubjectOfferingClass.userId, userId),
-				eq(table.userSubjectOfferingClass.subOffClassId, subjectOfferingClassId)
-			)
+				eq(
+					table.userSubjectOfferingClass.subOffClassId,
+					subjectOfferingClassId,
+				),
+			),
 		)
 		.limit(1);
 

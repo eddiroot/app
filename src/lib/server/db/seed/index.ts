@@ -4,7 +4,6 @@ import * as schema from '../schema';
 import { seedDemo } from './demo';
 import { seedEddi } from './eddi';
 import type { SeedContext } from './types';
-import { truncateAllTables } from './utils';
 
 const { Pool } = pg;
 
@@ -14,7 +13,7 @@ async function seed(): Promise<void> {
 		port: parseInt(process.env.DB_PORT || '5432', 10),
 		user: process.env.DB_USER,
 		password: process.env.DB_PASSWORD,
-		database: process.env.DB_NAME
+		database: process.env.DB_NAME,
 	});
 
 	const db = drizzle(pool, { schema });
@@ -22,10 +21,8 @@ async function seed(): Promise<void> {
 	const context: SeedContext = { db, pool };
 
 	try {
-		await truncateAllTables(pool);
 		const { eddi } = await seedEddi(context);
 		await seedDemo(context, eddi);
-		console.log('\n✅ Seeding completed successfully!\n');
 	} catch (error) {
 		console.error('\n❌ Seeding failed:', error);
 		throw error;

@@ -1,136 +1,33 @@
-import { userGenderEnum, userHonorificEnum, userTypeEnum, yearLevelEnum } from '$lib/enums.js';
+import { userTypeEnum, yearLevelEnum } from '$lib/enums.js';
 import { db } from '$lib/server/db';
 import * as table from '$lib/server/db/schema';
 import { hash } from '@node-rs/argon2';
-import { randomInt } from 'crypto';
 import { and, eq } from 'drizzle-orm';
 
-export async function createUser({
-	email,
-	password,
-	schoolId,
-	type,
-	firstName,
-	lastName,
-	gender,
-	dateOfBirth,
-	honorific,
-	yearLevelId,
-	middleName,
-	avatarUrl
-}: {
-	email: string;
-	password: string;
-	schoolId: number;
-	type: userTypeEnum;
-	firstName: string;
-	lastName: string;
-	gender?: userGenderEnum;
-	dateOfBirth?: Date;
-	honorific?: userHonorificEnum;
-	yearLevelId: number;
-	middleName?: string;
-	avatarUrl?: string;
-}) {
-	const passwordHash = await hash(password);
-	const verificationCode = String(randomInt(100000, 1000000));
-
-	const [user] = await db
-		.insert(table.user)
-		.values({
-			email,
-			passwordHash,
-			schoolId,
-			type,
-			firstName,
-			lastName,
-			gender,
-			dateOfBirth,
-			honorific,
-			yearLevelId,
-			middleName,
-			avatarUrl,
-			verificationCode
-		})
-		.returning();
-
-	return { user, verificationCode };
-}
-
-export async function createGoogleUser({
-	email,
-	googleId,
-	schoolId,
-	firstName,
-	lastName,
-	avatarUrl,
-	yearLevelId
-}: {
-	email: string;
-	googleId: string;
-	schoolId: number;
-	firstName: string;
-	lastName: string;
-	avatarUrl: string;
-	yearLevelId: number;
-}) {
-	const [user] = await db
-		.insert(table.user)
-		.values({
-			email,
-			googleId,
-			schoolId,
-			firstName,
-			lastName,
-			avatarUrl,
-			yearLevelId
-		})
-		.returning();
-
-	return user;
-}
-
-export async function createMicrosoftUser({
-	email,
-	microsoftId,
-	schoolId,
-	firstName,
-	lastName,
-	yearLevelId
-}: {
-	email: string;
-	microsoftId: string;
-	schoolId: number;
-	firstName: string;
-	lastName: string;
-	yearLevelId: number;
-}) {
-	const [user] = await db
-		.insert(table.user)
-		.values({
-			email,
-			microsoftId,
-			schoolId,
-			firstName,
-			lastName,
-			yearLevelId
-		})
-		.returning();
-
-	return user;
-}
-
-export async function updateUserVerificationCode(userId: string, verificationCode: string) {
-	await db.update(table.user).set({ verificationCode }).where(eq(table.user.id, userId));
+export async function updateUserVerificationCode(
+	userId: string,
+	verificationCode: string,
+) {
+	await db
+		.update(table.user)
+		.set({ verificationCode })
+		.where(eq(table.user.id, userId));
 }
 
 export async function updateUserPassword(userId: string, newPassword: string) {
 	const passwordHash = await hash(newPassword);
-	await db.update(table.user).set({ passwordHash }).where(eq(table.user.id, userId));
+	await db
+		.update(table.user)
+		.set({ passwordHash })
+		.where(eq(table.user.id, userId));
 }
 
 export async function getUserById(userId: string) {
-	const users = await db.select().from(table.user).where(eq(table.user.id, userId)).limit(1);
+	const users = await db
+		.select()
+		.from(table.user)
+		.where(eq(table.user.id, userId))
+		.limit(1);
 	return users.length > 0 ? users[0] : null;
 }
 
@@ -160,13 +57,17 @@ export async function setUserVerified(userId: string) {
 }
 
 export async function checkUserExistence(email: string): Promise<boolean> {
-	const users = await db.select().from(table.user).where(eq(table.user.email, email)).limit(1);
+	const users = await db
+		.select()
+		.from(table.user)
+		.where(eq(table.user.email, email))
+		.limit(1);
 	return users.length > 0;
 }
 
 export async function verifyUserAccessToClass(
 	userId: string,
-	subjectOfferingClassId: number
+	subjectOfferingClassId: number,
 ): Promise<boolean> {
 	const userAccess = await db
 		.select()
@@ -174,9 +75,12 @@ export async function verifyUserAccessToClass(
 		.where(
 			and(
 				eq(table.userSubjectOfferingClass.userId, userId),
-				eq(table.userSubjectOfferingClass.subOffClassId, subjectOfferingClassId),
-				eq(table.userSubjectOfferingClass.isArchived, false)
-			)
+				eq(
+					table.userSubjectOfferingClass.subOffClassId,
+					subjectOfferingClassId,
+				),
+				eq(table.userSubjectOfferingClass.isArchived, false),
+			),
 		)
 		.limit(1);
 	return userAccess.length > 0;
@@ -184,7 +88,7 @@ export async function verifyUserAccessToClass(
 
 export async function verifyUserAccessToSubjectOffering(
 	userId: string,
-	subjectOfferingId: number
+	subjectOfferingId: number,
 ): Promise<boolean> {
 	const userAccess = await db
 		.select()
@@ -193,8 +97,8 @@ export async function verifyUserAccessToSubjectOffering(
 			and(
 				eq(table.userSubjectOffering.userId, userId),
 				eq(table.userSubjectOffering.subOfferingId, subjectOfferingId),
-				eq(table.userSubjectOffering.isArchived, false)
-			)
+				eq(table.userSubjectOffering.isArchived, false),
+			),
 		)
 		.limit(1);
 	return userAccess.length > 0;
@@ -208,17 +112,20 @@ export async function getGuardiansForStudent(studentUserId: string) {
 				email: table.user.email,
 				firstName: table.user.firstName,
 				middleName: table.user.middleName,
-				lastName: table.user.lastName
+				lastName: table.user.lastName,
 			},
-			relationshipType: table.userRelationship.relationshipType
+			relationshipType: table.userRelationship.relationshipType,
 		})
 		.from(table.userRelationship)
-		.innerJoin(table.user, eq(table.user.id, table.userRelationship.relatedUserId))
+		.innerJoin(
+			table.user,
+			eq(table.user.id, table.userRelationship.relatedUserId),
+		)
 		.where(
 			and(
 				eq(table.userRelationship.userId, studentUserId),
-				eq(table.user.type, userTypeEnum.guardian)
-			)
+				eq(table.user.type, userTypeEnum.guardian),
+			),
 		);
 
 	return guardians;
@@ -232,32 +139,38 @@ export async function getUserProfileById(userId: string) {
 			firstName: table.user.firstName,
 			middleName: table.user.middleName,
 			lastName: table.user.lastName,
-			avatarUrl: table.user.avatarUrl,
+			avatarPath: table.user.avatarPath,
 			dateOfBirth: table.user.dateOfBirth,
 			gender: table.user.gender,
 			honorific: table.user.honorific,
-			yearLevel: table.yearLevel.yearLevel,
+			yearLevel: table.schoolYearLevel.code,
 			type: table.user.type,
 			schoolId: table.user.schoolId,
 			emailVerified: table.user.emailVerified,
-			createdAt: table.user.createdAt
+			createdAt: table.user.createdAt,
 		})
 		.from(table.user)
-		.innerJoin(table.yearLevel, eq(table.yearLevel.id, table.user.yearLevelId))
+		.innerJoin(
+			table.schoolYearLevel,
+			eq(table.schoolYearLevel.id, table.user.schoolYearLevelId),
+		)
 		.where(eq(table.user.id, userId))
 		.limit(1);
 	return user.length > 0 ? user[0] : null;
 }
 
-export async function getTeacherSpecializationsByTeacherId(teacherId: string) {
+export async function getUserSpecialisationsByUserId(userId: string) {
 	const specializations = await db
 		.select({
-			subjectId: table.userTeacherSpecialization.subjectId,
-			subjectName: table.subject.name
+			subjectId: table.userSpecialisation.subjectId,
+			subjectName: table.subject.name,
 		})
-		.from(table.userTeacherSpecialization)
-		.innerJoin(table.subject, eq(table.subject.id, table.userTeacherSpecialization.subjectId))
-		.where(eq(table.userTeacherSpecialization.teacherId, teacherId));
+		.from(table.userSpecialisation)
+		.innerJoin(
+			table.subject,
+			eq(table.subject.id, table.userSpecialisation.subjectId),
+		)
+		.where(eq(table.userSpecialisation.userId, userId));
 
 	return specializations;
 }
@@ -270,17 +183,27 @@ export async function getAllStudentsBySchoolId(schoolId: number) {
 			firstName: table.user.firstName,
 			middleName: table.user.middleName,
 			lastName: table.user.lastName,
-			yearLevel: table.yearLevel.yearLevel
+			yearLevel: table.schoolYearLevel.code,
 		})
 		.from(table.user)
-		.innerJoin(table.yearLevel, eq(table.yearLevel.id, table.user.yearLevelId))
-		.where(and(eq(table.user.schoolId, schoolId), eq(table.user.type, userTypeEnum.student)));
+		.innerJoin(
+			table.schoolYearLevel,
+			eq(table.schoolYearLevel.id, table.user.schoolYearLevelId),
+		)
+		.where(
+			and(
+				eq(table.user.schoolId, schoolId),
+				eq(table.user.type, userTypeEnum.student),
+			),
+		);
 
 	return students;
 }
 
 // Group students by year level
-export async function getAllStudentsGroupedByYearLevelsBySchoolId(schoolId: number) {
+export async function getAllStudentsGroupedByYearLevelsBySchoolId(
+	schoolId: number,
+) {
 	const students = await getAllStudentsBySchoolId(schoolId);
 
 	type StudentInfo = Pick<
@@ -289,10 +212,8 @@ export async function getAllStudentsGroupedByYearLevelsBySchoolId(schoolId: numb
 	>;
 
 	// Group students by year level
-	const studentsByYearLevel: Record<yearLevelEnum, StudentInfo[]> = {} as Record<
-		yearLevelEnum,
-		StudentInfo[]
-	>;
+	const studentsByYearLevel: Record<yearLevelEnum, StudentInfo[]> =
+		{} as Record<yearLevelEnum, StudentInfo[]>;
 
 	for (const student of students) {
 		if (!studentsByYearLevel[student.yearLevel]) {

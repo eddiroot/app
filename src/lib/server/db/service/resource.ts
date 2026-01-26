@@ -11,7 +11,7 @@ export async function createResource(
 	resourceType: string,
 	uploadedBy: string,
 	description?: string,
-	bucketName: string = 'schools'
+	bucketName: string = 'schools',
 ) {
 	const [resource] = await db
 		.insert(table.resource)
@@ -22,7 +22,7 @@ export async function createResource(
 			contentType,
 			fileSize,
 			resourceType,
-			uploadedBy
+			uploadedBy,
 		})
 		.returning();
 
@@ -33,7 +33,12 @@ export async function getResourceById(resourceId: number) {
 	const [resource] = await db
 		.select()
 		.from(table.resource)
-		.where(and(eq(table.resource.id, resourceId), eq(table.resource.isArchived, false)))
+		.where(
+			and(
+				eq(table.resource.id, resourceId),
+				eq(table.resource.isArchived, false),
+			),
+		)
 		.limit(1);
 
 	return resource || null;

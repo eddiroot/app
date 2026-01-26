@@ -4,116 +4,118 @@ import {
 	integer,
 	jsonb,
 	pgSchema,
+	primaryKey,
 	text,
-	timestamp,
-	unique,
-	uuid
+	uuid,
 } from 'drizzle-orm/pg-core';
-import { newsPriorityEnum, newsStatusEnum, newsVisibilityEnum } from '../../../enums';
+import {
+	newsPriorityEnum,
+	newsStatusEnum,
+	newsVisibilityEnum,
+} from '../../../enums';
 import { resource } from './resource';
-import { campus, school } from './schools';
+import { school, schoolCampus } from './school';
 import { user } from './user';
-import { embeddings, timestamps } from './utils';
+import {
+	enumToPgEnum,
+	essentials,
+	essentialsNoId,
+	standardTimestamp,
+} from './utils';
 
 export const newsSchema = pgSchema('news');
 
-export const newsPriorityEnumPg = newsSchema.enum('news_priority', [
-	newsPriorityEnum.low,
-	newsPriorityEnum.normal,
-	newsPriorityEnum.high,
-	newsPriorityEnum.urgent
-]);
+export const newsPriorityEnumPg = newsSchema.enum(
+	'enum_news_priority',
+	enumToPgEnum(newsPriorityEnum),
+);
+export const newsStatusEnumPg = newsSchema.enum(
+	'enum_news_status',
+	enumToPgEnum(newsStatusEnum),
+);
+export const newsVisibilityEnumPg = newsSchema.enum(
+	'enum_news_visibility',
+	enumToPgEnum(newsVisibilityEnum),
+);
 
-export const newsStatusEnumPg = newsSchema.enum('news_status', [
-	newsStatusEnum.draft,
-	newsStatusEnum.scheduled,
-	newsStatusEnum.published,
-	newsStatusEnum.archived
-]);
-
-export const newsVisibilityEnumPg = newsSchema.enum('news_visibility', [
-	newsVisibilityEnum.public,
-	newsVisibilityEnum.internal,
-	newsVisibilityEnum.staff,
-	newsVisibilityEnum.students
-]);
-
-export const newsCategory = newsSchema.table('news_category', {
-	id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
-	name: text('name').notNull().unique(),
-	description: text('description'),
-	color: text('color'), // For UI styling
-	isArchived: boolean('is_archived').notNull().default(false),
-	...timestamps
-});
+export const newsCategory = newsSchema.table(
+	'news_category',
+	{
+		...essentials,
+		schoolId: integer()
+			.notNull()
+			.references(() => school.id, { onDelete: 'cascade' }),
+		name: text().notNull().unique(),
+		description: text(),
+		color: text(),
+	},
+	(self) => [index().on(self.schoolId)],
+);
 
 export type NewsCategory = typeof newsCategory.$inferSelect;
 
 export const news = newsSchema.table(
 	'news',
 	{
-		id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
-		title: text('title').notNull(),
-		excerpt: text('excerpt'),
-		content: jsonb('content').notNull(),
-		schoolId: integer('school_id')
+		...essentials,
+		title: text().notNull(),
+		excerpt: text(),
+		content: jsonb().notNull(),
+		schoolId: integer()
 			.notNull()
 			.references(() => school.id, { onDelete: 'cascade' }),
-		campusId: integer('campus_id').references(() => campus.id, { onDelete: 'cascade' }),
-		categoryId: integer('category_id').references(() => newsCategory.id, { onDelete: 'set null' }),
-		authorId: uuid('author_id')
+		schoolCampusId: integer('sch_cmps_id').references(() => schoolCampus.id, {
+			onDelete: 'cascade',
+		}),
+		categoryId: integer().references(() => newsCategory.id, {
+			onDelete: 'set null',
+		}),
+		authorId: uuid()
 			.notNull()
 			.references(() => user.id, { onDelete: 'cascade' }),
 		status: newsStatusEnumPg().notNull().default(newsStatusEnum.draft),
 		priority: newsPriorityEnumPg().notNull().default(newsPriorityEnum.normal),
-		visibility: newsVisibilityEnumPg().notNull().default(newsVisibilityEnum.public),
-		publishedAt: timestamp('published_at', { mode: 'date' }),
-		expiresAt: timestamp('expires_at', { mode: 'date' }),
-		tags: jsonb('tags'),
-		isPinned: boolean('is_pinned').notNull().default(false),
-		viewCount: integer('view_count').notNull().default(0),
-		isArchived: boolean('is_archived').notNull().default(false),
-		...timestamps,
-		...embeddings
+		visibility: newsVisibilityEnumPg()
+			.notNull()
+			.default(newsVisibilityEnum.public),
+		publishedAt: standardTimestamp('published_at'),
+		expiresAt: standardTimestamp('expires_at'),
+		tags: jsonb(),
+		isPinned: boolean().notNull().default(false),
+		viewCount: integer().notNull().default(0),
 	},
 	(self) => [
-		unique().on(self.schoolId, self.title), // Unique title per school
-		index('news_embedding_idx').using('hnsw', self.embedding.op('vector_cosine_ops')),
-		index('news_metadata_idx').using('gin', self.embeddingMetadata)
-	]
+		index().on(self.schoolId),
+		index().on(self.schoolCampusId),
+		index().on(self.categoryId),
+		index().on(self.authorId),
+	],
 );
 
 export type News = typeof news.$inferSelect;
 
 // Junction table for news resources (attachments, documents, etc.)
-export const newsResource = newsSchema.table('news_resource', {
-	id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
-	newsId: integer('news_id')
-		.notNull()
-		.references(() => news.id, { onDelete: 'cascade' }),
-	resourceId: integer('resource_id')
-		.notNull()
-		.references(() => resource.id, { onDelete: 'cascade' }),
-	authorId: uuid('author_id')
-		.notNull()
-		.references(() => user.id, { onDelete: 'cascade' }),
-	displayOrder: integer('display_order').notNull().default(0),
-	isArchived: boolean('is_archived').notNull().default(false),
-	...timestamps
-});
+export const newsResource = newsSchema.table(
+	'news_resource',
+	{
+		...essentialsNoId,
+		newsId: integer()
+			.notNull()
+			.references(() => news.id, { onDelete: 'cascade' }),
+		resourceId: integer()
+			.notNull()
+			.references(() => resource.id, { onDelete: 'cascade' }),
+		authorId: uuid()
+			.notNull()
+			.references(() => user.id, { onDelete: 'cascade' }),
+		displayOrder: integer().notNull().default(0),
+	},
+	(self) => [
+		primaryKey({ columns: [self.newsId, self.resourceId] }),
+		index().on(self.newsId),
+		index().on(self.resourceId),
+		index().on(self.authorId),
+	],
+);
 
 export type NewsResource = typeof newsResource.$inferSelect;
-
-// Track news views for analytics
-export const newsView = newsSchema.table('news_view', {
-	id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
-	newsId: integer('news_id')
-		.notNull()
-		.references(() => news.id, { onDelete: 'cascade' }),
-	viewerId: uuid('viewer_id').references(() => user.id, { onDelete: 'cascade' }), // Null for anonymous views
-	ipAddress: text('ip_address'),
-	userAgent: text('user_agent'),
-	...timestamps
-});
-
-export type NewsView = typeof newsView.$inferSelect;

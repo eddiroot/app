@@ -1,19 +1,27 @@
 import type * as schema from '../../schema';
-import type { DemoYearLevelIds } from './consts';
-// School infrastructure data
+
 export interface DemoSchoolData {
 	school: typeof schema.school.$inferSelect;
-	campus: typeof schema.campus.$inferSelect;
+	semestersAndTerms: {
+		semesters: (typeof schema.schoolSemester.$inferSelect)[];
+		terms: (typeof schema.schoolTerm.$inferSelect)[];
+	};
+	campus: typeof schema.schoolCampus.$inferSelect;
 	buildings: {
 		middleSchool: typeof schema.schoolBuilding.$inferSelect;
 		seniorSchool: typeof schema.schoolBuilding.$inferSelect;
 		gymnasium: typeof schema.schoolBuilding.$inferSelect;
 	};
 	spaces: (typeof schema.schoolSpace.$inferSelect)[];
-	yearLevels: DemoYearLevelIds;
+	yearLevels: {
+		none: typeof schema.schoolYearLevel.$inferSelect;
+		year7: typeof schema.schoolYearLevel.$inferSelect;
+		year8: typeof schema.schoolYearLevel.$inferSelect;
+		year9: typeof schema.schoolYearLevel.$inferSelect;
+		year10: typeof schema.schoolYearLevel.$inferSelect;
+	};
 }
 
-// User data
 export interface DemoUserData {
 	admin: typeof schema.user.$inferSelect;
 	principal: typeof schema.user.$inferSelect;
@@ -23,9 +31,8 @@ export interface DemoUserData {
 	parents: (typeof schema.user.$inferSelect)[];
 }
 
-// Subject data
 export interface DemoSubjectData {
-	coreSubjects: (typeof schema.coreSubject.$inferSelect)[];
+	subjectGroups: (typeof schema.subjectGroup.$inferSelect)[];
 	subjects: (typeof schema.subject.$inferSelect)[];
 	offerings: (typeof schema.subjectOffering.$inferSelect)[];
 	classes: (typeof schema.subjectOfferingClass.$inferSelect)[];

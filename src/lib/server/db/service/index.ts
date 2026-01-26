@@ -13,9 +13,6 @@ export * from './subjects.js';
 // Class
 export * from './classes.js';
 
-// Course Map
-export * from './coursemap.js';
-
 // User
 export * from './user.js';
 
@@ -28,8 +25,8 @@ export * from './events.js';
 // Curriculum
 export * from './curriculum.js';
 
-// Vector
-export * from './vector.js';
-
 // News
 export * from './news.js';
+
+// Create
+export * from './create.js';
