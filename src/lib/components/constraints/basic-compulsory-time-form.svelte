@@ -3,7 +3,7 @@
 	import Input from '$lib/components/ui/input/input.svelte';
 	import Label from '$lib/components/ui/label/label.svelte';
 	import Textarea from '$lib/components/ui/textarea/textarea.svelte';
-	import { basicCompulsoryTimeSchema } from '$lib/schemas/constraints';
+	import { basicCompulsoryTimeSchema } from '$lib/server/fet/constraints/constraints';
 
 	interface Props {
 		onSubmit: (values: Record<string, any>) => void;
@@ -21,7 +21,7 @@
 		const values = {
 			Weight_Percentage: weightPercentage,
 			Active: true,
-			Comments: comments || null
+			Comments: comments || null,
 		};
 
 		// Validate with Zod
@@ -36,7 +36,7 @@
 		const result = basicCompulsoryTimeSchema.safeParse({
 			Weight_Percentage: weightPercentage,
 			Active: true,
-			Comments: comments || null
+			Comments: comments || null,
 		});
 		return result.success ? null : result.error.flatten().fieldErrors;
 	});
@@ -49,8 +49,9 @@
 		<div class="rounded-lg border border-blue-200 bg-blue-50 p-4">
 			<h3 class="mb-2 font-semibold text-blue-900">Mandatory Constraint</h3>
 			<p class="text-sm text-blue-800">
-				This constraint ensures all activities are scheduled within the defined time periods. It is
-				required for the timetabling system to function properly.
+				This constraint ensures all activities are scheduled within the defined
+				time periods. It is required for the timetabling system to function
+				properly.
 			</p>
 		</div>
 
@@ -66,7 +67,9 @@
 				placeholder="100"
 			/>
 			{#if validationErrors?.Weight_Percentage}
-				<p class="text-destructive text-sm">{validationErrors.Weight_Percentage[0]}</p>
+				<p class="text-destructive text-sm">
+					{validationErrors.Weight_Percentage[0]}
+				</p>
 			{/if}
 			<p class="text-muted-foreground text-sm">
 				For mandatory constraints, this should typically be set to 100%.

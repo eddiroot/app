@@ -23,7 +23,7 @@
 		onRemove,
 		onOpen,
 		showRemoveButton = true,
-		className = ''
+		className = '',
 	}: {
 		resource: ResourceInfo;
 		variant?: 'default' | 'new' | 'existing';
@@ -92,7 +92,9 @@
 		} else {
 			// Default behavior: open resource for viewing in new tab (no download)
 			try {
-				const response = await fetch(`/api/resources?resourceId=${resource.id}&action=download`);
+				const response = await fetch(
+					`/api/resources?resourceId=${resource.id}&action=download`,
+				);
 				const result = await response.json();
 
 				if (result.downloadUrl) {
@@ -109,16 +111,12 @@
 	}
 
 	// Variant-specific styling
-	const variantClasses = {
-		default: '',
-		existing: '',
-		new: ''
-	};
+	const variantClasses = { default: '', existing: '', new: '' };
 
 	const iconClasses = {
 		default: 'text-muted-foreground',
 		existing: 'text-muted-foreground',
-		new: 'text-blue-500'
+		new: 'text-blue-500',
 	};
 </script>
 

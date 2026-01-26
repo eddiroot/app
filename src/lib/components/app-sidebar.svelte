@@ -5,9 +5,14 @@
 	import * as Collapsible from '$lib/components/ui/collapsible/index.js';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
 	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
-	import type { userTypeEnum } from '$lib/enums';
-	import type { Campus, School, Subject, SubjectOffering } from '$lib/server/db/schema';
-	import { convertToFullName, getPermissions, userPermissions } from '$lib/utils';
+	import { userPermissions, type userTypeEnum } from '$lib/enums';
+	import type {
+		School,
+		SchoolCampus,
+		Subject,
+		SubjectOffering,
+	} from '$lib/server/db/schema';
+	import { convertToFullName, getPermissions } from '$lib/utils';
 	import BarChart3Icon from '@lucide/svelte/icons/bar-chart-3';
 	import BookOpenIcon from '@lucide/svelte/icons/book-open';
 	import BookOpenCheckIcon from '@lucide/svelte/icons/book-open-check';
@@ -35,16 +40,12 @@
 		subjects,
 		user,
 		school,
-		campuses
+		campuses,
 	}: {
 		subjects: Array<{
 			subject: Subject;
 			subjectOffering: SubjectOffering;
-			classes: Array<{
-				id: number;
-				name: string;
-				subOfferingId: number;
-			}>;
+			classes: Array<{ id: number; name: string; subOfferingId: number }>;
 		}>;
 		user: {
 			id: string;
@@ -55,7 +56,7 @@
 			lastName: string;
 		} | null;
 		school: School | null;
-		campuses: Campus[];
+		campuses: SchoolCampus[];
 	} = $props();
 
 	const headerItems = [
@@ -63,75 +64,55 @@
 			title: 'Dashboard',
 			url: '/dashboard',
 			icon: LayoutDashboardIcon,
-			requiredPermission: userPermissions.viewDashboard
+			requiredPermission: userPermissions.viewDashboard,
 		},
 		{
 			title: 'Admin',
 			url: '/admin',
 			icon: WrenchIcon,
-			requiredPermission: userPermissions.viewAdmin
+			requiredPermission: userPermissions.viewAdmin,
 		},
 		{
 			title: 'Calendar',
 			url: '/calendar',
 			icon: CalendarDaysIcon,
-			requiredPermission: userPermissions.viewCalendar
+			requiredPermission: userPermissions.viewCalendar,
 		},
 		{
 			title: 'Attendance',
 			url: '/attendance',
 			icon: UsersIcon,
-			requiredPermission: userPermissions.viewGuardianAttendance
-		}
+			requiredPermission: userPermissions.viewGuardianAttendance,
+		},
 	];
 
 	const subjectItems = [
-		{
-			title: 'Home',
-			url: '',
-			icon: HomeIcon
-		},
-		{
-			title: 'Discussion',
-			url: 'discussion',
-			icon: MessagesSquareIcon
-		},
+		{ title: 'Home', url: '', icon: HomeIcon },
+		{ title: 'Discussion', url: 'discussion', icon: MessagesSquareIcon },
 		{
 			title: 'Course Map',
 			url: 'curriculum',
 			icon: RouteIcon,
-			requiredPermission: userPermissions.viewCourseMap
-		}
+			requiredPermission: userPermissions.viewCourseMap,
+		},
 	];
 
 	const classItems = [
-		{
-			title: 'Home',
-			url: '',
-			icon: HomeIcon
-		},
+		{ title: 'Home', url: '', icon: HomeIcon },
 		{
 			title: 'Attendance',
 			url: 'attendance',
 			icon: UsersIcon,
-			requiredPermission: userPermissions.viewClassAttendance
+			requiredPermission: userPermissions.viewClassAttendance,
 		},
-		{
-			title: 'Tasks',
-			url: 'tasks',
-			icon: BookOpenCheckIcon
-		},
+		{ title: 'Tasks', url: 'tasks', icon: BookOpenCheckIcon },
 		{
 			title: 'Analytics',
 			url: 'analytics',
 			icon: BarChart3Icon,
-			requiredPermission: userPermissions.viewAnalytics
+			requiredPermission: userPermissions.viewAnalytics,
 		},
-		{
-			title: 'Grades',
-			url: 'grades',
-			icon: BookOpenIcon
-		}
+		{ title: 'Grades', url: 'grades', icon: BookOpenIcon },
 	];
 
 	const subjectNameToIcon = (name: string) => {
@@ -161,11 +142,14 @@
 	const fullName = convertToFullName(
 		userData()?.firstName,
 		userData()?.middleName,
-		userData()?.lastName
+		userData()?.lastName,
 	);
 	let form: HTMLFormElement | null = $state(null);
 
-	function getInitials(firstName: string | null, lastName: string | null): string {
+	function getInitials(
+		firstName: string | null,
+		lastName: string | null,
+	): string {
 		return `${firstName?.charAt(0) || ''}${lastName?.charAt(0) || ''}`.toUpperCase();
 	}
 
@@ -178,7 +162,9 @@
 	}
 
 	function isClassActive(subjectOfferingId: string, classId: string): boolean {
-		return page.url.pathname.startsWith(`/subjects/${subjectOfferingId}/class/${classId}`);
+		return page.url.pathname.startsWith(
+			`/subjects/${subjectOfferingId}/class/${classId}`,
+		);
 	}
 
 	function isSubjectSubItemActive(subjectId: string, subUrl: string): boolean {
@@ -187,24 +173,32 @@
 		if (subUrl === '') return page.url.pathname === subjectBasePath;
 
 		const expectedPath = `${subjectBasePath}/${subUrl}`;
-		return page.url.pathname === expectedPath || page.url.pathname.startsWith(expectedPath + '/');
+		return (
+			page.url.pathname === expectedPath ||
+			page.url.pathname.startsWith(expectedPath + '/')
+		);
 	}
 
 	function isClassSubItemActive(
 		subjectOfferingId: string,
 		classId: string,
-		subUrl: string
+		subUrl: string,
 	): boolean {
 		const classBasePath = `/subjects/${subjectOfferingId}/class/${classId}`;
 
 		if (subUrl === '') return page.url.pathname === classBasePath;
 
 		const expectedPath = `${classBasePath}/${subUrl}`;
-		return page.url.pathname === expectedPath || page.url.pathname.startsWith(expectedPath + '/');
+		return (
+			page.url.pathname === expectedPath ||
+			page.url.pathname.startsWith(expectedPath + '/')
+		);
 	}
 
 	const campusesData = () => campuses;
-	let currentCampus = $state(campusesData().length > 0 ? campusesData()[0] : null);
+	let currentCampus = $state(
+		campusesData().length > 0 ? campusesData()[0] : null,
+	);
 	const permissions = $state(getPermissions(userData()?.type));
 </script>
 
@@ -228,13 +222,16 @@
 							>
 								<Avatar.Root class="h-8 w-8 rounded-lg">
 									<Avatar.Image
-										src={school?.logoUrl || '/favicon.png'}
+										src={school?.logoPath || '/favicon.png'}
 										alt="{school?.name || 'school'} logo"
 									/>
 								</Avatar.Root>
 								<div class="grid flex-1 text-left text-sm leading-tight">
-									<span class="truncate font-medium">{school?.name || 'No school found'}</span>
-									<span class="truncate text-xs">{currentCampus?.name || 'No campus selected'}</span
+									<span class="truncate font-medium"
+										>{school?.name || 'No school found'}</span
+									>
+									<span class="truncate text-xs"
+										>{currentCampus?.name || 'No campus selected'}</span
 									>
 								</div>
 								<ChevronsUpDownIcon className="ml-auto size-4" />
@@ -296,7 +293,9 @@
 							<Collapsible.Trigger>
 								{#snippet child({ props })}
 									<a
-										href={sidebar.leftOpen ? undefined : `/subjects/${subject.subjectOffering.id}`}
+										href={sidebar.leftOpen
+											? undefined
+											: `/subjects/${subject.subjectOffering.id}`}
 										onclick={() => {
 											if (!sidebar.leftOpen) {
 												sidebar.setLeftOpen(true);
@@ -306,13 +305,19 @@
 										<Sidebar.MenuButton
 											side="left"
 											tooltipContent={subject.subject.name}
-											isActive={isSubjectActive(subject.subjectOffering.id.toString())}
+											isActive={isSubjectActive(
+												subject.subjectOffering.id.toString(),
+											)}
 											{...props}
 										>
-											{@const IconComponent = subjectNameToIcon(subject.subject.name)}
+											{@const IconComponent = subjectNameToIcon(
+												subject.subject.name,
+											)}
 											<IconComponent class="mr-2" />
 
-											<span class="whitespace-nowrap">{subject.subject.name}</span>
+											<span class="whitespace-nowrap"
+												>{subject.subject.name}</span
+											>
 											<ChevronDownIcon
 												class="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-180"
 											/>
@@ -328,7 +333,7 @@
 												<Sidebar.MenuSubButton
 													isActive={isSubjectSubItemActive(
 														subject.subjectOffering.id.toString(),
-														item.url
+														item.url,
 													)}
 												>
 													{#snippet child({ props })}
@@ -347,14 +352,16 @@
 									{#each subject.classes as classItem (classItem.id)}
 										<Collapsible.Root
 											class="group/collapsible-class"
-											open={isSubjectActive(subject.subjectOffering.id.toString())}
+											open={isSubjectActive(
+												subject.subjectOffering.id.toString(),
+											)}
 										>
 											<Collapsible.Trigger>
 												{#snippet child({ props })}
 													<Sidebar.MenuSubButton
 														isActive={isClassActive(
 															subject.subjectOffering.id.toString(),
-															classItem.id.toString()
+															classItem.id.toString(),
 														)}
 														{...props}
 													>
@@ -375,7 +382,7 @@
 																	isActive={isClassSubItemActive(
 																		subject.subjectOffering.id.toString(),
 																		classItem.id.toString(),
-																		item.url
+																		item.url,
 																	)}
 																>
 																	{#snippet child({ props })}
@@ -418,7 +425,10 @@
 								<Avatar.Root class="h-8 w-8 rounded-lg">
 									<Avatar.Image alt={fullName} />
 									<Avatar.Fallback class="rounded-lg"
-										>{getInitials(user?.firstName || '?', user?.lastName || '?')}</Avatar.Fallback
+										>{getInitials(
+											user?.firstName || '?',
+											user?.lastName || '?',
+										)}</Avatar.Fallback
 									>
 								</Avatar.Root>
 								<div class="grid flex-1 text-left text-sm leading-tight">
@@ -429,14 +439,23 @@
 							</Sidebar.MenuButton>
 						{/snippet}
 					</DropdownMenu.Trigger>
-					<DropdownMenu.Content side={sidebar.isMobile ? 'bottom' : 'right'} align="end">
-						<DropdownMenu.Item class="cursor-pointer" onclick={() => goto(`/profile/${user?.id}`)}>
+					<DropdownMenu.Content
+						side={sidebar.isMobile ? 'bottom' : 'right'}
+						align="end"
+					>
+						<DropdownMenu.Item
+							class="cursor-pointer"
+							onclick={() => goto(`/profile/${user?.id}`)}
+						>
 							<UserIcon />
 							Profile
 						</DropdownMenu.Item>
 						<DropdownMenu.Separator />
 						<form method="post" action="/?/logout" bind:this={form}>
-							<DropdownMenu.Item class="cursor-pointer" onclick={() => form!.submit()}>
+							<DropdownMenu.Item
+								class="cursor-pointer"
+								onclick={() => form!.submit()}
+							>
 								<LogOutIcon />
 								<input type="submit" value="Logout" class="cursor-pointer" />
 							</DropdownMenu.Item>

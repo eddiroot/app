@@ -5,16 +5,25 @@
 	import Input from '$lib/components/ui/input/input.svelte';
 	import Label from '$lib/components/ui/label/label.svelte';
 	import Textarea from '$lib/components/ui/textarea/textarea.svelte';
-	import type { AutocompleteOption } from '$lib/constraint-data-fetchers';
-	import { minDaysBetweenActivitiesSchema } from '$lib/schemas/constraints';
-	import type { EnhancedConstraintFormProps } from '$lib/types/constraint-form-types';
+	import type { AutocompleteOption } from '$lib/server/fet/constraints/constraint-data-fetchers';
+	import type { EnhancedConstraintFormProps } from '$lib/server/fet/constraints/constraint-form-types';
+	import { minDaysBetweenActivitiesSchema } from '$lib/server/fet/constraints/constraints';
 	import TrashIcon from '@lucide/svelte/icons/trash';
 
-	let { onSubmit, onCancel, initialValues = {}, formData }: EnhancedConstraintFormProps = $props();
+	let {
+		onSubmit,
+		onCancel,
+		initialValues = {},
+		formData,
+	}: EnhancedConstraintFormProps = $props();
 
 	// Form state
-	let weightPercentage = $state((initialValues.Weight_Percentage as number) || 95);
-	let consecutiveIfSameDay = $state((initialValues.Consecutive_If_Same_Day as boolean) ?? true);
+	let weightPercentage = $state(
+		(initialValues.Weight_Percentage as number) || 95,
+	);
+	let consecutiveIfSameDay = $state(
+		(initialValues.Consecutive_If_Same_Day as boolean) ?? true,
+	);
 	let minDays = $state((initialValues.MinDays as number) || 1);
 	let comments = $state((initialValues.Comments as string) || '');
 
@@ -42,7 +51,7 @@
 			Number_of_Activities: activityIds.length,
 			Activity_Id: activityIds,
 			Active: true,
-			Comments: comments || null
+			Comments: comments || null,
 		};
 
 		// Validate with Zod
@@ -62,7 +71,7 @@
 			Number_of_Activities: activityIds.length,
 			Activity_Id: activityIds,
 			Active: true,
-			Comments: comments || null
+			Comments: comments || null,
 		});
 		return result.success ? null : result.error.flatten().fieldErrors;
 	});
@@ -84,14 +93,23 @@
 				placeholder="95"
 			/>
 			{#if validationErrors?.Weight_Percentage}
-				<p class="text-destructive text-sm">{validationErrors.Weight_Percentage[0]}</p>
+				<p class="text-destructive text-sm">
+					{validationErrors.Weight_Percentage[0]}
+				</p>
 			{/if}
 		</div>
 
 		<!-- Minimum Days -->
 		<div class="space-y-2">
 			<Label for="minDays">Minimum Days Between Activities (1-6)</Label>
-			<Input id="minDays" type="number" min="1" max="6" bind:value={minDays} placeholder="1" />
+			<Input
+				id="minDays"
+				type="number"
+				min="1"
+				max="6"
+				bind:value={minDays}
+				placeholder="1"
+			/>
 			{#if validationErrors?.MinDays}
 				<p class="text-destructive text-sm">{validationErrors.MinDays[0]}</p>
 			{/if}
@@ -111,7 +129,8 @@
 			</Label>
 		</div>
 		<p class="text-muted-foreground ml-6 text-sm">
-			If activities are scheduled on the same day, they should be consecutive periods.
+			If activities are scheduled on the same day, they should be consecutive
+			periods.
 		</p>
 
 		<!-- Activities -->
@@ -148,11 +167,13 @@
 				</div>
 			</div>
 			{#if validationErrors?.Activity_Id}
-				<p class="text-destructive text-sm">{validationErrors.Activity_Id[0]}</p>
+				<p class="text-destructive text-sm">
+					{validationErrors.Activity_Id[0]}
+				</p>
 			{/if}
 			<p class="text-muted-foreground text-sm">
-				Specify the activities that should be spaced apart. You need at least 2 activities for this
-				constraint to work.
+				Specify the activities that should be spaced apart. You need at least 2
+				activities for this constraint to work.
 			</p>
 		</div>
 

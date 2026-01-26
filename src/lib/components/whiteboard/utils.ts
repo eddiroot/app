@@ -11,6 +11,11 @@ export function hexToRgba(hex: string, alpha: number): string {
 /**
  * Calculate distance between two points
  */
-export function calculateDistance(x1: number, y1: number, x2: number, y2: number): number {
+export function calculateDistance(
+	x1: number,
+	y1: number,
+	x2: number,
+	y2: number,
+): number {
 	return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
 }

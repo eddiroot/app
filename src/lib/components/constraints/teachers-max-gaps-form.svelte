@@ -3,7 +3,7 @@
 	import Input from '$lib/components/ui/input/input.svelte';
 	import Label from '$lib/components/ui/label/label.svelte';
 	import Textarea from '$lib/components/ui/textarea/textarea.svelte';
-	import { teachersMaxGapsSchema } from '$lib/schemas/constraints';
+	import { teachersMaxGapsSchema } from '$lib/server/fet/constraints/constraints';
 
 	interface Props {
 		onSubmit: (values: Record<string, any>) => void;
@@ -23,7 +23,7 @@
 			Weight_Percentage: weightPercentage,
 			Max_Gaps: maxGaps,
 			Active: true,
-			Comments: comments || null
+			Comments: comments || null,
 		};
 
 		// Validate with Zod
@@ -39,7 +39,7 @@
 			Weight_Percentage: weightPercentage,
 			Max_Gaps: maxGaps,
 			Active: true,
-			Comments: comments || null
+			Comments: comments || null,
 		});
 		return result.success ? null : result.error.flatten().fieldErrors;
 	});
@@ -61,20 +61,29 @@
 				placeholder="100"
 			/>
 			{#if validationErrors?.Weight_Percentage}
-				<p class="text-destructive text-sm">{validationErrors.Weight_Percentage[0]}</p>
+				<p class="text-destructive text-sm">
+					{validationErrors.Weight_Percentage[0]}
+				</p>
 			{/if}
 		</div>
 
 		<!-- Max Gaps -->
 		<div class="space-y-2">
 			<Label for="maxGaps">Maximum Gaps Per Week (0-20)</Label>
-			<Input id="maxGaps" type="number" min="0" max="20" bind:value={maxGaps} placeholder="3" />
+			<Input
+				id="maxGaps"
+				type="number"
+				min="0"
+				max="20"
+				bind:value={maxGaps}
+				placeholder="3"
+			/>
 			{#if validationErrors?.Max_Gaps}
 				<p class="text-destructive text-sm">{validationErrors.Max_Gaps[0]}</p>
 			{/if}
 			<p class="text-muted-foreground text-sm">
-				Maximum number of free periods (gaps) teachers can have in their weekly schedule. Lower
-				values create more compact schedules.
+				Maximum number of free periods (gaps) teachers can have in their weekly
+				schedule. Lower values create more compact schedules.
 			</p>
 		</div>
 

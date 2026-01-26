@@ -10,21 +10,15 @@
 		pathname: string;
 	}
 
-	type Tab = {
-		id: string;
-		label: string;
-	};
+	type Tab = { id: string; label: string };
 
 	let { pathname }: Props = $props();
 
 	const getAvailableTabs = (): Tab[] => {
 		return [
 			{ id: 'chat', label: 'Chat' },
-			{
-				id: 'practise',
-				label: 'Practise'
-			},
-			{ id: 'assess', label: 'Assess' }
+			{ id: 'practise', label: 'Practise' },
+			{ id: 'assess', label: 'Assess' },
 		];
 	};
 

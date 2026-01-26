@@ -6,7 +6,7 @@
 		CardContent,
 		CardDescription,
 		CardHeader,
-		CardTitle
+		CardTitle,
 	} from '$lib/components/ui/card';
 	import { Input } from '$lib/components/ui/input';
 	import { Label } from '$lib/components/ui/label';
@@ -20,7 +20,7 @@
 		onSuccess,
 		isAdmin = false,
 		isOwnProfile = true,
-		targetUserName = ''
+		targetUserName = '',
 	}: {
 		form: any;
 		open?: boolean;
@@ -55,7 +55,9 @@
 </script>
 
 {#if open}
-	<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+	<div
+		class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
+	>
 		<Card class="w-full max-w-md">
 			<CardHeader>
 				<CardTitle class="flex items-center gap-2">
@@ -191,7 +193,12 @@
 					</div>
 
 					<div class="flex justify-end gap-2 pt-4">
-						<Button type="button" variant="outline" onclick={handleClose} disabled={isSubmitting}>
+						<Button
+							type="button"
+							variant="outline"
+							onclick={handleClose}
+							disabled={isSubmitting}
+						>
 							Cancel
 						</Button>
 						<Button type="submit" disabled={isSubmitting}>

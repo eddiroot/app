@@ -4,19 +4,28 @@
 	import Input from '$lib/components/ui/input/input.svelte';
 	import Label from '$lib/components/ui/label/label.svelte';
 	import Textarea from '$lib/components/ui/textarea/textarea.svelte';
-	import { subjectPreferredRoomsSchema } from '$lib/schemas/constraints';
-	import type { EnhancedConstraintFormProps } from '$lib/types/constraint-form-types';
+	import type { EnhancedConstraintFormProps } from '$lib/server/fet/constraints/constraint-form-types';
+	import { subjectPreferredRoomsSchema } from '$lib/server/fet/constraints/constraints';
 	import PlusIcon from '@lucide/svelte/icons/plus';
 	import TrashIcon from '@lucide/svelte/icons/trash';
 
-	let { onSubmit, onCancel, initialValues = {}, formData }: EnhancedConstraintFormProps = $props();
+	let {
+		onSubmit,
+		onCancel,
+		initialValues = {},
+		formData,
+	}: EnhancedConstraintFormProps = $props();
 
 	// Form state - use IDs instead of names
-	let weightPercentage = $state((initialValues.Weight_Percentage as number) || 100);
+	let weightPercentage = $state(
+		(initialValues.Weight_Percentage as number) || 100,
+	);
 	let subjectId = $state((initialValues.Subject as string) || '');
-	let numberOfRooms = $state((initialValues.Number_of_Preferred_Rooms as number) || 1);
+	let numberOfRooms = $state(
+		(initialValues.Number_of_Preferred_Rooms as number) || 1,
+	);
 	let preferredRoomIds = $state<(string | number)[]>(
-		(initialValues.Preferred_Room as (string | number)[]) || ['']
+		(initialValues.Preferred_Room as (string | number)[]) || [''],
 	);
 	let comments = $state((initialValues.Comments as string) || '');
 
@@ -49,7 +58,7 @@
 			Number_of_Preferred_Rooms: numberOfRooms,
 			Preferred_Room: preferredRoomIds.filter((roomId) => roomId !== ''),
 			Active: true,
-			Comments: comments || null
+			Comments: comments || null,
 		};
 
 		// Validate with Zod
@@ -67,7 +76,7 @@
 			Number_of_Preferred_Rooms: numberOfRooms,
 			Preferred_Room: preferredRoomIds.filter((roomId) => roomId !== ''),
 			Active: true,
-			Comments: comments || null
+			Comments: comments || null,
 		});
 		return result.success ? null : result.error.flatten().fieldErrors;
 	});
@@ -89,7 +98,9 @@
 				placeholder="100"
 			/>
 			{#if validationErrors?.Weight_Percentage}
-				<p class="text-destructive text-sm">{validationErrors.Weight_Percentage[0]}</p>
+				<p class="text-destructive text-sm">
+					{validationErrors.Weight_Percentage[0]}
+				</p>
 			{/if}
 		</div>
 
@@ -123,24 +134,37 @@
 							class="flex-1"
 						/>
 						{#if preferredRoomIds.length > 1}
-							<Button variant="outline" size="sm" onclick={() => removeRoom(index)} type="button">
+							<Button
+								variant="outline"
+								size="sm"
+								onclick={() => removeRoom(index)}
+								type="button"
+							>
 								<TrashIcon class="h-4 w-4" />
 							</Button>
 						{/if}
 					</div>
 				{/each}
 
-				<Button variant="outline" size="sm" onclick={addRoom} type="button" class="w-full">
+				<Button
+					variant="outline"
+					size="sm"
+					onclick={addRoom}
+					type="button"
+					class="w-full"
+				>
 					<PlusIcon class="mr-2 h-4 w-4" />
 					Add Room
 				</Button>
 			</div>
 			{#if validationErrors?.Preferred_Room}
-				<p class="text-destructive text-sm">{validationErrors.Preferred_Room[0]}</p>
+				<p class="text-destructive text-sm">
+					{validationErrors.Preferred_Room[0]}
+				</p>
 			{/if}
 			<p class="text-muted-foreground text-sm">
-				Add multiple rooms that can be used for this subject. The system will prefer these rooms
-				when scheduling.
+				Add multiple rooms that can be used for this subject. The system will
+				prefer these rooms when scheduling.
 			</p>
 		</div>
 

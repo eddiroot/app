@@ -4,20 +4,28 @@
 	import Input from '$lib/components/ui/input/input.svelte';
 	import Label from '$lib/components/ui/label/label.svelte';
 	import Textarea from '$lib/components/ui/textarea/textarea.svelte';
-	import { roomNotAvailableTimesSchema } from '$lib/schemas/constraints';
-	import type { EnhancedConstraintFormProps } from '$lib/types/constraint-form-types';
+	import type { EnhancedConstraintFormProps } from '$lib/server/fet/constraints/constraint-form-types';
+	import { roomNotAvailableTimesSchema } from '$lib/server/fet/constraints/constraints';
 	import PlusIcon from '@lucide/svelte/icons/plus';
 	import TrashIcon from '@lucide/svelte/icons/trash';
 
-	let { onSubmit, onCancel, initialValues = {}, formData }: EnhancedConstraintFormProps = $props();
+	let {
+		onSubmit,
+		onCancel,
+		initialValues = {},
+		formData,
+	}: EnhancedConstraintFormProps = $props();
 
 	// Form state
-	let weightPercentage = $state((initialValues.Weight_Percentage as number) || 100);
+	let weightPercentage = $state(
+		(initialValues.Weight_Percentage as number) || 100,
+	);
 	let selectedRoomId = $state<string | number>('');
 	let notAvailableTimes = $state<Array<{ Day: number; Period: number }>>(
-		(initialValues.Not_Available_Time as Array<{ Day: number; Period: number }>) || [
-			{ Day: 0, Period: 0 }
-		]
+		(initialValues.Not_Available_Time as Array<{
+			Day: number;
+			Period: number;
+		}>) || [{ Day: 0, Period: 0 }],
 	);
 	let comments = $state((initialValues.Comments as string) || '');
 
@@ -41,7 +49,7 @@
 			Number_of_Not_Available_Times: notAvailableTimes.length,
 			Not_Available_Time: notAvailableTimes,
 			Active: true,
-			Comments: comments || null
+			Comments: comments || null,
 		};
 
 		// Validate with Zod
@@ -59,7 +67,7 @@
 			Number_of_Not_Available_Times: notAvailableTimes.length,
 			Not_Available_Time: notAvailableTimes,
 			Active: true,
-			Comments: comments || null
+			Comments: comments || null,
 		});
 		return result.success ? null : result.error.flatten().fieldErrors;
 	});
@@ -81,7 +89,9 @@
 				placeholder="100"
 			/>
 			{#if validationErrors?.Weight_Percentage}
-				<p class="text-destructive text-sm">{validationErrors.Weight_Percentage[0]}</p>
+				<p class="text-destructive text-sm">
+					{validationErrors.Weight_Percentage[0]}
+				</p>
 			{/if}
 		</div>
 
@@ -97,7 +107,9 @@
 				<p class="text-destructive text-sm">{validationErrors.Room[0]}</p>
 			{/if}
 			{#if formData?.spaces.length === 0}
-				<p class="text-destructive text-sm">All rooms already have this constraint applied.</p>
+				<p class="text-destructive text-sm">
+					All rooms already have this constraint applied.
+				</p>
 			{/if}
 		</div>
 
@@ -105,7 +117,9 @@
 		<div class="space-y-2">
 			<Label>Not Available Times *</Label>
 			{#if validationErrors?.Not_Available_Time}
-				<p class="text-destructive text-sm">{validationErrors.Not_Available_Time[0]}</p>
+				<p class="text-destructive text-sm">
+					{validationErrors.Not_Available_Time[0]}
+				</p>
 			{/if}
 			<div class="space-y-3">
 				<div class="flex gap-2">
@@ -155,7 +169,8 @@
 				</Button>
 			</div>
 			<p class="text-muted-foreground text-sm">
-				Specify when this room is not available for scheduling (e.g., maintenance, other bookings).
+				Specify when this room is not available for scheduling (e.g.,
+				maintenance, other bookings).
 			</p>
 		</div>
 

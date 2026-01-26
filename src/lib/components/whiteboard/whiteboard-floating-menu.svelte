@@ -63,7 +63,7 @@
 		onShapeOptionsChange,
 		onDrawOptionsChange,
 		onLineArrowOptionsChange,
-		onCanvasInteraction
+		onCanvasInteraction,
 	}: Props = $props();
 
 	// Track which menu panel to show (independent of selectedTool for editing existing objects)
@@ -81,7 +81,7 @@
 		fontWeight: 'normal',
 		colour: '#1E1E1E',
 		textAlign: 'left',
-		opacity: 1
+		opacity: 1,
 	});
 
 	let shapeOptions = $state<ShapeOptions>({
@@ -90,21 +90,21 @@
 		fillColour: 'transparent',
 		strokeDashArray: [],
 		cornerRadius: 0,
-		opacity: 1
+		opacity: 1,
 	});
 
 	let drawOptions = $state<DrawOptions>({
 		brushSize: 6,
 		brushColour: '#1E1E1E',
 		brushType: 'pencil',
-		opacity: 1
+		opacity: 1,
 	});
 
 	let lineArrowOptions = $state<LineArrowOptions>({
 		strokeWidth: 2,
 		strokeColour: '#1E1E1E',
 		strokeDashArray: [],
-		opacity: 1
+		opacity: 1,
 	});
 
 	// Flag to prevent triggering onChange handlers during sync
@@ -208,13 +208,13 @@
 		{ value: 'Georgia', label: 'Georgia' },
 		{ value: 'Verdana', label: 'Verdana' },
 		{ value: 'Courier New', label: 'Courier New' },
-		{ value: 'Impact', label: 'Impact' }
+		{ value: 'Impact', label: 'Impact' },
 	];
 
 	const fontWeights = [
 		{ value: 'normal', label: 'Normal' },
 		{ value: 'bold', label: 'Bold' },
-		{ value: '300', label: 'Light' }
+		{ value: '300', label: 'Light' },
 	];
 
 	// Common colours
@@ -227,7 +227,7 @@
 		// Row 2
 		['#553C9A', '#3C366B', '#2C5282', '#0987A0', '#2C7A7B'],
 		// Row 3
-		['#2F855A', '#4D7C0F', '#B7791F', '#C05621', '#C53030']
+		['#2F855A', '#4D7C0F', '#B7791F', '#C05621', '#C53030'],
 	] as const;
 
 	const colourShades = {
@@ -245,13 +245,15 @@
 		'#4D7C0F': ['#4D7C0F', '#65A30D', '#84CC16', '#BEF264', '#ECFCCB'], // Lime
 		'#B7791F': ['#B7791F', '#D69E2E', '#F6E05E', '#FAF089', '#FEFCBF'], // Yellow
 		'#C05621': ['#C05621', '#DD6B20', '#ED8936', '#FBD38D', '#FEEBCB'], // Orange
-		'#C53030': ['#C53030', '#E53E3E', '#F56565', '#FEB2B2', '#FED7D7'] // Red
+		'#C53030': ['#C53030', '#E53E3E', '#F56565', '#FEB2B2', '#FED7D7'], // Red
 	} as const;
 
 	type ColourFamily = keyof typeof colourShades;
 	let selectedColourFamily = $state<ColourFamily>('#1E1E1E'); // Default to black
 	let showExpandedColours = $state(false); // Toggle for expanded colour palette
-	let expandedColoursFor = $state<'text' | 'stroke' | 'fill' | 'brush' | 'line' | null>(null); // Track which colour picker opened the expanded palette
+	let expandedColoursFor = $state<
+		'text' | 'stroke' | 'fill' | 'brush' | 'line' | null
+	>(null); // Track which colour picker opened the expanded palette
 
 	// Function to close the expanded colors panel
 	export function closeExpandedColors() {
@@ -271,7 +273,8 @@
 	export function updateShapeOptions(options: Partial<ShapeOptions>) {
 		isSyncingFromObject = true;
 		shapeOptions = { ...shapeOptions, ...options };
-		if (options.strokeWidth !== undefined) strokeWidthValue = options.strokeWidth;
+		if (options.strokeWidth !== undefined)
+			strokeWidthValue = options.strokeWidth;
 		if (options.opacity !== undefined) shapeOpacityValue = options.opacity;
 		setTimeout(() => (isSyncingFromObject = false), 0);
 	}
@@ -287,7 +290,8 @@
 	export function updateLineArrowOptions(options: Partial<LineArrowOptions>) {
 		isSyncingFromObject = true;
 		lineArrowOptions = { ...lineArrowOptions, ...options };
-		if (options.strokeWidth !== undefined) lineArrowStrokeWidthValue = options.strokeWidth;
+		if (options.strokeWidth !== undefined)
+			lineArrowStrokeWidthValue = options.strokeWidth;
 		if (options.opacity !== undefined) lineArrowOpacityValue = options.opacity;
 		setTimeout(() => (isSyncingFromObject = false), 0);
 	}
@@ -299,23 +303,39 @@
 
 	// Reactive updates
 	$effect(() => {
-		if (!isSyncingFromObject && activeMenuPanel === 'text' && onTextOptionsChange) {
+		if (
+			!isSyncingFromObject &&
+			activeMenuPanel === 'text' &&
+			onTextOptionsChange
+		) {
 			onTextOptionsChange(textOptions);
 		}
 	});
 
 	$effect(() => {
-		if (!isSyncingFromObject && activeMenuPanel === 'shapes' && onShapeOptionsChange) {
+		if (
+			!isSyncingFromObject &&
+			activeMenuPanel === 'shapes' &&
+			onShapeOptionsChange
+		) {
 			onShapeOptionsChange(shapeOptions);
 		}
 	});
 
 	$effect(() => {
-		if (!isSyncingFromObject && activeMenuPanel === 'draw' && onDrawOptionsChange) {
+		if (
+			!isSyncingFromObject &&
+			activeMenuPanel === 'draw' &&
+			onDrawOptionsChange
+		) {
 			onDrawOptionsChange(drawOptions);
 		}
 
-		if (!isSyncingFromObject && activeMenuPanel === 'eraser' && onDrawOptionsChange) {
+		if (
+			!isSyncingFromObject &&
+			activeMenuPanel === 'eraser' &&
+			onDrawOptionsChange
+		) {
 			onDrawOptionsChange(drawOptions);
 		}
 	});
@@ -339,13 +359,17 @@
 				activeMenuPanel === 'eraser' ||
 				activeMenuPanel === 'line' ||
 				activeMenuPanel === 'arrow' ||
-				activeMenuPanel === 'image')
+				activeMenuPanel === 'image'),
 	);
 </script>
 
 {#if shouldShowMenu}
-	<div class="absolute top-1/2 left-8 z-20 flex -translate-y-1/2 transform gap-2">
-		<Card.Root class="bg-background/20 border-border/50 max-w-80 min-w-64 backdrop-blur-sm">
+	<div
+		class="absolute top-1/2 left-8 z-20 flex -translate-y-1/2 transform gap-2"
+	>
+		<Card.Root
+			class="bg-background/20 border-border/50 max-w-80 min-w-64 backdrop-blur-sm"
+		>
 			{#if activeMenuPanel === 'text'}
 				<Card.Header class="pb-3">
 					<Card.Title class="flex items-center gap-2 text-sm">
@@ -413,7 +437,8 @@
 						<Label class="text-xs font-medium">Font Weight</Label>
 						<Select.Root type="single" bind:value={textOptions.fontWeight}>
 							<Select.Trigger class="h-8">
-								{fontWeights.find((w) => w.value === textOptions.fontWeight)?.label || 'Normal'}
+								{fontWeights.find((w) => w.value === textOptions.fontWeight)
+									?.label || 'Normal'}
 							</Select.Trigger>
 							<Select.Content>
 								{#each fontWeights as weight}
@@ -438,7 +463,10 @@
 									onclick={() => (textOptions.colour = colour)}
 									aria-label="Select colour {colour}"
 								>
-									<div class="h-full w-full rounded-sm" style="background-color: {colour}"></div>
+									<div
+										class="h-full w-full rounded-sm"
+										style="background-color: {colour}"
+									></div>
 								</button>
 							{/each}
 
@@ -534,7 +562,8 @@
 						<Label class="text-xs font-medium">Border Style</Label>
 						<div class="flex gap-2">
 							<Button
-								variant={JSON.stringify(shapeOptions.strokeDashArray) === JSON.stringify([])
+								variant={JSON.stringify(shapeOptions.strokeDashArray) ===
+								JSON.stringify([])
 									? 'default'
 									: 'outline'}
 								size="sm"
@@ -544,7 +573,8 @@
 								<MinusIcon />
 							</Button>
 							<Button
-								variant={JSON.stringify(shapeOptions.strokeDashArray) === JSON.stringify([5, 5])
+								variant={JSON.stringify(shapeOptions.strokeDashArray) ===
+								JSON.stringify([5, 5])
 									? 'default'
 									: 'outline'}
 								size="sm"
@@ -564,7 +594,8 @@
 								</svg>
 							</Button>
 							<Button
-								variant={JSON.stringify(shapeOptions.strokeDashArray) === JSON.stringify([2, 2])
+								variant={JSON.stringify(shapeOptions.strokeDashArray) ===
+								JSON.stringify([2, 2])
 									? 'default'
 									: 'outline'}
 								size="sm"
@@ -601,7 +632,10 @@
 									onclick={() => (shapeOptions.strokeColour = colour)}
 									aria-label="Select stroke colour {colour}"
 								>
-									<div class="h-full w-full rounded-sm" style="background-color: {colour}"></div>
+									<div
+										class="h-full w-full rounded-sm"
+										style="background-color: {colour}"
+									></div>
 								</button>
 							{/each}
 
@@ -640,7 +674,9 @@
 						<Label class="text-xs font-medium">Fill Colour</Label>
 						<div class="mb-2 flex gap-2">
 							<Button
-								variant={shapeOptions.fillColour === 'transparent' ? 'default' : 'outline'}
+								variant={shapeOptions.fillColour === 'transparent'
+									? 'default'
+									: 'outline'}
 								size="sm"
 								onclick={() => (shapeOptions.fillColour = 'transparent')}
 								class="h-7 text-xs"
@@ -658,7 +694,10 @@
 									onclick={() => (shapeOptions.fillColour = colour)}
 									aria-label="Select fill colour {colour}"
 								>
-									<div class="h-full w-full rounded-sm" style="background-color: {colour}"></div>
+									<div
+										class="h-full w-full rounded-sm"
+										style="background-color: {colour}"
+									></div>
 								</button>
 							{/each}
 
@@ -764,7 +803,10 @@
 									onclick={() => (drawOptions.brushColour = colour)}
 									aria-label="Select brush colour {colour}"
 								>
-									<div class="h-full w-full rounded-sm" style="background-color: {colour}"></div>
+									<div
+										class="h-full w-full rounded-sm"
+										style="background-color: {colour}"
+									></div>
 								</button>
 							{/each}
 
@@ -849,7 +891,9 @@
 						<Label class="text-xs font-medium">Stroke Width</Label>
 						<div class="flex gap-2">
 							<Button
-								variant={lineArrowStrokeWidthValue === 1 ? 'default' : 'outline'}
+								variant={lineArrowStrokeWidthValue === 1
+									? 'default'
+									: 'outline'}
 								size="sm"
 								onclick={() => (lineArrowStrokeWidthValue = 1)}
 								class="flex h-10 w-10 items-center justify-center"
@@ -857,7 +901,9 @@
 								<MinusIcon class="h-3 w-3" strokeWidth={1} />
 							</Button>
 							<Button
-								variant={lineArrowStrokeWidthValue === 3 ? 'default' : 'outline'}
+								variant={lineArrowStrokeWidthValue === 3
+									? 'default'
+									: 'outline'}
 								size="sm"
 								onclick={() => (lineArrowStrokeWidthValue = 3)}
 								class="flex h-10 w-10 items-center justify-center"
@@ -865,7 +911,9 @@
 								<MinusIcon strokeWidth={3} />
 							</Button>
 							<Button
-								variant={lineArrowStrokeWidthValue === 6 ? 'default' : 'outline'}
+								variant={lineArrowStrokeWidthValue === 6
+									? 'default'
+									: 'outline'}
 								size="sm"
 								onclick={() => (lineArrowStrokeWidthValue = 6)}
 								class="flex h-10 w-10 items-center justify-center"
@@ -890,7 +938,10 @@
 									onclick={() => (lineArrowOptions.strokeColour = colour)}
 									aria-label="Select colour {colour}"
 								>
-									<div class="h-full w-full rounded-sm" style="background-color: {colour}"></div>
+									<div
+										class="h-full w-full rounded-sm"
+										style="background-color: {colour}"
+									></div>
 								</button>
 							{/each}
 
@@ -929,7 +980,9 @@
 						<Label class="text-xs font-medium">Line Style</Label>
 						<div class="flex gap-2">
 							<Button
-								variant={lineArrowOptions.strokeDashArray.length === 0 ? 'default' : 'outline'}
+								variant={lineArrowOptions.strokeDashArray.length === 0
+									? 'default'
+									: 'outline'}
 								size="sm"
 								onclick={() => (lineArrowOptions.strokeDashArray = [])}
 								class="h-8 flex-1"
@@ -937,7 +990,9 @@
 								Solid
 							</Button>
 							<Button
-								variant={lineArrowOptions.strokeDashArray.length > 0 ? 'default' : 'outline'}
+								variant={lineArrowOptions.strokeDashArray.length > 0
+									? 'default'
+									: 'outline'}
 								size="sm"
 								onclick={() => (lineArrowOptions.strokeDashArray = [5, 5])}
 								class="h-8 flex-1"
@@ -998,7 +1053,9 @@
 
 		<!-- Side Panel for Expanded Colours -->
 		{#if showExpandedColours}
-			<Card.Root class="bg-background/20 border-border/50 w-64 backdrop-blur-sm">
+			<Card.Root
+				class="bg-background/20 border-border/50 w-64 backdrop-blur-sm"
+			>
 				<Card.Header class="pb-3">
 					<Card.Title class="flex items-center gap-2 text-sm">
 						<PaletteIcon />
@@ -1048,7 +1105,9 @@
 
 					<!-- Shades -->
 					<div class="space-y-2">
-						<Label class="text-muted-foreground text-xs font-medium">Shades</Label>
+						<Label class="text-muted-foreground text-xs font-medium"
+							>Shades</Label
+						>
 						{#if colourShades[selectedColourFamily].length === 0}
 							<div class="text-muted-foreground py-2 text-xs italic">
 								No shades available for this colour
@@ -1060,10 +1119,14 @@
 										class="h-10 w-10 rounded-md border-2 p-0.5 transition-colors hover:scale-105 {(expandedColoursFor ===
 											'text' &&
 											textOptions.colour === shade) ||
-										(expandedColoursFor === 'stroke' && shapeOptions.strokeColour === shade) ||
-										(expandedColoursFor === 'fill' && shapeOptions.fillColour === shade) ||
-										(expandedColoursFor === 'brush' && drawOptions.brushColour === shade) ||
-										(expandedColoursFor === 'line' && lineArrowOptions.strokeColour === shade)
+										(expandedColoursFor === 'stroke' &&
+											shapeOptions.strokeColour === shade) ||
+										(expandedColoursFor === 'fill' &&
+											shapeOptions.fillColour === shade) ||
+										(expandedColoursFor === 'brush' &&
+											drawOptions.brushColour === shade) ||
+										(expandedColoursFor === 'line' &&
+											lineArrowOptions.strokeColour === shade)
 											? 'border-primary ring-primary/20 ring-2'
 											: 'border-border hover:border-primary/50'}"
 										onclick={() => {
@@ -1082,7 +1145,10 @@
 										}}
 										aria-label="Select shade {shade}"
 									>
-										<div class="h-full w-full rounded-sm" style="background-color: {shade}"></div>
+										<div
+											class="h-full w-full rounded-sm"
+											style="background-color: {shade}"
+										></div>
 									</button>
 								{/each}
 							</div>
