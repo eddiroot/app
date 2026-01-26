@@ -1749,30 +1749,12 @@
 				"Teacher": "Sepp",
 				"Number_of_Not_Available_Times": "6",
 				"Not_Available_Times": [
-					{
-						"Day": "Monday",
-						"Hour": "1"
-					},
-					{
-						"Day": "Monday",
-						"Hour": "2"
-					},
-					{
-						"Day": "Monday",
-						"Hour": "3"
-					},
-					{
-						"Day": "Monday",
-						"Hour": "4"
-					},
-					{
-						"Day": "Monday",
-						"Hour": "5"
-					},
-					{
-						"Day": "Monday",
-						"Hour": "6"
-					}
+					{ "Day": "Monday", "Hour": "1" },
+					{ "Day": "Monday", "Hour": "2" },
+					{ "Day": "Monday", "Hour": "3" },
+					{ "Day": "Monday", "Hour": "4" },
+					{ "Day": "Monday", "Hour": "5" },
+					{ "Day": "Monday", "Hour": "6" }
 				],
 				"Active": "true",
 				"Comments": null
@@ -1785,30 +1767,12 @@
 				"Teacher": "Jan",
 				"Number_of_Not_Available_Times": "6",
 				"Not_Available_Times": [
-					{
-						"Day": "Monday",
-						"Hour": "1"
-					},
-					{
-						"Day": "Monday",
-						"Hour": "2"
-					},
-					{
-						"Day": "Monday",
-						"Hour": "3"
-					},
-					{
-						"Day": "Monday",
-						"Hour": "4"
-					},
-					{
-						"Day": "Monday",
-						"Hour": "5"
-					},
-					{
-						"Day": "Monday",
-						"Hour": "6"
-					}
+					{ "Day": "Monday", "Hour": "1" },
+					{ "Day": "Monday", "Hour": "2" },
+					{ "Day": "Monday", "Hour": "3" },
+					{ "Day": "Monday", "Hour": "4" },
+					{ "Day": "Monday", "Hour": "5" },
+					{ "Day": "Monday", "Hour": "6" }
 				],
 				"Active": "true",
 				"Comments": null
@@ -1821,22 +1785,10 @@
 				"Teacher": "Tanja",
 				"Number_of_Not_Available_Times": "4",
 				"Not_Available_Times": [
-					{
-						"Day": "Wednesday",
-						"Hour": "3"
-					},
-					{
-						"Day": "Wednesday",
-						"Hour": "4"
-					},
-					{
-						"Day": "Wednesday",
-						"Hour": "5"
-					},
-					{
-						"Day": "Wednesday",
-						"Hour": "6"
-					}
+					{ "Day": "Wednesday", "Hour": "3" },
+					{ "Day": "Wednesday", "Hour": "4" },
+					{ "Day": "Wednesday", "Hour": "5" },
+					{ "Day": "Wednesday", "Hour": "6" }
 				],
 				"Active": "true",
 				"Comments": null
@@ -2195,30 +2147,12 @@
 				"Teacher": "Linda",
 				"Number_of_Not_Available_Times": "6",
 				"Not_Available_Times": [
-					{
-						"Day": "Monday",
-						"Hour": "1"
-					},
-					{
-						"Day": "Monday",
-						"Hour": "2"
-					},
-					{
-						"Day": "Monday",
-						"Hour": "3"
-					},
-					{
-						"Day": "Monday",
-						"Hour": "4"
-					},
-					{
-						"Day": "Monday",
-						"Hour": "5"
-					},
-					{
-						"Day": "Monday",
-						"Hour": "6"
-					}
+					{ "Day": "Monday", "Hour": "1" },
+					{ "Day": "Monday", "Hour": "2" },
+					{ "Day": "Monday", "Hour": "3" },
+					{ "Day": "Monday", "Hour": "4" },
+					{ "Day": "Monday", "Hour": "5" },
+					{ "Day": "Monday", "Hour": "6" }
 				],
 				"Active": "true",
 				"Comments": null
@@ -2243,30 +2177,12 @@
 				"Teacher": "Simon",
 				"Number_of_Not_Available_Times": "6",
 				"Not_Available_Times": [
-					{
-						"Day": "Tuesday",
-						"Hour": "1"
-					},
-					{
-						"Day": "Tuesday",
-						"Hour": "2"
-					},
-					{
-						"Day": "Tuesday",
-						"Hour": "3"
-					},
-					{
-						"Day": "Tuesday",
-						"Hour": "4"
-					},
-					{
-						"Day": "Tuesday",
-						"Hour": "5"
-					},
-					{
-						"Day": "Tuesday",
-						"Hour": "6"
-					}
+					{ "Day": "Tuesday", "Hour": "1" },
+					{ "Day": "Tuesday", "Hour": "2" },
+					{ "Day": "Tuesday", "Hour": "3" },
+					{ "Day": "Tuesday", "Hour": "4" },
+					{ "Day": "Tuesday", "Hour": "5" },
+					{ "Day": "Tuesday", "Hour": "6" }
 				],
 				"Active": "true",
 				"Comments": null
@@ -4302,30 +4218,12 @@
 				"Teacher": "Sepp",
 				"Number_of_Not_Available_Times": "6",
 				"Not_Available_Times": [
-					{
-						"Day": "Monday",
-						"Hour": "1"
-					},
-					{
-						"Day": "Monday",
-						"Hour": "2"
-					},
-					{
-						"Day": "Monday",
-						"Hour": "3"
-					},
-					{
-						"Day": "Monday",
-						"Hour": "4"
-					},
-					{
-						"Day": "Monday",
-						"Hour": "5"
-					},
-					{
-						"Day": "Monday",
-						"Hour": "6"
-					}
+					{ "Day": "Monday", "Hour": "1" },
+					{ "Day": "Monday", "Hour": "2" },
+					{ "Day": "Monday", "Hour": "3" },
+					{ "Day": "Monday", "Hour": "4" },
+					{ "Day": "Monday", "Hour": "5" },
+					{ "Day": "Monday", "Hour": "6" }
 				],
 				"Active": "true",
 				"Comments": null
@@ -4338,30 +4236,12 @@
 				"Teacher": "Jan",
 				"Number_of_Not_Available_Times": "6",
 				"Not_Available_Times": [
-					{
-						"Day": "Monday",
-						"Hour": "1"
-					},
-					{
-						"Day": "Monday",
-						"Hour": "2"
-					},
-					{
-						"Day": "Monday",
-						"Hour": "3"
-					},
-					{
-						"Day": "Monday",
-						"Hour": "4"
-					},
-					{
-						"Day": "Monday",
-						"Hour": "5"
-					},
-					{
-						"Day": "Monday",
-						"Hour": "6"
-					}
+					{ "Day": "Monday", "Hour": "1" },
+					{ "Day": "Monday", "Hour": "2" },
+					{ "Day": "Monday", "Hour": "3" },
+					{ "Day": "Monday", "Hour": "4" },
+					{ "Day": "Monday", "Hour": "5" },
+					{ "Day": "Monday", "Hour": "6" }
 				],
 				"Active": "true",
 				"Comments": null
@@ -4374,22 +4254,10 @@
 				"Teacher": "Tanja",
 				"Number_of_Not_Available_Times": "4",
 				"Not_Available_Times": [
-					{
-						"Day": "Wednesday",
-						"Hour": "3"
-					},
-					{
-						"Day": "Wednesday",
-						"Hour": "4"
-					},
-					{
-						"Day": "Wednesday",
-						"Hour": "5"
-					},
-					{
-						"Day": "Wednesday",
-						"Hour": "6"
-					}
+					{ "Day": "Wednesday", "Hour": "3" },
+					{ "Day": "Wednesday", "Hour": "4" },
+					{ "Day": "Wednesday", "Hour": "5" },
+					{ "Day": "Wednesday", "Hour": "6" }
 				],
 				"Active": "true",
 				"Comments": null
@@ -4748,30 +4616,12 @@
 				"Teacher": "Linda",
 				"Number_of_Not_Available_Times": "6",
 				"Not_Available_Times": [
-					{
-						"Day": "Monday",
-						"Hour": "1"
-					},
-					{
-						"Day": "Monday",
-						"Hour": "2"
-					},
-					{
-						"Day": "Monday",
-						"Hour": "3"
-					},
-					{
-						"Day": "Monday",
-						"Hour": "4"
-					},
-					{
-						"Day": "Monday",
-						"Hour": "5"
-					},
-					{
-						"Day": "Monday",
-						"Hour": "6"
-					}
+					{ "Day": "Monday", "Hour": "1" },
+					{ "Day": "Monday", "Hour": "2" },
+					{ "Day": "Monday", "Hour": "3" },
+					{ "Day": "Monday", "Hour": "4" },
+					{ "Day": "Monday", "Hour": "5" },
+					{ "Day": "Monday", "Hour": "6" }
 				],
 				"Active": "true",
 				"Comments": null
@@ -4796,30 +4646,12 @@
 				"Teacher": "Simon",
 				"Number_of_Not_Available_Times": "6",
 				"Not_Available_Times": [
-					{
-						"Day": "Tuesday",
-						"Hour": "1"
-					},
-					{
-						"Day": "Tuesday",
-						"Hour": "2"
-					},
-					{
-						"Day": "Tuesday",
-						"Hour": "3"
-					},
-					{
-						"Day": "Tuesday",
-						"Hour": "4"
-					},
-					{
-						"Day": "Tuesday",
-						"Hour": "5"
-					},
-					{
-						"Day": "Tuesday",
-						"Hour": "6"
-					}
+					{ "Day": "Tuesday", "Hour": "1" },
+					{ "Day": "Tuesday", "Hour": "2" },
+					{ "Day": "Tuesday", "Hour": "3" },
+					{ "Day": "Tuesday", "Hour": "4" },
+					{ "Day": "Tuesday", "Hour": "5" },
+					{ "Day": "Tuesday", "Hour": "6" }
 				],
 				"Active": "true",
 				"Comments": null
@@ -5123,42 +4955,15 @@
 				"Room": "H1",
 				"Number_of_Not_Available_Times": "9",
 				"Not_Available_Times": [
-					{
-						"Day": "Monday",
-						"Hour": "1"
-					},
-					{
-						"Day": "Monday",
-						"Hour": "2"
-					},
-					{
-						"Day": "Monday",
-						"Hour": "3"
-					},
-					{
-						"Day": "Wednesday",
-						"Hour": "5"
-					},
-					{
-						"Day": "Wednesday",
-						"Hour": "6"
-					},
-					{
-						"Day": "Thursday",
-						"Hour": "1"
-					},
-					{
-						"Day": "Thursday",
-						"Hour": "2"
-					},
-					{
-						"Day": "Thursday",
-						"Hour": "3"
-					},
-					{
-						"Day": "Friday",
-						"Hour": "1"
-					}
+					{ "Day": "Monday", "Hour": "1" },
+					{ "Day": "Monday", "Hour": "2" },
+					{ "Day": "Monday", "Hour": "3" },
+					{ "Day": "Wednesday", "Hour": "5" },
+					{ "Day": "Wednesday", "Hour": "6" },
+					{ "Day": "Thursday", "Hour": "1" },
+					{ "Day": "Thursday", "Hour": "2" },
+					{ "Day": "Thursday", "Hour": "3" },
+					{ "Day": "Friday", "Hour": "1" }
 				],
 				"Active": "true",
 				"Comments": null
@@ -5171,42 +4976,15 @@
 				"Room": "H2",
 				"Number_of_Not_Available_Times": "9",
 				"Not_Available_Times": [
-					{
-						"Day": "Monday",
-						"Hour": "1"
-					},
-					{
-						"Day": "Monday",
-						"Hour": "2"
-					},
-					{
-						"Day": "Monday",
-						"Hour": "3"
-					},
-					{
-						"Day": "Wednesday",
-						"Hour": "5"
-					},
-					{
-						"Day": "Wednesday",
-						"Hour": "6"
-					},
-					{
-						"Day": "Thursday",
-						"Hour": "1"
-					},
-					{
-						"Day": "Thursday",
-						"Hour": "2"
-					},
-					{
-						"Day": "Thursday",
-						"Hour": "3"
-					},
-					{
-						"Day": "Friday",
-						"Hour": "1"
-					}
+					{ "Day": "Monday", "Hour": "1" },
+					{ "Day": "Monday", "Hour": "2" },
+					{ "Day": "Monday", "Hour": "3" },
+					{ "Day": "Wednesday", "Hour": "5" },
+					{ "Day": "Wednesday", "Hour": "6" },
+					{ "Day": "Thursday", "Hour": "1" },
+					{ "Day": "Thursday", "Hour": "2" },
+					{ "Day": "Thursday", "Hour": "3" },
+					{ "Day": "Friday", "Hour": "1" }
 				],
 				"Active": "true",
 				"Comments": null
@@ -5219,50 +4997,17 @@
 				"Room": "H3",
 				"Number_of_Not_Available_Times": "11",
 				"Not_Available_Times": [
-					{
-						"Day": "Monday",
-						"Hour": "1"
-					},
-					{
-						"Day": "Monday",
-						"Hour": "2"
-					},
-					{
-						"Day": "Monday",
-						"Hour": "3"
-					},
-					{
-						"Day": "Tuesday",
-						"Hour": "5"
-					},
-					{
-						"Day": "Tuesday",
-						"Hour": "6"
-					},
-					{
-						"Day": "Wednesday",
-						"Hour": "5"
-					},
-					{
-						"Day": "Wednesday",
-						"Hour": "6"
-					},
-					{
-						"Day": "Thursday",
-						"Hour": "1"
-					},
-					{
-						"Day": "Thursday",
-						"Hour": "2"
-					},
-					{
-						"Day": "Thursday",
-						"Hour": "3"
-					},
-					{
-						"Day": "Friday",
-						"Hour": "1"
-					}
+					{ "Day": "Monday", "Hour": "1" },
+					{ "Day": "Monday", "Hour": "2" },
+					{ "Day": "Monday", "Hour": "3" },
+					{ "Day": "Tuesday", "Hour": "5" },
+					{ "Day": "Tuesday", "Hour": "6" },
+					{ "Day": "Wednesday", "Hour": "5" },
+					{ "Day": "Wednesday", "Hour": "6" },
+					{ "Day": "Thursday", "Hour": "1" },
+					{ "Day": "Thursday", "Hour": "2" },
+					{ "Day": "Thursday", "Hour": "3" },
+					{ "Day": "Friday", "Hour": "1" }
 				],
 				"Active": "true",
 				"Comments": null
@@ -5379,42 +5124,15 @@
 				"Room": "H1",
 				"Number_of_Not_Available_Times": "9",
 				"Not_Available_Times": [
-					{
-						"Day": "Monday",
-						"Hour": "1"
-					},
-					{
-						"Day": "Monday",
-						"Hour": "2"
-					},
-					{
-						"Day": "Monday",
-						"Hour": "3"
-					},
-					{
-						"Day": "Wednesday",
-						"Hour": "5"
-					},
-					{
-						"Day": "Wednesday",
-						"Hour": "6"
-					},
-					{
-						"Day": "Thursday",
-						"Hour": "1"
-					},
-					{
-						"Day": "Thursday",
-						"Hour": "2"
-					},
-					{
-						"Day": "Thursday",
-						"Hour": "3"
-					},
-					{
-						"Day": "Friday",
-						"Hour": "1"
-					}
+					{ "Day": "Monday", "Hour": "1" },
+					{ "Day": "Monday", "Hour": "2" },
+					{ "Day": "Monday", "Hour": "3" },
+					{ "Day": "Wednesday", "Hour": "5" },
+					{ "Day": "Wednesday", "Hour": "6" },
+					{ "Day": "Thursday", "Hour": "1" },
+					{ "Day": "Thursday", "Hour": "2" },
+					{ "Day": "Thursday", "Hour": "3" },
+					{ "Day": "Friday", "Hour": "1" }
 				],
 				"Active": "true",
 				"Comments": null
@@ -5427,42 +5145,15 @@
 				"Room": "H2",
 				"Number_of_Not_Available_Times": "9",
 				"Not_Available_Times": [
-					{
-						"Day": "Monday",
-						"Hour": "1"
-					},
-					{
-						"Day": "Monday",
-						"Hour": "2"
-					},
-					{
-						"Day": "Monday",
-						"Hour": "3"
-					},
-					{
-						"Day": "Wednesday",
-						"Hour": "5"
-					},
-					{
-						"Day": "Wednesday",
-						"Hour": "6"
-					},
-					{
-						"Day": "Thursday",
-						"Hour": "1"
-					},
-					{
-						"Day": "Thursday",
-						"Hour": "2"
-					},
-					{
-						"Day": "Thursday",
-						"Hour": "3"
-					},
-					{
-						"Day": "Friday",
-						"Hour": "1"
-					}
+					{ "Day": "Monday", "Hour": "1" },
+					{ "Day": "Monday", "Hour": "2" },
+					{ "Day": "Monday", "Hour": "3" },
+					{ "Day": "Wednesday", "Hour": "5" },
+					{ "Day": "Wednesday", "Hour": "6" },
+					{ "Day": "Thursday", "Hour": "1" },
+					{ "Day": "Thursday", "Hour": "2" },
+					{ "Day": "Thursday", "Hour": "3" },
+					{ "Day": "Friday", "Hour": "1" }
 				],
 				"Active": "true",
 				"Comments": null
@@ -5475,50 +5166,17 @@
 				"Room": "H3",
 				"Number_of_Not_Available_Times": "11",
 				"Not_Available_Times": [
-					{
-						"Day": "Monday",
-						"Hour": "1"
-					},
-					{
-						"Day": "Monday",
-						"Hour": "2"
-					},
-					{
-						"Day": "Monday",
-						"Hour": "3"
-					},
-					{
-						"Day": "Tuesday",
-						"Hour": "5"
-					},
-					{
-						"Day": "Tuesday",
-						"Hour": "6"
-					},
-					{
-						"Day": "Wednesday",
-						"Hour": "5"
-					},
-					{
-						"Day": "Wednesday",
-						"Hour": "6"
-					},
-					{
-						"Day": "Thursday",
-						"Hour": "1"
-					},
-					{
-						"Day": "Thursday",
-						"Hour": "2"
-					},
-					{
-						"Day": "Thursday",
-						"Hour": "3"
-					},
-					{
-						"Day": "Friday",
-						"Hour": "1"
-					}
+					{ "Day": "Monday", "Hour": "1" },
+					{ "Day": "Monday", "Hour": "2" },
+					{ "Day": "Monday", "Hour": "3" },
+					{ "Day": "Tuesday", "Hour": "5" },
+					{ "Day": "Tuesday", "Hour": "6" },
+					{ "Day": "Wednesday", "Hour": "5" },
+					{ "Day": "Wednesday", "Hour": "6" },
+					{ "Day": "Thursday", "Hour": "1" },
+					{ "Day": "Thursday", "Hour": "2" },
+					{ "Day": "Thursday", "Hour": "3" },
+					{ "Day": "Friday", "Hour": "1" }
 				],
 				"Active": "true",
 				"Comments": null

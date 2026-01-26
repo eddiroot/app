@@ -1,6 +1,4 @@
-# Welcome to Max's Guide on timetabling
-
-Firsts things first i just wanted to create this document to ensure that all the findings I find out about timetabling with fet and the intricacies of the software do not go under the rug to accumulate dust.
+# Max's Guide on Timetabling
 
 # Users
 
@@ -18,7 +16,7 @@ Note that in the fet file you will have the following structure:
 <Year>
     <Group>
         <Subgroup>
-        </Subgroup>  
+        </Subgroup>
     </Group>
 </Year>
 ```
@@ -137,27 +135,27 @@ All of this is done after the "Generate Timetable File for Processing" Button is
 
 ```ts
 const [
- timetableDays,
- timetablePeriods,
- studentGroups,
- activities,
- buildings,
- spaces,
- teachers,
- subjects,
- school,
- activeConstraints
+	timetableDays,
+	timetablePeriods,
+	studentGroups,
+	activities,
+	buildings,
+	spaces,
+	teachers,
+	subjects,
+	school,
+	activeConstraints,
 ] = await Promise.all([
- getTimetableDraftDaysByTimetableDraftId(draft.id),
- getTimetableDraftPeriodsByTimetableDraftId(draft.id),
- getAllStudentGroupsByTimetableDraftId(draft.id),
- getEnhancedTimetableDraftActivitiesByTimetableDraftId(draft.id),
- getBuildingsBySchoolId(user.schoolId),
- getSpacesBySchoolId(user.schoolId),
- getUsersBySchoolIdAndType(user.schoolId, userTypeEnum.teacher),
- getSubjectsBySchoolId(user.schoolId),
- getSchoolById(user.schoolId),
- getActiveTimetableDraftConstraintsByTimetableDraftId(draft.id)
+	getTimetableDraftDaysByTimetableDraftId(draft.id),
+	getTimetableDraftPeriodsByTimetableDraftId(draft.id),
+	getAllStudentGroupsByTimetableDraftId(draft.id),
+	getEnhancedTimetableDraftActivitiesByTimetableDraftId(draft.id),
+	getBuildingsBySchoolId(user.schoolId),
+	getSpacesBySchoolId(user.schoolId),
+	getUsersBySchoolIdAndType(user.schoolId, userTypeEnum.teacher),
+	getSubjectsBySchoolId(user.schoolId),
+	getSchoolById(user.schoolId),
+	getActiveTimetableDraftConstraintsByTimetableDraftId(draft.id),
 ]);
 ```
 
@@ -165,16 +163,16 @@ const [
 
 ```ts
 const xmlContent = await buildFETInput({
- timetableDays,
- timetablePeriods,
- studentGroups,
- activities,
- buildings,
- spaces,
- teachers,
- subjects,
- school,
- activeConstraints
+	timetableDays,
+	timetablePeriods,
+	studentGroups,
+	activities,
+	buildings,
+	spaces,
+	teachers,
+	subjects,
+	school,
+	activeConstraints,
 });
 ```
 
@@ -299,9 +297,9 @@ This post request does the following.
 
 ## FET output processing
 
-From the FET software, there are numerous output files that will be produced in the docker container that are then retirieved and stored in object storage. This would be under /schoolId/timetableId/timetableDraftId/output/*
+From the FET software, there are numerous output files that will be produced in the docker container that are then retirieved and stored in object storage. This would be under /schoolId/timetableId/timetableDraftId/output/\*
 
-The file that we are particularly interested in has the suffix "_timetable.csv". This file contains information about all the timetable activity allocations for a cycle.
+The file that we are particularly interested in has the suffix "\_timetable.csv". This file contains information about all the timetable activity allocations for a cycle.
 
 This file contains the following headers:
 

@@ -1,4 +1,4 @@
-FROM node:22-alpine AS builder
+FROM node:24-alpine AS builder
 
 WORKDIR /app
 COPY package*.json ./
@@ -9,7 +9,7 @@ ENV NODE_OPTIONS="--max-old-space-size=4096"
 RUN npm run build
 RUN npm prune --prod
 
-FROM node:22-alpine AS deployer
+FROM node:24-alpine AS deployer
 
 WORKDIR /app
 COPY --from=builder /app/build build/
