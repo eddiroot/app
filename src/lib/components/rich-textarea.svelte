@@ -41,7 +41,11 @@
 			element,
 			extensions: [
 				StarterKit,
-				Placeholder.configure({ placeholder: placeholder || '' }),
+				Placeholder.configure({
+					emptyEditorClass:
+						'before:content-[attr(data-placeholder)] before:float-left before:text-muted-foreground before:h-0 before:pointer-events-none',
+					placeholder: placeholder || '',
+				}),
 			],
 			content: (value as string) || '',
 			editable: !disabled,
@@ -54,7 +58,7 @@
 			editorProps: {
 				attributes: {
 					class:
-						'p-3 prose dark:prose-invert max-w-none focus:outline-none min-h-16 text-sm',
+						'p-3 prose dark:prose-invert max-w-none focus:outline-none min-h-16 text-sm text-primary-foreground',
 				},
 			},
 		});
@@ -163,13 +167,3 @@
 	{/if}
 	<div bind:this={element}></div>
 </div>
-
-<style>
-	:global(.tiptap p.is-editor-empty:first-child::before) {
-		color: #adb5bd;
-		content: attr(data-placeholder);
-		float: left;
-		height: 0;
-		pointer-events: none;
-	}
-</style>
