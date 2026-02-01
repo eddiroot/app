@@ -430,7 +430,7 @@
 </script>
 
 <div
-	class="grid h-full gap-4 p-4 {viewMode === ViewMode.CONFIGURE
+	class="grid h-[calc(100vh-1rem)] gap-4 p-4 {viewMode === ViewMode.CONFIGURE
 		? 'grid-cols-[200px_1fr_300px]'
 		: 'grid-cols-[200px_1fr]'}"
 >
@@ -868,7 +868,7 @@
 					</Card.Description>
 				</Card.Header>
 				<Card.Content class="flex h-full flex-col gap-4">
-					<ScrollArea class="h-[calc(100vh-300px)]">
+					<ScrollArea class="h-[calc(100vh-230px)]">
 						<div
 							class="grid grid-cols-2 gap-3 rounded-lg p-2 {(dndState.sourceContainer.startsWith(
 								'task',

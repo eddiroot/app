@@ -3,14 +3,11 @@ enum enum_constraint_type {
   space
 }
 
-enum enum_user_type {
-  N
-  student
-  guardian
-  teacher
-  staff
-  principal
-  admin
+enum enum_event_type {
+  school
+  campus
+  subject
+  class
 }
 
 enum enum_grade_release {
@@ -182,6 +179,23 @@ enum enum_whiteboard_object_type {
   Image
 }
 
+enum enum_year_level {
+  N
+  F
+  "1"
+  "2"
+  "3"
+  "4"
+  "5"
+  "6"
+  "7"
+  "8"
+  "9"
+  "10"
+  "11"
+  "12"
+}
+
 table subject.att_behaviour {
   att_id integer [not null]
   behaviour_id integer [not null]
@@ -190,39 +204,6 @@ table subject.att_behaviour {
     (att_id, behaviour_id) [pk]
     att_id
     behaviour_id
-  }
-}
-
-table subject.behaviour {
-  id integer [pk, not null]
-  isArchived boolean [not null, default: false]
-  created_at "timestamp (3)" [not null, default: `now()`]
-  updated_at "timestamp (3)" [not null, default: `now()`]
-  sch_id integer [not null]
-  level_id integer [not null]
-  name text [not null]
-  description text
-
-  indexes {
-    (sch_id, name) [name: 'behaviour_sch_id_name_unique', unique]
-    sch_id
-    level_id
-  }
-}
-
-table subject.behaviour_level {
-  id integer [pk, not null]
-  isArchived boolean [not null, default: false]
-  created_at "timestamp (3)" [not null, default: `now()`]
-  updated_at "timestamp (3)" [not null, default: `now()`]
-  sch_id integer [not null]
-  level integer [not null]
-  name text [not null]
-
-  indexes {
-    (sch_id, level) [name: 'behaviour_level_sch_id_level_unique', unique]
-    
-    sch_id
   }
 }
 
@@ -284,7 +265,7 @@ table timetable.con {
   repeatable boolean [not null]
 }
 
-table coursemap.cm_itm {
+table curriculum.crclm_itm {
   id integer [pk, not null]
   isArchived boolean [not null, default: false]
   created_at "timestamp (3)" [not null, default: `now()`]
@@ -301,335 +282,67 @@ table coursemap.cm_itm {
   }
 }
 
-table coursemap.cm_itm_ap {
+table curriculum.crclm_itm_res {
+  crclm_itm_id integer [not null]
+  res_id integer [not null]
+
+  indexes {
+    (crclm_itm_id, res_id) [pk]
+    crclm_itm_id
+    res_id
+  }
+}
+
+table curriculum.crclm_itm_tp {
   id integer [pk, not null]
   isArchived boolean [not null, default: false]
   created_at "timestamp (3)" [not null, default: `now()`]
   updated_at "timestamp (3)" [not null, default: `now()`]
-  cm_itm_id integer [not null]
-  taskId integer
   name text [not null]
   scope text[]
   description text
+  crclm_itm_id integer [not null]
+  taskId integer
   rubricId integer
 
   indexes {
-    cm_itm_id
+    crclm_itm_id
     taskId
     rubricId
   }
 }
 
-table coursemap.cm_itm_ap_las {
-  cm_itm_ap_id integer [not null]
-  crclm_sub_las_id integer [not null]
-
-  indexes {
-    (cm_itm_ap_id, crclm_sub_las_id) [pk]
-    cm_itm_ap_id
-    crclm_sub_las_id
-  }
-}
-
-table coursemap.cm_itm_ap_res {
-  cm_itm_ap_id integer [not null]
+table curriculum.crclm_itm_tp_res {
+  crclm_itm_tp_id integer [not null]
   res_id integer [not null]
 
   indexes {
-    (cm_itm_ap_id, res_id) [pk]
-    cm_itm_ap_id
+    (crclm_itm_tp_id, res_id) [pk]
+    crclm_itm_tp_id
     res_id
   }
 }
 
-table coursemap.cm_itm_la {
-  id integer [pk, not null]
-  isArchived boolean [not null, default: false]
-  created_at "timestamp (3)" [not null, default: `now()`]
-  updated_at "timestamp (3)" [not null, default: `now()`]
-  cm_itm_id integer [not null]
-  crclm_sub_la_id integer [not null]
-
-  indexes {
-    cm_itm_id
-    crclm_sub_la_id
-  }
-}
-
-table coursemap.cm_itm_lp {
-  id integer [pk, not null]
-  isArchived boolean [not null, default: false]
-  created_at "timestamp (3)" [not null, default: `now()`]
-  updated_at "timestamp (3)" [not null, default: `now()`]
-  cm_itm_id integer [not null]
-  taskId integer
-  name text [not null]
-  scope text[]
-  description text
-
-  indexes {
-    cm_itm_id
-    taskId
-  }
-}
-
-table coursemap.cm_itm_lp_las {
-  cm_itm_lp_id integer [not null]
-  crclm_sub_la_std_id integer [not null]
-
-  indexes {
-    (cm_itm_lp_id, crclm_sub_la_std_id) [pk]
-    cm_itm_lp_id
-    crclm_sub_la_std_id
-  }
-}
-
-table coursemap.cm_itm_lp_res {
-  cm_itm_lp_id integer [not null]
-  res_id integer [not null]
-
-  indexes {
-    (cm_itm_lp_id, res_id) [pk]
-    cm_itm_lp_id
-    res_id
-  }
-}
-
-table coursemap.cm_itm_res {
-  cm_itm_id integer [not null]
-  res_id integer [not null]
-
-  indexes {
-    (cm_itm_id, res_id) [pk]
-    cm_itm_id
-    res_id
-  }
-}
-
-table curriculum.crclm {
+table event.evt {
   id integer [pk, not null]
   isArchived boolean [not null, default: false]
   created_at "timestamp (3)" [not null, default: `now()`]
   updated_at "timestamp (3)" [not null, default: `now()`]
   name text [not null]
-  schoolId integer
-  countryCode varchar(2)
-  stateCode varchar(3)
-
-  indexes {
-    schoolId
-  }
-}
-
-table curriculum.crclm_sub {
-  id integer [pk, not null]
-  isArchived boolean [not null, default: false]
-  created_at "timestamp (3)" [not null, default: `now()`]
-  updated_at "timestamp (3)" [not null, default: `now()`]
-  name text [not null]
-  crclm_id integer [not null]
-
-  indexes {
-    crclm_id
-  }
-}
-
-table curriculum.crclm_sub_ass_task {
-  id integer [pk, not null]
-  isArchived boolean [not null, default: false]
-  created_at "timestamp (3)" [not null, default: `now()`]
-  updated_at "timestamp (3)" [not null, default: `now()`]
-  content text [not null]
-  crclm_sub_id integer [not null]
-
-  indexes {
-    crclm_sub_id
-  }
-}
-
-table curriculum.crclm_sub_exam_q {
-  id integer [pk, not null]
-  isArchived boolean [not null, default: false]
-  created_at "timestamp (3)" [not null, default: `now()`]
-  updated_at "timestamp (3)" [not null, default: `now()`]
-  question text [not null]
-  answer text [not null]
-  crclm_sub_id integer [not null]
-
-  indexes {
-    crclm_sub_id
-  }
-}
-
-table curriculum.crclm_sub_extra_cont {
-  id integer [pk, not null]
-  isArchived boolean [not null, default: false]
-  created_at "timestamp (3)" [not null, default: `now()`]
-  updated_at "timestamp (3)" [not null, default: `now()`]
-  crclm_sub_id integer [not null]
-  content text [not null]
-
-  indexes {
-    crclm_sub_id
-  }
-}
-
-table curriculum.crclm_sub_key_know {
-  id integer [pk, not null]
-  isArchived boolean [not null, default: false]
-  created_at "timestamp (3)" [not null, default: `now()`]
-  updated_at "timestamp (3)" [not null, default: `now()`]
-  description text [not null]
-  crclm_sub_out_id integer
-  topicName text
-  crclm_sub_id integer
-  number integer [not null]
-
-  indexes {
-    crclm_sub_out_id
-    crclm_sub_id
-  }
-}
-
-table curriculum.crclm_sub_key_skl {
-  id integer [pk, not null]
-  isArchived boolean [not null, default: false]
-  created_at "timestamp (3)" [not null, default: `now()`]
-  updated_at "timestamp (3)" [not null, default: `now()`]
-  description text [not null]
-  crclm_sub_out_id integer
-  crclm_sub_id integer
-  number integer [not null]
-  topicName text
-
-  indexes {
-    crclm_sub_out_id
-    crclm_sub_id
-  }
-}
-
-table curriculum.crclm_sub_lrn_act {
-  id integer [pk, not null]
-  isArchived boolean [not null, default: false]
-  created_at "timestamp (3)" [not null, default: `now()`]
-  updated_at "timestamp (3)" [not null, default: `now()`]
-  content text [not null]
-  crclm_sub_id integer [not null]
-
-  indexes {
-    crclm_sub_id
-  }
-}
-
-table curriculum.crclm_sub_la {
-  id integer [pk, not null]
-  isArchived boolean [not null, default: false]
-  created_at "timestamp (3)" [not null, default: `now()`]
-  updated_at "timestamp (3)" [not null, default: `now()`]
-  crclm_sub_id integer [not null]
-  name text [not null]
-
-  indexes {
-    crclm_sub_id
-  }
-}
-
-table curriculum.crclm_sub_la_cnt {
-  id integer [pk, not null]
-  isArchived boolean [not null, default: false]
-  created_at "timestamp (3)" [not null, default: `now()`]
-  updated_at "timestamp (3)" [not null, default: `now()`]
-  crclm_sub_la_id integer [not null]
-  description text [not null]
-  number integer [not null]
-
-  indexes {
-    crclm_sub_la_id
-  }
-}
-
-table curriculum.crclm_sub_la_out {
-  crclm_sub_la_id integer [not null]
-  crclm_sub_out_id integer [not null]
-
-  indexes {
-    crclm_sub_la_id
-    crclm_sub_out_id
-  }
-}
-
-table curriculum.crclm_sub_la_std {
-  id integer [pk, not null]
-  isArchived boolean [not null, default: false]
-  created_at "timestamp (3)" [not null, default: `now()`]
-  updated_at "timestamp (3)" [not null, default: `now()`]
-  crclm_sub_la_id integer [not null]
-  crclm_sub_la_tpc_id integer
-  code varchar(20) [not null]
-  description text
-  yearLevel integer [not null]
-
-  indexes {
-    crclm_sub_la_id
-    crclm_sub_la_tpc_id
-    yearLevel
-  }
-}
-
-table curriculum.crclm_sub_la_std_elab {
-  id integer [pk, not null]
-  isArchived boolean [not null, default: false]
-  created_at "timestamp (3)" [not null, default: `now()`]
-  updated_at "timestamp (3)" [not null, default: `now()`]
-  crclm_sub_la_std_id integer [not null]
-  standardElaboration text [not null]
-
-  indexes {
-    crclm_sub_la_std_id
-  }
-}
-
-table curriculum.crclm_sub_la_tpc {
-  id integer [pk, not null]
-  isArchived boolean [not null, default: false]
-  created_at "timestamp (3)" [not null, default: `now()`]
-  updated_at "timestamp (3)" [not null, default: `now()`]
-  crclm_sub_la_id integer [not null]
-  name text [not null]
-
-  indexes {
-    (crclm_sub_la_id, name) [name: 'crclm_sub_la_tpc_crclm_sub_la_id_name_unique', unique]
-    crclm_sub_la_id
-  }
-}
-
-table curriculum.crclm_sub_out {
-  id integer [pk, not null]
-  isArchived boolean [not null, default: false]
-  created_at "timestamp (3)" [not null, default: `now()`]
-  updated_at "timestamp (3)" [not null, default: `now()`]
-  crclm_sub_id integer [not null]
-  number integer [not null]
-  description text [not null]
-
-  indexes {
-    crclm_sub_id
-  }
-}
-
-table event.evt_cmps {
-  id integer [pk, not null]
-  isArchived boolean [not null, default: false]
-  created_at "timestamp (3)" [not null, default: `now()`]
-  updated_at "timestamp (3)" [not null, default: `now()`]
-  name text [not null]
+  type enum_event_type [not null]
   start "timestamp (3)" [not null]
   end "timestamp (3)" [not null]
   requiresRSVP boolean [not null, default: false]
-  sch_cmps_id integer [not null]
+  sch_id integer
+  sch_cmps_id integer
+  sub_off_id integer
+  sub_off_cls_id integer
 
   indexes {
+    sch_id
     sch_cmps_id
+    sub_off_id
+    sub_off_cls_id
   }
 }
 
@@ -639,61 +352,12 @@ table event.evt_rsvp {
   created_at "timestamp (3)" [not null, default: `now()`]
   updated_at "timestamp (3)" [not null, default: `now()`]
   userId uuid [not null]
-  eventType text [not null]
   eventId integer [not null]
-  willAttend boolean [not null]
+  isAttending boolean [not null]
 
   indexes {
-    (userId, eventType, eventId) [name: 'evt_rsvp_userId_eventType_eventId_unique', unique]
+    (userId, eventId) [name: 'evt_rsvp_userId_eventId_unique', unique]
     userId
-  }
-}
-
-table event.evt_sch {
-  id integer [pk, not null]
-  isArchived boolean [not null, default: false]
-  created_at "timestamp (3)" [not null, default: `now()`]
-  updated_at "timestamp (3)" [not null, default: `now()`]
-  name text [not null]
-  start "timestamp (3)" [not null]
-  end "timestamp (3)" [not null]
-  requiresRSVP boolean [not null, default: false]
-  sch_id integer [not null]
-
-  indexes {
-    sch_id
-  }
-}
-
-table event.evt_sub_off {
-  id integer [pk, not null]
-  isArchived boolean [not null, default: false]
-  created_at "timestamp (3)" [not null, default: `now()`]
-  updated_at "timestamp (3)" [not null, default: `now()`]
-  name text [not null]
-  start "timestamp (3)" [not null]
-  end "timestamp (3)" [not null]
-  requiresRSVP boolean [not null, default: false]
-  sub_off_id integer [not null]
-
-  indexes {
-    sub_off_id
-  }
-}
-
-table event.evt_sub_off_cls {
-  id integer [pk, not null]
-  isArchived boolean [not null, default: false]
-  created_at "timestamp (3)" [not null, default: `now()`]
-  updated_at "timestamp (3)" [not null, default: `now()`]
-  name text [not null]
-  start "timestamp (3)" [not null]
-  end "timestamp (3)" [not null]
-  requiresRSVP boolean [not null, default: false]
-  sub_off_cls_id integer [not null]
-
-  indexes {
-    sub_off_cls_id
   }
 }
 
@@ -736,7 +400,7 @@ table timetable.fet_sub_off_cls_user {
   }
 }
 
-table curriculum.grade_scale {
+table school.grade_scale {
   id integer [pk, not null]
   isArchived boolean [not null, default: false]
   created_at "timestamp (3)" [not null, default: `now()`]
@@ -745,7 +409,7 @@ table curriculum.grade_scale {
   gradeScaleType enum_grade_scale [not null]
 }
 
-table curriculum.grade_scale_level {
+table school.grade_scale_level {
   id integer [pk, not null]
   isArchived boolean [not null, default: false]
   created_at "timestamp (3)" [not null, default: `now()`]
@@ -770,10 +434,6 @@ table news.news {
   title text [not null]
   excerpt text
   content jsonb [not null]
-  schoolId integer [not null]
-  sch_cmps_id integer
-  categoryId integer
-  authorId uuid [not null]
   status enum_news_status [not null, default: 'draft']
   priority enum_news_priority [not null, default: 'normal']
   visibility enum_news_visibility [not null, default: 'public']
@@ -782,6 +442,10 @@ table news.news {
   tags jsonb
   isPinned boolean [not null, default: false]
   viewCount integer [not null, default: 0]
+  schoolId integer [not null]
+  sch_cmps_id integer
+  categoryId integer
+  authorId uuid [not null]
 
   indexes {
     schoolId
@@ -796,10 +460,10 @@ table news.news_category {
   isArchived boolean [not null, default: false]
   created_at "timestamp (3)" [not null, default: `now()`]
   updated_at "timestamp (3)" [not null, default: `now()`]
-  schoolId integer [not null]
   name text [not null, unique]
   description text
   color text
+  schoolId integer [not null]
 
   indexes {
     schoolId
@@ -888,6 +552,39 @@ table school.sch {
   logoPath text
   countryCode varchar(2) [not null]
   stateCode varchar(3) [not null]
+}
+
+table school.sch_bvr {
+  id integer [pk, not null]
+  isArchived boolean [not null, default: false]
+  created_at "timestamp (3)" [not null, default: `now()`]
+  updated_at "timestamp (3)" [not null, default: `now()`]
+  name text [not null]
+  description text
+  sch_id integer [not null]
+  level_id integer [not null]
+
+  indexes {
+    (sch_id, name) [name: 'sch_bvr_sch_id_name_unique', unique]
+    sch_id
+    level_id
+  }
+}
+
+table school.sch_bvr_lvl {
+  id integer [pk, not null]
+  isArchived boolean [not null, default: false]
+  created_at "timestamp (3)" [not null, default: `now()`]
+  updated_at "timestamp (3)" [not null, default: `now()`]
+  level integer [not null]
+  name text [not null]
+  sch_id integer [not null]
+
+  indexes {
+    (sch_id, level) [name: 'sch_bvr_lvl_sch_id_level_unique', unique]
+    
+    sch_id
+  }
 }
 
 table school.sch_bldng {
@@ -1001,14 +698,12 @@ table subject.sub {
   sch_id integer [not null]
   sub_grp_id integer
   sch_yl_id integer [not null]
-  crclm_sub_id integer
   description text
 
   indexes {
     sch_id
     sub_grp_id
     sch_yl_id
-    crclm_sub_id
   }
 }
 
@@ -1119,13 +814,13 @@ table subject.sub_off_cls_res {
   description text
   sub_off_cls_id integer [not null]
   res_id integer [not null]
-  cm_item_id integer
+  crclm_item_id integer
   author_id uuid [not null]
 
   indexes {
     sub_off_cls_id
     res_id
-    cm_item_id
+    crclm_item_id
     author_id
   }
 }
@@ -1140,7 +835,7 @@ table task.sub_off_cls_task {
   sub_off_cls_id integer [not null]
   taskId integer [not null]
   authorId uuid [not null]
-  cm_item_id integer
+  crclm_item_id integer
   week integer
   due "timestamp (3)"
   rubricId integer
@@ -1267,15 +962,6 @@ table task.task_block {
   availableMarks integer
 }
 
-table task.task_std {
-  id integer [pk, not null]
-  isArchived boolean [not null, default: false]
-  created_at "timestamp (3)" [not null, default: `now()`]
-  updated_at "timestamp (3)" [not null, default: `now()`]
-  taskId integer [not null]
-  lrn_a_std_id integer [not null]
-}
-
 table timetable.tt {
   id integer [pk, not null]
   isArchived boolean [not null, default: false]
@@ -1333,7 +1019,7 @@ table timetable.tt_activity_assign_yr {
   created_at "timestamp (3)" [not null, default: `now()`]
   updated_at "timestamp (3)" [not null, default: `now()`]
   tt_activity_id integer [not null]
-  yearlevel integer [not null]
+  yearLevelId integer [not null]
 }
 
 table timetable.tt_activity_preferred_space {
@@ -1559,13 +1245,7 @@ table task.wb_obj {
 
 ref att_behaviour_att_id_sub_off_cls_allo_att_id_fk: subject.att_behaviour.att_id > subject.sub_off_cls_allo_att.id [delete: cascade, update: no action]
 
-ref att_behaviour_behaviour_id_behaviour_id_fk: subject.att_behaviour.behaviour_id > subject.behaviour.id [delete: cascade, update: no action]
-
-ref behaviour_sch_id_sch_id_fk: subject.behaviour.sch_id > school.sch.id [delete: cascade, update: no action]
-
-ref behaviour_level_id_behaviour_level_id_fk: subject.behaviour.level_id > subject.behaviour_level.id [delete: cascade, update: no action]
-
-ref behaviour_level_sch_id_sch_id_fk: subject.behaviour_level.sch_id > school.sch.id [delete: cascade, update: no action]
+ref att_behaviour_behaviour_id_sch_bvr_id_fk: subject.att_behaviour.behaviour_id > school.sch_bvr.id [delete: cascade, update: no action]
 
 ref cls_task_block_res_taskBlockId_task_block_id_fk: task.cls_task_block_res.taskBlockId > task.task_block.id [delete: cascade, update: no action]
 
@@ -1585,91 +1265,31 @@ ref cls_task_res_resource_res_id_res_id_fk: task.cls_task_res_resource.res_id > 
 
 ref cls_task_res_resource_authorId_user_id_fk: task.cls_task_res_resource.authorId > user.user.id [delete: cascade, update: no action]
 
-ref cm_itm_sub_off_id_sub_off_id_fk: coursemap.cm_itm.sub_off_id > subject.sub_off.id [delete: cascade, update: no action]
+ref crclm_itm_sub_off_id_sub_off_id_fk: curriculum.crclm_itm.sub_off_id > subject.sub_off.id [delete: cascade, update: no action]
 
-ref cm_itm_ap_cm_itm_id_cm_itm_id_fk: coursemap.cm_itm_ap.cm_itm_id > coursemap.cm_itm.id [delete: cascade, update: no action]
+ref crclm_itm_res_crclm_itm_id_crclm_itm_id_fk: curriculum.crclm_itm_res.crclm_itm_id > curriculum.crclm_itm.id [delete: cascade, update: no action]
 
-ref cm_itm_ap_taskId_task_id_fk: coursemap.cm_itm_ap.taskId > task.task.id [delete: set null, update: no action]
+ref crclm_itm_res_res_id_res_id_fk: curriculum.crclm_itm_res.res_id > resource.res.id [delete: cascade, update: no action]
 
-ref cm_itm_ap_rubricId_rubric_id_fk: coursemap.cm_itm_ap.rubricId > task.rubric.id [delete: set null, update: no action]
+ref crclm_itm_tp_crclm_itm_id_crclm_itm_id_fk: curriculum.crclm_itm_tp.crclm_itm_id > curriculum.crclm_itm.id [delete: cascade, update: no action]
 
-ref cm_itm_ap_las_cm_itm_ap_id_cm_itm_ap_id_fk: coursemap.cm_itm_ap_las.cm_itm_ap_id > coursemap.cm_itm_ap.id [delete: cascade, update: no action]
+ref crclm_itm_tp_taskId_task_id_fk: curriculum.crclm_itm_tp.taskId > task.task.id [delete: set null, update: no action]
 
-ref cm_itm_ap_las_crclm_sub_las_id_crclm_sub_la_std_id_fk: coursemap.cm_itm_ap_las.crclm_sub_las_id > curriculum.crclm_sub_la_std.id [delete: cascade, update: no action]
+ref crclm_itm_tp_rubricId_rubric_id_fk: curriculum.crclm_itm_tp.rubricId > task.rubric.id [delete: set null, update: no action]
 
-ref cm_itm_ap_res_cm_itm_ap_id_cm_itm_ap_id_fk: coursemap.cm_itm_ap_res.cm_itm_ap_id > coursemap.cm_itm_ap.id [delete: cascade, update: no action]
+ref crclm_itm_tp_res_crclm_itm_tp_id_crclm_itm_tp_id_fk: curriculum.crclm_itm_tp_res.crclm_itm_tp_id > curriculum.crclm_itm_tp.id [delete: cascade, update: no action]
 
-ref cm_itm_ap_res_res_id_res_id_fk: coursemap.cm_itm_ap_res.res_id > resource.res.id [delete: cascade, update: no action]
+ref crclm_itm_tp_res_res_id_res_id_fk: curriculum.crclm_itm_tp_res.res_id > resource.res.id [delete: cascade, update: no action]
 
-ref cm_itm_la_cm_itm_id_cm_itm_id_fk: coursemap.cm_itm_la.cm_itm_id > coursemap.cm_itm.id [delete: cascade, update: no action]
+ref evt_sch_id_sch_id_fk: event.evt.sch_id > school.sch.id [delete: cascade, update: no action]
 
-ref cm_itm_la_crclm_sub_la_id_crclm_sub_la_id_fk: coursemap.cm_itm_la.crclm_sub_la_id > curriculum.crclm_sub_la.id [delete: cascade, update: no action]
+ref evt_sch_cmps_id_sch_cmps_id_fk: event.evt.sch_cmps_id > school.sch_cmps.id [delete: cascade, update: no action]
 
-ref cm_itm_lp_cm_itm_id_cm_itm_id_fk: coursemap.cm_itm_lp.cm_itm_id > coursemap.cm_itm.id [delete: cascade, update: no action]
+ref evt_sub_off_id_sub_off_id_fk: event.evt.sub_off_id > subject.sub_off.id [delete: cascade, update: no action]
 
-ref cm_itm_lp_taskId_task_id_fk: coursemap.cm_itm_lp.taskId > task.task.id [delete: cascade, update: no action]
-
-ref cm_itm_lp_las_cm_itm_lp_id_cm_itm_lp_id_fk: coursemap.cm_itm_lp_las.cm_itm_lp_id > coursemap.cm_itm_lp.id [delete: cascade, update: no action]
-
-ref cm_itm_lp_las_crclm_sub_la_std_id_crclm_sub_la_std_id_fk: coursemap.cm_itm_lp_las.crclm_sub_la_std_id > curriculum.crclm_sub_la_std.id [delete: cascade, update: no action]
-
-ref cm_itm_lp_res_cm_itm_lp_id_cm_itm_lp_id_fk: coursemap.cm_itm_lp_res.cm_itm_lp_id > coursemap.cm_itm_lp.id [delete: cascade, update: no action]
-
-ref cm_itm_lp_res_res_id_res_id_fk: coursemap.cm_itm_lp_res.res_id > resource.res.id [delete: cascade, update: no action]
-
-ref cm_itm_res_cm_itm_id_cm_itm_id_fk: coursemap.cm_itm_res.cm_itm_id > coursemap.cm_itm.id [delete: cascade, update: no action]
-
-ref cm_itm_res_res_id_res_id_fk: coursemap.cm_itm_res.res_id > resource.res.id [delete: cascade, update: no action]
-
-ref crclm_schoolId_sch_id_fk: curriculum.crclm.schoolId > school.sch.id [delete: cascade, update: no action]
-
-ref crclm_sub_crclm_id_crclm_id_fk: curriculum.crclm_sub.crclm_id > curriculum.crclm.id [delete: cascade, update: no action]
-
-ref crclm_sub_ass_task_crclm_sub_id_crclm_sub_id_fk: curriculum.crclm_sub_ass_task.crclm_sub_id > curriculum.crclm_sub.id [delete: cascade, update: no action]
-
-ref crclm_sub_exam_q_crclm_sub_id_crclm_sub_id_fk: curriculum.crclm_sub_exam_q.crclm_sub_id > curriculum.crclm_sub.id [delete: cascade, update: no action]
-
-ref crclm_sub_extra_cont_crclm_sub_id_crclm_sub_id_fk: curriculum.crclm_sub_extra_cont.crclm_sub_id > curriculum.crclm_sub.id [delete: cascade, update: no action]
-
-ref crclm_sub_key_know_crclm_sub_out_id_crclm_sub_out_id_fk: curriculum.crclm_sub_key_know.crclm_sub_out_id > curriculum.crclm_sub_out.id [delete: cascade, update: no action]
-
-ref crclm_sub_key_know_crclm_sub_id_crclm_sub_id_fk: curriculum.crclm_sub_key_know.crclm_sub_id > curriculum.crclm_sub.id [delete: cascade, update: no action]
-
-ref crclm_sub_key_skl_crclm_sub_out_id_crclm_sub_out_id_fk: curriculum.crclm_sub_key_skl.crclm_sub_out_id > curriculum.crclm_sub_out.id [delete: cascade, update: no action]
-
-ref crclm_sub_key_skl_crclm_sub_id_crclm_sub_id_fk: curriculum.crclm_sub_key_skl.crclm_sub_id > curriculum.crclm_sub.id [delete: cascade, update: no action]
-
-ref crclm_sub_lrn_act_crclm_sub_id_crclm_sub_id_fk: curriculum.crclm_sub_lrn_act.crclm_sub_id > curriculum.crclm_sub.id [delete: cascade, update: no action]
-
-ref crclm_sub_la_crclm_sub_id_crclm_sub_id_fk: curriculum.crclm_sub_la.crclm_sub_id > curriculum.crclm_sub.id [delete: cascade, update: no action]
-
-ref crclm_sub_la_cnt_crclm_sub_la_id_crclm_sub_la_id_fk: curriculum.crclm_sub_la_cnt.crclm_sub_la_id > curriculum.crclm_sub_la.id [delete: cascade, update: no action]
-
-ref crclm_sub_la_out_crclm_sub_la_id_crclm_sub_la_id_fk: curriculum.crclm_sub_la_out.crclm_sub_la_id > curriculum.crclm_sub_la.id [delete: cascade, update: no action]
-
-ref crclm_sub_la_out_crclm_sub_out_id_crclm_sub_out_id_fk: curriculum.crclm_sub_la_out.crclm_sub_out_id > curriculum.crclm_sub_out.id [delete: cascade, update: no action]
-
-ref crclm_sub_la_std_crclm_sub_la_id_crclm_sub_la_id_fk: curriculum.crclm_sub_la_std.crclm_sub_la_id > curriculum.crclm_sub_la.id [delete: cascade, update: no action]
-
-ref crclm_sub_la_std_crclm_sub_la_tpc_id_crclm_sub_la_tpc_id_fk: curriculum.crclm_sub_la_std.crclm_sub_la_tpc_id > curriculum.crclm_sub_la_tpc.id [delete: cascade, update: no action]
-
-ref crclm_sub_la_std_yearLevel_sch_yl_id_fk: curriculum.crclm_sub_la_std.yearLevel > school.sch_yl.id [delete: cascade, update: no action]
-
-ref crclm_sub_la_std_elab_crclm_sub_la_std_id_crclm_sub_la_std_id_fk: curriculum.crclm_sub_la_std_elab.crclm_sub_la_std_id > curriculum.crclm_sub_la_std.id [delete: cascade, update: no action]
-
-ref crclm_sub_la_tpc_crclm_sub_la_id_crclm_sub_la_id_fk: curriculum.crclm_sub_la_tpc.crclm_sub_la_id > curriculum.crclm_sub_la.id [delete: cascade, update: no action]
-
-ref crclm_sub_out_crclm_sub_id_crclm_sub_id_fk: curriculum.crclm_sub_out.crclm_sub_id > curriculum.crclm_sub.id [delete: cascade, update: no action]
-
-ref evt_cmps_sch_cmps_id_sch_cmps_id_fk: event.evt_cmps.sch_cmps_id > school.sch_cmps.id [delete: cascade, update: no action]
+ref evt_sub_off_cls_id_sub_off_cls_id_fk: event.evt.sub_off_cls_id > subject.sub_off_cls.id [delete: cascade, update: no action]
 
 ref evt_rsvp_userId_user_id_fk: event.evt_rsvp.userId > user.user.id [delete: cascade, update: no action]
-
-ref evt_sch_sch_id_sch_id_fk: event.evt_sch.sch_id > school.sch.id [delete: cascade, update: no action]
-
-ref evt_sub_off_sub_off_id_sub_off_id_fk: event.evt_sub_off.sub_off_id > subject.sub_off.id [delete: cascade, update: no action]
-
-ref evt_sub_off_cls_sub_off_cls_id_sub_off_cls_id_fk: event.evt_sub_off_cls.sub_off_cls_id > subject.sub_off_cls.id [delete: cascade, update: no action]
 
 ref fet_sub_off_cls_allo_fet_sub_off_cls_id_fet_sub_off_cls_id_fk: timetable.fet_sub_off_cls_allo.fet_sub_off_cls_id > timetable.fet_sub_off_cls.id [delete: cascade, update: no action]
 
@@ -1689,7 +1309,7 @@ ref fet_sub_off_cls_user_userId_user_id_fk: timetable.fet_sub_off_cls_user.userI
 
 ref fet_sub_off_cls_user_fet_sub_off_class_id_fet_sub_off_cls_id_fk: timetable.fet_sub_off_cls_user.fet_sub_off_class_id > timetable.fet_sub_off_cls.id [delete: cascade, update: no action]
 
-ref grade_scale_level_grade_scale_id_grade_scale_id_fk: curriculum.grade_scale_level.grade_scale_id > curriculum.grade_scale.id [delete: cascade, update: no action]
+ref grade_scale_level_grade_scale_id_grade_scale_id_fk: school.grade_scale_level.grade_scale_id > school.grade_scale.id [delete: cascade, update: no action]
 
 ref news_schoolId_sch_id_fk: news.news.schoolId > school.sch.id [delete: cascade, update: no action]
 
@@ -1719,6 +1339,12 @@ ref rubric_cell_feedback_rubricCellId_rubric_cell_id_fk: task.rubric_cell_feedba
 
 ref rubric_row_rubricId_rubric_id_fk: task.rubric_row.rubricId > task.rubric.id [delete: cascade, update: no action]
 
+ref sch_bvr_sch_id_sch_id_fk: school.sch_bvr.sch_id > school.sch.id [delete: cascade, update: no action]
+
+ref sch_bvr_level_id_sch_bvr_lvl_id_fk: school.sch_bvr.level_id > school.sch_bvr_lvl.id [delete: cascade, update: no action]
+
+ref sch_bvr_lvl_sch_id_sch_id_fk: school.sch_bvr_lvl.sch_id > school.sch.id [delete: cascade, update: no action]
+
 ref sch_bldng_sch_cmps_id_sch_cmps_id_fk: school.sch_bldng.sch_cmps_id > school.sch_cmps.id [delete: cascade, update: no action]
 
 ref sch_cmps_sch_id_sch_id_fk: school.sch_cmps.sch_id > school.sch.id [delete: cascade, update: no action]
@@ -1731,7 +1357,7 @@ ref sch_term_sch_sem_id_sch_sem_id_fk: school.sch_term.sch_sem_id > school.sch_s
 
 ref sch_yl_sch_id_sch_id_fk: school.sch_yl.sch_id > school.sch.id [delete: cascade, update: no action]
 
-ref sch_yl_grade_scale_id_grade_scale_id_fk: school.sch_yl.grade_scale_id > curriculum.grade_scale.id [delete: set null, update: no action]
+ref sch_yl_grade_scale_id_grade_scale_id_fk: school.sch_yl.grade_scale_id > school.grade_scale.id [delete: set null, update: no action]
 
 ref session_userId_user_id_fk: user.session.userId > user.user.id [delete: no action, update: no action]
 
@@ -1740,8 +1366,6 @@ ref sub_sch_id_sch_id_fk: subject.sub.sch_id > school.sch.id [delete: cascade, u
 ref sub_sub_grp_id_sub_grp_id_fk: subject.sub.sub_grp_id > subject.sub_grp.id [delete: cascade, update: no action]
 
 ref sub_sch_yl_id_sch_yl_id_fk: subject.sub.sch_yl_id > school.sch_yl.id [delete: cascade, update: no action]
-
-ref sub_crclm_sub_id_crclm_sub_id_fk: subject.sub.crclm_sub_id > curriculum.crclm_sub.id [delete: set null, update: no action]
 
 ref sub_off_cls_allo_sub_off_cls_id_sub_off_cls_id_fk: subject.sub_off_cls_allo.sub_off_cls_id > subject.sub_off_cls.id [delete: cascade, update: no action]
 
@@ -1759,7 +1383,7 @@ ref sub_off_sub_id_sub_id_fk: subject.sub_off.sub_id > subject.sub.id [delete: c
 
 ref sub_off_sch_cmps_id_sch_cmps_id_fk: subject.sub_off.sch_cmps_id > school.sch_cmps.id [delete: cascade, update: no action]
 
-ref sub_off_grade_scale_id_grade_scale_id_fk: subject.sub_off.grade_scale_id > curriculum.grade_scale.id [delete: set null, update: no action]
+ref sub_off_grade_scale_id_grade_scale_id_fk: subject.sub_off.grade_scale_id > school.grade_scale.id [delete: set null, update: no action]
 
 ref sub_off_cls_tt_draft_id_tt_draft_id_fk: subject.sub_off_cls.tt_draft_id > timetable.tt_draft.id [delete: cascade, update: no action]
 
@@ -1769,7 +1393,7 @@ ref sub_off_cls_res_sub_off_cls_id_sub_off_cls_id_fk: subject.sub_off_cls_res.su
 
 ref sub_off_cls_res_res_id_res_id_fk: subject.sub_off_cls_res.res_id > resource.res.id [delete: cascade, update: no action]
 
-ref sub_off_cls_res_cm_item_id_cm_itm_id_fk: subject.sub_off_cls_res.cm_item_id > coursemap.cm_itm.id [delete: cascade, update: no action]
+ref sub_off_cls_res_crclm_item_id_crclm_itm_id_fk: subject.sub_off_cls_res.crclm_item_id > curriculum.crclm_itm.id [delete: cascade, update: no action]
 
 ref sub_off_cls_res_author_id_user_id_fk: subject.sub_off_cls_res.author_id > user.user.id [delete: cascade, update: no action]
 
@@ -1779,7 +1403,7 @@ ref sub_off_cls_task_taskId_task_id_fk: task.sub_off_cls_task.taskId > task.task
 
 ref sub_off_cls_task_authorId_user_id_fk: task.sub_off_cls_task.authorId > user.user.id [delete: cascade, update: no action]
 
-ref sub_off_cls_task_cm_item_id_cm_itm_id_fk: task.sub_off_cls_task.cm_item_id > coursemap.cm_itm.id [delete: cascade, update: no action]
+ref sub_off_cls_task_crclm_item_id_crclm_itm_id_fk: task.sub_off_cls_task.crclm_item_id > curriculum.crclm_itm.id [delete: cascade, update: no action]
 
 ref sub_off_cls_task_rubricId_rubric_id_fk: task.sub_off_cls_task.rubricId > task.rubric.id [delete: set null, update: no action]
 
@@ -1815,10 +1439,6 @@ ref task_sub_off_id_sub_off_id_fk: task.task.sub_off_id > subject.sub_off.id [de
 
 ref task_block_taskId_task_id_fk: task.task_block.taskId > task.task.id [delete: cascade, update: no action]
 
-ref task_std_taskId_task_id_fk: task.task_std.taskId > task.task.id [delete: cascade, update: no action]
-
-ref task_std_lrn_a_std_id_crclm_sub_la_std_id_fk: task.task_std.lrn_a_std_id > curriculum.crclm_sub_la_std.id [delete: cascade, update: no action]
-
 ref tt_sch_id_sch_id_fk: timetable.tt.sch_id > school.sch.id [delete: cascade, update: no action]
 
 ref tt_sch_sem_id_sch_sem_id_fk: timetable.tt.sch_sem_id > school.sch_sem.id [delete: set null, update: no action]
@@ -1837,7 +1457,7 @@ ref tt_activity_assign_stu_userId_user_id_fk: timetable.tt_activity_assign_stu.u
 
 ref tt_activity_assign_yr_tt_activity_id_tt_activity_id_fk: timetable.tt_activity_assign_yr.tt_activity_id > timetable.tt_activity.id [delete: cascade, update: no action]
 
-ref tt_activity_assign_yr_yearlevel_sch_yl_id_fk: timetable.tt_activity_assign_yr.yearlevel > school.sch_yl.id [delete: cascade, update: no action]
+ref tt_activity_assign_yr_yearLevelId_sch_yl_id_fk: timetable.tt_activity_assign_yr.yearLevelId > school.sch_yl.id [delete: cascade, update: no action]
 
 ref tt_activity_preferred_space_tt_activity_id_tt_activity_id_fk: timetable.tt_activity_preferred_space.tt_activity_id > timetable.tt_activity.id [delete: cascade, update: no action]
 
