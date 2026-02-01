@@ -23,11 +23,11 @@ export const implementedConstraints = [
 
 /**
  * Get the appropriate form component for a constraint using a switch statement
- * @param FETName - The FET constraint name
+ * @param fetName - The FET constraint name
  * @returns The corresponding form component or the default ConstraintForm
  */
-export function getConstraintFormComponent(FETName: string) {
-	switch (FETName) {
+export function getConstraintFormComponent(fetName: string) {
+	switch (fetName) {
 		// Time Constraints
 		case 'ConstraintSubjectPreferredRooms':
 			return SubjectPreferredRoomsForm;
@@ -48,22 +48,22 @@ export function getConstraintFormComponent(FETName: string) {
 
 /**
  * Check if a constraint has a custom form implementation
- * @param FETName - The FET constraint name
+ * @param fetName - The FET constraint name
  * @returns True if the constraint has a custom form, false otherwise
  */
-export function hasCustomForm(FETName: string): boolean {
-	return implementedConstraints.includes(FETName);
+export function hasCustomForm(fetName: string): boolean {
+	return implementedConstraints.includes(fetName);
 }
 
 /**
  * Check if a constraint form requires enhanced props (formData for autocomplete)
- * @param FETName - The FET constraint name
+ * @param fetName - The FET constraint name
  * @returns True if the constraint form needs enhanced props, false otherwise
  */
-export function requiresEnhancedProps(FETName: string): boolean {
+export function requiresEnhancedProps(fetName: string): boolean {
 	return [
 		'ConstraintSubjectPreferredRooms',
 		'ConstraintMinDaysBetweenActivities',
 		'ConstraintRoomNotAvailableTimes',
-	].includes(FETName);
+	].includes(fetName);
 }

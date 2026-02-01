@@ -27,8 +27,12 @@
 		{ id: 'overall' as const, label: 'Overall Statistics', icon: '📊' },
 		{ id: 'students' as const, label: 'Student Statistics', icon: '👨‍🎓' },
 		{ id: 'teachers' as const, label: 'Teacher Statistics', icon: '👨‍🏫' },
-		{ id: 'student-timetable' as const, label: 'Student Timetable', icon: '📅' },
-		{ id: 'room-timetable' as const, label: 'Room Timetable', icon: '🏫' }
+		{
+			id: 'student-timetable' as const,
+			label: 'Student Timetable',
+			icon: '📅',
+		},
+		{ id: 'room-timetable' as const, label: 'Room Timetable', icon: '🏫' },
 	] as const;
 </script>
 
@@ -52,39 +56,51 @@
 				<!-- Summary Cards -->
 				<div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
 					<Card.Root>
-						<Card.Header class="flex flex-row items-center justify-between space-y-0 pb-2">
-							<Card.Title class="text-sm font-medium">Total Students</Card.Title>
+						<Card.Header
+							class="flex flex-row items-center justify-between space-y-0 pb-2"
+						>
+							<Card.Title class="text-sm font-medium">Total Students</Card.Title
+							>
 							<span class="text-2xl">👨‍🎓</span>
 						</Card.Header>
 						<Card.Content>
 							<div class="text-2xl font-bold">{data.summary.totalStudents}</div>
 							<p class="text-muted-foreground text-xs">
-								Avg {data.summary.averageStudentHoursPerCycle.toFixed(1)}h per cycle
+								Avg {data.summary.averageStudentHoursPerCycle.toFixed(1)}h per
+								cycle
 							</p>
 						</Card.Content>
 					</Card.Root>
 
 					<Card.Root>
-						<Card.Header class="flex flex-row items-center justify-between space-y-0 pb-2">
-							<Card.Title class="text-sm font-medium">Total Teachers</Card.Title>
+						<Card.Header
+							class="flex flex-row items-center justify-between space-y-0 pb-2"
+						>
+							<Card.Title class="text-sm font-medium">Total Teachers</Card.Title
+							>
 							<span class="text-2xl">👨‍🏫</span>
 						</Card.Header>
 						<Card.Content>
 							<div class="text-2xl font-bold">{data.summary.totalTeachers}</div>
 							<p class="text-muted-foreground text-xs">
-								Avg {data.summary.averageTeacherHoursPerCycle.toFixed(1)}h per cycle
+								Avg {data.summary.averageTeacherHoursPerCycle.toFixed(1)}h per
+								cycle
 							</p>
 						</Card.Content>
 					</Card.Root>
 
 					<Card.Root>
-						<Card.Header class="flex flex-row items-center justify-between space-y-0 pb-2">
+						<Card.Header
+							class="flex flex-row items-center justify-between space-y-0 pb-2"
+						>
 							<Card.Title class="text-sm font-medium">Total Classes</Card.Title>
 							<span class="text-2xl">📚</span>
 						</Card.Header>
 						<Card.Content>
 							<div class="text-2xl font-bold">{data.summary.totalClasses}</div>
-							<p class="text-muted-foreground text-xs">Across all subject offerings</p>
+							<p class="text-muted-foreground text-xs">
+								Across all subject offerings
+							</p>
 						</Card.Content>
 					</Card.Root>
 				</div>
@@ -94,38 +110,50 @@
 					<Card.Root>
 						<Card.Header>
 							<Card.Title>Student Workload Distribution</Card.Title>
-							<Card.Description>Hours per cycle across all students</Card.Description>
+							<Card.Description
+								>Hours per cycle across all students</Card.Description
+							>
 						</Card.Header>
 						<Card.Content class="space-y-4">
 							<div class="space-y-2">
 								<div class="flex justify-between text-sm">
 									<span class="text-muted-foreground">Minimum</span>
 									<span class="font-medium"
-										>{data.summary.studentWorkloadDistribution.min.toFixed(1)}h</span
+										>{data.summary.studentWorkloadDistribution.min.toFixed(
+											1,
+										)}h</span
 									>
 								</div>
 								<div class="flex justify-between text-sm">
 									<span class="text-muted-foreground">Maximum</span>
 									<span class="font-medium"
-										>{data.summary.studentWorkloadDistribution.max.toFixed(1)}h</span
+										>{data.summary.studentWorkloadDistribution.max.toFixed(
+											1,
+										)}h</span
 									>
 								</div>
 								<div class="flex justify-between text-sm">
 									<span class="text-muted-foreground">Mean</span>
 									<span class="font-medium"
-										>{data.summary.studentWorkloadDistribution.mean.toFixed(1)}h</span
+										>{data.summary.studentWorkloadDistribution.mean.toFixed(
+											1,
+										)}h</span
 									>
 								</div>
 								<div class="flex justify-between text-sm">
 									<span class="text-muted-foreground">Median</span>
 									<span class="font-medium"
-										>{data.summary.studentWorkloadDistribution.median.toFixed(1)}h</span
+										>{data.summary.studentWorkloadDistribution.median.toFixed(
+											1,
+										)}h</span
 									>
 								</div>
 								<div class="flex justify-between text-sm">
 									<span class="text-muted-foreground">Standard Deviation</span>
 									<span class="font-medium"
-										>{data.summary.studentWorkloadDistribution.standardDeviation.toFixed(1)}h</span
+										>{data.summary.studentWorkloadDistribution.standardDeviation.toFixed(
+											1,
+										)}h</span
 									>
 								</div>
 							</div>
@@ -135,90 +163,62 @@
 					<Card.Root>
 						<Card.Header>
 							<Card.Title>Teacher Workload Distribution</Card.Title>
-							<Card.Description>Hours per cycle across all teachers</Card.Description>
+							<Card.Description
+								>Hours per cycle across all teachers</Card.Description
+							>
 						</Card.Header>
 						<Card.Content class="space-y-4">
 							<div class="space-y-2">
 								<div class="flex justify-between text-sm">
 									<span class="text-muted-foreground">Minimum</span>
 									<span class="font-medium"
-										>{data.summary.teacherWorkloadDistribution.min.toFixed(1)}h</span
+										>{data.summary.teacherWorkloadDistribution.min.toFixed(
+											1,
+										)}h</span
 									>
 								</div>
 								<div class="flex justify-between text-sm">
 									<span class="text-muted-foreground">Maximum</span>
 									<span class="font-medium"
-										>{data.summary.teacherWorkloadDistribution.max.toFixed(1)}h</span
+										>{data.summary.teacherWorkloadDistribution.max.toFixed(
+											1,
+										)}h</span
 									>
 								</div>
 								<div class="flex justify-between text-sm">
 									<span class="text-muted-foreground">Mean</span>
 									<span class="font-medium"
-										>{data.summary.teacherWorkloadDistribution.mean.toFixed(1)}h</span
+										>{data.summary.teacherWorkloadDistribution.mean.toFixed(
+											1,
+										)}h</span
 									>
 								</div>
 								<div class="flex justify-between text-sm">
 									<span class="text-muted-foreground">Median</span>
 									<span class="font-medium"
-										>{data.summary.teacherWorkloadDistribution.median.toFixed(1)}h</span
+										>{data.summary.teacherWorkloadDistribution.median.toFixed(
+											1,
+										)}h</span
 									>
 								</div>
 								<div class="flex justify-between text-sm">
 									<span class="text-muted-foreground">Standard Deviation</span>
 									<span class="font-medium"
-										>{data.summary.teacherWorkloadDistribution.standardDeviation.toFixed(1)}h</span
+										>{data.summary.teacherWorkloadDistribution.standardDeviation.toFixed(
+											1,
+										)}h</span
 									>
 								</div>
 							</div>
 						</Card.Content>
 					</Card.Root>
 				</div>
-
-				<!-- Day Utilization -->
-				<Card.Root>
-					<Card.Header>
-						<Card.Title>Day Utilization</Card.Title>
-						<Card.Description>Average hours and people scheduled per day</Card.Description>
-					</Card.Header>
-					<Card.Content>
-						<div class="space-y-4">
-							{#each Object.values(data.summary.dayUtilization) as day}
-								<div class="space-y-2">
-									<div class="flex items-center justify-between">
-										<h4 class="font-semibold">{day.dayName}</h4>
-										<div class="text-muted-foreground text-sm">
-											{day.studentsScheduled} students • {day.teachersScheduled} teachers
-										</div>
-									</div>
-									<div class="grid grid-cols-2 gap-4">
-										<div class="rounded-lg border p-3">
-											<div class="text-muted-foreground text-xs">Student Average</div>
-											<div class="text-lg font-semibold">
-												{day.averageStudentHours.toFixed(1)}h
-											</div>
-											<div class="text-muted-foreground text-xs">
-												Total: {day.totalStudentHours.toFixed(1)}h
-											</div>
-										</div>
-										<div class="rounded-lg border p-3">
-											<div class="text-muted-foreground text-xs">Teacher Average</div>
-											<div class="text-lg font-semibold">
-												{day.averageTeacherHours.toFixed(1)}h
-											</div>
-											<div class="text-muted-foreground text-xs">
-												Total: {day.totalTeacherHours.toFixed(1)}h
-											</div>
-										</div>
-									</div>
-								</div>
-							{/each}
-						</div>
-					</Card.Content>
-				</Card.Root>
 			{:else}
 				<Card.Root>
 					<Card.Content class="py-8">
-						<p class="text-muted-foreground text-center">Loading statistics...</p>
+						<p class="text-muted-foreground text-center">
+							Loading statistics...
+						</p>
 					</Card.Content>
 				</Card.Root>
 			{/if}
@@ -228,7 +228,9 @@
 			<Card.Root>
 				<Card.Header>
 					<Card.Title>Student Statistics</Card.Title>
-					<Card.Description>Detailed statistics for all students in the timetable</Card.Description>
+					<Card.Description
+						>Detailed statistics for all students in the timetable</Card.Description
+					>
 				</Card.Header>
 				<Card.Content>
 					<StudentDataTable data={data.students} columns={studentColumns} />
@@ -240,7 +242,9 @@
 			<Card.Root>
 				<Card.Header>
 					<Card.Title>Teacher Statistics</Card.Title>
-					<Card.Description>Detailed statistics for all teachers in the timetable</Card.Description>
+					<Card.Description
+						>Detailed statistics for all teachers in the timetable</Card.Description
+					>
 				</Card.Header>
 				<Card.Content>
 					<TeacherDataTable data={data.teachers} columns={teacherColumns} />
@@ -253,7 +257,9 @@
 			<Card.Root>
 				<Card.Header>
 					<Card.Title>View Student Timetable</Card.Title>
-					<Card.Description>Search by first name, last name, or email address</Card.Description>
+					<Card.Description
+						>Search by first name, last name, or email address</Card.Description
+					>
 				</Card.Header>
 				<Card.Content class="space-y-4">
 					<!-- Search Form -->
@@ -290,7 +296,9 @@
 					{#if form?.users && form.users.length > 0}
 						<div class="space-y-2">
 							<p class="text-muted-foreground text-sm">
-								Found {form.users.length} user{form.users.length !== 1 ? 's' : ''}
+								Found {form.users.length} user{form.users.length !== 1
+									? 's'
+									: ''}
 							</p>
 							<div class="space-y-2">
 								{#each form.users as user}
@@ -318,9 +326,14 @@
 														{user.firstName}
 														{user.lastName}
 													</div>
-													<div class="text-muted-foreground text-xs">{user.email}</div>
+													<div class="text-muted-foreground text-xs">
+														{user.email}
+													</div>
 												</div>
-												<span class="bg-secondary rounded-full px-2 py-1 text-xs">{user.type}</span>
+												<span
+													class="bg-secondary rounded-full px-2 py-1 text-xs"
+													>{user.type}</span
+												>
 											</div>
 										</Button>
 									</form>
@@ -331,7 +344,8 @@
 						<Alert.Root>
 							<Alert.Title>No users found</Alert.Title>
 							<Alert.Description>
-								No users matched your search for "{form.searchQuery}". Try a different search term.
+								No users matched your search for "{form.searchQuery}". Try a
+								different search term.
 							</Alert.Description>
 						</Alert.Root>
 					{/if}
@@ -354,12 +368,17 @@
 							{form.userTimetable.userName}'s Timetable
 						</Card.Title>
 						<Card.Description>
-							{form.userTimetable.userType} • {form.userTimetable.totalHoursPerCycle.toFixed(1)}h
-							per cycle • {form.userTimetable.averageHoursPerDay.toFixed(1)}h average per day
+							{form.userTimetable.userType} • {form.userTimetable.totalHoursPerCycle.toFixed(
+								1,
+							)}h per cycle • {form.userTimetable.averageHoursPerDay.toFixed(
+								1,
+							)}h average per day
 						</Card.Description>
 					</Card.Header>
 					<Card.Content>
-						<div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+						<div
+							class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5"
+						>
 							{#each form.userTimetable.days as day}
 								<div class="space-y-2">
 									<div class="flex items-center justify-between border-b pb-2">
@@ -370,7 +389,9 @@
 									</div>
 
 									{#if day.sessions.length === 0}
-										<p class="text-muted-foreground py-2 text-sm italic">No classes scheduled</p>
+										<p class="text-muted-foreground py-2 text-sm italic">
+											No classes scheduled
+										</p>
 									{:else}
 										<div class="space-y-2">
 											{#each day.sessions as session}
@@ -378,13 +399,17 @@
 													class="hover:bg-accent flex flex-col gap-2 rounded-lg border p-3 transition-colors"
 												>
 													<div class="flex items-center justify-between">
-														<div class="text-sm font-medium">{session.startTime.slice(0, 5)}</div>
+														<div class="text-sm font-medium">
+															{session.start.slice(0, 5)}
+														</div>
 														<div class="text-muted-foreground text-sm">
-															{session.endTime.slice(0, 5)}
+															{session.end.slice(0, 5)}
 														</div>
 													</div>
 													<div>
-														<div class="text-sm font-medium">{session.subjectName}</div>
+														<div class="text-sm font-medium">
+															{session.subjectName}
+														</div>
 														<!-- {#if session.className}
 															<div class="text-muted-foreground text-xs">{session.className}</div>
 														{/if} -->

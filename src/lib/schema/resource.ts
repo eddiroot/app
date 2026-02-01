@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import z from 'zod';
 
 const MAX_MB_COUNT = 50;
 const MAX_UPLOAD_SIZE = 1024 * 1024 * MAX_MB_COUNT;
@@ -50,107 +50,18 @@ const ACCEPTED_FILE_TYPES = [
 	{ mime: 'application/x-zip-compressed', extension: 'ZIP' },
 ];
 
-// File schema for single resource upload
-export const resourceFileSchema = z
+const fileSchema = z
 	.instanceof(File)
 	.refine((file) => {
 		return file.size <= MAX_UPLOAD_SIZE;
 	}, `File size must be less than ${MAX_MB_COUNT}MB`)
-	.refine(
-		(file) => {
-			return ACCEPTED_FILE_TYPES.map((ft) => ft.mime).includes(file.type);
-		},
-		`File must be one of: ${ACCEPTED_FILE_TYPES.map((ft) => ft.extension).join(', ')}`,
-	);
+	.refine((file) => {
+		return ACCEPTED_FILE_TYPES.map((t) => t.mime).includes(file.type);
+	}, 'File is not one of the accepted types');
 
-// Multiple files schema for batch uploads
-export const resourceFilesSchema = z
-	.array(resourceFileSchema)
+const filesSchema = z
+	.array(fileSchema)
 	.min(1, 'At least one file is required')
-	.max(10, 'Maximum 10 files allowed per upload');
+	.max(10, 'Maximum 10 files allowed');
 
-// Base resource schema for creating resources
-export const createResourceSchema = z.object({
-	fileName: z
-		.string()
-		.min(1, 'File name is required')
-		.max(255, 'File name must not exceed 255 characters'),
-	file: resourceFileSchema,
-	description: z
-		.string()
-		.max(500, 'Description cannot exceed 500 characters')
-		.optional(),
-});
-
-// Schema for updating resource metadata
-export const updateResourceSchema = z.object({
-	fileName: z
-		.string()
-		.min(1, 'File name is required')
-		.max(255, 'File name must not exceed 255 characters')
-		.optional(),
-	description: z
-		.string()
-		.max(500, 'Description cannot exceed 500 characters')
-		.optional(),
-	isArchived: z.boolean().optional(),
-});
-
-// Schema for resource upload form (multiple files)
-export const resourceUploadFormSchema = z.object({
-	files: resourceFilesSchema,
-	description: z
-		.string()
-		.max(500, 'Description cannot exceed 500 characters')
-		.optional(),
-});
-
-// Schema for linking resources to entities (course items, lesson plans, etc.)
-export const resourceLinkSchema = z.object({
-	resourceId: z.number().positive('Resource ID must be a positive number'),
-	entityId: z.number().positive('Entity ID must be a positive number'),
-	entityType: z.enum([
-		'courseMapItem',
-		'lessonPlan',
-		'assessmentPlan',
-		'subjectOfferingClass',
-		'task',
-	]),
-	description: z
-		.string()
-		.max(250, 'Link description cannot exceed 250 characters')
-		.optional(),
-});
-
-// Validation schema for resource queries/filters
-export const resourceQuerySchema = z.object({
-	search: z
-		.string()
-		.max(100, 'Search term cannot exceed 100 characters')
-		.optional(),
-	isArchived: z.boolean().default(false),
-	limit: z.number().min(1).max(100).default(20),
-	offset: z.number().min(0).default(0),
-	sortBy: z
-		.enum(['fileName', 'createdAt', 'fileSize', 'resourceType'])
-		.default('createdAt'),
-	sortOrder: z.enum(['asc', 'desc']).default('desc'),
-});
-
-export type ResourceFileSchema = typeof resourceFileSchema;
-export type ResourceFilesSchema = typeof resourceFilesSchema;
-export type CreateResourceSchema = typeof createResourceSchema;
-export type UpdateResourceSchema = typeof updateResourceSchema;
-export type ResourceUploadFormSchema = typeof resourceUploadFormSchema;
-export type ResourceLinkSchema = typeof resourceLinkSchema;
-export type ResourceQuerySchema = typeof resourceQuerySchema;
-
-export type ResourceFile = z.infer<typeof resourceFileSchema>;
-export type ResourceFiles = z.infer<typeof resourceFilesSchema>;
-export type CreateResource = z.infer<typeof createResourceSchema>;
-export type UpdateResource = z.infer<typeof updateResourceSchema>;
-export type ResourceUploadForm = z.infer<typeof resourceUploadFormSchema>;
-export type ResourceLink = z.infer<typeof resourceLinkSchema>;
-export type ResourceQuery = z.infer<typeof resourceQuerySchema>;
-
-export { ACCEPTED_FILE_TYPES, MAX_MB_COUNT, MAX_UPLOAD_SIZE };
+export { fileSchema, filesSchema, MAX_MB_COUNT, MAX_UPLOAD_SIZE };

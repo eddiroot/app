@@ -20,7 +20,7 @@ export * from './user';
 export * from './utils';
 
 // Coursemap schemas
-export * from './coursemap';
+export * from './curriculum';
 
 // Curriculum schemas
 export * from './curriculum';

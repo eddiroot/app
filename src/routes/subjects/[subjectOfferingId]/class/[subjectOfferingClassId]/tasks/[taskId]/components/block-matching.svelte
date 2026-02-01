@@ -9,21 +9,37 @@
 	import GripVerticalIcon from '@lucide/svelte/icons/grip-vertical';
 	import PlusIcon from '@lucide/svelte/icons/plus';
 	import TrashIcon from '@lucide/svelte/icons/trash-2';
-	import { dndState, draggable, droppable, type DragDropState } from '@thisux/sveltednd';
+	import {
+		dndState,
+		draggable,
+		droppable,
+		type DragDropState,
+	} from '@thisux/sveltednd';
 
-	let { config, onConfigUpdate, response, onResponseUpdate, viewMode }: MatchingBlockProps =
-		$props();
+	let {
+		config,
+		onConfigUpdate,
+		response,
+		onResponseUpdate,
+		viewMode,
+	}: MatchingBlockProps = $props();
 
 	let draggedItemIndex = $state<number | null>(null);
 
 	function addPair() {
-		const newConfig = { ...config, pairs: [...config.pairs, { left: '', right: '' }] };
+		const newConfig = {
+			...config,
+			pairs: [...config.pairs, { left: '', right: '' }],
+		};
 		onConfigUpdate(newConfig);
 	}
 
 	function removePair(index: number) {
 		if (config.pairs.length <= 1) return;
-		const newConfig = { ...config, pairs: config.pairs.filter((_, i) => i !== index) };
+		const newConfig = {
+			...config,
+			pairs: config.pairs.filter((_, i) => i !== index),
+		};
 		onConfigUpdate(newConfig);
 	}
 
@@ -34,16 +50,18 @@
 		updatedPairs[index] = { ...updatedPairs[index], [field]: value };
 		newConfig.pairs = updatedPairs;
 		onConfigUpdate(newConfig);
-	}	
+	}
 
 	$effect(() => {
 		if (!response || !response.matches || response.matches.length === 0) {
-			const rightItems = config.pairs.map((pair) => pair.right).sort(() => Math.random() - 0.5);
-			onResponseUpdate({ 
-				matches: config.pairs.map((pair, index) => ({ 
-					left: pair.left, 
-					right: rightItems[index] 
-				}))
+			const rightItems = config.pairs
+				.map((pair) => pair.right)
+				.sort(() => Math.random() - 0.5);
+			onResponseUpdate({
+				matches: config.pairs.map((pair, index) => ({
+					left: pair.left,
+					right: rightItems[index],
+				})),
 			});
 		}
 	});
@@ -54,12 +72,15 @@
 
 		const targetIndex = parseInt(targetContainer.split('-')[1]);
 		const sourceIndex = response.matches.findIndex(
-			(match) => match.right === draggedItem
+			(match) => match.right === draggedItem,
 		);
 
 		const newMatches = [...response.matches];
 		const temp = newMatches[sourceIndex].right;
-		newMatches[sourceIndex] = { ...newMatches[sourceIndex], right: newMatches[targetIndex].right };
+		newMatches[sourceIndex] = {
+			...newMatches[sourceIndex],
+			right: newMatches[targetIndex].right,
+		};
 		newMatches[targetIndex] = { ...newMatches[targetIndex], right: temp };
 
 		if (onResponseUpdate) {
@@ -157,20 +178,24 @@
 		<Card.Header>
 			<Card.Title class="text-lg font-semibold">Matching Exercise</Card.Title>
 			{#if config.instructions}
-				<Card.Description class="text-muted-foreground text-sm whitespace-pre-wrap"
+				<Card.Description
+					class="text-muted-foreground text-sm whitespace-pre-wrap"
 					>{config.instructions}</Card.Description
 				>
 			{/if}
 		</Card.Header>
 		<Card.Content class="space-y-6">
-			{#if response.matches.length > 0 && response.matches.some((pair) => pair.left.trim())}
+			{#if response.matches.length > 0 && response.matches.some( (pair) => pair.left.trim(), )}
 				<div class="space-y-4">
-					{#each response.matches.filter((pair) => pair.left.trim()) as pair, pairIndex}
-						<div class="rounded-lg border-2 border-muted p-3">
-							<div class="grid grid-cols-1 items-center gap-4 md:grid-cols-[1fr_auto_1fr] md:gap-8">
-								
+					{#each response.matches.filter( (pair) => pair.left.trim(), ) as pair, pairIndex}
+						<div class="border-muted rounded-lg border-2 p-3">
+							<div
+								class="grid grid-cols-1 items-center gap-4 md:grid-cols-[1fr_auto_1fr] md:gap-8"
+							>
 								<!-- Left Item -->
-								<div class="bg-muted/20 flex min-h-12 items-center rounded-lg border p-3">
+								<div
+									class="bg-muted/20 flex min-h-12 items-center rounded-lg border p-3"
+								>
 									<div class="flex items-center gap-3">
 										<span class="text-muted-foreground w-6 text-sm font-medium"
 											>{pairIndex + 1}.</span
@@ -188,14 +213,12 @@
 								{#if response?.matches?.[pairIndex]?.right}
 									<div
 										class="rounded-md p-1 transition-colors {dndState.targetContainer ===
-										`matching-${pairIndex}` && draggedItemIndex !== pairIndex
-											? 'border-2 border-dashed border-accent-foreground bg-accent/10'
+											`matching-${pairIndex}` && draggedItemIndex !== pairIndex
+											? 'border-accent-foreground bg-accent/10 border-2 border-dashed'
 											: 'border-2 border-transparent'}"
 										use:droppable={{
 											container: `matching-${pairIndex}`,
-											callbacks: {
-												onDrop: handleDrop
-											}
+											callbacks: { onDrop: handleDrop },
 										}}
 									>
 										<!-- Show drag handle -->
@@ -210,21 +233,26 @@
 														},
 														onDragEnd: () => {
 															draggedItemIndex = null;
-														}
-													}
+														},
+													},
 												}}
 												class="hover:bg-muted flex h-6 w-6 cursor-grab items-center justify-center rounded transition-colors active:cursor-grabbing"
 											>
-												<GripVerticalIcon class="text-muted-foreground h-4 w-4" />
+												<GripVerticalIcon
+													class="text-muted-foreground h-4 w-4"
+												/>
 											</div>
 											<div
 												class="bg-secondary/50 flex min-h-12 flex-1 items-center rounded-lg border p-3"
 											>
 												<div class="flex items-center gap-3">
-													<span class="text-muted-foreground w-6 text-sm font-medium"
+													<span
+														class="text-muted-foreground w-6 text-sm font-medium"
 														>{pairIndex + 1}.</span
 													>
-													<span class="font-medium">{response.matches[pairIndex].right}</span>
+													<span class="font-medium"
+														>{response.matches[pairIndex].right}</span
+													>
 												</div>
 											</div>
 										</div>
@@ -234,7 +262,7 @@
 						</div>
 					{/each}
 				</div>
-				{:else}
+			{:else}
 				<p class="text-muted-foreground">
 					No matching pairs configured. Switch to edit mode to add pairs.
 				</p>

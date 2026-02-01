@@ -1,14 +1,21 @@
 import { schoolSpaceTypeEnum } from '$lib/enums.js';
 import { db } from '$lib/server/db/index.js';
 import { schoolSpace } from '$lib/server/db/schema';
-import { getBuildingsBySchoolId, getSpacesBySchoolId } from '$lib/server/db/service';
-import { parseCSVData, validateCSVFile } from '$lib/utils.js';
+import {
+	getBuildingsBySchoolId,
+	getSpacesBySchoolId,
+} from '$lib/server/db/service';
+import { parseCSVData, validateCSVFile } from '$lib/utils';
 import { fail, superValidate, withFiles } from 'sveltekit-superforms';
 import { zod4 } from 'sveltekit-superforms/adapters';
-import { locationsImportSchema, optionalColumns, requiredColumns } from './schema.js';
+import {
+	locationsImportSchema,
+	optionalColumns,
+	requiredColumns,
+} from './schema.js';
 
 export const load = async ({ locals: { security } }) => {
-	const user = security.isAuthenticated().isSchoolAdmin().getUser();
+	const user = security.isAuthenticated().isAdmin().getUser();
 	const spaces = await getSpacesBySchoolId(user.schoolId);
 	const form = await superValidate(zod4(locationsImportSchema));
 	return { spaces, form };
@@ -16,7 +23,7 @@ export const load = async ({ locals: { security } }) => {
 
 export const actions = {
 	default: async ({ request, locals: { security } }) => {
-		const user = security.isAuthenticated().isSchoolAdmin().getUser();
+		const user = security.isAuthenticated().isAdmin().getUser();
 
 		const formData = await request.formData();
 		const form = await superValidate(formData, zod4(locationsImportSchema));
@@ -28,13 +35,17 @@ export const actions = {
 		try {
 			const file = form.data.file;
 
-			const validationResult = await validateCSVFile(file, requiredColumns, optionalColumns);
+			const validationResult = await validateCSVFile(
+				file,
+				requiredColumns,
+				optionalColumns,
+			);
 
 			if (!validationResult.isValid) {
 				return fail(400, {
 					form,
 					error: 'CSV validation failed',
-					validation: validationResult
+					validation: validationResult,
 				});
 			}
 
@@ -45,21 +56,16 @@ export const actions = {
 				return fail(400, {
 					form,
 					error: 'CSV file contains no valid data rows',
-					validation: validationResult
+					validation: validationResult,
 				});
 			}
 
 			const buildings = await getBuildingsBySchoolId(user.schoolId);
-			const buildingMap = new Map(buildings.map((b) => [b.name.toLowerCase(), b.id]));
+			const buildingMap = new Map(
+				buildings.map((b) => [b.name.toLowerCase(), b.id]),
+			);
 
-			const spacesToInsert: Array<{
-				name: string;
-				type: (typeof schoolSpaceTypeEnum)[keyof typeof schoolSpaceTypeEnum];
-				buildingId: number;
-				capacity: number | null;
-				description: string | null;
-				isArchived: boolean;
-			}> = [];
+			const spacesToInsert: (typeof schoolSpace.$inferInsert)[] = [];
 
 			for (const rowData of csvData) {
 				const name = rowData['name']?.trim();
@@ -77,7 +83,7 @@ export const actions = {
 					return fail(400, {
 						form,
 						error: `Building "${buildingName}" not found. Available buildings: ${buildings.map((b) => b.name).join(', ')}`,
-						validation: validationResult
+						validation: validationResult,
 					});
 				}
 
@@ -88,7 +94,7 @@ export const actions = {
 					return fail(400, {
 						form,
 						error: `Invalid space type "${type}". Valid types: ${validTypes.join(', ')}`,
-						validation: validationResult
+						validation: validationResult,
 					});
 				}
 
@@ -104,10 +110,10 @@ export const actions = {
 				spacesToInsert.push({
 					name,
 					type: spaceTypeValue,
-					buildingId,
+					schoolBuildingId: buildingId,
 					capacity,
 					description,
-					isArchived: false
+					isArchived: false,
 				});
 			}
 
@@ -115,19 +121,16 @@ export const actions = {
 				return fail(400, {
 					form,
 					error: 'No valid spaces found in CSV file',
-					validation: validationResult
+					validation: validationResult,
 				});
 			}
 
 			await db.insert(schoolSpace).values(spacesToInsert);
 
-			return withFiles({
-				form,
-				success: true
-			});
+			return withFiles({ form, success: true });
 		} catch (err) {
 			console.error('Error importing locations:', err);
 			return fail(500, { form, error: 'Failed to import locations' });
 		}
-	}
+	},
 };

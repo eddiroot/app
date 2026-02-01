@@ -8,7 +8,7 @@
 		itemId,
 		initialLiked = false,
 		initialCount = 0,
-		size = 'sm'
+		size = 'sm',
 	}: {
 		action: string;
 		itemId?: number;

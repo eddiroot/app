@@ -1,9 +1,14 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	import { page } from '$app/state';
 	import { Badge } from '$lib/components/ui/badge';
 	import { Button } from '$lib/components/ui/button';
-	import { Card, CardContent, CardHeader, CardTitle } from '$lib/components/ui/card';
+	import {
+		Card,
+		CardContent,
+		CardHeader,
+		CardTitle,
+	} from '$lib/components/ui/card';
+	import { ArchiveIcon } from '@lucide/svelte';
 	import ArrowLeft from '@lucide/svelte/icons/arrow-left';
 	import Calendar from '@lucide/svelte/icons/calendar';
 	import Clock from '@lucide/svelte/icons/clock';
@@ -11,7 +16,6 @@
 	import Eye from '@lucide/svelte/icons/eye';
 	import FileText from '@lucide/svelte/icons/file-text';
 	import MapPin from '@lucide/svelte/icons/map-pin';
-	import Trash2 from '@lucide/svelte/icons/trash-2';
 	import { toast } from 'svelte-sonner';
 
 	interface DraftItem {
@@ -27,7 +31,7 @@
 			id: string;
 			firstName: string | null;
 			lastName: string | null;
-			avatarUrl: string | null;
+			avatarPath: string | null;
 		} | null;
 		category: {
 			id: number;
@@ -35,20 +39,10 @@
 			description: string | null;
 			color: string | null;
 		} | null;
-		campus: {
-			id: number;
-			name: string;
-		} | null;
+		campus: { id: number; name: string } | null;
 		images: Array<{
-			newsResource: {
-				id: number;
-				displayOrder: number;
-			};
-			resource: {
-				id: number;
-				fileName: string;
-				imageUrl: string;
-			};
+			newsResource: { id: number; displayOrder: number };
+			resource: { id: number; fileName: string; imageUrl: string };
 		}>;
 	}
 
@@ -61,7 +55,7 @@
 			month: 'short',
 			year: 'numeric',
 			hour: '2-digit',
-			minute: '2-digit'
+			minute: '2-digit',
 		}).format(new Date(date));
 	};
 
@@ -132,18 +126,16 @@
 		return [];
 	};
 
-	// Handle delete with toast confirmation
-	const handleDelete = (newsId: number, title: string) => {
+	const handleArchive = (newsId: number, title: string) => {
 		// Show confirmation toast
-		toast(`Delete "${title}"?`, {
-			description: 'This action cannot be undone.',
+		toast(`Archive "${title}"?`, {
 			action: {
-				label: 'Delete',
+				label: 'Archive',
 				onClick: () => {
 					// Create form and submit it
 					const form = document.createElement('form');
 					form.method = 'POST';
-					form.action = '?/delete';
+					form.action = '?/archive';
 
 					const input = document.createElement('input');
 					input.type = 'hidden';
@@ -153,38 +145,26 @@
 
 					document.body.appendChild(form);
 					form.submit();
-				}
+				},
 			},
 			cancel: {
 				label: 'Cancel',
 				onClick: () => {
 					// Toast will auto-dismiss
-				}
+				},
 			},
-			duration: 10000 // Give user time to decide
+			duration: 10000, // Give user time to decide
 		});
 	};
-
-	// Show success toast if coming from a successful deletion
-	$effect(() => {
-		if (typeof window !== 'undefined' && page.url.searchParams.get('deleted') === '1') {
-			toast.success('Draft article deleted successfully!');
-			// Clean up the URL parameter
-			const url = new URL(window.location.href);
-			url.searchParams.delete('deleted');
-			window.history.replaceState({}, '', url);
-		}
-	});
 </script>
-
-<svelte:head>
-	<title>Draft News Articles</title>
-	<meta name="description" content="Manage your draft news articles" />
-</svelte:head>
 
 <div class="mx-auto w-full max-w-6xl space-y-6 p-6">
 	<!-- Back Button -->
-	<Button variant="ghost" size="sm" onclick={() => (window.location.href = '/news')}>
+	<Button
+		variant="ghost"
+		size="sm"
+		onclick={() => (window.location.href = '/news')}
+	>
 		<ArrowLeft />
 		Back
 	</Button>
@@ -193,7 +173,9 @@
 	<div class="flex items-center justify-between">
 		<div>
 			<h1 class="text-3xl font-bold tracking-tight">Draft Articles</h1>
-			<p class="text-muted-foreground mt-1">Manage your unpublished news articles</p>
+			<p class="text-muted-foreground mt-1">
+				Manage your unpublished news articles
+			</p>
 		</div>
 		<Button variant="default" size="sm" href="/news/new">
 			<FileText />
@@ -222,11 +204,20 @@
 								</CardTitle>
 							</div>
 							<div class="flex gap-2">
-								<Button variant="outline" size="sm" href={`/news/edit/${draft.news.id}`}>
+								<Button
+									variant="outline"
+									size="sm"
+									href={`/news/edit/${draft.news.id}`}
+								>
 									<Edit />
 									Edit
 								</Button>
-								<form method="POST" action="?/publish" use:enhance class="inline">
+								<form
+									method="POST"
+									action="?/publish"
+									use:enhance
+									class="inline"
+								>
 									<input type="hidden" name="newsId" value={draft.news.id} />
 									<Button type="submit" variant="default" size="sm">
 										<Eye />
@@ -236,11 +227,11 @@
 								<Button
 									variant="outline"
 									size="sm"
-									class="text-destructive hover:text-destructive"
-									onclick={() => handleDelete(draft.news.id, draft.news.title)}
+									class="text-warning hover:text-warning"
+									onclick={() => handleArchive(draft.news.id, draft.news.title)}
 								>
-									<Trash2 />
-									Delete
+									<ArchiveIcon />
+									Archive
 								</Button>
 							</div>
 						</div>
@@ -248,14 +239,18 @@
 						<!-- Full Content Display -->
 						<div class="mt-4">
 							<div class="prose prose-sm max-w-none">
-								<div class="text-sm whitespace-pre-wrap text-gray-700 dark:text-gray-300">
+								<div
+									class="text-sm whitespace-pre-wrap text-gray-700 dark:text-gray-300"
+								>
 									{getFullContent(draft.news.content)}
 								</div>
 							</div>
 						</div>
 
 						<!-- Meta Information -->
-						<div class="text-muted-foreground flex flex-wrap items-center gap-4 text-sm">
+						<div
+							class="text-muted-foreground flex flex-wrap items-center gap-4 text-sm"
+						>
 							<div class="flex items-center gap-1">
 								<Clock />
 								<span>Updated {formatDate(draft.news.updatedAt)}</span>
@@ -266,7 +261,9 @@
 							</div>
 							{#if draft.images && draft.images.length > 0}
 								<Badge variant="outline" class="text-xs">
-									{draft.images.length} image{draft.images.length === 1 ? '' : 's'}
+									{draft.images.length} image{draft.images.length === 1
+										? ''
+										: 's'}
 								</Badge>
 							{/if}
 						</div>
@@ -293,7 +290,9 @@
 								<Badge variant="outline" class="text-xs">#{tag}</Badge>
 							{/each}
 							{#if tags.length > 3}
-								<Badge variant="outline" class="text-xs">+{tags.length - 3}</Badge>
+								<Badge variant="outline" class="text-xs"
+									>+{tags.length - 3}</Badge
+								>
 							{/if}
 						</div>
 					</CardHeader>
@@ -302,7 +301,9 @@
 					{#if draft.images && draft.images.length > 0}
 						<CardContent class="pt-0">
 							<div class="space-y-3">
-								<div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+								<div
+									class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3"
+								>
 									{#each draft.images.slice(0, 6) as image}
 										<div class="bg-muted/50 overflow-hidden rounded-lg border">
 											<img
@@ -327,14 +328,19 @@
 		{:else}
 			<!-- Empty State -->
 			<div class="py-12 text-center">
-				<div class="bg-muted mx-auto mb-4 flex h-24 w-24 items-center justify-center rounded-full">
+				<div
+					class="bg-muted mx-auto mb-4 flex h-24 w-24 items-center justify-center rounded-full"
+				>
 					<FileText class="text-muted-foreground h-12 w-12" />
 				</div>
 				<h3 class="mb-2 text-lg font-semibold">No draft articles</h3>
 				<p class="text-muted-foreground mb-4">
 					You don't have any draft news articles yet. Create one to get started!
 				</p>
-				<Button variant="default" onclick={() => (window.location.href = '/news/new')}>
+				<Button
+					variant="default"
+					onclick={() => (window.location.href = '/news/new')}
+				>
 					<FileText />
 					Create your first draft
 				</Button>

@@ -16,8 +16,8 @@ export type ClassSession = {
 	subjectOfferingId: number;
 	className: string;
 	spaceName: string | null;
-	startTime: string;
-	endTime: string;
+	start: string;
+	end: string;
 	durationMinutes: number;
 	dayId: number;
 	dayNumber: number;
@@ -51,9 +51,9 @@ export type UserTimetable = {
 /**
  * Calculate duration in minutes between two time strings
  */
-function calculateDurationMinutes(startTime: string, endTime: string): number {
-	const [startHour, startMin] = startTime.split(':').map(Number);
-	const [endHour, endMin] = endTime.split(':').map(Number);
+function calculateDurationMinutes(start: string, end: string): number {
+	const [startHour, startMin] = start.split(':').map(Number);
+	const [endHour, endMin] = end.split(':').map(Number);
 
 	const startTotalMin = startHour * 60 + startMin;
 	const endTotalMin = endHour * 60 + endMin;
@@ -105,7 +105,7 @@ async function getClassAllocations(fetClassIds: number[]) {
 			dayNumber: table.timetableDay.day,
 			startPeriodId: table.fetSubjectClassAllocation.startPeriodId,
 			endPeriodId: table.fetSubjectClassAllocation.endPeriodId,
-			startTime: table.timetablePeriod.start,
+			start: table.timetablePeriod.start,
 			spaceId: table.fetSubjectClassAllocation.schoolSpaceId,
 		})
 		.from(table.fetSubjectClassAllocation)
@@ -133,18 +133,15 @@ async function getClassAllocations(fetClassIds: number[]) {
 	// Get end times for allocations
 	const endPeriodIds = [...new Set(allocations.map((a) => a.endPeriodId))];
 	const endPeriods = await db
-		.select({
-			id: table.timetablePeriod.id,
-			endTime: table.timetablePeriod.end,
-		})
+		.select({ id: table.timetablePeriod.id, end: table.timetablePeriod.end })
 		.from(table.timetablePeriod)
 		.where(inArray(table.timetablePeriod.id, endPeriodIds));
 
-	const endPeriodMap = new Map(endPeriods.map((p) => [p.id, p.endTime]));
+	const endPeriodMap = new Map(endPeriods.map((p) => [p.id, p.end]));
 
 	return allocations.map((alloc) => ({
 		...alloc,
-		endTime: endPeriodMap.get(alloc.endPeriodId) || alloc.startTime,
+		end: endPeriodMap.get(alloc.endPeriodId) || alloc.start,
 	}));
 }
 
@@ -302,9 +299,9 @@ export async function generateUserTimetable(
 			subjectOfferingId: subject?.subjectOfferingId || 0,
 			className: subject?.className || '',
 			spaceName,
-			startTime: alloc.startTime,
-			endTime: alloc.endTime,
-			durationMinutes: calculateDurationMinutes(alloc.startTime, alloc.endTime),
+			start: alloc.start,
+			end: alloc.end,
+			durationMinutes: calculateDurationMinutes(alloc.start, alloc.end),
 			dayId: alloc.dayId,
 			dayNumber: alloc.dayNumber,
 			startPeriodId: alloc.startPeriodId,
@@ -316,7 +313,7 @@ export async function generateUserTimetable(
 	const daySchedules: DaySchedule[] = timetableDays.map((day) => {
 		const daySessions = sessions
 			.filter((s) => s.dayNumber === day.day)
-			.sort((a, b) => a.startTime.localeCompare(b.startTime));
+			.sort((a, b) => a.start.localeCompare(b.start));
 
 		const totalMinutes = daySessions.reduce(
 			(sum, s) => sum + s.durationMinutes,
@@ -394,12 +391,12 @@ export function getFreePeriodsSummary(userTimetable: UserTimetable): {
 		} else if (day.sessions.length > 1) {
 			// Check for gaps between sessions
 			const sortedSessions = [...day.sessions].sort((a, b) =>
-				a.startTime.localeCompare(b.startTime),
+				a.start.localeCompare(b.start),
 			);
 
 			for (let i = 0; i < sortedSessions.length - 1; i++) {
-				const currentEnd = sortedSessions[i].endTime;
-				const nextStart = sortedSessions[i + 1].startTime;
+				const currentEnd = sortedSessions[i].end;
+				const nextStart = sortedSessions[i + 1].start;
 
 				const gapMinutes = calculateDurationMinutes(currentEnd, nextStart);
 				if (gapMinutes > 0) {
@@ -450,7 +447,7 @@ export function formatUserTimetableForDisplay(
 				const spacePart = session.spaceName ? ` @ ${session.spaceName}` : '';
 				const classPart = session.className ? ` (${session.className})` : '';
 				lines.push(
-					`  ${session.startTime} - ${session.endTime} | ${session.subjectName}${classPart}${spacePart}`,
+					`  ${session.start} - ${session.end} | ${session.subjectName}${classPart}${spacePart}`,
 				);
 			}
 		}

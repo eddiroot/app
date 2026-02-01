@@ -31,7 +31,7 @@
 			...config,
 			rows: Math.max(1, newRows),
 			columns: Math.max(1, newColumns),
-			data: newData
+			data: newData,
 		};
 		await onConfigUpdate(newConfig);
 	}
@@ -43,10 +43,7 @@
 		}
 		newData[row][col] = value;
 
-		const newConfig = {
-			...config,
-			data: newData
-		};
+		const newConfig = { ...config, data: newData };
 		await onConfigUpdate(newConfig);
 	}
 
@@ -103,7 +100,12 @@
 					<div class="space-y-2">
 						<Label>Rows</Label>
 						<div class="flex items-center gap-2">
-							<Button size="sm" variant="outline" onclick={removeRow} disabled={config.rows <= 1}>
+							<Button
+								size="sm"
+								variant="outline"
+								onclick={removeRow}
+								disabled={config.rows <= 1}
+							>
 								<MinusIcon />
 							</Button>
 							<span class="min-w-[2rem] text-center">{config.rows}</span>
@@ -145,7 +147,8 @@
 												<Input
 													value={config.data?.[rowIndex]?.[colIndex] || ''}
 													oninput={(e) => {
-														const value = (e.target as HTMLInputElement)?.value || '';
+														const value =
+															(e.target as HTMLInputElement)?.value || '';
 														updateCellData(rowIndex, colIndex, value);
 													}}
 													placeholder={rowIndex === 0
@@ -179,7 +182,9 @@
 										<tr>
 											{#each row as cell}
 												<td
-													class="border-border border p-3 {rowIndex === 0 ? 'font-semibold' : ''}"
+													class="border-border border p-3 {rowIndex === 0
+														? 'font-semibold'
+														: ''}"
 												>
 													{cell || ''}
 												</td>
@@ -192,7 +197,9 @@
 					</Card.Content>
 				</Card.Root>
 			{:else}
-				<div class="flex h-48 w-full items-center justify-center rounded-lg border border-dashed">
+				<div
+					class="flex h-48 w-full items-center justify-center rounded-lg border border-dashed"
+				>
 					<div class="text-center">
 						<TableIcon class="text-muted-foreground mx-auto h-12 w-12" />
 						<p class="text-muted-foreground mt-2 text-sm">No table created</p>

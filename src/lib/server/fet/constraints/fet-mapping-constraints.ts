@@ -1,7 +1,7 @@
 import { constraintTypeEnum } from '../../../enums';
 
 export interface ConstraintDefinition {
-	FETName: string;
+	fetName: string;
 	friendlyName: string;
 	description: string;
 	type: constraintTypeEnum;
@@ -11,7 +11,7 @@ export interface ConstraintDefinition {
 
 export const TIME_CONSTRAINTS: ConstraintDefinition[] = [
 	{
-		FETName: 'ConstraintBasicCompulsoryTime',
+		fetName: 'ConstraintBasicCompulsoryTime',
 		friendlyName: 'Basic Compulsory Time',
 		description:
 			'Ensures that a teacher never instructs two or more activities at the same time, and students have maximum one activity per period. Essential foundation constraint that must always be included.',
@@ -20,7 +20,7 @@ export const TIME_CONSTRAINTS: ConstraintDefinition[] = [
 		repeatable: false,
 	},
 	{
-		FETName: 'ConstraintStudentsEarlyMaxBeginningsAtSecondHour',
+		fetName: 'ConstraintStudentsEarlyMaxBeginningsAtSecondHour',
 		friendlyName: 'Students Early Max Beginnings At Second Hour',
 		description:
 			'Limits the maximum number of activities that can begin at the second hour for students. Helps manage student schedules to avoid too many early starts.',
@@ -29,7 +29,7 @@ export const TIME_CONSTRAINTS: ConstraintDefinition[] = [
 		repeatable: false,
 	},
 	{
-		FETName: 'ConstraintStudentsMaxGapsPerWeek',
+		fetName: 'ConstraintStudentsMaxGapsPerWeek',
 		friendlyName: 'Students Max Gaps Per Week',
 		description:
 			'Limits the maximum number of free periods (gaps) students can have per week. Maintains structured learning environment and supervision requirements, especially important for younger students.',
@@ -38,7 +38,7 @@ export const TIME_CONSTRAINTS: ConstraintDefinition[] = [
 		repeatable: true,
 	},
 	{
-		FETName: 'ConstraintMinDaysBetweenActivities',
+		fetName: 'ConstraintMinDaysBetweenActivities',
 		friendlyName: 'Minimum Days Between Activities',
 		description:
 			'Ensures activities are spread across multiple days. Prevents clustering all lessons of a subject on consecutive days. Automatically added for split activities.',
@@ -47,7 +47,7 @@ export const TIME_CONSTRAINTS: ConstraintDefinition[] = [
 		repeatable: true,
 	},
 	{
-		FETName: 'ConstraintTeacherNotAvailableTimes',
+		fetName: 'ConstraintTeacherNotAvailableTimes',
 		friendlyName: 'Teacher Not Available Times',
 		description:
 			'Blocks specific time periods when teachers cannot teach due to meetings, training, or personal commitments. Not available periods are not counted as gaps in gap calculations.',
@@ -56,7 +56,7 @@ export const TIME_CONSTRAINTS: ConstraintDefinition[] = [
 		repeatable: true,
 	},
 	{
-		FETName: 'ConstraintTeacherMaxDaysPerWeek',
+		fetName: 'ConstraintTeacherMaxDaysPerWeek',
 		friendlyName: 'Teacher Max Days Per Week',
 		description:
 			'Allows teachers to have free days for work-life balance. Essential for part-time teachers and often desired for full-time staff.',
@@ -65,7 +65,7 @@ export const TIME_CONSTRAINTS: ConstraintDefinition[] = [
 		repeatable: true,
 	},
 	{
-		FETName: 'ConstraintActivitiesPreferredStartingTimes',
+		fetName: 'ConstraintActivitiesPreferredStartingTimes',
 		friendlyName: 'Activities Preferred Starting Times',
 		description:
 			'Sets preferred starting times for multiple activities based on criteria like teacher, subject, or activity tag. Provides bulk time preferences for activity groups.',
@@ -74,7 +74,7 @@ export const TIME_CONSTRAINTS: ConstraintDefinition[] = [
 		repeatable: true,
 	},
 	{
-		FETName: 'ConstraintActivityPreferredStartingTimes',
+		fetName: 'ConstraintActivityPreferredStartingTimes',
 		friendlyName: 'Activity Preferred Starting Times',
 		description:
 			'Provides multiple acceptable time options for a single activity. Allows flexible scheduling with constraints.',
@@ -83,7 +83,7 @@ export const TIME_CONSTRAINTS: ConstraintDefinition[] = [
 		repeatable: true,
 	},
 	{
-		FETName: 'ConstraintActivityPreferredStartingTime',
+		fetName: 'ConstraintActivityPreferredStartingTime',
 		friendlyName: 'Activity Preferred Starting Time',
 		description:
 			'Guides activity placement to optimal time slots. Used for subject-specific timing preferences like physical education in morning periods.',
@@ -92,7 +92,7 @@ export const TIME_CONSTRAINTS: ConstraintDefinition[] = [
 		repeatable: true,
 	},
 	{
-		FETName: 'ConstraintTeachersMaxGapsPerWeek',
+		fetName: 'ConstraintTeachersMaxGapsPerWeek',
 		friendlyName: 'Teachers Max Gaps Per Week',
 		description:
 			'Minimizes free periods during work days for efficiency and teacher satisfaction. Recommended for optimization, helps create efficient schedules.',
@@ -101,7 +101,7 @@ export const TIME_CONSTRAINTS: ConstraintDefinition[] = [
 		repeatable: false,
 	},
 	{
-		FETName: 'ConstraintSubactivitiesPreferredTimeSlots',
+		fetName: 'ConstraintSubactivitiesPreferredTimeSlots',
 		friendlyName: 'Subactivities Preferred Time Slots',
 		description:
 			'Sets preferred time slots for subactivities of a specific component number. Used for complex activity arrangements.',
@@ -111,7 +111,7 @@ export const TIME_CONSTRAINTS: ConstraintDefinition[] = [
 	},
 	// Teacher Daily/Weekly Constraints
 	{
-		FETName: 'ConstraintTeachersMinHoursDaily',
+		fetName: 'ConstraintTeachersMinHoursDaily',
 		friendlyName: 'Teachers Min Hours Daily',
 		description:
 			'Ensures teachers have minimum teaching hours per day for contract requirements or workload balancing. Can create substitution problems if teachers are absent.',
@@ -120,7 +120,7 @@ export const TIME_CONSTRAINTS: ConstraintDefinition[] = [
 		repeatable: false,
 	},
 	{
-		FETName: 'ConstraintTeachersMaxHoursDaily',
+		fetName: 'ConstraintTeachersMaxHoursDaily',
 		friendlyName: 'Teachers Max Hours Daily',
 		description:
 			'Prevents teacher overload on single days for workload balancing and teacher wellbeing. Recommended for maintaining balanced schedules.',
@@ -129,7 +129,7 @@ export const TIME_CONSTRAINTS: ConstraintDefinition[] = [
 		repeatable: false,
 	},
 	{
-		FETName: 'ConstraintTeacherMinHoursDaily',
+		fetName: 'ConstraintTeacherMinHoursDaily',
 		friendlyName: 'Teacher Min Hours Daily',
 		description:
 			'Ensures specific teacher has minimum teaching hours per day. Individual teacher version of the general constraint.',
@@ -138,7 +138,7 @@ export const TIME_CONSTRAINTS: ConstraintDefinition[] = [
 		repeatable: true,
 	},
 	{
-		FETName: 'ConstraintTeacherMaxHoursDaily',
+		fetName: 'ConstraintTeacherMaxHoursDaily',
 		friendlyName: 'Teacher Max Hours Daily',
 		description:
 			'Prevents specific teacher overload on single days. Individual teacher version for customized workload management.',
@@ -147,7 +147,7 @@ export const TIME_CONSTRAINTS: ConstraintDefinition[] = [
 		repeatable: true,
 	},
 	{
-		FETName: 'ConstraintTeachersMaxDaysPerWeek',
+		fetName: 'ConstraintTeachersMaxDaysPerWeek',
 		friendlyName: 'Teachers Max Days Per Week',
 		description:
 			'Allows all teachers to have free days. General version for school-wide policy.',
@@ -156,7 +156,7 @@ export const TIME_CONSTRAINTS: ConstraintDefinition[] = [
 		repeatable: false,
 	},
 	{
-		FETName: 'ConstraintTeacherMinDaysPerWeek',
+		fetName: 'ConstraintTeacherMinDaysPerWeek',
 		friendlyName: 'Teacher Min Days Per Week',
 		description:
 			'Forces specific teacher to work minimum days. Rarely needed - usually better achieved through other constraints.',
@@ -166,7 +166,7 @@ export const TIME_CONSTRAINTS: ConstraintDefinition[] = [
 	},
 	// Teacher Gap Constraints
 	{
-		FETName: 'ConstraintTeachersMaxGapsPerDay',
+		fetName: 'ConstraintTeachersMaxGapsPerDay',
 		friendlyName: 'Teachers Max Gaps Per Day',
 		description:
 			'Prevents scattered schedules within a day for all teachers. Improves teacher efficiency and reduces waiting time.',
@@ -175,7 +175,7 @@ export const TIME_CONSTRAINTS: ConstraintDefinition[] = [
 		repeatable: false,
 	},
 	{
-		FETName: 'ConstraintTeacherMaxGapsPerDay',
+		fetName: 'ConstraintTeacherMaxGapsPerDay',
 		friendlyName: 'Teacher Max Gaps Per Day',
 		description:
 			'Prevents scattered schedules within a day for specific teacher. Individual version for customized scheduling.',
@@ -184,7 +184,7 @@ export const TIME_CONSTRAINTS: ConstraintDefinition[] = [
 		repeatable: true,
 	},
 	{
-		FETName: 'ConstraintTeacherMaxGapsPerWeek',
+		fetName: 'ConstraintTeacherMaxGapsPerWeek',
 		friendlyName: 'Teacher Max Gaps Per Week',
 		description:
 			'Minimizes free periods during work days for specific teacher. Individual version for personalized gap management.',
@@ -194,7 +194,7 @@ export const TIME_CONSTRAINTS: ConstraintDefinition[] = [
 	},
 	// Student Constraints
 	{
-		FETName: 'ConstraintStudentsMaxHoursDaily',
+		fetName: 'ConstraintStudentsMaxHoursDaily',
 		friendlyName: 'Students Max Hours Daily',
 		description:
 			'Prevents student overload for age-appropriate scheduling and attention span considerations. Recommended for all student groups.',
@@ -203,7 +203,7 @@ export const TIME_CONSTRAINTS: ConstraintDefinition[] = [
 		repeatable: false,
 	},
 	{
-		FETName: 'ConstraintStudentsMinHoursDaily',
+		fetName: 'ConstraintStudentsMinHoursDaily',
 		friendlyName: 'Students Min Hours Daily',
 		description:
 			'Ensures students have minimum daily instruction for curriculum requirements.',
@@ -212,7 +212,7 @@ export const TIME_CONSTRAINTS: ConstraintDefinition[] = [
 		repeatable: false,
 	},
 	{
-		FETName: 'ConstraintStudentsSetMaxHoursDaily',
+		fetName: 'ConstraintStudentsSetMaxHoursDaily',
 		friendlyName: 'Students Set Max Hours Daily',
 		description:
 			'Prevents student overload for specific student groups. Allows differentiated scheduling by year level or program.',
@@ -221,7 +221,7 @@ export const TIME_CONSTRAINTS: ConstraintDefinition[] = [
 		repeatable: true,
 	},
 	{
-		FETName: 'ConstraintStudentsSetMinHoursDaily',
+		fetName: 'ConstraintStudentsSetMinHoursDaily',
 		friendlyName: 'Students Set Min Hours Daily',
 		description:
 			'Ensures specific student groups have minimum daily instruction. Useful for different programs or year levels.',
@@ -230,7 +230,7 @@ export const TIME_CONSTRAINTS: ConstraintDefinition[] = [
 		repeatable: true,
 	},
 	{
-		FETName: 'ConstraintStudentsSetNotAvailableTimes',
+		fetName: 'ConstraintStudentsSetNotAvailableTimes',
 		friendlyName: 'Students Set Not Available Times',
 		description:
 			'Blocks specific time periods when student groups cannot attend classes due to assemblies, field trips, or special events.',
@@ -239,7 +239,7 @@ export const TIME_CONSTRAINTS: ConstraintDefinition[] = [
 		repeatable: true,
 	},
 	{
-		FETName: 'ConstraintStudentsSetMaxGapsPerWeek',
+		fetName: 'ConstraintStudentsSetMaxGapsPerWeek',
 		friendlyName: 'Students Set Max Gaps Per Week',
 		description:
 			'Limits maximum gaps for specific student groups. Allows differentiated gap policies by year level.',
@@ -248,7 +248,7 @@ export const TIME_CONSTRAINTS: ConstraintDefinition[] = [
 		repeatable: true,
 	},
 	{
-		FETName: 'ConstraintStudentsSetMaxGapsPerDay',
+		fetName: 'ConstraintStudentsSetMaxGapsPerDay',
 		friendlyName: 'Students Set Max Gaps Per Day',
 		description:
 			'Prevents scattered schedules within a day for specific student groups. Maintains structured learning environment.',
@@ -257,7 +257,7 @@ export const TIME_CONSTRAINTS: ConstraintDefinition[] = [
 		repeatable: true,
 	},
 	{
-		FETName: 'ConstraintStudentsSetEarlyMaxBeginningsAtSecondHour',
+		fetName: 'ConstraintStudentsSetEarlyMaxBeginningsAtSecondHour',
 		friendlyName: 'Students Set Early Max Beginnings At Second Hour',
 		description:
 			'Limits activities beginning at second hour for specific student groups. Helps manage differentiated start times.',
@@ -267,7 +267,7 @@ export const TIME_CONSTRAINTS: ConstraintDefinition[] = [
 	},
 	// Continuous Hours Constraints
 	{
-		FETName: 'ConstraintTeachersMaxHoursContinuously',
+		fetName: 'ConstraintTeachersMaxHoursContinuously',
 		friendlyName: 'Teachers Max Hours Continuously',
 		description:
 			'Prevents fatigue from too many consecutive hours of teaching. Recommended for health and safety.',
@@ -276,7 +276,7 @@ export const TIME_CONSTRAINTS: ConstraintDefinition[] = [
 		repeatable: false,
 	},
 	{
-		FETName: 'ConstraintTeacherMaxHoursContinuously',
+		fetName: 'ConstraintTeacherMaxHoursContinuously',
 		friendlyName: 'Teacher Max Hours Continuously',
 		description:
 			'Prevents fatigue from too many consecutive hours for specific teacher. Individual version for customized scheduling.',
@@ -285,7 +285,7 @@ export const TIME_CONSTRAINTS: ConstraintDefinition[] = [
 		repeatable: true,
 	},
 	{
-		FETName: 'ConstraintStudentsMaxHoursContinuously',
+		fetName: 'ConstraintStudentsMaxHoursContinuously',
 		friendlyName: 'Students Max Hours Continuously',
 		description:
 			'Prevents fatigue from too many consecutive hours for students. Important for attention span management.',
@@ -295,7 +295,7 @@ export const TIME_CONSTRAINTS: ConstraintDefinition[] = [
 	},
 	// Activity Tag Constraints
 	{
-		FETName: 'ConstraintTeachersActivityTagMaxHoursDaily',
+		fetName: 'ConstraintTeachersActivityTagMaxHoursDaily',
 		friendlyName: 'Teachers Activity Tag Max Hours Daily',
 		description:
 			'Limits specific types of activities per day for all teachers. Prevents too much of intensive subjects like labs or sports.',
@@ -304,7 +304,7 @@ export const TIME_CONSTRAINTS: ConstraintDefinition[] = [
 		repeatable: true,
 	},
 	{
-		FETName: 'ConstraintTeacherActivityTagMaxHoursDaily',
+		fetName: 'ConstraintTeacherActivityTagMaxHoursDaily',
 		friendlyName: 'Teacher Activity Tag Max Hours Daily',
 		description:
 			'Limits specific types of activities per day for individual teacher. Customized activity type management.',
@@ -313,7 +313,7 @@ export const TIME_CONSTRAINTS: ConstraintDefinition[] = [
 		repeatable: true,
 	},
 	{
-		FETName: 'ConstraintTeachersActivityTagMaxHoursContinuously',
+		fetName: 'ConstraintTeachersActivityTagMaxHoursContinuously',
 		friendlyName: 'Teachers Activity Tag Max Hours Continuously',
 		description:
 			'Limits consecutive hours of specific activity types for all teachers. Prevents fatigue from intensive subjects.',
@@ -322,7 +322,7 @@ export const TIME_CONSTRAINTS: ConstraintDefinition[] = [
 		repeatable: true,
 	},
 	{
-		FETName: 'ConstraintStudentsActivityTagMaxHoursDaily',
+		fetName: 'ConstraintStudentsActivityTagMaxHoursDaily',
 		friendlyName: 'Students Activity Tag Max Hours Daily',
 		description:
 			'Limits specific types of activities per day for students. Prevents overload of intensive subjects.',
@@ -331,7 +331,7 @@ export const TIME_CONSTRAINTS: ConstraintDefinition[] = [
 		repeatable: true,
 	},
 	{
-		FETName: 'ConstraintStudentsActivityTagMaxHoursContinuously',
+		fetName: 'ConstraintStudentsActivityTagMaxHoursContinuously',
 		friendlyName: 'Students Activity Tag Max Hours Continuously',
 		description:
 			'Limits consecutive hours of specific activity types for students. Manages attention span for intensive subjects.',
@@ -341,7 +341,7 @@ export const TIME_CONSTRAINTS: ConstraintDefinition[] = [
 	},
 	// Break and Interval Constraints
 	{
-		FETName: 'ConstraintBreakTimes',
+		fetName: 'ConstraintBreakTimes',
 		friendlyName: 'Break Times',
 		description:
 			'Easy way to declare that all teachers and students are unavailable during breaks. Used for lunch breaks, assembly periods, whole-school events.',
@@ -350,7 +350,7 @@ export const TIME_CONSTRAINTS: ConstraintDefinition[] = [
 		repeatable: true,
 	},
 	{
-		FETName: 'ConstraintTeacherIntervalMaxDaysPerWeek',
+		fetName: 'ConstraintTeacherIntervalMaxDaysPerWeek',
 		friendlyName: 'Teacher Interval Max Days Per Week',
 		description:
 			'Limits maximum days per week a teacher works within specific time intervals. Advanced scheduling control.',
@@ -359,7 +359,7 @@ export const TIME_CONSTRAINTS: ConstraintDefinition[] = [
 		repeatable: true,
 	},
 	{
-		FETName: 'ConstraintStudentsIntervalMaxDaysPerWeek',
+		fetName: 'ConstraintStudentsIntervalMaxDaysPerWeek',
 		friendlyName: 'Students Interval Max Days Per Week',
 		description:
 			'Limits maximum days per week students have activities within specific time intervals.',
@@ -368,7 +368,7 @@ export const TIME_CONSTRAINTS: ConstraintDefinition[] = [
 		repeatable: false,
 	},
 	{
-		FETName: 'ConstraintStudentsSetIntervalMaxDaysPerWeek',
+		fetName: 'ConstraintStudentsSetIntervalMaxDaysPerWeek',
 		friendlyName: 'Students Set Interval Max Days Per Week',
 		description:
 			'Limits maximum days per week specific student groups have activities within specific time intervals.',
@@ -378,7 +378,7 @@ export const TIME_CONSTRAINTS: ConstraintDefinition[] = [
 	},
 	// Activity Relationship Constraints
 	{
-		FETName: 'ConstraintTwoActivitiesConsecutive',
+		fetName: 'ConstraintTwoActivitiesConsecutive',
 		friendlyName: 'Two Activities Consecutive',
 		description:
 			'Forces activities to be scheduled back-to-back. Used for theory-practice combinations and double periods.',
@@ -387,7 +387,7 @@ export const TIME_CONSTRAINTS: ConstraintDefinition[] = [
 		repeatable: true,
 	},
 	{
-		FETName: 'ConstraintTwoActivitiesGrouped',
+		fetName: 'ConstraintTwoActivitiesGrouped',
 		friendlyName: 'Two Activities Grouped',
 		description:
 			'Groups activities on same day without enforcing order. Used for related subjects and room efficiency.',
@@ -396,7 +396,7 @@ export const TIME_CONSTRAINTS: ConstraintDefinition[] = [
 		repeatable: true,
 	},
 	{
-		FETName: 'ConstraintTwoActivitiesOrdered',
+		fetName: 'ConstraintTwoActivitiesOrdered',
 		friendlyName: 'Two Activities Ordered',
 		description:
 			'Enforces sequence where first activity comes before second. Used for prerequisites and logical progression. Very restrictive.',
@@ -405,7 +405,7 @@ export const TIME_CONSTRAINTS: ConstraintDefinition[] = [
 		repeatable: true,
 	},
 	{
-		FETName: 'ConstraintActivitiesNotOverlapping',
+		fetName: 'ConstraintActivitiesNotOverlapping',
 		friendlyName: 'Activities Not Overlapping',
 		description:
 			'Prevents activities from overlapping in time. Special cases beyond basic constraints.',
@@ -414,7 +414,7 @@ export const TIME_CONSTRAINTS: ConstraintDefinition[] = [
 		repeatable: true,
 	},
 	{
-		FETName: 'ConstraintMinGapsBetweenActivities',
+		fetName: 'ConstraintMinGapsBetweenActivities',
 		friendlyName: 'Min Gaps Between Activities',
 		description:
 			'Ensures minimum time between related activities. Used for digestion time and preparation needs.',
@@ -424,7 +424,7 @@ export const TIME_CONSTRAINTS: ConstraintDefinition[] = [
 	},
 	// Same Time Scheduling
 	{
-		FETName: 'ConstraintActivitiesSameStartingTime',
+		fetName: 'ConstraintActivitiesSameStartingTime',
 		friendlyName: 'Activities Same Starting Time',
 		description:
 			'Forces activities to start at exactly same time. Used for parallel courses and option blocks.',
@@ -433,7 +433,7 @@ export const TIME_CONSTRAINTS: ConstraintDefinition[] = [
 		repeatable: true,
 	},
 	{
-		FETName: 'ConstraintActivitiesSameStartingDay',
+		fetName: 'ConstraintActivitiesSameStartingDay',
 		friendlyName: 'Activities Same Starting Day',
 		description:
 			'Groups activities on same day, any hours. Used for course groupings and teacher efficiency.',
@@ -442,7 +442,7 @@ export const TIME_CONSTRAINTS: ConstraintDefinition[] = [
 		repeatable: true,
 	},
 	{
-		FETName: 'ConstraintActivitiesSameStartingHour',
+		fetName: 'ConstraintActivitiesSameStartingHour',
 		friendlyName: 'Activities Same Starting Hour',
 		description:
 			'Schedules activities at same hour across different days. Used for parallel scheduling patterns.',
@@ -452,7 +452,7 @@ export const TIME_CONSTRAINTS: ConstraintDefinition[] = [
 	},
 	// Activity Time Slot Constraints
 	{
-		FETName: 'ConstraintActivityPreferredTimeSlots',
+		fetName: 'ConstraintActivityPreferredTimeSlots',
 		friendlyName: 'Activity Preferred Time Slots',
 		description:
 			'Provides multiple acceptable time slots for a single activity. Advanced time preference management.',
@@ -461,7 +461,7 @@ export const TIME_CONSTRAINTS: ConstraintDefinition[] = [
 		repeatable: true,
 	},
 	{
-		FETName: 'ConstraintActivitiesPreferredTimeSlots',
+		fetName: 'ConstraintActivitiesPreferredTimeSlots',
 		friendlyName: 'Activities Preferred Time Slots',
 		description:
 			'Sets preferred time slots for multiple activities based on various criteria. Bulk time slot preference management.',
@@ -471,7 +471,7 @@ export const TIME_CONSTRAINTS: ConstraintDefinition[] = [
 	},
 	// Special Scheduling Constraints
 	{
-		FETName: 'ConstraintActivityEndsStudentsDay',
+		fetName: 'ConstraintActivityEndsStudentsDay',
 		friendlyName: 'Activity Ends Students Day',
 		description:
 			'Ensures specific activities are scheduled at end of day. Used for activities not attended by all students.',
@@ -480,7 +480,7 @@ export const TIME_CONSTRAINTS: ConstraintDefinition[] = [
 		repeatable: true,
 	},
 	{
-		FETName: 'ConstraintActivitiesEndStudentsDay',
+		fetName: 'ConstraintActivitiesEndStudentsDay',
 		friendlyName: 'Activities End Students Day',
 		description:
 			'Ensures multiple activities are scheduled at end of day based on criteria. Bulk version for end-of-day scheduling.',
@@ -490,7 +490,7 @@ export const TIME_CONSTRAINTS: ConstraintDefinition[] = [
 	},
 	// Advanced Time Slot Constraints
 	{
-		FETName: 'ConstraintActivitiesOccupyMaxTimeSlotsFromSelection',
+		fetName: 'ConstraintActivitiesOccupyMaxTimeSlotsFromSelection',
 		friendlyName: 'Activities Occupy Max Time Slots From Selection',
 		description:
 			'Limits the number of time slots occupied by activities from a predefined selection. Advanced scheduling control.',
@@ -499,7 +499,7 @@ export const TIME_CONSTRAINTS: ConstraintDefinition[] = [
 		repeatable: true,
 	},
 	{
-		FETName: 'ConstraintActivitiesMaxSimultaneousInSelectedTimeSlots',
+		fetName: 'ConstraintActivitiesMaxSimultaneousInSelectedTimeSlots',
 		friendlyName: 'Activities Max Simultaneous In Selected Time Slots',
 		description:
 			'Limits maximum number of activities running simultaneously in selected time slots. Resource management.',
@@ -508,7 +508,7 @@ export const TIME_CONSTRAINTS: ConstraintDefinition[] = [
 		repeatable: true,
 	},
 	{
-		FETName: 'ConstraintActivitiesMinSimultaneousInSelectedTimeSlots',
+		fetName: 'ConstraintActivitiesMinSimultaneousInSelectedTimeSlots',
 		friendlyName: 'Activities Min Simultaneous In Selected Time Slots',
 		description:
 			'Ensures minimum number of activities running simultaneously in selected time slots. Resource utilization.',
@@ -517,7 +517,7 @@ export const TIME_CONSTRAINTS: ConstraintDefinition[] = [
 		repeatable: true,
 	},
 	{
-		FETName: 'ConstraintMaxTotalActivitiesFromSetInSelectedTimeSlots',
+		fetName: 'ConstraintMaxTotalActivitiesFromSetInSelectedTimeSlots',
 		friendlyName: 'Max Total Activities From Set In Selected Time Slots',
 		description:
 			'Limits total number of activities from a set that can occur in selected time slots. Advanced resource planning.',
@@ -526,7 +526,7 @@ export const TIME_CONSTRAINTS: ConstraintDefinition[] = [
 		repeatable: true,
 	},
 	{
-		FETName: 'ConstraintActivityTagsNotOverlapping',
+		fetName: 'ConstraintActivityTagsNotOverlapping',
 		friendlyName: 'Activity Tags Not Overlapping',
 		description:
 			'Prevents activities with specific tags from overlapping in time. Tag-based scheduling control.',
@@ -536,7 +536,7 @@ export const TIME_CONSTRAINTS: ConstraintDefinition[] = [
 	},
 	// Teacher Wellness Constraints
 	{
-		FETName: 'ConstraintTeacherMinRestingHours',
+		fetName: 'ConstraintTeacherMinRestingHours',
 		friendlyName: 'Teacher Min Resting Hours',
 		description:
 			'Ensures minimum resting hours between teaching periods for specific teacher. Teacher wellness and work-life balance.',
@@ -545,7 +545,7 @@ export const TIME_CONSTRAINTS: ConstraintDefinition[] = [
 		repeatable: true,
 	},
 	{
-		FETName: 'ConstraintTeachersMaxAfternoonsPerWeek',
+		fetName: 'ConstraintTeachersMaxAfternoonsPerWeek',
 		friendlyName: 'Teachers Max Afternoons Per Week',
 		description:
 			'Limits maximum afternoon sessions per week for all teachers. Work-life balance consideration.',
@@ -554,7 +554,7 @@ export const TIME_CONSTRAINTS: ConstraintDefinition[] = [
 		repeatable: false,
 	},
 	{
-		FETName: 'ConstraintStudentsMinHoursPerMorning',
+		fetName: 'ConstraintStudentsMinHoursPerMorning',
 		friendlyName: 'Students Min Hours Per Morning',
 		description:
 			'Ensures students have minimum hours of instruction per morning session. Morning productivity optimization.',
@@ -563,7 +563,7 @@ export const TIME_CONSTRAINTS: ConstraintDefinition[] = [
 		repeatable: false,
 	},
 	{
-		FETName: 'ConstraintTeachersMaxZeroGapsPerAfternoon',
+		fetName: 'ConstraintTeachersMaxZeroGapsPerAfternoon',
 		friendlyName: 'Teachers Max Zero Gaps Per Afternoon',
 		description:
 			'Limits afternoon periods with zero gaps for all teachers. Advanced gap management.',
@@ -572,7 +572,7 @@ export const TIME_CONSTRAINTS: ConstraintDefinition[] = [
 		repeatable: false,
 	},
 	{
-		FETName: 'ConstraintTeacherMaxTwoActivityTagsPerDayFromN1N2N3',
+		fetName: 'ConstraintTeacherMaxTwoActivityTagsPerDayFromN1N2N3',
 		friendlyName: 'Teacher Max Two Activity Tags Per Day From N1N2N3',
 		description:
 			'Specialized constraint for limiting activity tag combinations per day for specific teacher. Advanced tag management.',
@@ -584,7 +584,7 @@ export const TIME_CONSTRAINTS: ConstraintDefinition[] = [
 
 export const SPACE_CONSTRAINTS: ConstraintDefinition[] = [
 	{
-		FETName: 'ConstraintBasicCompulsorySpace',
+		fetName: 'ConstraintBasicCompulsorySpace',
 		friendlyName: 'Basic Compulsory Space',
 		description:
 			'Ensures that a room never has two or more activities scheduled simultaneously. Essential foundation constraint for room allocation.',
@@ -593,7 +593,7 @@ export const SPACE_CONSTRAINTS: ConstraintDefinition[] = [
 		repeatable: false,
 	},
 	{
-		FETName: 'ConstraintRoomNotAvailableTimes',
+		fetName: 'ConstraintRoomNotAvailableTimes',
 		friendlyName: 'Room Not Available Times',
 		description:
 			'Blocks specific time periods when rooms cannot be used due to maintenance, special events, or shared facilities.',
@@ -602,7 +602,7 @@ export const SPACE_CONSTRAINTS: ConstraintDefinition[] = [
 		repeatable: true,
 	},
 	{
-		FETName: 'ConstraintSubjectPreferredRoom',
+		fetName: 'ConstraintSubjectPreferredRoom',
 		friendlyName: 'Subject Preferred Room',
 		description:
 			'Links subjects to specialized facilities for equipment requirements. Essential for science labs, computer rooms, etc.',
@@ -611,7 +611,7 @@ export const SPACE_CONSTRAINTS: ConstraintDefinition[] = [
 		repeatable: true,
 	},
 	{
-		FETName: 'ConstraintSubjectPreferredRooms',
+		fetName: 'ConstraintSubjectPreferredRooms',
 		friendlyName: 'Subject Preferred Rooms',
 		description:
 			'Assigns multiple preferred rooms for a specific subject. Provides flexibility while maintaining specialization.',
@@ -620,7 +620,7 @@ export const SPACE_CONSTRAINTS: ConstraintDefinition[] = [
 		repeatable: true,
 	},
 	{
-		FETName: 'ConstraintSubjectActivityTagPreferredRoom',
+		fetName: 'ConstraintSubjectActivityTagPreferredRoom',
 		friendlyName: 'Subject Activity Tag Preferred Room',
 		description:
 			'Links subject-activity tag combinations to specific rooms. Advanced room assignment based on multiple criteria.',
@@ -629,7 +629,7 @@ export const SPACE_CONSTRAINTS: ConstraintDefinition[] = [
 		repeatable: true,
 	},
 	{
-		FETName: 'ConstraintSubjectActivityTagPreferredRooms',
+		fetName: 'ConstraintSubjectActivityTagPreferredRooms',
 		friendlyName: 'Subject Activity Tag Preferred Rooms',
 		description:
 			'Links subject-activity tag combinations to multiple preferred rooms. Flexible specialized room assignment.',
@@ -638,7 +638,7 @@ export const SPACE_CONSTRAINTS: ConstraintDefinition[] = [
 		repeatable: true,
 	},
 	{
-		FETName: 'ConstraintActivityPreferredRoom',
+		fetName: 'ConstraintActivityPreferredRoom',
 		friendlyName: 'Activity Preferred Room',
 		description:
 			'Assigns a preferred room for a specific activity. Individual activity room preference.',
@@ -647,7 +647,7 @@ export const SPACE_CONSTRAINTS: ConstraintDefinition[] = [
 		repeatable: true,
 	},
 	{
-		FETName: 'ConstraintActivityPreferredRooms',
+		fetName: 'ConstraintActivityPreferredRooms',
 		friendlyName: 'Activity Preferred Rooms',
 		description:
 			'Assigns multiple preferred rooms for a specific activity. Provides room options for individual activities.',
@@ -656,7 +656,7 @@ export const SPACE_CONSTRAINTS: ConstraintDefinition[] = [
 		repeatable: true,
 	},
 	{
-		FETName: 'ConstraintActivityTagPreferredRoom',
+		fetName: 'ConstraintActivityTagPreferredRoom',
 		friendlyName: 'Activity Tag Preferred Room',
 		description:
 			'Links activity tags to specific rooms. Room assignment based on activity type.',
@@ -665,7 +665,7 @@ export const SPACE_CONSTRAINTS: ConstraintDefinition[] = [
 		repeatable: true,
 	},
 	{
-		FETName: 'ConstraintActivityTagPreferredRooms',
+		fetName: 'ConstraintActivityTagPreferredRooms',
 		friendlyName: 'Activity Tag Preferred Rooms',
 		description:
 			'Links activity tags to multiple preferred rooms. Flexible room assignment by activity type.',
@@ -675,7 +675,7 @@ export const SPACE_CONSTRAINTS: ConstraintDefinition[] = [
 	},
 	// Teacher Room Constraints
 	{
-		FETName: 'ConstraintTeacherHomeRoom',
+		fetName: 'ConstraintTeacherHomeRoom',
 		friendlyName: 'Teacher Home Room',
 		description:
 			'Assigns a home room for a specific teacher. Reduces movement and provides teacher base.',
@@ -684,7 +684,7 @@ export const SPACE_CONSTRAINTS: ConstraintDefinition[] = [
 		repeatable: true,
 	},
 	{
-		FETName: 'ConstraintTeacherHomeRooms',
+		fetName: 'ConstraintTeacherHomeRooms',
 		friendlyName: 'Teacher Home Rooms',
 		description:
 			'Assigns multiple home rooms for a specific teacher. Provides room options while maintaining teacher base.',
@@ -694,7 +694,7 @@ export const SPACE_CONSTRAINTS: ConstraintDefinition[] = [
 	},
 	// Student Room Constraints
 	{
-		FETName: 'ConstraintStudentsSetHomeRoom',
+		fetName: 'ConstraintStudentsSetHomeRoom',
 		friendlyName: 'Students Set Home Room',
 		description:
 			'Assigns a home room for specific student groups. Maintains class identity and reduces movement.',
@@ -703,7 +703,7 @@ export const SPACE_CONSTRAINTS: ConstraintDefinition[] = [
 		repeatable: true,
 	},
 	{
-		FETName: 'ConstraintStudentsSetHomeRooms',
+		fetName: 'ConstraintStudentsSetHomeRooms',
 		friendlyName: 'Students Set Home Rooms',
 		description:
 			'Assigns multiple home rooms for specific student groups. Provides room flexibility while maintaining group cohesion.',
@@ -713,7 +713,7 @@ export const SPACE_CONSTRAINTS: ConstraintDefinition[] = [
 	},
 	// Building Change Constraints
 	{
-		FETName: 'ConstraintTeachersMaxBuildingChangesPerDay',
+		fetName: 'ConstraintTeachersMaxBuildingChangesPerDay',
 		friendlyName: 'Teachers Max Building Changes Per Day',
 		description:
 			'Limits building changes for all teachers to reduce travel time and improve efficiency.',
@@ -722,7 +722,7 @@ export const SPACE_CONSTRAINTS: ConstraintDefinition[] = [
 		repeatable: false,
 	},
 	{
-		FETName: 'ConstraintTeacherMaxBuildingChangesPerDay',
+		fetName: 'ConstraintTeacherMaxBuildingChangesPerDay',
 		friendlyName: 'Teacher Max Building Changes Per Day',
 		description:
 			'Limits building changes for specific teacher. Individual control over teacher movement.',
@@ -731,7 +731,7 @@ export const SPACE_CONSTRAINTS: ConstraintDefinition[] = [
 		repeatable: true,
 	},
 	{
-		FETName: 'ConstraintStudentsSetMaxBuildingChangesPerDay',
+		fetName: 'ConstraintStudentsSetMaxBuildingChangesPerDay',
 		friendlyName: 'Students Set Max Building Changes Per Day',
 		description:
 			'Limits building changes for specific student groups. Reduces student travel time and supervision issues.',
@@ -740,7 +740,7 @@ export const SPACE_CONSTRAINTS: ConstraintDefinition[] = [
 		repeatable: true,
 	},
 	{
-		FETName: 'ConstraintStudentsSetMinGapsBetweenBuildingChanges',
+		fetName: 'ConstraintStudentsSetMinGapsBetweenBuildingChanges',
 		friendlyName: 'Students Set Min Gaps Between Building Changes',
 		description:
 			'Ensures minimum time between building changes for student groups. Allows adequate transition time.',
@@ -750,7 +750,7 @@ export const SPACE_CONSTRAINTS: ConstraintDefinition[] = [
 	},
 	// Advanced Room Constraints
 	{
-		FETName: 'ConstraintActivitiesOccupyMaxDifferentRooms',
+		fetName: 'ConstraintActivitiesOccupyMaxDifferentRooms',
 		friendlyName: 'Activities Occupy Max Different Rooms',
 		description:
 			'Limits the number of different rooms used by a set of activities. Promotes room efficiency and reduces setup.',
@@ -759,7 +759,7 @@ export const SPACE_CONSTRAINTS: ConstraintDefinition[] = [
 		repeatable: true,
 	},
 	{
-		FETName: 'ConstraintActivitiesSameRoomIfConsecutive',
+		fetName: 'ConstraintActivitiesSameRoomIfConsecutive',
 		friendlyName: 'Activities Same Room If Consecutive',
 		description:
 			'Ensures consecutive activities use the same room when possible. Reduces unnecessary movement.',

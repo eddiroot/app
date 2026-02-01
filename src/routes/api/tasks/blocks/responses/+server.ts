@@ -1,4 +1,7 @@
-import { upsertClassTaskBlockResponse, upsertClassTaskResponse } from '$lib/server/db/service';
+import {
+	upsertClassTaskBlockResponse,
+	upsertClassTaskResponse,
+} from '$lib/server/db/service';
 import { json } from '@sveltejs/kit';
 
 export async function POST({ request, locals: { security } }) {
@@ -17,7 +20,7 @@ export async function POST({ request, locals: { security } }) {
 			taskBlockId,
 			user.id,
 			classTaskId,
-			response
+			response,
 		);
 
 		return json({ success: true, response: savedResponse });

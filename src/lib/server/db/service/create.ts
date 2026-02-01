@@ -61,19 +61,22 @@ export async function createSchoolTerm(
 }
 
 export async function createBehaviourLevel(
-	data: typeof table.behaviourLevel.$inferInsert,
+	data: typeof table.schoolBehaviourLevel.$inferInsert,
 ) {
 	const [behaviourLevel] = await db
-		.insert(table.behaviourLevel)
+		.insert(table.schoolBehaviourLevel)
 		.values(data)
 		.returning();
 	return behaviourLevel;
 }
 
 export async function createBehaviour(
-	data: typeof table.behaviour.$inferInsert,
+	data: typeof table.schoolBehaviour.$inferInsert,
 ) {
-	const [behaviour] = await db.insert(table.behaviour).values(data).returning();
+	const [behaviour] = await db
+		.insert(table.schoolBehaviour)
+		.values(data)
+		.returning();
 	return behaviour;
 }
 
@@ -221,44 +224,9 @@ export async function createRubricCell(
 }
 
 // Schema: Event
-export async function createEventSchool(
-	data: typeof table.eventSchool.$inferInsert,
-) {
-	const [eventSchool] = await db
-		.insert(table.eventSchool)
-		.values(data)
-		.returning();
-	return eventSchool;
-}
-
-export async function createEventCampus(
-	data: typeof table.eventCampus.$inferInsert,
-) {
-	const [eventCampus] = await db
-		.insert(table.eventCampus)
-		.values(data)
-		.returning();
-	return eventCampus;
-}
-
-export async function createEventSubjectOffering(
-	data: typeof table.eventSubjectOffering.$inferInsert,
-) {
-	const [eventSubject] = await db
-		.insert(table.eventSubjectOffering)
-		.values(data)
-		.returning();
-	return eventSubject;
-}
-
-export async function createEventSubjectOfferingClass(
-	data: typeof table.eventSubjectOfferingClass.$inferInsert,
-) {
-	const [eventSubjectClass] = await db
-		.insert(table.eventSubjectOfferingClass)
-		.values(data)
-		.returning();
-	return eventSubjectClass;
+export async function createEvent(data: typeof table.event.$inferInsert) {
+	const [event] = await db.insert(table.event).values(data).returning();
+	return event;
 }
 
 // Schema: News
@@ -275,4 +243,20 @@ export async function createNewsCategory(
 export async function createNews(data: typeof table.news.$inferInsert) {
 	const [newsItem] = await db.insert(table.news).values(data).returning();
 	return newsItem;
+}
+
+// Schema: Resource
+export async function createResource(data: typeof table.resource.$inferInsert) {
+	const [resource] = await db.insert(table.resource).values(data).returning();
+	return resource;
+}
+
+export async function createSubjectOfferingClassResource(
+	data: typeof table.subjectOfferingClassResource.$inferInsert,
+) {
+	const [subjectOfferingClassResource] = await db
+		.insert(table.subjectOfferingClassResource)
+		.values(data)
+		.returning();
+	return subjectOfferingClassResource;
 }

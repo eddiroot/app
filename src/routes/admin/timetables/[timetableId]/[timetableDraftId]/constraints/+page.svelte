@@ -3,39 +3,39 @@
 	import * as Card from '$lib/components/ui/card';
 	import Checkbox from '$lib/components/ui/checkbox/checkbox.svelte';
 	import * as Dialog from '$lib/components/ui/dialog';
+	import type { Constraint } from '$lib/server/db/schema';
+	import {
+		getConstraintFormComponent,
+		requiresEnhancedProps,
+	} from '$lib/server/fet/constraints/constraint-form-mapping.js';
 	import EditIcon from '@lucide/svelte/icons/edit';
 	import PlusIcon from '@lucide/svelte/icons/plus';
 	import TrashIcon from '@lucide/svelte/icons/trash';
-	// Import constraint form mapping utilities
-	import { getConstraintFormComponent, requiresEnhancedProps } from '$lib/constraint-form-mapping';
-	// Fallback generic form
-	import type { Constraint } from '$lib/server/db/schema/timetables';
 
 	let { data } = $props();
 	let {
-		user,
 		timetableId,
 		timetableDraftId,
 		currentTimeConstraints,
 		currentSpaceConstraints,
 		availableTimeConstraints,
 		availableSpaceConstraints,
-		formData
-	} = data;
+		formData,
+	} = $derived(data);
 
-	// Create reactive state for constraint active status with optimistic updates
 	let constraintStates = $state(new Map());
 
-	// Initialize constraint states
 	$effect(() => {
 		// Initialize states for current constraints
-		[...currentTimeConstraints, ...currentSpaceConstraints].forEach((constraint) => {
-			constraintStates.set(`${constraint.id}`, {
-				active: constraint.active,
-				isUpdating: false,
-				originalActive: constraint.active
-			});
-		});
+		[...currentTimeConstraints, ...currentSpaceConstraints].forEach(
+			(constraint) => {
+				constraintStates.set(constraint.tt_draft_con.id, {
+					active: constraint.tt_draft_con.active,
+					isUpdating: false,
+					originalActive: constraint.tt_draft_con.active,
+				});
+			},
+		);
 	});
 
 	// Modal state
@@ -62,14 +62,12 @@
 				`/admin/timetables/${timetableId}/${timetableDraftId}/constraints`,
 				{
 					method: 'POST',
-					headers: {
-						'Content-Type': 'application/json'
-					},
+					headers: { 'Content-Type': 'application/json' },
 					body: JSON.stringify({
 						constraintId: constraintToAdd.id,
-						parameters: formData
-					})
-				}
+						parameters: formData,
+					}),
+				},
 			);
 
 			const result = await response.json();
@@ -90,7 +88,10 @@
 	}
 
 	// Handle toggling constraint active status
-	async function handleToggleConstraintActive(constraintId: number, newActiveState: boolean) {
+	async function handleToggleConstraintActive(
+		constraintId: number,
+		newActiveState: boolean,
+	) {
 		const stateKey = `${constraintId}`;
 		const currentState = constraintStates.get(stateKey);
 
@@ -100,7 +101,7 @@
 		constraintStates.set(stateKey, {
 			...currentState,
 			active: newActiveState,
-			isUpdating: true
+			isUpdating: true,
 		});
 
 		try {
@@ -108,14 +109,12 @@
 				`/admin/timetables/${timetableId}/${timetableDraftId}/constraints`,
 				{
 					method: 'PATCH',
-					headers: {
-						'Content-Type': 'application/json'
-					},
+					headers: { 'Content-Type': 'application/json' },
 					body: JSON.stringify({
 						constraintId: constraintId,
-						active: newActiveState
-					})
-				}
+						active: newActiveState,
+					}),
+				},
 			);
 
 			const result = await response.json();
@@ -125,14 +124,14 @@
 				constraintStates.set(stateKey, {
 					active: newActiveState,
 					isUpdating: false,
-					originalActive: newActiveState
+					originalActive: newActiveState,
 				});
 			} else {
 				// Rollback optimistic update
 				constraintStates.set(stateKey, {
 					...currentState,
 					active: currentState.originalActive,
-					isUpdating: false
+					isUpdating: false,
 				});
 				console.error('Failed to update constraint:', result.error);
 			}
@@ -141,7 +140,7 @@
 			constraintStates.set(stateKey, {
 				...currentState,
 				active: currentState.originalActive,
-				isUpdating: false
+				isUpdating: false,
 			});
 			console.error('Error updating constraint:', error);
 		}
@@ -149,7 +148,11 @@
 
 	// Handle deleting a constraint from the timetable
 	async function handleDeleteConstraint(ttConstraintId: number) {
-		if (!confirm('Are you sure you want to remove this constraint from the timetable?')) {
+		if (
+			!confirm(
+				'Are you sure you want to remove this constraint from the timetable?',
+			)
+		) {
 			return;
 		}
 
@@ -158,13 +161,9 @@
 				`/admin/timetables/${timetableId}/${timetableDraftId}/constraints`,
 				{
 					method: 'DELETE',
-					headers: {
-						'Content-Type': 'application/json'
-					},
-					body: JSON.stringify({
-						ttConstraintId: ttConstraintId
-					})
-				}
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify({ ttConstraintId: ttConstraintId }),
+				},
 			);
 
 			const result = await response.json();
@@ -184,7 +183,7 @@
 
 	// Get the appropriate form component for a constraint using the mapping
 	function getFormComponent(constraint: Constraint) {
-		return getConstraintFormComponent(constraint.FETName);
+		return getConstraintFormComponent(constraint.fetName);
 	}
 </script>
 
@@ -195,7 +194,9 @@
 			Timetable ID: {timetableId}
 		</div>
 		<div>
-			<Button href="/admin/constraintinfo" variant="outline">Info & Recommendations</Button>
+			<Button href="/admin/constraintinfo" variant="outline"
+				>Info & Recommendations</Button
+			>
 		</div>
 	</div>
 
@@ -220,34 +221,45 @@
 					{:else}
 						<div class="space-y-3">
 							{#each currentTimeConstraints as constraint}
-								<div class="flex items-center justify-between rounded-lg border p-3">
+								<div
+									class="flex items-center justify-between rounded-lg border p-3"
+								>
 									<div class="flex-1">
-										<h3 class="font-medium">{constraint.friendlyName}</h3>
+										<h3 class="font-medium">{constraint.con.friendlyName}</h3>
 										<p class="text-muted-foreground text-sm">
-											{constraint.description}
+											{constraint.con.description}
 										</p>
 									</div>
 									<div class="flex items-center gap-3">
-										{#if constraint.optional}
-											{@const state = constraintStates.get(`${constraint.id}`)}
+										{#if constraint.con.optional}
+											{@const state = constraintStates.get(
+												constraint.tt_draft_con.id,
+											)}
 											<Checkbox
-												checked={state?.active ?? constraint.active}
+												checked={state?.active ??
+													constraint.tt_draft_con.active}
 												disabled={state?.isUpdating ?? false}
 												onCheckedChange={(checked) =>
-													handleToggleConstraintActive(constraint.id, checked === true)}
+													handleToggleConstraintActive(
+														constraint.tt_draft_con.id,
+														checked === true,
+													)}
 											/>
 										{:else}
-											<span class="text-muted-foreground text-xs">Mandatory</span>
+											<span class="text-muted-foreground text-xs"
+												>Mandatory</span
+											>
 										{/if}
 										<div class="flex gap-1">
 											<Button variant="ghost" size="sm" onclick={() => {}}>
 												<EditIcon class="h-4 w-4" />
 											</Button>
-											{#if constraint.optional}
+											{#if constraint.con.optional}
 												<Button
 													variant="ghost"
 													size="sm"
-													onclick={() => handleDeleteConstraint(constraint.id)}
+													onclick={() =>
+														handleDeleteConstraint(constraint.tt_draft_con.id)}
 												>
 													<TrashIcon class="h-4 w-4" />
 												</Button>
@@ -265,7 +277,9 @@
 		<!-- Active Space Constraints -->
 		<div class="space-y-4">
 			<div class="flex items-center justify-between">
-				<h2 class="text-xl leading-tight font-bold">Active Space Constraints</h2>
+				<h2 class="text-xl leading-tight font-bold">
+					Active Space Constraints
+				</h2>
 				<span class="text-muted-foreground text-sm">
 					{currentSpaceConstraints.length} constraints assigned
 				</span>
@@ -279,34 +293,45 @@
 					{:else}
 						<div class="space-y-3">
 							{#each currentSpaceConstraints as constraint}
-								<div class="flex items-center justify-between rounded-lg border p-3">
+								<div
+									class="flex items-center justify-between rounded-lg border p-3"
+								>
 									<div class="flex-1">
-										<h3 class="font-medium">{constraint.friendlyName}</h3>
+										<h3 class="font-medium">{constraint.con.friendlyName}</h3>
 										<p class="text-muted-foreground text-sm">
-											{constraint.description}
+											{constraint.con.description}
 										</p>
 									</div>
 									<div class="flex items-center gap-3">
-										{#if constraint.optional}
-											{@const state = constraintStates.get(`${constraint.id}`)}
+										{#if constraint.con.optional}
+											{@const state = constraintStates.get(
+												constraint.tt_draft_con.id,
+											)}
 											<Checkbox
-												checked={state?.active ?? constraint.active}
+												checked={state?.active ??
+													constraint.tt_draft_con.active}
 												disabled={state?.isUpdating ?? false}
 												onCheckedChange={(checked) =>
-													handleToggleConstraintActive(constraint.id, checked === true)}
+													handleToggleConstraintActive(
+														constraint.tt_draft_con.id,
+														checked === true,
+													)}
 											/>
 										{:else}
-											<span class="text-muted-foreground text-xs">Mandatory</span>
+											<span class="text-muted-foreground text-xs"
+												>Mandatory</span
+											>
 										{/if}
 										<div class="flex gap-1">
 											<Button variant="ghost" size="sm" onclick={() => {}}>
 												<EditIcon class="h-4 w-4" />
 											</Button>
-											{#if constraint.optional}
+											{#if constraint.con.optional}
 												<Button
 													variant="ghost"
 													size="sm"
-													onclick={() => handleDeleteConstraint(constraint.id)}
+													onclick={() =>
+														handleDeleteConstraint(constraint.con.id)}
 												>
 													<TrashIcon class="h-4 w-4" />
 												</Button>
@@ -326,7 +351,9 @@
 		<!-- Available Time Constraints -->
 		<div class="space-y-4">
 			<div class="flex items-center justify-between">
-				<h2 class="text-xl leading-tight font-bold">Available Time Constraints</h2>
+				<h2 class="text-xl leading-tight font-bold">
+					Available Time Constraints
+				</h2>
 				<span class="text-muted-foreground text-sm">
 					{availableTimeConstraints.length} constraints available
 				</span>
@@ -345,7 +372,9 @@
 										<div class="flex items-center justify-between">
 											<h3 class="font-semibold">{constraint.friendlyName}</h3>
 											{#if !constraint.repeatable}
-												<span class="text-muted-foreground bg-muted rounded-full px-2 py-1 text-xs">
+												<span
+													class="text-muted-foreground bg-muted rounded-full px-2 py-1 text-xs"
+												>
 													One-time
 												</span>
 											{/if}
@@ -373,7 +402,9 @@
 		<!-- Available Space Constraints -->
 		<div class="space-y-4">
 			<div class="flex items-center justify-between">
-				<h2 class="text-xl leading-tight font-bold">Available Space Constraints</h2>
+				<h2 class="text-xl leading-tight font-bold">
+					Available Space Constraints
+				</h2>
 				<span class="text-muted-foreground text-sm">
 					{availableSpaceConstraints.length} constraints available
 				</span>
@@ -392,7 +423,9 @@
 										<div class="flex items-center justify-between">
 											<h3 class="font-semibold">{constraint.friendlyName}</h3>
 											{#if !constraint.repeatable}
-												<span class="text-muted-foreground bg-muted rounded-full px-2 py-1 text-xs">
+												<span
+													class="text-muted-foreground bg-muted rounded-full px-2 py-1 text-xs"
+												>
 													One-time
 												</span>
 											{/if}
@@ -423,21 +456,27 @@
 <Dialog.Root bind:open={addConstraintModalOpen}>
 	<Dialog.Content class="max-h-[80vh] max-w-2xl overflow-y-auto">
 		<Dialog.Header>
-			<Dialog.Title>Add Constraint: {constraintToAdd?.friendlyName}</Dialog.Title>
+			<Dialog.Title
+				>Add Constraint: {constraintToAdd?.friendlyName}</Dialog.Title
+			>
 			<Dialog.Description>
-				Configure the parameters for this constraint and add it to your timetable.
+				Configure the parameters for this constraint and add it to your
+				timetable.
 			</Dialog.Description>
 		</Dialog.Header>
 		{#if constraintToAdd}
 			{@const FormComponent = getFormComponent(constraintToAdd)}
-			{#if requiresEnhancedProps(constraintToAdd.FETName)}
+			{#if requiresEnhancedProps(constraintToAdd.fetName)}
 				<FormComponent
 					onSubmit={handleAddConstraint}
 					onCancel={closeAddConstraintModal}
 					{formData}
 				/>
 			{:else}
-				<FormComponent onSubmit={handleAddConstraint} onCancel={closeAddConstraintModal} />
+				<FormComponent
+					onSubmit={handleAddConstraint}
+					onCancel={closeAddConstraintModal}
+				/>
 			{/if}
 		{/if}
 	</Dialog.Content>

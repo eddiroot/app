@@ -27,8 +27,8 @@ Represents a single class in the timetable:
 	subjectOfferingId: number;
 	className: string; // e.g., "Math Methods 3/4"
 	spaceName: string | null; // e.g., "Room 204"
-	startTime: string; // "09:00:00"
-	endTime: string; // "10:30:00"
+	start: string; // "09:00:00"
+	end: string; // "10:30:00"
 	durationMinutes: number; // 90
 	dayId: number; // Database day ID
 	dayNumber: number; // 0-4 (Monday-Friday)
@@ -92,7 +92,7 @@ console.log(
 const monday = timetable.days[0];
 for (const session of monday.sessions) {
 	console.log(
-		`${session.startTime} - ${session.subjectName} @ ${session.spaceName}`,
+		`${session.start} - ${session.subjectName} @ ${session.spaceName}`,
 	);
 }
 ```
@@ -241,7 +241,7 @@ export const load = async ({ params, locals }) => {
 		{:else}
 			{#each day.sessions as session}
 				<div class="session">
-					<span class="time">{session.startTime} - {session.endTime}</span>
+					<span class="time">{session.start} - {session.end}</span>
 					<span class="subject">{session.subjectName}</span>
 					{#if session.spaceName}
 						<span class="room">@ {session.spaceName}</span>
@@ -339,11 +339,11 @@ const busiestDay = userTimetable.days.reduce((max, day) =>
 ```typescript
 function hasConflicts(day: DaySchedule): boolean {
 	const sorted = [...day.sessions].sort((a, b) =>
-		a.startTime.localeCompare(b.startTime),
+		a.start.localeCompare(b.start),
 	);
 
 	for (let i = 0; i < sorted.length - 1; i++) {
-		if (sorted[i].endTime > sorted[i + 1].startTime) {
+		if (sorted[i].end > sorted[i + 1].start) {
 			return true; // Overlap detected
 		}
 	}

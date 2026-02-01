@@ -9,7 +9,7 @@
 	import { Input } from '$lib/components/ui/input';
 	import { Label } from '$lib/components/ui/label';
 	import * as Select from '$lib/components/ui/select/index.js';
-	import { convertToFullName, yearLevelToLabel } from '$lib/utils';
+	import { convertToFullName } from '$lib/utils';
 	import InfoIcon from '@lucide/svelte/icons/info';
 	import PlusIcon from '@lucide/svelte/icons/plus';
 	import Trash2Icon from '@lucide/svelte/icons/trash-2';
@@ -25,7 +25,7 @@
 			.sort();
 	});
 
-	let yearLevel = $state(data.defaultYearLevel);
+	let yearLevel = $derived(data.defaultYearLevel);
 	let createDialogOpen = $state(false);
 	let infoDialogOpen = $state(false);
 	let autoCreating = $state(false);
@@ -46,12 +46,17 @@
 
 		// Get all students for the year level, excluding those already in this specific group
 		const availableStudents = data.students.filter(
-			(student) => student.yearLevel === yearLevel && !studentIdsInGroup.has(student.id)
+			(student) =>
+				student.yearLevel === yearLevel && !studentIdsInGroup.has(student.id),
 		);
 
 		return availableStudents.map((student) => ({
 			value: student.id,
-			label: convertToFullName(student.firstName, student.middleName, student.lastName)
+			label: convertToFullName(
+				student.firstName,
+				student.middleName,
+				student.lastName,
+			),
 		}));
 	}
 
@@ -73,7 +78,7 @@
 
 			const response = await fetch('?/createGroup', {
 				method: 'POST',
-				body: formData
+				body: formData,
 			});
 
 			if (response.ok) {
@@ -99,7 +104,7 @@
 
 			const response = await fetch('?/autoCreateGroups', {
 				method: 'POST',
-				body: formData
+				body: formData,
 			});
 
 			if (response.ok) {
@@ -121,7 +126,7 @@
 
 			const response = await fetch('?/addStudent', {
 				method: 'POST',
-				body: formData
+				body: formData,
 			});
 
 			if (response.ok) {
@@ -141,7 +146,7 @@
 
 			const response = await fetch('?/removeStudent', {
 				method: 'POST',
-				body: formData
+				body: formData,
 			});
 
 			if (response.ok) {
@@ -154,7 +159,11 @@
 
 	// Delete group
 	async function deleteGroup(groupId: number) {
-		if (!confirm('Are you sure you want to delete this group? All students will be unassigned.')) {
+		if (
+			!confirm(
+				'Are you sure you want to delete this group? All students will be unassigned.',
+			)
+		) {
 			return;
 		}
 
@@ -164,7 +173,7 @@
 
 			const response = await fetch('?/deleteGroup', {
 				method: 'POST',
-				body: formData
+				body: formData,
 			});
 
 			if (response.ok) {
@@ -205,12 +214,12 @@
 		<div class="flex gap-2">
 			<Select.Root type="single" name="yearLevel" bind:value={yearLevel}>
 				<Select.Trigger class="w-[180px]">
-					{yearLevel ? yearLevelToLabel(yearLevel) : 'Select a year level'}
+					{yearLevel ?? 'Select a year level'}
 				</Select.Trigger>
 				<Select.Content>
 					{#each yearLevels() as yearLevelValue}
-						<Select.Item value={yearLevelValue} label={yearLevelToLabel(yearLevelValue)}>
-							{yearLevelToLabel(yearLevelValue)}
+						<Select.Item value={yearLevelValue} label={yearLevelValue}>
+							{yearLevelValue}
 						</Select.Item>
 					{/each}
 				</Select.Content>
@@ -258,7 +267,8 @@
 												placeholder="Add student to group..."
 												searchPlaceholder="Search students..."
 												emptyText="No available students found."
-												onselect={(option) => addStudentToGroup(group.id, option.value as string)}
+												onselect={(option) =>
+													addStudentToGroup(group.id, option.value as string)}
 											/>
 										{/key}
 									</div>
@@ -275,13 +285,14 @@
 													{convertToFullName(
 														student.firstName,
 														student.middleName,
-														student.lastName
+														student.lastName,
 													)}
 												</span>
 												<Button
 													variant="ghost"
 													size="sm"
-													onclick={() => removeStudentFromGroup(group.id, student.id)}
+													onclick={() =>
+														removeStudentFromGroup(group.id, student.id)}
 												>
 													<Trash2Icon class="h-4 w-4" />
 												</Button>
@@ -303,7 +314,8 @@
 						<UsersIcon class="text-muted-foreground mx-auto mb-4 h-12 w-12" />
 						<Card.Title class="mb-2 text-lg">No groups yet</Card.Title>
 						<Card.Description class="mb-4">
-							Get started by creating your first group for students in this year level.
+							Get started by creating your first group for students in this year
+							level.
 						</Card.Description>
 					</Card.Content>
 				</Card.Root>
@@ -331,14 +343,27 @@
 		<div class="grid gap-4 py-4">
 			<div class="grid gap-2">
 				<Label for="create-name">Group Name</Label>
-				<Input id="create-name" bind:value={groupName} placeholder="Enter group name" required />
+				<Input
+					id="create-name"
+					bind:value={groupName}
+					placeholder="Enter group name"
+					required
+				/>
 			</div>
 		</div>
 		<Dialog.Footer>
-			<Button type="button" variant="outline" onclick={() => (createDialogOpen = false)}>
+			<Button
+				type="button"
+				variant="outline"
+				onclick={() => (createDialogOpen = false)}
+			>
 				Cancel
 			</Button>
-			<Button type="button" onclick={createGroup} disabled={!groupName.trim() || creatingGroup}>
+			<Button
+				type="button"
+				onclick={createGroup}
+				disabled={!groupName.trim() || creatingGroup}
+			>
 				{creatingGroup ? 'Creating...' : 'Create Group'}
 			</Button>
 		</Dialog.Footer>
@@ -351,7 +376,8 @@
 		<Dialog.Header>
 			<Dialog.Title>Page Information</Dialog.Title>
 			<Dialog.Description>
-				Important information about managing students and groups in this timetable:
+				Important information about managing students and groups in this
+				timetable:
 			</Dialog.Description>
 		</Dialog.Header>
 		<div class="grid gap-4 py-4">
@@ -361,18 +387,21 @@
 					class="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring min-h-[200px] w-full rounded-md border px-3 py-2 text-sm focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
 					placeholder="Type important information about this page here..."
 				>
-					For a highschool model where there are no groupings of students and hence why no shared
-					classes, its important to follow the following structure for grouping the students: 1.
-					Create groups that represent the classes or subjects that students will be attending. -
-					For example, if there is a Year 10 English class, create a group named "Year 10 English".
-					2. Assign students to these groups based on the classes they are enrolled in. - A student
-					taking Year 10 English and Year 10 Math would be assigned to both the "Year 10 English"
-					and "Year 10 Math" groups. 3. When creating activities, link them to the appropriate
-					groups. - For instance, the activity for the Year 10 English class should be associated
-					with the "Year 10 English" group. NOTE: The more groups the better, so if you have 60
-					students that need to do english, however you can only have 30 studnets per class then you
-					should have 2 groups of "Year 10 English A" and "Year 10 English B" to ensure the students
-					can be split into different classes.
+					For a highschool model where there are no groupings of students and
+					hence why no shared classes, its important to follow the following
+					structure for grouping the students: 1. Create groups that represent
+					the classes or subjects that students will be attending. - For
+					example, if there is a Year 10 English class, create a group named
+					"Year 10 English". 2. Assign students to these groups based on the
+					classes they are enrolled in. - A student taking Year 10 English and
+					Year 10 Math would be assigned to both the "Year 10 English" and "Year
+					10 Math" groups. 3. When creating activities, link them to the
+					appropriate groups. - For instance, the activity for the Year 10
+					English class should be associated with the "Year 10 English" group.
+					NOTE: The more groups the better, so if you have 60 students that need
+					to do english, however you can only have 30 studnets per class then
+					you should have 2 groups of "Year 10 English A" and "Year 10 English
+					B" to ensure the students can be split into different classes.
 				</p>
 			</div>
 		</div>

@@ -1,11 +1,11 @@
 import {
-	createOrUpdateEventRSVP,
-	getCampusEventById,
+	getEventCampusById,
 	getEventRSVP,
-	getSchoolEventById,
-	getSubjectOfferingClassEventById,
-	getSubjectOfferingEventById
-} from '$lib/server/db/service/events';
+	getEventSchoolById,
+	getEventSubjectOfferingById,
+	getEventSubjectOfferingClassById,
+	upsertEventRSVP,
+} from '$lib/server/db/service/event';
 import { fail, redirect } from '@sveltejs/kit';
 import { superValidate } from 'sveltekit-superforms';
 import { zod4 } from 'sveltekit-superforms/adapters';
@@ -26,16 +26,16 @@ export const load = async ({ params, locals: { security } }) => {
 	try {
 		switch (eventType) {
 			case 'school':
-				event = await getSchoolEventById(eventIdNum);
+				event = await getEventSchoolById(eventIdNum);
 				break;
 			case 'campus':
-				event = await getCampusEventById(eventIdNum);
+				event = await getEventCampusById(eventIdNum);
 				break;
 			case 'subject':
-				event = await getSubjectOfferingEventById(eventIdNum);
+				event = await getEventSubjectOfferingById(eventIdNum);
 				break;
 			case 'class':
-				event = await getSubjectOfferingClassEventById(eventIdNum);
+				event = await getEventSubjectOfferingClassById(eventIdNum);
 				break;
 			default:
 				throw redirect(302, '/timetable');
@@ -50,15 +50,11 @@ export const load = async ({ params, locals: { security } }) => {
 	}
 
 	// Get existing RSVP
-	const existingRSVP = await getEventRSVP(
-		user.id,
-		eventType as 'school' | 'campus' | 'subject' | 'class',
-		eventIdNum
-	);
+	const existingRSVP = await getEventRSVP(user.id, eventIdNum);
 
 	const form = await superValidate(
-		{ willAttend: existingRSVP?.willAttend ?? false },
-		zod4(rsvpSchema)
+		{ willAttend: existingRSVP?.isAttending ?? false },
+		zod4(rsvpSchema),
 	);
 
 	return {
@@ -66,7 +62,7 @@ export const load = async ({ params, locals: { security } }) => {
 		event,
 		eventType,
 		eventId: eventIdNum,
-		hasExistingRSVP: !!existingRSVP
+		hasExistingRSVP: !!existingRSVP,
 	};
 };
 
@@ -74,7 +70,7 @@ export const actions = {
 	default: async ({ request, params, locals: { security } }) => {
 		const user = security.isAuthenticated().getUser();
 
-		const { eventType, eventId } = params;
+		const { eventId } = params;
 		const eventIdNum = parseInt(eventId as string, 10);
 
 		if (isNaN(eventIdNum)) {
@@ -88,20 +84,15 @@ export const actions = {
 		}
 
 		try {
-			await createOrUpdateEventRSVP(
-				user.id,
-				eventType as 'school' | 'campus' | 'subject' | 'class',
-				eventIdNum,
-				form.data.willAttend
-			);
+			await upsertEventRSVP(user.id, eventIdNum, form.data.willAttend);
 		} catch (error) {
 			console.error('Error creating RSVP:', error);
 			return fail(500, {
 				form,
-				message: 'Failed to save RSVP. Please try again.'
+				message: 'Failed to save RSVP. Please try again.',
 			});
 		}
 
 		redirect(302, '/timetable?rsvp=success');
-	}
+	},
 };

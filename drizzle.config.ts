@@ -22,8 +22,6 @@ export default defineConfig({
 	// See: https://github.com/drizzle-team/drizzle-orm/issues/3476
 	schemaFilter: [
 		'public',
-		'chatbot',
-		'coursemap',
 		'curriculum',
 		'event',
 		'news',

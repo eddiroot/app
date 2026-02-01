@@ -9,19 +9,16 @@ export function getNestedResponses(
 			firstName: string;
 			middleName: string | null;
 			lastName: string;
-			avatarUrl: string | null;
+			avatarPath: string | null;
 			type: string;
 		};
-	}[]
+	}[],
 ) {
 	const responseMap = new Map();
 	const topLevelResponses = [];
 
 	for (const response of allResponses) {
-		responseMap.set(response.response.id, {
-			...response,
-			replies: []
-		});
+		responseMap.set(response.response.id, { ...response, replies: [] });
 	}
 
 	for (const response of allResponses) {
@@ -46,7 +43,10 @@ export function getNestedResponses(
  * @param authorId - ID of the post/response author
  * @returns true if user info should be shown, false if it should be anonymous
  */
-export function shouldShowUserInfo(isAnonymous: boolean, currentUserType: string): boolean {
+export function shouldShowUserInfo(
+	isAnonymous: boolean,
+	currentUserType: string,
+): boolean {
 	if (!isAnonymous) return true;
 
 	// Non-students can always see the name (teachers, staff, etc.)
@@ -72,11 +72,13 @@ export function shouldShowResponseUserInfo(
 	responseIsAnonymous: boolean,
 	threadIsAnonymous: boolean,
 	isOPResponse: boolean,
-	currentUserType: string
+	currentUserType: string,
 ): boolean {
 	// For OP responses on anonymous threads, default to anonymous unless explicitly unmarked
 	const effectivelyAnonymous =
-		isOPResponse && threadIsAnonymous ? responseIsAnonymous : responseIsAnonymous;
+		isOPResponse && threadIsAnonymous
+			? responseIsAnonymous
+			: responseIsAnonymous;
 
 	return shouldShowUserInfo(effectivelyAnonymous, currentUserType);
 }

@@ -8,7 +8,7 @@
 	import {
 		ViewMode,
 		type BalancingEquationsBlockProps,
-		type BlockBalancingEquationsConfig
+		type BlockBalancingEquationsConfig,
 	} from '$lib/schema/task';
 	import CheckCircleIcon from '@lucide/svelte/icons/check-circle';
 	import FlaskConicalIcon from '@lucide/svelte/icons/flask-conical';
@@ -21,7 +21,7 @@
 		onConfigUpdate,
 		response,
 		onResponseUpdate,
-		viewMode
+		viewMode,
 	}: BalancingEquationsBlockProps = $props();
 
 	function formatChemical(formula: string): string {
@@ -30,7 +30,8 @@
 	}
 
 	function isEquationBalanced(): boolean {
-		if (!response?.coefficients || !config.reactants || !config.products) return false;
+		if (!response?.coefficients || !config.reactants || !config.products)
+			return false;
 
 		// Check if all student answers match the correct coefficients
 		for (let index = 0; index < config.reactants.length; index++) {
@@ -86,7 +87,11 @@
 		saveChanges(newConfig);
 	}
 
-	async function updateCoefficient(type: 'reactants' | 'products', index: number, value: string) {
+	async function updateCoefficient(
+		type: 'reactants' | 'products',
+		index: number,
+		value: string,
+	) {
 		const coefficient = parseInt(value) || 1;
 		const newResponse = { ...response };
 		if (!newResponse.coefficients) {
@@ -155,7 +160,8 @@
 									<Input
 										value={reactant.coefficient?.toString() || '1'}
 										oninput={(e) => {
-											const value = parseInt((e.target as HTMLInputElement)?.value) || 1;
+											const value =
+												parseInt((e.target as HTMLInputElement)?.value) || 1;
 											const newConfig = { ...config };
 											newConfig.reactants[index].coefficient = value;
 											saveChanges(newConfig);
@@ -220,7 +226,8 @@
 									<Input
 										value={product.coefficient?.toString() || '1'}
 										oninput={(e) => {
-											const value = parseInt((e.target as HTMLInputElement)?.value) || 1;
+											const value =
+												parseInt((e.target as HTMLInputElement)?.value) || 1;
 											const newConfig = { ...config };
 											newConfig.products[index].coefficient = value;
 											saveChanges(newConfig);
@@ -297,7 +304,8 @@
 
 					<div class="mb-6">
 						<p class="text-muted-foreground mb-4 text-sm">
-							Balance the chemical equation by entering the correct coefficients:
+							Balance the chemical equation by entering the correct
+							coefficients:
 						</p>
 
 						<div
@@ -307,18 +315,28 @@
 								{#if reactant.formula}
 									{#if index > 0}<span class="mx-2">+</span>{/if}
 									{#if reactant.given}
-										<span class="font-bold text-blue-600">{reactant.coefficient}</span>
+										<span class="font-bold text-blue-600"
+											>{reactant.coefficient}</span
+										>
 									{:else}
 										<Input
-											value={response.coefficients?.reactants[index]?.toString() || ''}
+											value={response.coefficients?.reactants[
+												index
+											]?.toString() || ''}
 											oninput={(e) =>
-												updateCoefficient('reactants', index, (e.target as HTMLInputElement).value)}
+												updateCoefficient(
+													'reactants',
+													index,
+													(e.target as HTMLInputElement).value,
+												)}
 											disabled={viewMode === ViewMode.REVIEW}
 											placeholder="?"
 											class="h-8 w-12 border-2 text-center font-bold text-blue-600"
 										/>
 									{/if}
-									<span class="ml-1">{@html formatChemical(reactant.formula)}</span>
+									<span class="ml-1"
+										>{@html formatChemical(reactant.formula)}</span
+									>
 								{/if}
 							{/each}
 
@@ -328,18 +346,28 @@
 								{#if product.formula}
 									{#if index > 0}<span class="mx-2">+</span>{/if}
 									{#if product.given}
-										<span class="font-bold text-blue-600">{product.coefficient}</span>
+										<span class="font-bold text-blue-600"
+											>{product.coefficient}</span
+										>
 									{:else}
 										<Input
-											value={response.coefficients?.products[index]?.toString() || ''}
+											value={response.coefficients?.products[
+												index
+											]?.toString() || ''}
 											oninput={(e) =>
-												updateCoefficient('products', index, (e.target as HTMLInputElement).value)}
+												updateCoefficient(
+													'products',
+													index,
+													(e.target as HTMLInputElement).value,
+												)}
 											disabled={viewMode === ViewMode.REVIEW}
 											placeholder="?"
 											class="h-8 w-12 border-2 text-center font-bold text-blue-600"
 										/>
 									{/if}
-									<span class="ml-1">{@html formatChemical(product.formula)}</span>
+									<span class="ml-1"
+										>{@html formatChemical(product.formula)}</span
+									>
 								{/if}
 							{/each}
 						</div>
@@ -363,8 +391,8 @@
 									<span class="font-medium">Not Balanced Yet</span>
 								</div>
 								<p class="mt-1 text-sm text-orange-600">
-									Check your coefficients. Make sure the number of each element is equal on both
-									sides.
+									Check your coefficients. Make sure the number of each element
+									is equal on both sides.
 								</p>
 							</div>
 						{/if}
@@ -375,17 +403,22 @@
 							<div class="flex items-center gap-2">
 								{#if isEquationBalanced()}
 									<CheckCircleIcon class="h-5 w-5 text-green-600" />
-									<span class="font-medium text-green-700">Correctly Balanced</span>
+									<span class="font-medium text-green-700"
+										>Correctly Balanced</span
+									>
 								{:else}
 									<XCircleIcon class="h-5 w-5 text-red-600" />
-									<span class="font-medium text-red-700">Incorrectly Balanced</span>
+									<span class="font-medium text-red-700"
+										>Incorrectly Balanced</span
+									>
 								{/if}
 							</div>
 							<p class="text-muted-foreground mt-1 text-sm">
 								{#if isEquationBalanced()}
 									The student successfully balanced the chemical equation.
 								{:else}
-									The student's answer does not properly balance the chemical equation.
+									The student's answer does not properly balance the chemical
+									equation.
 								{/if}
 							</p>
 						</div>
@@ -393,10 +426,14 @@
 				</Card.Content>
 			</Card.Root>
 		{:else}
-			<div class="flex h-48 w-full items-center justify-center rounded-lg border border-dashed">
+			<div
+				class="flex h-48 w-full items-center justify-center rounded-lg border border-dashed"
+			>
 				<div class="text-center">
 					<FlaskConicalIcon class="text-muted-foreground mx-auto h-12 w-12" />
-					<p class="text-muted-foreground mt-2 text-sm">No chemical equation created</p>
+					<p class="text-muted-foreground mt-2 text-sm">
+						No chemical equation created
+					</p>
 					<p class="text-muted-foreground text-xs">
 						Switch to edit mode to create a balancing question
 					</p>

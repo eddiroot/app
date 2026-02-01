@@ -101,7 +101,7 @@ export class FETDockerService {
 		outputDir: string,
 		params: FETProcessingParams = {},
 	): Promise<FETExecutionResult> {
-		const startTime = Date.now();
+		const start = Date.now();
 
 		const defaultParams = {
 			htmllevel: 7,
@@ -136,13 +136,13 @@ export class FETDockerService {
 				timeout: 20 * 60 * 1000, // 20 minutes
 			});
 
-			return { success: true, stdout, executionTime: Date.now() - startTime };
+			return { success: true, stdout, executionTime: Date.now() - start };
 		} catch (error) {
 			const execError = error as { stdout?: string; message?: string };
 			return {
 				success: false,
 				error: execError?.stdout || 'Unknown error',
-				executionTime: Date.now() - startTime,
+				executionTime: Date.now() - start,
 			};
 		}
 	}

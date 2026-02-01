@@ -16,19 +16,31 @@
 	let announcementsPane: PaneAPI | null = $state(null);
 	let isAnnouncementsCollapsed = $state(false);
 
-	const currentThreadId = $derived(() => page.url.pathname.split('/').pop() || '');
+	const currentThreadId = $derived(
+		() => page.url.pathname.split('/').pop() || '',
+	);
 
 	function getThreadAuthorName(thread: any): string {
-		const showInfo = shouldShowUserInfo(thread.thread.isAnonymous, data.currentUser.type);
+		const showInfo = shouldShowUserInfo(
+			thread.thread.isAnonymous,
+			data.currentUser.type,
+		);
 		if (!showInfo) return 'Anonymous';
-		return convertToFullName(thread.user.firstName, thread.user.middleName, thread.user.lastName);
+		return convertToFullName(
+			thread.user.firstName,
+			thread.user.middleName,
+			thread.user.lastName,
+		);
 	}
 </script>
 
 <div class="grid h-full grid-cols-[300px_1fr] overflow-y-hidden">
 	<div class="h-full border-r border-b">
 		<div class="p-2">
-			<Button href="/subjects/{data.subjectOfferingIdInt}/discussion/new" class="w-full">
+			<Button
+				href="/subjects/{data.subjectOfferingIdInt}/discussion/new"
+				class="w-full"
+			>
 				<PlusIcon />
 				New Post
 			</Button>
@@ -41,7 +53,10 @@
 					<Button
 						onclick={() => {
 							if (announcementsPane) {
-								if (isAnnouncementsCollapsed || announcementsPane.getSize() === 0) {
+								if (
+									isAnnouncementsCollapsed ||
+									announcementsPane.getSize() === 0
+								) {
 									announcementsPane.expand();
 								} else {
 									announcementsPane.collapse();
@@ -55,8 +70,9 @@
 					</Button>
 				</div>
 				<Resizable.Pane
-					defaultSize={data.threads.filter((thread) => thread.thread.type == 'announcement')
-						.length > 0
+					defaultSize={data.threads.filter(
+						(thread) => thread.thread.type == 'announcement',
+					).length > 0
 						? 30
 						: 0}
 					collapsible
@@ -69,7 +85,8 @@
 						<div>
 							{#each data.threads.filter((thread) => thread.thread.type == 'announcement') as thread (thread.thread.id)}
 								<a
-									href="/subjects/{data.subjectOfferingIdInt}/discussion/{thread.thread.id}"
+									href="/subjects/{data.subjectOfferingIdInt}/discussion/{thread
+										.thread.id}"
 									class="block"
 								>
 									<Card.Root
@@ -87,8 +104,13 @@
 											</Card.Description>
 										</Card.Header>
 										<Card.Footer>
-											<div class="text-muted-foreground flex items-center text-xs">
-												<span>Created {new Date(thread.thread.createdAt).toLocaleDateString()}</span
+											<div
+												class="text-muted-foreground flex items-center text-xs"
+											>
+												<span
+													>Created {new Date(
+														thread.thread.createdAt,
+													).toLocaleDateString()}</span
 												>
 											</div>
 										</Card.Footer>
@@ -108,7 +130,8 @@
 						<div>
 							{#each data.threads.filter((thread) => thread.thread.type != 'announcement') as thread (thread.thread.id)}
 								<a
-									href="/subjects/{data.subjectOfferingIdInt}/discussion/{thread.thread.id}"
+									href="/subjects/{data.subjectOfferingIdInt}/discussion/{thread
+										.thread.id}"
 									class="block"
 								>
 									<Card.Root
@@ -126,8 +149,13 @@
 											</Card.Description>
 										</Card.Header>
 										<Card.Footer>
-											<div class="text-muted-foreground flex items-center text-xs">
-												<span>Created {new Date(thread.thread.createdAt).toLocaleDateString()}</span
+											<div
+												class="text-muted-foreground flex items-center text-xs"
+											>
+												<span
+													>Created {new Date(
+														thread.thread.createdAt,
+													).toLocaleDateString()}</span
 												>
 											</div>
 										</Card.Footer>

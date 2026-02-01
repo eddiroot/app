@@ -1,29 +1,35 @@
 import { userTypeEnum } from '$lib/enums.js';
 import type { Task } from '$lib/server/db/schema';
 import {
-	addResourceToSubjectOfferingClass,
 	createResource,
+	createSubjectOfferingClassResource,
 	getResourcesBySubjectOfferingClassId,
 	getTasksBySubjectOfferingClassId,
 	getTopics,
-	removeResourceFromSubjectOfferingClass
+	removeResourceFromSubjectOfferingClass,
 } from '$lib/server/db/service';
-import { generateUniqueFileName, getPresignedUrl, uploadBufferHelper } from '$lib/server/obj';
+import {
+	generateUniqueFileName,
+	getPresignedUrl,
+	uploadBufferHelper,
+} from '$lib/server/obj';
 import { error, fail } from '@sveltejs/kit';
 import { superValidate, withFiles } from 'sveltekit-superforms';
 import { zod4 } from 'sveltekit-superforms/adapters';
 import { z } from 'zod';
 
 const uploadSchema = z.object({
-	file: z.instanceof(File).refine((file) => file.size > 0, 'Please select a file to upload'),
+	file: z
+		.instanceof(File)
+		.refine((file) => file.size > 0, 'Please select a file to upload'),
 	title: z.string().optional(),
 	description: z.string().optional(),
-	topicId: z.number().min(1, 'Please select a topic')
+	topicId: z.number().min(1, 'Please select a topic'),
 });
 
 export const load = async ({
 	locals: { security },
-	params: { subjectOfferingId, subjectOfferingClassId }
+	params: { subjectOfferingId, subjectOfferingClassId },
 }) => {
 	const user = security.isAuthenticated().getUser();
 
@@ -37,8 +43,13 @@ export const load = async ({
 		throw error(400, 'Invalid subject offering ID');
 	}
 
-	const tasks = await getTasksBySubjectOfferingClassId(user.id, subjectOfferingClassIdInt);
-	const resources = await getResourcesBySubjectOfferingClassId(subjectOfferingClassIdInt);
+	const tasks = await getTasksBySubjectOfferingClassId(
+		user.id,
+		subjectOfferingClassIdInt,
+	);
+	const resources = await getResourcesBySubjectOfferingClassId(
+		subjectOfferingClassIdInt,
+	);
 	const topics = await getTopics(subjectOfferingIdInt);
 
 	const resourcesWithUrls = await Promise.all(
@@ -52,18 +63,15 @@ export const load = async ({
 					: row.resource.objectKey;
 
 				const downloadUrl = await getPresignedUrl(schoolId, objectName);
-				return {
-					...row,
-					downloadUrl
-				};
+				return { ...row, downloadUrl };
 			} catch (error) {
-				console.error(`Failed to generate URL for resource ${row.resource.id}:`, error);
-				return {
-					...row,
-					downloadUrl: null
-				};
+				console.error(
+					`Failed to generate URL for resource ${row.resource.id}:`,
+					error,
+				);
+				return { ...row, downloadUrl: null };
 			}
-		})
+		}),
 	);
 
 	const form = await superValidate(zod4(uploadSchema));
@@ -71,23 +79,33 @@ export const load = async ({
 	const topicsWithTasks = topics.map((topic) => ({
 		topic,
 		tasks: [] as { task: Task; status: string }[],
-		resources: [] as typeof resourcesWithUrls
+		resources: [] as typeof resourcesWithUrls,
 	}));
 
 	tasks.forEach((task) => {
-		if (user.type === userTypeEnum.student && task.subjectOfferingClassTask.status !== 'published')
+		if (
+			user.type === userTypeEnum.student &&
+			task.subjectOfferingClassTask.status !== 'published'
+		)
 			return;
 
-		const topicEntry = topicsWithTasks.find((item) => item.topic.id === task.courseMapItem.id);
+		const topicEntry = topicsWithTasks.find(
+			(item) => item.topic.id === task.curriculumItem.id,
+		);
 		if (topicEntry) {
-			topicEntry.tasks.push({ task: task.task, status: task.subjectOfferingClassTask.status });
+			topicEntry.tasks.push({
+				task: task.task,
+				status: task.subjectOfferingClassTask.status,
+			});
 		}
 	});
 
 	resourcesWithUrls.forEach((resource) => {
-		const coursemapItemId = resource.resourceRelation.coursemapItemId;
+		const coursemapItemId = resource.resourceRelation.curriculumItemId;
 		if (coursemapItemId) {
-			const topicEntry = topicsWithTasks.find((item) => item.topic.id === coursemapItemId);
+			const topicEntry = topicsWithTasks.find(
+				(item) => item.topic.id === coursemapItemId,
+			);
 			if (topicEntry) {
 				topicEntry.resources.push(resource);
 			}
@@ -98,7 +116,11 @@ export const load = async ({
 };
 
 export const actions = {
-	upload: async ({ request, locals: { security }, params: { subjectOfferingClassId } }) => {
+	upload: async ({
+		request,
+		locals: { security },
+		params: { subjectOfferingClassId },
+	}) => {
 		const user = security.isAuthenticated().getUser();
 
 		const formData = await request.formData();
@@ -127,25 +149,24 @@ export const actions = {
 			await uploadBufferHelper(buffer, objectKey, file.type);
 
 			// Create resource in database
-			const resource = await createResource(
-				form.data.title || file.name.replace(/\.[^/.]+$/, ''), // Use title or filename without extension
-				file.name,
+			const resource = await createResource({
+				bucketName: user.schoolId.toString(),
 				objectKey,
-				file.type,
-				file.size,
-				'general', // resource type
-				user.id
-			);
+				fileName: file.name,
+				fileSize: file.size,
+				fileType: file.type,
+				uploadedBy: user.id,
+			});
 
 			// Link resource to subject offering class
-			await addResourceToSubjectOfferingClass(
-				classId,
-				resource.id,
-				user.id,
-				form.data.title,
-				form.data.description,
-				form.data.topicId
-			);
+			await createSubjectOfferingClassResource({
+				subjectOfferingClassId: classId,
+				resourceId: resource.id,
+				title: form.data.title,
+				description: form.data.description,
+				curriculumItemId: form.data.topicId,
+				authorId: user.id,
+			});
 
 			return withFiles({ form });
 		} catch (error) {
@@ -154,7 +175,11 @@ export const actions = {
 		}
 	},
 
-	delete: async ({ request, locals: { security }, params: { subjectOfferingClassId } }) => {
+	delete: async ({
+		request,
+		locals: { security },
+		params: { subjectOfferingClassId },
+	}) => {
 		security.isAuthenticated();
 
 		const formData = await request.formData();
@@ -172,5 +197,5 @@ export const actions = {
 			console.error('Error deleting resource:', error);
 			return fail(500, { message: 'Failed to delete resource' });
 		}
-	}
+	},
 };

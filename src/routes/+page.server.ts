@@ -14,5 +14,5 @@ export const actions = {
 		auth.deleteSessionTokenCookie(event);
 
 		return redirect(302, '/login');
-	}
+	},
 };

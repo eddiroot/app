@@ -12,7 +12,7 @@
 		DEFAULT_SHAPE_OPTIONS,
 		DEFAULT_TEXT_OPTIONS,
 		IMAGE_THROTTLE_MS,
-		ZOOM_LIMITS
+		ZOOM_LIMITS,
 	} from '$lib/components/whiteboard/constants';
 	import type { ToolState } from '$lib/components/whiteboard/tools';
 	import * as Tools from '$lib/components/whiteboard/tools';
@@ -21,7 +21,7 @@
 		LineArrowOptions,
 		ShapeOptions,
 		TextOptions,
-		WhiteboardTool
+		WhiteboardTool,
 	} from '$lib/components/whiteboard/types';
 	import { hexToRgba } from '$lib/components/whiteboard/utils';
 	import * as WebSocketHandler from '$lib/components/whiteboard/websocket';
@@ -63,9 +63,12 @@
 	let currentTextOptions = $state<TextOptions>({ ...DEFAULT_TEXT_OPTIONS });
 	let currentShapeOptions = $state<ShapeOptions>({ ...DEFAULT_SHAPE_OPTIONS });
 	let currentDrawOptions = $state<DrawOptions>({ ...DEFAULT_DRAW_OPTIONS });
-	let currentLineArrowOptions = $state<LineArrowOptions>({ ...DEFAULT_LINE_ARROW_OPTIONS });
+	let currentLineArrowOptions = $state<LineArrowOptions>({
+		...DEFAULT_LINE_ARROW_OPTIONS,
+	});
 
-	const { whiteboardId, taskId, subjectOfferingId, subjectOfferingClassId } = $derived(page.params);
+	const { whiteboardId, taskId, subjectOfferingId, subjectOfferingClassId } =
+		$derived(page.params);
 	const whiteboardIdNum = $derived(parseInt(whiteboardId ?? '0'));
 
 	// Throttling mechanism for image updates only
@@ -80,17 +83,17 @@
 	};
 
 	// Throttled update function specifically for image movements
-	const sendImageUpdate = (objectId: string, objectData: any, immediate = false) => {
+	const sendImageUpdate = (
+		objectId: string,
+		objectData: any,
+		immediate = false,
+	) => {
 		// Store the latest state for this image
 		imageUpdateQueue.set(objectId, objectData);
 
 		if (immediate) {
 			// Send immediately for final positions (persist to database)
-			sendCanvasUpdate({
-				type: 'modify',
-				object: objectData,
-				live: false
-			});
+			sendCanvasUpdate({ type: 'modify', object: objectData, live: false });
 			imageUpdateQueue.delete(objectId);
 			return;
 		}
@@ -112,14 +115,10 @@
 					scaleX: objData.scaleX,
 					scaleY: objData.scaleY,
 					angle: objData.angle,
-					opacity: objData.opacity
+					opacity: objData.opacity,
 				};
 
-				sendCanvasUpdate({
-					type: 'modify',
-					object: updateData,
-					live: true
-				});
+				sendCanvasUpdate({ type: 'modify', object: updateData, live: true });
 			});
 			imageUpdateQueue.clear();
 			imageThrottleTimeout = null;
@@ -138,7 +137,7 @@
 		hoveredObjectsForDeletion,
 		originalOpacities,
 		tempShape,
-		tempText
+		tempText,
 	});
 
 	// Helper to apply tool state updates
@@ -181,7 +180,7 @@
 			state,
 			clearEraserState,
 			clearShapeDrawingState,
-			clearTextDrawingState
+			clearTextDrawingState,
 		);
 		applyToolState(state);
 	};
@@ -193,7 +192,7 @@
 			state,
 			clearEraserState,
 			clearShapeDrawingState,
-			clearTextDrawingState
+			clearTextDrawingState,
 		);
 		applyToolState(state);
 	};
@@ -205,7 +204,7 @@
 			state,
 			clearEraserState,
 			clearShapeDrawingState,
-			clearTextDrawingState
+			clearTextDrawingState,
 		);
 		applyToolState(state);
 	};
@@ -217,7 +216,7 @@
 			state,
 			clearShapeDrawingState,
 			clearTextDrawingState,
-			clearEraserState
+			clearEraserState,
 		);
 		applyToolState(state);
 	};
@@ -229,7 +228,7 @@
 			state,
 			clearEraserState,
 			clearShapeDrawingState,
-			clearTextDrawingState
+			clearTextDrawingState,
 		);
 		applyToolState(state);
 	};
@@ -241,7 +240,7 @@
 			state,
 			clearEraserState,
 			clearShapeDrawingState,
-			clearTextDrawingState
+			clearTextDrawingState,
 		);
 		applyToolState(state);
 	};
@@ -265,7 +264,7 @@
 			state,
 			clearEraserState,
 			clearShapeDrawingState,
-			clearTextDrawingState
+			clearTextDrawingState,
 		);
 		applyToolState(state);
 		// Trigger the file input
@@ -293,10 +292,10 @@
 						strokeColour: '#1E1E1E',
 						fillColour: 'transparent',
 						strokeDashArray: [],
-						opacity: img.opacity || 1
+						opacity: img.opacity || 1,
 					});
 				}, 0);
-			}
+			},
 		});
 	};
 
@@ -339,7 +338,9 @@
 	};
 
 	const goBack = () => {
-		goto(`/subjects/${subjectOfferingId}/class/${subjectOfferingClassId}/tasks/${taskId}`);
+		goto(
+			`/subjects/${subjectOfferingId}/class/${subjectOfferingClassId}/tasks/${taskId}`,
+		);
 	};
 
 	// Handle floating menu option changes
@@ -356,16 +357,13 @@
 				fontWeight: options.fontWeight,
 				fill: options.colour,
 				textAlign: options.textAlign,
-				opacity: options.opacity
+				opacity: options.opacity,
 			});
 			canvas.renderAll();
 			const objData = activeObject.toObject();
 			// @ts-expect-error
 			objData.id = activeObject.id;
-			sendCanvasUpdate({
-				type: 'modify',
-				object: objData
-			});
+			sendCanvasUpdate({ type: 'modify', object: objData });
 		}
 	};
 
@@ -384,26 +382,24 @@
 		) {
 			// For images, only apply opacity (other properties don't make sense for images)
 			if (activeObject.type === 'image') {
-				activeObject.set({
-					opacity: options.opacity
-				});
+				activeObject.set({ opacity: options.opacity });
 			} else {
 				activeObject.set({
 					strokeWidth: options.strokeWidth,
 					stroke: options.strokeColour,
-					fill: options.fillColour === 'transparent' ? 'transparent' : options.fillColour,
+					fill:
+						options.fillColour === 'transparent'
+							? 'transparent'
+							: options.fillColour,
 					strokeDashArray: options.strokeDashArray,
-					opacity: options.opacity
+					opacity: options.opacity,
 				});
 			}
 			canvas.renderAll();
 			const objData = activeObject.toObject();
 			// @ts-expect-error
 			objData.id = activeObject.id;
-			sendCanvasUpdate({
-				type: 'modify',
-				object: objData
-			});
+			sendCanvasUpdate({ type: 'modify', object: objData });
 		}
 	};
 
@@ -419,16 +415,13 @@
 			activeObject.set({
 				strokeWidth: options.brushSize,
 				stroke: options.brushColour,
-				opacity: options.opacity
+				opacity: options.opacity,
 			});
 			canvas.renderAll();
 			const objData = activeObject.toObject();
 			// @ts-expect-error
 			objData.id = activeObject.id;
-			sendCanvasUpdate({
-				type: 'modify',
-				object: objData
-			});
+			sendCanvasUpdate({ type: 'modify', object: objData });
 		}
 
 		// Also update the brush for future drawing
@@ -460,13 +453,16 @@
 
 		if (!canvas) return;
 		const activeObject = canvas.getActiveObject();
-		if (activeObject && (activeObject.type === 'line' || activeObject.type === 'group')) {
+		if (
+			activeObject &&
+			(activeObject.type === 'line' || activeObject.type === 'group')
+		) {
 			if (activeObject.type === 'line') {
 				activeObject.set({
 					strokeWidth: options.strokeWidth,
 					stroke: options.strokeColour,
 					strokeDashArray: options.strokeDashArray,
-					opacity: options.opacity
+					opacity: options.opacity,
 				});
 			} else if (activeObject.type === 'group') {
 				// Handle arrow group - update all objects in the group
@@ -476,7 +472,7 @@
 							strokeWidth: options.strokeWidth,
 							stroke: options.strokeColour,
 							strokeDashArray: options.strokeDashArray,
-							opacity: options.opacity
+							opacity: options.opacity,
 						});
 					}
 				});
@@ -485,10 +481,7 @@
 			const objData = activeObject.toObject();
 			// @ts-expect-error
 			objData.id = activeObject.id;
-			sendCanvasUpdate({
-				type: 'modify',
-				object: objData
-			});
+			sendCanvasUpdate({ type: 'modify', object: objData });
 		}
 	};
 
@@ -499,8 +492,13 @@
 		if (event.key === 'Escape') {
 			const activeObject = canvas.getActiveObject();
 			// Don't switch to select if editing text
-			// @ts-expect-error
-			if (!activeObject || !activeObject.isType('textbox') || !activeObject.isEditing) {
+
+			if (
+				!activeObject ||
+				!activeObject.isType('textbox') ||
+				// @ts-expect-error
+				!activeObject.isEditing
+			) {
 				event.preventDefault();
 				setSelectTool();
 			}
@@ -508,8 +506,11 @@
 
 		if (event.key === 'Backspace' || event.key === 'Delete') {
 			const activeObject = canvas.getActiveObject();
-			// @ts-expect-error
-			if (activeObject && (!activeObject.isType('textbox') || !activeObject.isEditing)) {
+			if (
+				activeObject &&
+				// @ts-expect-error
+				(!activeObject.isType('textbox') || !activeObject.isEditing)
+			) {
 				event.preventDefault();
 				deleteSelected();
 			}
@@ -525,7 +526,9 @@
 
 		const resizeCanvas = () => {
 			if (!whiteboardCanvas || !canvas) return;
-			const whiteContainer = whiteboardCanvas.closest('.rounded-lg.border-2.bg-white');
+			const whiteContainer = whiteboardCanvas.closest(
+				'.rounded-lg.border-2.bg-white',
+			);
 			if (whiteContainer) {
 				const rect = whiteContainer.getBoundingClientRect();
 				const width = rect.width - 4;
@@ -534,10 +537,7 @@
 				whiteboardCanvas.width = width;
 				whiteboardCanvas.height = height;
 
-				canvas.setDimensions({
-					width: width,
-					height: height
-				});
+				canvas.setDimensions({ width: width, height: height });
 				canvas.renderAll();
 			}
 		};
@@ -555,7 +555,7 @@
 		socket = WebSocketHandler.setupWebSocket(
 			`/subjects/${subjectOfferingId}/class/${subjectOfferingClassId}/tasks/${taskId}/whiteboard/ws`,
 			canvas,
-			whiteboardIdNum
+			whiteboardIdNum,
 		);
 
 		// Setup all canvas event handlers using the extracted module
@@ -656,7 +656,7 @@
 			clearEraserState,
 
 			// Refs
-			floatingMenuRef: floatingMenuRef || undefined
+			floatingMenuRef: floatingMenuRef || undefined,
 		};
 
 		CanvasEvents.setupCanvasEvents(canvas, canvasEventContext);
@@ -702,7 +702,10 @@
 
 				if (whiteboardCanvas) {
 					const rect = whiteboardCanvas.getBoundingClientRect();
-					const point = new fabric.Point(centerX - rect.left, centerY - rect.top);
+					const point = new fabric.Point(
+						centerX - rect.left,
+						centerY - rect.top,
+					);
 					canvas.zoomToPoint(point, constrainedZoom);
 					currentZoom = constrainedZoom; // Update zoom state
 				}
@@ -743,7 +746,7 @@
 	<div class="bg-background flex h-full w-full flex-col">
 		<!-- Header with back button and title -->
 		<header
-			class="bg-background/95 supports-[backdrop-filter]:bg-background/60 border-b backdrop-blur"
+			class="bg-background/95 supports-backdrop-filter:bg-background/60 border-b backdrop-blur"
 		>
 			<div class="flex h-14 items-center px-4">
 				<Button variant="ghost" size="sm" onclick={goBack} class="mr-4">
@@ -762,7 +765,9 @@
 		</header>
 
 		<!-- Whiteboard Canvas -->
-		<main class="relative flex flex-1 items-center justify-center overflow-hidden p-4">
+		<main
+			class="relative flex flex-1 items-center justify-center overflow-hidden p-4"
+		>
 			<!-- Floating Toolbar -->
 			<WhiteboardToolbar
 				{selectedTool}
@@ -778,7 +783,9 @@
 				onClearCanvas={clearCanvas}
 			/>
 
-			<div class="flex h-full w-full rounded-lg border-2 bg-white shadow-lg dark:bg-neutral-700">
+			<div
+				class="flex h-full w-full rounded-lg border-2 bg-white shadow-lg dark:bg-neutral-700"
+			>
 				<canvas bind:this={whiteboardCanvas} class="h-full w-full"></canvas>
 			</div>
 

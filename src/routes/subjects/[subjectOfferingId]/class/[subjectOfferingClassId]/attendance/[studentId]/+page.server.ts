@@ -1,11 +1,14 @@
 import {
 	getStudentAttendanceHistoryForClass,
 	getSubjectOfferingClassDetailsById,
-	getUserById
+	getUserById,
 } from '$lib/server/db/service';
 import type { PageServerLoad } from './$types';
 
-export const load: PageServerLoad = async ({ locals: { security }, params }) => {
+export const load: PageServerLoad = async ({
+	locals: { security },
+	params,
+}) => {
 	security.isAuthenticated();
 
 	const studentId = params.studentId;
@@ -20,19 +23,17 @@ export const load: PageServerLoad = async ({ locals: { security }, params }) => 
 		throw new Error('Student not found');
 	}
 
-	const classDetails = await getSubjectOfferingClassDetailsById(subjectOfferingClassId);
+	const classDetails = await getSubjectOfferingClassDetailsById(
+		subjectOfferingClassId,
+	);
 	if (!classDetails) {
 		throw new Error('Class not found');
 	}
 
 	const attendanceHistory = await getStudentAttendanceHistoryForClass(
 		studentId,
-		subjectOfferingClassId
+		subjectOfferingClassId,
 	);
 
-	return {
-		student,
-		classDetails,
-		attendanceHistory
-	};
+	return { student, classDetails, attendanceHistory };
 };

@@ -6,15 +6,14 @@
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
 	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
 	import { userPermissions, type userTypeEnum } from '$lib/enums';
-	import type {
-		School,
-		SchoolCampus,
-		Subject,
-		SubjectOffering,
+	import {
+		type School,
+		type SchoolCampus,
+		type Subject,
+		type SubjectOffering,
 	} from '$lib/server/db/schema';
 	import { convertToFullName, getPermissions } from '$lib/utils';
 	import BarChart3Icon from '@lucide/svelte/icons/bar-chart-3';
-	import BookOpenIcon from '@lucide/svelte/icons/book-open';
 	import BookOpenCheckIcon from '@lucide/svelte/icons/book-open-check';
 	import BookOpenTextIcon from '@lucide/svelte/icons/book-open-text';
 	import BowArrowIcon from '@lucide/svelte/icons/bow-arrow';
@@ -29,12 +28,15 @@
 	import LogOutIcon from '@lucide/svelte/icons/log-out';
 	import MapIcon from '@lucide/svelte/icons/map';
 	import MessagesSquareIcon from '@lucide/svelte/icons/messages-square';
+	import MoonIcon from '@lucide/svelte/icons/moon';
 	import OrbitIcon from '@lucide/svelte/icons/orbit';
 	import PiIcon from '@lucide/svelte/icons/pi';
 	import RouteIcon from '@lucide/svelte/icons/route';
+	import SunIcon from '@lucide/svelte/icons/sun';
 	import UserIcon from '@lucide/svelte/icons/user';
 	import UsersIcon from '@lucide/svelte/icons/users';
 	import WrenchIcon from '@lucide/svelte/icons/wrench';
+	import { resetMode, setMode } from 'mode-watcher';
 
 	let {
 		subjects,
@@ -87,10 +89,9 @@
 	];
 
 	const subjectItems = [
-		{ title: 'Home', url: '', icon: HomeIcon },
 		{ title: 'Discussion', url: 'discussion', icon: MessagesSquareIcon },
 		{
-			title: 'Course Map',
+			title: 'Curriculum',
 			url: 'curriculum',
 			icon: RouteIcon,
 			requiredPermission: userPermissions.viewCourseMap,
@@ -112,7 +113,6 @@
 			icon: BarChart3Icon,
 			requiredPermission: userPermissions.viewAnalytics,
 		},
-		{ title: 'Grades', url: 'grades', icon: BookOpenIcon },
 	];
 
 	const subjectNameToIcon = (name: string) => {
@@ -145,6 +145,7 @@
 		userData()?.lastName,
 	);
 	let form: HTMLFormElement | null = $state(null);
+	let openSubjectIds = $state<number[]>([]);
 
 	function getInitials(
 		firstName: string | null,
@@ -202,12 +203,7 @@
 	const permissions = $state(getPermissions(userData()?.type));
 </script>
 
-<Sidebar.Root
-	collapsible="icon"
-	class="top-(--header-height) h-[calc(100svh-var(--header-height))]!"
-	side="left"
-	variant="inset"
->
+<Sidebar.Root collapsible="icon" side="left" variant="inset">
 	<Sidebar.Header>
 		<Sidebar.Menu>
 			<Sidebar.MenuItem>
@@ -215,7 +211,6 @@
 					<DropdownMenu.Trigger>
 						{#snippet child({ props })}
 							<Sidebar.MenuButton
-								side="left"
 								size="lg"
 								class="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
 								{...props}
@@ -262,7 +257,6 @@
 						{#if !item.requiredPermission || permissions.includes(item.requiredPermission)}
 							<Sidebar.MenuItem>
 								<Sidebar.MenuButton
-									side="left"
 									isActive={isMainItemActive(item.url)}
 									tooltipContent={item.title}
 								>
@@ -281,48 +275,65 @@
 		</Sidebar.Group>
 		{#if subjects.length > 0}
 			<Sidebar.Group>
-				<Sidebar.GroupLabel>
-					<a href="/subjects" class="text-lg font-semibold">Subjects</a>
+				<Sidebar.GroupLabel class="text-lg font-semibold">
+					Subjects
 				</Sidebar.GroupLabel>
 				<Sidebar.Menu>
 					{#each subjects as subject (subject.subject.id)}
+						{@const subjectOfferingId = subject.subjectOffering.id}
 						<Collapsible.Root
 							class="group/collapsible"
-							open={isSubjectActive(subject.subjectOffering.id.toString())}
+							open={openSubjectIds.includes(subjectOfferingId)}
 						>
 							<Collapsible.Trigger>
 								{#snippet child({ props })}
-									<a
-										href={sidebar.leftOpen
-											? undefined
-											: `/subjects/${subject.subjectOffering.id}`}
-										onclick={() => {
-											if (!sidebar.leftOpen) {
-												sidebar.setLeftOpen(true);
+									<Sidebar.MenuButton
+										tooltipContent={subject.subject.name}
+										isActive={isSubjectActive(
+											subject.subjectOffering.id.toString(),
+										)}
+										{...props}
+										onclick={(e) => {
+											// If the sidebar is open, normal state toggling
+											if (sidebar.open) {
+												if (openSubjectIds.includes(subjectOfferingId)) {
+													openSubjectIds = openSubjectIds.filter(
+														(id) => id !== subjectOfferingId,
+													);
+												} else {
+													openSubjectIds = [
+														...openSubjectIds,
+														subjectOfferingId,
+													];
+												}
 											}
+
+											// If the sidebar is closed but the clicked subject is not open
+											if (
+												!sidebar.open &&
+												!openSubjectIds.includes(subjectOfferingId)
+											) {
+												openSubjectIds = [...openSubjectIds, subjectOfferingId];
+											}
+
+											// Open the sidebar if it's closed
+											if (!sidebar.open) {
+												sidebar.setOpen(true);
+											}
+
+											e.preventDefault();
 										}}
 									>
-										<Sidebar.MenuButton
-											side="left"
-											tooltipContent={subject.subject.name}
-											isActive={isSubjectActive(
-												subject.subjectOffering.id.toString(),
-											)}
-											{...props}
+										{@const IconComponent = subjectNameToIcon(
+											subject.subject.name,
+										)}
+										<IconComponent class="mr-2" />
+										<span class="whitespace-nowrap">{subject.subject.name}</span
 										>
-											{@const IconComponent = subjectNameToIcon(
-												subject.subject.name,
-											)}
-											<IconComponent class="mr-2" />
-
-											<span class="whitespace-nowrap"
-												>{subject.subject.name}</span
-											>
-											<ChevronDownIcon
-												class="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-180"
-											/>
-										</Sidebar.MenuButton>
-									</a>
+										<ChevronDownIcon
+											class="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-180"
+										/>
+									</Sidebar.MenuButton>
 								{/snippet}
 							</Collapsible.Trigger>
 							<Collapsible.Content>
@@ -350,12 +361,7 @@
 										{/if}
 									{/each}
 									{#each subject.classes as classItem (classItem.id)}
-										<Collapsible.Root
-											class="group/collapsible-class"
-											open={isSubjectActive(
-												subject.subjectOffering.id.toString(),
-											)}
-										>
+										<Collapsible.Root class="group/collapsible-class">
 											<Collapsible.Trigger>
 												{#snippet child({ props })}
 													<Sidebar.MenuSubButton
@@ -417,7 +423,6 @@
 					<DropdownMenu.Trigger>
 						{#snippet child({ props })}
 							<Sidebar.MenuButton
-								side="left"
 								size="lg"
 								class="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
 								{...props}
@@ -451,6 +456,29 @@
 							Profile
 						</DropdownMenu.Item>
 						<DropdownMenu.Separator />
+						<DropdownMenu.Sub>
+							<DropdownMenu.SubTrigger>
+								<SunIcon
+									class="h-[1.2rem] w-[1.2rem] scale-100 rotate-0 transition-all dark:scale-0 dark:-rotate-90"
+								/>
+								<MoonIcon
+									class="absolute h-[1.2rem] w-[1.2rem] scale-0 rotate-90 transition-all dark:scale-100 dark:rotate-0"
+								/>
+								Theme</DropdownMenu.SubTrigger
+							>
+							<DropdownMenu.SubContent>
+								<DropdownMenu.Item onclick={() => setMode('light')}
+									>Light</DropdownMenu.Item
+								>
+								<DropdownMenu.Item onclick={() => setMode('dark')}
+									>Dark</DropdownMenu.Item
+								>
+								<DropdownMenu.Item onclick={() => resetMode()}
+									>System</DropdownMenu.Item
+								>
+							</DropdownMenu.SubContent>
+						</DropdownMenu.Sub>
+						<DropdownMenu.Separator />
 						<form method="post" action="/?/logout" bind:this={form}>
 							<DropdownMenu.Item
 								class="cursor-pointer"
@@ -465,4 +493,5 @@
 			</Sidebar.MenuItem>
 		</Sidebar.Menu>
 	</Sidebar.Footer>
+	<Sidebar.Rail />
 </Sidebar.Root>

@@ -21,7 +21,7 @@
 	const attendanceHistory = $derived(data.attendanceHistory || []);
 
 	const studentName = $derived(
-		convertToFullName(student.firstName, student.middleName, student.lastName)
+		convertToFullName(student.firstName, student.middleName, student.lastName),
 	);
 	const subjectName = $derived(classDetails.subject.name);
 	const className = $derived(classDetails.subjectOfferingClass.name);
@@ -45,15 +45,18 @@
 
 	function calculateAttendanceStats() {
 		const total = attendanceHistory.length;
-		const recorded = attendanceHistory.filter((record) => record.attendance !== null).length;
+		const recorded = attendanceHistory.filter(
+			(record) => record.attendance !== null,
+		).length;
 		const present = attendanceHistory.filter(
-			(record) => record.attendance?.status === 'present'
+			(record) => record.attendance?.status === 'present',
 		).length;
 		const absent = attendanceHistory.filter(
-			(record) => record.attendance?.status === 'absent'
+			(record) => record.attendance?.status === 'absent',
 		).length;
 
-		const attendanceRate = recorded > 0 ? Math.round((present / recorded) * 100) : 0;
+		const attendanceRate =
+			recorded > 0 ? Math.round((present / recorded) * 100) : 0;
 
 		return { total, recorded, present, absent, attendanceRate };
 	}
@@ -67,7 +70,7 @@
 		<div class="flex items-center justify-between">
 			<div class="flex items-center gap-4">
 				<Avatar.Root class="h-16 w-16">
-					<Avatar.Image src={student.avatarUrl} alt={studentName} />
+					<Avatar.Image src={student.avatarPath} alt={studentName} />
 					<Avatar.Fallback class="text-lg">
 						{student.firstName.charAt(0)}{student.lastName.charAt(0)}
 					</Avatar.Fallback>
@@ -84,8 +87,8 @@
 			<Button
 				variant="ghost"
 				size="sm"
-				href="/subjects/{classDetails.subjectOffering.id}/class/{classDetails.subjectOfferingClass
-					.id}/attendance"
+				href="/subjects/{classDetails.subjectOffering.id}/class/{classDetails
+					.subjectOfferingClass.id}/attendance"
 			>
 				<ArrowLeft />
 				Back to Class Attendance
@@ -96,7 +99,9 @@
 	<!-- Stats Cards -->
 	<div class="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
 		<Card.Root>
-			<Card.Header class="flex flex-row items-center justify-between space-y-0 pb-2">
+			<Card.Header
+				class="flex flex-row items-center justify-between space-y-0 pb-2"
+			>
 				<Card.Title class="text-sm font-medium">Total Classes</Card.Title>
 				<Calendar />
 			</Card.Header>
@@ -106,7 +111,9 @@
 		</Card.Root>
 
 		<Card.Root>
-			<Card.Header class="flex flex-row items-center justify-between space-y-0 pb-2">
+			<Card.Header
+				class="flex flex-row items-center justify-between space-y-0 pb-2"
+			>
 				<Card.Title class="text-sm font-medium">Attendance Rate</Card.Title>
 				<div class="bg-success/10 rounded-full p-1">
 					<Check class="text-success h-4 w-4" />
@@ -121,7 +128,9 @@
 		</Card.Root>
 
 		<Card.Root>
-			<Card.Header class="flex flex-row items-center justify-between space-y-0 pb-2">
+			<Card.Header
+				class="flex flex-row items-center justify-between space-y-0 pb-2"
+			>
 				<Card.Title class="text-sm font-medium">Present</Card.Title>
 				<div class="bg-success/10 rounded-full p-1">
 					<Check class="text-success h-4 w-4" />
@@ -133,7 +142,9 @@
 		</Card.Root>
 
 		<Card.Root>
-			<Card.Header class="flex flex-row items-center justify-between space-y-0 pb-2">
+			<Card.Header
+				class="flex flex-row items-center justify-between space-y-0 pb-2"
+			>
 				<Card.Title class="text-sm font-medium">Absent</Card.Title>
 				<div class="bg-destructive/10 rounded-full p-1">
 					<X class="text-destructive h-4 w-4" />
@@ -164,13 +175,13 @@
 						{@const status = getAttendanceStatus(record.attendance)}
 						<Table.Row>
 							<Table.Cell class="font-medium">
-								{record.subjectClassAllocation.startTime}
+								{record.subjectClassAllocation.start}
 							</Table.Cell>
 							<Table.Cell>
 								<div class="flex items-center gap-1">
 									<Clock class="text-muted-foreground h-4 w-4" />
-									{record.subjectClassAllocation.startTime} -
-									{record.subjectClassAllocation.endTime}
+									{record.subjectClassAllocation.start} -
+									{record.subjectClassAllocation.end}
 								</div>
 							</Table.Cell>
 							<Table.Cell>
@@ -184,7 +195,10 @@
 								{/if}
 							</Table.Cell>
 							<Table.Cell>
-								<Badge variant={status.variant} class="flex w-32 items-center gap-1">
+								<Badge
+									variant={status.variant}
+									class="flex w-32 items-center gap-1"
+								>
 									<status.icon class="h-3 w-3" />
 									{status.status}
 								</Badge>
@@ -199,7 +213,9 @@
 											</div>
 										{/if}
 										{#if record.attendance.noteTeacher}
-											<div class="text-muted-foreground flex items-center gap-1 text-sm">
+											<div
+												class="text-muted-foreground flex items-center gap-1 text-sm"
+											>
 												<FileText class="text-muted-foreground h-3 w-3" />
 												{record.attendance.noteTeacher}
 											</div>

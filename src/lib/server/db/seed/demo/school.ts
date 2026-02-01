@@ -16,12 +16,12 @@ export async function seedDemoSchool(
 
 	const eddiBehaviourLevels = await db
 		.select()
-		.from(schema.behaviourLevel)
-		.where(eq(schema.behaviourLevel.schoolId, eddiSchool.id));
+		.from(schema.schoolBehaviourLevel)
+		.where(eq(schema.schoolBehaviourLevel.schoolId, eddiSchool.id));
 
 	for (const eddiLevel of eddiBehaviourLevels) {
 		const [demoBehaviourLevel] = await db
-			.insert(schema.behaviourLevel)
+			.insert(schema.schoolBehaviourLevel)
 			.values({
 				schoolId: school.id,
 				level: eddiLevel.level,
@@ -31,12 +31,12 @@ export async function seedDemoSchool(
 
 		const eddiBehaviours = await db
 			.select()
-			.from(schema.behaviour)
-			.where(eq(schema.behaviour.levelId, eddiLevel.id));
+			.from(schema.schoolBehaviour)
+			.where(eq(schema.schoolBehaviour.levelId, eddiLevel.id));
 
 		for (const eddiBehaviour of eddiBehaviours) {
 			await db
-				.insert(schema.behaviour)
+				.insert(schema.schoolBehaviour)
 				.values({
 					schoolId: school.id,
 					levelId: demoBehaviourLevel.id,
@@ -45,8 +45,6 @@ export async function seedDemoSchool(
 				});
 		}
 	}
-
-	console.log('Copied behaviour levels and behaviours from eddi school');
 
 	// Create campus
 	const [campus] = await db
@@ -58,8 +56,6 @@ export async function seedDemoSchool(
 			description: 'Primary campus of Demo School',
 		})
 		.returning();
-
-	console.log(`  Created campus: ${campus.name}`);
 
 	// Create buildings
 	const [middleSchool, seniorSchool, gymnasium] = await db
@@ -82,8 +78,6 @@ export async function seedDemoSchool(
 			},
 		])
 		.returning();
-
-	console.log('  Created buildings: Middle School, Senior School, Gymnasium');
 
 	// Create spaces
 	const spaces = await db
@@ -203,11 +197,8 @@ export async function seedDemoSchool(
 		])
 		.returning();
 
-	console.log(`  Created ${spaces.length} school spaces`);
-
 	// Create year levels (Foundation to Year 12)
 	const yearLevels = await seedYearLevels(db, school.id);
-	console.log(`  Created ${Object.keys(yearLevels).length} year levels`);
 
 	// Create semesters and terms
 	const semestersAndTerms = await seedSchoolSemestersAndTerms(db, school.id);

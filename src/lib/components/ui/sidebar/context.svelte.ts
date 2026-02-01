@@ -1,54 +1,35 @@
-import { IsMobile } from '$lib/hooks/is-mobile.svelte.js';
-import { getContext, setContext } from 'svelte';
-import { SIDEBAR_KEYBOARD_SHORTCUT } from './constants.js';
+import { IsMobile } from "$lib/hooks/is-mobile.svelte.js";
+import { getContext, setContext } from "svelte";
+import { SIDEBAR_KEYBOARD_SHORTCUT } from "./constants.js";
 
 type Getter<T> = () => T;
 
 export type SidebarStateProps = {
 	/**
-	 * A getter function that returns the current open state of the left sidebar.
+	 * A getter function that returns the current open state of the sidebar.
 	 * We use a getter function here to support `bind:open` on the `Sidebar.Provider`
 	 * component.
 	 */
-	leftOpen: Getter<boolean>;
+	open: Getter<boolean>;
 
 	/**
-	 * A getter function that returns the current open state of the right sidebar.
-	 * We use a getter function here to support `bind:open` on the `Sidebar.Provider`
-	 * component.
-	 */
-	rightOpen: Getter<boolean>;
-
-	/**
-	 * A function that sets the open state of the left sidebar. To support `bind:open`, we need
+	 * A function that sets the open state of the sidebar. To support `bind:open`, we need
 	 * a source of truth for changing the open state to ensure it will be synced throughout
 	 * the sub-components and any `bind:` references.
 	 */
-	setLeftOpen: (open: boolean) => void;
-
-	/**
-	 * A function that sets the open state of the right sidebar. To support `bind:open`, we need
-	 * a source of truth for changing the open state to ensure it will be synced throughout
-	 * the sub-components and any `bind:` references.
-	 */
-	setRightOpen: (open: boolean) => void;
+	setOpen: (open: boolean) => void;
 };
 
 class SidebarState {
 	readonly props: SidebarStateProps;
-	leftOpen = $derived.by(() => this.props.leftOpen());
-	rightOpen = $derived.by(() => this.props.rightOpen());
-	leftOpenMobile = $state(false);
-	rightOpenMobile = $state(false);
-	setLeftOpen: SidebarStateProps['setLeftOpen'];
-	setRightOpen: SidebarStateProps['setRightOpen'];
+	open = $derived.by(() => this.props.open());
+	openMobile = $state(false);
+	setOpen: SidebarStateProps["setOpen"];
 	#isMobile: IsMobile;
-	leftState = $derived.by(() => (this.leftOpen ? 'expanded' : 'collapsed'));
-	rightState = $derived.by(() => (this.rightOpen ? 'expanded' : 'collapsed'));
+	state = $derived.by(() => (this.open ? "expanded" : "collapsed"));
 
 	constructor(props: SidebarStateProps) {
-		this.setLeftOpen = props.setLeftOpen;
-		this.setRightOpen = props.setRightOpen;
+		this.setOpen = props.setOpen;
 		this.#isMobile = new IsMobile();
 		this.props = props;
 	}
@@ -63,33 +44,22 @@ class SidebarState {
 	handleShortcutKeydown = (e: KeyboardEvent) => {
 		if (e.key === SIDEBAR_KEYBOARD_SHORTCUT && (e.metaKey || e.ctrlKey)) {
 			e.preventDefault();
-			this.toggleLeft();
-			this.toggleRight();
+			this.toggle();
 		}
 	};
 
-	setLeftOpenMobile = (value: boolean) => {
-		this.leftOpenMobile = value;
+	setOpenMobile = (value: boolean) => {
+		this.openMobile = value;
 	};
 
-	setRightOpenMobile = (value: boolean) => {
-		this.rightOpenMobile = value;
-	};
-
-	toggleLeft = () => {
+	toggle = () => {
 		return this.#isMobile.current
-			? (this.leftOpenMobile = !this.leftOpenMobile)
-			: this.setLeftOpen(!this.leftOpen);
-	};
-
-	toggleRight = () => {
-		return this.#isMobile.current
-			? (this.rightOpenMobile = !this.rightOpenMobile)
-			: this.setRightOpen(!this.rightOpen);
+			? (this.openMobile = !this.openMobile)
+			: this.setOpen(!this.open);
 	};
 }
 
-const SYMBOL_KEY = 'scn-sidebar';
+const SYMBOL_KEY = "scn-sidebar";
 
 /**
  * Instantiates a new `SidebarState` instance and sets it in the context.

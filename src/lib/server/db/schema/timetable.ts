@@ -253,7 +253,7 @@ export const timetableActivityAssignedYear = timetableSchema.table(
 		timetableActivityId: integer('tt_activity_id')
 			.references(() => timetableActivity.id, { onDelete: 'cascade' })
 			.notNull(),
-		yearlevel: integer()
+		yearLevelId: integer()
 			.notNull()
 			.references(() => schoolYearLevel.id, { onDelete: 'cascade' }),
 	},

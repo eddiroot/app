@@ -8,7 +8,10 @@
 		label,
 		align = 'left',
 		...restProps
-	}: ComponentProps<typeof Button> & { label: string; align?: 'left' | 'right' } = $props();
+	}: ComponentProps<typeof Button> & {
+		label: string;
+		align?: 'left' | 'right';
+	} = $props();
 </script>
 
 <Button

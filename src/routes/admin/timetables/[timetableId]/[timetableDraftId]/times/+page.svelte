@@ -3,36 +3,43 @@
 	import Button from '$lib/components/ui/button/button.svelte';
 	import * as Form from '$lib/components/ui/form';
 	import Input from '$lib/components/ui/input/input.svelte';
-	import { formatTime } from '$lib/utils.js';
+	import { formatTime } from '$lib/utils';
 	import PlusIcon from '@lucide/svelte/icons/plus';
 	import TrashIcon from '@lucide/svelte/icons/trash-2';
 	import { superForm } from 'sveltekit-superforms';
 	import { zod4 } from 'sveltekit-superforms/adapters';
-	import { addPeriodSchema, updateCycleWeeksRepeatSchema, updateDaysSchema } from './schema.js';
+	import {
+		addPeriodSchema,
+		updateCycleWeeksRepeatSchema,
+		updateDaysSchema,
+	} from './schema.js';
 
 	let { data } = $props();
 
-	let updateDaysFormElement: HTMLFormElement;
 	let updateCycleWeeksRepeatFormElement: HTMLFormElement;
 
-	const updateDaysForm = superForm(data.updateDaysForm, {
+	let dataUpdateDaysForm = () => data.updateDaysForm;
+	const updateDaysForm = superForm(dataUpdateDaysForm(), {
 		validators: zod4(updateDaysSchema),
-		resetForm: false
+		resetForm: false,
 	});
-	const { form: updateDaysData, enhance: updateDaysEnhance } = updateDaysForm;
 
-	const addPeriodForm = superForm(data.addPeriodForm, {
+	let dataAddPeriodForm = () => data.addPeriodForm;
+	const addPeriodForm = superForm(dataAddPeriodForm(), {
 		validators: zod4(addPeriodSchema),
-		resetForm: true
+		resetForm: true,
 	});
 	const { form: addPeriodData, enhance: addPeriodEnhance } = addPeriodForm;
 
-	const updateCycleWeeksRepeatForm = superForm(data.updateCycleWeeksRepeatForm, {
-		validators: zod4(updateCycleWeeksRepeatSchema),
-		resetForm: false
-	});
-	const { form: updateCycleWeeksRepeatData, enhance: updateCycleWeeksRepeatEnhance } =
-		updateCycleWeeksRepeatForm;
+	let dataUpdateCycleWeeksRepeatForm = () => data.updateCycleWeeksRepeatForm;
+	const updateCycleWeeksRepeatForm = superForm(
+		dataUpdateCycleWeeksRepeatForm(),
+		{ validators: zod4(updateCycleWeeksRepeatSchema), resetForm: false },
+	);
+	const {
+		form: updateCycleWeeksRepeatData,
+		enhance: updateCycleWeeksRepeatEnhance,
+	} = updateCycleWeeksRepeatForm;
 </script>
 
 <div class="space-y-8">
@@ -60,13 +67,16 @@
 							}}
 						/>
 						<span class="text-muted-foreground text-sm">
-							week{$updateCycleWeeksRepeatData.cycleWeeksRepeat !== 1 ? 's' : ''}
+							week{$updateCycleWeeksRepeatData.cycleWeeksRepeat !== 1
+								? 's'
+								: ''}
 						</span>
 					</div>
 				{/snippet}
 			</Form.Control>
 			<Form.Description>
-				The number of weeks in the timetable cycle before it repeats (Usually 1 or 2)
+				The number of weeks in the timetable cycle before it repeats (Usually 1
+				or 2)
 			</Form.Description>
 			<Form.FieldErrors />
 		</Form.Field>
@@ -120,8 +130,13 @@
 
 	<div class="space-y-4">
 		<h2 class="text-2xl leading-tight font-bold">Periods</h2>
-		<form method="POST" action="?/updatePeriods" class="flex flex-row gap-2" use:addPeriodEnhance>
-			<Form.Field form={addPeriodForm} name="startTime">
+		<form
+			method="POST"
+			action="?/updatePeriods"
+			class="flex flex-row gap-2"
+			use:addPeriodEnhance
+		>
+			<Form.Field form={addPeriodForm} name="start">
 				<Form.Control>
 					{#snippet children({ props })}
 						<Input
@@ -129,13 +144,13 @@
 							type="time"
 							class="w-32"
 							placeholder="Start time"
-							bind:value={$addPeriodData.startTime}
+							bind:value={$addPeriodData.start}
 						/>
 					{/snippet}
 				</Form.Control>
 				<Form.FieldErrors />
 			</Form.Field>
-			<Form.Field form={addPeriodForm} name="endTime">
+			<Form.Field form={addPeriodForm} name="end">
 				<Form.Control>
 					{#snippet children({ props })}
 						<Input
@@ -143,7 +158,7 @@
 							type="time"
 							class="w-32"
 							placeholder="End time"
-							bind:value={$addPeriodData.endTime}
+							bind:value={$addPeriodData.end}
 						/>
 					{/snippet}
 				</Form.Control>
@@ -153,7 +168,9 @@
 		</form>
 
 		{#if data.periods.length === 0}
-			<p class="text-muted-foreground text-sm">No periods defined yet. Add a period above.</p>
+			<p class="text-muted-foreground text-sm">
+				No periods defined yet. Add a period above.
+			</p>
 		{:else}
 			<ol class="space-y-2">
 				{#each data.periods as period}
@@ -162,7 +179,7 @@
 					>
 						<div class="flex flex-col">
 							<span class="font-semibold">
-								{formatTime(period.startTime)} - {formatTime(period.endTime)}
+								{formatTime(period.start)} - {formatTime(period.end)}
 							</span>
 							{#if period.duration !== null}
 								<span class="text-muted-foreground text-sm">
@@ -171,7 +188,12 @@
 							{/if}
 						</div>
 						{#if data.periods.length > 1}
-							<form method="POST" action="?/deletePeriod" use:enhance class="ml-2">
+							<form
+								method="POST"
+								action="?/deletePeriod"
+								use:enhance
+								class="ml-2"
+							>
 								<input type="hidden" name="periodId" value={period.id} />
 								<Button type="submit" variant="destructive" size="icon">
 									<TrashIcon />
@@ -185,8 +207,8 @@
 
 		{#if data.periods.length === 1}
 			<p class="text-muted-foreground text-sm">
-				At least one period is required. Add more periods above or delete periods when you have more
-				than one.
+				At least one period is required. Add more periods above or delete
+				periods when you have more than one.
 			</p>
 		{/if}
 	</div>

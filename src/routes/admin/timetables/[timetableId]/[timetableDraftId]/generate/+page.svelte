@@ -24,7 +24,10 @@
 		message: string;
 		translatedMessage: string | null;
 	} | null>(null);
-	let selectedResponse = $state<{ timetableDraftId: number; message: string } | null>(null);
+	let selectedResponse = $state<{
+		timetableDraftId: number;
+		message: string;
+	} | null>(null);
 	let showErrorDialog = $state(false);
 	let showResponseDialog = $state(false);
 	let showTranslated = $state(false);
@@ -33,8 +36,10 @@
 	// Check if there are any active queue entries (queued or in_progress)
 	let hasActiveEntries = $derived(
 		data.queueEntries?.some(
-			(entry) => entry.status === 'queued' || entry.status === 'in_progress'
-		) ?? false
+			(entry) =>
+				entry.tt_queue.status === 'queued' ||
+				entry.tt_queue.status === 'in_progress',
+		) ?? false,
 	);
 
 	function getStatusColor(status: string) {
@@ -66,9 +71,13 @@
 	function showError(
 		timetableDraftId: number,
 		message: string,
-		translatedMessage: string | null | undefined
+		translatedMessage: string | null | undefined,
 	) {
-		selectedError = { timetableDraftId, message, translatedMessage: translatedMessage || null };
+		selectedError = {
+			timetableDraftId,
+			message,
+			translatedMessage: translatedMessage || null,
+		};
 		showTranslated = false;
 		isTranslating = false;
 		showErrorDialog = true;
@@ -91,9 +100,18 @@
 			.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
 			.replace(/\*(.*?)\*/g, '<em>$1</em>')
 			.replace(/`(.*?)`/g, '<code class="bg-blue-100 px-1 rounded">$1</code>')
-			.replace(/^### (.*$)/gim, '<h3 class="text-lg font-semibold mt-4 mb-2">$1</h3>')
-			.replace(/^## (.*$)/gim, '<h2 class="text-xl font-semibold mt-6 mb-3">$1</h2>')
-			.replace(/^# (.*$)/gim, '<h1 class="text-2xl font-bold mt-8 mb-4">$1</h1>')
+			.replace(
+				/^### (.*$)/gim,
+				'<h3 class="text-lg font-semibold mt-4 mb-2">$1</h3>',
+			)
+			.replace(
+				/^## (.*$)/gim,
+				'<h2 class="text-xl font-semibold mt-6 mb-3">$1</h2>',
+			)
+			.replace(
+				/^# (.*$)/gim,
+				'<h1 class="text-2xl font-bold mt-8 mb-4">$1</h1>',
+			)
 			.replace(/^- (.*$)/gim, '<li class="ml-6 mb-1">• $1</li>')
 			.replace(/^\d+\. (.*$)/gim, '<li class="ml-6 mb-1 list-decimal">$1</li>')
 			.replace(/\n\n/g, '<br/>')
@@ -114,14 +132,12 @@
 		try {
 			const response = await fetch('/api/timetables/translate-error', {
 				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json'
-				},
+				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify({
 					timetableDraftId: selectedError.timetableDraftId,
 					errorMessage: selectedError.message,
-					forceRetranslate
-				})
+					forceRetranslate,
+				}),
 			});
 
 			if (!response.ok) {
@@ -133,7 +149,7 @@
 			// Update the selected error with the translated message
 			selectedError = {
 				...selectedError,
-				translatedMessage: data.translatedMessage
+				translatedMessage: data.translatedMessage,
 			};
 
 			// Refresh the queue data to get the updated translated message from the database
@@ -207,7 +223,9 @@
 	<div class="flex-1">
 		<Card.Root class="border-none shadow-none">
 			<Card.Header class="space-y-4 text-center">
-				<div class="bg-primary/10 mx-auto flex h-16 w-16 items-center justify-center rounded-full">
+				<div
+					class="bg-primary/10 mx-auto flex h-16 w-16 items-center justify-center rounded-full"
+				>
 					<CheckCircle class="text-primary h-8 w-8" />
 				</div>
 				<div class="space-y-2">
@@ -225,8 +243,9 @@
 						<div class="space-y-1">
 							<p class="font-medium">Timetable Generation</p>
 							<p class="text-muted-foreground text-sm">
-								Once you start the generation process, eddi will analyse all of your configured data
-								and create an optimised timetable based on your constraints and preferences.
+								Once you start the generation process, eddi will analyse all of
+								your configured data and create an optimised timetable based on
+								your constraints and preferences.
 							</p>
 						</div>
 					</div>
@@ -236,8 +255,9 @@
 						<div class="space-y-1">
 							<p class="font-medium">Important Notice</p>
 							<p class="text-muted-foreground text-sm">
-								While the generation is in progress, the timetable will be locked and no changes can
-								be made to subjects, activities, students, or rules until the process completes.
+								While the generation is in progress, the timetable will be
+								locked and no changes can be made to subjects, activities,
+								students, or rules until the process completes.
 							</p>
 						</div>
 					</div>
@@ -249,7 +269,12 @@
 					class="flex justify-center"
 					onsubmit={handleGenerate}
 				>
-					<Button type="submit" size="lg" class="px-8 py-3" disabled={isGenerating}>
+					<Button
+						type="submit"
+						size="lg"
+						class="px-8 py-3"
+						disabled={isGenerating}
+					>
 						{#if isGenerating}
 							<Loader class="mr-2 h-4 w-4 animate-spin" />
 							Generating...
@@ -276,7 +301,9 @@
 						</Card.Title>
 						<Card.Description>
 							{#if data.queueEntries && data.queueEntries.length > 0}
-								{data.queueEntries.length} draft{data.queueEntries.length !== 1 ? 's' : ''}
+								{data.queueEntries.length} draft{data.queueEntries.length !== 1
+									? 's'
+									: ''}
 							{:else}
 								No drafts yet
 							{/if}
@@ -302,44 +329,20 @@
 						{#each data.queueEntries as entry}
 							<div class="border-muted rounded-lg border p-4">
 								<div class="mb-2 flex items-center justify-between">
-									<span class="text-sm font-medium">Draft #{entry.timetableDraftId}</span>
+									<span class="text-sm font-medium"
+										>Draft #{entry.tt_draft.id}</span
+									>
 									<div class="flex items-center gap-2">
-										<Badge class={getStatusColor(entry.status)}>
-											{formatStatus(entry.status)}
+										<Badge class={getStatusColor(entry.tt_queue.status)}>
+											{formatStatus(entry.tt_queue.status)}
 										</Badge>
-										{#if entry.status === 'failed' && entry.fetResponse}
-											<Button
-												variant="ghost"
-												size="icon"
-												class="h-6 w-6"
-												onclick={() =>
-													showError(
-														entry.timetableDraftId,
-														entry.fetResponse!,
-														entry.translatedErrorMessage
-													)}
-												title="View error details"
-											>
-												<AlertCircle class="h-4 w-4 text-red-500" />
-											</Button>
-										{:else if entry.status === 'completed' && entry.fetResponse}
-											<Button
-												variant="ghost"
-												size="icon"
-												class="h-6 w-6"
-												onclick={() => showResponse(entry.timetableDraftId, entry.fetResponse!)}
-												title="View FET response"
-											>
-												<Info class="h-4 w-4 text-green-500" />
-											</Button>
-										{/if}
 									</div>
 								</div>
 								<div class="text-muted-foreground space-y-1 text-xs">
-									<p class="truncate" title={entry.fileName}>
-										{entry.fileName}
+									<p class="truncate" title={entry.tt_queue.fileName}>
+										{entry.tt_queue.fileName}
 									</p>
-									<p>{formatDate(entry.createdAt)}</p>
+									<p>{formatDate(entry.tt_queue.createdAt)}</p>
 								</div>
 							</div>
 						{/each}
@@ -357,7 +360,12 @@
 						}}
 						class="border-t pt-4"
 					>
-						<Button type="submit" class="w-full" variant="outline" disabled={isProcessing}>
+						<Button
+							type="submit"
+							class="w-full"
+							variant="outline"
+							disabled={isProcessing}
+						>
 							{#if isProcessing}
 								<Loader class="mr-2 h-4 w-4 animate-spin" />
 								Processing...
@@ -370,7 +378,8 @@
 				{:else}
 					<div class="py-8 text-center">
 						<p class="text-muted-foreground text-sm">
-							No timetable drafts in queue yet. Generate your first timetable to get started.
+							No timetable drafts in queue yet. Generate your first timetable to
+							get started.
 						</p>
 					</div>
 				{/if}
@@ -384,7 +393,9 @@
 	<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
 		<div class="mx-4 w-full max-w-sm rounded-lg bg-white p-8 shadow-xl">
 			<div class="space-y-4 text-center">
-				<div class="bg-primary/10 mx-auto flex h-16 w-16 items-center justify-center rounded-full">
+				<div
+					class="bg-primary/10 mx-auto flex h-16 w-16 items-center justify-center rounded-full"
+				>
 					<Loader class="text-primary h-8 w-8 animate-spin" />
 				</div>
 				<div class="space-y-2">
@@ -400,7 +411,7 @@
 
 <!-- Error Dialog -->
 <Dialog.Root bind:open={showErrorDialog}>
-	<Dialog.Content class="flex max-h-[80vh] !max-w-5xl flex-col">
+	<Dialog.Content class="flex max-h-[80vh] max-w-5xl! flex-col">
 		<Dialog.Header>
 			<Dialog.Title class="flex items-center gap-2">
 				<AlertCircle class="h-5 w-5 text-red-500" />
@@ -459,7 +470,8 @@
 						<div class="space-y-2">
 							<p class="font-medium">Translating Error Message</p>
 							<p class="text-muted-foreground text-sm">
-								Using AI to provide a user-friendly explanation (this may take a while)...
+								Using AI to provide a user-friendly explanation (this may take a
+								while)...
 							</p>
 						</div>
 					</div>
@@ -474,7 +486,9 @@
 			{:else}
 				<!-- Raw Message -->
 				<div class="rounded-lg border border-red-200 bg-red-50 p-4">
-					<p class="font-mono text-sm break-words whitespace-pre-wrap text-red-800">
+					<p
+						class="font-mono text-sm wrap-break-word whitespace-pre-wrap text-red-800"
+					>
 						{selectedError?.message || 'No error message available'}
 					</p>
 				</div>
@@ -489,23 +503,29 @@
 
 <!-- FET Response Dialog -->
 <Dialog.Root bind:open={showResponseDialog}>
-	<Dialog.Content class="flex max-h-[80vh] !max-w-5xl flex-col">
+	<Dialog.Content class="flex max-h-[80vh] max-w-5xl! flex-col">
 		<Dialog.Header>
 			<Dialog.Title class="flex items-center gap-2">
 				<Info class="h-5 w-5 text-green-500" />
 				FET Response - Draft #{selectedResponse?.timetableDraftId}
 			</Dialog.Title>
-			<Dialog.Description>The output from the timetable generation process:</Dialog.Description>
+			<Dialog.Description
+				>The output from the timetable generation process:</Dialog.Description
+			>
 		</Dialog.Header>
 		<div class="mt-4 flex-1 overflow-y-auto">
 			<div class="rounded-lg border border-green-200 bg-green-50 p-4">
-				<p class="font-mono text-sm break-words whitespace-pre-wrap text-green-800">
+				<p
+					class="font-mono text-sm wrap-break-word whitespace-pre-wrap text-green-800"
+				>
 					{selectedResponse?.message || 'No response available'}
 				</p>
 			</div>
 		</div>
 		<Dialog.Footer class="mt-6">
-			<Button variant="outline" onclick={() => (showResponseDialog = false)}>Close</Button>
+			<Button variant="outline" onclick={() => (showResponseDialog = false)}
+				>Close</Button
+			>
 		</Dialog.Footer>
 	</Dialog.Content>
 </Dialog.Root>

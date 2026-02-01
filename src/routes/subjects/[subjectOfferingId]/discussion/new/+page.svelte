@@ -12,16 +12,19 @@
 	let { data } = $props();
 
 	const dataForm = () => data.form;
-	const form = superForm(dataForm(), {
-		validators: zod4(formSchema)
-	});
+	const form = superForm(dataForm(), { validators: zod4(formSchema) });
 
 	const { form: formData, enhance } = form;
 </script>
 
 <div>
 	<h1 class="mb-4 text-3xl font-bold">New Post</h1>
-	<form method="POST" action="?/create" class="@container space-y-6" use:enhance>
+	<form
+		method="POST"
+		action="?/create"
+		class="@container space-y-6"
+		use:enhance
+	>
 		<div class="grid grid-cols-1 gap-x-4 gap-y-6 @sm:grid-cols-8">
 			<Form.Field {form} name="title" class="@sm:col-span-5">
 				<Form.Control>
@@ -40,11 +43,16 @@
 				<Form.Control>
 					{#snippet children({ props })}
 						<Form.Label>Type</Form.Label>
-						<Select.Root type="single" bind:value={$formData.type} name={props.name}>
+						<Select.Root
+							type="single"
+							bind:value={$formData.type}
+							name={props.name}
+						>
 							<Select.Trigger {...props} class="w-full">
 								{$formData.type == 'qanda'
 									? 'Q&A'
-									: $formData.type.charAt(0).toUpperCase() + $formData.type.slice(1)}
+									: $formData.type.charAt(0).toUpperCase() +
+										$formData.type.slice(1)}
 							</Select.Trigger>
 							<Select.Content>
 								<Select.Item value="question" label="Question" />
@@ -80,7 +88,9 @@
 				<Form.Field {form} name="isAnonymous" class="space-y-0">
 					<Form.Control>
 						{#snippet children({ props })}
-							<Form.Label class="hover:bg-accent/50 items-start gap-3 rounded-lg border p-3">
+							<Form.Label
+								class="hover:bg-accent/50 items-start gap-3 rounded-lg border p-3"
+							>
 								<Checkbox {...props} bind:checked={$formData.isAnonymous} />
 								<div class="grid gap-1.5 font-normal">
 									<p class="text-sm leading-none font-medium">Anonymous Post</p>

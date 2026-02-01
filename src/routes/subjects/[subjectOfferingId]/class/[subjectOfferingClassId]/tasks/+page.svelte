@@ -18,21 +18,26 @@
 	import { z } from 'zod';
 
 	let { data } = $props();
-	let topicsWithTasks = $state(data.topicsWithTasks || []);
+	let topicsWithTasks = $derived(data.topicsWithTasks || []);
 	let showUploadDialog = $state(false);
 
 	let showDeleteDialog = $state(false);
-	let resourcePendingDelete = $state<{ id: number; title: string } | null>(null);
+	let resourcePendingDelete = $state<{ id: number; title: string } | null>(
+		null,
+	);
 	let deletingResource = $state(false);
 
 	const uploadSchema = z.object({
-		file: z.instanceof(File).refine((file) => file.size > 0, 'Please select a file to upload'),
+		file: z
+			.instanceof(File)
+			.refine((file) => file.size > 0, 'Please select a file to upload'),
 		title: z.string().optional(),
 		description: z.string().optional(),
-		topicId: z.number().min(1, 'Please select a topic')
+		topicId: z.number().min(1, 'Please select a topic'),
 	});
 
-	const form = superForm(data.form!, {
+	let dataForm = () => data.form;
+	const form = superForm(dataForm(), {
 		validators: zod4(uploadSchema),
 		onUpdated: async ({ form }) => {
 			if (form.valid) {
@@ -47,7 +52,7 @@
 				$formData.topicId = undefined as any;
 				await invalidateAll();
 			}
-		}
+		},
 	});
 
 	const { form: formData, enhance, submitting } = form;
@@ -97,7 +102,10 @@
 		try {
 			const formData = new FormData();
 			formData.append('resourceId', resourcePendingDelete.id.toString());
-			const response = await fetch('?/delete', { method: 'POST', body: formData });
+			const response = await fetch('?/delete', {
+				method: 'POST',
+				body: formData,
+			});
 			if (response.ok) {
 				toast.success('Resource deleted');
 				showDeleteDialog = false;
@@ -152,7 +160,9 @@
 					<h2 class="text-foreground text-xl font-semibold">{topic.name}</h2>
 				</div>
 
-				<div class="mt-4 grid grid-cols-[repeat(auto-fill,minmax(18rem,1fr))] gap-8">
+				<div
+					class="mt-4 grid grid-cols-[repeat(auto-fill,minmax(18rem,1fr))] gap-8"
+				>
 					{#if tasks.length === 0 && resources.length === 0}
 						<div class="text-muted-foreground col-span-full text-sm">
 							No tasks or resources available for this topic.
@@ -161,7 +171,10 @@
 
 					<!-- Tasks -->
 					{#each tasks as task}
-						<a href={`${page.url.pathname}/${task.task.id}`} class="block h-full">
+						<a
+							href={`${page.url.pathname}/${task.task.id}`}
+							class="block h-full"
+						>
 							<Card.Root class="h-full transition-shadow hover:shadow-md">
 								<Card.Header>
 									<Card.Title>
@@ -170,7 +183,9 @@
 								</Card.Header>
 								<Card.Content class="h-12 w-72 truncate break-all">
 									{#if task.task.description}
-										<span class="text-muted-foreground h-12 truncate text-sm text-wrap">
+										<span
+											class="text-muted-foreground h-12 truncate text-sm text-wrap"
+										>
 											{task.task.description}
 										</span>
 									{/if}
@@ -189,7 +204,9 @@
 						<Card.Root class="w-full">
 							<Card.Header>
 								<a target="_blank" href={resource.downloadUrl}>
-									<Card.Title class="w-48 truncate py-0.5 break-all hover:underline">
+									<Card.Title
+										class="w-48 truncate py-0.5 break-all hover:underline"
+									>
 										{resource.resourceRelation.title &&
 										resource.resourceRelation.title.trim() !== ''
 											? resource.resourceRelation.title
@@ -200,7 +217,9 @@
 							{#if resource.resourceRelation.description}
 								<Card.Content class="h-12 w-72 truncate break-all">
 									{#if resource.resourceRelation.description}
-										<span class="text-muted-foreground h-12 truncate text-sm text-wrap">
+										<span
+											class="text-muted-foreground h-12 truncate text-sm text-wrap"
+										>
 											{resource.resourceRelation.description}
 										</span>
 									{/if}
@@ -212,7 +231,11 @@
 								</span>
 								<Card.Action class="space-x-1">
 									{#if resource.downloadUrl}
-										<Button variant="outline" target="_blank" href={resource.downloadUrl}>
+										<Button
+											variant="outline"
+											target="_blank"
+											href={resource.downloadUrl}
+										>
 											<DownloadIcon />
 										</Button>
 									{/if}
@@ -224,7 +247,7 @@
 												resource.resourceRelation.title &&
 													resource.resourceRelation.title.trim() !== ''
 													? resource.resourceRelation.title
-													: resource.resource.fileName
+													: resource.resource.fileName,
 											)}
 									>
 										<TrashIcon />
@@ -244,7 +267,8 @@
 			<Dialog.Header>
 				<Dialog.Title>Upload Resource</Dialog.Title>
 				<Dialog.Description>
-					Upload a file to share with your class. Select a topic to organise the resource.
+					Upload a file to share with your class. Select a topic to organise the
+					resource.
 				</Dialog.Description>
 			</Dialog.Header>
 			<form
@@ -255,7 +279,8 @@
 				class="space-y-4"
 			>
 				<div class="space-y-2">
-					<label for="file-input" class="text-sm font-medium">Select File</label>
+					<label for="file-input" class="text-sm font-medium">Select File</label
+					>
 					<button
 						type="button"
 						class="border-muted-foreground/25 hover:border-muted-foreground/50 w-full cursor-pointer rounded-lg border-2 border-dashed p-4 text-center transition-colors"
@@ -265,12 +290,16 @@
 							<div class="space-y-1">
 								<FileIcon class="text-muted-foreground mx-auto h-8 w-8" />
 								<div class="text-sm font-medium">{selectedFile.name}</div>
-								<div class="text-muted-foreground text-xs">{formatFileSize(selectedFile.size)}</div>
+								<div class="text-muted-foreground text-xs">
+									{formatFileSize(selectedFile.size)}
+								</div>
 							</div>
 						{:else}
 							<div class="space-y-1">
 								<UploadIcon class="text-muted-foreground mx-auto h-8 w-8" />
-								<div class="text-muted-foreground text-sm">Click to select a file</div>
+								<div class="text-muted-foreground text-sm">
+									Click to select a file
+								</div>
 							</div>
 						{/if}
 					</button>
@@ -298,8 +327,8 @@
 					>
 						<Select.Trigger class="w-full">
 							{#if selectedTopic}
-								{data.topics?.find((t) => t.id === parseInt(selectedTopic!))?.name ||
-									'Select a topic'}
+								{data.topics?.find((t) => t.id === parseInt(selectedTopic!))
+									?.name || 'Select a topic'}
 							{:else}
 								Select a topic
 							{/if}
@@ -316,7 +345,8 @@
 				</div>
 
 				<div class="space-y-2">
-					<label for="title" class="text-sm font-medium">Title (optional)</label>
+					<label for="title" class="text-sm font-medium">Title (optional)</label
+					>
 					<Input
 						id="title"
 						name="title"
@@ -325,7 +355,9 @@
 					/>
 				</div>
 				<div class="space-y-2">
-					<label for="description" class="text-sm font-medium">Description (optional)</label>
+					<label for="description" class="text-sm font-medium"
+						>Description (optional)</label
+					>
 					<Textarea
 						id="description"
 						name="description"
@@ -336,10 +368,17 @@
 				</div>
 
 				<div class="flex justify-end space-x-2">
-					<Button type="button" variant="outline" onclick={() => (showUploadDialog = false)}>
+					<Button
+						type="button"
+						variant="outline"
+						onclick={() => (showUploadDialog = false)}
+					>
 						Cancel
 					</Button>
-					<Button type="submit" disabled={$submitting || !selectedFile || !selectedTopic}>
+					<Button
+						type="submit"
+						disabled={$submitting || !selectedFile || !selectedTopic}
+					>
 						{#if $submitting}
 							Uploading...
 						{:else}
@@ -356,7 +395,7 @@
 		<Dialog.Content class="sm:max-w-[420px]">
 			<Dialog.Header>
 				<Dialog.Title>Delete resource</Dialog.Title>
-				<Dialog.Description class="w-full truncate text-wrap break-words">
+				<Dialog.Description class="w-full truncate text-wrap wrap-break-word">
 					{#if resourcePendingDelete}
 						<span class="font-semibold break-all">
 							"{resourcePendingDelete.title}"

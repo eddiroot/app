@@ -1,5 +1,3 @@
-// need to change over to using subjectOffering class instead
-
 import {
 	getAnnouncementsBySubjectOfferingClassId,
 	getAssessmentsBySubjectOfferingClassId,
@@ -7,31 +5,37 @@ import {
 	getLessonsAndHomeworkBySubjectOfferingClassId,
 	getResourcesBySubjectOfferingClassId,
 	getSubjectBySubjectOfferingClassId,
-	getTeachersBySubjectOfferingClassId
+	getTeachersBySubjectOfferingClassId,
 } from '$lib/server/db/service';
 import { getPresignedUrl } from '$lib/server/obj';
 
 export const load = async ({
 	locals: { security },
-	params: { subjectOfferingId, subjectOfferingClassId }
+	params: { subjectOfferingId, subjectOfferingClassId },
 }) => {
 	security.isAuthenticated();
 	const user = security.isAuthenticated().getUser();
 	const thisSubjectOffering = await getSubjectBySubjectOfferingClassId(
-		Number(subjectOfferingClassId)
+		Number(subjectOfferingClassId),
 	);
-	const thisSubjectOfferingClass = await getClassById(Number(subjectOfferingClassId));
+	const thisSubjectOfferingClass = await getClassById(
+		Number(subjectOfferingClassId),
+	);
 	const thisSubjectOfferingTeachers = await getTeachersBySubjectOfferingClassId(
-		Number(subjectOfferingClassId)
+		Number(subjectOfferingClassId),
 	);
-	const assessments = await getAssessmentsBySubjectOfferingClassId(Number(subjectOfferingClassId));
+	const assessments = await getAssessmentsBySubjectOfferingClassId(
+		Number(subjectOfferingClassId),
+	);
 	const tasks = await getLessonsAndHomeworkBySubjectOfferingClassId(
 		user.id,
-		Number(subjectOfferingClassId)
+		Number(subjectOfferingClassId),
 	);
-	const resources = await getResourcesBySubjectOfferingClassId(Number(subjectOfferingClassId));
+	const resources = await getResourcesBySubjectOfferingClassId(
+		Number(subjectOfferingClassId),
+	);
 	const announcements = await getAnnouncementsBySubjectOfferingClassId(
-		Number(subjectOfferingClassId)
+		Number(subjectOfferingClassId),
 	);
 
 	// Generate presigned URLs for each resource
@@ -45,18 +49,15 @@ export const load = async ({
 					: row.resource.objectKey;
 
 				const downloadUrl = await getPresignedUrl(schoolId, objectName);
-				return {
-					...row,
-					downloadUrl
-				};
+				return { ...row, downloadUrl };
 			} catch (error) {
-				console.error(`Failed to generate URL for resource ${row.resource.id}:`, error);
-				return {
-					...row,
-					downloadUrl: null
-				};
+				console.error(
+					`Failed to generate URL for resource ${row.resource.id}:`,
+					error,
+				);
+				return { ...row, downloadUrl: null };
 			}
-		})
+		}),
 	);
 
 	return {
@@ -69,6 +70,6 @@ export const load = async ({
 		resources: resourcesWithUrls,
 		announcements,
 		subjectOfferingId: Number(subjectOfferingId),
-		subjectOfferingClassId: Number(subjectOfferingClassId)
+		subjectOfferingClassId: Number(subjectOfferingClassId),
 	};
 };

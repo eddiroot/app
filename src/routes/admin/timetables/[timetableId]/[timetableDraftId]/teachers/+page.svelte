@@ -5,9 +5,9 @@
 		TableCell,
 		TableHead,
 		TableHeader,
-		TableRow
+		TableRow,
 	} from '$lib/components/ui/table';
-	import { convertToFullName } from '$lib/utils.js';
+	import { convertToFullName } from '$lib/utils';
 
 	let { data } = $props();
 </script>
@@ -22,7 +22,11 @@
 		{#each data.teachers as teacher}
 			<TableRow>
 				<TableCell>
-					{convertToFullName(teacher.firstName, teacher.middleName, teacher.lastName)}
+					{convertToFullName(
+						teacher.firstName,
+						teacher.middleName,
+						teacher.lastName,
+					)}
 				</TableCell>
 			</TableRow>
 		{/each}

@@ -5,8 +5,13 @@
 	import Textarea from '$lib/components/ui/textarea/textarea.svelte';
 	import { ViewMode, type SubmissionBlockProps } from '$lib/schema/task';
 
-	let { config, onConfigUpdate, response, onResponseUpdate, viewMode }: SubmissionBlockProps =
-		$props();
+	let {
+		config,
+		onConfigUpdate,
+		response,
+		onResponseUpdate,
+		viewMode,
+	}: SubmissionBlockProps = $props();
 
 	let files = $state<FileList | undefined>(undefined);
 	let uploading = $state(false);
@@ -40,7 +45,7 @@
 
 			const uploadResponse = await fetch('?/uploadFile', {
 				method: 'POST',
-				body: formData
+				body: formData,
 			});
 
 			const result = await uploadResponse.json();
@@ -55,13 +60,13 @@
 				throw new Error('No URL returned from upload');
 			}
 
-			await onResponseUpdate({
-				path: data.url
-			});
+			await onResponseUpdate({ path: data.url });
 		} catch (error) {
 			console.error('Upload error:', error);
 			uploadError =
-				error instanceof Error ? error.message : 'Failed to upload file. Please try again.';
+				error instanceof Error
+					? error.message
+					: 'Failed to upload file. Please try again.';
 			files = undefined;
 		} finally {
 			uploading = false;
@@ -145,7 +150,9 @@
 					<Card.Content>
 						{#if config.instructions}
 							<div class="bg-muted mb-4 rounded-lg p-3">
-								<p class="text-muted-foreground text-sm font-medium">Instructions:</p>
+								<p class="text-muted-foreground text-sm font-medium">
+									Instructions:
+								</p>
 								<p class="text-sm whitespace-pre-wrap">{config.instructions}</p>
 							</div>
 						{/if}
@@ -167,11 +174,15 @@
 					<Card.Content>
 						{#if config.instructions}
 							<div class="bg-muted mb-4 rounded-lg p-3">
-								<p class="text-muted-foreground text-sm font-medium">Instructions:</p>
+								<p class="text-muted-foreground text-sm font-medium">
+									Instructions:
+								</p>
 								<p class="text-sm whitespace-pre-wrap">{config.instructions}</p>
 							</div>
 						{/if}
-						<p class="text-muted-foreground">The student has not submitted their work yet.</p>
+						<p class="text-muted-foreground">
+							The student has not submitted their work yet.
+						</p>
 					</Card.Content>
 				</Card.Root>
 			{/if}

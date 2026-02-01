@@ -16,8 +16,7 @@ import {
 	taskTypeEnum,
 	whiteboardObjectTypeEnum,
 } from '../../../enums';
-import { courseMapItem } from './coursemap';
-import { curriculumSubjectLearningAreaStandard } from './curriculum';
+import { curriculumItem } from './curriculum';
 import { resource } from './resource';
 import { subjectOffering, subjectOfferingClass } from './subject';
 import { user } from './user';
@@ -51,20 +50,6 @@ export const task = taskSchema.table('task', {
 
 export type Task = typeof task.$inferSelect;
 
-export const taskStandard = taskSchema.table('task_std', {
-	...essentials,
-	taskId: integer()
-		.notNull()
-		.references(() => task.id, { onDelete: 'cascade' }),
-	learningAreaStandardId: integer('lrn_a_std_id')
-		.notNull()
-		.references(() => curriculumSubjectLearningAreaStandard.id, {
-			onDelete: 'cascade',
-		}),
-});
-
-export type TaskStandard = typeof taskStandard.$inferSelect;
-
 export const taskBlockTypeEnumPg = taskSchema.enum(
 	'enum_task_block_type',
 	enumToPgEnum(taskBlockTypeEnum),
@@ -80,6 +65,7 @@ export const taskBlock = taskSchema.table('task_block', {
 	index: integer().default(0).notNull(),
 	availableMarks: integer(),
 });
+
 export type TaskBlock = typeof taskBlock.$inferSelect;
 
 export const taskStatusEnumPg = taskSchema.enum(
@@ -102,9 +88,10 @@ export const subjectOfferingClassTask = taskSchema.table(
 		authorId: uuid()
 			.notNull()
 			.references(() => user.id, { onDelete: 'cascade' }),
-		courseMapItemId: integer('cm_item_id').references(() => courseMapItem.id, {
-			onDelete: 'cascade',
-		}),
+		curriculumItemId: integer('crclm_item_id').references(
+			() => curriculumItem.id,
+			{ onDelete: 'cascade' },
+		),
 		week: integer(),
 		due: standardTimestamp('due'),
 		rubricId: integer().references(() => rubric.id, { onDelete: 'set null' }),

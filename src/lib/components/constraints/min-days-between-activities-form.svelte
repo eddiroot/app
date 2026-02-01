@@ -18,14 +18,14 @@
 	}: EnhancedConstraintFormProps = $props();
 
 	// Form state
-	let weightPercentage = $state(
+	let weightPercentage = $derived(
 		(initialValues.Weight_Percentage as number) || 95,
 	);
-	let consecutiveIfSameDay = $state(
+	let consecutiveIfSameDay = $derived(
 		(initialValues.Consecutive_If_Same_Day as boolean) ?? true,
 	);
-	let minDays = $state((initialValues.MinDays as number) || 1);
-	let comments = $state((initialValues.Comments as string) || '');
+	let minDays = $derived((initialValues.MinDays as number) || 1);
+	let comments = $derived((initialValues.Comments as string) || '');
 
 	// Activity selection state
 	let selectedActivities = $state<AutocompleteOption[]>([]);

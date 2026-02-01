@@ -5,13 +5,18 @@
 	import {
 		ViewMode,
 		type BlockShortAnswerConfig,
-		type ShortAnswerBlockProps
+		type ShortAnswerBlockProps,
 	} from '$lib/schema/task';
 	import CheckCircleIcon from '@lucide/svelte/icons/check-circle';
 	import MessageSquareTextIcon from '@lucide/svelte/icons/message-square-text';
 
-	let { config, onConfigUpdate, response, onResponseUpdate, viewMode }: ShortAnswerBlockProps =
-		$props();
+	let {
+		config,
+		onConfigUpdate,
+		response,
+		onResponseUpdate,
+		viewMode,
+	}: ShortAnswerBlockProps = $props();
 
 	function saveChanges(input: BlockShortAnswerConfig) {
 		if (!input.question.trim()) {
@@ -19,9 +24,7 @@
 			return;
 		}
 
-		onConfigUpdate({
-			question: input.question.trim()
-		});
+		onConfigUpdate({ question: input.question.trim() });
 	}
 </script>
 
@@ -91,9 +94,13 @@
 				</Card.Content>
 			</Card.Root>
 		{:else}
-			<div class="flex h-48 w-full items-center justify-center rounded-lg border border-dashed">
+			<div
+				class="flex h-48 w-full items-center justify-center rounded-lg border border-dashed"
+			>
 				<div class="text-center">
-					<MessageSquareTextIcon class="text-muted-foreground mx-auto h-12 w-12" />
+					<MessageSquareTextIcon
+						class="text-muted-foreground mx-auto h-12 w-12"
+					/>
 					<p class="text-muted-foreground mt-2 text-sm">No question created</p>
 					<p class="text-muted-foreground text-xs">
 						Switch to edit mode to create a short answer question

@@ -4,7 +4,7 @@
 	import {
 		FlexRender,
 		createSvelteTable,
-		renderComponent
+		renderComponent,
 	} from '$lib/components/ui/data-table/index.js';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
 	import { Input } from '$lib/components/ui/input/index.js';
@@ -19,7 +19,7 @@
 		type VisibilityState,
 		getCoreRowModel,
 		getFilteredRowModel,
-		getSortedRowModel
+		getSortedRowModel,
 	} from '@tanstack/table-core';
 	import ImportForm from './import-form.svelte';
 
@@ -31,30 +31,32 @@
 			header: ({ table }) =>
 				renderComponent(DataTableCheckbox, {
 					checked: table.getIsAllPageRowsSelected(),
-					indeterminate: table.getIsSomePageRowsSelected() && !table.getIsAllPageRowsSelected(),
+					indeterminate:
+						table.getIsSomePageRowsSelected() &&
+						!table.getIsAllPageRowsSelected(),
 					onCheckedChange: (value) => table.toggleAllPageRowsSelected(!!value),
-					'aria-label': 'Select all'
+					'aria-label': 'Select all',
 				}),
 			cell: ({ row }) =>
 				renderComponent(DataTableCheckbox, {
 					checked: row.getIsSelected(),
 					onCheckedChange: (value) => row.toggleSelected(!!value),
-					'aria-label': 'Select row'
+					'aria-label': 'Select row',
 				}),
 			enableSorting: false,
-			enableHiding: false
+			enableHiding: false,
 		},
 		{
 			accessorKey: 'name',
 			header: 'Name',
 			filterFn: 'includesString',
-			size: 200
+			size: 200,
 		},
 		{
 			accessorKey: 'campusName',
 			header: 'Campus',
 			filterFn: 'includesString',
-			size: 180
+			size: 180,
 		},
 		{
 			accessorKey: 'description',
@@ -64,7 +66,7 @@
 			cell: ({ getValue }) => {
 				const description = getValue() as string | null;
 				return description || 'No description';
-			}
+			},
 		},
 		{
 			accessorKey: 'isArchived',
@@ -73,7 +75,7 @@
 			cell: ({ getValue }) => {
 				const isArchived = getValue() as boolean;
 				return isArchived ? 'Archived' : 'Active';
-			}
+			},
 		},
 		{
 			accessorKey: 'createdAt',
@@ -82,16 +84,14 @@
 			cell: ({ getValue }) => {
 				const date = getValue() as string;
 				return new Date(date).toLocaleDateString();
-			}
-		}
+			},
+		},
 	];
 
 	let sorting = $state<SortingState>([]);
 	let columnFilters = $state<ColumnFiltersState>([]);
 	let rowSelection = $state<RowSelectionState>({});
-	let columnVisibility = $state<VisibilityState>({
-		description: false
-	});
+	let columnVisibility = $state<VisibilityState>({ description: false });
 
 	const table = createSvelteTable({
 		get data() {
@@ -110,7 +110,7 @@
 			},
 			get columnFilters() {
 				return columnFilters;
-			}
+			},
 		},
 		getCoreRowModel: getCoreRowModel(),
 		getSortedRowModel: getSortedRowModel(),
@@ -142,7 +142,7 @@
 			} else {
 				rowSelection = updater;
 			}
-		}
+		},
 	});
 
 	let importDialogOpen = $state(false);
@@ -159,7 +159,8 @@
 			<Input
 				placeholder="Filter buildings..."
 				value={(table.getColumn('name')?.getFilterValue() as string) ?? ''}
-				oninput={(e) => table.getColumn('name')?.setFilterValue(e.currentTarget.value)}
+				oninput={(e) =>
+					table.getColumn('name')?.setFilterValue(e.currentTarget.value)}
 				onchange={(e) => {
 					table.getColumn('name')?.setFilterValue(e.currentTarget.value);
 				}}
@@ -179,9 +180,14 @@
 						{/snippet}
 					</DropdownMenu.Trigger>
 					<DropdownMenu.Content align="end">
-						{#each table.getAllColumns().filter((col) => col.getCanHide()) as column (column.id)}
+						{#each table
+							.getAllColumns()
+							.filter((col) => col.getCanHide()) as column (column.id)}
 							<DropdownMenu.CheckboxItem
-								bind:checked={() => column.getIsVisible(), (v) => column.toggleVisibility(!!v)}
+								bind:checked={
+									() => column.getIsVisible(),
+									(v) => column.toggleVisibility(!!v)
+								}
 							>
 								{column.id === 'campusName'
 									? 'Campus'
@@ -219,13 +225,18 @@
 						<Table.Row data-state={row.getIsSelected() && 'selected'}>
 							{#each row.getVisibleCells() as cell (cell.id)}
 								<Table.Cell class="[&:has([role=checkbox])]:pl-3">
-									<FlexRender content={cell.column.columnDef.cell} context={cell.getContext()} />
+									<FlexRender
+										content={cell.column.columnDef.cell}
+										context={cell.getContext()}
+									/>
 								</Table.Cell>
 							{/each}
 						</Table.Row>
 					{:else}
 						<Table.Row>
-							<Table.Cell colspan={columns.length} class="h-24 text-center">No results.</Table.Cell>
+							<Table.Cell colspan={columns.length} class="h-24 text-center"
+								>No results.</Table.Cell
+							>
 						</Table.Row>
 					{/each}
 				</Table.Body>

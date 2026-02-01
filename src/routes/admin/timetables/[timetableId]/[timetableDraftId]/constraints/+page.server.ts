@@ -1,10 +1,13 @@
-import { buildConstraintFormData } from '$lib/constraint-data-fetchers';
-import { hasCustomForm } from '$lib/constraint-form-mapping';
 import { constraintTypeEnum } from '$lib/enums';
-import { getAllConstraints, getAllConstraintsByTimetableDraftId } from '$lib/server/db/service';
+import {
+	getAllConstraints,
+	getAllConstraintsByTimetableDraftId,
+} from '$lib/server/db/service';
+import { buildConstraintFormData } from '$lib/server/fet/constraints/constraint-data-fetchers';
+import { hasCustomForm } from '$lib/server/fet/constraints/constraint-form-mapping.js';
 
 export const load = async ({ locals: { security }, params }) => {
-	const user = security.isAuthenticated().isSchoolAdmin().getUser();
+	const user = security.isAuthenticated().isAdmin().getUser();
 	const timetableId = parseInt(params.timetableId, 10);
 	const timetableDraftId = parseInt(params.timetableDraftId, 10);
 
@@ -12,11 +15,12 @@ export const load = async ({ locals: { security }, params }) => {
 	const allConstraints = await getAllConstraints();
 
 	// Get constraints currently assigned to this timetable
-	const assignedConstraints = await getAllConstraintsByTimetableDraftId(timetableDraftId);
+	const assignedConstraints =
+		await getAllConstraintsByTimetableDraftId(timetableDraftId);
 
 	// Filter to only show constraints that have custom forms
 	const constraintsWithForms = allConstraints.filter((constraint) =>
-		hasCustomForm(constraint.FETName)
+		hasCustomForm(constraint.fetName),
 	);
 
 	// Get the constraint IDs that are already assigned to this timetable
@@ -34,22 +38,25 @@ export const load = async ({ locals: { security }, params }) => {
 
 	// Separate current constraints by type
 	const currentTimeConstraints = assignedConstraints.filter(
-		(con) => con.type === constraintTypeEnum.time
+		(con) => con.type === constraintTypeEnum.time,
 	);
 	const currentSpaceConstraints = assignedConstraints.filter(
-		(con) => con.type === constraintTypeEnum.space
+		(con) => con.type === constraintTypeEnum.space,
 	);
 
 	// Separate available constraints by type
 	const availableTimeConstraints = availableConstraints.filter(
-		(con) => con.type === constraintTypeEnum.time
+		(con) => con.type === constraintTypeEnum.time,
 	);
 	const availableSpaceConstraints = availableConstraints.filter(
-		(con) => con.type === constraintTypeEnum.space
+		(con) => con.type === constraintTypeEnum.space,
 	);
 
 	// Build form data for autocomplete components
-	const formData = await buildConstraintFormData(timetableDraftId, user.schoolId);
+	const formData = await buildConstraintFormData(
+		timetableDraftId,
+		user.schoolId,
+	);
 
 	return {
 		user,
@@ -59,6 +66,6 @@ export const load = async ({ locals: { security }, params }) => {
 		currentSpaceConstraints,
 		availableTimeConstraints,
 		availableSpaceConstraints,
-		formData
+		formData,
 	};
 };

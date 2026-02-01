@@ -1,4 +1,7 @@
-import { renderComponent, renderSnippet } from '$lib/components/ui/data-table/index.js';
+import {
+	renderComponent,
+	renderSnippet,
+} from '$lib/components/ui/data-table/index.js';
 import type { ColumnDef } from '@tanstack/table-core';
 import { createRawSnippet } from 'svelte';
 import StudentColumnHeader from './student-column-header.svelte';
@@ -22,14 +25,15 @@ export const studentColumns: ColumnDef<StudentStatistic>[] = [
 		header: ({ column }) =>
 			renderComponent(StudentColumnHeader, {
 				onclick: column.getToggleSortingHandler(),
-				label: 'Student Name'
+				label: 'Student Name',
 			}),
 		cell: ({ row }) => {
 			const nameSnippet = createRawSnippet(() => ({
-				render: () => `<div class="font-medium">${row.getValue('userName')}</div>`
+				render: () =>
+					`<div class="font-medium">${row.getValue('userName')}</div>`,
 			}));
 			return renderSnippet(nameSnippet);
-		}
+		},
 	},
 	{
 		accessorKey: 'numberOfEnrolledClasses',
@@ -37,15 +41,15 @@ export const studentColumns: ColumnDef<StudentStatistic>[] = [
 			renderComponent(StudentColumnHeader, {
 				onclick: column.getToggleSortingHandler(),
 				label: '# of Enrolled Classes',
-				align: 'right'
+				align: 'right',
 			}),
 		cell: ({ row }) => {
 			const classes = row.getValue('numberOfEnrolledClasses') as number;
 			const classesSnippet = createRawSnippet(() => ({
-				render: () => `<div class="text-right">${classes}</div>`
+				render: () => `<div class="text-right">${classes}</div>`,
 			}));
 			return renderSnippet(classesSnippet);
-		}
+		},
 	},
 	{
 		accessorKey: 'totalHoursPerCycle',
@@ -53,15 +57,15 @@ export const studentColumns: ColumnDef<StudentStatistic>[] = [
 			renderComponent(StudentColumnHeader, {
 				onclick: column.getToggleSortingHandler(),
 				label: 'Total Hours/Cycle',
-				align: 'right'
+				align: 'right',
 			}),
 		cell: ({ row }) => {
 			const hours = row.getValue('totalHoursPerCycle') as number;
 			const hoursSnippet = createRawSnippet(() => ({
-				render: () => `<div class="text-right">${hours.toFixed(2)}h</div>`
+				render: () => `<div class="text-right">${hours.toFixed(2)}h</div>`,
 			}));
 			return renderSnippet(hoursSnippet);
-		}
+		},
 	},
 	{
 		accessorKey: 'averageHoursPerDay',
@@ -69,15 +73,15 @@ export const studentColumns: ColumnDef<StudentStatistic>[] = [
 			renderComponent(StudentColumnHeader, {
 				onclick: column.getToggleSortingHandler(),
 				label: 'Avg Hours/Day',
-				align: 'right'
+				align: 'right',
 			}),
 		cell: ({ row }) => {
 			const hours = row.getValue('averageHoursPerDay') as number;
 			const avgSnippet = createRawSnippet(() => ({
-				render: () => `<div class="text-right">${hours.toFixed(2)}h</div>`
+				render: () => `<div class="text-right">${hours.toFixed(2)}h</div>`,
 			}));
 			return renderSnippet(avgSnippet);
-		}
+		},
 	},
 	{
 		accessorKey: 'maxHoursPerDay',
@@ -85,15 +89,15 @@ export const studentColumns: ColumnDef<StudentStatistic>[] = [
 			renderComponent(StudentColumnHeader, {
 				onclick: column.getToggleSortingHandler(),
 				label: 'Max Hours/Day',
-				align: 'right'
+				align: 'right',
 			}),
 		cell: ({ row }) => {
 			const hours = row.getValue('maxHoursPerDay') as number;
 			const maxSnippet = createRawSnippet(() => ({
-				render: () => `<div class="text-right">${hours.toFixed(2)}h</div>`
+				render: () => `<div class="text-right">${hours.toFixed(2)}h</div>`,
 			}));
 			return renderSnippet(maxSnippet);
-		}
+		},
 	},
 	{
 		accessorKey: 'minHoursPerDay',
@@ -101,15 +105,15 @@ export const studentColumns: ColumnDef<StudentStatistic>[] = [
 			renderComponent(StudentColumnHeader, {
 				onclick: column.getToggleSortingHandler(),
 				label: 'Min Hours/Day',
-				align: 'right'
+				align: 'right',
 			}),
 		cell: ({ row }) => {
 			const hours = row.getValue('minHoursPerDay') as number;
 			const minSnippet = createRawSnippet(() => ({
-				render: () => `<div class="text-right">${hours.toFixed(2)}h</div>`
+				render: () => `<div class="text-right">${hours.toFixed(2)}h</div>`,
 			}));
 			return renderSnippet(minSnippet);
-		}
+		},
 	},
 	{
 		accessorKey: 'numberOfFreeDays',
@@ -117,14 +121,14 @@ export const studentColumns: ColumnDef<StudentStatistic>[] = [
 			renderComponent(StudentColumnHeader, {
 				onclick: column.getToggleSortingHandler(),
 				label: 'Free Days',
-				align: 'right'
+				align: 'right',
 			}),
 		cell: ({ row }) => {
 			const days = row.getValue('numberOfFreeDays') as number;
 			const freeDaysSnippet = createRawSnippet(() => ({
-				render: () => `<div class="text-right">${days}</div>`
+				render: () => `<div class="text-right">${days}</div>`,
 			}));
 			return renderSnippet(freeDaysSnippet);
-		}
-	}
+		},
+	},
 ];

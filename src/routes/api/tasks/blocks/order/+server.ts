@@ -16,7 +16,10 @@ export async function PUT({ request }: { request: Request }) {
 		// Validate each block update object
 		for (const update of blockOrder) {
 			if (typeof update.id !== 'number' || typeof update.index !== 'number') {
-				return json({ error: 'Each block update must have valid id and index' }, { status: 400 });
+				return json(
+					{ error: 'Each block update must have valid id and index' },
+					{ status: 400 },
+				);
 			}
 		}
 

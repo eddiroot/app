@@ -50,10 +50,7 @@
 			canvas.height = viewport.height;
 			canvas.width = viewport.width;
 
-			const renderContext = {
-				canvasContext: context,
-				viewport: viewport
-			};
+			const renderContext = { canvasContext: context, viewport: viewport };
 
 			await page.render(renderContext).promise;
 		} catch (err) {
@@ -90,13 +87,13 @@
 			// Set worker source using the correct version
 			pdfjsLib.GlobalWorkerOptions.workerSrc = new URL(
 				'pdfjs-dist/build/pdf.worker.min.mjs',
-				import.meta.url
+				import.meta.url,
 			).toString();
 
 			const loadingTask = pdfjsLib.getDocument({
 				url: url,
 				cMapUrl: 'https://cdn.jsdelivr.net/npm/pdfjs-dist@5.3.93/cmaps/',
-				cMapPacked: true
+				cMapPacked: true,
 			});
 
 			pdfDoc = await loadingTask.promise;

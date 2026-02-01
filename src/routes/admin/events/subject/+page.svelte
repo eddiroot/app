@@ -18,14 +18,17 @@
 
 	let { data }: { data: PageData } = $props();
 
-	const form = superForm(data.form, {
+	let dataForm = () => data.form;
+	const form = superForm(dataForm(), {
 		validators: zod4(createSubjectOfferingEventSchema),
-		resetForm: false
+		resetForm: false,
 	});
 
 	const { form: formData, enhance, submitting } = form;
 
-	let selectedSubjectOfferingId = $derived($formData.subjectOfferingId?.toString() || '');
+	let selectedSubjectOfferingId = $derived(
+		$formData.subjectOfferingId?.toString() || '',
+	);
 </script>
 
 <div class="space-y-6">
@@ -87,7 +90,7 @@
 								<Select.Trigger {...props} class="mt-1">
 									{#if selectedSubjectOfferingId}
 										{@const selectedOffering = data.subjectOfferings.find(
-											(o) => o.id.toString() === selectedSubjectOfferingId
+											(o) => o.id.toString() === selectedSubjectOfferingId,
 										)}
 										{selectedOffering
 											? `${selectedOffering.subject.name} - Year ${selectedOffering.year}`
@@ -114,7 +117,7 @@
 
 				<!-- Date and Time -->
 				<div class="grid gap-4 md:grid-cols-2">
-					<Form.Field {form} name="startTimestamp">
+					<Form.Field {form} name="start">
 						<Form.Control>
 							{#snippet children({ props })}
 								<Label for={props.id} class="flex items-center gap-2">
@@ -123,7 +126,7 @@
 								</Label>
 								<Input
 									{...props}
-									bind:value={$formData.startTimestamp}
+									bind:value={$formData.start}
 									type="datetime-local"
 									class="mt-1"
 								/>
@@ -132,7 +135,7 @@
 						<Form.FieldErrors />
 					</Form.Field>
 
-					<Form.Field {form} name="endTimestamp">
+					<Form.Field {form} name="end">
 						<Form.Control>
 							{#snippet children({ props })}
 								<Label for={props.id} class="flex items-center gap-2">
@@ -141,7 +144,7 @@
 								</Label>
 								<Input
 									{...props}
-									bind:value={$formData.endTimestamp}
+									bind:value={$formData.end}
 									type="datetime-local"
 									class="mt-1"
 								/>
@@ -156,7 +159,11 @@
 					<Form.Control>
 						{#snippet children({ props })}
 							<div class="flex items-center space-x-3">
-								<Checkbox {...props} bind:checked={$formData.requiresRSVP} id={props.id} />
+								<Checkbox
+									{...props}
+									bind:checked={$formData.requiresRSVP}
+									id={props.id}
+								/>
 								<div class="grid gap-1.5 leading-none">
 									<Label
 										for={props.id}
@@ -166,7 +173,8 @@
 										Require RSVP
 									</Label>
 									<p class="text-muted-foreground text-xs">
-										Parents and students will need to confirm their attendance for this event
+										Parents and students will need to confirm their attendance
+										for this event
 									</p>
 								</div>
 							</div>
@@ -177,8 +185,12 @@
 
 				<!-- Action Buttons -->
 				<div class="flex justify-end gap-3 pt-4">
-					<Button.Root variant="outline" href="/admin/events">Cancel</Button.Root>
-					<Button.Root type="submit" disabled={$submitting}>Create Subject Event</Button.Root>
+					<Button.Root variant="outline" href="/admin/events"
+						>Cancel</Button.Root
+					>
+					<Button.Root type="submit" disabled={$submitting}
+						>Create Subject Event</Button.Root
+					>
 				</div>
 			</form>
 		</Card.Content>

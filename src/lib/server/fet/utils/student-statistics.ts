@@ -25,8 +25,8 @@ export type ClassAllocation = {
 	dayNumber: number;
 	startPeriodId: number;
 	endPeriodId: number;
-	startTime: string;
-	endTime: string;
+	start: string;
+	end: string;
 	durationMinutes: number;
 };
 
@@ -84,8 +84,8 @@ export async function getStudentEnrollmentsWithAllocations(
 			dayNumber: table.timetableDay.day,
 			startPeriodId: table.fetSubjectClassAllocation.startPeriodId,
 			endPeriodId: table.fetSubjectClassAllocation.endPeriodId,
-			startTime: table.timetablePeriod.start,
-			endTime: table.timetablePeriod.end,
+			start: table.timetablePeriod.start,
+			end: table.timetablePeriod.end,
 		})
 		.from(table.fetSubjectClassAllocation)
 		.innerJoin(
@@ -112,14 +112,11 @@ export async function getStudentEnrollmentsWithAllocations(
 	// Get end times for allocations (since we joined on start period)
 	const endPeriodIds = [...new Set(allocations.map((a) => a.endPeriodId))];
 	const endPeriods = await db
-		.select({
-			id: table.timetablePeriod.id,
-			endTime: table.timetablePeriod.end,
-		})
+		.select({ id: table.timetablePeriod.id, end: table.timetablePeriod.end })
 		.from(table.timetablePeriod)
 		.where(inArray(table.timetablePeriod.id, endPeriodIds));
 
-	const endPeriodMap = new Map(endPeriods.map((p) => [p.id, p.endTime]));
+	const endPeriodMap = new Map(endPeriods.map((p) => [p.id, p.end]));
 
 	// Build enrollment objects
 	const enrollmentMap = new Map<string, StudentEnrollment>();
@@ -145,10 +142,9 @@ export async function getStudentEnrollmentsWithAllocations(
 		);
 
 		for (const alloc of classAllocations) {
-			const actualEndTime =
-				endPeriodMap.get(alloc.endPeriodId) || alloc.endTime;
+			const actualEndTime = endPeriodMap.get(alloc.endPeriodId) || alloc.end;
 			const durationMinutes = calculateDurationMinutes(
-				alloc.startTime,
+				alloc.start,
 				actualEndTime,
 			);
 
@@ -158,8 +154,8 @@ export async function getStudentEnrollmentsWithAllocations(
 				dayNumber: alloc.dayNumber,
 				startPeriodId: alloc.startPeriodId,
 				endPeriodId: alloc.endPeriodId,
-				startTime: alloc.startTime,
-				endTime: actualEndTime,
+				start: alloc.start,
+				end: actualEndTime,
 				durationMinutes,
 			});
 		}

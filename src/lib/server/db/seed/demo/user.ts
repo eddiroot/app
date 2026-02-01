@@ -236,8 +236,6 @@ export async function seedDemoUsers(
 		})
 		.returning();
 
-	console.log(`  Created admin: ${admin.email}`);
-
 	// Generate a year level coordinator for years 7-10 (exclude 'none')
 	const coordinators = [];
 	const activeYearLevels = Object.values(yearLevels).filter(
@@ -373,7 +371,6 @@ export async function seedDemoUsers(
 	}
 
 	const parents = await db.insert(schema.user).values(parentValues).returning();
-	console.log(`  Created ${parents.length} parents`);
 
 	// Generate 30 Teachers
 	const teacherValues: Array<{
@@ -423,7 +420,6 @@ export async function seedDemoUsers(
 		.insert(schema.user)
 		.values(teacherValues)
 		.returning();
-	console.log(`  Created ${teachers.length} teachers`);
 
 	// Assign all users to campus
 	const allUserIds = [
@@ -443,8 +439,6 @@ export async function seedDemoUsers(
 			.insert(schema.userCampus)
 			.values(batch.map((userId) => ({ userId, schoolCampusId: campus.id })));
 	}
-
-	console.log(`  Assigned ${allUserIds.length} users to campus`);
 
 	// Create parent-child relationships
 	// Each student gets 2 parents (mother at even index, father at odd index)
@@ -476,10 +470,6 @@ export async function seedDemoUsers(
 		const batch = relationshipValues.slice(i, i + BATCH_SIZE);
 		await db.insert(schema.userRelationship).values(batch);
 	}
-
-	console.log(
-		`  Created ${relationshipValues.length} parent-child relationships`,
-	);
 
 	return { admin, principal, coordinators, teachers, students, parents };
 }

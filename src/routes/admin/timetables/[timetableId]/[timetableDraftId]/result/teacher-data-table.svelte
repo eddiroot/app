@@ -1,6 +1,9 @@
 <script lang="ts">
 	import { Button } from '$lib/components/ui/button/index.js';
-	import { createSvelteTable, FlexRender } from '$lib/components/ui/data-table/index.js';
+	import {
+		createSvelteTable,
+		FlexRender,
+	} from '$lib/components/ui/data-table/index.js';
 	import * as Table from '$lib/components/ui/table/index.js';
 	import {
 		type ColumnDef,
@@ -8,7 +11,7 @@
 		type SortingState,
 		getCoreRowModel,
 		getPaginationRowModel,
-		getSortedRowModel
+		getSortedRowModel,
 	} from '@tanstack/table-core';
 	import type { TeacherStatistic } from './teacher-columns';
 
@@ -20,10 +23,7 @@
 	let { data, columns }: TeacherDataTableProps = $props();
 
 	// Pagination state
-	let pagination = $state<PaginationState>({
-		pageIndex: 0,
-		pageSize: 10
-	});
+	let pagination = $state<PaginationState>({ pageIndex: 0, pageSize: 10 });
 
 	// Sorting state
 	let sorting = $state<SortingState>([]);
@@ -56,9 +56,9 @@
 				},
 				get sorting() {
 					return sorting;
-				}
-			}
-		})
+				},
+			},
+		}),
 	);
 </script>
 
@@ -87,7 +87,10 @@
 						<Table.Row>
 							{#each row.getVisibleCells() as cell}
 								<Table.Cell>
-									<FlexRender content={cell.column.columnDef.cell} context={cell.getContext()} />
+									<FlexRender
+										content={cell.column.columnDef.cell}
+										context={cell.getContext()}
+									/>
 								</Table.Cell>
 							{/each}
 						</Table.Row>

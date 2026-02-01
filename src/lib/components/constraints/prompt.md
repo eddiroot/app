@@ -15,7 +15,7 @@ Constraints to Implement:
 
 For the following constraints, i want you to create forms by following the following steps:
 
-1. Identify the fields required for each constraint based on its FETName and parameters. (consider unique_constraints.txt)
+1. Identify the fields required for each constraint based on its fetName and parameters. (consider unique_constraints.txt)
 2. Determine the appropriate input types for each field (e.g., text, number, date, select, checkbox).
 3. Utilize the Autocomplete component for fields that require selection from a predefined list of options.
 4. Create a Svelte component for each constraint form, ensuring it includes:

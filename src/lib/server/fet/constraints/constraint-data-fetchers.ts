@@ -38,7 +38,7 @@ export async function getTimetableDraftPeriodsOptions(
 	const periods = await getTimetableDraftPeriodsByTimetableDraftId(timetableId);
 	return periods.map((period) => ({
 		value: period.id,
-		label: `${period.startTime} - ${period.endTime}`,
+		label: `${period.start} - ${period.end}`,
 	}));
 }
 

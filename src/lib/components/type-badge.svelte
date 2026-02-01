@@ -7,16 +7,17 @@
 
 	const { type }: Props = $props();
 
-	const variant =
+	const variant = $derived(
 		type === 'teacher'
 			? 'default'
 			: type === 'student'
 				? 'success'
 				: type.toLowerCase().includes('admin')
 					? 'destructive'
-					: 'secondary';
+					: 'secondary',
+	);
 
-	const spacedType = type.replace(/([a-z])([A-Z])/g, '$1 $2');
+	const spacedType = $derived(type.replace(/([a-z])([A-Z])/g, '$1 $2'));
 </script>
 
 <Badge {variant} class="capitalize">{spacedType}</Badge>

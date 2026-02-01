@@ -1,25 +1,25 @@
 import { userTypeEnum } from '$lib/enums.js';
 import {
-    getActiveTimetableDraftConstraintsByTimetableDraftId,
-    getAllStudentGroupsByTimetableDraftId,
-    getAllStudentsGroupedByYearLevelsBySchoolId,
-    getBuildingsBySchoolId,
-    getEnhancedTimetableDraftActivitiesByTimetableDraftId,
-    getSchoolById,
-    getSpacesBySchoolId,
-    getSubjectsBySchoolId,
-    getTimetableDraftById,
-    getTimetableDraftDaysByTimetableDraftId,
-    getTimetableDraftPeriodsByTimetableDraftId,
-    getTimetableQueueByTimetableId,
-    getUsersBySchoolIdAndType
+	getActiveTimetableDraftConstraintsByTimetableDraftId,
+	getAllStudentGroupsByTimetableDraftId,
+	getAllStudentsGroupedByYearLevelsBySchoolId,
+	getBuildingsBySchoolId,
+	getEnhancedTimetableDraftActivitiesByTimetableDraftId,
+	getSchoolById,
+	getSpacesBySchoolId,
+	getSubjectsBySchoolId,
+	getTimetableDraftById,
+	getTimetableDraftDaysByTimetableDraftId,
+	getTimetableDraftPeriodsByTimetableDraftId,
+	getTimetableQueueByTimetableId,
+	getUsersBySchoolIdAndType,
 } from '$lib/server/db/service';
 import { fail } from '@sveltejs/kit';
 import { processTimetableQueue } from '../../../../../../scripts/process/timetable.js';
 import { buildFETInput } from './utils.js';
 
 export const load = async ({ params, locals: { security }, depends }) => {
-	security.isAuthenticated().isSchoolAdmin();
+	security.isAuthenticated().isAdmin();
 
 	const timetableId = parseInt(params.timetableId, 10);
 	if (isNaN(timetableId)) {
@@ -29,18 +29,18 @@ export const load = async ({ params, locals: { security }, depends }) => {
 	depends('app:queue');
 	const queueEntries = await getTimetableQueueByTimetableId(timetableId);
 
-	return {
-		queueEntries
-	};
+	return { queueEntries };
 };
 
 export const actions = {
 	generateTimetable: async ({ params, locals: { security }, fetch }) => {
-		security.isAuthenticated().isSchoolAdmin();
+		security.isAuthenticated().isAdmin();
 
 		const user = security.getUser();
 		const timetableId = parseInt(params.timetableId, 10);
-		const draft = await getTimetableDraftById(parseInt(params.timetableDraftId, 10));
+		const draft = await getTimetableDraftById(
+			parseInt(params.timetableDraftId, 10),
+		);
 
 		try {
 			const [
@@ -54,7 +54,7 @@ export const actions = {
 				teachers,
 				subjects,
 				school,
-				activeConstraints
+				activeConstraints,
 			] = await Promise.all([
 				getTimetableDraftDaysByTimetableDraftId(draft.id),
 				getTimetableDraftPeriodsByTimetableDraftId(draft.id),
@@ -66,7 +66,7 @@ export const actions = {
 				getUsersBySchoolIdAndType(user.schoolId, userTypeEnum.teacher),
 				getSubjectsBySchoolId(user.schoolId),
 				getSchoolById(user.schoolId),
-				getActiveTimetableDraftConstraintsByTimetableDraftId(draft.id)
+				getActiveTimetableDraftConstraintsByTimetableDraftId(draft.id),
 			]);
 
 			const xmlContent = await buildFETInput({
@@ -80,21 +80,19 @@ export const actions = {
 				teachers,
 				subjects,
 				school,
-				activeConstraints
+				activeConstraints,
 			});
 
 			// Call the FET API to generate the timetable
 			try {
 				const response = await fetch('/api/timetables/generate', {
 					method: 'POST',
-					headers: {
-						'Content-Type': 'application/json'
-					},
+					headers: { 'Content-Type': 'application/json' },
 					body: JSON.stringify({
 						timetableId,
 						draft,
-						fetXmlContent: xmlContent
-					})
+						fetXmlContent: xmlContent,
+					}),
 				});
 
 				if (!response.ok) {
@@ -105,7 +103,9 @@ export const actions = {
 				const result = await response.json();
 				return {
 					success: true,
-					message: result.message || 'Timetable generation has been queued successfully'
+					message:
+						result.message ||
+						'Timetable generation has been queued successfully',
 				};
 			} catch (apiError) {
 				console.error('Error calling FET API:', apiError);
@@ -113,18 +113,19 @@ export const actions = {
 				// await createTimetableQueueEntry(timetableId, user.id, uniqueFileName);
 				return {
 					success: true,
-					message: 'Timetable data queued for processing (fallback mode)'
+					message: 'Timetable data queued for processing (fallback mode)',
 				};
 			}
 		} catch (error) {
 			console.error('Error generating timetable XML:', error);
 			return fail(500, {
-				error: 'Failed to generate timetable. Please ensure all required data is configured.'
+				error:
+					'Failed to generate timetable. Please ensure all required data is configured.',
 			});
 		}
 	},
 	processQueue: async ({ locals: { security } }) => {
-		security.isAuthenticated().isSchoolAdmin();
+		security.isAuthenticated().isAdmin();
 
 		try {
 			// Trigger the queue processor
@@ -132,15 +133,10 @@ export const actions = {
 				console.error('Background processing error:', err);
 			});
 
-			return {
-				success: true,
-				message: 'Queue processing started'
-			};
+			return { success: true, message: 'Queue processing started' };
 		} catch (error) {
 			console.error('Error starting queue processor:', error);
-			return fail(500, {
-				error: 'Failed to start queue processing'
-			});
+			return fail(500, { error: 'Failed to start queue processing' });
 		}
-	}
+	},
 };

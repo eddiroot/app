@@ -5,13 +5,18 @@
 	import {
 		ViewMode,
 		type BlockHighlightTextConfig,
-		type HighlightTextBlockProps
+		type HighlightTextBlockProps,
 	} from '$lib/schema/task';
 	import CheckCircleIcon from '@lucide/svelte/icons/check-circle';
 	import HighlighterIcon from '@lucide/svelte/icons/highlighter';
 
-	let { config, onConfigUpdate, response, onResponseUpdate, viewMode }: HighlightTextBlockProps =
-		$props();
+	let {
+		config,
+		onConfigUpdate,
+		response,
+		onResponseUpdate,
+		viewMode,
+	}: HighlightTextBlockProps = $props();
 
 	let selectedTextIndices = $state<number[]>([]);
 
@@ -26,10 +31,7 @@
 			return;
 		}
 
-		onConfigUpdate({
-			text: input.text,
-			instructions: input.instructions
-		});
+		onConfigUpdate({ text: input.text, instructions: input.instructions });
 	}
 
 	function splitTextIntoWords(text: string): string[] {
@@ -52,12 +54,11 @@
 
 		// Update response
 		const words = splitTextIntoWords(config.text);
-		const selectedText = currentSelections.map((index) => words[index]).filter((word) => word);
+		const selectedText = currentSelections
+			.map((index) => words[index])
+			.filter((word) => word);
 
-		onResponseUpdate({
-			...response,
-			selectedText
-		});
+		onResponseUpdate({ ...response, selectedText });
 	}
 
 	function isWordSelected(wordIndex: number): boolean {
@@ -132,14 +133,18 @@
 									<button
 										type="button"
 										class={`rounded px-1 transition-colors ${
-											isWordSelected(index) ? 'bg-primary' : 'hover:bg-primary/40'
+											isWordSelected(index)
+												? 'bg-primary'
+												: 'hover:bg-primary/40'
 										}`}
 										onclick={() => toggleWordSelection(index)}
 									>
 										{word}
 									</button>
 								{:else}
-									<span class={`rounded px-1 ${isWordSelected(index) ? 'bg-primary' : ''}`}>
+									<span
+										class={`rounded px-1 ${isWordSelected(index) ? 'bg-primary' : ''}`}
+									>
 										{word}
 									</span>
 								{/if}
@@ -149,7 +154,8 @@
 
 					{#if viewMode === ViewMode.ANSWER}
 						<p class="text-muted-foreground text-sm">
-							Click on words to highlight them. You can click again to remove the highlight.
+							Click on words to highlight them. You can click again to remove
+							the highlight.
 						</p>
 					{/if}
 
@@ -160,18 +166,22 @@
 								<span class="font-medium">Response Submitted</span>
 							</div>
 							<p class="text-muted-foreground mt-1 text-sm">
-								Highlighted {response.selectedText?.length || 0} word(s). This response will be reviewed
-								and graded.
+								Highlighted {response.selectedText?.length || 0} word(s). This response
+								will be reviewed and graded.
 							</p>
 						</div>
 					{/if}
 				</Card.Content>
 			</Card.Root>
 		{:else}
-			<div class="flex h-48 w-full items-center justify-center rounded-lg border border-dashed">
+			<div
+				class="flex h-48 w-full items-center justify-center rounded-lg border border-dashed"
+			>
 				<div class="text-center">
 					<HighlighterIcon class="text-muted-foreground mx-auto h-12 w-12" />
-					<p class="text-muted-foreground mt-2 text-sm">No text highlighting exercise created</p>
+					<p class="text-muted-foreground mt-2 text-sm">
+						No text highlighting exercise created
+					</p>
 					<p class="text-muted-foreground text-xs">
 						Switch to edit mode to create a text highlighting exercise
 					</p>

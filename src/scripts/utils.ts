@@ -11,7 +11,7 @@ import { and, eq } from 'drizzle-orm';
 export async function parseTimetableCSVAndPopulateClasses(
 	csvContent: string,
 	timetableId: number,
-	timetableDraftId: number
+	timetableDraftId: number,
 ) {
 	// Parse CSV content
 	const lines = csvContent.trim().split('\n');
@@ -101,12 +101,7 @@ export async function parseTimetableCSVAndPopulateClasses(
 
 		// Track unique classes by classId
 		if (!classMap.has(classId)) {
-			classMap.set(classId, {
-				classId,
-				subjectOfferingId,
-				students,
-				teachers
-			});
+			classMap.set(classId, { classId, subjectOfferingId, students, teachers });
 		}
 
 		// Track activities and their periods
@@ -116,7 +111,7 @@ export async function parseTimetableCSVAndPopulateClasses(
 				classId,
 				roomId,
 				dayId,
-				periods: [periodId]
+				periods: [periodId],
 			});
 		} else {
 			activityMap.get(activityId)!.periods.push(periodId);
@@ -138,29 +133,26 @@ export async function parseTimetableCSVAndPopulateClasses(
 
 	// Get all students from the school for year level lookups
 	const allStudents = await db
-		.select({
-			id: table.user.id,
-			yearLevel: table.user.yearLevel
-		})
+		.select({ id: table.user.id, yearLevel: table.user.schoolYearLevelId })
 		.from(table.user)
 		.where(
 			and(
 				eq(table.user.schoolId, schoolId),
 				eq(table.user.type, userTypeEnum.student),
-				eq(table.user.isArchived, false)
-			)
+				eq(table.user.isArchived, false),
+			),
 		);
 
 	// Get all timetable groups with their members
 	const groupMembers = await db
 		.select({
 			groupId: table.timetableGroupMember.groupId,
-			userId: table.timetableGroupMember.userId
+			userId: table.timetableGroupMember.userId,
 		})
 		.from(table.timetableGroupMember)
 		.innerJoin(
 			table.timetableGroup,
-			eq(table.timetableGroupMember.groupId, table.timetableGroup.id)
+			eq(table.timetableGroupMember.groupId, table.timetableGroup.id),
 		)
 		.where(eq(table.timetableGroup.timetableDraftId, timetableDraftId));
 
@@ -226,7 +218,7 @@ export async function parseTimetableCSVAndPopulateClasses(
 		fetSubjectOfferingClassesToInsert.push({
 			timetableDraftId,
 			subjectOfferingId: classData.subjectOfferingId,
-			isArchived: false
+			isArchived: false,
 		});
 
 		// Resolve all user IDs (students + teachers) for this class
@@ -273,13 +265,17 @@ export async function parseTimetableCSVAndPopulateClasses(
 			dayId: activityData.dayId,
 			startPeriodId,
 			endPeriodId,
-			isArchived: false
+			isArchived: false,
 		});
 	}
 
 	// Insert fetSubjectClassAllocation records in batches
 	const batchSize = 100;
-	for (let i = 0; i < fetSubjectClassAllocationsToInsert.length; i += batchSize) {
+	for (
+		let i = 0;
+		i < fetSubjectClassAllocationsToInsert.length;
+		i += batchSize
+	) {
 		const batch = fetSubjectClassAllocationsToInsert.slice(i, i + batchSize);
 		await db.insert(table.fetSubjectClassAllocation).values(batch);
 	}
@@ -297,28 +293,34 @@ export async function parseTimetableCSVAndPopulateClasses(
 			fetUserSubjectOfferingClassesToInsert.push({
 				userId,
 				fetSubOffClassId: dbClassId,
-				isArchived: false
+				isArchived: false,
 			});
 		}
 	}
 
 	// Insert fetUserSubjectOfferingClass records in batches
-	for (let i = 0; i < fetUserSubjectOfferingClassesToInsert.length; i += batchSize) {
+	for (
+		let i = 0;
+		i < fetUserSubjectOfferingClassesToInsert.length;
+		i += batchSize
+	) {
 		const batch = fetUserSubjectOfferingClassesToInsert.slice(i, i + batchSize);
 		await db.insert(table.fetSubjectOfferingClassUser).values(batch);
 	}
 
-	console.log(`Successfully inserted ${insertedClassIds.length} FET subject offering classes`);
 	console.log(
-		`Successfully inserted ${fetSubjectClassAllocationsToInsert.length} FET subject class allocations`
+		`Successfully inserted ${insertedClassIds.length} FET subject offering classes`,
 	);
 	console.log(
-		`Successfully inserted ${fetUserSubjectOfferingClassesToInsert.length} FET user subject offering class associations`
+		`Successfully inserted ${fetSubjectClassAllocationsToInsert.length} FET subject class allocations`,
+	);
+	console.log(
+		`Successfully inserted ${fetUserSubjectOfferingClassesToInsert.length} FET user subject offering class associations`,
 	);
 
 	return {
 		classesInserted: insertedClassIds.length,
 		allocationsInserted: fetSubjectClassAllocationsToInsert.length,
-		userClassAssociationsInserted: fetUserSubjectOfferingClassesToInsert.length
+		userClassAssociationsInserted: fetUserSubjectOfferingClassesToInsert.length,
 	};
 }

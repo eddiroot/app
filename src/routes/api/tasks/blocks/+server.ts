@@ -1,5 +1,9 @@
 import { taskBlockTypeEnum } from '$lib/enums';
-import { createTaskBlock, deleteTaskBlock, updateTaskBlock } from '$lib/server/db/service';
+import {
+	createTaskBlock,
+	deleteTaskBlock,
+	updateTaskBlock,
+} from '$lib/server/db/service';
 import { json } from '@sveltejs/kit';
 
 export async function POST({ request }: { request: Request }) {
@@ -7,14 +11,25 @@ export async function POST({ request }: { request: Request }) {
 		const { taskId, type, config, index } = await request.json();
 
 		if (!taskId || !type || (!index && index != 0) || config === undefined) {
-			return json({ error: 'Task ID, type, index, and config are required' }, { status: 400 });
+			return json(
+				{ error: 'Task ID, type, index, and config are required' },
+				{ status: 400 },
+			);
 		}
 
-		if (typeof taskId !== 'number' || typeof type !== 'string' || typeof index !== 'number') {
+		if (
+			typeof taskId !== 'number' ||
+			typeof type !== 'string' ||
+			typeof index !== 'number'
+		) {
 			return json({ error: 'Invalid input types' }, { status: 400 });
 		}
 
-		if (typeof config !== 'object' || config === null || Array.isArray(config)) {
+		if (
+			typeof config !== 'object' ||
+			config === null ||
+			Array.isArray(config)
+		) {
 			return json({ error: 'Config must be a valid object' }, { status: 400 });
 		}
 
@@ -22,12 +37,12 @@ export async function POST({ request }: { request: Request }) {
 			return json({ error: 'Invalid block type' }, { status: 400 });
 		}
 
-		const block = await createTaskBlock(
+		const block = await createTaskBlock({
 			taskId,
-			type as taskBlockTypeEnum,
-			config as Record<string, unknown>,
-			index
-		);
+			type: type as taskBlockTypeEnum,
+			config: config as Record<string, unknown>,
+			index,
+		});
 
 		return json({ block });
 	} catch (error) {
@@ -48,10 +63,20 @@ export async function PATCH({ request }: { request: Request }) {
 			return json({ error: 'Invalid block ID type' }, { status: 400 });
 		}
 
-		const updates: { config?: Record<string, unknown>; type?: taskBlockTypeEnum } = {};
+		const updates: {
+			config?: Record<string, unknown>;
+			type?: taskBlockTypeEnum;
+		} = {};
 		if (config !== undefined) {
-			if (typeof config !== 'object' || config === null || Array.isArray(config)) {
-				return json({ error: 'Config must be a valid object' }, { status: 400 });
+			if (
+				typeof config !== 'object' ||
+				config === null ||
+				Array.isArray(config)
+			) {
+				return json(
+					{ error: 'Config must be a valid object' },
+					{ status: 400 },
+				);
 			}
 			updates.config = config as Record<string, unknown>;
 		}

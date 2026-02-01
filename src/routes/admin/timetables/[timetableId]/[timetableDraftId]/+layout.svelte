@@ -15,7 +15,7 @@
 				percentage: 0,
 				label: '',
 				previous: null,
-				next: null
+				next: null,
 			}
 		);
 	}
@@ -46,12 +46,16 @@
 			<div class="space-y-2">
 				<div class="flex items-center justify-between text-sm font-medium">
 					<span class="text-muted-foreground">Progress</span>
-					<span class="text-primary font-semibold">{currentStep.percentage}%</span>
+					<span class="text-primary font-semibold"
+						>{currentStep.percentage}%</span
+					>
 				</div>
 				<Progress value={currentStep.percentage} class="h-3" />
 			</div>
 
-			<div class="invisible grid grid-cols-10 items-center gap-2 text-xs lg:visible">
+			<div
+				class="invisible grid grid-cols-10 items-center gap-2 text-xs lg:visible"
+			>
 				{#each Object.entries(steps) as [_, step]}
 					<a
 						href={buildStepUrl(step.url.toLowerCase())}

@@ -4,19 +4,29 @@
 	import Input from '$lib/components/ui/input/input.svelte';
 	import Label from '$lib/components/ui/label/label.svelte';
 	import { Textarea } from '$lib/components/ui/textarea';
-	import { ViewMode, type BlockFillBlankConfig, type FillBlankBlockProps } from '$lib/schema/task';
+	import {
+		ViewMode,
+		type BlockFillBlankConfig,
+		type FillBlankBlockProps,
+	} from '$lib/schema/task';
 	import PenToolIcon from '@lucide/svelte/icons/pen-tool';
 	import XIcon from '@lucide/svelte/icons/x';
 
-	let { config, onConfigUpdate, response, onResponseUpdate, viewMode }: FillBlankBlockProps =
-		$props();
+	let {
+		config,
+		onConfigUpdate,
+		response,
+		onResponseUpdate,
+		viewMode,
+	}: FillBlankBlockProps = $props();
 
 	function isAnswerCorrect(): boolean {
 		if (!response?.answers || !config.answers) return false;
 		if (response.answers.length !== config.answers.length) return false;
 		return response.answers.every(
 			(answer, index) =>
-				answer?.trim().toLowerCase() === config.answers[index]?.trim().toLowerCase()
+				answer?.trim().toLowerCase() ===
+				config.answers[index]?.trim().toLowerCase(),
 		);
 	}
 
@@ -36,11 +46,14 @@
 
 		onConfigUpdate({
 			sentence: input.sentence.trim(),
-			answers: input.answers || []
+			answers: input.answers || [],
 		});
 	}
 
-	function syncBlanksWithSentence(sentence: string, currentAnswers: string[] = []) {
+	function syncBlanksWithSentence(
+		sentence: string,
+		currentAnswers: string[] = [],
+	) {
 		const blankCount = getBlankCount(sentence);
 		const newAnswers = [...currentAnswers];
 
@@ -77,15 +90,23 @@
 						onblur={(e) => {
 							const value = (e.target as HTMLTextAreaElement)?.value;
 							if (value) {
-								const syncedAnswers = syncBlanksWithSentence(value, config.answers);
-								saveChanges({ ...config, sentence: value, answers: syncedAnswers });
+								const syncedAnswers = syncBlanksWithSentence(
+									value,
+									config.answers,
+								);
+								saveChanges({
+									...config,
+									sentence: value,
+									answers: syncedAnswers,
+								});
 							}
 						}}
 						placeholder="Enter your sentence with _____ where blanks should be..."
 						class="min-h-[80px] resize-none"
 					/>
 					<p class="text-muted-foreground text-xs">
-						Use _____ (5 underscores) to indicate where blanks should appear in the sentence.
+						Use _____ (5 underscores) to indicate where blanks should appear in
+						the sentence.
 					</p>
 				</div>
 
@@ -120,8 +141,12 @@
 					{@const parsed = parseSentence(config.sentence)}
 					<div class="space-y-2">
 						<Label>Preview</Label>
-						<div class="dark:bg-input/30 border-input rounded-lg border bg-transparent p-4">
-							<div class="flex flex-wrap items-center gap-2 text-lg leading-relaxed">
+						<div
+							class="dark:bg-input/30 border-input rounded-lg border bg-transparent p-4"
+						>
+							<div
+								class="flex flex-wrap items-center gap-2 text-lg leading-relaxed"
+							>
 								{#each parsed.parts as part, index}
 									<span>{part}</span>
 									{#if index < parsed.parts.length - 1}
@@ -143,7 +168,9 @@
 			<Card.Root>
 				<Card.Content>
 					{@const parsed = parseSentence(config.sentence)}
-					<div class="flex flex-wrap items-center gap-2 text-lg leading-relaxed">
+					<div
+						class="flex flex-wrap items-center gap-2 text-lg leading-relaxed"
+					>
 						{#each parsed.parts as part, index}
 							<span>{part}</span>
 							{#if index < parsed.parts.length - 1}
@@ -187,17 +214,23 @@
 								<span class="font-medium">Incorrect</span>
 							</div>
 							<p class="text-destructive mt-1 text-sm">
-								The correct answers are: <strong>{config.answers.join(', ')}</strong>
+								The correct answers are: <strong
+									>{config.answers.join(', ')}</strong
+								>
 							</p>
 						</div>
 					{/if}
 				</Card.Content>
 			</Card.Root>
 		{:else}
-			<div class="flex h-48 w-full items-center justify-center rounded-lg border border-dashed">
+			<div
+				class="flex h-48 w-full items-center justify-center rounded-lg border border-dashed"
+			>
 				<div class="text-center">
 					<PenToolIcon class="text-muted-foreground mx-auto h-12 w-12" />
-					<p class="text-muted-foreground mt-2 text-sm">No fill-in-blank question created</p>
+					<p class="text-muted-foreground mt-2 text-sm">
+						No fill-in-blank question created
+					</p>
 					<p class="text-muted-foreground text-xs">
 						Switch to edit mode to create a fill-in-blank question
 					</p>

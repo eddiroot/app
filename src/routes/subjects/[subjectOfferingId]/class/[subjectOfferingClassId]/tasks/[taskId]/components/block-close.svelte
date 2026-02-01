@@ -3,11 +3,21 @@
 	import Input from '$lib/components/ui/input/input.svelte';
 	import Label from '$lib/components/ui/label/label.svelte';
 	import { Textarea } from '$lib/components/ui/textarea';
-	import { ViewMode, type BlockCloseConfig, type CloseBlockProps } from '$lib/schema/task';
+	import {
+		ViewMode,
+		type BlockCloseConfig,
+		type CloseBlockProps,
+	} from '$lib/schema/task';
 	import CheckCircleIcon from '@lucide/svelte/icons/check-circle';
 	import PenToolIcon from '@lucide/svelte/icons/pen-tool';
 
-	let { config, onConfigUpdate, response, onResponseUpdate, viewMode }: CloseBlockProps = $props();
+	let {
+		config,
+		onConfigUpdate,
+		response,
+		onResponseUpdate,
+		viewMode,
+	}: CloseBlockProps = $props();
 
 	function parseSentence(sentence: string): { parts: string[] } {
 		const parts = sentence.split('_____');
@@ -23,12 +33,13 @@
 			return;
 		}
 
-		onConfigUpdate({
-			text: input.text.trim()
-		});
+		onConfigUpdate({ text: input.text.trim() });
 	}
 
-	function syncBlanksWithSentence(sentence: string, currentAnswers: string[] = []) {
+	function syncBlanksWithSentence(
+		sentence: string,
+		currentAnswers: string[] = [],
+	) {
 		const blankCount = getBlankCount(sentence);
 		const newAnswers = [...currentAnswers];
 
@@ -62,7 +73,10 @@
 						onblur={(e) => {
 							const value = (e.target as HTMLTextAreaElement)?.value;
 							if (value) {
-								const syncedAnswers = syncBlanksWithSentence(value, response?.answers || []);
+								const syncedAnswers = syncBlanksWithSentence(
+									value,
+									response?.answers || [],
+								);
 								saveChanges({ ...config, text: value });
 								onResponseUpdate({ ...response, answers: syncedAnswers });
 							}
@@ -71,7 +85,8 @@
 						class="min-h-[80px] resize-none"
 					/>
 					<p class="text-muted-foreground text-xs">
-						Use _____ (5 underscores) to indicate where students can input their responses.
+						Use _____ (5 underscores) to indicate where students can input their
+						responses.
 					</p>
 				</div>
 
@@ -79,8 +94,12 @@
 					{@const parsed = parseSentence(config.text)}
 					<div class="space-y-2">
 						<Label>Preview</Label>
-						<div class="dark:bg-input/30 border-input rounded-lg border bg-transparent p-4">
-							<div class="flex flex-wrap items-center gap-1 text-lg leading-relaxed">
+						<div
+							class="dark:bg-input/30 border-input rounded-lg border bg-transparent p-4"
+						>
+							<div
+								class="flex flex-wrap items-center gap-1 text-lg leading-relaxed"
+							>
 								{#each parsed.parts as part, index}
 									<span>{part}</span>
 									{#if index < parsed.parts.length - 1}
@@ -102,7 +121,9 @@
 			<Card.Root>
 				<Card.Content>
 					{@const parsed = parseSentence(config.text)}
-					<div class="flex flex-wrap items-center gap-1 text-lg leading-relaxed">
+					<div
+						class="flex flex-wrap items-center gap-1 text-lg leading-relaxed"
+					>
 						{#each parsed.parts as part, index}
 							<span>{part}</span>
 							{#if index < parsed.parts.length - 1}
@@ -115,15 +136,18 @@
 											newAnswers[index] = target.value;
 											const newResponse = { ...response, answers: newAnswers };
 											await onResponseUpdate(newResponse);
-											target.style.width = Math.max(100, target.value.length * 8 + 20) + 'px';
+											target.style.width =
+												Math.max(100, target.value.length * 8 + 20) + 'px';
 										}}
 										disabled={viewMode !== ViewMode.ANSWER}
 										class={`focus:border-primary border-muted-foreground border-0 border-b-2 border-dashed bg-transparent px-2 py-1 text-center focus:border-solid focus:outline-none ${
-											viewMode === ViewMode.ANSWER ? 'focus:bg-background/50' : ''
+											viewMode === ViewMode.ANSWER
+												? 'focus:bg-background/50'
+												: ''
 										}`}
 										style="border-radius: 0; width: {Math.max(
 											100,
-											(response.answers?.[index] || '').length * 8 + 20
+											(response.answers?.[index] || '').length * 8 + 20,
 										)}px; min-width: 100px;"
 									/>
 								</div>
@@ -151,10 +175,14 @@
 				</Card.Content>
 			</Card.Root>
 		{:else}
-			<div class="flex h-48 w-full items-center justify-center rounded-lg border border-dashed">
+			<div
+				class="flex h-48 w-full items-center justify-center rounded-lg border border-dashed"
+			>
 				<div class="text-center">
 					<PenToolIcon class="text-muted-foreground mx-auto h-12 w-12" />
-					<p class="text-muted-foreground mt-2 text-sm">No close passage created</p>
+					<p class="text-muted-foreground mt-2 text-sm">
+						No close passage created
+					</p>
 					<p class="text-muted-foreground text-xs">
 						Switch to edit mode to create a close passage with input areas
 					</p>

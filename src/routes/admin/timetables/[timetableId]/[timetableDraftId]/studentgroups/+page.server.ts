@@ -7,12 +7,12 @@ import {
 	getStudentsForTimetable,
 	getSubjectOfferingsByYearLevelForTimetableByTimetableId,
 	getTimetableDraftGroupsByTimetableDraftId,
-	removeStudentFromTimetableDraftGroup
+	removeStudentFromTimetableDraftGroup,
 } from '$lib/server/db/service';
 import { fail } from '@sveltejs/kit';
 
 export const load = async ({ locals: { security }, params }) => {
-	const user = security.isAuthenticated().isSchoolAdmin().getUser();
+	const user = security.isAuthenticated().isAdmin().getUser();
 	const timetableId = parseInt(params.timetableId);
 
 	// Get all students for the school
@@ -27,17 +27,12 @@ export const load = async ({ locals: { security }, params }) => {
 		studentsByGroupId[group.id] = groupStudents;
 	}
 
-	return {
-		defaultYearLevel,
-		students,
-		groups,
-		studentsByGroupId
-	};
+	return { defaultYearLevel, students, groups, studentsByGroupId };
 };
 
 export const actions = {
 	createGroup: async ({ request, params, locals: { security } }) => {
-		security.isAuthenticated().isSchoolAdmin();
+		security.isAuthenticated().isAdmin();
 
 		const timetableId = parseInt(params.timetableId, 10);
 		if (isNaN(timetableId)) {
@@ -62,7 +57,7 @@ export const actions = {
 	},
 
 	autoCreateGroups: async ({ request, params, locals: { security } }) => {
-		security.isAuthenticated().isSchoolAdmin();
+		security.isAuthenticated().isAdmin();
 
 		const timetableId = parseInt(params.timetableId, 10);
 		if (isNaN(timetableId)) {
@@ -77,27 +72,37 @@ export const actions = {
 		}
 
 		try {
-			const subjectOfferings = await getSubjectOfferingsByYearLevelForTimetableByTimetableId(
-				timetableId,
-				yearLevel as yearLevelEnum
-			);
+			const subjectOfferings =
+				await getSubjectOfferingsByYearLevelForTimetableByTimetableId(
+					timetableId,
+					yearLevel as yearLevelEnum,
+				);
 
 			let createdCount = 0;
 			for (const { subject } of subjectOfferings) {
 				const groupName = `${subject.name}`;
-				await createTimetableDraftStudentGroup(timetableId, yearLevel as yearLevelEnum, groupName);
+				await createTimetableDraftStudentGroup(
+					timetableId,
+					yearLevel as yearLevelEnum,
+					groupName,
+				);
 				createdCount++;
 			}
 
-			return { success: true, message: `Successfully created ${createdCount} groups!` };
+			return {
+				success: true,
+				message: `Successfully created ${createdCount} groups!`,
+			};
 		} catch (error) {
 			console.error('Error auto-creating groups:', error);
-			return fail(500, { error: 'Failed to auto-create groups. Please try again.' });
+			return fail(500, {
+				error: 'Failed to auto-create groups. Please try again.',
+			});
 		}
 	},
 
 	addStudent: async ({ request, params, locals: { security } }) => {
-		security.isAuthenticated().isSchoolAdmin();
+		security.isAuthenticated().isAdmin();
 
 		const timetableId = parseInt(params.timetableId, 10);
 		if (isNaN(timetableId)) {
@@ -113,16 +118,21 @@ export const actions = {
 		}
 
 		try {
-			await addStudentToTimetableDraftGroup(parseInt(groupId as string, 10), userId as string);
+			await addStudentToTimetableDraftGroup(
+				parseInt(groupId as string, 10),
+				userId as string,
+			);
 			return { success: true };
 		} catch (error) {
 			console.error('Error adding student to group:', error);
-			return fail(500, { error: 'Failed to add student to group. Please try again.' });
+			return fail(500, {
+				error: 'Failed to add student to group. Please try again.',
+			});
 		}
 	},
 
 	removeStudent: async ({ request, params, locals: { security } }) => {
-		security.isAuthenticated().isSchoolAdmin();
+		security.isAuthenticated().isAdmin();
 
 		const timetableId = parseInt(params.timetableId, 10);
 		if (isNaN(timetableId)) {
@@ -138,16 +148,21 @@ export const actions = {
 		}
 
 		try {
-			await removeStudentFromTimetableDraftGroup(parseInt(groupId as string, 10), userId as string);
+			await removeStudentFromTimetableDraftGroup(
+				parseInt(groupId as string, 10),
+				userId as string,
+			);
 			return { success: true };
 		} catch (error) {
 			console.error('Error removing student from group:', error);
-			return fail(500, { error: 'Failed to remove student from group. Please try again.' });
+			return fail(500, {
+				error: 'Failed to remove student from group. Please try again.',
+			});
 		}
 	},
 
 	deleteGroup: async ({ request, params, locals: { security } }) => {
-		security.isAuthenticated().isSchoolAdmin();
+		security.isAuthenticated().isAdmin();
 
 		const timetableId = parseInt(params.timetableId, 10);
 		if (isNaN(timetableId)) {
@@ -168,5 +183,5 @@ export const actions = {
 			console.error('Error deleting group:', error);
 			return fail(500, { error: 'Failed to delete group. Please try again.' });
 		}
-	}
+	},
 };

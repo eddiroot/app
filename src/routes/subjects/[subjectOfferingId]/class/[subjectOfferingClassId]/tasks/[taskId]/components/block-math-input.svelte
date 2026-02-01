@@ -12,17 +12,30 @@
 	import type { MathfieldElement } from 'mathlive';
 	import { on } from 'svelte/events';
 
-	let { config, onConfigUpdate, response, onResponseUpdate, viewMode }: MathInputBlockProps =
-		$props();
+	let {
+		config,
+		onConfigUpdate,
+		response,
+		onResponseUpdate,
+		viewMode,
+	}: MathInputBlockProps = $props();
 
-	let activeTab = $state<'basic' | 'functions' | 'greek' | 'calculus' | 'advanced'>('basic');
-	let studentActiveTab = $state<'basic' | 'functions' | 'greek' | 'calculus' | 'advanced'>('basic');
+	let activeTab = $state<
+		'basic' | 'functions' | 'greek' | 'calculus' | 'advanced'
+	>('basic');
+	let studentActiveTab = $state<
+		'basic' | 'functions' | 'greek' | 'calculus' | 'advanced'
+	>('basic');
 	let activeMathField = $state<'question' | 'answer'>('question');
 	let lastFocusedField = $state<MathfieldElement | null>(null);
 
 	const initMathField = (
 		node: MathfieldElement,
-		params: { getValue: () => string; setValue: (val: string) => void; readonly?: boolean }
+		params: {
+			getValue: () => string;
+			setValue: (val: string) => void;
+			readonly?: boolean;
+		},
 	) => {
 		$effect(() => {
 			const val = params.getValue();
@@ -86,10 +99,12 @@
 						class="min-h-[80px]"
 						placeholder="Enter instructions or context for this math problem..."
 						value={config.text}
-						oninput={(e) => onConfigUpdate({ ...config, text: e.currentTarget.value })}
+						oninput={(e) =>
+							onConfigUpdate({ ...config, text: e.currentTarget.value })}
 					/>
 					<p class="text-muted-foreground text-xs">
-						Provide instructions or context that will be shown to students before the question.
+						Provide instructions or context that will be shown to students
+						before the question.
 					</p>
 				</div>
 
@@ -112,16 +127,25 @@
 								class="ml-auto"
 								aria-pressed={config.advancedMathSymbols}
 								aria-label="Toggle advanced math symbols"
-								onclick={() => onConfigUpdate({ ...config, advancedMathSymbols: !config.advancedMathSymbols })}
+								onclick={() =>
+									onConfigUpdate({
+										...config,
+										advancedMathSymbols: !config.advancedMathSymbols,
+									})}
 							>
-								{#if config.advancedMathSymbols}Hide advanced{:else}Show advanced{/if}
+								{#if config.advancedMathSymbols}Hide advanced{:else}Show
+									advanced{/if}
 							</Button>
 						</Tabs.List>
 						<Tabs.Content value="basic">
 							<div class="min-h-[80px] rounded-lg border p-3">
 								<div class="flex flex-wrap gap-1">
 									{#each [['+', '+'], ['-', '−'], ['\\times', '×'], ['\\div', '÷'], ['=', '='], ['\\neq', '≠'], ['\\leq', '≤'], ['\\geq', '≥'], ['<', '<'], ['>', '>'], ['\\pm', '±'], ['\\mp', '∓'], ['\\%', '%'], ['\\frac{#0}{#0}', '½'], ['^{#0}', 'x²'], ['_{#0}', 'x₁'], ['\\left(#0\\right)', '( )'], ['\\left[#0\\right]', '[ ]'], ['\\left\\{#0\\right\\}', '{ }']] as [latex, display]}
-										<Button type="button" variant="ghost" onclick={() => insertSymbol(latex)}>
+										<Button
+											type="button"
+											variant="ghost"
+											onclick={() => insertSymbol(latex)}
+										>
 											{display}
 										</Button>
 									{/each}
@@ -133,7 +157,11 @@
 							<div class="min-h-[80px] rounded-lg border p-3">
 								<div class="flex flex-wrap gap-1">
 									{#each [['\\sin', 'sin'], ['\\cos', 'cos'], ['\\tan', 'tan'], ['\\csc', 'csc'], ['\\sec', 'sec'], ['\\cot', 'cot'], ['\\arcsin', 'sin⁻¹'], ['\\arccos', 'cos⁻¹'], ['\\arctan', 'tan⁻¹'], ['\\log', 'log'], ['\\ln', 'ln'], ['\\log_{#0}', 'log₁₀'], ['e^{#0}', 'eˣ'], ['\\exp', 'exp']] as [latex, display]}
-										<Button type="button" variant="ghost" onclick={() => insertSymbol(latex)}>
+										<Button
+											type="button"
+											variant="ghost"
+											onclick={() => insertSymbol(latex)}
+										>
 											{display}
 										</Button>
 									{/each}
@@ -145,7 +173,11 @@
 							<div class="min-h-[80px] rounded-lg border p-3">
 								<div class="flex flex-wrap gap-1">
 									{#each [['\\pi', 'π'], ['\\alpha', 'α'], ['\\beta', 'β'], ['\\gamma', 'γ'], ['\\delta', 'δ'], ['\\epsilon', 'ε'], ['\\theta', 'θ'], ['\\lambda', 'λ'], ['\\mu', 'μ'], ['\\phi', 'φ'], ['\\psi', 'ψ'], ['\\omega', 'ω'], ['\\Delta', 'Δ'], ['\\Theta', 'Θ'], ['\\Phi', 'Φ'], ['\\Omega', 'Ω']] as [latex, display]}
-										<Button type="button" variant="ghost" onclick={() => insertSymbol(latex)}>
+										<Button
+											type="button"
+											variant="ghost"
+											onclick={() => insertSymbol(latex)}
+										>
 											{display}
 										</Button>
 									{/each}
@@ -157,7 +189,11 @@
 							<div class="min-h-[80px] rounded-lg border p-3">
 								<div class="flex flex-wrap gap-1">
 									{#each [['\\frac{d}{dx}', 'd/dx'], ['\\frac{\\partial}{\\partial x}', '∂/∂x'], ['\\int', '∫'], ['\\int_{#0}^{#0}', '∫ᵃᵇ'], ['\\iint', '∬'], ['\\iiint', '∭'], ['\\oint', '∮'], ['\\lim_{#0}', 'lim'], ['\\lim_{x \\to \\infty}', 'lim x→∞'], ['\\nabla', '∇'], ["f'", "f'"], ["f''", "f''"]] as [latex, display]}
-										<Button type="button" variant="ghost" onclick={() => insertSymbol(latex)}>
+										<Button
+											type="button"
+											variant="ghost"
+											onclick={() => insertSymbol(latex)}
+										>
 											{display}
 										</Button>
 									{/each}
@@ -169,7 +205,11 @@
 							<div class="min-h-[80px] rounded-lg border p-3">
 								<div class="flex flex-wrap gap-1">
 									{#each [['\\sum', 'Σ'], ['\\sum_{#0}^{#0}', 'Σⁿₖ₌₁'], ['\\prod', '∏'], ['\\prod_{#0}^{#0}', '∏ⁿₖ₌₁'], ['\\sqrt{#0}', '√'], ['\\sqrt[#0]{#0}', 'ⁿ√'], ['\\infty', '∞'], ['\\emptyset', '∅'], ['\\in', '∈'], ['\\notin', '∉'], ['\\subset', '⊂'], ['\\supset', '⊃'], ['\\cup', '∪'], ['\\cap', '∩'], ['\\land', '∧'], ['\\lor', '∨'], ['\\neg', '¬'], ['\\rightarrow', '→'], ['\\leftrightarrow', '↔'], ['\\begin{pmatrix} #0 & #0 \\\\ #0 & #0 \\end{pmatrix}', '⎛⎞'], ['\\begin{bmatrix} #0 & #0 \\\\ #0 & #0 \\end{bmatrix}', '⎡⎤'], ['\\det', 'det']] as [latex, display]}
-										<Button type="button" variant="ghost" onclick={() => insertSymbol(latex)}>
+										<Button
+											type="button"
+											variant="ghost"
+											onclick={() => insertSymbol(latex)}
+										>
 											{display}
 										</Button>
 									{/each}
@@ -190,12 +230,15 @@
 						onfocus={() => (activeMathField = 'question')}
 						use:initMathField={{
 							getValue: () => config.question || '',
-							setValue: (val: string) => onConfigUpdate({ ...config, question: val })
+							setValue: (val: string) =>
+								onConfigUpdate({ ...config, question: val }),
 						}}
 						class="math-field"
 						style="min-height: 60px;"
 					></math-field>
-					<p class="text-muted-foreground text-xs">Enter your equation using the editor above.</p>
+					<p class="text-muted-foreground text-xs">
+						Enter your equation using the editor above.
+					</p>
 				</div>
 
 				<div class="space-y-2">
@@ -205,7 +248,8 @@
 						onfocus={() => (activeMathField = 'answer')}
 						use:initMathField={{
 							getValue: () => config.answer || '',
-							setValue: (val: string) => onConfigUpdate({ ...config, answer: val })
+							setValue: (val: string) =>
+								onConfigUpdate({ ...config, answer: val }),
 						}}
 						class="math-field"
 					></math-field>
@@ -227,7 +271,7 @@
 						use:initMathField={{
 							getValue: () => config.question || '',
 							setValue: () => {},
-							readonly: true
+							readonly: true,
 						}}
 						class="math-field-readonly"
 						style="font-size: 18px;"
@@ -271,8 +315,9 @@
 					<math-field
 						use:initMathField={{
 							getValue: () => response.answer || '',
-							setValue: (val: string) => onResponseUpdate({ ...response, answer: val }),
-							readonly: viewMode === ViewMode.REVIEW
+							setValue: (val: string) =>
+								onResponseUpdate({ ...response, answer: val }),
+							readonly: viewMode === ViewMode.REVIEW,
 						}}
 						class="math-field"
 					></math-field>
@@ -298,8 +343,12 @@
 							</p>
 							{#if config.answer}
 								<div class="mt-3 rounded-md bg-green-50 p-3">
-									<p class="text-sm font-medium text-green-800">Expected Answer:</p>
-									<p class="font-mono text-sm text-green-700">{config.answer}</p>
+									<p class="text-sm font-medium text-green-800">
+										Expected Answer:
+									</p>
+									<p class="font-mono text-sm text-green-700">
+										{config.answer}
+									</p>
 								</div>
 							{/if}
 						{/if}
@@ -319,7 +368,7 @@
 						use:initMathField={{
 							getValue: () => config.question || '',
 							setValue: () => {},
-							readonly: true
+							readonly: true,
 						}}
 						class="math-field-readonly"
 						style="font-size: 24px;"
@@ -330,7 +379,8 @@
 					<math-field
 						use:initMathField={{
 							getValue: () => response.answer || '',
-							setValue: (val: string) => onResponseUpdate({ ...response, answer: val })
+							setValue: (val: string) =>
+								onResponseUpdate({ ...response, answer: val }),
 						}}
 						class="math-field"
 						style="min-height: 60px; font-size: 18px;"

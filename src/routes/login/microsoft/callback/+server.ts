@@ -1,6 +1,6 @@
 import { createSession, setSessionTokenCookie } from '$lib/server/auth';
-import { createMicrosoftUser, getUserByMicrosoftId } from '$lib/server/db/service';
-import { microsoft } from '$lib/server/oauth';
+import { microsoft } from '$lib/server/auth/oauth';
+import { createUser, getUserByMicrosoftId } from '$lib/server/db/service';
 import type { OAuth2Tokens } from 'arctic';
 import { decodeIdToken } from 'arctic';
 
@@ -9,15 +9,16 @@ export async function GET(event): Promise<Response> {
 	const state = event.url.searchParams.get('state');
 	const storedState = event.cookies.get('microsoft_oauth_state') ?? null;
 	const codeVerifier = event.cookies.get('microsoft_code_verifier') ?? null;
-	if (code === null || state === null || storedState === null || codeVerifier === null) {
-		return new Response(null, {
-			status: 400
-		});
+	if (
+		code === null ||
+		state === null ||
+		storedState === null ||
+		codeVerifier === null
+	) {
+		return new Response(null, { status: 400 });
 	}
 	if (state !== storedState) {
-		return new Response(null, {
-			status: 400
-		});
+		return new Response(null, { status: 400 });
 	}
 
 	let tokens: OAuth2Tokens;
@@ -26,9 +27,7 @@ export async function GET(event): Promise<Response> {
 		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	} catch (e) {
 		// Invalid code or client credentials
-		return new Response(null, {
-			status: 400
-		});
+		return new Response(null, { status: 400 });
 	}
 	const claims = decodeIdToken(tokens.idToken()) as {
 		sub: string;
@@ -43,28 +42,19 @@ export async function GET(event): Promise<Response> {
 	if (existingUser !== null) {
 		const session = await createSession(existingUser.id);
 		setSessionTokenCookie(event, session.token);
-		return new Response(null, {
-			status: 302,
-			headers: {
-				Location: '/'
-			}
-		});
+		return new Response(null, { status: 302, headers: { Location: '/' } });
 	}
 
-	const user = await createMicrosoftUser({
+	const user = await createUser({
 		microsoftId: claims.sub,
 		email: claims.email,
 		schoolId: 1000, // TODO: Replace with actual school ID logic
+		schoolYearLevelId: 1, // TODO: Replace with actual year level ID logic
 		firstName: claims.given_name,
-		lastName: claims.family_name
+		lastName: claims.family_name,
 	});
 
 	const session = await createSession(user.id);
 	setSessionTokenCookie(event, session.token);
-	return new Response(null, {
-		status: 302,
-		headers: {
-			Location: '/'
-		}
-	});
+	return new Response(null, { status: 302, headers: { Location: '/' } });
 }

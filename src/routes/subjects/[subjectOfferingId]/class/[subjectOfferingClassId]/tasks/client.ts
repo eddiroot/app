@@ -13,10 +13,8 @@ interface TaskOrderRequest {
 export async function updateTaskOrder(request: TaskOrderRequest) {
 	const response = await fetch(`${API_BASE}/order`, {
 		method: 'PATCH',
-		headers: {
-			'Content-Type': 'application/json'
-		},
-		body: JSON.stringify({ type: 'task', ...request })
+		headers: { 'Content-Type': 'application/json' },
+		body: JSON.stringify({ type: 'task', ...request }),
 	});
 
 	const data = await response.json();
@@ -38,10 +36,8 @@ interface TopicOrderRequest {
 export async function updateTopicOrder(request: TopicOrderRequest) {
 	const response = await fetch(`${API_BASE}/order`, {
 		method: 'PATCH',
-		headers: {
-			'Content-Type': 'application/json'
-		},
-		body: JSON.stringify({ type: 'topic', ...request })
+		headers: { 'Content-Type': 'application/json' },
+		body: JSON.stringify({ type: 'topic', ...request }),
 	});
 
 	const data = await response.json();

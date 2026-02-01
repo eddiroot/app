@@ -15,7 +15,13 @@
 	import XCircleIcon from '@lucide/svelte/icons/x-circle';
 	import XSquareIcon from '@lucide/svelte/icons/x-square';
 
-	let { config, onConfigUpdate, response, onResponseUpdate, viewMode }: ChoiceBlockProps = $props();
+	let {
+		config,
+		onConfigUpdate,
+		response,
+		onResponseUpdate,
+		viewMode,
+	}: ChoiceBlockProps = $props();
 
 	let isMultiAnswer = $derived(() => {
 		return config.options.filter((option) => option.isAnswer).length > 1;
@@ -28,7 +34,9 @@
 			newResponse.answers = [option];
 		} else {
 			if (newResponse.answers.includes(option)) {
-				newResponse.answers = newResponse.answers.filter((ans) => ans !== option);
+				newResponse.answers = newResponse.answers.filter(
+					(ans) => ans !== option,
+				);
 			} else {
 				newResponse.answers = [...newResponse.answers, option];
 			}
@@ -52,7 +60,7 @@
 
 	function isAnswerCorrect(option: string): boolean {
 		return config.options.some(
-			(opt) => opt.text.toLowerCase() === option.toLowerCase() && opt.isAnswer
+			(opt) => opt.text.toLowerCase() === option.toLowerCase() && opt.isAnswer,
 		);
 	}
 </script>
@@ -104,7 +112,9 @@
 							<div class="flex items-start gap-3 rounded-lg border p-3">
 								<Button
 									type="button"
-									variant={getCorrectAnswers()?.includes(option.text) ? 'success' : 'destructive'}
+									variant={getCorrectAnswers()?.includes(option.text)
+										? 'success'
+										: 'destructive'}
 									size="icon"
 									onclick={() => toggleCorrect(option.text)}
 									disabled={!option.text.trim()}
@@ -146,7 +156,7 @@
 										onclick={async () => {
 											const newConfig = { ...config };
 											newConfig.options = newConfig.options.filter(
-												(opt) => opt.text !== option.text
+												(opt) => opt.text !== option.text,
 											);
 											await onConfigUpdate(newConfig);
 										}}
@@ -168,7 +178,9 @@
 						<div class="mb-6">
 							<h3 class="mb-2 text-lg font-medium">{config.question}</h3>
 							{#if isMultiAnswer()}
-								<p class="text-muted-foreground text-sm">Select all correct answers</p>
+								<p class="text-muted-foreground text-sm">
+									Select all correct answers
+								</p>
 							{:else}
 								<p class="text-muted-foreground text-sm">Select one answer</p>
 							{/if}
@@ -208,10 +220,14 @@
 					</Card.Content>
 				</Card.Root>
 			{:else}
-				<div class="flex h-48 w-full items-center justify-center rounded-lg border border-dashed">
+				<div
+					class="flex h-48 w-full items-center justify-center rounded-lg border border-dashed"
+				>
 					<div class="text-center">
 						<HelpCircleIcon class="text-muted-foreground mx-auto h-12 w-12" />
-						<p class="text-muted-foreground mt-2 text-sm">No question created</p>
+						<p class="text-muted-foreground mt-2 text-sm">
+							No question created
+						</p>
 						<p class="text-muted-foreground text-xs">
 							Please configure this choice block in the task editor.
 						</p>

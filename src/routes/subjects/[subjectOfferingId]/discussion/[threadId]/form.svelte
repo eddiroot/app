@@ -7,7 +7,11 @@
 	import { subjectThreadResponseTypeEnum, userTypeEnum } from '$lib/enums.js';
 	import CheckCircle from '@lucide/svelte/icons/check-circle';
 	import MessageSquare from '@lucide/svelte/icons/message-square';
-	import { type Infer, superForm, type SuperValidated } from 'sveltekit-superforms';
+	import {
+		type Infer,
+		superForm,
+		type SuperValidated,
+	} from 'sveltekit-superforms';
 	import { zod4 } from 'sveltekit-superforms/adapters';
 	import { formSchema, type FormSchema } from './schema.js';
 	import { getResponseTypeDescription } from './utils.js';
@@ -23,7 +27,7 @@
 		isOPOnAnonymousThread = false,
 		currentUserId = undefined,
 		threadAuthorId = undefined,
-		currentUserType = undefined
+		currentUserType = undefined,
 	}: {
 		data: { form: SuperValidated<Infer<FormSchema>> };
 		threadType: string;
@@ -39,7 +43,8 @@
 	} = $props();
 
 	const dataForm = () => data.form;
-	const formId = () => isReply ? `reply-form-${parentResponseId}` : 'main-response-form';
+	const formId = () =>
+		isReply ? `reply-form-${parentResponseId}` : 'main-response-form';
 
 	const form = superForm(dataForm(), {
 		id: formId(),
@@ -52,16 +57,20 @@
 					onSuccess();
 				}
 			}
-		}
+		},
 	});
 
 	const { form: formData, enhance } = form;
 	const isOP = $derived(() => currentUserId === threadAuthorId);
-	
+
 	let resetEditor = $state(false);
 </script>
 
-<div class={isReply ? 'border-muted-foreground mt-2 border-l-2 py-2 pl-4' : 'mt-4 border-t pt-4'}>
+<div
+	class={isReply
+		? 'border-muted-foreground mt-2 border-l-2 py-2 pl-4'
+		: 'mt-4 border-t pt-4'}
+>
 	<div class="mb-3 px-4">
 		<h3 class="text-base font-semibold">
 			{isReply ? `Reply to ${parentAuthor || 'comment'}` : 'Add a Response'}
@@ -75,7 +84,11 @@
 		</p>
 	</div>
 	<form method="POST" action="?/addResponse" class="space-y-4 px-4" use:enhance>
-		<input type="hidden" name="parentResponseId" value={parentResponseId || ''} />
+		<input
+			type="hidden"
+			name="parentResponseId"
+			value={parentResponseId || ''}
+		/>
 		<input type="hidden" name="type" value={$formData.type} />
 
 		{#if (threadType === 'question' || threadType === 'qanda') && !isReply}
@@ -113,7 +126,9 @@
 										<CheckCircle class="text-primary h-4 w-4" />
 										<div class="flex flex-col">
 											<span class="font-medium">Answer</span>
-											<span class="text-muted-foreground text-xs">Provide a solution</span>
+											<span class="text-muted-foreground text-xs"
+												>Provide a solution</span
+											>
 										</div>
 									</div>
 								</Select.Item>
@@ -122,7 +137,9 @@
 										<MessageSquare class="text-primary h-4 w-4" />
 										<div class="flex flex-col">
 											<span class="font-medium">Comment</span>
-											<span class="text-muted-foreground text-xs">Ask or discuss</span>
+											<span class="text-muted-foreground text-xs"
+												>Ask or discuss</span
+											>
 										</div>
 									</div>
 								</Select.Item>
@@ -130,7 +147,9 @@
 						</Select.Root>
 					{/snippet}
 				</Form.Control>
-				<Form.Description>{getResponseTypeDescription($formData.type)}</Form.Description>
+				<Form.Description
+					>{getResponseTypeDescription($formData.type)}</Form.Description
+				>
 				<Form.FieldErrors />
 			</Form.Field>
 		{/if}
@@ -157,10 +176,14 @@
 			<Form.Field {form} name="isAnonymous" class="space-y-0">
 				<Form.Control>
 					{#snippet children({ props })}
-						<Form.Label class="hover:bg-accent/50 items-start gap-3 rounded-lg border p-3">
+						<Form.Label
+							class="hover:bg-accent/50 items-start gap-3 rounded-lg border p-3"
+						>
 							<Checkbox {...props} bind:checked={$formData.isAnonymous} />
 							<div class="grid gap-1.5 font-normal">
-								<p class="text-sm leading-none font-medium">Anonymous Response</p>
+								<p class="text-sm leading-none font-medium">
+									Anonymous Response
+								</p>
 								<p class="text-muted-foreground text-sm">
 									Keep your response anonymous (your thread is anonymous)
 								</p>
@@ -174,7 +197,9 @@
 
 		<div class="flex justify-end gap-2">
 			{#if isReply && onCancel}
-				<Button type="button" variant="outline" onclick={onCancel}>Cancel</Button>
+				<Button type="button" variant="outline" onclick={onCancel}
+					>Cancel</Button
+				>
 			{/if}
 			<Button type="submit" class="flex items-center gap-2">
 				{#if isReply}

@@ -10,19 +10,19 @@
 
 	let { config, onConfigUpdate, viewMode }: WhiteboardBlockProps = $props();
 
-	const { taskId, subjectOfferingId, subjectOfferingClassId } = $derived(page.params);
+	const { taskId, subjectOfferingId, subjectOfferingClassId } = $derived(
+		page.params,
+	);
 
 	const createWhiteboard = async () => {
 		try {
 			const response = await fetch('/api/whiteboards', {
 				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json'
-				},
+				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify({
 					taskId: parseInt(taskId!),
-					title: config.title || null
-				})
+					title: config.title || null,
+				}),
 			});
 
 			if (response.ok) {
@@ -45,7 +45,7 @@
 
 		const newConfig = {
 			whiteboardId: currentWhiteboardId,
-			title: config.title || ''
+			title: config.title || '',
 		};
 
 		await onConfigUpdate(newConfig);
@@ -59,7 +59,7 @@
 			if (currentWhiteboardId) {
 				const newConfig = {
 					whiteboardId: currentWhiteboardId,
-					title: config.title || ''
+					title: config.title || '',
 				};
 				await onConfigUpdate(newConfig);
 			}
@@ -110,7 +110,9 @@
 			<h3 class="mb-2 text-lg font-semibold break-words">
 				{config.title || 'Interactive Whiteboard'}
 			</h3>
-			<Button class="mt-6 w-full" onclick={openWhiteboard}>Open Whiteboard</Button>
+			<Button class="mt-6 w-full" onclick={openWhiteboard}
+				>Open Whiteboard</Button
+			>
 		</div>
 	{:else}
 		<button
@@ -122,7 +124,9 @@
 			<div class="pointer-events-none text-center">
 				<PresentationIcon class="text-muted-foreground mx-auto h-12 w-12" />
 				<p class="text-muted-foreground mt-2 text-sm">No whiteboard created</p>
-				<p class="text-muted-foreground text-xs">Click to create and open whiteboard</p>
+				<p class="text-muted-foreground text-xs">
+					Click to create and open whiteboard
+				</p>
 			</div>
 		</button>
 	{/if}

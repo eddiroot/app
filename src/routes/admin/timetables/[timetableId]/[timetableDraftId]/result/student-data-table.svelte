@@ -1,6 +1,9 @@
 <script lang="ts" generics="TData, TValue">
 	import { Button } from '$lib/components/ui/button/index.js';
-	import { createSvelteTable, FlexRender } from '$lib/components/ui/data-table/index.js';
+	import {
+		createSvelteTable,
+		FlexRender,
+	} from '$lib/components/ui/data-table/index.js';
 	import * as Table from '$lib/components/ui/table/index.js';
 	import {
 		type ColumnDef,
@@ -8,7 +11,7 @@
 		type SortingState,
 		getCoreRowModel,
 		getPaginationRowModel,
-		getSortedRowModel
+		getSortedRowModel,
 	} from '@tanstack/table-core';
 
 	type DataTableProps<TData, TValue> = {
@@ -20,12 +23,13 @@
 
 	let pagination = $state<PaginationState>({ pageIndex: 0, pageSize: 10 });
 	let sorting = $state<SortingState>([]);
+	let getColumns = () => columns;
 
 	const table = createSvelteTable({
 		get data() {
 			return data ?? [];
 		},
-		columns,
+		columns: getColumns(),
 		getCoreRowModel: getCoreRowModel(),
 		getPaginationRowModel: getPaginationRowModel(),
 		getSortedRowModel: getSortedRowModel(),
@@ -49,8 +53,8 @@
 			},
 			get sorting() {
 				return sorting;
-			}
-		}
+			},
+		},
 	});
 </script>
 
@@ -78,13 +82,18 @@
 					<Table.Row data-state={row.getIsSelected() && 'selected'}>
 						{#each row.getVisibleCells() as cell (cell.id)}
 							<Table.Cell>
-								<FlexRender content={cell.column.columnDef.cell} context={cell.getContext()} />
+								<FlexRender
+									content={cell.column.columnDef.cell}
+									context={cell.getContext()}
+								/>
 							</Table.Cell>
 						{/each}
 					</Table.Row>
 				{:else}
 					<Table.Row>
-						<Table.Cell colspan={columns.length} class="h-24 text-center">No results.</Table.Cell>
+						<Table.Cell colspan={columns.length} class="h-24 text-center"
+							>No results.</Table.Cell
+						>
 					</Table.Row>
 				{/each}
 			</Table.Body>
@@ -95,7 +104,7 @@
 		<div class="text-muted-foreground text-sm">
 			Showing {pagination.pageIndex * pagination.pageSize + 1} to {Math.min(
 				(pagination.pageIndex + 1) * pagination.pageSize,
-				data?.length ?? 0
+				data?.length ?? 0,
 			)} of {data?.length ?? 0} students
 		</div>
 		<div class="flex items-center space-x-2">

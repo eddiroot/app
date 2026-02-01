@@ -1,26 +1,36 @@
 import { XMLBuilder } from 'fast-xml-parser';
 
 import {
-    getActiveTimetableDraftConstraintsByTimetableDraftId,
-    getAllStudentGroupsByTimetableDraftId,
-    getAllStudentsGroupedByYearLevelsBySchoolId,
-    getBuildingsBySchoolId,
-    getEnhancedTimetableDraftActivitiesByTimetableDraftId,
-    getSchoolById,
-    getSpacesBySchoolId,
-    getSubjectsBySchoolId,
-    getTeacherSpecializationsByTeacherId,
-    getTimetableDraftDaysByTimetableDraftId,
-    getTimetableDraftPeriodsByTimetableDraftId,
-    getUsersBySchoolIdAndType
+	getActiveTimetableDraftConstraintsByTimetableDraftId,
+	getAllStudentGroupsByTimetableDraftId,
+	getAllStudentsGroupedByYearLevelsBySchoolId,
+	getBuildingsBySchoolId,
+	getEnhancedTimetableDraftActivitiesByTimetableDraftId,
+	getSchoolById,
+	getSpacesBySchoolId,
+	getSubjectsBySchoolId,
+	getTeacherSpecializationsByTeacherId,
+	getTimetableDraftDaysByTimetableDraftId,
+	getTimetableDraftPeriodsByTimetableDraftId,
+	getUsersBySchoolIdAndType,
 } from '$lib/server/db/service';
 
 export type TimetableData = {
-	timetableDays: Awaited<ReturnType<typeof getTimetableDraftDaysByTimetableDraftId>>;
-	timetablePeriods: Awaited<ReturnType<typeof getTimetableDraftPeriodsByTimetableDraftId>>;
-	studentGroups: Awaited<ReturnType<typeof getAllStudentGroupsByTimetableDraftId>>;
-	studentsByYear: Awaited<ReturnType<typeof getAllStudentsGroupedByYearLevelsBySchoolId>>;
-	activities: Awaited<ReturnType<typeof getEnhancedTimetableDraftActivitiesByTimetableDraftId>>;
+	timetableDays: Awaited<
+		ReturnType<typeof getTimetableDraftDaysByTimetableDraftId>
+	>;
+	timetablePeriods: Awaited<
+		ReturnType<typeof getTimetableDraftPeriodsByTimetableDraftId>
+	>;
+	studentGroups: Awaited<
+		ReturnType<typeof getAllStudentGroupsByTimetableDraftId>
+	>;
+	studentsByYear: Awaited<
+		ReturnType<typeof getAllStudentsGroupedByYearLevelsBySchoolId>
+	>;
+	activities: Awaited<
+		ReturnType<typeof getEnhancedTimetableDraftActivitiesByTimetableDraftId>
+	>;
 	buildings: Awaited<ReturnType<typeof getBuildingsBySchoolId>>;
 	spaces: Awaited<ReturnType<typeof getSpacesBySchoolId>>;
 	teachers: Awaited<ReturnType<typeof getUsersBySchoolIdAndType>>;
@@ -34,26 +44,24 @@ export type TimetableData = {
 async function buildTeachersList(teachers: TimetableData['teachers']) {
 	return Promise.all(
 		teachers.map(async (teacher) => {
-			const qualifiedSubjects = await getTeacherSpecializationsByTeacherId(teacher.id);
+			const qualifiedSubjects = await getTeacherSpecializationsByTeacherId(
+				teacher.id,
+			);
 			const subjectIds = qualifiedSubjects.map((qs) => qs.subjectId);
 
 			return {
 				Name: teacher.id,
 				Target_Number_of_Hours: '',
 				Qualified_Subjects:
-					subjectIds.length > 0
-						? {
-								Qualified_Subject: subjectIds
-							}
-						: undefined
+					subjectIds.length > 0 ? { Qualified_Subject: subjectIds } : undefined,
 			};
-		})
+		}),
 	);
 }
 
 function buildStudentsList(
 	studentGroups: TimetableData['studentGroups'],
-	studentsByYear: TimetableData['studentsByYear']
+	studentsByYear: TimetableData['studentsByYear'],
 ) {
 	// Organize data by year level
 	const yearLevelMap = new Map<
@@ -62,10 +70,7 @@ function buildStudentsList(
 			totalStudents: Set<string>;
 			groups: Map<
 				number | string,
-				{
-					name: string;
-					students: Array<{ id: string; name: string }>;
-				}
+				{ name: string; students: Array<{ id: string; name: string }> }
 			>;
 		}
 	>();
@@ -80,7 +85,7 @@ function buildStudentsList(
 		if (!yearLevelMap.has(yearLevelKey)) {
 			yearLevelMap.set(yearLevelKey, {
 				totalStudents: new Set(),
-				groups: new Map()
+				groups: new Map(),
 			});
 		}
 
@@ -88,10 +93,7 @@ function buildStudentsList(
 
 		// Initialize group if it doesn't exist
 		if (!yearData.groups.has(groupId)) {
-			yearData.groups.set(groupId, {
-				name: groupName,
-				students: []
-			});
+			yearData.groups.set(groupId, { name: groupName, students: [] });
 		}
 
 		// Add student if they exist (leftJoin may return null for empty groups)
@@ -100,10 +102,9 @@ function buildStudentsList(
 			const studentName = `${row.userFirstName} ${row.userLastName}`;
 
 			yearData.totalStudents.add(studentId);
-			yearData.groups.get(groupId)!.students.push({
-				id: studentId,
-				name: studentName
-			});
+			yearData.groups
+				.get(groupId)!
+				.students.push({ id: studentId, name: studentName });
 		}
 	}
 
@@ -113,7 +114,7 @@ function buildStudentsList(
 		if (!yearLevelMap.has(yearLevel)) {
 			yearLevelMap.set(yearLevel, {
 				totalStudents: new Set(),
-				groups: new Map()
+				groups: new Map(),
 			});
 		}
 
@@ -123,12 +124,12 @@ function buildStudentsList(
 		const yearGroupKey = `AllStudents-Y${yearLevel}`;
 		const yearGroupStudents = students.map((student) => ({
 			id: student.id,
-			name: `${student.firstName} ${student.lastName}`
+			name: `${student.firstName} ${student.lastName}`,
 		}));
 
 		yearData.groups.set(yearGroupKey, {
 			name: `Year ${yearLevel} - All Students`,
-			students: yearGroupStudents
+			students: yearGroupStudents,
 		});
 
 		// Add all students to totalStudents set
@@ -148,14 +149,14 @@ function buildStudentsList(
 			const subgroups = groupData.students.map((student) => ({
 				Name: `S${student.id}`,
 				Number_of_Students: 1,
-				Comments: student.name
+				Comments: student.name,
 			}));
 
 			yearGroups.push({
 				Name: typeof groupId === 'number' ? `G${groupId}` : groupId,
 				Number_of_Students: groupData.students.length,
 				Comments: groupData.name,
-				Subgroup: subgroups
+				Subgroup: subgroups,
 			});
 		}
 
@@ -163,7 +164,7 @@ function buildStudentsList(
 			Name: `Y${yearLevel}`,
 			Number_of_Students: data.totalStudents.size,
 			Comments: `Year ${yearLevel}`,
-			Group: yearGroups
+			Group: yearGroups,
 		});
 	}
 
@@ -180,28 +181,38 @@ function buildActivitiesList(activities: TimetableData['activities']) {
 
 		// Add group IDs
 		if (activity.groupIds.length > 0) {
-			studentIdentifiers.push(...activity.groupIds.map((id) => 'G' + id.toString()));
+			studentIdentifiers.push(
+				...activity.groupIds.map((id) => 'G' + id.toString()),
+			);
 		}
 
 		// Add year levels
 		if (activity.yearLevels.length > 0) {
-			studentIdentifiers.push(...activity.yearLevels.map((yl) => 'Y' + yl.toString()));
+			studentIdentifiers.push(
+				...activity.yearLevels.map((yl) => 'Y' + yl.toString()),
+			);
 		}
 
 		// Add individual student IDs
 		if (activity.studentIds.length > 0) {
-			studentIdentifiers.push(...activity.studentIds.map((id) => 'S' + id.toString()));
+			studentIdentifiers.push(
+				...activity.studentIds.map((id) => 'S' + id.toString()),
+			);
 		}
 
 		// If no teachers or students assigned, skip this activity
 		if (teacherIds.length === 0 || studentIdentifiers.length === 0) {
-			console.warn(`Activity ${activity.id} skipped: missing teachers or students`);
+			console.warn(
+				`Activity ${activity.id} skipped: missing teachers or students`,
+			);
 			return [];
 		}
 
 		// Calculate how many split activities we need
 		// If totalPeriods > periodsPerInstance, we create multiple activities (splits)
-		const numberOfSplits = Math.ceil(activity.totalPeriods / activity.periodsPerInstance);
+		const numberOfSplits = Math.ceil(
+			activity.totalPeriods / activity.periodsPerInstance,
+		);
 
 		// Create split activities
 		const splitActivities = [];
@@ -215,7 +226,7 @@ function buildActivitiesList(activities: TimetableData['activities']) {
 				Activity_Group_Id: activity.id, // Links all splits together by the same unique activity ID
 				Active: true,
 				Comments: activity.id,
-				Id: 0 // Placeholder - will be assigned later
+				Id: 0, // Placeholder - will be assigned later
 			});
 		}
 
@@ -230,7 +241,10 @@ function buildActivitiesList(activities: TimetableData['activities']) {
 	return activitiesList;
 }
 
-function buildRoomsList(spaces: TimetableData['spaces'], buildings: TimetableData['buildings']) {
+function buildRoomsList(
+	spaces: TimetableData['spaces'],
+	buildings: TimetableData['buildings'],
+) {
 	return spaces.map((space) => {
 		const building = buildings.find((b) => b.id === space.buildingId);
 
@@ -238,7 +252,7 @@ function buildRoomsList(spaces: TimetableData['spaces'], buildings: TimetableDat
 			Name: space.id,
 			Building: building?.id || '',
 			Capacity: space.capacity || 30,
-			Virtual: false
+			Virtual: false,
 		};
 	});
 }
@@ -258,9 +272,12 @@ function buildConstraintsXML(constraints: TimetableData['activeConstraints']) {
 					: constraint.parameters;
 
 			// Add to constraints using FET name
-			timeConstraintsXML[constraint.FETName] = parsedParams;
+			timeConstraintsXML[constraint.fetName] = parsedParams;
 		} catch (error) {
-			console.error(`Error parsing time constraint ${constraint.FETName}:`, error);
+			console.error(
+				`Error parsing time constraint ${constraint.fetName}:`,
+				error,
+			);
 		}
 	});
 
@@ -275,9 +292,12 @@ function buildConstraintsXML(constraints: TimetableData['activeConstraints']) {
 					: constraint.parameters;
 
 			// Add to constraints using FET name
-			spaceConstraintsXML[constraint.FETName] = parsedParams;
+			spaceConstraintsXML[constraint.fetName] = parsedParams;
 		} catch (error) {
-			console.error(`Error parsing space constraint ${constraint.FETName}:`, error);
+			console.error(
+				`Error parsing space constraint ${constraint.fetName}:`,
+				error,
+			);
 		}
 	});
 
@@ -286,7 +306,7 @@ function buildConstraintsXML(constraints: TimetableData['activeConstraints']) {
 
 function buildPreferredRoomsConstraints(
 	activities: TimetableData['activities'],
-	activitiesList: ReturnType<typeof buildActivitiesList>
+	activitiesList: ReturnType<typeof buildActivitiesList>,
 ) {
 	const preferredRoomsConstraints: Array<{
 		Weight_Percentage: number;
@@ -298,12 +318,14 @@ function buildPreferredRoomsConstraints(
 	}> = [];
 
 	// Group activities by their location preferences
-	const activitiesWithLocations = activities.filter((activity) => activity.locationIds.length > 0);
+	const activitiesWithLocations = activities.filter(
+		(activity) => activity.locationIds.length > 0,
+	);
 
 	activitiesWithLocations.forEach((activity) => {
 		// Find all activity instances for this activity in the activitiesList
 		const activityInstances = activitiesList.filter(
-			(act) => act.Subject === activity.subjectOfferingId.toString()
+			(act) => act.Subject === activity.subjectOfferingId.toString(),
 		);
 
 		// For each instance, add a constraint with the preferred rooms
@@ -314,7 +336,7 @@ function buildPreferredRoomsConstraints(
 				Number_of_Preferred_Rooms: activity.locationIds.length,
 				Preferred_Room: activity.locationIds.map((id) => id.toString()),
 				Active: true,
-				Comments: `Preferred rooms for activity ${activity.id}`
+				Comments: `Preferred rooms for activity ${activity.id}`,
 			});
 		});
 	});
@@ -333,87 +355,63 @@ export async function buildFETInput({
 	teachers,
 	subjects,
 	school,
-	activeConstraints
+	activeConstraints,
 }: TimetableData) {
-	const daysList = timetableDays.map((day) => ({
-		Name: day.id
-	}));
+	const daysList = timetableDays.map((day) => ({ Name: day.id }));
 
-	const hoursList = timetablePeriods.map((period) => ({
-		Name: period.id
-	}));
+	const hoursList = timetablePeriods.map((period) => ({ Name: period.id }));
 
-	const subjectsList = subjects.map((subject) => ({
-		Name: subject.id
-	}));
+	const subjectsList = subjects.map((subject) => ({ Name: subject.id }));
 
 	const teachersList = await buildTeachersList(teachers);
 	const studentsList = buildStudentsList(studentGroups, studentsByYear);
 	const activitiesList = buildActivitiesList(activities);
 
-	const buildingsList = buildings.map((building) => ({
-		Name: building.id
-	}));
+	const buildingsList = buildings.map((building) => ({ Name: building.id }));
 
 	const roomsList = buildRoomsList(spaces, buildings);
 
-	const { timeConstraintsXML, spaceConstraintsXML } = buildConstraintsXML(activeConstraints);
+	const { timeConstraintsXML, spaceConstraintsXML } =
+		buildConstraintsXML(activeConstraints);
 
-	const preferredRoomsConstraints = buildPreferredRoomsConstraints(activities, activitiesList);
+	const preferredRoomsConstraints = buildPreferredRoomsConstraints(
+		activities,
+		activitiesList,
+	);
 
 	// Add the preferred rooms constraints to the space constraints
 	if (preferredRoomsConstraints.length > 0) {
-		spaceConstraintsXML['ConstraintActivityPreferredRooms'] = preferredRoomsConstraints;
+		spaceConstraintsXML['ConstraintActivityPreferredRooms'] =
+			preferredRoomsConstraints;
 	}
 
 	const xmlData = {
-		'?xml': {
-			'@_version': '1.0',
-			'@_encoding': 'UTF-8'
-		},
+		'?xml': { '@_version': '1.0', '@_encoding': 'UTF-8' },
 		fet: {
 			'@_version': '7.3.0',
 			Institution_Name: school?.id || 'Unknown School',
 			Comments:
 				'This is a timetable generated for a school working with eddi. Full credit goes to Liviu Lalescu and Volker Dirr for their work on FET (Free Timetabling Software) which we utilise to generate the output.',
-			Days_List: {
-				Number_of_Days: daysList.length,
-				Day: daysList
-			},
-			Hours_List: {
-				Number_of_Hours: hoursList.length,
-				Hour: hoursList
-			},
-			Subjects_List: {
-				Subject: subjectsList
-			},
+			Days_List: { Number_of_Days: daysList.length, Day: daysList },
+			Hours_List: { Number_of_Hours: hoursList.length, Hour: hoursList },
+			Subjects_List: { Subject: subjectsList },
 			Activity_Tags_List: {},
-			Teachers_List: {
-				Teacher: teachersList
-			},
-			Students_List: {
-				Year: studentsList
-			},
-			Activities_List: {
-				Activity: activitiesList
-			},
-			Buildings_List: {
-				Building: buildingsList
-			},
-			Rooms_List: {
-				Room: roomsList
-			},
+			Teachers_List: { Teacher: teachersList },
+			Students_List: { Year: studentsList },
+			Activities_List: { Activity: activitiesList },
+			Buildings_List: { Building: buildingsList },
+			Rooms_List: { Room: roomsList },
 			Time_Constraints_List: timeConstraintsXML,
 			Space_Constraints_List: spaceConstraintsXML,
-			Timetable_Generation_Options_List: {}
-		}
+			Timetable_Generation_Options_List: {},
+		},
 	};
 
 	const xmlBuilderOptions = {
 		ignoreAttributes: false,
 		format: true,
 		suppressEmptyNode: true,
-		attributeNamePrefix: '@_'
+		attributeNamePrefix: '@_',
 	};
 
 	const builder = new XMLBuilder(xmlBuilderOptions);

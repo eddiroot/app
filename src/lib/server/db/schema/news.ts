@@ -42,12 +42,12 @@ export const newsCategory = newsSchema.table(
 	'news_category',
 	{
 		...essentials,
-		schoolId: integer()
-			.notNull()
-			.references(() => school.id, { onDelete: 'cascade' }),
 		name: text().notNull().unique(),
 		description: text(),
 		color: text(),
+		schoolId: integer()
+			.notNull()
+			.references(() => school.id, { onDelete: 'cascade' }),
 	},
 	(self) => [index().on(self.schoolId)],
 );
@@ -61,6 +61,16 @@ export const news = newsSchema.table(
 		title: text().notNull(),
 		excerpt: text(),
 		content: jsonb().notNull(),
+		status: newsStatusEnumPg().notNull().default(newsStatusEnum.draft),
+		priority: newsPriorityEnumPg().notNull().default(newsPriorityEnum.normal),
+		visibility: newsVisibilityEnumPg()
+			.notNull()
+			.default(newsVisibilityEnum.public),
+		publishedAt: standardTimestamp('published_at'),
+		expiresAt: standardTimestamp('expires_at'),
+		tags: jsonb(),
+		isPinned: boolean().notNull().default(false),
+		viewCount: integer().notNull().default(0),
 		schoolId: integer()
 			.notNull()
 			.references(() => school.id, { onDelete: 'cascade' }),
@@ -73,16 +83,6 @@ export const news = newsSchema.table(
 		authorId: uuid()
 			.notNull()
 			.references(() => user.id, { onDelete: 'cascade' }),
-		status: newsStatusEnumPg().notNull().default(newsStatusEnum.draft),
-		priority: newsPriorityEnumPg().notNull().default(newsPriorityEnum.normal),
-		visibility: newsVisibilityEnumPg()
-			.notNull()
-			.default(newsVisibilityEnum.public),
-		publishedAt: standardTimestamp('published_at'),
-		expiresAt: standardTimestamp('expires_at'),
-		tags: jsonb(),
-		isPinned: boolean().notNull().default(false),
-		viewCount: integer().notNull().default(0),
 	},
 	(self) => [
 		index().on(self.schoolId),

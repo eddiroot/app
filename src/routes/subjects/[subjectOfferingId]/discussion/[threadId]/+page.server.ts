@@ -1,5 +1,9 @@
-import { subjectThreadResponseTypeEnum, subjectThreadTypeEnum, userTypeEnum } from '$lib/enums.js';
-import { geminiCompletion } from '$lib/server/ai/index.js';
+import {
+	subjectThreadResponseTypeEnum,
+	subjectThreadTypeEnum,
+	userTypeEnum,
+} from '$lib/enums.js';
+import { geminiCompletion } from '$lib/server/ai';
 import {
 	createSubjectThreadResponse,
 	getSubjectThreadById,
@@ -7,7 +11,7 @@ import {
 	getSubjectThreadResponseLikeCounts,
 	getSubjectThreadResponsesById,
 	toggleSubjectThreadLike,
-	toggleSubjectThreadResponseLike
+	toggleSubjectThreadResponseLike,
 } from '$lib/server/db/service';
 import { fail, superValidate } from 'sveltekit-superforms';
 import { zod4 } from 'sveltekit-superforms/adapters';
@@ -25,7 +29,7 @@ export const load = async ({ locals: { security }, params: { threadId } }) => {
 			form: null,
 			currentUser,
 			threadLikes: null,
-			responseLikes: []
+			responseLikes: [],
 		};
 	}
 
@@ -34,29 +38,46 @@ export const load = async ({ locals: { security }, params: { threadId } }) => {
 	const nestedResponses = getNestedResponses(responses);
 
 	// Get like information for the thread
-	const threadLikes = await getSubjectThreadLikeInfo(threadIdInt, currentUser.id);
+	const threadLikes = await getSubjectThreadLikeInfo(
+		threadIdInt,
+		currentUser.id,
+	);
 
 	// Get like information for all responses
 	const responseIds = responses.map((r) => r.response.id);
-	const responseLikes = await getSubjectThreadResponseLikeCounts(responseIds, currentUser.id);
+	const responseLikes = await getSubjectThreadResponseLikeCounts(
+		responseIds,
+		currentUser.id,
+	);
 
 	const form = await superValidate(zod4(formSchema), {
 		defaults: {
 			type:
 				thread?.thread?.type == subjectThreadTypeEnum.question ||
-					thread?.thread?.type === subjectThreadTypeEnum.qanda
+				thread?.thread?.type === subjectThreadTypeEnum.qanda
 					? subjectThreadResponseTypeEnum.answer
 					: subjectThreadResponseTypeEnum.comment,
 			content: '',
-			isAnonymous: false
-		}
+			isAnonymous: false,
+		},
 	});
 
-	return { thread, nestedResponses, form, currentUser, threadLikes, responseLikes };
+	return {
+		thread,
+		nestedResponses,
+		form,
+		currentUser,
+		threadLikes,
+		responseLikes,
+	};
 };
 
 export const actions = {
-	addResponse: async ({ request, locals: { security }, params: { threadId } }) => {
+	addResponse: async ({
+		request,
+		locals: { security },
+		params: { threadId },
+	}) => {
 		const user = security.isAuthenticated().getUser();
 
 		const threadIdInt = parseInt(threadId, 10);
@@ -74,14 +95,14 @@ export const actions = {
 		}
 
 		try {
-			await createSubjectThreadResponse(
-				form.data.type,
-				threadIdInt,
-				user.id,
-				form.data.content,
-				form.data.parentResponseId,
-				form.data.isAnonymous
-			);
+			await createSubjectThreadResponse({
+				type: form.data.type,
+				subjectThreadId: threadIdInt,
+				userId: user.id,
+				content: form.data.content,
+				parentResponseId: form.data.parentResponseId,
+				isAnonymous: form.data.isAnonymous,
+			});
 		} catch (error) {
 			console.error('Error creating response:', error);
 			return fail(500, { form });
@@ -104,10 +125,10 @@ export const actions = {
 
 		const responses = await getSubjectThreadResponsesById(threadIdInt);
 		const answers = responses.filter(
-			(r) => r.response.type === 'answer' && !r.response.parentResponseId
+			(r) => r.response.type === 'answer' && !r.response.parentResponseId,
 		);
 		const comments = responses.filter(
-			(r) => r.response.type === 'comment' && !r.response.parentResponseId
+			(r) => r.response.type === 'comment' && !r.response.parentResponseId,
 		);
 
 		const prompt = `
@@ -132,7 +153,7 @@ export const actions = {
 		const systemInstruction =
 			'You are a helpful assistant that creates concise, well-structured summaries of academic discussions and Q&A threads for school students who are looking to get all the necessary information. The summaries should be in plain text format (not markdown).';
 
-		const summary = await geminiCompletion(prompt, undefined, undefined, systemInstruction);
+		const summary = await geminiCompletion(prompt, systemInstruction);
 		return { summary };
 	},
 	toggleThreadLike: async ({ locals: { security }, params: { threadId } }) => {
@@ -167,11 +188,14 @@ export const actions = {
 		}
 
 		try {
-			const result = await toggleSubjectThreadResponseLike(responseIdInt, user.id);
+			const result = await toggleSubjectThreadResponseLike(
+				responseIdInt,
+				user.id,
+			);
 			return { success: true, liked: result.liked, responseId: responseIdInt };
 		} catch (error) {
 			console.error('Error toggling response like:', error);
 			return fail(500, { message: 'Failed to toggle like' });
 		}
-	}
+	},
 };

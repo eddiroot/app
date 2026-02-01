@@ -14,7 +14,7 @@
 	import X from '@lucide/svelte/icons/x';
 
 	let {
-		data
+		data,
 	}: {
 		data: {
 			categories: Array<{
@@ -43,7 +43,9 @@
 	// Form state
 	let title = $state(page.form?.formData?.title || '');
 	let content = $state(page.form?.formData?.content || '');
-	let selectedCategory = $state(page.form?.formData?.categoryId?.toString() || '');
+	let selectedCategory = $state(
+		page.form?.formData?.categoryId?.toString() || '',
+	);
 	let selectedCampus = $state(page.form?.formData?.campusId?.toString() || '');
 	let selectedVisibility = $state(page.form?.formData?.visibility || 'public');
 	let tags = $state(page.form?.formData?.tags || '');
@@ -57,7 +59,7 @@
 			? Array.isArray(page.form.formData.tags)
 				? page.form.formData.tags
 				: [page.form.formData.tags]
-			: []
+			: [],
 	);
 
 	// Validation state
@@ -100,7 +102,9 @@
 
 		// File type validation
 		const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/webp'];
-		const invalidFiles = selectedImages.filter((file) => !allowedTypes.includes(file.type));
+		const invalidFiles = selectedImages.filter(
+			(file) => !allowedTypes.includes(file.type),
+		);
 		if (invalidFiles.length > 0) {
 			errors.images = 'Only PNG, JPEG, JPG, and WebP images are allowed';
 		}
@@ -179,14 +183,17 @@
 		const trimmedTag = tagInput.trim();
 		if (trimmedTag && !tagsList.includes(trimmedTag)) {
 			if (tagsList.length >= 20) {
-				validationErrors = { ...validationErrors, tags: 'Maximum 20 tags allowed' };
+				validationErrors = {
+					...validationErrors,
+					tags: 'Maximum 20 tags allowed',
+				};
 				showValidationErrors = true;
 				return;
 			}
 			if (trimmedTag.length > 50) {
 				validationErrors = {
 					...validationErrors,
-					tags: 'Tags must be less than 50 characters each'
+					tags: 'Tags must be less than 50 characters each',
 				};
 				showValidationErrors = true;
 				return;
@@ -231,11 +238,15 @@
 
 		submitting = true;
 		const form = document.getElementById('newsForm') as HTMLFormElement;
-		const actionInput = form.querySelector('input[name="action"]') as HTMLInputElement;
+		const actionInput = form.querySelector(
+			'input[name="action"]',
+		) as HTMLInputElement;
 		actionInput.value = action;
 
 		// Add tags to form as hidden inputs
-		const tagsContainer = form.querySelector('.tags-inputs-container') as HTMLDivElement;
+		const tagsContainer = form.querySelector(
+			'.tags-inputs-container',
+		) as HTMLDivElement;
 		tagsContainer.innerHTML = '';
 		tagsList.forEach((tag) => {
 			const input = document.createElement('input');
@@ -246,7 +257,9 @@
 		});
 
 		// Add images to form
-		const imageContainer = form.querySelector('.image-inputs-container') as HTMLDivElement;
+		const imageContainer = form.querySelector(
+			'.image-inputs-container',
+		) as HTMLDivElement;
 		imageContainer.innerHTML = '';
 
 		selectedImages.forEach((file) => {
@@ -264,12 +277,10 @@
 	};
 </script>
 
-<svelte:head>
-	<title>Create News</title>
-</svelte:head>
-
 {#if submitting}
-	<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+	<div
+		class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm"
+	>
 		<div
 			class="bg-background mx-4 flex max-w-sm flex-col items-center space-y-4 rounded-lg p-8 shadow-xl"
 		>
@@ -301,7 +312,9 @@
 
 		{#if showValidationErrors && Object.keys(validationErrors).length > 0}
 			<div class="mb-6 rounded border border-red-200 bg-red-50 p-4">
-				<h3 class="mb-2 text-sm font-medium text-red-800">Please fix the following errors:</h3>
+				<h3 class="mb-2 text-sm font-medium text-red-800">
+					Please fix the following errors:
+				</h3>
 				<ul class="space-y-1 text-sm text-red-700">
 					{#each Object.entries(validationErrors) as [field, error]}
 						<li>• {error}</li>
@@ -310,7 +323,12 @@
 			</div>
 		{/if}
 
-		<form method="POST" enctype="multipart/form-data" id="newsForm" class="grid grid-cols-3 gap-6">
+		<form
+			method="POST"
+			enctype="multipart/form-data"
+			id="newsForm"
+			class="grid grid-cols-3 gap-6"
+		>
 			<input type="hidden" name="action" value="save_draft" />
 			<input type="hidden" name="categoryId" bind:value={selectedCategory} />
 			<input type="hidden" name="campusId" bind:value={selectedCampus} />
@@ -330,13 +348,19 @@
 								bind:value={title}
 								placeholder="Enter article title..."
 								required
-								class="mt-1 {validationErrors.title ? 'border-red-500 focus:border-red-500' : ''}"
+								class="mt-1 {validationErrors.title
+									? 'border-red-500 focus:border-red-500'
+									: ''}"
 								oninput={() => validateField('title')}
 							/>
 							{#if validationErrors.title}
-								<p class="mt-1 text-sm text-red-500">{validationErrors.title}</p>
+								<p class="mt-1 text-sm text-red-500">
+									{validationErrors.title}
+								</p>
 							{:else}
-								<p class="text-muted-foreground mt-1 text-xs">{title.length}/200 characters</p>
+								<p class="text-muted-foreground mt-1 text-xs">
+									{title.length}/200 characters
+								</p>
 							{/if}
 						</div>
 
@@ -354,13 +378,19 @@ You can create bullet points like this:
 "
 								rows={16}
 								required
-								class="mt-1 {validationErrors.content ? 'border-red-500 focus:border-red-500' : ''}"
+								class="mt-1 {validationErrors.content
+									? 'border-red-500 focus:border-red-500'
+									: ''}"
 								oninput={() => validateField('content')}
 							/>
 							{#if validationErrors.content}
-								<p class="mt-1 text-sm text-red-500">{validationErrors.content}</p>
+								<p class="mt-1 text-sm text-red-500">
+									{validationErrors.content}
+								</p>
 							{:else}
-								<p class="text-muted-foreground mt-1 text-xs">{content.length}/10,000 characters</p>
+								<p class="text-muted-foreground mt-1 text-xs">
+									{content.length}/10,000 characters
+								</p>
 							{/if}
 						</div>
 
@@ -380,7 +410,9 @@ You can create bullet points like this:
 								</div>
 							</Button>
 							{#if validationErrors.images}
-								<p class="mt-1 text-sm text-red-500">{validationErrors.images}</p>
+								<p class="mt-1 text-sm text-red-500">
+									{validationErrors.images}
+								</p>
 							{:else if selectedImages.length > 0}
 								<p class="text-muted-foreground mt-1 text-xs">
 									{selectedImages.length}/10 images selected
@@ -405,7 +437,9 @@ You can create bullet points like this:
 											>
 												<X class="h-3 w-3" />
 											</Button>
-											<p class="text-muted-foreground mt-1 truncate text-xs">{file.name}</p>
+											<p class="text-muted-foreground mt-1 truncate text-xs">
+												{file.name}
+											</p>
 										</div>
 									{/each}
 								</div>
@@ -445,13 +479,17 @@ You can create bullet points like this:
 								{#if validationErrors.tags}
 									<p class="text-sm text-red-500">{validationErrors.tags}</p>
 								{:else if tagsList.length > 0}
-									<p class="text-muted-foreground text-xs">{tagsList.length}/20 tags</p>
+									<p class="text-muted-foreground text-xs">
+										{tagsList.length}/20 tags
+									</p>
 								{/if}
 
 								{#if tagsList.length > 0}
 									<div class="flex flex-wrap gap-2">
 										{#each tagsList as tag, index}
-											<div class="bg-secondary flex items-center gap-1 rounded px-2 py-1 text-sm">
+											<div
+												class="bg-secondary flex items-center gap-1 rounded px-2 py-1 text-sm"
+											>
 												<span>{tag}</span>
 												<Button
 													type="button"
@@ -482,8 +520,9 @@ You can create bullet points like this:
 							<Select.Root type="single" bind:value={selectedCategory}>
 								<Select.Trigger class="mt-1">
 									{#if selectedCategory}
-										{data.categories.find((c) => c.id.toString() === selectedCategory)?.name ||
-											'No category'}
+										{data.categories.find(
+											(c) => c.id.toString() === selectedCategory,
+										)?.name || 'No category'}
 									{:else}
 										No category
 									{/if}
@@ -491,7 +530,9 @@ You can create bullet points like this:
 								<Select.Content>
 									<Select.Item value="">No category</Select.Item>
 									{#each data.categories as category}
-										<Select.Item value={category.id.toString()}>{category.name}</Select.Item>
+										<Select.Item value={category.id.toString()}
+											>{category.name}</Select.Item
+										>
 									{/each}
 								</Select.Content>
 							</Select.Root>
@@ -502,8 +543,9 @@ You can create bullet points like this:
 							<Select.Root type="single" bind:value={selectedCampus}>
 								<Select.Trigger class="mt-1">
 									{#if selectedCampus}
-										{data.userCampuses.find((c) => c.id.toString() === selectedCampus)?.name ||
-											'All campuses'}
+										{data.userCampuses.find(
+											(c) => c.id.toString() === selectedCampus,
+										)?.name || 'All campuses'}
 									{:else}
 										All campuses
 									{/if}
@@ -511,7 +553,9 @@ You can create bullet points like this:
 								<Select.Content>
 									<Select.Item value="">All campuses</Select.Item>
 									{#each data.userCampuses as campus}
-										<Select.Item value={campus.id.toString()}>{campus.name}</Select.Item>
+										<Select.Item value={campus.id.toString()}
+											>{campus.name}</Select.Item
+										>
 									{/each}
 								</Select.Content>
 							</Select.Root>
@@ -535,7 +579,9 @@ You can create bullet points like this:
 								</Select.Trigger>
 								<Select.Content>
 									<Select.Item value="public">Everyone (Public)</Select.Item>
-									<Select.Item value="internal">School Community Only</Select.Item>
+									<Select.Item value="internal"
+										>School Community Only</Select.Item
+									>
 									<Select.Item value="staff">Staff Members Only</Select.Item>
 									<Select.Item value="students">Students Only</Select.Item>
 								</Select.Content>
@@ -544,7 +590,9 @@ You can create bullet points like this:
 
 						<div class="flex items-center space-x-2 pt-2">
 							<Checkbox id="isPinned" name="isPinned" bind:checked={isPinned} />
-							<Label for="isPinned" class="text-sm">Pin to top of news feed</Label>
+							<Label for="isPinned" class="text-sm"
+								>Pin to top of news feed</Label
+							>
 						</div>
 					</div>
 				</div>

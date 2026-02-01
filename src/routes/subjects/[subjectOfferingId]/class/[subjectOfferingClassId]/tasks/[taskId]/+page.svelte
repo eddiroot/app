@@ -1,10 +1,17 @@
 <script lang="ts">
 	import { page } from '$app/state';
 	import { type TaskBlock } from '$lib/server/db/schema';
-	import { dndState, draggable, droppable, type DragDropState } from '@thisux/sveltednd';
+	import {
+		dndState,
+		draggable,
+		droppable,
+		type DragDropState,
+	} from '@thisux/sveltednd';
 	// UI Components
 	import { Badge } from '$lib/components/ui/badge';
-	import Button, { buttonVariants } from '$lib/components/ui/button/button.svelte';
+	import Button, {
+		buttonVariants,
+	} from '$lib/components/ui/button/button.svelte';
 	import * as Card from '$lib/components/ui/card';
 	import * as Dialog from '$lib/components/ui/dialog';
 	import * as Form from '$lib/components/ui/form';
@@ -40,15 +47,16 @@
 		updateBlock,
 		updateBlockOrder,
 		updateTaskTitle,
-		upsertBlockResponse
+		upsertBlockResponse,
 	} from './client';
 
+	import ScrollArea from '$lib/components/ui/scroll-area/scroll-area.svelte';
 	import {
 		gradeReleaseEnum,
 		quizModeEnum,
 		taskBlockTypeEnum,
 		taskStatusEnum,
-		userTypeEnum
+		userTypeEnum,
 	} from '$lib/enums';
 	import {
 		blockTypes,
@@ -70,7 +78,7 @@
 		type BlockSubmissionConfig,
 		type BlockTableConfig,
 		type BlockVideoConfig,
-		type BlockWhiteboardConfig
+		type BlockWhiteboardConfig,
 	} from '$lib/schema/task';
 	import { formatTimer } from '$lib/utils';
 	import { PencilIcon, SettingsIcon } from '@lucide/svelte';
@@ -78,16 +86,22 @@
 	import PresentationIcon from '@lucide/svelte/icons/presentation';
 	import { superForm } from 'sveltekit-superforms';
 	import { zod4 } from 'sveltekit-superforms/adapters';
-	import { quizSettingsFormSchema, startQuizFormSchema, statusFormSchema } from './schema';
+	import {
+		quizSettingsFormSchema,
+		startQuizFormSchema,
+		statusFormSchema,
+	} from './schema';
 
 	let { data } = $props();
 
-	let blocks = $state(data.blocks);
+	let blocks = $derived(data.blocks);
 	let responses = $state<Record<number, any>>({});
 
 	let mouseOverElement = $state<string>('');
-	let viewMode = $state<ViewMode>(
-		data.user.type == userTypeEnum.student ? ViewMode.ANSWER : ViewMode.CONFIGURE
+	let viewMode = $derived<ViewMode>(
+		data.user.type == userTypeEnum.student
+			? ViewMode.ANSWER
+			: ViewMode.CONFIGURE,
 	);
 	let selectedStudent = $state<string | null>(null);
 	let showSettings = $state(false);
@@ -95,26 +109,30 @@
 	let timeRemaining = $state<number>(0);
 	let timerInterval: ReturnType<typeof setInterval> | null = null;
 
-	const statusForm = superForm(data.statusForm, {
+	let dataStatusForm = () => data.statusForm;
+	const statusForm = superForm(dataStatusForm(), {
 		validators: zod4(statusFormSchema),
-		resetForm: false
+		resetForm: false,
 	});
 	const { form: statusFormData, enhance: statusEnhance } = statusForm;
 
-	const quizSettingsForm = superForm(data.quizSettingsForm, {
+	let dataQuizSettingsForm = () => data.quizSettingsForm;
+	const quizSettingsForm = superForm(dataQuizSettingsForm(), {
 		validators: zod4(quizSettingsFormSchema),
 		resetForm: false,
 		onUpdated: ({ form }) => {
 			if (form.valid) {
 				showSettings = false;
 			}
-		}
+		},
 	});
-	const { form: quizSettingsFormData, enhance: quizSettingsEnhance } = quizSettingsForm;
+	const { form: quizSettingsFormData, enhance: quizSettingsEnhance } =
+		quizSettingsForm;
 
-	const startQuizForm = superForm(data.startQuizForm, {
+	let dataStartQuizForm = () => data.startQuizForm;
+	const startQuizForm = superForm(dataStartQuizForm(), {
 		validators: zod4(startQuizFormSchema),
-		resetForm: false
+		resetForm: false,
 	});
 	const { enhance: startQuizEnhance } = startQuizForm;
 
@@ -136,16 +154,20 @@
 			(data.classTask.quizMode === quizModeEnum.scheduled ||
 				data.classTask.quizMode === quizModeEnum.manual);
 
-		if (isStudentInQuizMode && data.classTask.quizDurationMinutes && data.classTask.quizStartTime) {
-			const startTime = new Date(data.classTask.quizStartTime).getTime();
+		if (
+			isStudentInQuizMode &&
+			data.classTask.quizDurationMinutes &&
+			data.classTask.quizStart
+		) {
+			const start = new Date(data.classTask.quizStart).getTime();
 			const durationMs = data.classTask.quizDurationMinutes * 60 * 1000;
-			const elapsed = Date.now() - startTime;
+			const elapsed = Date.now() - start;
 			const remaining = Math.max(0, (durationMs - elapsed) / 1000);
 
 			timeRemaining = remaining;
 
 			if (remaining > 0) {
-				startTimer();
+				startr();
 			}
 		}
 
@@ -156,7 +178,7 @@
 		};
 	});
 
-	function startTimer() {
+	function startr() {
 		if (timerInterval) clearInterval(timerInterval);
 
 		timerInterval = setInterval(() => {
@@ -168,13 +190,17 @@
 		blocks.forEach((block) => {
 			if (!Object.prototype.hasOwnProperty.call(responses, block.id)) {
 				const serverResponse =
-					data.user.type === userTypeEnum.student ? data.blockResponses![block.id]?.response : null;
+					data.user.type === userTypeEnum.student
+						? data.blockResponses![block.id]?.response
+						: null;
 				responses[block.id] = serverResponse || getInitialResponse(block.type);
 			}
 		});
 	});
 
-	function getInitialResponse(blockType: taskBlockTypeEnum): BlockResponse | null {
+	function getInitialResponse(
+		blockType: taskBlockTypeEnum,
+	): BlockResponse | null {
 		switch (blockType) {
 			case taskBlockTypeEnum.choice:
 				return { answers: [] };
@@ -204,11 +230,18 @@
 		if (!initialResponse) return null;
 
 		if (data.user.type == userTypeEnum.student) {
-			return responses[blockId] || data.blockResponses![blockId]?.response || initialResponse;
+			return (
+				responses[blockId] ||
+				data.blockResponses![blockId]?.response ||
+				initialResponse
+			);
 		}
 
 		if (viewMode === ViewMode.REVIEW && selectedStudent) {
-			return data.groupedBlockResponses![selectedStudent]?.[blockId]?.response || initialResponse;
+			return (
+				data.groupedBlockResponses![selectedStudent]?.[blockId]?.response ||
+				initialResponse
+			);
 		}
 
 		return responses[blockId] || initialResponse;
@@ -251,14 +284,19 @@
 			return;
 		}
 
-		if (sourceContainer === 'blockPalette' && targetContainer.startsWith('task')) {
-			const index = blocks.findIndex((b) => b.id.toString() === targetContainer.split('-')[1]);
+		if (
+			sourceContainer === 'blockPalette' &&
+			targetContainer.startsWith('task')
+		) {
+			const index = blocks.findIndex(
+				(b) => b.id.toString() === targetContainer.split('-')[1],
+			);
 
 			const { block } = await createBlock({
 				taskId: data.task.id,
 				type: draggedItem.type,
 				config: draggedItem.config,
-				index: targetContainer === 'task-bottom' ? blocks.length : index
+				index: targetContainer === 'task-bottom' ? blocks.length : index,
 			});
 
 			if (!block) {
@@ -272,21 +310,28 @@
 			} else if (index !== -1) {
 				blocks = [...blocks.slice(0, index), block, ...blocks.slice(index)];
 			} else {
-				alert('Failed to insert block at the correct position. Please try again.');
+				alert(
+					'Failed to insert block at the correct position. Please try again.',
+				);
 				resetDndState();
 				return;
 			}
 		}
 
 		// Handle drops from two-column layout to main task
-		if (sourceContainer.startsWith('two-column-') && targetContainer.startsWith('task')) {
-			const index = blocks.findIndex((b) => b.id.toString() === targetContainer.split('-')[1]);
+		if (
+			sourceContainer.startsWith('two-column-') &&
+			targetContainer.startsWith('task')
+		) {
+			const index = blocks.findIndex(
+				(b) => b.id.toString() === targetContainer.split('-')[1],
+			);
 
 			const { block } = await createBlock({
 				taskId: data.task.id,
 				type: draggedItem.type,
 				config: draggedItem.config,
-				index: targetContainer === 'task-bottom' ? blocks.length : index
+				index: targetContainer === 'task-bottom' ? blocks.length : index,
 			});
 
 			if (!block) {
@@ -300,16 +345,21 @@
 			} else if (index !== -1) {
 				blocks = [...blocks.slice(0, index), block, ...blocks.slice(index)];
 			} else {
-				alert('Failed to insert block at the correct position. Please try again.');
+				alert(
+					'Failed to insert block at the correct position. Please try again.',
+				);
 				resetDndState();
 				return;
 			}
 		}
 
-		if (sourceContainer.startsWith('task') && targetContainer.startsWith('task')) {
+		if (
+			sourceContainer.startsWith('task') &&
+			targetContainer.startsWith('task')
+		) {
 			const sourceIndex = draggedItem.index;
 			const targetIndex = blocks.findIndex(
-				(b) => b.id.toString() === targetContainer.split('-')[1]
+				(b) => b.id.toString() === targetContainer.split('-')[1],
 			);
 
 			if (targetIndex === -1 || sourceIndex === -1) {
@@ -327,17 +377,18 @@
 			const [movedBlock] = newBlocks.splice(sourceIndex, 1);
 
 			// Adjust target index if moving downwards (after removing the source item, indices shift)
-			const adjustedTargetIndex = sourceIndex < targetIndex ? targetIndex - 1 : targetIndex;
+			const adjustedTargetIndex =
+				sourceIndex < targetIndex ? targetIndex - 1 : targetIndex;
 			newBlocks.splice(adjustedTargetIndex, 0, movedBlock);
 
 			const finalisedBlocks = newBlocks.map((block, index) => ({
 				...block,
-				index
+				index,
 			}));
 
 			const blockOrder = finalisedBlocks.map(({ id, index }) => ({
 				id,
-				index
+				index,
 			}));
 
 			try {
@@ -351,7 +402,10 @@
 			blocks = finalisedBlocks;
 		}
 
-		if (sourceContainer.startsWith('task') && targetContainer === 'blockPalette') {
+		if (
+			sourceContainer.startsWith('task') &&
+			targetContainer === 'blockPalette'
+		) {
 			const { success } = await deleteBlock(draggedItem.id);
 			if (!success) {
 				alert('Failed to delete block. Please try again.');
@@ -362,7 +416,10 @@
 		}
 
 		// Handle drops from main task to two-column layout
-		if (sourceContainer.startsWith('task') && targetContainer.startsWith('two-column-')) {
+		if (
+			sourceContainer.startsWith('task') &&
+			targetContainer.startsWith('two-column-')
+		) {
 			const { success } = await deleteBlock(draggedItem.id);
 			if (!success) {
 				alert('Failed to move block to column. Please try again.');
@@ -400,7 +457,7 @@
 										// Auto-submit the form when value changes
 										setTimeout(() => {
 											const form = document.querySelector(
-												'form[action="?/status"]'
+												'form[action="?/status"]',
 											) as HTMLFormElement;
 											if (form) form.submit();
 										}, 0);
@@ -408,11 +465,14 @@
 								}}
 							>
 								<Select.Trigger class="w-full">
-									{$statusFormData.status[0].toUpperCase() + $statusFormData.status.slice(1)}
+									{$statusFormData.status[0].toUpperCase() +
+										$statusFormData.status.slice(1)}
 								</Select.Trigger>
 								<Select.Content>
 									<Select.Item value={taskStatusEnum.draft}>Draft</Select.Item>
-									<Select.Item value={taskStatusEnum.published}>Published</Select.Item>
+									<Select.Item value={taskStatusEnum.published}
+										>Published</Select.Item
+									>
 								</Select.Content>
 							</Select.Root>
 						{/snippet}
@@ -427,7 +487,12 @@
 				<PencilIcon />
 				Edit
 			</Button>
-			<Button variant="outline" disabled onclick={() => (viewMode = ViewMode.PRESENT)} size="lg">
+			<Button
+				variant="outline"
+				disabled
+				onclick={() => (viewMode = ViewMode.PRESENT)}
+				size="lg"
+			>
 				<PresentationIcon />
 				Present
 			</Button>
@@ -448,7 +513,11 @@
 				Review
 			</Button>
 			{#if data.task.type === 'test'}
-				<Button variant="outline" onclick={() => (showSettings = true)} size="lg">
+				<Button
+					variant="outline"
+					onclick={() => (showSettings = true)}
+					size="lg"
+				>
 					<SettingsIcon />
 					Settings
 				</Button>
@@ -456,7 +525,9 @@
 		{/if}
 		<Card.Root class="h-full">
 			<Card.Header>
-				<Card.Title>{viewMode === ViewMode.REVIEW ? 'Students' : 'Content'}</Card.Title>
+				<Card.Title
+					>{viewMode === ViewMode.REVIEW ? 'Students' : 'Content'}</Card.Title
+				>
 			</Card.Header>
 			<Card.Content class="space-y-1">
 				{#if viewMode === ViewMode.REVIEW}
@@ -464,7 +535,9 @@
 						<Button
 							onclick={() => (selectedStudent = response.student.id)}
 							size="lg"
-							variant={selectedStudent === response.student.id ? 'default' : 'ghost'}
+							variant={selectedStudent === response.student.id
+								? 'default'
+								: 'ghost'}
 						>
 							{response.student.firstName}
 							{response.student.lastName}
@@ -492,12 +565,12 @@
 			<div class={viewMode === ViewMode.CONFIGURE ? 'ml-[38px]' : ''}>
 				<div class="flex items-center gap-4">
 					<BlockHeading
-						config={{
-							text: data.task.title,
-							size: 1
-						}}
+						config={{ text: data.task.title, size: 1 }}
 						onConfigUpdate={async (config) =>
-							await updateTaskTitle({ taskId: data.task.id, title: config.text })}
+							await updateTaskTitle({
+								taskId: data.task.id,
+								title: config.text,
+							})}
 						{viewMode}
 					/>
 
@@ -544,19 +617,23 @@
 					<div class="flex h-full flex-col items-center justify-center">
 						<ClockIcon class="text-primary mx-auto mb-4 h-12 w-12" />
 						<h3 class="mb-4 text-xl font-semibold">Quiz Not Available</h3>
-						{#if data.classTask.quizMode === quizModeEnum.scheduled && data.classTask.quizStartTime}
-							{@const startTime = new Date(data.classTask.quizStartTime)}
+						{#if data.classTask.quizMode === quizModeEnum.scheduled && data.classTask.quizStart}
+							{@const start = new Date(data.classTask.quizStart)}
 							{@const now = new Date()}
-							{@const timeDiff = startTime.getTime() - now.getTime()}
-							<p class="text-muted-foreground mb-4">This quiz will become available at:</p>
+							{@const timeDiff = start.getTime() - now.getTime()}
+							<p class="text-muted-foreground mb-4">
+								This quiz will become available at:
+							</p>
 							<div class="bg-primary/10 mb-4 rounded-lg p-3">
 								<p class="text-primary font-mono text-lg font-bold">
-									{startTime.toLocaleString()}
+									{start.toLocaleString()}
 								</p>
 							</div>
 							{#if timeDiff > 0 && timeDiff < 24 * 60 * 60 * 1000}
 								{@const hours = Math.floor(timeDiff / (1000 * 60 * 60))}
-								{@const minutes = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60))}
+								{@const minutes = Math.floor(
+									(timeDiff % (1000 * 60 * 60)) / (1000 * 60),
+								)}
 								<div class="bg-warning/10 mb-4 rounded-lg p-3">
 									<p class="text-warning text-sm font-medium">
 										Available in: {hours}h {minutes}m
@@ -576,14 +653,13 @@
 					<!-- Normal Content Rendering -->
 					{#each blocks as block}
 						<div
-							class="ml-[38px] min-h-4 rounded-md {dndState.targetContainer === `task-${block.id}`
+							class="ml-[38px] min-h-4 rounded-md {dndState.targetContainer ===
+							`task-${block.id}`
 								? 'border-accent-foreground my-2 h-8 border border-dashed'
 								: ''}"
 							use:droppable={{
 								container: `task-${block.id}`,
-								callbacks: {
-									onDrop: handleDrop
-								}
+								callbacks: { onDrop: handleDrop },
 							}}
 						></div>
 
@@ -597,10 +673,7 @@
 						>
 							{#if viewMode === ViewMode.CONFIGURE && mouseOverElement === `task-${block.id}`}
 								<div
-									use:draggable={{
-										container: 'task',
-										dragData: block
-									}}
+									use:draggable={{ container: 'task', dragData: block }}
 									class="group hover:bg-muted relative flex h-6 w-6 cursor-grab items-center justify-center rounded transition-colors active:cursor-grabbing"
 								>
 									<GripVerticalIcon
@@ -614,25 +687,29 @@
 								{#if block.type === taskBlockTypeEnum.heading}
 									<BlockHeading
 										config={block.config as BlockHeadingConfig}
-										onConfigUpdate={async (config) => await handleConfigUpdate(block, config)}
+										onConfigUpdate={async (config) =>
+											await handleConfigUpdate(block, config)}
 										{viewMode}
 									/>
 								{:else if block.type === taskBlockTypeEnum.richText}
 									<BlockRichText
 										config={block.config as BlockRichTextConfig}
-										onConfigUpdate={async (config) => await handleConfigUpdate(block, config)}
+										onConfigUpdate={async (config) =>
+											await handleConfigUpdate(block, config)}
 										{viewMode}
 									/>
 								{:else if block.type === taskBlockTypeEnum.whiteboard}
 									<BlockWhiteboard
 										config={block.config as BlockWhiteboardConfig}
-										onConfigUpdate={async (config) => await handleConfigUpdate(block, config)}
+										onConfigUpdate={async (config) =>
+											await handleConfigUpdate(block, config)}
 										{viewMode}
 									/>
 								{:else if block.type === taskBlockTypeEnum.choice}
 									<BlockChoice
 										config={block.config as BlockChoiceConfig}
-										onConfigUpdate={async (config) => await handleConfigUpdate(block, config)}
+										onConfigUpdate={async (config) =>
+											await handleConfigUpdate(block, config)}
 										response={getCurrentResponse(block.id, block.type)}
 										onResponseUpdate={async (response) =>
 											await handleResponseUpdate(block.id, response)}
@@ -641,7 +718,8 @@
 								{:else if block.type === taskBlockTypeEnum.fillBlank}
 									<BlockFillBlank
 										config={block.config as BlockFillBlankConfig}
-										onConfigUpdate={async (config) => await handleConfigUpdate(block, config)}
+										onConfigUpdate={async (config) =>
+											await handleConfigUpdate(block, config)}
 										response={getCurrentResponse(block.id, block.type)}
 										onResponseUpdate={async (response) =>
 											await handleResponseUpdate(block.id, response)}
@@ -650,7 +728,8 @@
 								{:else if block.type === taskBlockTypeEnum.matching}
 									<BlockMatching
 										config={block.config as BlockMatchingConfig}
-										onConfigUpdate={async (config) => await handleConfigUpdate(block, config)}
+										onConfigUpdate={async (config) =>
+											await handleConfigUpdate(block, config)}
 										response={getCurrentResponse(block.id, block.type)}
 										onResponseUpdate={async (response) =>
 											await handleResponseUpdate(block.id, response)}
@@ -659,7 +738,8 @@
 								{:else if block.type === taskBlockTypeEnum.shortAnswer}
 									<BlockShortAnswer
 										config={block.config as BlockShortAnswerConfig}
-										onConfigUpdate={async (config) => await handleConfigUpdate(block, config)}
+										onConfigUpdate={async (config) =>
+											await handleConfigUpdate(block, config)}
 										response={getCurrentResponse(block.id, block.type)}
 										onResponseUpdate={async (response) =>
 											await handleResponseUpdate(block.id, response)}
@@ -668,7 +748,8 @@
 								{:else if block.type === taskBlockTypeEnum.close}
 									<BlockClose
 										config={block.config as BlockCloseConfig}
-										onConfigUpdate={async (config) => await handleConfigUpdate(block, config)}
+										onConfigUpdate={async (config) =>
+											await handleConfigUpdate(block, config)}
 										response={getCurrentResponse(block.id, block.type)}
 										onResponseUpdate={async (response) =>
 											await handleResponseUpdate(block.id, response)}
@@ -677,7 +758,8 @@
 								{:else if block.type === taskBlockTypeEnum.highlightText}
 									<BlockHighlightText
 										config={block.config as BlockHighlightTextConfig}
-										onConfigUpdate={async (config) => await handleConfigUpdate(block, config)}
+										onConfigUpdate={async (config) =>
+											await handleConfigUpdate(block, config)}
 										response={getCurrentResponse(block.id, block.type)}
 										onResponseUpdate={async (response) =>
 											await handleResponseUpdate(block.id, response)}
@@ -686,13 +768,15 @@
 								{:else if block.type === taskBlockTypeEnum.table}
 									<BlockTable
 										config={block.config as BlockTableConfig}
-										onConfigUpdate={async (config) => await handleConfigUpdate(block, config)}
+										onConfigUpdate={async (config) =>
+											await handleConfigUpdate(block, config)}
 										{viewMode}
 									/>
 								{:else if block.type === taskBlockTypeEnum.graph}
 									<BlockGraph
 										config={block.config as BlockGraphConfig}
-										onConfigUpdate={async (config) => await handleConfigUpdate(block, config)}
+										onConfigUpdate={async (config) =>
+											await handleConfigUpdate(block, config)}
 										response={getCurrentResponse(block.id, block.type)}
 										onResponseUpdate={async (response) =>
 											await handleResponseUpdate(block.id, response)}
@@ -701,7 +785,8 @@
 								{:else if block.type === taskBlockTypeEnum.balancingEquations}
 									<BlockBalancingEquations
 										config={block.config as BlockBalancingEquationsConfig}
-										onConfigUpdate={async (config) => await handleConfigUpdate(block, config)}
+										onConfigUpdate={async (config) =>
+											await handleConfigUpdate(block, config)}
 										response={getCurrentResponse(block.id, block.type)}
 										onResponseUpdate={async (response) =>
 											await handleResponseUpdate(block.id, response)}
@@ -710,7 +795,8 @@
 								{:else if block.type === taskBlockTypeEnum.mathInput}
 									<BlockMathInput
 										config={block.config as BlockMathInputConfig}
-										onConfigUpdate={async (config) => await handleConfigUpdate(block, config)}
+										onConfigUpdate={async (config) =>
+											await handleConfigUpdate(block, config)}
 										response={getCurrentResponse(block.id, block.type)}
 										onResponseUpdate={async (response) =>
 											await handleResponseUpdate(block.id, response)}
@@ -719,25 +805,29 @@
 								{:else if block.type === taskBlockTypeEnum.audio}
 									<BlockAudio
 										config={block.config as BlockAudioConfig}
-										onConfigUpdate={async (config) => await handleConfigUpdate(block, config)}
+										onConfigUpdate={async (config) =>
+											await handleConfigUpdate(block, config)}
 										{viewMode}
 									/>
 								{:else if block.type === taskBlockTypeEnum.image}
 									<BlockImage
 										config={block.config as BlockImageConfig}
-										onConfigUpdate={async (config) => await handleConfigUpdate(block, config)}
+										onConfigUpdate={async (config) =>
+											await handleConfigUpdate(block, config)}
 										{viewMode}
 									/>
 								{:else if block.type === taskBlockTypeEnum.video}
 									<BlockVideo
 										config={block.config as BlockVideoConfig}
-										onConfigUpdate={async (config) => await handleConfigUpdate(block, config)}
+										onConfigUpdate={async (config) =>
+											await handleConfigUpdate(block, config)}
 										{viewMode}
 									/>
 								{:else if block.type === taskBlockTypeEnum.submission}
 									<BlockSubmission
 										config={block.config as BlockSubmissionConfig}
-										onConfigUpdate={async (config) => await handleConfigUpdate(block, config)}
+										onConfigUpdate={async (config) =>
+											await handleConfigUpdate(block, config)}
 										response={getCurrentResponse(block.id, block.type)}
 										onResponseUpdate={async (response) =>
 											await handleResponseUpdate(block.id, response)}
@@ -753,16 +843,16 @@
 						<div
 							use:droppable={{
 								container: `task-bottom`,
-								callbacks: {
-									onDrop: handleDrop
-								}
+								callbacks: { onDrop: handleDrop },
 							}}
 							class="my-4 ml-[38px] flex min-h-24 items-center justify-center rounded-lg border border-dashed transition-colors {dndState.targetContainer ===
 							'task-bottom'
 								? draggedOverClasses
 								: notDraggedOverClasses}"
 						>
-							<span class="text-muted-foreground text-sm">Add more blocks here</span>
+							<span class="text-muted-foreground text-sm"
+								>Add more blocks here</span
+							>
 						</div>
 					{/if}
 				{/if}
@@ -777,42 +867,42 @@
 				<Card.Header>
 					<Card.Title class="text-lg">Task Blocks</Card.Title>
 					<Card.Description>
-						Drag and drop blocks from the palette to the task content area. If you'd like to delete
-						a block, simply drag it to the area below.
+						Drag and drop blocks from the palette to the task content area. If
+						you'd like to delete a block, simply drag it to the area below.
 					</Card.Description>
 				</Card.Header>
 				<Card.Content class="flex h-full flex-col gap-4">
-					<div
-						class="grid grid-cols-2 gap-3 rounded-lg p-2 {(dndState.sourceContainer.startsWith(
-							'task'
-						) ||
-							dndState.sourceContainer.startsWith('two-column-')) &&
-						dndState.targetContainer === 'blockPalette'
-							? 'border-destructive border border-dashed'
-							: notDraggedOverClasses}"
-						use:droppable={{
-							container: `blockPalette`,
-							callbacks: {
-								onDrop: handleDrop
-							}
-						}}
-					>
-						{#each blockTypes as { type, name, initialConfig, icon }}
-							{@const Icon = icon}
-							<div
-								class="flex flex-col items-center justify-center gap-1 {buttonVariants({
-									variant: 'outline'
-								})} aspect-square h-18 w-full"
-								use:draggable={{
-									container: 'blockPalette',
-									dragData: { type, config: initialConfig, id: 0 }
-								}}
-							>
-								<Icon class="size-8" />
-								<span class="text-center text-xs leading-tight">{name}</span>
-							</div>
-						{/each}
-					</div>
+					<ScrollArea class="h-[calc(100vh-300px)]">
+						<div
+							class="grid grid-cols-2 gap-3 rounded-lg p-2 {(dndState.sourceContainer.startsWith(
+								'task',
+							) ||
+								dndState.sourceContainer.startsWith('two-column-')) &&
+							dndState.targetContainer === 'blockPalette'
+								? 'border-destructive border border-dashed'
+								: notDraggedOverClasses}"
+							use:droppable={{
+								container: `blockPalette`,
+								callbacks: { onDrop: handleDrop },
+							}}
+						>
+							{#each blockTypes as { type, name, initialConfig, icon }}
+								{@const Icon = icon}
+								<div
+									class="flex flex-col items-center justify-center gap-1 {buttonVariants(
+										{ variant: 'outline' },
+									)} aspect-square h-18 w-full"
+									use:draggable={{
+										container: 'blockPalette',
+										dragData: { type, config: initialConfig, id: 0 },
+									}}
+								>
+									<Icon class="size-8" />
+									<span class="text-center text-xs leading-tight">{name}</span>
+								</div>
+							{/each}
+						</div>
+					</ScrollArea>
 				</Card.Content>
 			</Card.Root>
 		</div>
@@ -823,10 +913,17 @@
 	<Dialog.Content class="max-w-md">
 		<Dialog.Header>
 			<Dialog.Title>Settings</Dialog.Title>
-			<Dialog.Description>Configure timing and grading settings for this task.</Dialog.Description>
+			<Dialog.Description
+				>Configure timing and grading settings for this task.</Dialog.Description
+			>
 		</Dialog.Header>
 
-		<form method="POST" action="?/updateQuizSettings" class="space-y-4" use:quizSettingsEnhance>
+		<form
+			method="POST"
+			action="?/updateQuizSettings"
+			class="space-y-4"
+			use:quizSettingsEnhance
+		>
 			<!-- Quiz Mode -->
 			<Form.Field form={quizSettingsForm} name="quizMode">
 				<Form.Control>
@@ -851,9 +948,15 @@
 									{/if}
 								</Select.Trigger>
 								<Select.Content>
-									<Select.Item value={quizModeEnum.none}>Regular Task</Select.Item>
-									<Select.Item value={quizModeEnum.scheduled}>Scheduled Start</Select.Item>
-									<Select.Item value={quizModeEnum.manual}>Manual Start</Select.Item>
+									<Select.Item value={quizModeEnum.none}
+										>Regular Task</Select.Item
+									>
+									<Select.Item value={quizModeEnum.scheduled}
+										>Scheduled Start</Select.Item
+									>
+									<Select.Item value={quizModeEnum.manual}
+										>Manual Start</Select.Item
+									>
 								</Select.Content>
 							</Select.Root>
 						</div>
@@ -864,16 +967,16 @@
 
 			{#if $quizSettingsFormData.quizMode === quizModeEnum.scheduled}
 				<!-- Scheduled Start Time -->
-				<Form.Field form={quizSettingsForm} name="quizStartTime">
+				<Form.Field form={quizSettingsForm} name="quizStart">
 					<Form.Control>
 						{#snippet children({ props })}
 							<div class="space-y-2">
-								<Label for="quizStartTime">Start Time</Label>
+								<Label for="quizStart">Start Time</Label>
 								<Input
 									{...props}
 									type="datetime-local"
-									name="quizStartTime"
-									bind:value={$quizSettingsFormData.quizStartTime}
+									name="quizStart"
+									bind:value={$quizSettingsFormData.quizStart}
 									required
 								/>
 							</div>
@@ -929,9 +1032,15 @@
 										{/if}
 									</Select.Trigger>
 									<Select.Content>
-										<Select.Item value={gradeReleaseEnum.instant}>Instant</Select.Item>
-										<Select.Item value={gradeReleaseEnum.manual}>Manual</Select.Item>
-										<Select.Item value={gradeReleaseEnum.scheduled}>Scheduled</Select.Item>
+										<Select.Item value={gradeReleaseEnum.instant}
+											>Instant</Select.Item
+										>
+										<Select.Item value={gradeReleaseEnum.manual}
+											>Manual</Select.Item
+										>
+										<Select.Item value={gradeReleaseEnum.scheduled}
+											>Scheduled</Select.Item
+										>
 									</Select.Content>
 								</Select.Root>
 							</div>
@@ -963,7 +1072,11 @@
 			{/if}
 
 			<Dialog.Footer>
-				<Button type="button" variant="outline" onclick={() => (showSettings = false)}>
+				<Button
+					type="button"
+					variant="outline"
+					onclick={() => (showSettings = false)}
+				>
 					Cancel
 				</Button>
 				<Button type="submit">Save Settings</Button>

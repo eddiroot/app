@@ -41,7 +41,7 @@
 					class="overflow-hidden text-xs text-ellipsis whitespace-nowrap"
 				>
 					{#if showTime}
-						{cls.classAllocation.startTime} - {cls.classAllocation.endTime}
+						{cls.classAllocation.start} - {cls.classAllocation.end}
 					{/if}
 					{#if showTime && showRoom}
 						{' '}

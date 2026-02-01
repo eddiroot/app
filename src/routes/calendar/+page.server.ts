@@ -1,17 +1,31 @@
+import type {
+	Event,
+	SubjectOffering,
+	SubjectOfferingClass,
+} from '$lib/server/db/schema';
 import {
 	getCampusEventsForWeekByUserId,
 	getSchoolEventsForWeekBySchoolId,
 	getSubjectClassAllocationsByUserIdForWeek,
 	getSubjectOfferingClassEventsForWeekByUserId,
 	getSubjectOfferingEventsForWeekByUserId,
-	getUserEventRSVPs
+	getUserEventRSVPs,
 } from '$lib/server/db/service';
+
+type WeekEvent = {
+	event: Event;
+	subjectOffering?: SubjectOffering;
+	subject?: { id: number; name: string };
+	subjectOfferingClass?: SubjectOfferingClass;
+};
 
 export const load = async ({ locals: { security }, url }) => {
 	const user = security.isAuthenticated().getUser();
 
 	const weekParam = url.searchParams.get('week');
-	const weekStartDate = new Date(weekParam ?? new Date().toISOString().split('T')[0]);
+	const weekStartDate = new Date(
+		weekParam ?? new Date().toISOString().split('T')[0],
+	);
 
 	const [
 		classAllocation,
@@ -19,25 +33,29 @@ export const load = async ({ locals: { security }, url }) => {
 		campusEvents,
 		subjectOfferingEvents,
 		subjectOfferingClassEvents,
-		userRSVPs
+		userRSVPs,
 	] = await Promise.all([
 		getSubjectClassAllocationsByUserIdForWeek(user.id, weekStartDate),
 		getSchoolEventsForWeekBySchoolId(user.schoolId, weekStartDate),
 		getCampusEventsForWeekByUserId(user.id, weekStartDate),
 		getSubjectOfferingEventsForWeekByUserId(user.id, weekStartDate),
 		getSubjectOfferingClassEventsForWeekByUserId(user.id, weekStartDate),
-		getUserEventRSVPs(user.id)
+		getUserEventRSVPs(user.id),
 	]);
+
+	const weekEvents: WeekEvent[] = [
+		...schoolEvents,
+		...campusEvents,
+		...subjectOfferingEvents,
+		...subjectOfferingClassEvents,
+	];
 
 	return {
 		user,
 		classAllocation,
-		schoolEvents,
-		campusEvents,
-		subjectOfferingEvents,
-		subjectOfferingClassEvents,
+		weekEvents,
 		userRSVPs,
-		currentWeekStart: weekStartDate.toISOString().split('T')[0]
+		currentWeekStart: weekStartDate.toISOString().split('T')[0],
 	};
 };
 
@@ -54,25 +72,29 @@ export const actions = {
 			campusEvents,
 			subjectOfferingEvents,
 			subjectOfferingClassEvents,
-			userRSVPs
+			userRSVPs,
 		] = await Promise.all([
 			getSubjectClassAllocationsByUserIdForWeek(user.id, weekStartDate),
 			getSchoolEventsForWeekBySchoolId(user.schoolId, weekStartDate),
 			getCampusEventsForWeekByUserId(user.id, weekStartDate),
 			getSubjectOfferingEventsForWeekByUserId(user.id, weekStartDate),
 			getSubjectOfferingClassEventsForWeekByUserId(user.id, weekStartDate),
-			getUserEventRSVPs(user.id)
+			getUserEventRSVPs(user.id),
 		]);
+
+		const weekEvents: WeekEvent[] = [
+			...schoolEvents,
+			...campusEvents,
+			...subjectOfferingEvents,
+			...subjectOfferingClassEvents,
+		];
 
 		return {
 			success: true,
 			classAllocation: classAllocation || [],
-			schoolEvents: schoolEvents || [],
-			campusEvents: campusEvents || [],
-			subjectOfferingEvents: subjectOfferingEvents || [],
-			subjectOfferingClassEvents: subjectOfferingClassEvents || [],
+			weekEvents,
 			userRSVPs: userRSVPs || [],
-			currentWeekStart: weekStartDate.toISOString().split('T')[0]
+			currentWeekStart: weekStartDate.toISOString().split('T')[0],
 		};
-	}
+	},
 };

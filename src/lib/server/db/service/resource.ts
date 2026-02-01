@@ -2,33 +2,6 @@ import { db } from '$lib/server/db';
 import * as table from '$lib/server/db/schema';
 import { and, eq } from 'drizzle-orm';
 
-export async function createResource(
-	name: string,
-	fileName: string,
-	objectKey: string,
-	contentType: string,
-	fileSize: number,
-	resourceType: string,
-	uploadedBy: string,
-	description?: string,
-	bucketName: string = 'schools',
-) {
-	const [resource] = await db
-		.insert(table.resource)
-		.values({
-			fileName,
-			objectKey,
-			bucketName,
-			contentType,
-			fileSize,
-			resourceType,
-			uploadedBy,
-		})
-		.returning();
-
-	return resource;
-}
-
 export async function getResourceById(resourceId: number) {
 	const [resource] = await db
 		.select()

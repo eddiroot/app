@@ -17,22 +17,17 @@
 	}: EnhancedConstraintFormProps = $props();
 
 	// Form state
-	let weightPercentage = $state(
+	let weightPercentage = $derived(
 		(initialValues.Weight_Percentage as number) || 100,
 	);
-	let selectedRoomId = $state<string | number>('');
-	let notAvailableTimes = $state<Array<{ Day: number; Period: number }>>(
+	let selectedRoomId = $derived((initialValues.Room as number | string) || '');
+	let notAvailableTimes = $derived<Array<{ Day: number; Period: number }>>(
 		(initialValues.Not_Available_Time as Array<{
 			Day: number;
 			Period: number;
 		}>) || [{ Day: 0, Period: 0 }],
 	);
-	let comments = $state((initialValues.Comments as string) || '');
-
-	// Initialize selectedRoomId from initialValues if provided
-	if (initialValues.Room) {
-		selectedRoomId = initialValues.Room as string | number;
-	}
+	let comments = $derived((initialValues.Comments as string) || '');
 
 	function addNotAvailableTime() {
 		notAvailableTimes = [...notAvailableTimes, { Day: 0, Period: 0 }];

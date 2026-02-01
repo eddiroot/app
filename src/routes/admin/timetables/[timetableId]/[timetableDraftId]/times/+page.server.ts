@@ -5,15 +5,19 @@ import {
 	getTimetableDraftDaysByTimetableDraftId,
 	getTimetableDraftPeriodsByTimetableDraftId,
 	updateTimetableDraftCycleWeekRepeatsByTimetableDraftId,
-	updateTimetableDraftDaysByTimetableDraftId
+	updateTimetableDraftDaysByTimetableDraftId,
 } from '$lib/server/db/service';
 import { error, fail } from '@sveltejs/kit';
 import { message, superValidate } from 'sveltekit-superforms';
 import { zod4 } from 'sveltekit-superforms/adapters';
-import { addPeriodSchema, updateCycleWeeksRepeatSchema, updateDaysSchema } from './schema.js';
+import {
+	addPeriodSchema,
+	updateCycleWeeksRepeatSchema,
+	updateDaysSchema,
+} from './schema.js';
 
 export const load = async ({ params, locals: { security } }) => {
-	security.isAuthenticated().isSchoolAdmin();
+	security.isAuthenticated().isAdmin();
 
 	const timetableDraftId = parseInt(params.timetableDraftId, 10);
 
@@ -25,14 +29,21 @@ export const load = async ({ params, locals: { security } }) => {
 		const [days, periods, cycle_week_repeats] = await Promise.all([
 			getTimetableDraftDaysByTimetableDraftId(timetableDraftId),
 			getTimetableDraftPeriodsByTimetableDraftId(timetableDraftId),
-			getTimetableDraftCycleWeekRepeatsByTimetableDraftId(timetableDraftId)
+			getTimetableDraftCycleWeekRepeatsByTimetableDraftId(timetableDraftId),
 		]);
 
-		const [updateDaysForm, addPeriodForm, updateCycleWeeksRepeatForm] = await Promise.all([
-			superValidate({ selectedDays: days.map((d) => d.day) }, zod4(updateDaysSchema)),
-			superValidate(zod4(addPeriodSchema)),
-			superValidate({ cycleWeeksRepeat: cycle_week_repeats }, zod4(updateCycleWeeksRepeatSchema))
-		]);
+		const [updateDaysForm, addPeriodForm, updateCycleWeeksRepeatForm] =
+			await Promise.all([
+				superValidate(
+					{ selectedDays: days.map((d) => d.day) },
+					zod4(updateDaysSchema),
+				),
+				superValidate(zod4(addPeriodSchema)),
+				superValidate(
+					{ cycleWeeksRepeat: cycle_week_repeats },
+					zod4(updateCycleWeeksRepeatSchema),
+				),
+			]);
 
 		return {
 			timetableDraftId,
@@ -41,7 +52,7 @@ export const load = async ({ params, locals: { security } }) => {
 			cycle_week_repeats,
 			updateDaysForm,
 			addPeriodForm,
-			updateCycleWeeksRepeatForm
+			updateCycleWeeksRepeatForm,
 		};
 	} catch (err) {
 		console.error('Error loading timetable data:', err);
@@ -51,7 +62,7 @@ export const load = async ({ params, locals: { security } }) => {
 
 export const actions = {
 	updateDays: async ({ request, params, locals: { security } }) => {
-		security.isAuthenticated().isSchoolAdmin();
+		security.isAuthenticated().isAdmin();
 
 		const timetableDraftId = parseInt(params.timetableDraftId, 10);
 		if (isNaN(timetableDraftId)) {
@@ -65,18 +76,23 @@ export const actions = {
 		}
 
 		try {
-			await updateTimetableDraftDaysByTimetableDraftId(timetableDraftId, form.data.selectedDays);
+			await updateTimetableDraftDaysByTimetableDraftId(
+				timetableDraftId,
+				form.data.selectedDays,
+			);
 			return message(form, 'Days updated successfully');
 		} catch (err) {
 			console.error('Error updating days:', err);
-			return message(form, err instanceof Error ? err.message : 'Failed to update days', {
-				status: 400
-			});
+			return message(
+				form,
+				err instanceof Error ? err.message : 'Failed to update days',
+				{ status: 400 },
+			);
 		}
 	},
 
 	updatePeriods: async ({ request, params, locals: { security } }) => {
-		security.isAuthenticated().isSchoolAdmin();
+		security.isAuthenticated().isAdmin();
 
 		const timetableDraftId = parseInt(params.timetableDraftId, 10);
 		if (isNaN(timetableDraftId)) {
@@ -90,7 +106,11 @@ export const actions = {
 		}
 
 		try {
-			await addTimetableDraftPeriod(timetableDraftId, form.data.startTime, form.data.endTime);
+			await addTimetableDraftPeriod(
+				timetableDraftId,
+				form.data.start,
+				form.data.end,
+			);
 			return message(form, 'Period added successfully');
 		} catch (err) {
 			console.error('Error adding period:', err);
@@ -99,7 +119,7 @@ export const actions = {
 	},
 
 	deletePeriod: async ({ request, params, locals: { security } }) => {
-		security.isAuthenticated().isSchoolAdmin();
+		security.isAuthenticated().isAdmin();
 
 		const timetableDraftId = parseInt(params.timetableDraftId, 10);
 		if (isNaN(timetableDraftId)) {
@@ -120,20 +140,23 @@ export const actions = {
 			return {
 				success: false,
 				message: err instanceof Error ? err.message : 'Failed to delete period',
-				status: 400
+				status: 400,
 			};
 		}
 	},
 
 	updateCycleWeeksRepeat: async ({ request, params, locals: { security } }) => {
-		security.isAuthenticated().isSchoolAdmin();
+		security.isAuthenticated().isAdmin();
 
 		const timetableDraftId = parseInt(params.timetableDraftId, 10);
 		if (isNaN(timetableDraftId)) {
 			return fail(400, { error: 'Invalid timetable ID' });
 		}
 
-		const form = await superValidate(request, zod4(updateCycleWeeksRepeatSchema));
+		const form = await superValidate(
+			request,
+			zod4(updateCycleWeeksRepeatSchema),
+		);
 
 		if (!form.valid) {
 			return fail(400, { form });
@@ -142,7 +165,7 @@ export const actions = {
 		try {
 			await updateTimetableDraftCycleWeekRepeatsByTimetableDraftId(
 				timetableDraftId,
-				form.data.cycleWeeksRepeat
+				form.data.cycleWeeksRepeat,
 			);
 
 			// Create array of day values from 1 to cycleWeeksRepeat * 5
@@ -150,16 +173,21 @@ export const actions = {
 			const dayArray = Array.from({ length: totalDays }, (_, i) => i + 1);
 
 			// Update the days to match the cycle weeks repeat
-			await updateTimetableDraftDaysByTimetableDraftId(timetableDraftId, dayArray);
+			await updateTimetableDraftDaysByTimetableDraftId(
+				timetableDraftId,
+				dayArray,
+			);
 
 			return message(form, 'Cycle weeks repeat updated successfully');
 		} catch (err) {
 			console.error('Error updating cycle weeks repeat:', err);
 			return message(
 				form,
-				err instanceof Error ? err.message : 'Failed to update cycle weeks repeat',
-				{ status: 400 }
+				err instanceof Error
+					? err.message
+					: 'Failed to update cycle weeks repeat',
+				{ status: 400 },
 			);
 		}
-	}
+	},
 };

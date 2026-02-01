@@ -24,7 +24,9 @@
 	<div class="container mx-auto px-4 lg:px-8">
 		<div class="grid gap-8 md:grid-cols-2 md:items-center lg:gap-12 xl:gap-20">
 			<div class="space-y-6">
-				<h1 class="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">
+				<h1
+					class="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl"
+				>
 					Redefining how schools work
 				</h1>
 				<p class="text-muted-foreground text-xl">
@@ -55,7 +57,8 @@
 					Foster meaningful discussions
 				</h2>
 				<p class="text-muted-foreground text-xl">
-					Create a collaborative learning environment with a structured discussion system.
+					Create a collaborative learning environment with a structured
+					discussion system.
 				</p>
 				<ul class="space-y-3 text-lg">
 					<li class="flex items-center">
@@ -99,7 +102,8 @@
 					Engage students with interactive lessons
 				</h2>
 				<p class="text-muted-foreground text-xl">
-					Use a drag-and-drop editor with AI assistance to speed up task creation.
+					Use a drag-and-drop editor with AI assistance to speed up task
+					creation.
 				</p>
 				<ul class="space-y-3 text-lg">
 					<li class="flex items-center">
@@ -132,8 +136,8 @@
 					Meet eddi, your personal tutor
 				</h2>
 				<p class="text-muted-foreground text-xl">
-					Give your students personalised help 24/7 with their own personal tutor that knows their
-					lessons and progress.
+					Give your students personalised help 24/7 with their own personal
+					tutor that knows their lessons and progress.
 				</p>
 				<ul class="space-y-3 text-lg">
 					<li class="flex items-center">
@@ -177,7 +181,8 @@
 					Timetabling made easy
 				</h2>
 				<p class="text-muted-foreground text-xl">
-					Schedule your classes and teachers with our intuitive timetable builder.
+					Schedule your classes and teachers with our intuitive timetable
+					builder.
 				</p>
 				<ul class="space-y-3 text-lg">
 					<li class="flex items-center">
@@ -251,7 +256,8 @@
 					Keep everyone informed
 				</h2>
 				<p class="text-muted-foreground text-xl">
-					Share important updates and news with your class/campus/school instantly.
+					Share important updates and news with your class/campus/school
+					instantly.
 				</p>
 				<ul class="space-y-3 text-lg">
 					<li class="flex items-center">
@@ -281,8 +287,8 @@
 					Track attendance effortlessly
 				</h2>
 				<p class="text-muted-foreground text-xl">
-					eddi gives you tools to mark the roll at the start of each class and automatically handles
-					absences and late arrivals.
+					eddi gives you tools to mark the roll at the start of each class and
+					automatically handles absences and late arrivals.
 				</p>
 				<ul class="space-y-3 text-lg">
 					<li class="flex items-center">

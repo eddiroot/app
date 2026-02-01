@@ -17,10 +17,16 @@ import {
 	subjectThreadResponseTypeEnum,
 	subjectThreadTypeEnum,
 } from '../../../enums';
-import { courseMapItem } from './coursemap';
-import { curriculumSubject, gradeScale } from './curriculum';
+import { curriculumItem } from './curriculum';
 import { resource } from './resource';
-import { school, schoolCampus, schoolSpace, schoolYearLevel } from './school';
+import {
+	gradeScale,
+	school,
+	schoolBehaviour,
+	schoolCampus,
+	schoolSpace,
+	schoolYearLevel,
+} from './school';
 import { timetableDraft } from './timetable';
 import { user } from './user';
 import { enumToPgEnum, essentials, standardTimestamp } from './utils';
@@ -58,17 +64,12 @@ export const subject = subjectSchema.table(
 		schoolYearLevelId: integer('sch_yl_id')
 			.notNull()
 			.references(() => schoolYearLevel.id, { onDelete: 'cascade' }),
-		curriculumSubjectId: integer('crclm_sub_id').references(
-			() => curriculumSubject.id,
-			{ onDelete: 'set null' },
-		),
 		description: text(),
 	},
 	(self) => [
 		index().on(self.schoolId),
 		index().on(self.subjectGroupId),
 		index().on(self.schoolYearLevelId),
-		index().on(self.curriculumSubjectId),
 	],
 );
 
@@ -201,47 +202,6 @@ export const subjectClassAllocationAttendanceComponent = subjectSchema.table(
 export type SubjectClassAllocationAttendanceComponent =
 	typeof subjectClassAllocationAttendanceComponent.$inferSelect;
 
-export const behaviourLevel = subjectSchema.table(
-	'behaviour_level',
-	{
-		...essentials,
-		schoolId: integer('sch_id')
-			.notNull()
-			.references(() => school.id, { onDelete: 'cascade' }),
-		level: integer().notNull(),
-		name: text().notNull(),
-	},
-	(self) => [
-		unique().on(self.schoolId, self.level),
-		check('valid_level_range', sql`${self.level} >= 0 AND ${self.level} <= 10`),
-		index().on(self.schoolId),
-	],
-);
-
-export type BehaviourLevel = typeof behaviourLevel.$inferSelect;
-
-export const behaviour = subjectSchema.table(
-	'behaviour',
-	{
-		...essentials,
-		schoolId: integer('sch_id')
-			.notNull()
-			.references(() => school.id, { onDelete: 'cascade' }),
-		levelId: integer('level_id')
-			.references(() => behaviourLevel.id, { onDelete: 'cascade' })
-			.notNull(),
-		name: text().notNull(),
-		description: text(),
-	},
-	(self) => [
-		unique().on(self.schoolId, self.name),
-		index().on(self.schoolId),
-		index().on(self.levelId),
-	],
-);
-
-export type Behaviour = typeof behaviour.$inferSelect;
-
 export const attendanceBehaviour = subjectSchema.table(
 	'att_behaviour',
 	{
@@ -252,7 +212,7 @@ export const attendanceBehaviour = subjectSchema.table(
 			}),
 		behaviourId: integer('behaviour_id')
 			.notNull()
-			.references(() => behaviour.id, { onDelete: 'cascade' }),
+			.references(() => schoolBehaviour.id, { onDelete: 'cascade' }),
 	},
 	(self) => [
 		primaryKey({ columns: [self.attendanceId, self.behaviourId] }),
@@ -372,9 +332,10 @@ export const subjectOfferingClassResource = subjectSchema.table(
 		resourceId: integer('res_id')
 			.notNull()
 			.references(() => resource.id, { onDelete: 'cascade' }),
-		coursemapItemId: integer('cm_item_id').references(() => courseMapItem.id, {
-			onDelete: 'cascade',
-		}),
+		curriculumItemId: integer('crclm_item_id').references(
+			() => curriculumItem.id,
+			{ onDelete: 'cascade' },
+		),
 		authorId: uuid('author_id')
 			.notNull()
 			.references(() => user.id, { onDelete: 'cascade' }),
@@ -382,7 +343,7 @@ export const subjectOfferingClassResource = subjectSchema.table(
 	(self) => [
 		index().on(self.subjectOfferingClassId),
 		index().on(self.resourceId),
-		index().on(self.coursemapItemId),
+		index().on(self.curriculumItemId),
 		index().on(self.authorId),
 	],
 );

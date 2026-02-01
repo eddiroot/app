@@ -54,14 +54,14 @@ export async function seedDemoSubjects(
 	// Year 7 to Year 10 (exclude 'none')
 	const activeYearLevelEntries = Object.entries(yearLevels)
 		.filter(([key]) => key !== 'none')
-		.map(([key, value]) => [key, value.id]) as [string, number][];
+		.map(([, value]) => [value.code, value.id]) as [string, number][];
 
 	for (const subjectGroup of subjectGroups) {
-		for (const [yearLevel, yearLevelId] of activeYearLevelEntries) {
+		for (const [yearLevelCode, yearLevelId] of activeYearLevelEntries) {
 			const [subject] = await db
 				.insert(schema.subject)
 				.values({
-					name: `Year ${yearLevel} ${subjectGroup.name}`,
+					name: `Year ${yearLevelCode} ${subjectGroup.name}`,
 					schoolId: school.id,
 					subjectGroupId: subjectGroup.id,
 					schoolYearLevelId: yearLevelId,
@@ -212,8 +212,6 @@ export async function seedDemoSubjects(
 		}
 	}
 
-	console.log(`  Assigned students to subject offerings and classes`);
-
 	// Assign admin to all offerings
 	for (const offering of offerings) {
 		await db
@@ -266,7 +264,6 @@ async function seedCourseMapItems(
 	const weeksPerSemester = 18;
 	const totalWeeks = 36;
 	const duration = 6;
-	let itemCount = 0;
 
 	for (const offering of offerings) {
 		const subject = subjects.find((s) => s.id === offering.subjectId);
@@ -291,7 +288,7 @@ async function seedCourseMapItems(
 				semester === 1 ? week : week - weeksPerSemester;
 
 			await db
-				.insert(schema.courseMapItem)
+				.insert(schema.curriculumItem)
 				.values({
 					subjectOfferingId: offering.id,
 					topic,
@@ -300,12 +297,8 @@ async function seedCourseMapItems(
 					duration,
 					hexColor: getSubjectColor(subjectName),
 				});
-
-			itemCount++;
 		}
 	}
-
-	console.log(`  Created ${itemCount} course map items`);
 }
 
 function getBaseTopicsForSubject(subjectName: string): string[] {

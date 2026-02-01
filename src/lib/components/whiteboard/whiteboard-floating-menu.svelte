@@ -67,7 +67,7 @@
 	}: Props = $props();
 
 	// Track which menu panel to show (independent of selectedTool for editing existing objects)
-	let activeMenuPanel = $state<string>(selectedTool);
+	let activeMenuPanel = $derived<string>(selectedTool);
 
 	// Sync activeMenuPanel with selectedTool when tool changes
 	$effect(() => {

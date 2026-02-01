@@ -10,13 +10,13 @@
 	import { Textarea } from '$lib/components/ui/textarea/index.js';
 	import {
 		subjectClassAllocationAttendanceComponentType,
-		subjectClassAllocationAttendanceStatus
+		subjectClassAllocationAttendanceStatus,
 	} from '$lib/enums';
 	import type { SubjectClassAllocationAttendanceComponent } from '$lib/server/db/schema';
 	import {
 		type SubjectClassAllocation,
 		type SubjectClassAllocationAttendance,
-		type User
+		type User,
 	} from '$lib/server/db/schema';
 	import { convertToFullName } from '$lib/utils';
 	import DoorClosed from '@lucide/svelte/icons/door-closed';
@@ -32,7 +32,10 @@
 	type AttendanceRecord = {
 		user: Pick<User, 'id' | 'firstName' | 'middleName' | 'lastName'>;
 		attendance?: SubjectClassAllocationAttendance | null;
-		subjectClassAllocation: Pick<SubjectClassAllocation, 'id' | 'startTime' | 'endTime'>;
+		subjectClassAllocation: Pick<
+			SubjectClassAllocation,
+			'id' | 'start' | 'end'
+		>;
 		behaviourIds?: number[];
 		attendanceComponents?: SubjectClassAllocationAttendanceComponent[];
 		classNote?: string | null;
@@ -52,7 +55,7 @@
 		bulkApplyMode = false,
 		isSelected = false,
 		onToggleSelection,
-		onStartBulkApply
+		onStartBulkApply,
 	}: {
 		attendanceRecord: AttendanceRecord;
 		groupedBehaviours?: GroupedBehaviours;
@@ -66,12 +69,14 @@
 	const attendanceRecordData = () => attendanceRecord;
 	const form = superForm(
 		{
-			subjectClassAllocationId: attendanceRecordData().subjectClassAllocation.id,
+			subjectClassAllocationId:
+				attendanceRecordData().subjectClassAllocation.id,
 			userId: attendanceRecordData().user.id,
 			status:
-				attendanceRecordData().attendance?.status || subjectClassAllocationAttendanceStatus.present,
+				attendanceRecordData().attendance?.status ||
+				subjectClassAllocationAttendanceStatus.present,
 			noteTeacher: attendanceRecordData().attendance?.noteTeacher || '',
-			behaviourIds: (attendanceRecordData().behaviourIds ?? []).map(String)
+			behaviourIds: (attendanceRecordData().behaviourIds ?? []).map(String),
 		},
 		{
 			validators: zod4Client(attendanceSchema),
@@ -81,76 +86,64 @@
 				if (result.type === 'success') {
 					dialogOpen = false;
 				}
-			}
-		}
+			},
+		},
 	);
 
 	const { form: formData, enhance: formEnhance } = form;
 
 	const user = $derived(attendanceRecord.user);
-	const fullName = $derived(convertToFullName(user.firstName, user.middleName, user.lastName));
+	const fullName = $derived(
+		convertToFullName(user.firstName, user.middleName, user.lastName),
+	);
 	let dialogOpen = $state(false);
 	let classPassDialogOpen = $state(false);
 
 	const selectedBehavioursLabel = $derived(
-		$formData.behaviourIds.length === 0 ? 'Behaviours' : `${$formData.behaviourIds.length} selected`
+		$formData.behaviourIds.length === 0
+			? 'Behaviours'
+			: `${$formData.behaviourIds.length} selected`,
 	);
 
-	const classStartTime = $derived(attendanceRecord.subjectClassAllocation.startTime);
-	const classEndTime = $derived(attendanceRecord.subjectClassAllocation.endTime);
+	const classStartTime = $derived(
+		attendanceRecord.subjectClassAllocation.start,
+	);
+	const classEndTime = $derived(attendanceRecord.subjectClassAllocation.end);
 	let showSlider = $state(false);
 
-	function parseTimeToSeconds(timeStr: string): number {
-		const parts = timeStr.split(':').map(Number);
-		if (parts.length === 3) {
-			return parts[0] * 3600 + parts[1] * 60 + parts[2];
-		}
-		return parts[0] * 3600 + parts[1] * 60;
-	}
-
-	function getCurrentTimeString(): string {
+	const getIsClassActive = () => {
 		const now = new Date();
-		const hours = now.getHours();
-		const minutes = now.getMinutes();
-		const seconds = now.getSeconds() + now.getMilliseconds() / 1000;
-		return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toFixed(3).padStart(6, '0')}`;
-	}
-
-	function isWithinClassTime(): boolean {
-		const now = new Date();
-		const currentSeconds = now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
-		const startSeconds = parseTimeToSeconds(classStartTime);
-		const endSeconds = parseTimeToSeconds(classEndTime);
-		return currentSeconds >= startSeconds && currentSeconds <= endSeconds;
-	}
-
-	let isClassActive = $state(isWithinClassTime());
-	let currentTime = $state(getCurrentTimeString());
+		return classStartTime <= now && classEndTime >= now;
+	};
+	let isClassActive = $derived(getIsClassActive());
 
 	$effect(() => {
 		const interval = setInterval(() => {
-			isClassActive = isWithinClassTime();
-			currentTime = getCurrentTimeString();
+			isClassActive = getIsClassActive();
 		}, 1000);
 
 		return () => clearInterval(interval);
 	});
 
 	$effect(() => {
-		$formData.behaviourIds = (attendanceRecordData().behaviourIds || []).map(String);
+		$formData.behaviourIds = (attendanceRecordData().behaviourIds || []).map(
+			String,
+		);
 	});
 
 	let components = $derived(attendanceRecord.attendanceComponents || []);
+	let componentsFunction = () => components;
 	const isLatestComponentClassPass =
-		// svelte-ignore state_referenced_locally
-		components.findIndex(
-			(c) => c.type === subjectClassAllocationAttendanceComponentType.classPass
+		componentsFunction().findIndex(
+			(c) => c.type === subjectClassAllocationAttendanceComponentType.classPass,
 		) ===
-		components.length - 1;
+		componentsFunction().length - 1;
 </script>
 
 <div class="transition-all">
-	<div class="flex items-center justify-between gap-x-4 rounded-t-md border-x border-t p-3">
+	<div
+		class="flex items-center justify-between gap-x-4 rounded-t-md border-x border-t p-3"
+	>
 		<div class="flex items-center gap-2">
 			{#if bulkApplyMode}
 				<Checkbox
@@ -185,8 +178,8 @@
 					<Form.Control>
 						{#snippet children({ props })}
 							<Button
-								class="border-input w-[120px] rounded-r-none {type === 'marked' &&
-								$formData.status === 'present'
+								class="border-input w-[120px] rounded-r-none {type ===
+									'marked' && $formData.status === 'present'
 									? 'bg-success/50! text-success-foreground! disabled:opacity-100!'
 									: ''} {type === 'marked' && $formData.status === 'absent'
 									? 'bg-destructive/50! text-destructive-foreground! disabled:opacity-100!'
@@ -198,7 +191,8 @@
 								variant="outline"
 								disabled={type === 'marked' || !isClassActive}
 							>
-								{$formData.status.slice(0, 1).toUpperCase() + $formData.status.slice(1)}
+								{$formData.status.slice(0, 1).toUpperCase() +
+									$formData.status.slice(1)}
 							</Button>
 							<Select.Root
 								type="single"
@@ -290,7 +284,10 @@
 						name="subjectClassAllocationId"
 						value={attendanceRecord.subjectClassAllocation.id}
 					/>
-					<Button type="submit" disabled={type === 'unmarked' || !isClassActive}>
+					<Button
+						type="submit"
+						disabled={type === 'unmarked' || !isClassActive}
+					>
 						<DoorClosed />
 					</Button>
 				</form>
@@ -316,7 +313,6 @@
 		{classEndTime}
 		bind:components
 		bind:showSlider
-		{currentTime}
 		attendanceId={attendanceRecord.attendance?.id}
 		disabled={type === 'unmarked' || !isClassActive}
 	/>
@@ -361,7 +357,11 @@
 				</Form.Field>
 			</div>
 			<Dialog.Footer>
-				<Button variant="outline" type="button" onclick={() => (dialogOpen = false)}>Close</Button>
+				<Button
+					variant="outline"
+					type="button"
+					onclick={() => (dialogOpen = false)}>Close</Button
+				>
 				<Button variant="default" type="submit">Save</Button>
 			</Dialog.Footer>
 		</form>
@@ -375,8 +375,8 @@
 			<Dialog.Header>
 				<Dialog.Title>Start Class Pass</Dialog.Title>
 				<Dialog.Description>
-					This will start a class pass for {fullName}. The current attendance component will end and
-					a class pass component will begin.
+					This will start a class pass for {fullName}. The current attendance
+					component will end and a class pass component will begin.
 				</Dialog.Description>
 			</Dialog.Header>
 			<input type="hidden" name="userId" value={user.id} />
@@ -386,7 +386,11 @@
 				value={attendanceRecord.subjectClassAllocation.id}
 			/>
 			<Dialog.Footer class="mt-4">
-				<Button variant="outline" type="button" onclick={() => (classPassDialogOpen = false)}>
+				<Button
+					variant="outline"
+					type="button"
+					onclick={() => (classPassDialogOpen = false)}
+				>
 					Cancel
 				</Button>
 				<Button

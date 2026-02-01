@@ -408,10 +408,6 @@ export async function seedDemoThreads(
 		return userData.teachers.filter((t) => teacherIds.includes(t.id));
 	};
 
-	let threadCount = 0;
-	let responseCount = 0;
-	let likeCount = 0;
-
 	for (const offering of offerings) {
 		const subject = subjects.find((s) => s.id === offering.subjectId);
 		if (!subject) continue;
@@ -455,8 +451,6 @@ export async function seedDemoThreads(
 				})
 				.returning();
 
-			threadCount++;
-
 			// Add 3-6 responses from different students
 			const numResponses = 3 + Math.floor(random() * 4);
 			const responders = shuffle(
@@ -483,7 +477,6 @@ export async function seedDemoThreads(
 					content: responseContent,
 					isAnonymous: random() < 0.05, // 5% anonymous
 				});
-				responseCount++;
 			}
 
 			// Add some likes to the thread
@@ -493,7 +486,6 @@ export async function seedDemoThreads(
 				await db
 					.insert(schema.subjectThreadLike)
 					.values({ subjectThreadId: thread.id, userId: liker.id });
-				likeCount++;
 			}
 		}
 
@@ -514,8 +506,6 @@ export async function seedDemoThreads(
 					isAnonymous: random() < 0.15, // 15% anonymous for questions
 				})
 				.returning();
-
-			threadCount++;
 
 			// Add 2-5 helpful responses (answers)
 			const numResponses = 2 + Math.floor(random() * 4);
@@ -543,7 +533,6 @@ export async function seedDemoThreads(
 						isAnonymous: false,
 					})
 					.returning();
-				responseCount++;
 
 				// Add follow-up response from original author
 				if (j === 0 && random() < 0.7) {
@@ -562,7 +551,6 @@ export async function seedDemoThreads(
 							parentResponseId: response.id,
 							isAnonymous: false,
 						});
-					responseCount++;
 				}
 
 				// Add likes to helpful responses
@@ -576,7 +564,6 @@ export async function seedDemoThreads(
 								subjectThreadResponseId: response.id,
 								userId: liker.id,
 							});
-						likeCount++;
 					}
 				}
 			}
@@ -599,8 +586,6 @@ export async function seedDemoThreads(
 					isAnonymous: false,
 				})
 				.returning();
-
-			threadCount++;
 
 			// Students might comment on announcements
 			if (random() < 0.6) {
@@ -633,13 +618,8 @@ export async function seedDemoThreads(
 							content: comment,
 							isAnonymous: false,
 						});
-					responseCount++;
 				}
 			}
 		}
 	}
-
-	console.log(`  Created ${threadCount} discussion threads`);
-	console.log(`  Created ${responseCount} thread responses`);
-	console.log(`  Created ${likeCount} thread/response likes`);
 }

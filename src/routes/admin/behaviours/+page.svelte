@@ -21,12 +21,12 @@
 		id: z.number().optional(),
 		name: z.string().min(1, 'Name is required'),
 		description: z.string().optional(),
-		levelId: z.string().optional()
+		levelId: z.string().optional(),
 	});
 
 	const levelSchema = z.object({
 		id: z.number().optional(),
-		name: z.string().min(1, 'Name is required')
+		name: z.string().min(1, 'Name is required'),
 	});
 
 	type BehaviourItem = {
@@ -36,11 +36,7 @@
 		levelId: number | null;
 	};
 
-	type LevelItem = {
-		id: number;
-		name: string;
-		level: number;
-	};
+	type LevelItem = { id: number; name: string; level: number };
 
 	let dialogOpen = $state(false);
 	let levelDialogOpen = $state(false);
@@ -58,7 +54,7 @@
 				dialogOpen = false;
 				editingBehaviour = null;
 			}
-		}
+		},
 	});
 
 	const dataLevelForm = () => data.levelForm;
@@ -70,7 +66,7 @@
 				levelDialogOpen = false;
 				editingLevel = null;
 			}
-		}
+		},
 	});
 
 	const { form: formData, enhance } = form;
@@ -78,7 +74,11 @@
 
 	function openCreateDialog(levelId?: number) {
 		editingBehaviour = null;
-		$formData = { name: '', description: '', levelId: levelId?.toString() ?? '' };
+		$formData = {
+			name: '',
+			description: '',
+			levelId: levelId?.toString() ?? '',
+		};
 		dialogOpen = true;
 	}
 
@@ -88,7 +88,7 @@
 			id: behaviour.id,
 			name: behaviour.name,
 			description: behaviour.description || '',
-			levelId: behaviour.levelId?.toString() ?? ''
+			levelId: behaviour.levelId?.toString() ?? '',
 		};
 		dialogOpen = true;
 	}
@@ -101,10 +101,7 @@
 
 	function openEditLevelDialog(level: LevelItem) {
 		editingLevel = level;
-		$levelFormData = {
-			id: level.id,
-			name: level.name
-		};
+		$levelFormData = { id: level.id, name: level.name };
 		levelDialogOpen = true;
 	}
 
@@ -118,21 +115,21 @@
 	// Mock action options
 	const actionTypes = [
 		{ value: 'notify', label: 'Notify' },
-		{ value: 'create', label: 'Create' }
+		{ value: 'create', label: 'Create' },
 	];
 
 	const notifyOptions = [
 		{ value: 'year-coordinator', label: 'Year Level Coordinator' },
 		{ value: 'guardians', label: 'Guardians' },
 		{ value: 'principal', label: 'Principal' },
-		{ value: 'head-teacher', label: 'Head Teacher' }
+		{ value: 'head-teacher', label: 'Head Teacher' },
 	];
 
 	const createOptions = [
 		{ value: 'mark-deduction', label: 'Mark Deduction' },
 		{ value: 'detention', label: 'Detention Event' },
 		{ value: 'referral', label: 'Behaviour Referral' },
-		{ value: 'suspension', label: 'Suspension Notice' }
+		{ value: 'suspension', label: 'Suspension Notice' },
 	];
 
 	let mockActionType = $state<string | undefined>(undefined);
@@ -145,17 +142,21 @@
 	});
 
 	const actionTypeLabel = $derived(
-		actionTypes.find((t) => t.value === mockActionType)?.label ?? 'Select action type'
+		actionTypes.find((t) => t.value === mockActionType)?.label ??
+			'Select action type',
 	);
 	const actionTargetLabel = $derived(
-		actionTargetOptions().find((t) => t.value === mockActionTarget)?.label ?? 'Select target'
+		actionTargetOptions().find((t) => t.value === mockActionTarget)?.label ??
+			'Select target',
 	);
 </script>
 
 <div class="space-y-6">
 	<div>
 		<h1 class="text-3xl font-bold tracking-tight">Behaviours</h1>
-		<p class="text-muted-foreground mt-2">Manage behaviours for classroom incident reporting</p>
+		<p class="text-muted-foreground mt-2">
+			Manage behaviours for classroom incident reporting
+		</p>
 	</div>
 
 	<!-- Behaviours grouped by level -->
@@ -177,7 +178,7 @@
 								openEditLevelDialog({
 									id: level.levelId,
 									name: level.levelName,
-									level: level.levelNumber
+									level: level.levelNumber,
 								})}
 						>
 							<PencilIcon class="h-4 w-4" />
@@ -198,7 +199,9 @@
 					<ScrollArea.Root class="h-60 w-full rounded-md border">
 						<ul class="divide-y">
 							{#each level.behaviours as behaviour}
-								<li class="hover:bg-accent/50 flex items-center justify-between p-2">
+								<li
+									class="hover:bg-accent/50 flex items-center justify-between p-2"
+								>
 									<span class="text-sm">{behaviour.label}</span>
 									<Button
 										variant="ghost"
@@ -208,7 +211,7 @@
 												id: parseInt(behaviour.value),
 												name: behaviour.label,
 												description: null,
-												levelId: level.levelId
+												levelId: level.levelId,
 											})}
 									>
 										<PencilIcon />
@@ -226,12 +229,16 @@
 				class="hover:border-primary hover:bg-accent/50 cursor-pointer border-2 border-dashed transition-colors"
 				onclick={openCreateLevelDialog}
 			>
-				<Card.Content class="flex h-full min-h-[200px] items-center justify-center p-6">
+				<Card.Content
+					class="flex h-full min-h-[200px] items-center justify-center p-6"
+				>
 					<div class="flex flex-col items-center gap-2 text-center">
 						<Plus class="text-muted-foreground h-8 w-8" />
 						<div>
 							<p class="font-semibold">Add Level</p>
-							<p class="text-muted-foreground text-sm">Create a new behaviour level</p>
+							<p class="text-muted-foreground text-sm">
+								Create a new behaviour level
+							</p>
 						</div>
 					</div>
 				</Card.Content>
@@ -242,12 +249,16 @@
 					<Tooltip.Trigger
 						class="border-border bg-card text-card-foreground w-full cursor-not-allowed rounded-lg border-2 border-dashed opacity-50 shadow-sm"
 					>
-						<div class="flex h-full min-h-[200px] items-center justify-center p-6">
+						<div
+							class="flex h-full min-h-[200px] items-center justify-center p-6"
+						>
 							<div class="flex flex-col items-center gap-2 text-center">
 								<Plus class="text-muted-foreground h-8 w-8" />
 								<div>
 									<p class="font-semibold">Add Level</p>
-									<p class="text-muted-foreground text-sm">Create a new behaviour level</p>
+									<p class="text-muted-foreground text-sm">
+										Create a new behaviour level
+									</p>
 								</div>
 							</div>
 						</div>
@@ -265,7 +276,8 @@
 			<Card.Header>
 				<Card.Title>No behaviour levels</Card.Title>
 				<Card.Description>
-					Create your first behaviour level to start tracking and actioning student behaviours
+					Create your first behaviour level to start tracking and actioning
+					student behaviours
 				</Card.Description>
 			</Card.Header>
 		</Card.Root>
@@ -294,7 +306,11 @@
 				<Form.Control>
 					{#snippet children({ props })}
 						<Form.Label>Name</Form.Label>
-						<Input {...props} bind:value={$formData.name} placeholder="e.g., Out of uniform" />
+						<Input
+							{...props}
+							bind:value={$formData.name}
+							placeholder="e.g., Out of uniform"
+						/>
 					{/snippet}
 				</Form.Control>
 				<Form.FieldErrors />
@@ -339,7 +355,11 @@
 			</Form.Field>
 
 			<Dialog.Footer>
-				<Button type="button" variant="outline" onclick={() => (dialogOpen = false)}>Cancel</Button>
+				<Button
+					type="button"
+					variant="outline"
+					onclick={() => (dialogOpen = false)}>Cancel</Button
+				>
 				<Button type="submit">{editingBehaviour ? 'Update' : 'Create'}</Button>
 			</Dialog.Footer>
 		</form>
@@ -380,7 +400,11 @@
 			</Form.Field>
 
 			<Dialog.Footer>
-				<Button type="button" variant="outline" onclick={() => (levelDialogOpen = false)}>
+				<Button
+					type="button"
+					variant="outline"
+					onclick={() => (levelDialogOpen = false)}
+				>
 					Cancel
 				</Button>
 				<Button type="submit">{editingLevel ? 'Update' : 'Create'}</Button>
@@ -406,7 +430,9 @@
 				</Select.Trigger>
 				<Select.Content>
 					{#each actionTypes as actionType}
-						<Select.Item value={actionType.value}>{actionType.label}</Select.Item>
+						<Select.Item value={actionType.value}
+							>{actionType.label}</Select.Item
+						>
 					{/each}
 				</Select.Content>
 			</Select.Root>
@@ -425,7 +451,11 @@
 			{/if}
 		</div>
 		<Dialog.Footer>
-			<Button type="button" variant="outline" onclick={() => (workflowDialogOpen = false)}>
+			<Button
+				type="button"
+				variant="outline"
+				onclick={() => (workflowDialogOpen = false)}
+			>
 				Close
 			</Button>
 		</Dialog.Footer>

@@ -16,7 +16,7 @@ export const createTimetableSchema = z.object({
 		.number()
 		.int('Please select a semester')
 		.positive('Please select a valid semester')
-		.refine((val) => val > 0, 'Please select a semester')
+		.refine((val) => val > 0, 'Please select a semester'),
 });
 
 export type CreateTimetableSchema = typeof createTimetableSchema;

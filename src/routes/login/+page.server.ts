@@ -21,14 +21,19 @@ export const actions = {
 
 		if (!validateEmail(email)) {
 			return fail(400, {
-				message: 'Invalid email (min 3, max 31 characters, alphanumeric only)'
+				message: 'Invalid email (min 3, max 31 characters, alphanumeric only)',
 			});
 		}
 		if (!validatePassword(password)) {
-			return fail(400, { message: 'Invalid password (min 6, max 255 characters)' });
+			return fail(400, {
+				message: 'Invalid password (min 6, max 255 characters)',
+			});
 		}
 
-		const results = await db.select().from(table.user).where(eq(table.user.email, email));
+		const results = await db
+			.select()
+			.from(table.user)
+			.where(eq(table.user.email, email));
 
 		const existingUser = results.at(0);
 		if (!existingUser) {
@@ -36,17 +41,25 @@ export const actions = {
 		}
 
 		if (existingUser.isArchived) {
-			return fail(400, { message: 'This account has been archived. Please contact support.' });
+			return fail(400, {
+				message: 'This account has been archived. Please contact support.',
+			});
 		}
 
 		if (!existingUser.emailVerified) {
-			return fail(400, { message: 'Please verify your email before logging in.' });
+			return fail(400, {
+				message: 'Please verify your email before logging in.',
+			});
 		}
 
-		if (existingUser.googleId || existingUser.microsoftId || !existingUser.passwordHash) {
+		if (
+			existingUser.googleId ||
+			existingUser.microsoftId ||
+			!existingUser.passwordHash
+		) {
 			return fail(400, {
 				message:
-					'This account is linked to a Google or Microsoft account. Please use the respective login method.'
+					'This account is linked to a Google or Microsoft account. Please use the respective login method.',
 			});
 		}
 
@@ -59,5 +72,5 @@ export const actions = {
 		auth.setSessionTokenCookie(event, session.token);
 
 		return redirect(302, '/dashboard');
-	}
+	},
 };

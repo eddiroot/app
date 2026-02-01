@@ -4,16 +4,21 @@
 	import * as Dialog from '$lib/components/ui/dialog/index.js';
 	import { Input } from '$lib/components/ui/input/index.js';
 	import Label from '$lib/components/ui/label/label.svelte';
-	import { validateCSVFile, type CSVValidationResult } from '$lib/utils.js';
+	import { validateCSVFile, type CSVValidationResult } from '$lib/utils';
 	import CheckIcon from '@lucide/svelte/icons/check';
 	import XIcon from '@lucide/svelte/icons/x';
-	import { fileProxy, superForm, type Infer, type SuperValidated } from 'sveltekit-superforms';
+	import {
+		fileProxy,
+		superForm,
+		type Infer,
+		type SuperValidated,
+	} from 'sveltekit-superforms';
 	import { zod4 } from 'sveltekit-superforms/adapters';
 	import {
 		optionalColumns,
 		requiredColumns,
 		subjectsImportSchema,
-		type SubjectsImportSchema
+		type SubjectsImportSchema,
 	} from './schema.js';
 
 	type Props = {
@@ -25,7 +30,8 @@
 
 	let csvValidationResult = $state<CSVValidationResult | null>(null);
 
-	const { form, errors, enhance, submitting } = superForm(data, {
+	let dataForm = () => data;
+	const { form, errors, enhance, submitting } = superForm(dataForm(), {
 		validators: zod4(subjectsImportSchema),
 		resetForm: false,
 		onResult: ({ result }) => {
@@ -34,7 +40,7 @@
 				open = false;
 				csvValidationResult = null;
 			}
-		}
+		},
 	});
 
 	function handleDialogClose() {
@@ -49,9 +55,11 @@
 
 	file.subscribe((files) => {
 		if (files && files.length > 0 && files[0].size > 0) {
-			validateCSVFile(files[0], requiredColumns, optionalColumns).then((result) => {
-				csvValidationResult = result;
-			});
+			validateCSVFile(files[0], requiredColumns, optionalColumns).then(
+				(result) => {
+					csvValidationResult = result;
+				},
+			);
 		} else {
 			csvValidationResult = null;
 		}
@@ -64,8 +72,8 @@
 			<Dialog.Header>
 				<Dialog.Title>Import Subjects from CSV</Dialog.Title>
 				<Dialog.Description>
-					Upload a CSV file to import subjects. The file must contain the required columns listed
-					below.
+					Upload a CSV file to import subjects. The file must contain the
+					required columns listed below.
 				</Dialog.Description>
 			</Dialog.Header>
 
@@ -100,10 +108,18 @@
 				<div class="space-y-4">
 					<div class="space-y-2">
 						<Label for="csvFile">CSV File</Label>
-						<Input id="csvFile" name="file" type="file" accept=".csv" bind:files={$file} />
+						<Input
+							id="csvFile"
+							name="file"
+							type="file"
+							accept=".csv"
+							bind:files={$file}
+						/>
 					</div>
 					{#if $errors.file}
-						<div class="bg-destructive/10 text-destructive flex items-center gap-2 rounded-md p-3">
+						<div
+							class="bg-destructive/10 text-destructive flex items-center gap-2 rounded-md p-3"
+						>
 							<XIcon class="size-4 shrink-0" />
 							<span class="text-sm">{$errors.file}</span>
 						</div>
@@ -115,10 +131,14 @@
 							<div class="flex items-center gap-2">
 								{#if csvValidationResult.isValid}
 									<CheckIcon class="text-primary size-5" />
-									<span class="text-primary text-sm font-medium">CSV format is valid</span>
+									<span class="text-primary text-sm font-medium"
+										>CSV format is valid</span
+									>
 								{:else}
 									<XIcon class="text-destructive size-5" />
-									<span class="text-destructive text-sm font-medium">CSV format has issues</span>
+									<span class="text-destructive text-sm font-medium"
+										>CSV format has issues</span
+									>
 								{/if}
 							</div>
 
@@ -128,10 +148,10 @@
 									<div class="flex flex-wrap gap-1">
 										{#each csvValidationResult.foundColumns as column}
 											{@const isRequired = requiredColumns.some(
-												(req) => req.toLowerCase() === column.toLowerCase()
+												(req) => req.toLowerCase() === column.toLowerCase(),
 											)}
 											{@const isOptional = optionalColumns.some(
-												(opt) => opt.toLowerCase() === column.toLowerCase()
+												(opt) => opt.toLowerCase() === column.toLowerCase(),
 											)}
 											<span
 												class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset
@@ -187,10 +207,16 @@
 			</div>
 
 			<Dialog.Footer class="mt-4">
-				<Button variant="outline" onclick={handleDialogClose} disabled={$submitting}>Cancel</Button>
+				<Button
+					variant="outline"
+					onclick={handleDialogClose}
+					disabled={$submitting}>Cancel</Button
+				>
 				<Button
 					type="submit"
-					disabled={!csvValidationResult?.isValid || $submitting || !!$errors.file}
+					disabled={!csvValidationResult?.isValid ||
+						$submitting ||
+						!!$errors.file}
 				>
 					{#if $submitting}
 						Processing...

@@ -17,17 +17,17 @@
 	}: EnhancedConstraintFormProps = $props();
 
 	// Form state - use IDs instead of names
-	let weightPercentage = $state(
+	let weightPercentage = $derived(
 		(initialValues.Weight_Percentage as number) || 100,
 	);
-	let subjectId = $state((initialValues.Subject as string) || '');
-	let numberOfRooms = $state(
+	let subjectId = $derived((initialValues.Subject as string) || '');
+	let numberOfRooms = $derived(
 		(initialValues.Number_of_Preferred_Rooms as number) || 1,
 	);
-	let preferredRoomIds = $state<(string | number)[]>(
+	let preferredRoomIds = $derived<(string | number)[]>(
 		(initialValues.Preferred_Room as (string | number)[]) || [''],
 	);
-	let comments = $state((initialValues.Comments as string) || '');
+	let comments = $derived((initialValues.Comments as string) || '');
 
 	// Update rooms array when numberOfRooms changes
 	$effect(() => {

@@ -95,12 +95,9 @@ export function parseCSVRow(row: string): string[] {
 /**
  * Calculates duration in minutes between two time strings (HH:MM:SS format)
  */
-export function calculateDurationMinutes(
-	startTime: string,
-	endTime: string,
-): number {
-	const [startHour, startMin] = startTime.split(':').map(Number);
-	const [endHour, endMin] = endTime.split(':').map(Number);
+export function calculateDurationMinutes(start: string, end: string): number {
+	const [startHour, startMin] = start.split(':').map(Number);
+	const [endHour, endMin] = end.split(':').map(Number);
 
 	const startTotalMin = startHour * 60 + startMin;
 	const endTotalMin = endHour * 60 + endMin;

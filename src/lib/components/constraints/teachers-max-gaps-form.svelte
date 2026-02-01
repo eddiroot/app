@@ -14,9 +14,9 @@
 	let { onSubmit, onCancel, initialValues = {} }: Props = $props();
 
 	// Form state
-	let weightPercentage = $state(initialValues.Weight_Percentage || 100);
-	let maxGaps = $state(initialValues.Max_Gaps || 3);
-	let comments = $state(initialValues.Comments || '');
+	let weightPercentage = $derived(initialValues.Weight_Percentage || 100);
+	let maxGaps = $derived(initialValues.Max_Gaps || 3);
+	let comments = $derived(initialValues.Comments || '');
 
 	function handleSubmit() {
 		const values = {

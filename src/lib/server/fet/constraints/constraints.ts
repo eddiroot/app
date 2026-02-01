@@ -136,25 +136,25 @@ export const constraintSchemas = {
 /**
  * Get schema for a specific constraint by FET name
  */
-export function getConstraintSchema(FETName: string): z.ZodSchema | null {
-	return constraintSchemas[FETName as keyof typeof constraintSchemas] || null;
+export function getConstraintSchema(fetName: string): z.ZodSchema | null {
+	return constraintSchemas[fetName as keyof typeof constraintSchemas] || null;
 }
 
 /**
  * Validate constraint parameters
  */
 export function validateConstraintParameters(
-	FETName: string,
+	fetName: string,
 	parameters: unknown,
 ): { success: true; data: unknown } | { success: false; errors: z.ZodError } {
-	const schema = getConstraintSchema(FETName);
+	const schema = getConstraintSchema(fetName);
 	if (!schema) {
 		return {
 			success: false,
 			errors: new z.ZodError([
 				{
 					code: 'custom',
-					message: `No schema found for constraint: ${FETName}`,
+					message: `No schema found for constraint: ${fetName}`,
 					path: [],
 				},
 			]),

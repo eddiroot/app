@@ -85,8 +85,8 @@ export async function getTeacherAssignmentsWithAllocations(
 			dayNumber: table.timetableDay.day,
 			startPeriodId: table.fetSubjectClassAllocation.startPeriodId,
 			endPeriodId: table.fetSubjectClassAllocation.endPeriodId,
-			startTime: table.timetablePeriod.start,
-			endTime: table.timetablePeriod.end,
+			start: table.timetablePeriod.start,
+			end: table.timetablePeriod.end,
 		})
 		.from(table.fetSubjectClassAllocation)
 		.innerJoin(
@@ -113,14 +113,11 @@ export async function getTeacherAssignmentsWithAllocations(
 	// Get end times for allocations
 	const endPeriodIds = [...new Set(allocations.map((a) => a.endPeriodId))];
 	const endPeriods = await db
-		.select({
-			id: table.timetablePeriod.id,
-			endTime: table.timetablePeriod.end,
-		})
+		.select({ id: table.timetablePeriod.id, end: table.timetablePeriod.end })
 		.from(table.timetablePeriod)
 		.where(inArray(table.timetablePeriod.id, endPeriodIds));
 
-	const endPeriodMap = new Map(endPeriods.map((p) => [p.id, p.endTime]));
+	const endPeriodMap = new Map(endPeriods.map((p) => [p.id, p.end]));
 
 	// Build assignment objects
 	const assignmentMap = new Map<string, TeacherAssignment>();
@@ -147,10 +144,9 @@ export async function getTeacherAssignmentsWithAllocations(
 		);
 
 		for (const alloc of classAllocations) {
-			const actualEndTime =
-				endPeriodMap.get(alloc.endPeriodId) || alloc.endTime;
+			const actualEndTime = endPeriodMap.get(alloc.endPeriodId) || alloc.end;
 			const durationMinutes = calculateDurationMinutes(
-				alloc.startTime,
+				alloc.start,
 				actualEndTime,
 			);
 
@@ -160,8 +156,8 @@ export async function getTeacherAssignmentsWithAllocations(
 				dayNumber: alloc.dayNumber,
 				startPeriodId: alloc.startPeriodId,
 				endPeriodId: alloc.endPeriodId,
-				startTime: alloc.startTime,
-				endTime: actualEndTime,
+				start: alloc.start,
+				end: actualEndTime,
 				durationMinutes,
 			});
 		}
@@ -173,9 +169,9 @@ export async function getTeacherAssignmentsWithAllocations(
 /**
  * Calculates duration in minutes between two time strings (HH:MM:SS format)
  */
-function calculateDurationMinutes(startTime: string, endTime: string): number {
-	const [startHour, startMin] = startTime.split(':').map(Number);
-	const [endHour, endMin] = endTime.split(':').map(Number);
+function calculateDurationMinutes(start: string, end: string): number {
+	const [startHour, startMin] = start.split(':').map(Number);
+	const [endHour, endMin] = end.split(':').map(Number);
 
 	const startTotalMin = startHour * 60 + startMin;
 	const endTotalMin = endHour * 60 + endMin;

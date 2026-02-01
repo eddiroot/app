@@ -1,12 +1,8 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import * as Card from '$lib/components/ui/card';
-	import type {
-		CampusEvent,
-		SchoolEvent,
-		SubjectOfferingClassEvent,
-		SubjectOfferingEvent,
-	} from '$lib/server/db/schema/events';
+	import { eventTypeEnum } from '$lib/enums.js';
+	import type { Event } from '$lib/server/db/schema/event';
 	import { formatTimestampAsTime } from '$lib/utils';
 	import BookOpenIcon from '@lucide/svelte/icons/book-open';
 	import CalendarIcon from '@lucide/svelte/icons/calendar';
@@ -16,12 +12,7 @@
 	import { generateSubjectColors } from '../../routes/calendar/utils.js';
 
 	interface EventCardProps {
-		event:
-			| SchoolEvent
-			| CampusEvent
-			| SubjectOfferingEvent
-			| SubjectOfferingClassEvent;
-		eventType: 'school' | 'campus' | 'subject' | 'class';
+		event: Event;
 		subjectInfo?: { name: string; className?: string };
 		subjectColor?: number;
 		showTime?: boolean;
@@ -30,7 +21,6 @@
 
 	let {
 		event,
-		eventType,
 		subjectInfo,
 		subjectColor,
 		showTime = true,
@@ -67,7 +57,8 @@
 
 		// For subject and class events, use the same color scheme as timetable cards
 		if (
-			(eventType === 'subject' || eventType === 'class') &&
+			(event.type === eventTypeEnum.subject ||
+				event.type === eventTypeEnum.class) &&
 			subjectColor !== undefined
 		) {
 			const colors = generateSubjectColors(subjectColor);
@@ -79,7 +70,7 @@
 			};
 		}
 
-		if (eventType === 'school') {
+		if (event.type === eventTypeEnum.school) {
 			return {
 				borderColor: isHovered
 					? 'var(--primary)'
@@ -101,14 +92,14 @@
 	});
 
 	const eventIcon = $derived(() => {
-		switch (eventType) {
-			case 'school':
+		switch (event.type) {
+			case eventTypeEnum.school:
 				return SchoolIcon;
-			case 'campus':
+			case eventTypeEnum.campus:
 				return MapPinIcon;
-			case 'subject':
+			case eventTypeEnum.subject:
 				return BookOpenIcon;
-			case 'class':
+			case eventTypeEnum.class:
 				return CalendarIcon;
 			default:
 				return CalendarIcon;
@@ -118,7 +109,7 @@
 	function handleClick() {
 		if (rsvpStatus === 'required') {
 			// Navigate to RSVP page
-			goto(`/timetable/${eventType}/${event.id}/rsvp`);
+			goto(`/timetable/${event.type}/${event.id}/rsvp`);
 		}
 	}
 </script>
@@ -156,8 +147,8 @@
 							class="flex items-center gap-1 text-xs text-ellipsis whitespace-nowrap"
 						>
 							<ClockIcon class="h-3 w-3" />
-							{formatTimestampAsTime(event.startTimestamp)} - {formatTimestampAsTime(
-								event.endTimestamp,
+							{formatTimestampAsTime(event.start)} - {formatTimestampAsTime(
+								event.end,
 							)}
 						</Card.Description>
 					{/if}
@@ -207,8 +198,8 @@
 							class="flex items-center gap-1 text-xs text-ellipsis whitespace-nowrap"
 						>
 							<ClockIcon class="h-3 w-3" />
-							{formatTimestampAsTime(event.startTimestamp)} - {formatTimestampAsTime(
-								event.endTimestamp,
+							{formatTimestampAsTime(event.start)} - {formatTimestampAsTime(
+								event.end,
 							)}
 						</Card.Description>
 					{/if}

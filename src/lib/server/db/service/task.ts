@@ -92,7 +92,7 @@ export async function getTasksBySubjectOfferingClassId(
 		.select({
 			task: table.task,
 			subjectOfferingClassTask: table.subjectOfferingClassTask,
-			courseMapItem: table.courseMapItem,
+			curriculumItem: table.curriculumItem,
 		})
 		.from(table.subjectOfferingClassTask)
 		.innerJoin(
@@ -100,10 +100,10 @@ export async function getTasksBySubjectOfferingClassId(
 			eq(table.subjectOfferingClassTask.taskId, table.task.id),
 		)
 		.innerJoin(
-			table.courseMapItem,
+			table.curriculumItem,
 			eq(
-				table.subjectOfferingClassTask.courseMapItemId,
-				table.courseMapItem.id,
+				table.subjectOfferingClassTask.curriculumItemId,
+				table.curriculumItem.id,
 			),
 		)
 		.where(
@@ -134,19 +134,11 @@ export async function getLessonsAndHomeworkBySubjectOfferingClassId(
 		.select({
 			task: table.task,
 			subjectOfferingClassTask: table.subjectOfferingClassTask,
-			courseMapItem: table.courseMapItem,
 		})
 		.from(table.subjectOfferingClassTask)
 		.innerJoin(
 			table.task,
 			eq(table.subjectOfferingClassTask.taskId, table.task.id),
-		)
-		.leftJoin(
-			table.courseMapItem,
-			eq(
-				table.subjectOfferingClassTask.courseMapItemId,
-				table.courseMapItem.id,
-			),
 		)
 		.where(
 			and(
@@ -167,14 +159,14 @@ export async function getLessonsAndHomeworkBySubjectOfferingClassId(
 
 export async function getTopics(subjectOfferingId: number) {
 	const topics = await db
-		.select({ id: table.courseMapItem.id, name: table.courseMapItem.topic })
-		.from(table.courseMapItem)
+		.select({ id: table.curriculumItem.id, name: table.curriculumItem.topic })
+		.from(table.curriculumItem)
 		.innerJoin(
 			table.subjectOffering,
-			eq(table.courseMapItem.subjectOfferingId, table.subjectOffering.id),
+			eq(table.curriculumItem.subjectOfferingId, table.subjectOffering.id),
 		)
 		.where(eq(table.subjectOffering.id, subjectOfferingId))
-		.orderBy(asc(table.courseMapItem.startWeek));
+		.orderBy(asc(table.curriculumItem.startWeek));
 
 	return topics;
 }
@@ -186,20 +178,13 @@ export async function getClassTasksByTopicId(
 	const tasks = await db
 		.select({ task: table.task })
 		.from(table.subjectOfferingClassTask)
-		.innerJoin(
-			table.courseMapItem,
-			eq(
-				table.subjectOfferingClassTask.courseMapItemId,
-				table.courseMapItem.id,
-			),
-		)
 		.where(
 			and(
 				eq(
 					table.subjectOfferingClassTask.subjectOfferingClassId,
 					subjectOfferingClassId,
 				),
-				eq(table.courseMapItem.id, topicId),
+				eq(table.curriculumItem.id, topicId),
 			),
 		)
 		.orderBy(asc(table.subjectOfferingClassTask.index));
@@ -398,208 +383,6 @@ export async function updateTaskOrder(
 	});
 }
 
-export async function getLearningAreaStandardByCourseMapItemId(
-	courseMapItemId: number,
-): Promise<curriculumLearningAreaStandard[]> {
-	const rows = await db
-		.select({
-			learningArea: table.learningArea,
-			learningAreaStandard: table.curriculumSubjectLearningAreaStandard,
-		})
-		.from(table.curriculumSubjectLearningAreaStandard)
-		.innerJoin(
-			table.courseMapItemLearningArea,
-			eq(
-				table.curriculumSubjectLearningAreaStandard.learningAreaId,
-				table.courseMapItemLearningArea.learningAreaId,
-			),
-		)
-		.innerJoin(
-			table.courseMapItem,
-			eq(
-				table.courseMapItemLearningArea.courseMapItemId,
-				table.courseMapItem.id,
-			),
-		)
-		.innerJoin(
-			table.subjectOffering,
-			eq(table.courseMapItem.subjectOfferingId, table.subjectOffering.id),
-		)
-		.innerJoin(
-			table.subject,
-			eq(table.subjectOffering.subjectId, table.subject.id),
-		)
-		.innerJoin(
-			table.yearLevel,
-			eq(table.subject.yearLevelId, table.yearLevel.id),
-		)
-		.innerJoin(
-			table.learningArea,
-			eq(
-				table.learningArea.id,
-				table.curriculumSubjectLearningAreaStandard.learningAreaId,
-			),
-		)
-		.where(
-			and(
-				eq(table.courseMapItemLearningArea.courseMapItemId, courseMapItemId),
-				eq(
-					table.curriculumSubjectLearningAreaStandard.yearLevel,
-					table.yearLevel.yearLevel,
-				),
-			),
-		)
-		.orderBy(asc(table.curriculumSubjectLearningAreaStandard.id));
-
-	// Group by learningArea.id using a Map for type safety
-	const map = new Map<number, curriculumLearningAreaStandard>();
-	for (const row of rows) {
-		const laId = row.learningArea.id;
-		if (!map.has(laId)) {
-			map.set(laId, { learningArea: row.learningArea, contents: [] });
-		}
-		map.get(laId)!.contents.push(row.learningAreaStandard);
-	}
-	return Array.from(map.values());
-}
-
-export async function getLearningAreasBySubjectOfferingId(
-	subjectOfferingId: number,
-) {
-	const learningAreas = await db
-		.select({ learningArea: table.learningArea })
-		.from(table.subjectOffering)
-		.innerJoin(
-			table.curriculumSubject,
-			eq(table.subjectOffering.curriculumSubjectId, table.curriculumSubject.id),
-		)
-		.innerJoin(
-			table.learningArea,
-			eq(table.learningArea.curriculumSubjectId, table.curriculumSubject.id),
-		)
-		.where(eq(table.subjectOffering.id, subjectOfferingId))
-		.orderBy(asc(table.learningArea.id));
-	return learningAreas.map((row) => row.learningArea);
-}
-
-// Select the learningAreaStandards and add this to the gemini service, use coursemap.ts funtion to get the learning area content
-export async function getStandardElaborationsByLearningAreaStandardIds(
-	learningAreaStandardIds: number[],
-) {
-	if (learningAreaStandardIds.length === 0) return [];
-
-	const elaborations = await db
-		.select({
-			id: table.standardElaboration.id,
-			learningAreaStandardId: table.standardElaboration.learningAreaStandardId,
-			standardElaboration: table.standardElaboration.standardElaboration,
-		})
-		.from(table.standardElaboration)
-		.where(
-			inArray(
-				table.standardElaboration.learningAreaStandardId,
-				learningAreaStandardIds,
-			),
-		)
-		.orderBy(asc(table.standardElaboration.id));
-
-	return elaborations;
-}
-
-export async function getLearningAreaStandardWithElaborationsByIds(
-	learningAreaStandardIds: number[],
-) {
-	if (learningAreaStandardIds.length === 0) return [];
-
-	// Get the learning area content and their elaborations (joined)
-	const rows = await db
-		.select({
-			learningAreaStandard: table.curriculumSubjectLearningAreaStandard,
-			standardElaboration: table.standardElaboration,
-		})
-		.from(table.curriculumSubjectLearningAreaStandard)
-		.leftJoin(
-			table.standardElaboration,
-			eq(
-				table.standardElaboration.learningAreaStandardId,
-				table.curriculumSubjectLearningAreaStandard.id,
-			),
-		)
-		.where(
-			inArray(
-				table.curriculumSubjectLearningAreaStandard.id,
-				learningAreaStandardIds,
-			),
-		)
-		.orderBy(asc(table.curriculumSubjectLearningAreaStandard.id));
-
-	// Group by learningAreaStandard.id
-	const map = new Map<number, CurriculumStandardWithElaborations>();
-	for (const row of rows) {
-		const lac = row.learningAreaStandard;
-		if (!map.has(lac.id)) {
-			map.set(lac.id, { learningAreaStandard: lac, elaborations: [] });
-		}
-		if (row.standardElaboration && row.standardElaboration.id) {
-			map.get(lac.id)!.elaborations.push(row.standardElaboration);
-		}
-	}
-	return Array.from(map.values());
-}
-
-export async function getCurriculumLearningAreaWithStandards(
-	subjectOfferingId: number,
-) {
-	const rows = await db
-		.select({
-			learningArea: table.learningArea,
-			learningAreaStandard: table.curriculumSubjectLearningAreaStandard,
-		})
-		.from(table.subjectOffering)
-		.innerJoin(
-			table.subject,
-			eq(table.subjectOffering.subjectId, table.subject.id),
-		)
-		.innerJoin(
-			table.yearLevel,
-			eq(table.subject.yearLevelId, table.yearLevel.id),
-		)
-		.innerJoin(
-			table.curriculumSubject,
-			eq(table.curriculumSubject.id, table.subjectOffering.curriculumSubjectId),
-		)
-		.innerJoin(
-			table.learningArea,
-			eq(table.learningArea.curriculumSubjectId, table.curriculumSubject.id),
-		)
-		.innerJoin(
-			table.curriculumSubjectLearningAreaStandard,
-			and(
-				eq(
-					table.curriculumSubjectLearningAreaStandard.learningAreaId,
-					table.learningArea.id,
-				),
-				eq(
-					table.curriculumSubjectLearningAreaStandard.yearLevel,
-					table.yearLevel.yearLevel,
-				),
-			),
-		)
-		.where(eq(table.subjectOffering.id, subjectOfferingId))
-		.orderBy(asc(table.learningArea.name));
-
-	// Group by learningArea.id using a Map for type safety
-	const map = new Map<number, curriculumLearningAreaStandard>();
-	for (const row of rows) {
-		const laId = row.learningArea.id;
-		if (!map.has(laId)) {
-			map.set(laId, { learningArea: row.learningArea, contents: [] });
-		}
-		map.get(laId)!.contents.push(row.learningAreaStandard);
-	}
-	return Array.from(map.values());
-}
-
 export async function updateRubric(
 	rubricId: number,
 	updates: { title?: string },
@@ -616,12 +399,12 @@ export async function updateRubric(
 export async function getAssessmenPlanRubric(assessmentPlanId: number) {
 	const rubric = await db
 		.select({ rubric: table.rubric })
-		.from(table.courseMapItemAssessmentPlan)
+		.from(table.curriculumItemTask)
 		.innerJoin(
 			table.rubric,
-			eq(table.courseMapItemAssessmentPlan.rubricId, table.rubric.id),
+			eq(table.curriculumItemTask.rubricId, table.rubric.id),
 		)
-		.where(eq(table.courseMapItemAssessmentPlan.id, assessmentPlanId))
+		.where(eq(table.curriculumItemTask.id, assessmentPlanId))
 		.limit(1);
 
 	return rubric.length > 0 ? rubric[0].rubric : null;
@@ -737,25 +520,6 @@ export async function deleteRubric(rubricId: number) {
 	await db.delete(table.rubric).where(eq(table.rubric.id, rubricId));
 }
 
-export async function duplicateRubric(rubricId: number, newTitle?: string) {
-	const existingRubric = await getRubricWithRowsAndCells(rubricId);
-	if (!existingRubric) {
-		throw new Error('Rubric not found');
-	}
-
-	const title = newTitle || `${existingRubric.rubric.title} (Copy)`;
-	const rows = existingRubric.rows.map(({ row, cells }) => ({
-		title: row.title,
-		cells: cells.map((cell) => ({
-			level: cell.level,
-			description: cell.description,
-			marks: cell.marks,
-		})),
-	}));
-
-	return await createCompleteRubric(title, rows);
-}
-
 export async function getSubjectOfferingClassTaskByTaskId(
 	taskId: number,
 	subjectOfferingClassId: number,
@@ -801,7 +565,7 @@ export async function updateSubjectOfferingClassTaskQuizSettings(
 	subjectOfferingClassId: number,
 	quizSettings: {
 		quizMode?: quizModeEnum;
-		quizStartTime?: Date | null;
+		quizStart?: Date | null;
 		quizDurationMinutes?: number | null;
 		gradeRelease?: gradeReleaseEnum;
 		gradeReleaseTime?: Date | null;
@@ -824,7 +588,7 @@ export async function updateSubjectOfferingClassTaskQuizSettings(
 export async function startQuizSession(classTaskId: number) {
 	await db
 		.update(table.subjectOfferingClassTask)
-		.set({ quizStartTime: new Date() })
+		.set({ quizStart: new Date() })
 		.where(eq(table.subjectOfferingClassTask.id, classTaskId));
 }
 

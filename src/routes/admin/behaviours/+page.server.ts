@@ -3,7 +3,7 @@ import {
 	createBehaviourLevel,
 	getLevelsWithBehaviours,
 	updateBehaviour,
-	updateBehaviourLevel
+	updateBehaviourLevel,
 } from '$lib/server/db/service';
 import { fail } from '@sveltejs/kit';
 import { superValidate } from 'sveltekit-superforms';
@@ -12,14 +12,15 @@ import { z } from 'zod';
 
 const levelSchema = z.object({
 	id: z.number().optional(),
-	name: z.string().min(1, 'Name is required')
+	number: z.number().min(1, 'Level number is required'),
+	name: z.string().min(1, 'Name is required'),
 });
 
 const behaviourSchema = z.object({
 	id: z.number().optional(),
 	name: z.string().min(1, 'Name is required'),
+	description: z.string().optional(),
 	levelId: z.string().min(1, 'Level is required'),
-	description: z.string().optional()
 });
 
 export const load = async ({ locals: { security } }) => {
@@ -29,7 +30,7 @@ export const load = async ({ locals: { security } }) => {
 	return {
 		levelsWithBehaviours,
 		form: await superValidate(zod4(behaviourSchema)),
-		levelForm: await superValidate(zod4(levelSchema))
+		levelForm: await superValidate(zod4(levelSchema)),
 	};
 };
 
@@ -43,12 +44,12 @@ export const actions = {
 		}
 
 		try {
-			await createBehaviour(
-				user.schoolId,
-				form.data.name,
-				parseInt(form.data.levelId, 10),
-				form.data.description
-			);
+			await createBehaviour({
+				schoolId: user.schoolId,
+				name: form.data.name,
+				levelId: parseInt(form.data.levelId, 10),
+				description: form.data.description,
+			});
 			return { form, success: true };
 		} catch (error) {
 			console.error('Error creating behaviour:', error);
@@ -66,8 +67,15 @@ export const actions = {
 
 		try {
 			const levelId =
-				form.data.levelId && form.data.levelId !== '' ? parseInt(form.data.levelId, 10) : undefined;
-			await updateBehaviour(form.data.id, form.data.name, levelId, form.data.description);
+				form.data.levelId && form.data.levelId !== ''
+					? parseInt(form.data.levelId, 10)
+					: undefined;
+			await updateBehaviour(
+				form.data.id,
+				form.data.name,
+				levelId,
+				form.data.description,
+			);
 			return { form, success: true };
 		} catch (error) {
 			console.error('Error updating behaviour:', error);
@@ -84,7 +92,11 @@ export const actions = {
 		}
 
 		try {
-			await createBehaviourLevel(user.schoolId, form.data.name);
+			await createBehaviourLevel({
+				schoolId: user.schoolId,
+				name: form.data.name,
+				level: form.data.number,
+			});
 			return { form, success: true };
 		} catch (error) {
 			console.error('Error creating behaviour level:', error);
@@ -107,5 +119,5 @@ export const actions = {
 			console.error('Error updating behaviour level:', error);
 			return fail(500, { form, error: 'Failed to update behaviour level' });
 		}
-	}
+	},
 };

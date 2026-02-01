@@ -44,10 +44,10 @@
 			const fullName = convertToFullName(
 				attendance.user.firstName,
 				attendance.user.middleName,
-				attendance.user.lastName
+				attendance.user.lastName,
 			);
 			return fullName.toLowerCase().includes(searchTerm.toLowerCase());
-		})
+		}),
 	);
 
 	const unmarkedAttendances = $derived(
@@ -57,10 +57,18 @@
 				return !attendance.attendance;
 			})
 			.sort((a, b) => {
-				const aName = convertToFullName(a.user.firstName, a.user.middleName, a.user.lastName);
-				const bName = convertToFullName(b.user.firstName, b.user.middleName, b.user.lastName);
+				const aName = convertToFullName(
+					a.user.firstName,
+					a.user.middleName,
+					a.user.lastName,
+				);
+				const bName = convertToFullName(
+					b.user.firstName,
+					b.user.middleName,
+					b.user.lastName,
+				);
 				return aName.localeCompare(bName);
-			})
+			}),
 	);
 
 	const markedAttendances = $derived(
@@ -70,15 +78,25 @@
 				return !!attendance.attendance;
 			})
 			.sort((a, b) => {
-				const aName = convertToFullName(a.user.firstName, a.user.middleName, a.user.lastName);
-				const bName = convertToFullName(b.user.firstName, b.user.middleName, b.user.lastName);
+				const aName = convertToFullName(
+					a.user.firstName,
+					a.user.middleName,
+					a.user.lastName,
+				);
+				const bName = convertToFullName(
+					b.user.firstName,
+					b.user.middleName,
+					b.user.lastName,
+				);
 				return aName.localeCompare(bName);
-			})
+			}),
 	);
 </script>
 
 <div class="flex h-full flex-col space-y-6 p-8">
-	<div class="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
+	<div
+		class="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center"
+	>
 		<h1 class="text-3xl font-bold tracking-tight">Attendance</h1>
 		<div class="flex items-center gap-4">
 			{#if bulkApplyMode}
@@ -103,17 +121,29 @@
 						<input type="hidden" name="userIds" value={userId} />
 					{/each}
 					{#each bulkApplyBehaviourIds as behaviourId}
-						<input type="hidden" name="behaviourIds" value={behaviourId.toString()} />
+						<input
+							type="hidden"
+							name="behaviourIds"
+							value={behaviourId.toString()}
+						/>
 					{/each}
 					<div class="flex items-center gap-2">
-						<Button type="button" variant="outline" onclick={cancelBulkApply}>Cancel</Button>
+						<Button type="button" variant="outline" onclick={cancelBulkApply}
+							>Cancel</Button
+						>
 						<Button type="submit" disabled={selectedUserIds.size === 0}>
-							Apply to {selectedUserIds.size} student{selectedUserIds.size !== 1 ? 's' : ''}
+							Apply to {selectedUserIds.size} student{selectedUserIds.size !== 1
+								? 's'
+								: ''}
 						</Button>
 					</div>
 				</form>
 			{:else if attendances.length >= 0}
-				<Input placeholder="Search students..." bind:value={searchTerm} class="w-full max-w-sm" />
+				<Input
+					placeholder="Search students..."
+					bind:value={searchTerm}
+					class="w-full max-w-sm"
+				/>
 			{/if}
 		</div>
 	</div>
@@ -133,7 +163,8 @@
 							type="unmarked"
 							{bulkApplyMode}
 							isSelected={selectedUserIds.has(attendanceRecord.user.id)}
-							onToggleSelection={() => toggleUserSelection(attendanceRecord.user.id)}
+							onToggleSelection={() =>
+								toggleUserSelection(attendanceRecord.user.id)}
 							onStartBulkApply={startBulkApply}
 						/>
 					</div>
@@ -157,7 +188,8 @@
 							type="marked"
 							{bulkApplyMode}
 							isSelected={selectedUserIds.has(attendanceRecord.user.id)}
-							onToggleSelection={() => toggleUserSelection(attendanceRecord.user.id)}
+							onToggleSelection={() =>
+								toggleUserSelection(attendanceRecord.user.id)}
 							onStartBulkApply={startBulkApply}
 						/>
 					</div>

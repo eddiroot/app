@@ -4,69 +4,69 @@ export const steps = {
 		url: 'times',
 		label: 'Times',
 		previous: null,
-		next: 'subjects'
+		next: 'subjects',
 	},
 	subjects: {
 		percentage: 20,
 		url: 'subjects',
 		label: 'Subjects',
 		previous: 'times',
-		next: 'teachers'
+		next: 'teachers',
 	},
 	teachers: {
 		percentage: 30,
 		url: 'teachers',
 		label: 'Teachers',
 		previous: 'subjects',
-		next: 'studentgroups'
+		next: 'studentgroups',
 	},
 	studentgroups: {
 		percentage: 40,
 		url: 'studentgroups',
 		label: 'Student Groups',
 		previous: 'teachers',
-		next: 'buildings'
+		next: 'buildings',
 	},
 	buildings: {
 		percentage: 50,
 		url: 'buildings',
 		label: 'Buildings',
 		previous: 'studentgroups',
-		next: 'spaces'
+		next: 'spaces',
 	},
 	spaces: {
 		percentage: 60,
 		url: 'spaces',
 		label: 'Spaces',
 		previous: 'buildings',
-		next: 'activities'
+		next: 'activities',
 	},
 	activities: {
 		percentage: 70,
 		url: 'activities',
 		label: 'Activities',
 		previous: 'spaces',
-		next: 'constraints'
+		next: 'constraints',
 	},
 	constraints: {
 		percentage: 80,
 		url: 'constraints',
 		label: 'Constraints',
 		previous: 'activities',
-		next: 'generate'
+		next: 'generate',
 	},
 	generate: {
 		percentage: 90,
 		url: 'generate',
 		label: 'Generate',
 		previous: 'constraints',
-		next: 'result'
+		next: 'result',
 	},
 	result: {
 		percentage: 100,
 		url: 'result',
 		label: 'Result',
 		previous: 'generate',
-		next: null
-	}
+		next: null,
+	},
 };

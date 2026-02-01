@@ -13,7 +13,11 @@ export const load = async ({ locals: { security } }) => {
 };
 
 export const actions = {
-	create: async ({ request, locals: { security }, params: { subjectOfferingId } }) => {
+	create: async ({
+		request,
+		locals: { security },
+		params: { subjectOfferingId },
+	}) => {
 		const user = security.isAuthenticated().getUser();
 
 		const subjectOfferingIdInt = parseInt(subjectOfferingId, 10);
@@ -23,9 +27,7 @@ export const actions = {
 
 		const form = await superValidate(request, zod4(formSchema));
 		if (!form.valid) {
-			return fail(400, {
-				form
-			});
+			return fail(400, { form });
 		}
 
 		if (
@@ -34,7 +36,8 @@ export const actions = {
 				form.data.type === subjectThreadTypeEnum.qanda)
 		) {
 			return fail(400, {
-				message: 'Students do not have permission to create this type of thread'
+				message:
+					'Students do not have permission to create this type of thread',
 			});
 		}
 
@@ -44,19 +47,22 @@ export const actions = {
 
 		let newThread;
 		try {
-			newThread = await createSubjectThread(
-				subjectOfferingIdInt,
-				user.id,
-				form.data.title,
-				form.data.type,
-				form.data.content,
-				form.data.isAnonymous
-			);
+			newThread = await createSubjectThread({
+				subjectOfferingId: subjectOfferingIdInt,
+				userId: user.id,
+				title: form.data.title,
+				type: form.data.type,
+				content: form.data.content,
+				isAnonymous: form.data.isAnonymous,
+			});
 		} catch (error) {
 			console.error('Error creating thread:', error);
 			return fail(500, { message: 'Failed to create discussion post' });
 		}
 
-		throw redirect(303, `/subjects/${subjectOfferingIdInt}/discussion/${newThread.id}`);
-	}
+		throw redirect(
+			303,
+			`/subjects/${subjectOfferingIdInt}/discussion/${newThread.id}`,
+		);
+	},
 };

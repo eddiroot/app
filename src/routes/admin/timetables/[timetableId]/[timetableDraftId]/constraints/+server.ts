@@ -1,15 +1,15 @@
-import { validateConstraintParameters } from '$lib/schemas/constraints';
 import {
 	createTimetableDraftConstraint,
 	deleteTimetableDraftConstraint,
 	getConstraintById,
-	updateTimetableDraftConstraintActiveStatus
+	updateTimetableDraftConstraintActiveStatus,
 } from '$lib/server/db/service';
+import { validateConstraintParameters } from '$lib/server/fet/constraints/constraints';
 import { json } from '@sveltejs/kit';
 
 // Add a constraint to a timetable
 export const POST = async ({ request, params, locals: { security } }) => {
-	security.isAuthenticated().isSchoolAdmin().getUser();
+	security.isAuthenticated().isAdmin().getUser();
 	const timetableDraftId = parseInt(params.timetableDraftId, 10);
 
 	try {
@@ -19,24 +19,24 @@ export const POST = async ({ request, params, locals: { security } }) => {
 		const constraint = await getConstraintById(constraintId);
 		if (!constraint) {
 			return json(
-				{
-					success: false,
-					error: 'Constraint not found'
-				},
-				{ status: 404 }
+				{ success: false, error: 'Constraint not found' },
+				{ status: 404 },
 			);
 		}
 
 		// Validate parameters with Zod
-		const validationResult = validateConstraintParameters(constraint.FETName, parameters);
+		const validationResult = validateConstraintParameters(
+			constraint.fetName,
+			parameters,
+		);
 		if (!validationResult.success) {
 			return json(
 				{
 					success: false,
 					error: 'Invalid constraint parameters',
-					validationErrors: validationResult.errors.flatten()
+					validationErrors: validationResult.errors.flatten(),
 				},
-				{ status: 400 }
+				{ status: 400 },
 			);
 		}
 
@@ -44,100 +44,79 @@ export const POST = async ({ request, params, locals: { security } }) => {
 			timetableDraftId,
 			constraintId,
 			active: true,
-			parameters: validationResult.data as Record<string, unknown>
+			parameters: validationResult.data as Record<string, unknown>,
 		};
 
 		const timetableConstraint = await createTimetableDraftConstraint(data);
 
-		return json({
-			success: true,
-			constraint: timetableConstraint
-		});
+		return json({ success: true, constraint: timetableConstraint });
 	} catch (error) {
 		console.error('Error adding constraint:', error);
 		return json(
-			{
-				success: false,
-				error: 'Failed to add constraint'
-			},
-			{ status: 500 }
+			{ success: false, error: 'Failed to add constraint' },
+			{ status: 500 },
 		);
 	}
 };
 
 // Update a constraint (toggle active state or update parameters)
 export const PATCH = async ({ request, locals: { security } }) => {
-	security.isAuthenticated().isSchoolAdmin().getUser();
+	security.isAuthenticated().isAdmin().getUser();
 
 	try {
 		const { constraintId: ttConstraintId, active } = await request.json();
 
 		if (!ttConstraintId) {
 			return json(
-				{
-					success: false,
-					error: 'constraintId is required'
-				},
-				{ status: 400 }
+				{ success: false, error: 'constraintId is required' },
+				{ status: 400 },
 			);
 		}
 
 		if (typeof active !== 'boolean') {
 			return json(
-				{
-					success: false,
-					error: 'Active field must be a boolean'
-				},
-				{ status: 400 }
+				{ success: false, error: 'Active field must be a boolean' },
+				{ status: 400 },
 			);
 		}
 
 		const updatedConstraint = await updateTimetableDraftConstraintActiveStatus(
 			ttConstraintId,
-			active
+			active,
 		);
 
 		if (!updatedConstraint) {
 			return json(
-				{
-					success: false,
-					error: 'Constraint not found'
-				},
-				{ status: 404 }
+				{ success: false, error: 'Constraint not found' },
+				{ status: 404 },
 			);
 		}
 
 		return json({
 			success: true,
 			message: 'Constraint updated successfully',
-			constraint: updatedConstraint
+			constraint: updatedConstraint,
 		});
 	} catch (error) {
 		console.error('Error updating constraint:', error);
 		return json(
-			{
-				success: false,
-				error: 'Failed to update constraint'
-			},
-			{ status: 500 }
+			{ success: false, error: 'Failed to update constraint' },
+			{ status: 500 },
 		);
 	}
 };
 
 // Remove a constraint from a timetable
 export const DELETE = async ({ request, locals: { security } }) => {
-	security.isAuthenticated().isSchoolAdmin().getUser();
+	security.isAuthenticated().isAdmin().getUser();
 
 	try {
 		const { ttConstraintId: ttConstraintId } = await request.json();
 
 		if (!ttConstraintId) {
 			return json(
-				{
-					success: false,
-					error: 'constraintId is required'
-				},
-				{ status: 400 }
+				{ success: false, error: 'constraintId is required' },
+				{ status: 400 },
 			);
 		}
 
@@ -147,11 +126,8 @@ export const DELETE = async ({ request, locals: { security } }) => {
 	} catch (error) {
 		console.error('Error removing constraint:', error);
 		return json(
-			{
-				success: false,
-				error: 'Failed to remove constraint'
-			},
-			{ status: 500 }
+			{ success: false, error: 'Failed to remove constraint' },
+			{ status: 500 },
 		);
 	}
 };

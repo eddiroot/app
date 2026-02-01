@@ -5,7 +5,7 @@
 		TableCell,
 		TableHead,
 		TableHeader,
-		TableRow
+		TableRow,
 	} from '$lib/components/ui/table';
 
 	let { data } = $props();

@@ -14,7 +14,7 @@
 		name?: string; // Made optional since Resource type doesn't have this
 		fileName: string;
 		fileSize: number;
-		resourceType: string;
+		fileType: string;
 	}
 
 	let {
@@ -33,8 +33,8 @@
 		className?: string;
 	} = $props();
 
-	function getResourceIcon(resourceType: string) {
-		switch (resourceType) {
+	function getResourceIcon(fileType: string) {
+		switch (fileType) {
 			case 'photo':
 			case 'image':
 				return FileImageIcon;
@@ -62,8 +62,8 @@
 		return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
 	}
 
-	function getResourceTypeColor(resourceType: string): string {
-		switch (resourceType) {
+	function getResourceTypeColor(fileType: string): string {
+		switch (fileType) {
 			case 'photo':
 			case 'image':
 				return 'bg-purple-100 text-purple-800';
@@ -83,7 +83,8 @@
 		}
 	}
 
-	const IconComponent = getResourceIcon(resource.resourceType);
+	let fileType = () => resource.fileType;
+	const IconComponent = getResourceIcon(fileType());
 
 	// Handle opening resource
 	async function handleOpen() {

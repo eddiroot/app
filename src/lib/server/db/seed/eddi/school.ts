@@ -9,7 +9,7 @@ export async function seedEddiSchool(db: Database) {
 
 	// Create standard behaviour levels and behaviours
 	const [level1, level2, level3, level4, level5] = await db
-		.insert(schema.behaviourLevel)
+		.insert(schema.schoolBehaviourLevel)
 		.values([
 			{ schoolId: eddiSchool.id, level: 1, name: 'Minor Infringement' },
 			{
@@ -28,7 +28,7 @@ export async function seedEddiSchool(db: Database) {
 		.returning();
 
 	await db
-		.insert(schema.behaviour)
+		.insert(schema.schoolBehaviour)
 		.values([
 			{
 				schoolId: eddiSchool.id,

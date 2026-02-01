@@ -6,8 +6,11 @@ import { fail } from '@sveltejs/kit';
 import { and, eq, ilike, or } from 'drizzle-orm';
 import type { Actions, PageServerLoad } from './$types';
 
-export const load: PageServerLoad = async ({ params, locals: { security } }) => {
-	security.isAuthenticated().isSchoolAdmin();
+export const load: PageServerLoad = async ({
+	params,
+	locals: { security },
+}) => {
+	security.isAuthenticated().isAdmin();
 
 	const timetableDraftId = parseInt(params.timetableDraftId);
 
@@ -20,16 +23,13 @@ export const load: PageServerLoad = async ({ params, locals: { security } }) => 
 	return {
 		students: statistics.students,
 		teachers: statistics.teachers,
-		summary: {
-			...statistics.summary,
-			dayUtilization
-		}
+		summary: { ...statistics.summary, dayUtilization },
 	};
 };
 
 export const actions: Actions = {
 	searchUser: async ({ request, locals: { security } }) => {
-		const currentUser = security.isAuthenticated().isSchoolAdmin().getUser();
+		const currentUser = security.isAuthenticated().isAdmin().getUser();
 		const schoolId = currentUser.schoolId;
 
 		const formData = await request.formData();
@@ -46,7 +46,7 @@ export const actions: Actions = {
 				firstName: user.firstName,
 				lastName: user.lastName,
 				email: user.email,
-				type: user.type
+				type: user.type,
 			})
 			.from(user)
 			.where(
@@ -56,9 +56,9 @@ export const actions: Actions = {
 					or(
 						ilike(user.firstName, `%${searchQuery}%`),
 						ilike(user.lastName, `%${searchQuery}%`),
-						ilike(user.email, `%${searchQuery}%`)
-					)
-				)
+						ilike(user.email, `%${searchQuery}%`),
+					),
+				),
 			)
 			.limit(10);
 
@@ -66,7 +66,7 @@ export const actions: Actions = {
 	},
 
 	loadUserTimetable: async ({ request, params, locals: { security } }) => {
-		const currentUser = security.isAuthenticated().isSchoolAdmin().getUser();
+		const currentUser = security.isAuthenticated().isAdmin().getUser();
 		const schoolId = currentUser.schoolId;
 
 		const formData = await request.formData();
@@ -88,12 +88,15 @@ export const actions: Actions = {
 		}
 
 		try {
-			const userTimetable = await generateUserTimetable(userId, parseInt(params.timetableDraftId));
+			const userTimetable = await generateUserTimetable(
+				userId,
+				parseInt(params.timetableDraftId),
+			);
 
 			return { userTimetable };
 		} catch (error) {
 			console.error('Error loading user timetable:', error);
 			return fail(500, { error: 'Failed to load timetable' });
 		}
-	}
+	},
 };

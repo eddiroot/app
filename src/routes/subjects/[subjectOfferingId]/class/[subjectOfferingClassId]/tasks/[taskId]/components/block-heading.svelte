@@ -67,16 +67,28 @@
 			{/if}
 		</div>
 	{:else if config.size === 1}
-		<h1 class="scroll-m-20 text-5xl font-extrabold tracking-tight">{config.text}</h1>
+		<h1 class="scroll-m-20 text-5xl font-extrabold tracking-tight">
+			{config.text}
+		</h1>
 	{:else if config.size === 2}
-		<h2 class="scroll-m-20 text-4xl font-semibold tracking-tight">{config.text}</h2>
+		<h2 class="scroll-m-20 text-4xl font-semibold tracking-tight">
+			{config.text}
+		</h2>
 	{:else if config.size === 3}
-		<h3 class="scroll-m-20 text-3xl font-semibold tracking-tight">{config.text}</h3>
+		<h3 class="scroll-m-20 text-3xl font-semibold tracking-tight">
+			{config.text}
+		</h3>
 	{:else if config.size === 4}
-		<h4 class="scroll-m-20 text-2xl font-semibold tracking-tight">{config.text}</h4>
+		<h4 class="scroll-m-20 text-2xl font-semibold tracking-tight">
+			{config.text}
+		</h4>
 	{:else if config.size === 5}
-		<h5 class="scroll-m-20 text-xl font-semibold tracking-tight">{config.text}</h5>
+		<h5 class="scroll-m-20 text-xl font-semibold tracking-tight">
+			{config.text}
+		</h5>
 	{:else if config.size === 6}
-		<h6 class="scroll-m-20 text-lg font-semibold tracking-tight">{config.text}</h6>
+		<h6 class="scroll-m-20 text-lg font-semibold tracking-tight">
+			{config.text}
+		</h6>
 	{/if}
 </div>

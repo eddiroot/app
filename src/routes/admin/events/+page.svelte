@@ -11,29 +11,29 @@
 			title: 'School Events',
 			description: 'e.g. end-of-year ceremonies, open days, and holidays.',
 			href: '/admin/events/school',
-			icon: SchoolIcon
+			icon: SchoolIcon,
 		},
 		{
 			type: 'campus',
 			title: 'Campus Events',
 			description: 'e.g. sports days, campus tours, and community events',
 			href: '/admin/events/campus',
-			icon: MapPinIcon
+			icon: MapPinIcon,
 		},
 		{
 			type: 'subject',
 			title: 'Subject Events',
 			description: 'e.g. year-wide exams, excursions, and presentations',
 			href: '/admin/events/subject',
-			icon: BookOpenIcon
+			icon: BookOpenIcon,
 		},
 		{
 			type: 'class',
 			title: 'Class Events',
 			description: 'e.g. tests, class trips, and special activities',
 			href: '/admin/events/class',
-			icon: ContactIcon
-		}
+			icon: ContactIcon,
+		},
 	];
 </script>
 
@@ -50,8 +50,12 @@
 							</div>
 						</div>
 						<div class="space-y-3 text-center">
-							<Card.Title class="text-xl font-semibold">{eventType.title}</Card.Title>
-							<Card.Description class="text-muted-foreground px-2 text-sm leading-relaxed">
+							<Card.Title class="text-xl font-semibold"
+								>{eventType.title}</Card.Title
+							>
+							<Card.Description
+								class="text-muted-foreground px-2 text-sm leading-relaxed"
+							>
 								{eventType.description}
 							</Card.Description>
 						</div>

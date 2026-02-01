@@ -40,7 +40,7 @@
 
 			const uploadResponse = await fetch('?/uploadFile', {
 				method: 'POST',
-				body: formData
+				body: formData,
 			});
 
 			const result = await uploadResponse.json();
@@ -55,14 +55,14 @@
 				throw new Error('No URL returned from upload');
 			}
 
-			await onConfigUpdate({
-				...config,
-				path: data.url,
-				altText: file.name
-			});
+			await onConfigUpdate({ ...config, path: data.url, altText: file.name });
 		} catch (error) {
 			console.error('Upload error:', error);
-			alert(error instanceof Error ? error.message : 'Failed to upload audio. Please try again.');
+			alert(
+				error instanceof Error
+					? error.message
+					: 'Failed to upload audio. Please try again.',
+			);
 		}
 	}
 
@@ -134,7 +134,9 @@
 					{config.path ? 'Replace Audio File' : 'Choose Audio File'}
 				</Button>
 				{#if config.altText}
-					<p class="text-muted-foreground text-sm">Selected: {config.altText}</p>
+					<p class="text-muted-foreground text-sm">
+						Selected: {config.altText}
+					</p>
 				{/if}
 			</div>
 

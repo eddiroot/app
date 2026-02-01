@@ -121,9 +121,6 @@ export async function seedDemoTasks(
 ): Promise<void> {
 	const { offerings, subjects, subjectGroups, classes } = subjectData;
 
-	let taskCount = 0;
-	let classTaskCount = 0;
-
 	// Process each class
 	for (const cls of classes) {
 		// Find the offering for this class
@@ -144,16 +141,16 @@ export async function seedDemoTasks(
 		const templates = TASK_TEMPLATES[subjectName];
 		if (!templates) continue;
 
-		// Get the first course map item for this offering
-		const courseMapItems = await db
+		// Get the first curriculum item for this offering
+		const curriculumItems = await db
 			.select()
-			.from(schema.courseMapItem)
-			.where(eq(schema.courseMapItem.subjectOfferingId, offering.id))
-			.orderBy(schema.courseMapItem.startWeek)
+			.from(schema.curriculumItem)
+			.where(eq(schema.curriculumItem.subjectOfferingId, offering.id))
+			.orderBy(schema.curriculumItem.startWeek)
 			.limit(1);
 
-		if (courseMapItems.length === 0) continue;
-		const firstCourseMapItem = courseMapItems[0];
+		if (curriculumItems.length === 0) continue;
+		const firstCurriculumItem = curriculumItems[0];
 
 		// Get the teacher for this class
 		const classTeachers = await db
@@ -184,8 +181,6 @@ export async function seedDemoTasks(
 				})
 				.returning();
 
-			taskCount++;
-
 			// Link task to the class with the course map item
 			await db
 				.insert(schema.subjectOfferingClassTask)
@@ -195,14 +190,9 @@ export async function seedDemoTasks(
 					subjectOfferingClassId: cls.id,
 					taskId: newTask.id,
 					authorId: classTeacher.userId,
-					courseMapItemId: firstCourseMapItem.id,
-					week: firstCourseMapItem.startWeek,
+					curriculumItemId: firstCurriculumItem.id,
+					week: firstCurriculumItem.startWeek,
 				});
-
-			classTaskCount++;
 		}
 	}
-
-	console.log(`  Created ${taskCount} tasks`);
-	console.log(`  Linked ${classTaskCount} tasks to classes`);
 }

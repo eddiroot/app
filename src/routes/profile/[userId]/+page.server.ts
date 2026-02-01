@@ -19,14 +19,9 @@ export const load = async ({ params, locals: { security } }) => {
 
 	// Anyone can view any profile, but only owner/admin can change password
 	const isOwnProfile = currentUser.id === targetUserId;
-	const isAdmin = currentUser.type === userTypeEnum.schoolAdmin;
+	const isAdmin = currentUser.type === userTypeEnum.admin;
 
-	return {
-		profile,
-		isOwnProfile,
-		isAdmin,
-		currentUser
-	};
+	return { profile, isOwnProfile, isAdmin, currentUser };
 };
 export const actions = {
 	changePassword: async ({ params, request, locals: { security } }) => {
@@ -35,13 +30,10 @@ export const actions = {
 
 		// Check permissions: user can change their own password or admin can change any password
 		const isOwnProfile = currentUser.id === targetUserId;
-		const isAdmin = currentUser.type === userTypeEnum.schoolAdmin;
+		const isAdmin = currentUser.type === userTypeEnum.admin;
 
 		if (!isOwnProfile && !isAdmin) {
-			return fail(403, {
-				message: 'Access denied.',
-				success: false
-			});
+			return fail(403, { message: 'Access denied.', success: false });
 		}
 
 		const formData = await request.formData();
@@ -53,21 +45,21 @@ export const actions = {
 		if (!newPassword || !confirmPassword) {
 			return fail(400, {
 				message: 'New password and confirmation are required.',
-				success: false
+				success: false,
 			});
 		}
 
 		if (newPassword.length < 6) {
 			return fail(400, {
 				message: 'New password must be at least 6 characters long.',
-				success: false
+				success: false,
 			});
 		}
 
 		if (newPassword !== confirmPassword) {
 			return fail(400, {
 				message: 'New passwords do not match.',
-				success: false
+				success: false,
 			});
 		}
 
@@ -76,14 +68,14 @@ export const actions = {
 			if (!currentPassword) {
 				return fail(400, {
 					message: 'Current password is required.',
-					success: false
+					success: false,
 				});
 			}
 
 			if (currentPassword === newPassword) {
 				return fail(400, {
 					message: 'New password must be different from current password.',
-					success: false
+					success: false,
 				});
 			}
 
@@ -97,16 +89,19 @@ export const actions = {
 			if (!existingUser || !existingUser.passwordHash) {
 				return fail(400, {
 					message: 'Unable to verify current password.',
-					success: false
+					success: false,
 				});
 			}
 
 			// Verify current password
-			const validCurrentPassword = await verify(existingUser.passwordHash, currentPassword);
+			const validCurrentPassword = await verify(
+				existingUser.passwordHash,
+				currentPassword,
+			);
 			if (!validCurrentPassword) {
 				return fail(400, {
 					message: 'Current password is incorrect.',
-					success: false
+					success: false,
 				});
 			}
 		}
@@ -119,16 +114,14 @@ export const actions = {
 				? 'Password changed successfully!'
 				: `Password changed successfully for ${targetUserId}!`;
 
-			return {
-				message,
-				success: true
-			};
+			return { message, success: true };
 		} catch (error) {
 			console.error('Error changing password:', error);
 			return fail(500, {
-				message: 'An error occurred while changing the password. Please try again.',
-				success: false
+				message:
+					'An error occurred while changing the password. Please try again.',
+				success: false,
 			});
 		}
-	}
+	},
 };

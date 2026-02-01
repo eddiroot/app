@@ -343,6 +343,4 @@ export async function seedDemoNews(
 			viewCount: 67,
 		},
 	]);
-
-	console.log('  Created 7 news articles');
 }

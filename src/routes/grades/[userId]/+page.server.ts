@@ -1,9 +1,14 @@
 import { userTypeEnum } from '$lib/enums';
-import { getUserProfileById /*, getStudentGrades */ } from '$lib/server/db/service';
+import {
+	getUserProfileById /*, getStudentGrades */,
+} from '$lib/server/db/service';
 import { redirect } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 
-export const load: PageServerLoad = async ({ params, locals: { security } }) => {
+export const load: PageServerLoad = async ({
+	params,
+	locals: { security },
+}) => {
 	const currentUser = security.isAuthenticated().getUser();
 	const targetUserId = params.userId;
 
@@ -24,7 +29,7 @@ export const load: PageServerLoad = async ({ params, locals: { security } }) => 
 
 	// Anyone can view student grades (for now - you might want to add permissions later)
 	const isOwnProfile = currentUser.id === targetUserId;
-	const isAdmin = currentUser.type === userTypeEnum.schoolAdmin;
+	const isAdmin = currentUser.type === userTypeEnum.admin;
 
 	// Load student grades/subjects
 	let studentSubjects = null;
@@ -36,7 +41,7 @@ export const load: PageServerLoad = async ({ params, locals: { security } }) => 
 			overallGrade: 85,
 			totalTasks: 8,
 			completedTasks: 7,
-			lastUpdated: new Date('2024-01-15').toISOString()
+			lastUpdated: new Date('2024-01-15').toISOString(),
 		},
 		{
 			subjectId: 2,
@@ -44,7 +49,7 @@ export const load: PageServerLoad = async ({ params, locals: { security } }) => 
 			overallGrade: 92,
 			totalTasks: 6,
 			completedTasks: 6,
-			lastUpdated: new Date('2024-01-12').toISOString()
+			lastUpdated: new Date('2024-01-12').toISOString(),
 		},
 		{
 			subjectId: 3,
@@ -52,7 +57,7 @@ export const load: PageServerLoad = async ({ params, locals: { security } }) => 
 			overallGrade: 78,
 			totalTasks: 10,
 			completedTasks: 9,
-			lastUpdated: new Date('2024-01-10').toISOString()
+			lastUpdated: new Date('2024-01-10').toISOString(),
 		},
 		{
 			subjectId: 4,
@@ -60,7 +65,7 @@ export const load: PageServerLoad = async ({ params, locals: { security } }) => 
 			overallGrade: 45,
 			totalTasks: 5,
 			completedTasks: 5,
-			lastUpdated: new Date('2024-01-08').toISOString()
+			lastUpdated: new Date('2024-01-08').toISOString(),
 		},
 		{
 			subjectId: 5,
@@ -68,7 +73,7 @@ export const load: PageServerLoad = async ({ params, locals: { security } }) => 
 			overallGrade: 95,
 			totalTasks: 7,
 			completedTasks: 6,
-			lastUpdated: new Date('2024-01-05').toISOString()
+			lastUpdated: new Date('2024-01-05').toISOString(),
 		},
 		{
 			subjectId: 6,
@@ -76,16 +81,10 @@ export const load: PageServerLoad = async ({ params, locals: { security } }) => 
 			overallGrade: 38,
 			totalTasks: 4,
 			completedTasks: 3,
-			lastUpdated: new Date('2024-01-03').toISOString()
-		}
+			lastUpdated: new Date('2024-01-03').toISOString(),
+		},
 	];
 	// Real implementation: studentSubjects = await getStudentSubjectGrades(targetUserId);
 
-	return {
-		profile,
-		isOwnProfile,
-		isAdmin,
-		currentUser,
-		studentSubjects
-	};
+	return { profile, isOwnProfile, isAdmin, currentUser, studentSubjects };
 };

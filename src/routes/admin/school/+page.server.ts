@@ -1,12 +1,16 @@
 import { getSchoolById, updateSchool } from '$lib/server/db/service';
-import { deleteFile, generateUniqueFileName, uploadBufferHelper } from '$lib/server/obj';
+import {
+	deleteFile,
+	generateUniqueFileName,
+	uploadBufferHelper,
+} from '$lib/server/obj';
 import { error } from '@sveltejs/kit';
 import { fail, superValidate, withFiles } from 'sveltekit-superforms';
 import { zod4 } from 'sveltekit-superforms/adapters';
 import { schoolFormSchema } from './schema';
 
 export const load = async ({ locals: { security } }) => {
-	const user = security.isAuthenticated().isSchoolAdmin().getUser();
+	const user = security.isAuthenticated().isAdmin().getUser();
 	const school = await getSchoolById(user.schoolId);
 
 	if (!school) {
@@ -14,10 +18,8 @@ export const load = async ({ locals: { security } }) => {
 	}
 
 	const form = await superValidate(
-		{
-			name: school?.name || ''
-		},
-		zod4(schoolFormSchema)
+		{ name: school?.name || '' },
+		zod4(schoolFormSchema),
 	);
 
 	return { form, school };
@@ -25,7 +27,7 @@ export const load = async ({ locals: { security } }) => {
 
 export const actions = {
 	default: async ({ request, locals: { security } }) => {
-		const user = security.isAuthenticated().isSchoolAdmin().getUser();
+		const user = security.isAuthenticated().isAdmin().getUser();
 
 		const formData = await request.formData();
 		const form = await superValidate(formData, zod4(schoolFormSchema));
@@ -41,15 +43,15 @@ export const actions = {
 				return fail(404, { form, message: 'School not found' });
 			}
 
-			let logoUrl = school.logoUrl || undefined;
+			let logoPath = school.logoPath || undefined;
 
 			// Handle logo upload if provided
 			if (form.data.logo && form.data.logo.size > 0) {
 				// Delete existing logo if it exists
-				if (school.logoUrl) {
+				if (school.logoPath) {
 					try {
 						// Extract the object name from the URL
-						const urlParts = school.logoUrl.split('/');
+						const urlParts = school.logoPath.split('/');
 						const objectName = urlParts.slice(-1)[0];
 						await deleteFile(objectName);
 					} catch (deleteError) {
@@ -59,16 +61,20 @@ export const actions = {
 
 				const buffer = Buffer.from(await form.data.logo.arrayBuffer());
 				const uniqueFileName = generateUniqueFileName(form.data.logo.name);
-				logoUrl = await uploadBufferHelper(buffer, uniqueFileName, form.data.logo.type);
+				logoPath = await uploadBufferHelper(
+					buffer,
+					uniqueFileName,
+					form.data.logo.type,
+				);
 			}
 
 			// Update school with new details and logo URL
-			await updateSchool(user.schoolId, form.data.name, logoUrl);
+			await updateSchool(user.schoolId, form.data.name, logoPath);
 
 			return withFiles({ form });
 		} catch (error) {
 			console.error('Error updating school:', error);
 			return fail(500, { form, message: 'Failed to update school details' });
 		}
-	}
+	},
 };
