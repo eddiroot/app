@@ -3,6 +3,8 @@
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { Input } from '$lib/components/ui/input/index.js';
 	import { Label } from '$lib/components/ui/label/index.js';
+
+	let { form } = $props();
 </script>
 
 <div class="grid h-full lg:grid-cols-2">
@@ -43,6 +45,13 @@
 							Or continue with
 						</span>
 					</div>
+					{#if form?.message}
+						<div
+							class="border-destructive/30 bg-destructive/10 text-destructive rounded-md border p-4 text-sm"
+						>
+							{form.message}
+						</div>
+					{/if}
 					<div class="grid gap-6">
 						<div class="grid gap-3">
 							<Label for="email">Email</Label>

@@ -19,15 +19,8 @@ export const actions = {
 		const email = formData.get('email');
 		const password = formData.get('password');
 
-		if (!validateEmail(email)) {
-			return fail(400, {
-				message: 'Invalid email (min 3, max 31 characters, alphanumeric only)',
-			});
-		}
-		if (!validatePassword(password)) {
-			return fail(400, {
-				message: 'Invalid password (min 6, max 255 characters)',
-			});
+		if (!validateEmail(email) || !validatePassword(password)) {
+			return fail(400, { message: 'Invalid email or password' });
 		}
 
 		const results = await db
