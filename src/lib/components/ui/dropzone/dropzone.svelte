@@ -1,5 +1,6 @@
 <script lang="ts">
 	import ResourceCard from '$lib/components/resource-card.svelte';
+	import { getFileTypeFromMimeType } from '$lib/schema/resource';
 	import { cn } from '$lib/utils';
 	import CloudUploadIcon from '@lucide/svelte/icons/cloud-upload';
 
@@ -72,40 +73,31 @@
 		dragover = false;
 	}
 
-	// Map File to ResourceInfo for the ResourceCard
 	function mapFileToResourceInfo(
 		file: File,
 		index?: number
 	): {
 		id?: number;
-		name?: string;
 		fileName: string;
 		fileSize: number;
-		resourceType: string;
+		fileType: string;
 	} {
-		const type = getResourceTypeFromMimeType(file.type);
+		const fileType = getFileTypeFromMimeType(file.type);
 		return {
-			id: index, // Use index as temporary id for new files
+			id: index,
 			fileName: file.name,
 			fileSize: file.size,
-			resourceType: type
+			fileType,
 		};
 	}
 
-	function getResourceTypeFromMimeType(mimeType: string): string {
-		if (mimeType.startsWith('image/')) return 'image';
-		if (mimeType.startsWith('video/')) return 'video';
-		if (mimeType.startsWith('audio/')) return 'audio';
-		if (mimeType === 'application/pdf') return 'pdf';
-		if (mimeType.includes('document')) return 'document';
-		return 'document';
-	}
+	
 </script>
 
 <div class="space-y-4">
 	<!-- Drop Zone -->
 	<div
-		{id}
+		
 		class={cn(
 			'hover:bg-muted hover:border-muted-foreground flex h-48 w-full cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed transition-colors',
 			className
@@ -144,6 +136,7 @@
 		<input
 			bind:this={fileInput}
 			type="file"
+			{id}
 			{accept}
 			{multiple}
 			onchange={handleChange}
@@ -164,10 +157,8 @@
 						variant="new"
 						onRemove={() => removeFile(index)}
 						onOpen={() => {
-							// For new files, create a temporary URL to preview
 							const url = URL.createObjectURL(file);
 							window.open(url, '_blank');
-							// Clean up the URL after a delay to prevent memory leaks
 							setTimeout(() => URL.revokeObjectURL(url), 1000);
 						}}
 						showRemoveButton={true}

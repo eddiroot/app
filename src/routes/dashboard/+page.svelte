@@ -48,10 +48,9 @@
 <div
 	class="grid h-full grid-cols-1 gap-6 overflow-y-auto p-8 xl:grid-cols-[1fr_1fr_1fr]"
 >
-	<!-- Today's Events -->
 	<Card.Root class="h-full overflow-hidden shadow-none">
 		<Card.Header>
-			<Card.Title class="text-xl">Today's Events</Card.Title>
+			<Card.Title class="text-xl">Your Day</Card.Title>
 		</Card.Header>
 		<Card.Content class="h-full overflow-hidden">
 			{#if data.userClasses && data.userClasses.length > 0}
@@ -69,7 +68,7 @@
 				</ScrollArea>
 			{:else}
 				<p class="text-muted-foreground text-center">
-					No classes scheduled for today.
+					No events or classes scheduled for today.
 				</p>
 			{/if}
 		</Card.Content>

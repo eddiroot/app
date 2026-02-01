@@ -19,7 +19,7 @@
 </svelte:head>
 
 <Toaster />
-<ModeWatcher />
+<ModeWatcher defaultMode="system" />
 <Sidebar.Provider class="flex flex-col">
 	<div class="flex flex-1">
 		{#if user()}

@@ -4,8 +4,8 @@ import {
 	createTask,
 	getTopics,
 } from '$lib/server/db/service';
-import { error, redirect } from '@sveltejs/kit';
-import { superValidate } from 'sveltekit-superforms';
+import { error, isRedirect, redirect } from '@sveltejs/kit';
+import { fail, superValidate } from 'sveltekit-superforms';
 import { zod4 } from 'sveltekit-superforms/adapters';
 import { formSchema } from './schema';
 
@@ -46,16 +46,16 @@ export const actions = {
 			const formData = await request.formData();
 			const form = await superValidate(formData, zod4(formSchema));
 
-			if (form.data.creationMethod === 'ai') {
-				// TODO: Generate the task using AI workflow
-				// Use form.data.files
+			if (!form.valid) {
+				return fail(400, { form });
+			}
 
+			if (form.data.files && form.data.files.length > 0) {
 				throw redirect(
 					303,
 					`/subjects/${subjectOfferingId}/class/${subjectOfferingClassId}/tasks/${123}`,
 				);
 			} else {
-				// Manual creation - create task without AI workflow
 				const task = await createTask({
 					title: form.data.title,
 					description: form.data.description || '',
@@ -64,7 +64,7 @@ export const actions = {
 				});
 
 				await createSubjectOfferingClassTask({
-					index: 0, // TODO: Determine the correct index
+					index: 0,
 					taskId: task.id,
 					subjectOfferingClassId: subjectOfferingClassIdInt,
 					authorId: user.id,
@@ -78,7 +78,7 @@ export const actions = {
 				);
 			}
 		} catch (err) {
-			console.error('Error creating task:', err);
+			if (isRedirect(err)) throw err;
 			return {
 				status: 500,
 				error: 'Unknown error occurred during task creation',

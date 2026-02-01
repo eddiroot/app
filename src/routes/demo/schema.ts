@@ -7,11 +7,6 @@ export const formSchema = z.object({
 		.email({ message: 'Please enter a valid email address' })
 		.toLowerCase(),
 	schoolName: z.string().min(1, { message: 'School name is required' }),
-	agreeToContact: z
-		.boolean()
-		.refine((val) => val === true, {
-			message: 'Please agree to be contacted by our team',
-		}),
 });
 
 export type FormSchema = typeof formSchema;

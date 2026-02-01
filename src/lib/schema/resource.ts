@@ -1,7 +1,9 @@
 import z from 'zod';
 
-const MAX_MB_COUNT = 50;
-const MAX_UPLOAD_SIZE = 1024 * 1024 * MAX_MB_COUNT;
+const MIN_KB_COUNT = 10;
+const MIN_UPLOAD_SIZE_BYTES = 10_000; // 10KB
+const MAX_MB_COUNT = 10;
+const MAX_UPLOAD_SIZE_BYTES = 10_000_000; // 10MB
 
 const ACCEPTED_FILE_TYPES = [
 	// Images
@@ -50,18 +52,49 @@ const ACCEPTED_FILE_TYPES = [
 	{ mime: 'application/x-zip-compressed', extension: 'ZIP' },
 ];
 
+export function getFileTypeFromMimeType(mimeType: string): string {
+	if (mimeType.startsWith('image/')) return 'image';
+	if (mimeType.startsWith('video/')) return 'video';
+	if (mimeType.startsWith('audio/')) return 'audio';
+	if (mimeType === 'application/pdf') return 'pdf';
+	if (mimeType.includes('document')) return 'document';
+	return 'document';
+}
+
 const fileSchema = z
-	.instanceof(File)
-	.refine((file) => {
-		return file.size <= MAX_UPLOAD_SIZE;
-	}, `File size must be less than ${MAX_MB_COUNT}MB`)
-	.refine((file) => {
-		return ACCEPTED_FILE_TYPES.map((t) => t.mime).includes(file.type);
-	}, 'File is not one of the accepted types');
+	.file()
+	.min(MIN_UPLOAD_SIZE_BYTES, `Files must be at least ${MIN_KB_COUNT}KB`)
+	.max(MAX_UPLOAD_SIZE_BYTES, `Files must be less than ${MAX_MB_COUNT}MB`)
+	.mime(
+		ACCEPTED_FILE_TYPES.map((t) => t.mime),
+		'File is not one of the accepted types',
+	);
 
 const filesSchema = z
 	.array(fileSchema)
 	.min(1, 'At least one file is required')
 	.max(10, 'Maximum 10 files allowed');
 
-export { fileSchema, filesSchema, MAX_MB_COUNT, MAX_UPLOAD_SIZE };
+const filesOptionalSchema = z.preprocess((val) => {
+	if (!Array.isArray(val)) return undefined;
+	const filtered = val.filter((f) => f !== undefined);
+	return filtered.length === 0 ? undefined : filtered;
+}, z.array(fileSchema).max(10, 'Maximum 10 files allowed').optional());
+
+const imageSchema = fileSchema.refine(
+	(file) => file.type.startsWith('image/'),
+	{ message: 'File must be an image' },
+);
+
+const imagesSchema = z
+	.array(imageSchema)
+	.min(1, 'At least one image is required')
+	.max(10, 'Maximum 10 images allowed');
+
+export {
+	fileSchema,
+	filesOptionalSchema,
+	filesSchema,
+	imageSchema,
+	imagesSchema,
+};

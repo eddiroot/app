@@ -3,7 +3,7 @@
 	"tailwind": { "css": "src/app.css", "baseColor": "neutral" },
 	"aliases": {
 		"components": "$lib/components",
-		"utils": "$lib/utils",
+		"utils": "$lib/utils/ui",
 		"ui": "$lib/components/ui",
 		"hooks": "$lib/hooks",
 		"lib": "$lib"

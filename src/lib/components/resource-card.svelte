@@ -11,7 +11,7 @@
 
 	interface ResourceInfo {
 		id?: number;
-		name?: string; // Made optional since Resource type doesn't have this
+		name?: string;
 		fileName: string;
 		fileSize: number;
 		fileType: string;
@@ -60,27 +60,6 @@
 		const sizes = ['B', 'KB', 'MB', 'GB'];
 		const i = Math.floor(Math.log(bytes) / Math.log(k));
 		return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
-	}
-
-	function getResourceTypeColor(fileType: string): string {
-		switch (fileType) {
-			case 'photo':
-			case 'image':
-				return 'bg-purple-100 text-purple-800';
-			case 'video':
-				return 'bg-red-100 text-red-800';
-			case 'audio':
-				return 'bg-green-100 text-green-800';
-			case 'document':
-			case 'pdf':
-				return 'bg-blue-100 text-blue-800';
-			case 'link':
-				return 'bg-cyan-100 text-cyan-800';
-			case 'note':
-				return 'bg-yellow-100 text-yellow-800';
-			default:
-				return 'bg-gray-100 text-gray-800';
-		}
 	}
 
 	let fileType = () => resource.fileType;
