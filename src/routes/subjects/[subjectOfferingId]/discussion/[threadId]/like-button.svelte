@@ -17,11 +17,8 @@
 		size?: ButtonSize;
 	} = $props();
 
-	// Safe to ignore - initial state won't change after mount
-	// svelte-ignore state_referenced_locally
-	let liked = $state(initialLiked);
-	// svelte-ignore state_referenced_locally
-	let count = $state(initialCount);
+	let liked = $derived(initialLiked);
+	let count = $derived(initialCount);
 	let isSubmitting = $state(false);
 </script>
 

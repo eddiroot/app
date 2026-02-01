@@ -24,7 +24,7 @@
 
 	let createActivityDialogOpen = $state(false);
 	let editActivityDialogOpen = $state(false);
-	let selectedYearLevel = $derived(data.defaultYearLevel?.toString());
+	let selectedYearLevel = $state(data.defaultYearLevel?.toString());
 
 	let dataCreateActivityForm = () => data.createActivityForm;
 	const createForm = superForm(dataCreateActivityForm(), {

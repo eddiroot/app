@@ -94,12 +94,14 @@
 
 	let { data } = $props();
 
-	let blocks = $derived(data.blocks);
+	let dataBlocks = () => data.blocks;
+	let blocks = $state(dataBlocks());
 	let responses = $state<Record<number, any>>({});
 
 	let mouseOverElement = $state<string>('');
-	let viewMode = $derived<ViewMode>(
-		data.user.type == userTypeEnum.student
+	let dataUserType = () => data.user.type;
+	let viewMode = $state<ViewMode>(
+		dataUserType() == userTypeEnum.student
 			? ViewMode.ANSWER
 			: ViewMode.CONFIGURE,
 	);
@@ -138,14 +140,8 @@
 
 	const isContentBlocked = $derived(() => {
 		if (data.user.type !== userTypeEnum.student) return false;
-
 		if (data.classTask.quizMode === quizModeEnum.none) return false;
-
-		if (!data.isQuizStarted) {
-			return true;
-		}
-
-		return false;
+		return !data.isQuizStarted;
 	});
 
 	$effect(() => {

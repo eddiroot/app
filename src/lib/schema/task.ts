@@ -602,10 +602,12 @@ export const blockTypes: {
 		type: taskBlockTypeEnum.choice,
 		name: 'Multiple Choice',
 		initialConfig: {
-			question: 'Sample multiple choice question?',
+			question: 'Which of these words is a noun?',
 			options: [
-				{ text: 'Option 1', isAnswer: false },
-				{ text: 'Option 2', isAnswer: true },
+				{ text: 'Melbourne', isAnswer: true },
+				{ text: 'Book', isAnswer: true },
+				{ text: 'Run', isAnswer: false },
+				{ text: 'Bake', isAnswer: false },
 			],
 		},
 		icon: List,

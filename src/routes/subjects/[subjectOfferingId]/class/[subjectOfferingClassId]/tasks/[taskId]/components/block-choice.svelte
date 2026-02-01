@@ -23,14 +23,14 @@
 		viewMode,
 	}: ChoiceBlockProps = $props();
 
-	let isMultiAnswer = $derived(() => {
-		return config.options.filter((option) => option.isAnswer).length > 1;
-	});
+	let isMultiAnswer = $derived(
+		config.options.filter((option) => option.isAnswer).length > 1,
+	);
 
 	async function toggleAnswer(option: string) {
 		let newResponse = { ...response };
 
-		if (!isMultiAnswer()) {
+		if (!isMultiAnswer) {
 			newResponse.answers = [option];
 		} else {
 			if (newResponse.answers.includes(option)) {
@@ -99,7 +99,11 @@
 							size="sm"
 							onclick={async () => {
 								const newConfig = { ...config };
-								newConfig.options.push({ text: '', isAnswer: false });
+								const optionNumber = newConfig.options.length + 1;
+								newConfig.options.push({
+									text: `Option ${optionNumber}`,
+									isAnswer: false,
+								});
 								await onConfigUpdate(newConfig);
 							}}
 						>
@@ -120,12 +124,12 @@
 									disabled={!option.text.trim()}
 								>
 									{#if getCorrectAnswers()?.includes(option.text)}
-										{#if !isMultiAnswer()}
+										{#if !isMultiAnswer}
 											<CheckCircleIcon />
 										{:else}
 											<CheckSquareIcon />
 										{/if}
-									{:else if !isMultiAnswer()}
+									{:else if !isMultiAnswer}
 										<CircleIcon />
 									{:else}
 										<SquareIcon />
@@ -144,7 +148,6 @@
 												onConfigUpdate(newConfig);
 											}
 										}}
-										placeholder={`Option ${index + 1}`}
 										class="w-full"
 									/>
 								</div>
@@ -177,7 +180,7 @@
 					<Card.Content>
 						<div class="mb-6">
 							<h3 class="mb-2 text-lg font-medium">{config.question}</h3>
-							{#if isMultiAnswer()}
+							{#if isMultiAnswer}
 								<p class="text-muted-foreground text-sm">
 									Select all correct answers
 								</p>
@@ -196,7 +199,7 @@
 									class="text-left"
 									disabled={viewMode === ViewMode.REVIEW}
 								>
-									{#if !isMultiAnswer()}
+									{#if !isMultiAnswer}
 										{#if isSelected && isCorrect}
 											<CheckCircleIcon class="text-success" />
 										{:else if isSelected && !isCorrect}
