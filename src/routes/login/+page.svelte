@@ -47,7 +47,7 @@
 					</div>
 					{#if form?.message}
 						<div
-							class="rounded-md border border-red-300 bg-red-50 p-4 text-sm text-red-700"
+							class="border-destructive/30 bg-destructive/10 text-destructive rounded-md border p-4 text-sm"
 						>
 							{form.message}
 						</div>
