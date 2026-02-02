@@ -2843,16 +2843,32 @@ export class ImageControlPoints extends BoundingBoxControlPoints {
 		const scaleX = image.scaleX || 1
 		const scaleY = image.scaleY || 1
 
+		// If image has a clipPath, use the clip dimensions and offset for control points
+		let effectiveWidth = width
+		let effectiveHeight = height
+		let clipOffsetX = 0
+		let clipOffsetY = 0
+
+		if (image.clipPath && image.clipPath.type === 'rect') {
+			const clipRect = image.clipPath as fabric.Rect
+			effectiveWidth = clipRect.width || width
+			effectiveHeight = clipRect.height || height
+			// The clipPath left/top are relative to the image center
+			clipOffsetX = (clipRect.left || 0) + effectiveWidth / 2
+			clipOffsetY = (clipRect.top || 0) + effectiveHeight / 2
+		}
+
 		// Get transformation matrix
 		const matrix = image.calcTransformMatrix()
 
 		// Define corners in local coordinates (unscaled, relative to origin)
 		// Images use center origin, so corners are at ±width/2, ±height/2
+		// When clipped, we need to offset by the clip position
 		const corners = [
-			{ x: -width / 2, y: -height / 2 }, // Top-left
-			{ x: width / 2, y: -height / 2 }, // Top-right
-			{ x: width / 2, y: height / 2 }, // Bottom-right
-			{ x: -width / 2, y: height / 2 } // Bottom-left
+			{ x: clipOffsetX - effectiveWidth / 2, y: clipOffsetY - effectiveHeight / 2 }, // Top-left
+			{ x: clipOffsetX + effectiveWidth / 2, y: clipOffsetY - effectiveHeight / 2 }, // Top-right
+			{ x: clipOffsetX + effectiveWidth / 2, y: clipOffsetY + effectiveHeight / 2 }, // Bottom-right
+			{ x: clipOffsetX - effectiveWidth / 2, y: clipOffsetY + effectiveHeight / 2 } // Bottom-left
 		]
 
 		// Transform to absolute coordinates (this applies scale, rotation, and translation)
@@ -3029,14 +3045,31 @@ export class ImageControlPoints extends BoundingBoxControlPoints {
 
 		const width = image.width || 0
 		const height = image.height || 0
+
+		// If image has a clipPath, use the clip dimensions and offset for control points
+		let effectiveWidth = width
+		let effectiveHeight = height
+		let clipOffsetX = 0
+		let clipOffsetY = 0
+
+		if (image.clipPath && image.clipPath.type === 'rect') {
+			const clipRect = image.clipPath as fabric.Rect
+			effectiveWidth = clipRect.width || width
+			effectiveHeight = clipRect.height || height
+			// The clipPath left/top are relative to the image center
+			clipOffsetX = (clipRect.left || 0) + effectiveWidth / 2
+			clipOffsetY = (clipRect.top || 0) + effectiveHeight / 2
+		}
+
 		const matrix = image.calcTransformMatrix()
 
 		// Define corners in local coordinates (unscaled, relative to center origin)
+		// When clipped, we need to offset by the clip position
 		const corners = [
-			{ x: -width / 2, y: -height / 2 },
-			{ x: width / 2, y: -height / 2 },
-			{ x: width / 2, y: height / 2 },
-			{ x: -width / 2, y: height / 2 }
+			{ x: clipOffsetX - effectiveWidth / 2, y: clipOffsetY - effectiveHeight / 2 },
+			{ x: clipOffsetX + effectiveWidth / 2, y: clipOffsetY - effectiveHeight / 2 },
+			{ x: clipOffsetX + effectiveWidth / 2, y: clipOffsetY + effectiveHeight / 2 },
+			{ x: clipOffsetX - effectiveWidth / 2, y: clipOffsetY + effectiveHeight / 2 }
 		]
 
 		// Transform to absolute coordinates (matrix handles scale, rotation, translation)
@@ -4219,13 +4252,23 @@ Z
 			absolutePositioned: false
 		})
 
-		// Apply the clip path
-		image.clipPath = clipRect
-
 		// Adjust image position so the visible part is centered where it was
 		const newCenterX = this.cropBounds.left + this.cropBounds.width / 2
 		const newCenterY = this.cropBounds.top + this.cropBounds.height / 2
+
+		// Instead of changing width/height and applying clipPath,
+		// we keep the original width/height but adjust scaleX/scaleY
+		// The clipPath coordinates need to stay relative to the ORIGINAL dimensions
+		image.clipPath = clipRect
+
+		// Calculate the new scale to make the cropped area fill the display bounds
+		const newScaleX = this.cropBounds.width / cropWidth
+		const newScaleY = this.cropBounds.height / cropHeight
+
+		// Update the image with new scale and position
 		image.set({
+			scaleX: newScaleX,
+			scaleY: newScaleY,
 			left: newCenterX,
 			top: newCenterY
 		})
@@ -4238,6 +4281,8 @@ Z
 				width: clipRect.width,
 				height: clipRect.height
 			},
+			scaleX: newScaleX,
+			scaleY: newScaleY,
 			position: {
 				left: newCenterX,
 				top: newCenterY
