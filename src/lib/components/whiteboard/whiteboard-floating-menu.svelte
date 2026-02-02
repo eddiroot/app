@@ -1109,54 +1109,15 @@
 						</div>
 					</div>
 
-					<Separator />
+			<Separator />
 
-					<!-- Layering Controls -->
-					<div class="space-y-1.5">
-						<Label class="text-xs font-medium">Layering</Label>
-						<div class="grid grid-cols-2 gap-2">
-							<Button
-								variant="outline"
-								size="sm"
-								onclick={onBringToFront}
-								class="flex items-center justify-center gap-2"
-								disabled={!onBringToFront}
-							>
-								<ArrowUpToLineIcon class="h-4 w-4" />
-								<span>To Front</span>
-							</Button>
-							<Button
-								variant="outline"
-								size="sm"
-								onclick={onSendToBack}
-								class="flex items-center justify-center gap-2"
-								disabled={!onSendToBack}
-							>
-								<ArrowDownToLineIcon class="h-4 w-4" />
-								<span>To Back</span>
-							</Button>
-							<Button
-								variant="outline"
-								size="sm"
-								onclick={onMoveForward}
-								class="flex items-center justify-center gap-2"
-								disabled={!onMoveForward}
-							>
-								<ArrowUpIcon class="h-4 w-4" />
-								<span>Forward</span>
-							</Button>
-							<Button
-								variant="outline"
-								size="sm"
-								onclick={onMoveBackward}
-								class="flex items-center justify-center gap-2"
-								disabled={!onMoveBackward}
-							>
-								<ArrowDownIcon class="h-4 w-4" />
-								<span>Backward</span>
-							</Button>
-						</div>
-					</div>
+			<!-- Layering Controls -->
+			<WhiteboardLayeringControls
+				{onBringToFront}
+				{onSendToBack}
+				{onMoveForward}
+				{onMoveBackward}
+			/>
 				</Card.Content>
 			{:else if activeMenuPanel === 'select'}
 				<Card.Header class="pb-0">
