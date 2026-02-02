@@ -2438,26 +2438,29 @@ export class TextboxControlPoints extends BoundingBoxControlPoints {
 			})
 		})
 
-		// Create rotation handle (index 12)
-		const topMidpoint = edgeMidpoints[0]
-		const rotationY = topMidpoint.y - 30
-		const rotationControlPointId = `${objectId}-cp-12`
-		const rotationCircle = this.createControlPointCircle(
-			topMidpoint.x,
-			rotationY,
-			rotationControlPointId,
-			objectId,
-			12,
-			true
-		)
-		rotationCircle.set({ visible, hoverCursor: 'crosshair' })
-		this.canvas.add(rotationCircle)
-		this.controlPoints.push({
-			id: rotationControlPointId,
-			circle: rotationCircle,
-			objectId,
-			pointIndex: 12
-		})
+		// DISABLED: Rotation control point for text objects due to bugs
+		/*
+// Create rotation handle (index 12)
+const topMidpoint = edgeMidpoints[0]
+const rotationY = topMidpoint.y - 30
+const rotationControlPointId = `${objectId}-cp-12`
+const rotationCircle = this.createControlPointCircle(
+topMidpoint.x,
+rotationY,
+rotationControlPointId,
+objectId,
+12,
+true
+)
+rotationCircle.set({ visible, hoverCursor: 'crosshair' })
+this.canvas.add(rotationCircle)
+this.controlPoints.push({
+id: rotationControlPointId,
+circle: rotationCircle,
+objectId,
+pointIndex: 12
+})
+*/
 
 		// Create border lines
 		const zoom = this.canvas.getZoom()
@@ -3381,126 +3384,129 @@ export class ImageControlPoints extends BoundingBoxControlPoints {
  */
 export class PathControlPoints extends BoundingBoxControlPoints {
 	addControlPoints(objectId: string, obj: fabric.Object, visible: boolean = true): void {
-		const path = obj as fabric.Path
-		const bounds = path.getBoundingRect()
+		// DISABLED: All control points for brush/path objects due to bugs
+		/*
+const path = obj as fabric.Path
+const bounds = path.getBoundingRect()
 
-		// Use bounding rect corners
-		const corners = [
-			{ x: bounds.left, y: bounds.top },
-			{ x: bounds.left + bounds.width, y: bounds.top },
-			{ x: bounds.left + bounds.width, y: bounds.top + bounds.height },
-			{ x: bounds.left, y: bounds.top + bounds.height }
-		]
+// Use bounding rect corners
+const corners = [
+{ x: bounds.left, y: bounds.top },
+{ x: bounds.left + bounds.width, y: bounds.top },
+{ x: bounds.left + bounds.width, y: bounds.top + bounds.height },
+{ x: bounds.left, y: bounds.top + bounds.height }
+]
 
-		// Create corner control points
-		corners.forEach((corner, index) => {
-			const controlPointId = `${objectId}-cp-${index}`
-			const circle = this.createControlPointCircle(
-				corner.x,
-				corner.y,
-				controlPointId,
-				objectId,
-				index,
-				true
-			)
-			circle.set({ visible })
-			this.canvas.add(circle)
-			this.controlPoints.push({ id: controlPointId, circle, objectId, pointIndex: index })
-		})
+// Create corner control points
+corners.forEach((corner, index) => {
+const controlPointId = `${objectId}-cp-${index}`
+const circle = this.createControlPointCircle(
+corner.x,
+corner.y,
+controlPointId,
+objectId,
+index,
+true
+)
+circle.set({ visible })
+this.canvas.add(circle)
+this.controlPoints.push({ id: controlPointId, circle, objectId, pointIndex: index })
+})
 
-		// Create edge midpoints
-		const edgeMidpoints = [
-			{ x: (corners[0].x + corners[1].x) / 2, y: (corners[0].y + corners[1].y) / 2, pointIndex: 8 },
-			{ x: (corners[1].x + corners[2].x) / 2, y: (corners[1].y + corners[2].y) / 2, pointIndex: 9 },
-			{
-				x: (corners[2].x + corners[3].x) / 2,
-				y: (corners[2].y + corners[3].y) / 2,
-				pointIndex: 10
-			},
-			{ x: (corners[3].x + corners[0].x) / 2, y: (corners[3].y + corners[0].y) / 2, pointIndex: 11 }
-		]
+// Create edge midpoints
+const edgeMidpoints = [
+{ x: (corners[0].x + corners[1].x) / 2, y: (corners[0].y + corners[1].y) / 2, pointIndex: 8 },
+{ x: (corners[1].x + corners[2].x) / 2, y: (corners[1].y + corners[2].y) / 2, pointIndex: 9 },
+{
+x: (corners[2].x + corners[3].x) / 2,
+y: (corners[2].y + corners[3].y) / 2,
+pointIndex: 10
+},
+{ x: (corners[3].x + corners[0].x) / 2, y: (corners[3].y + corners[0].y) / 2, pointIndex: 11 }
+]
 
-		edgeMidpoints.forEach((midpoint) => {
-			const controlPointId = `${objectId}-cp-${midpoint.pointIndex}`
-			const circle = this.createControlPointCircle(
-				midpoint.x,
-				midpoint.y,
-				controlPointId,
-				objectId,
-				midpoint.pointIndex,
-				true
-			)
-			circle.set({ visible })
-			this.canvas.add(circle)
-			this.controlPoints.push({
-				id: controlPointId,
-				circle,
-				objectId,
-				pointIndex: midpoint.pointIndex
-			})
-		})
+edgeMidpoints.forEach((midpoint) => {
+const controlPointId = `${objectId}-cp-${midpoint.pointIndex}`
+const circle = this.createControlPointCircle(
+midpoint.x,
+midpoint.y,
+controlPointId,
+objectId,
+midpoint.pointIndex,
+true
+)
+circle.set({ visible })
+this.canvas.add(circle)
+this.controlPoints.push({
+id: controlPointId,
+circle,
+objectId,
+pointIndex: midpoint.pointIndex
+})
+})
 
-		// Create rotation handle with zoom-adjusted distance
-		const topMidpoint = edgeMidpoints[0]
-		const center = path.getCenterPoint()
-		const vectorX = topMidpoint.x - center.x
-		const vectorY = topMidpoint.y - center.y
-		const vectorLength = Math.sqrt(vectorX * vectorX + vectorY * vectorY)
-		const normalizedX = vectorX / vectorLength
-		const normalizedY = vectorY / vectorLength
-		const rotationDistance = this.getRotationHandleDistance()
-		const rotationX = center.x + normalizedX * (vectorLength + rotationDistance)
-		const rotationY = center.y + normalizedY * (vectorLength + rotationDistance)
-		const rotationControlPointId = `${objectId}-cp-12`
-		const rotationCircle = this.createControlPointCircle(
-			rotationX,
-			rotationY,
-			rotationControlPointId,
-			objectId,
-			12,
-			true
-		)
-		rotationCircle.set({ visible, hoverCursor: 'crosshair' })
-		this.canvas.add(rotationCircle)
-		this.controlPoints.push({
-			id: rotationControlPointId,
-			circle: rotationCircle,
-			objectId,
-			pointIndex: 12
-		})
+// Create rotation handle with zoom-adjusted distance
+const topMidpoint = edgeMidpoints[0]
+const center = path.getCenterPoint()
+const vectorX = topMidpoint.x - center.x
+const vectorY = topMidpoint.y - center.y
+const vectorLength = Math.sqrt(vectorX * vectorX + vectorY * vectorY)
+const normalizedX = vectorX / vectorLength
+const normalizedY = vectorY / vectorLength
+const rotationDistance = this.getRotationHandleDistance()
+const rotationX = center.x + normalizedX * (vectorLength + rotationDistance)
+const rotationY = center.y + normalizedY * (vectorLength + rotationDistance)
+const rotationControlPointId = `${objectId}-cp-12`
+const rotationCircle = this.createControlPointCircle(
+rotationX,
+rotationY,
+rotationControlPointId,
+objectId,
+12,
+true
+)
+rotationCircle.set({ visible, hoverCursor: 'crosshair' })
+this.canvas.add(rotationCircle)
+this.controlPoints.push({
+id: rotationControlPointId,
+circle: rotationCircle,
+objectId,
+pointIndex: 12
+})
 
-		// Create border lines
-		const zoom = this.canvas.getZoom()
-		const scale = 1 / zoom
+// Create border lines
+const zoom = this.canvas.getZoom()
+const scale = 1 / zoom
 
-		const edges = [
-			{ start: 0, end: 1 },
-			{ start: 1, end: 2 },
-			{ start: 2, end: 3 },
-			{ start: 3, end: 0 }
-		]
+const edges = [
+{ start: 0, end: 1 },
+{ start: 1, end: 2 },
+{ start: 2, end: 3 },
+{ start: 3, end: 0 }
+]
 
-		edges.forEach(({ start, end }, index) => {
-			const edgeId = `${objectId}-edge-${index}`
-			const edgeLine = new fabric.Line(
-				[corners[start].x, corners[start].y, corners[end].x, corners[end].y],
-				{
-					stroke: 'oklch(0.8 0.05 39.0427)',
-					strokeWidth: 1.5 * scale,
-					selectable: false,
-					evented: false,
-					excludeFromExport: true,
-					visible
-				}
-			)
-			;(edgeLine as any).id = edgeId
-			;(edgeLine as any).linkedObjectId = objectId
-			this.canvas.add(edgeLine)
-			this.edgeLines.set(edgeId, edgeLine)
-		})
+edges.forEach(({ start, end }, index) => {
+const edgeId = `${objectId}-edge-${index}`
+const edgeLine = new fabric.Line(
+[corners[start].x, corners[start].y, corners[end].x, corners[end].y],
+{
+stroke: 'oklch(0.8 0.05 39.0427)',
+strokeWidth: 1.5 * scale,
+selectable: false,
+evented: false,
+excludeFromExport: true,
+visible
+}
+)
+;(edgeLine as any).id = edgeId
+;(edgeLine as any).linkedObjectId = objectId
+this.canvas.add(edgeLine)
+this.edgeLines.set(edgeId, edgeLine)
+})
 
-		this.bringControlPointsToFront()
-		this.canvas.renderAll()
+this.bringControlPointsToFront()
+this.canvas.renderAll()
+*/
 	}
 
 	removeControlPoints(objectId: string): void {
