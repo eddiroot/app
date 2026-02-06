@@ -53,7 +53,7 @@
 			<Card.Title class="text-xl">Your Day</Card.Title>
 		</Card.Header>
 		<Card.Content class="h-full overflow-hidden">
-			{#if data.userClasses && data.userClasses.length > 0}
+			{#if data.userClasses && data.userClasses.length > 0 || data.schoolEvents && data.schoolEvents.length > 0 || data.campusEvents && data.campusEvents.length > 0 || data.subjectOfferingEvents && data.subjectOfferingEvents.length > 0}
 				<ScrollArea class="h-full">
 					<div class="space-y-3 pr-4">
 						{#each data.userClasses as cls (cls.classAllocation.id)}

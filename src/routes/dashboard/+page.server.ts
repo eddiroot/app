@@ -1,6 +1,10 @@
 import {
+	getCampusEventsForDayByUserId,
 	getRecentAnnouncementsByUserId,
+	getSchoolEventsForDayByUserId,
 	getSubjectClassAllocationsByUserIdForToday,
+	getSubjectOfferingClassEventsForDayByUserId,
+	getSubjectOfferingEventsForDayByUserId,
 	getSubjectsByUserId,
 } from '$lib/server/db/service';
 import { getPublishedNewsBySchoolId } from '$lib/server/db/service/news';
@@ -14,6 +18,19 @@ export const load = async ({ locals: { security } }) => {
 	const announcements = await getRecentAnnouncementsByUserId(user.id);
 	const userClasses = await getSubjectClassAllocationsByUserIdForToday(user.id);
 
+	// Get all event data to determine which events they should see for today
+	const [
+		schoolEvents,
+		campusEvents,
+		subjectOfferingEvents,
+		subjectOfferingClassEvents,
+	] = await Promise.all([
+		getSchoolEventsForDayByUserId(user.id, new Date()),
+		getCampusEventsForDayByUserId(user.id, new Date()),
+		getSubjectOfferingEventsForDayByUserId(user.id, new Date()),
+		getSubjectOfferingClassEventsForDayByUserId(user.id, new Date()),
+	]);
+
 	// Get user's campuses to determine which news they should see
 	const userCampuses = await getCampusesByUserId(user.id);
 	const userCampusId = userCampuses.length > 0 ? userCampuses[0].id : undefined;
@@ -25,5 +42,15 @@ export const load = async ({ locals: { security } }) => {
 		user.type,
 	);
 
-	return { user, subjects, announcements, userClasses, news };
+	return {
+		user,
+		subjects,
+		announcements,
+		userClasses,
+		news,
+		schoolEvents,
+		campusEvents,
+		subjectOfferingEvents,
+		subjectOfferingClassEvents,
+	};
 };

@@ -5,7 +5,7 @@ import type {
 } from '$lib/server/db/schema';
 import {
 	getCampusEventsForWeekByUserId,
-	getSchoolEventsForWeekBySchoolId,
+	getSchoolEventsForWeekByUserId,
 	getSubjectClassAllocationsByUserIdForWeek,
 	getSubjectOfferingClassEventsForWeekByUserId,
 	getSubjectOfferingEventsForWeekByUserId,
@@ -36,7 +36,7 @@ export const load = async ({ locals: { security }, url }) => {
 		userRSVPs,
 	] = await Promise.all([
 		getSubjectClassAllocationsByUserIdForWeek(user.id, weekStartDate),
-		getSchoolEventsForWeekBySchoolId(user.schoolId, weekStartDate),
+		getSchoolEventsForWeekByUserId(user.id, weekStartDate),
 		getCampusEventsForWeekByUserId(user.id, weekStartDate),
 		getSubjectOfferingEventsForWeekByUserId(user.id, weekStartDate),
 		getSubjectOfferingClassEventsForWeekByUserId(user.id, weekStartDate),
@@ -75,7 +75,7 @@ export const actions = {
 			userRSVPs,
 		] = await Promise.all([
 			getSubjectClassAllocationsByUserIdForWeek(user.id, weekStartDate),
-			getSchoolEventsForWeekBySchoolId(user.schoolId, weekStartDate),
+			getSchoolEventsForWeekByUserId(user.id, weekStartDate),
 			getCampusEventsForWeekByUserId(user.id, weekStartDate),
 			getSubjectOfferingEventsForWeekByUserId(user.id, weekStartDate),
 			getSubjectOfferingClassEventsForWeekByUserId(user.id, weekStartDate),
