@@ -26,11 +26,28 @@ export async function createSchoolBuilding(
 	return building;
 }
 
+export async function createSchoolBuildings(
+	data: (typeof table.schoolBuilding.$inferInsert)[],
+) {
+	const buildings = await db
+		.insert(table.schoolBuilding)
+		.values(data)
+		.returning();
+	return buildings;
+}
+
 export async function createSchoolSpace(
 	data: typeof table.schoolSpace.$inferInsert,
 ) {
 	const [space] = await db.insert(table.schoolSpace).values(data).returning();
 	return space;
+}
+
+export async function createSchoolSpaces(
+	data: (typeof table.schoolSpace.$inferInsert)[],
+) {
+	const spaces = await db.insert(table.schoolSpace).values(data).returning();
+	return spaces;
 }
 
 export async function createSchoolYearLevel(
@@ -102,6 +119,28 @@ export async function createUser(
 }
 
 // Schema: Subject
+export async function createSubject(data: typeof table.subject.$inferInsert) {
+	const [subject] = await db.insert(table.subject).values(data).returning();
+	return subject;
+}
+
+export async function createSubjects(
+	data: (typeof table.subject.$inferInsert)[],
+) {
+	const subjects = await db.insert(table.subject).values(data).returning();
+	return subjects;
+}
+
+export async function createSubjectOffering(
+	data: typeof table.subjectOffering.$inferInsert,
+) {
+	const [offering] = await db
+		.insert(table.subjectOffering)
+		.values(data)
+		.returning();
+	return offering;
+}
+
 export async function createSubjectThread(
 	data: typeof table.subjectThread.$inferInsert,
 ) {

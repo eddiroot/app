@@ -1,4 +1,5 @@
 import { userTypeEnum } from '$lib/enums.js';
+import { fileSchema } from '$lib/schema/resource.js';
 import type { Task } from '$lib/server/db/schema';
 import {
 	createResource,
@@ -19,9 +20,7 @@ import { zod4 } from 'sveltekit-superforms/adapters';
 import { z } from 'zod';
 
 const uploadSchema = z.object({
-	file: z
-		.instanceof(File)
-		.refine((file) => file.size > 0, 'Please select a file to upload'),
+	file: fileSchema,
 	title: z.string().optional(),
 	description: z.string().optional(),
 	topicId: z.number().min(1, 'Please select a topic'),

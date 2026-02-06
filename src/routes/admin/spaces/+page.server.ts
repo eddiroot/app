@@ -1,7 +1,7 @@
 import { schoolSpaceTypeEnum } from '$lib/enums.js';
-import { db } from '$lib/server/db/index.js';
 import { schoolSpace } from '$lib/server/db/schema';
 import {
+	createSchoolSpaces,
 	getBuildingsBySchoolId,
 	getSpacesBySchoolId,
 } from '$lib/server/db/service';
@@ -125,8 +125,7 @@ export const actions = {
 				});
 			}
 
-			await db.insert(schoolSpace).values(spacesToInsert);
-
+			await createSchoolSpaces(spacesToInsert);
 			return withFiles({ form, success: true });
 		} catch (err) {
 			console.error('Error importing locations:', err);

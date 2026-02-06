@@ -1,8 +1,5 @@
-import { parseCSVData, validateCSVFile } from '$lib';
-import type { yearLevelEnum } from '$lib/enums.js';
-import { db } from '$lib/server/db/index.js';
-import { subject } from '$lib/server/db/schema';
-import { getSubjectsBySchoolId } from '$lib/server/db/service';
+import { createSubjects, getSubjectsBySchoolId } from '$lib/server/db/service';
+import { parseCSVData, validateCSVFile } from '$lib/utils';
 import { fail } from '@sveltejs/kit';
 import { superValidate, withFiles } from 'sveltekit-superforms';
 import { zod4 } from 'sveltekit-superforms/adapters';
@@ -60,19 +57,23 @@ export const actions = {
 
 			const subjectsToInsert: Array<{
 				name: string;
-				yearLevel: yearLevelEnum;
+				schoolYearLevelId: number;
 				schoolId: number;
 			}> = [];
 
 			for (const rowData of csvData) {
 				const name = rowData['name']?.trim();
-				const yearLevel = rowData['yearlevel']?.trim() as yearLevelEnum;
+				const schoolYearLevelId = parseInt(rowData['yearlevel']?.trim());
 
-				if (!name || !yearLevel) {
+				if (!name || !schoolYearLevelId) {
 					continue;
 				}
 
-				subjectsToInsert.push({ name, yearLevel, schoolId: user.schoolId });
+				subjectsToInsert.push({
+					name,
+					schoolYearLevelId,
+					schoolId: user.schoolId,
+				});
 			}
 
 			if (subjectsToInsert.length === 0) {
@@ -83,8 +84,7 @@ export const actions = {
 				});
 			}
 
-			await db.insert(subject).values(subjectsToInsert);
-
+			await createSubjects(subjectsToInsert);
 			return withFiles({ form, success: true });
 		} catch (err) {
 			console.error('Error importing subjects:', err);

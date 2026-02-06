@@ -81,6 +81,12 @@ const filesOptionalSchema = z.preprocess((val) => {
 	return filtered.length === 0 ? undefined : filtered;
 }, z.array(fileSchema).max(10, 'Maximum 10 files allowed').optional());
 
+const csvSchema = fileSchema.refine(
+	(file) =>
+		file.type === 'text/csv' || file.name.toLowerCase().endsWith('.csv'),
+	{ message: 'File must be a CSV' },
+);
+
 const imageSchema = fileSchema.refine(
 	(file) => file.type.startsWith('image/'),
 	{ message: 'File must be an image' },
@@ -92,6 +98,7 @@ const imagesSchema = z
 	.max(10, 'Maximum 10 images allowed');
 
 export {
+	csvSchema,
 	fileSchema,
 	filesOptionalSchema,
 	filesSchema,

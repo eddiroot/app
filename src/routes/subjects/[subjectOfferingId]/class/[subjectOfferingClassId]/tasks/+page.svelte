@@ -7,6 +7,7 @@
 	import Input from '$lib/components/ui/input/input.svelte';
 	import * as Select from '$lib/components/ui/select';
 	import Textarea from '$lib/components/ui/textarea/textarea.svelte';
+	import { fileSchema } from '$lib/schema/resource.js';
 	import DownloadIcon from '@lucide/svelte/icons/download';
 	import FileIcon from '@lucide/svelte/icons/file';
 	import PlusIcon from '@lucide/svelte/icons/plus';
@@ -28,9 +29,7 @@
 	let deletingResource = $state(false);
 
 	const uploadSchema = z.object({
-		file: z
-			.instanceof(File)
-			.refine((file) => file.size > 0, 'Please select a file to upload'),
+		file: fileSchema,
 		title: z.string().optional(),
 		description: z.string().optional(),
 		topicId: z.number().min(1, 'Please select a topic'),

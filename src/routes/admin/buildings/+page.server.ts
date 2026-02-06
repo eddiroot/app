@@ -1,6 +1,6 @@
-import { db } from '$lib/server/db/index.js';
 import { schoolBuilding } from '$lib/server/db/schema';
 import {
+	createSchoolBuildings,
 	getBuildingsBySchoolId,
 	getCampusesBySchoolId,
 } from '$lib/server/db/service';
@@ -100,8 +100,7 @@ export const actions = {
 				});
 			}
 
-			await db.insert(schoolBuilding).values(buildingsToInsert);
-
+			await createSchoolBuildings(buildingsToInsert);
 			return withFiles({ form, success: true });
 		} catch (err) {
 			console.error('Error importing buildings:', err);
