@@ -127,7 +127,13 @@
 						</div>
 					</div>
 				</div>
-				<Card.Action>
+				<Card.Action class="flex gap-2">
+					<LikeButton
+						action="?/toggleThreadLike"
+						size="lg"
+						initialLiked={data.threadLikes?.userLiked || false}
+						initialCount={data.threadLikes?.count || 0}
+					/>
 					<form
 						method="POST"
 						action="?/generateSummary"
@@ -143,6 +149,7 @@
 						<Button
 							variant="outline"
 							type="submit"
+							size="lg"
 							disabled={isGeneratingSummary || !!form?.summary}
 						>
 							{#if isGeneratingSummary}
@@ -159,13 +166,6 @@
 					{@html thread()?.thread.content || 'No content available'}
 				</div>
 			</Card.Content>
-			<Card.Footer>
-				<LikeButton
-					action="?/toggleThreadLike"
-					initialLiked={data.threadLikes?.userLiked || false}
-					initialCount={data.threadLikes?.count || 0}
-				/>
-			</Card.Footer>
 		</Card.Root>
 
 		<!-- Answers Section (for questions) -->
