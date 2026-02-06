@@ -2,8 +2,6 @@ import { queueStatusEnum } from '$lib/enums.js';
 import {
 	getInProgressTimetableQueues,
 	getOldestQueuedTimetable,
-	updateTimetableDraftError,
-	updateTimetableDraftFetResponse,
 	updateTimetableQueueStatus,
 } from '$lib/server/db/service/index.js';
 import { FETDockerService } from '$lib/server/fet';
@@ -32,18 +30,21 @@ export async function processTimetableQueue() {
 		}
 
 		// Mark task as in progress
-		await updateTimetableQueueStatus(queueEntry.id, queueStatusEnum.inProgress);
+		await updateTimetableQueueStatus(
+			queueEntry.tt_queue.id,
+			queueStatusEnum.inProgress,
+		);
 
 		// Docker container paths - use a dedicated working directory
-		const workingDir = `/app/timetables/${queueEntry.id}`;
-		const containerTempPath = `${workingDir}/input/${queueEntry.fileName}`;
+		const workingDir = `/app/timetables/${queueEntry.tt_queue.id}`;
+		const containerTempPath = `${workingDir}/input/${queueEntry.tt_queue.fileName}`;
 		const containerOutputDir = `${workingDir}/output`;
 
 		try {
-			const schoolId = queueEntry.school.id.toString();
-			const timetableId = queueEntry.timetableId.toString();
-			const timetableDraftId = queueEntry.timetableDraftId.toString();
-			const fileName = queueEntry.fileName;
+			const schoolId = queueEntry.sch.id.toString();
+			const timetableId = queueEntry.tt_queue.timetableId.toString();
+			const timetableDraftId = queueEntry.tt_queue.timetableDraftId.toString();
+			const fileName = queueEntry.tt_queue.fileName;
 
 			// Retrieve the timetable file from object storage
 			const fileUrl = await getPresignedUrl(
@@ -91,10 +92,6 @@ export async function processTimetableQueue() {
 			);
 
 			if (!fetResult.success && fetResult.error) {
-				await updateTimetableDraftFetResponse(
-					queueEntry.timetableDraftId,
-					fetResult.error,
-				);
 				throw new Error(`FET processing failed: ${fetResult.stdout}`);
 			}
 
@@ -155,12 +152,12 @@ export async function processTimetableQueue() {
 					try {
 						await parseTimetableCSVAndPopulateClasses(
 							timetableCSV,
-							queueEntry.timetableId,
-							queueEntry.timetableDraftId,
+							queueEntry.tt_queue.timetableId,
+							queueEntry.tt_queue.timetableDraftId,
 						);
 
 						await updateTimetableQueueStatus(
-							queueEntry.id,
+							queueEntry.tt_queue.id,
 							queueStatusEnum.completed,
 						);
 					} catch (dbError) {
@@ -191,7 +188,10 @@ export async function processTimetableQueue() {
 					: 'Unknown error';
 
 			// Store error message in draft if not already stored
-			await updateTimetableQueueStatus(queueEntry.id, queueStatusEnum.failed);
+			await updateTimetableQueueStatus(
+				queueEntry.tt_queue.id,
+				queueStatusEnum.failed,
+			);
 			console.error(
 				'❌ [TIMETABLE PROCESSOR] Error during timetable processing:',
 				processingError,
@@ -205,21 +205,18 @@ export async function processTimetableQueue() {
 					? String(processingError.stdout)
 					: errorMessage;
 
-			await updateTimetableDraftError(
-				queueEntry.timetableDraftId,
-				errorDetails,
-			);
+			console.error('❌ [TIMETABLE PROCESSOR] Error details:', errorDetails);
 
 			// Mark task as failed
 			await updateTimetableQueueStatus(
-				queueEntry.id,
+				queueEntry.tt_queue.id,
 				queueStatusEnum.failed,
 				new Date(),
 			);
 		} finally {
 			// Always attempt cleanup of the specific working directory
 			try {
-				const workingDir = `/app/timetables/${queueEntry.id}`;
+				const workingDir = `/app/timetables/${queueEntry.tt_queue.id}`;
 				await fetService.removeDirectory(workingDir);
 				console.log(
 					`🧹 [TIMETABLE PROCESSOR] Cleaned up working directory: ${workingDir}`,

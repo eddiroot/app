@@ -34,7 +34,9 @@
 
 	let filteredGroups = $derived(() => {
 		if (!yearLevel) return [];
-		return data.groups.filter((group) => group.yearLevel === yearLevel);
+		return data.groups.filter(
+			(group) => group.yearLevel.toString() === yearLevel,
+		);
 	});
 
 	// Get student options for a specific group (exclude students already in that group)

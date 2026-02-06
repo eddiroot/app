@@ -95,13 +95,13 @@
 
 	function openCreateLevelDialog() {
 		editingLevel = null;
-		$levelFormData = { name: '' };
+		$levelFormData = { name: '', number: data.levelsWithBehaviours.length + 1 };
 		levelDialogOpen = true;
 	}
 
 	function openEditLevelDialog(level: LevelItem) {
 		editingLevel = level;
-		$levelFormData = { id: level.id, name: level.name };
+		$levelFormData = { id: level.id, name: level.name, number: level.level };
 		levelDialogOpen = true;
 	}
 

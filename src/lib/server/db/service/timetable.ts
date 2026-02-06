@@ -55,25 +55,6 @@ export async function getTimetableAndSchoolByTimetableId(timetableId: number) {
 	return result;
 }
 
-export async function createSchoolTimetable(data: {
-	schoolId: number;
-	name: string;
-	year: number;
-	schoolSemesterId: number;
-}) {
-	const [timetable] = await db
-		.insert(table.timetable)
-		.values({
-			schoolId: data.schoolId,
-			name: data.name,
-			year: data.year,
-			schoolSemesterId: data.schoolSemesterId,
-		})
-		.returning();
-
-	return timetable;
-}
-
 // ============================================================================
 // TIMETABLE DAYS - Operations
 // ============================================================================
@@ -294,7 +275,8 @@ export async function getTimetableDraftStudentGroupsWithCountsByTimetableDraftId
 		.select({
 			id: table.timetableGroup.id,
 			name: table.timetableGroup.name,
-			yearLevel: table.schoolYearLevel.code,
+			yearLevelId: table.schoolYearLevel.id,
+			yearLevelCode: table.schoolYearLevel.code,
 			count: count(table.timetableGroupMember.userId),
 		})
 		.from(table.timetableGroup)
@@ -656,13 +638,14 @@ export async function getEnhancedTimetableDraftActivitiesByTimetableDraftId(
 
 	const activities = await Promise.all(
 		baseActivities.map(async (activity) => {
-			const [teachers, locations, students, groups, years] = await Promise.all([
-				getActivityTeachersByActivityId(activity.id),
-				getActivityLocationsByActivityId(activity.id),
-				getActivityStudentsByActivityId(activity.id),
-				getActivityGroupsByActivityId(activity.id),
-				getActivityYearsByActivityId(activity.id),
-			]);
+			const [teachers, locations, students, groups, yearLevels] =
+				await Promise.all([
+					getActivityTeachersByActivityId(activity.id),
+					getActivitySpacesByActivityId(activity.id),
+					getActivityStudentsByActivityId(activity.id),
+					getActivityGroupsByActivityId(activity.id),
+					getActivityYearLevelsByActivityId(activity.id),
+				]);
 
 			return {
 				...activity,
@@ -670,7 +653,7 @@ export async function getEnhancedTimetableDraftActivitiesByTimetableDraftId(
 				locationIds: locations.map((l) => l.id),
 				studentIds: students.map((s) => s.id),
 				groupIds: groups.map((g) => g.id),
-				yearLevels: years.map((y) => y.yearLevel),
+				yearLevels,
 			};
 		}),
 	);
@@ -1030,7 +1013,7 @@ export async function getActivityTeachersByActivityId(activityId: number) {
 	return teachers;
 }
 
-export async function getActivityLocationsByActivityId(activityId: number) {
+export async function getActivitySpacesByActivityId(activityId: number) {
 	const locations = await db
 		.select({
 			id: table.schoolSpace.id,
@@ -1114,9 +1097,12 @@ export async function getActivityGroupsByActivityId(activityId: number) {
 	return groups;
 }
 
-export async function getActivityYearsByActivityId(activityId: number) {
+export async function getActivityYearLevelsByActivityId(activityId: number) {
 	const years = await db
-		.select({ yearLevel: table.schoolYearLevel.code })
+		.select({
+			yearLevelId: table.schoolYearLevel.id,
+			yearLevelCode: table.schoolYearLevel.code,
+		})
 		.from(table.timetableActivityAssignedYear)
 		.innerJoin(
 			table.schoolYearLevel,

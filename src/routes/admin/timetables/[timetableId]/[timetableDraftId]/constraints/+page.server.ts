@@ -24,7 +24,9 @@ export const load = async ({ locals: { security }, params }) => {
 	);
 
 	// Get the constraint IDs that are already assigned to this timetable
-	const assignedConstraintIds = new Set(assignedConstraints.map((c) => c.id));
+	const assignedConstraintIds = new Set(
+		assignedConstraints.map(({ tt_draft_con }) => tt_draft_con.id),
+	);
 
 	// Filter available constraints based on repeatability rules
 	const availableConstraints = constraintsWithForms.filter((constraint) => {
@@ -38,10 +40,10 @@ export const load = async ({ locals: { security }, params }) => {
 
 	// Separate current constraints by type
 	const currentTimeConstraints = assignedConstraints.filter(
-		(con) => con.type === constraintTypeEnum.time,
+		({ con }) => con.type === constraintTypeEnum.time,
 	);
 	const currentSpaceConstraints = assignedConstraints.filter(
-		(con) => con.type === constraintTypeEnum.space,
+		({ con }) => con.type === constraintTypeEnum.space,
 	);
 
 	// Separate available constraints by type

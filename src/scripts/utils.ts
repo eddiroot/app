@@ -168,10 +168,10 @@ export async function parseTimetableCSVAndPopulateClasses(
 	// Create a map of yearLevel -> userIds
 	const yearToUsersMap = new Map<string, string[]>();
 	for (const student of allStudents) {
-		if (!yearToUsersMap.has(student.yearLevel)) {
-			yearToUsersMap.set(student.yearLevel, []);
+		if (!yearToUsersMap.has(student.yearLevel.toString())) {
+			yearToUsersMap.set(student.yearLevel.toString(), []);
 		}
-		yearToUsersMap.get(student.yearLevel)!.push(student.id);
+		yearToUsersMap.get(student.yearLevel.toString())!.push(student.id);
 	}
 
 	// Helper function to resolve user IDs from student identifiers

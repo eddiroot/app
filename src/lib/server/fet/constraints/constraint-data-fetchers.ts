@@ -99,7 +99,7 @@ export async function getTimetableDraftGroupsOptions(
 		);
 	return groups.map((group) => ({
 		value: group.id,
-		label: `${group.name} (${group.yearLevel}) - ${group.count} students`,
+		label: `${group.name} (${group.yearLevelCode}) - ${group.count} students`,
 	}));
 }
 

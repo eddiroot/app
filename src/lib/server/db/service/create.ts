@@ -299,3 +299,11 @@ export async function createSubjectOfferingClassResource(
 		.returning();
 	return subjectOfferingClassResource;
 }
+
+// Schema: Timetable
+export async function createTimetable(
+	data: typeof table.timetable.$inferInsert,
+) {
+	const [timetable] = await db.insert(table.timetable).values(data).returning();
+	return timetable;
+}

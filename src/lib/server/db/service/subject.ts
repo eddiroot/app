@@ -4,7 +4,6 @@ import {
 	subjectThreadTypeEnum,
 	taskTypeEnum,
 	userTypeEnum,
-	yearLevelEnum,
 } from '$lib/enums.js';
 import { db } from '$lib/server/db';
 import * as table from '$lib/server/db/schema';
@@ -158,7 +157,6 @@ export async function getSubjectOfferingsBySubjectId(subjectId: number) {
 export async function getSubjectOfferingsByForTimetableByTimetableId(
 	timetableId: number,
 ) {
-	// First, get the timetable details
 	const [timetableData] = await db
 		.select({
 			schoolId: table.timetable.schoolId,
@@ -173,7 +171,6 @@ export async function getSubjectOfferingsByForTimetableByTimetableId(
 		return [];
 	}
 
-	// Build the query conditions
 	const conditions = [
 		eq(table.subject.schoolId, timetableData.schoolId),
 		eq(table.subjectOffering.year, timetableData.year),
@@ -181,7 +178,6 @@ export async function getSubjectOfferingsByForTimetableByTimetableId(
 		eq(table.subject.isArchived, false),
 	];
 
-	// Get all subject offerings matching the timetable's school, year, and semester
 	const subjectOfferings = await db
 		.select({ subjectOffering: table.subjectOffering, subject: table.subject })
 		.from(table.subjectOffering)
@@ -199,27 +195,10 @@ export async function getSubjectOfferingsByForTimetableByTimetableId(
 	return subjectOfferings;
 }
 
-/**
- * Gets subject offerings for a specific year level (e.g., Year 8, Year 9) within a timetable's context.
- *
- * This function retrieves subject offerings where:
- * - The subject's yearLevel matches the specified yearLevel parameter (e.g., Year 8, Year 9)
- * - The offering's year matches the timetable's school year (e.g., 2025, 2026)
- * - The offering's semester matches the timetable's semester (if applicable)
- * - The offerings are for the timetable's school
- *
- * Note: "yearLevel" refers to the student grade level (Year 8, Year 9, etc.),
- * while the timetable's "schoolYear" refers to the calendar year (2025, 2026, etc.)
- *
- * @param timetableId - The ID of the timetable to scope the query to
- * @param yearLevel - The student year level (e.g., yearLevelEnum.year8, yearLevelEnum.year9)
- * @returns Subject offerings with their related subject data, filtered by year level
- */
-export async function getSubjectOfferingsByYearLevelForTimetableByTimetableId(
+export async function getSubjectOfferingsByYearLevelIdForTimetableByTimetableId(
 	timetableId: number,
-	yearLevel: yearLevelEnum,
+	yearLevelId: number,
 ) {
-	// First, get the timetable details
 	const [timetableData] = await db
 		.select({
 			schoolId: table.timetable.schoolId,
@@ -234,18 +213,14 @@ export async function getSubjectOfferingsByYearLevelForTimetableByTimetableId(
 		return [];
 	}
 
-	// Build the query conditions
-	// Note: subject.schoolYearLevel = student grade level (Year 8, 9, etc.)
-	//       subjectOffering.year = calendar year (2025, 2026, etc.)
 	const conditions = [
 		eq(table.subject.schoolId, timetableData.schoolId),
-		eq(table.schoolYearLevel.code, yearLevel), // Filter by student grade level
+		eq(table.schoolYearLevel.id, yearLevelId),
 		eq(table.subjectOffering.year, timetableData.year), // Filter by calendar year
 		eq(table.subjectOffering.isArchived, false),
 		eq(table.subject.isArchived, false),
 	];
 
-	// Get all subject offerings matching the timetable's school, year, semester, and year level
 	const subjectOfferings = await db
 		.select({ subjectOffering: table.subjectOffering, subject: table.subject })
 		.from(table.subjectOffering)

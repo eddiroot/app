@@ -1,5 +1,5 @@
 import {
-	createSchoolTimetable,
+	createTimetable,
 	getSchoolTimetablesBySchoolId,
 	getSemestersBySchoolId,
 } from '$lib/server/db/service';
@@ -35,11 +35,11 @@ export const actions: Actions = {
 		}
 
 		try {
-			await createSchoolTimetable({
-				schoolId: user.schoolId,
+			await createTimetable({
 				name: form.data.name,
-				schoolYear: form.data.schoolYear,
+				schoolId: user.schoolId,
 				schoolSemesterId: form.data.schoolSemester,
+				year: form.data.schoolYear,
 			});
 
 			return message(form, 'Timetable created successfully!');

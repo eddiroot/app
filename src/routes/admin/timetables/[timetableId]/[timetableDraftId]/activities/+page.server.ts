@@ -1,15 +1,15 @@
-import { userTypeEnum, yearLevelEnum } from '$lib/enums.js';
+import { userTypeEnum } from '$lib/enums.js';
 import {
 	createTimetableDraftActivityWithRelations,
 	deleteTimetableDraftActivity,
 	getActivityGroupsByActivityId,
-	getActivityLocationsByActivityId,
+	getActivitySpacesByActivityId,
 	getActivityStudentsByActivityId,
 	getActivityTeachersByActivityId,
-	getActivityYearsByActivityId,
+	getActivityYearLevelsByActivityId,
 	getSpacesBySchoolId,
 	getStudentsForTimetable,
-	getSubjectOfferingsByYearLevelForTimetableByTimetableId,
+	getSubjectOfferingsByYearLevelIdForTimetableByTimetableId,
 	getTimetableDraftActivitiesByTimetableDraftId,
 	getTimetableDraftStudentGroupsWithCountsByTimetableDraftId,
 	getUsersBySchoolIdAndType,
@@ -23,16 +23,6 @@ import {
 	deleteActivitySchema,
 	editActivitySchema,
 } from './schema.js';
-
-type EnrichedActivity = Awaited<
-	ReturnType<typeof getTimetableDraftActivitiesByTimetableDraftId>
->[number] & {
-	teacherIds: string[];
-	yearLevels: string[];
-	groupIds: number[];
-	studentIds: string[];
-	locationIds: number[];
-};
 
 export const load = async ({ locals: { security }, params }) => {
 	const user = security.isAuthenticated().isAdmin().getUser();
@@ -52,46 +42,44 @@ export const load = async ({ locals: { security }, params }) => {
 			timetableId,
 		);
 
-	const defaultYearLevel =
-		groups.length > 0 ? groups[0].yearLevel : yearLevelEnum.year9;
-
 	const yearLevels = groups
-		.map((group) => group.yearLevel)
+		.map((group) => ({ id: group.yearLevelId, code: group.yearLevelCode }))
 		.filter((value, index, self) => self.indexOf(value) === index);
 
-	// Get subjects for all year levels
 	const subjectOfferingsByYearLevel: Record<
 		string,
 		Awaited<
-			ReturnType<typeof getSubjectOfferingsByYearLevelForTimetableByTimetableId>
+			ReturnType<
+				typeof getSubjectOfferingsByYearLevelIdForTimetableByTimetableId
+			>
 		>
 	> = {};
 	for (const yearLevel of yearLevels) {
-		subjectOfferingsByYearLevel[yearLevel] =
-			await getSubjectOfferingsByYearLevelForTimetableByTimetableId(
+		subjectOfferingsByYearLevel[yearLevel.id] =
+			await getSubjectOfferingsByYearLevelIdForTimetableByTimetableId(
 				parseInt(params.timetableId, 10),
-				yearLevel,
+				yearLevel.id,
 			);
 	}
 
-	// Enrich activities with all related data
-	const activities: EnrichedActivity[] = await Promise.all(
+	const activities = await Promise.all(
 		baseActivities.map(async (activity) => {
-			const [teachers, locations, students, groups, years] = await Promise.all([
-				getActivityTeachersByActivityId(activity.id),
-				getActivityLocationsByActivityId(activity.id),
-				getActivityStudentsByActivityId(activity.id),
-				getActivityGroupsByActivityId(activity.id),
-				getActivityYearsByActivityId(activity.id),
-			]);
+			const [teachers, spaces, students, groups, yearLevels] =
+				await Promise.all([
+					getActivityTeachersByActivityId(activity.id),
+					getActivitySpacesByActivityId(activity.id),
+					getActivityStudentsByActivityId(activity.id),
+					getActivityGroupsByActivityId(activity.id),
+					getActivityYearLevelsByActivityId(activity.id),
+				]);
 
 			return {
 				...activity,
 				teacherIds: teachers.map((t) => t.id),
-				locationIds: locations.map((l) => l.id),
+				spaceIds: spaces.map((l) => l.id.toString()),
 				studentIds: students.map((s) => s.id),
-				groupIds: groups.map((g) => g.id),
-				yearLevels: years.map((y) => y.yearLevel),
+				groupIds: groups.map((g) => g.id.toString()),
+				yearLevels,
 			};
 		}),
 	);
@@ -109,7 +97,6 @@ export const load = async ({ locals: { security }, params }) => {
 
 	return {
 		timetableId,
-		defaultYearLevel,
 		yearLevels,
 		groups,
 		teachers,
@@ -142,10 +129,14 @@ export const actions: Actions = {
 				timetableDraftId,
 				subjectOfferingId: form.data.subjectOfferingId,
 				teacherIds: form.data.teacherIds,
-				yearLevelIds: form.data.yearLevelIds ?? [],
-				groupIds: form.data.groupIds ?? [],
+				yearLevelIds: (form.data.yearLevelIds ?? []).map((id) =>
+					parseInt(id, 10),
+				),
+				groupIds: (form.data.groupIds ?? []).map((id) => parseInt(id, 10)),
 				studentIds: form.data.studentIds ?? [],
-				preferredSpaceIds: form.data.spaceIds ?? [],
+				preferredSpaceIds: (form.data.spaceIds ?? []).map((id) =>
+					parseInt(id, 10),
+				),
 				periodsPerInstance: form.data.periodsPerInstance,
 				instancesPerWeek: form.data.numInstancesPerWeek,
 			});
@@ -181,10 +172,10 @@ export const actions: Actions = {
 				periodsPerInstance: form.data.periodsPerInstance,
 				totalPeriods,
 				teacherIds: form.data.teacherIds,
-				yearLevelIds: form.data.yearLevelIds,
-				groupIds: form.data.groupIds,
+				yearLevelIds: form.data.yearLevelIds?.map((id) => parseInt(id, 10)),
+				groupIds: form.data.groupIds?.map((id) => parseInt(id, 10)),
 				studentIds: form.data.studentIds,
-				preferredSpaceIds: form.data.spaceIds,
+				preferredSpaceIds: form.data.spaceIds?.map((id) => parseInt(id, 10)),
 			});
 
 			return message(form, 'Activity updated successfully!');

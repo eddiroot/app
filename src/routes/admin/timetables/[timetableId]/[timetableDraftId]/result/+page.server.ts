@@ -1,7 +1,7 @@
 import { db } from '$lib/server/db';
 import { user } from '$lib/server/db/schema/user';
-import { generateTimetableStatistics } from '$lib/server/db/utils/timetable-statistics';
-import { generateUserTimetable } from '$lib/server/db/utils/user-timetable-statistics';
+import { generateTimetableStatistics } from '$lib/server/fet/utils/timetable-statistics';
+import { generateUserTimetable } from '$lib/server/fet/utils/user-timetable-statistics';
 import { fail } from '@sveltejs/kit';
 import { and, eq, ilike, or } from 'drizzle-orm';
 import type { Actions, PageServerLoad } from './$types';
@@ -13,11 +13,7 @@ export const load: PageServerLoad = async ({
 	security.isAuthenticated().isAdmin();
 
 	const timetableDraftId = parseInt(params.timetableDraftId);
-
-	// Generate comprehensive statistics which includes students and teachers
 	const statistics = await generateTimetableStatistics(timetableDraftId);
-
-	// Convert Map to plain object for serialization
 	const dayUtilization = Object.fromEntries(statistics.summary.dayUtilization);
 
 	return {

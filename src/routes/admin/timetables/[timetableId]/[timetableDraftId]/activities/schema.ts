@@ -3,10 +3,10 @@ import { z } from 'zod';
 export const createActivitySchema = z.object({
 	subjectOfferingId: z.number().int().positive('Subject is required'),
 	teacherIds: z.array(z.uuid()).min(1, 'At least one teacher must be selected'),
-	yearLevelIds: z.array(z.coerce.number()).default([]).optional(),
-	groupIds: z.array(z.coerce.number()).default([]).optional(),
+	yearLevelIds: z.array(z.string()).default([]).optional(),
+	groupIds: z.array(z.string()).default([]).optional(),
 	studentIds: z.array(z.uuid()).default([]).optional(),
-	spaceIds: z.array(z.coerce.number()).default([]).optional(),
+	spaceIds: z.array(z.string()).default([]).optional(),
 	numInstancesPerWeek: z
 		.number()
 		.int()
@@ -21,10 +21,10 @@ export const editActivitySchema = z.object({
 	activityId: z.number().min(1, 'Activity ID is required'),
 	subjectOfferingId: z.number().int().positive('Subject is required'),
 	teacherIds: z.array(z.uuid()).min(1, 'At least one teacher must be selected'),
-	yearLevelIds: z.array(z.coerce.number()).default([]).optional(),
-	groupIds: z.array(z.coerce.number()).default([]).optional(),
+	yearLevelIds: z.array(z.string()).default([]).optional(),
+	groupIds: z.array(z.string()).default([]).optional(),
 	studentIds: z.array(z.uuid()).default([]).optional(),
-	spaceIds: z.array(z.coerce.number()).default([]).optional(),
+	spaceIds: z.array(z.string()).default([]).optional(),
 	numInstancesPerWeek: z
 		.number()
 		.int()

@@ -9,10 +9,10 @@ import {
 	getSchoolById,
 	getSpacesBySchoolId,
 	getSubjectsBySchoolId,
-	getTeacherSpecializationsByTeacherId,
 	getTimetableDraftDaysByTimetableDraftId,
 	getTimetableDraftPeriodsByTimetableDraftId,
 	getUsersBySchoolIdAndType,
+	getUserSpecialisationsByUserId,
 } from '$lib/server/db/service';
 
 export type TimetableData = {
@@ -44,7 +44,7 @@ export type TimetableData = {
 async function buildTeachersList(teachers: TimetableData['teachers']) {
 	return Promise.all(
 		teachers.map(async (teacher) => {
-			const qualifiedSubjects = await getTeacherSpecializationsByTeacherId(
+			const qualifiedSubjects = await getUserSpecialisationsByUserId(
 				teacher.id,
 			);
 			const subjectIds = qualifiedSubjects.map((qs) => qs.subjectId);
@@ -77,11 +77,10 @@ function buildStudentsList(
 
 	// Process all rows from studentGroups
 	for (const row of studentGroups) {
-		const yearLevelKey = row.yearLevel;
+		const yearLevelKey = row.yearLevel.toString();
 		const groupId = row.groupId;
 		const groupName = row.groupName;
 
-		// Initialize year level if it doesn't exist
 		if (!yearLevelMap.has(yearLevelKey)) {
 			yearLevelMap.set(yearLevelKey, {
 				totalStudents: new Set(),

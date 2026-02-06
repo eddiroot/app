@@ -1,11 +1,10 @@
-import { yearLevelEnum } from '$lib/enums';
 import {
 	addStudentToTimetableDraftGroup,
 	createTimetableDraftStudentGroup,
 	deleteTimetableDraftStudentGroup,
 	getStudentsByGroupId,
 	getStudentsForTimetable,
-	getSubjectOfferingsByYearLevelForTimetableByTimetableId,
+	getSubjectOfferingsByYearLevelIdForTimetableByTimetableId,
 	getTimetableDraftGroupsByTimetableDraftId,
 	removeStudentFromTimetableDraftGroup,
 } from '$lib/server/db/service';
@@ -41,14 +40,19 @@ export const actions = {
 
 		const formData = await request.formData();
 		const name = formData.get('name') as string;
-		const yearLevel = formData.get('yearLevel') as yearLevelEnum;
+		const yearLevelId = formData.get('yearLevel');
 
-		if (!name || !yearLevel) {
-			return fail(400, { error: 'Name and year level are required' });
+		if (!name || !yearLevelId) {
+			return fail(400, { error: 'Name and year level id are required' });
+		}
+
+		const yearLevelIdInt = parseInt(yearLevelId as string, 10);
+		if (isNaN(yearLevelIdInt)) {
+			return fail(400, { error: 'Invalid year level ID' });
 		}
 
 		try {
-			await createTimetableDraftStudentGroup(timetableId, yearLevel, name);
+			await createTimetableDraftStudentGroup(timetableId, yearLevelIdInt, name);
 			return { success: true };
 		} catch (error) {
 			console.error('Error creating group:', error);
@@ -65,17 +69,22 @@ export const actions = {
 		}
 
 		const formData = await request.formData();
-		const yearLevel = formData.get('yearLevel') as string;
+		const yearLevelId = formData.get('yearLevelId') as string;
 
-		if (!yearLevel) {
+		if (!yearLevelId) {
 			return fail(400, { error: 'Year level is required' });
+		}
+
+		const yearLevelIdInt = parseInt(yearLevelId, 10);
+		if (isNaN(yearLevelIdInt)) {
+			return fail(400, { error: 'Invalid year level ID' });
 		}
 
 		try {
 			const subjectOfferings =
-				await getSubjectOfferingsByYearLevelForTimetableByTimetableId(
+				await getSubjectOfferingsByYearLevelIdForTimetableByTimetableId(
 					timetableId,
-					yearLevel as yearLevelEnum,
+					yearLevelIdInt,
 				);
 
 			let createdCount = 0;
@@ -83,7 +92,7 @@ export const actions = {
 				const groupName = `${subject.name}`;
 				await createTimetableDraftStudentGroup(
 					timetableId,
-					yearLevel as yearLevelEnum,
+					yearLevelIdInt,
 					groupName,
 				);
 				createdCount++;

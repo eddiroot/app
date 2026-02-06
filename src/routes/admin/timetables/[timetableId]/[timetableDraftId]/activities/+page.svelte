@@ -8,6 +8,7 @@
 	import { Input } from '$lib/components/ui/input';
 	import { Label } from '$lib/components/ui/label';
 	import * as Select from '$lib/components/ui/select/index.js';
+	import { yearLevelEnum } from '$lib/enums.js';
 	import { convertToFullName } from '$lib/utils';
 	import PencilIcon from '@lucide/svelte/icons/pencil';
 	import PlusIcon from '@lucide/svelte/icons/plus';
@@ -24,7 +25,9 @@
 
 	let createActivityDialogOpen = $state(false);
 	let editActivityDialogOpen = $state(false);
-	let selectedYearLevel = $state(data.defaultYearLevel?.toString());
+	let getYearLevelZeroIndexCode = () =>
+		data.yearLevels[0]?.code || yearLevelEnum.year7;
+	let selectedYearLevel = $state(getYearLevelZeroIndexCode());
 
 	let dataCreateActivityForm = () => data.createActivityForm;
 	const createForm = superForm(dataCreateActivityForm(), {
@@ -91,7 +94,9 @@
 			$editFormData.numInstancesPerWeek =
 				activity.totalPeriods / activity.periodsPerInstance;
 			$editFormData.periodsPerInstance = activity.periodsPerInstance;
-			$editFormData.yearLevelIds = activity.yearLevels;
+			$editFormData.yearLevelIds = activity.yearLevels.map((y) =>
+				y.yearLevelId.toString(),
+			);
 			$editFormData.groupIds = activity.groupIds;
 			$editFormData.studentIds = activity.studentIds;
 			$editFormData.spaceIds = activity.spaceIds;
@@ -116,32 +121,40 @@
 		$createFormData.teacherIds = [];
 		$createFormData.numInstancesPerWeek = 1;
 		$createFormData.periodsPerInstance = 1;
-		$createFormData.yearLevels = [];
+		$createFormData.yearLevelIds = [];
 		$createFormData.groupIds = [];
 		$createFormData.studentIds = [];
 		$createFormData.spaceIds = [];
 		createActivityDialogOpen = true;
 	}
 
-	const yearLevelOptions = data.yearLevels.map((yearLevel) => ({
-		value: yearLevel,
-		label: yearLevel,
-	}));
+	const yearLevelOptions = $derived(
+		data.yearLevels.map((yearLevel) => ({
+			value: yearLevel,
+			label: yearLevel,
+		})),
+	);
 
-	const groupOptions = data.groups.map((group) => ({
-		value: group.id.toString(),
-		label: `${group.name} (${group.yearLevel})`,
-	}));
+	const groupOptions = $derived(
+		data.groups.map((group) => ({
+			value: group.id.toString(),
+			label: `${group.name} (${group.yearLevelCode})`,
+		})),
+	);
 
-	const studentOptions = data.students.map((student) => ({
-		value: student.id,
-		label: `${convertToFullName(student.firstName, student.middleName, student.lastName)} (${student.yearLevel})`,
-	}));
+	const studentOptions = $derived(
+		data.students.map((student) => ({
+			value: student.id,
+			label: `${convertToFullName(student.firstName, student.middleName, student.lastName)} (${student.yearLevel})`,
+		})),
+	);
 
-	const spaceOptions = data.spaces.map((space) => ({
-		value: space.id.toString(),
-		label: space.name,
-	}));
+	const spaceOptions = $derived(
+		data.spaces.map((space) => ({
+			value: space.id.toString(),
+			label: space.name,
+		})),
+	);
 </script>
 
 <div class="mb-4 flex items-start justify-between">
@@ -193,8 +206,8 @@
 	</Select.Trigger>
 	<Select.Content>
 		{#each data.yearLevels as yearLevel}
-			<Select.Item value={yearLevel}>
-				{yearLevel}
+			<Select.Item value={yearLevel.id.toString()}>
+				{yearLevel.code}
 			</Select.Item>
 		{/each}
 	</Select.Content>
@@ -214,7 +227,7 @@
 	<input type="hidden" name="yearLevel" value={selectedYearLevel} />
 	<div class="mb-8 space-y-4">
 		<Accordion.Root type="single" class="w-full">
-			{#each currentSubjectOfferings as subjectAndOffering, index}
+			{#each currentSubjectOfferings as subjectAndOffering}
 				<Accordion.Item value="subject-{subjectAndOffering.subjectOffering.id}">
 					<Accordion.Trigger class="w-full">
 						<div class="flex w-full items-center justify-between">
@@ -310,7 +323,7 @@
 															<div class="flex flex-wrap gap-1">
 																{#each activity.groupIds as groupId}
 																	{@const group = data.groups.find(
-																		(g) => g.id === groupId,
+																		(g) => g.id.toString() === groupId,
 																	)}
 																	{#if group}
 																		<Badge variant="outline" class="text-xs">
@@ -360,7 +373,7 @@
 															<div class="flex flex-wrap gap-1">
 																{#each activity.spaceIds as locationId}
 																	{@const space = data.spaces.find(
-																		(s) => s.id === locationId,
+																		(s) => s.id.toString() === locationId,
 																	)}
 																	{#if space}
 																		<Badge variant="outline" class="text-xs">
@@ -524,17 +537,19 @@
 					<Label for="activity-year-levels"
 						>Assign to Year Levels (Optional)</Label
 					>
-					<Select.Root type="multiple" bind:value={$createFormData.yearLevels}>
+					<Select.Root
+						type="multiple"
+						bind:value={$createFormData.yearLevelIds}
+					>
 						<Select.Trigger class="w-full">
-							{#if ($createFormData.yearLevels ?? []).length > 0}
-								{($createFormData.yearLevels ?? [])
-									.map((yearLevel) => {
-										return (
-											yearLevelOptions.find(
-												(y) => y.value.toString() === yearLevel,
-											)?.label || 'Unknown'
-										);
-									})
+							{#if data.yearLevels.length > 0}
+								{data.yearLevels
+									.filter((y) =>
+										($createFormData.yearLevelIds ?? []).includes(
+											y.id.toString(),
+										),
+									)
+									.map((y) => y.code)
 									.join(', ')}
 							{:else}
 								Select year levels...
@@ -548,8 +563,8 @@
 							{/each}
 						</Select.Content>
 					</Select.Root>
-					{#each $createFormData.yearLevels || [] as yearLevel}
-						<input type="hidden" name="yearLevels" value={yearLevel} />
+					{#each $createFormData.yearLevelIds || [] as yearLevel}
+						<input type="hidden" name="yearLevelIds" value={yearLevel} />
 					{/each}
 					<p class="text-muted-foreground text-sm">
 						Select year levels for activities that apply to entire grade levels
@@ -562,8 +577,8 @@
 					>
 					<Select.Root type="multiple" bind:value={$createFormData.groupIds}>
 						<Select.Trigger class="w-full">
-							{#if createGroupIds.length > 0}
-								{createGroupIds
+							{#if ($createFormData.groupIds ?? []).length > 0}
+								{($createFormData.groupIds ?? [])
 									.map((groupId) => {
 										return (
 											groupOptions.find((g) => g.value === groupId)?.label ||
@@ -629,13 +644,13 @@
 				<!-- Preferred Rooms Selection -->
 				<div class="grid gap-2">
 					<Label for="activity-rooms">Preferred Rooms (Optional)</Label>
-					<Select.Root type="multiple" bind:value={createLocationIds}>
+					<Select.Root type="multiple" bind:value={$createFormData.spaceIds}>
 						<Select.Trigger class="w-full">
-							{#if createLocationIds.length > 0}
-								{createLocationIds
-									.map((roomId) => {
+							{#if ($createFormData.spaceIds ?? []).length > 0}
+								{($createFormData.spaceIds ?? [])
+									.map((locationId) => {
 										return (
-											spaceOptions.find((s) => s.value === roomId)?.label ||
+											spaceOptions.find((s) => s.value === locationId)?.label ||
 											'Unknown'
 										);
 									})
@@ -766,17 +781,16 @@
 					<Label for="edit-activity-year-levels"
 						>Assign to Year Levels (Optional)</Label
 					>
-					<Select.Root type="multiple" bind:value={$editFormData.yearLevels}>
+					<Select.Root type="multiple" bind:value={$editFormData.yearLevelIds}>
 						<Select.Trigger class="w-full">
-							{#if ($editFormData.yearLevels ?? []).length > 0}
-								{($editFormData.yearLevels ?? [])
-									.map((yearLevel) => {
-										return (
-											yearLevelOptions.find(
-												(y) => y.value.toString() === yearLevel,
-											)?.label || 'Unknown'
-										);
-									})
+							{#if data.yearLevels.length > 0}
+								{data.yearLevels
+									.filter((y) =>
+										($editFormData.yearLevelIds ?? []).includes(
+											y.id.toString(),
+										),
+									)
+									.map((y) => y.code)
 									.join(', ')}
 							{:else}
 								Select year levels...
@@ -790,8 +804,8 @@
 							{/each}
 						</Select.Content>
 					</Select.Root>
-					{#each $editFormData.yearLevels || [] as yearLevel}
-						<input type="hidden" name="yearLevels" value={yearLevel} />
+					{#each $editFormData.yearLevelIds || [] as yearLevel}
+						<input type="hidden" name="yearLevelIds" value={yearLevel} />
 					{/each}
 					<p class="text-muted-foreground text-sm">
 						Select year levels for activities that apply to entire grade levels
@@ -801,10 +815,10 @@
 				<!-- Groups Selection -->
 				<div class="grid gap-2">
 					<Label for="edit-activity-groups">Assign to Groups (Optional)</Label>
-					<Select.Root type="multiple" bind:value={editGroupIds}>
+					<Select.Root type="multiple" bind:value={$editFormData.groupIds}>
 						<Select.Trigger class="w-full">
-							{#if editGroupIds.length > 0}
-								{editGroupIds
+							{#if ($editFormData.groupIds ?? []).length > 0}
+								{($editFormData.groupIds ?? [])
 									.map((groupId) => {
 										return (
 											groupOptions.find((g) => g.value === groupId)?.label ||
@@ -871,13 +885,13 @@
 				<!-- Preferred Rooms Selection -->
 				<div class="grid gap-2">
 					<Label for="edit-activity-rooms">Preferred Rooms (Optional)</Label>
-					<Select.Root type="multiple" bind:value={editLocationIds}>
+					<Select.Root type="multiple" bind:value={$editFormData.spaceIds}>
 						<Select.Trigger class="w-full">
-							{#if editLocationIds.length > 0}
-								{editLocationIds
-									.map((roomId) => {
+							{#if ($editFormData.spaceIds ?? []).length > 0}
+								{($editFormData.spaceIds ?? [])
+									.map((locationId) => {
 										return (
-											spaceOptions.find((s) => s.value === roomId)?.label ||
+											spaceOptions.find((s) => s.value === locationId)?.label ||
 											'Unknown'
 										);
 									})
