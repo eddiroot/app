@@ -2,4 +2,5 @@ export * from './csv.js';
 export * from './datetime.js';
 export * from './names.js';
 export * from './permissions.js';
+export * from './timetable.js';
 export * from './ui.js';

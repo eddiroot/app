@@ -9,7 +9,7 @@
 		generateTimeslots,
 		getClassPosition,
 		getEventPosition,
-	} from './utils.js';
+	} from '$lib/utils/timetable';
 
 	let { data } = $props();
 

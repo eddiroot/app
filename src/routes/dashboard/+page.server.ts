@@ -25,10 +25,10 @@ export const load = async ({ locals: { security } }) => {
 		subjectOfferingEvents,
 		subjectOfferingClassEvents,
 	] = await Promise.all([
-		getSchoolEventsForDayByUserId(user.id, new Date()),
-		getCampusEventsForDayByUserId(user.id, new Date()),
-		getSubjectOfferingEventsForDayByUserId(user.id, new Date()),
-		getSubjectOfferingClassEventsForDayByUserId(user.id, new Date()),
+		getSchoolEventsForDayByUserId(user.id, new Date(2026, 1, 9)),
+		getCampusEventsForDayByUserId(user.id, new Date(2026, 1, 9)),
+		getSubjectOfferingEventsForDayByUserId(user.id, new Date(2026, 1, 9)),
+		getSubjectOfferingClassEventsForDayByUserId(user.id, new Date(2026, 1, 9)),
 	]);
 
 	// Get user's campuses to determine which news they should see

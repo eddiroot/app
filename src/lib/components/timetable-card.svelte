@@ -1,6 +1,6 @@
 <script lang="ts">
 	import * as Card from '$lib/components/ui/card';
-	import { generateSubjectColors } from '../../routes/calendar/utils.js';
+	import { generateSubjectColors } from '$lib/utils';
 
 	interface Props {
 		cls: any;

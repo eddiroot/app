@@ -3,13 +3,12 @@
 	import * as Card from '$lib/components/ui/card';
 	import { eventTypeEnum } from '$lib/enums.js';
 	import type { Event } from '$lib/server/db/schema/event';
-	import { formatTimestampAsTime } from '$lib/utils';
+	import { formatTimestampAsTime, generateSubjectColors } from '$lib/utils';
 	import BookOpenIcon from '@lucide/svelte/icons/book-open';
 	import CalendarIcon from '@lucide/svelte/icons/calendar';
 	import ClockIcon from '@lucide/svelte/icons/clock';
 	import MapPinIcon from '@lucide/svelte/icons/map-pin';
 	import SchoolIcon from '@lucide/svelte/icons/school';
-	import { generateSubjectColors } from '../../routes/calendar/utils.js';
 
 	interface EventCardProps {
 		event: Event;
