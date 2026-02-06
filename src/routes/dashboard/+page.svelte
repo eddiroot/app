@@ -124,7 +124,7 @@
 	</Card.Root>
 
 	<!-- School News -->
-	<Card.Root class="h-full overflow-hidden border-2 shadow-none">
+	<Card.Root class="h-full overflow-hidden shadow-none">
 		<Card.Header class="flex flex-row items-center justify-between space-y-0">
 			<Card.Title class="text-xl">School News</Card.Title>
 			<a

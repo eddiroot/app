@@ -75,7 +75,7 @@
 	}
 </script>
 
-<div class="bg-background sticky top-0 z-50 space-y-4 p-8">
+<div class="bg-background sticky top-0 z-50 space-y-4 rounded-xl p-8">
 	<!-- Week Navigation -->
 	<div class="flex items-center justify-between">
 		<Button.Root
