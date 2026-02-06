@@ -27,11 +27,7 @@ const handleAuth: Handle = async ({ event, resolve }) => {
 		event.locals.user = null;
 		event.locals.session = null;
 		event.locals.security = new Security(event);
-		if (
-			event.route.id !== '/' &&
-			event.url.pathname !== '/login' &&
-			event.url.pathname !== '/demo'
-		) {
+		if (event.route.id !== '/' && !event.route.id?.startsWith('/(public)')) {
 			return redirect(303, '/login');
 		}
 		return resolve(event);

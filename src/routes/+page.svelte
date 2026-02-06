@@ -73,42 +73,42 @@
 							class="grid w-[300px] gap-2 p-2 sm:w-[400px] md:w-[500px] md:grid-cols-2 lg:w-[600px]"
 						>
 							{@render ListItem({
-								href: '/features/tasks',
+								href: '#tasks',
 								title: 'Tasks',
 								content:
 									'Engage students with interactive and collaborative lessons and assessments.',
 							})}
 							{@render ListItem({
-								href: '/features/curriculum',
+								href: '#curriculum',
 								title: 'Curriculum',
 								content: 'Plan and organise your school curriculum with ease.',
 							})}
 							{@render ListItem({
-								href: '/features/discussions',
+								href: '#discussions',
 								title: 'Discussions',
 								content:
 									'Foster meaningful discussions with a structured discussion system.',
 							})}
 							{@render ListItem({
-								href: '/features/calendars',
+								href: '#calendars',
 								title: 'Calendar',
 								content:
 									'Integrated calendar for classes and events to keep everyone organised.',
 							})}
 							{@render ListItem({
-								href: '/features/attendance',
+								href: '#attendance',
 								title: 'Attendance',
 								content:
 									'Track attendance effortlessly with tools to mark the roll and manage absences.',
 							})}
 							{@render ListItem({
-								href: '/features/news',
+								href: '#news',
 								title: 'News',
 								content:
 									'Keep everyone informed with instant updates and announcements.',
 							})}
 							{@render ListItem({
-								href: '/features/timetables',
+								href: '#timetables',
 								title: 'Timetables',
 								content:
 									'Create and manage school timetables with minimal effort.',
@@ -116,38 +116,13 @@
 						</ul>
 					</NavigationMenu.Content>
 				</NavigationMenu.Item>
-				<NavigationMenu.Item>
-					<NavigationMenu.Trigger>Learn</NavigationMenu.Trigger>
-					<NavigationMenu.Content>
-						<ul
-							class="grid w-[300px] gap-2 p-2 sm:w-[400px] md:w-[500px] md:grid-cols-2 lg:w-[600px]"
-						>
-							{@render ListItem({
-								href: '/learn/school-leadership',
-								title: 'School Leadership',
-								content: 'Discover tools to build vision and culture.',
-							})}
-							{@render ListItem({
-								href: '/learn/wellbeing',
-								title: 'Wellbeing',
-								content: 'Build for teacher and student joy.',
-							})}
-							{@render ListItem({
-								href: '/learn/classroom-strategies',
-								title: 'Classroom Strategies',
-								content:
-									'Explore strategies to enhance student engagement and learning.',
-							})}
-						</ul>
-					</NavigationMenu.Content>
-				</NavigationMenu.Item>
-				<NavigationMenu.Item>
+				<!-- <NavigationMenu.Item>
 					<NavigationMenu.Link>
 						{#snippet child()}
 							<a href="/impact" class={navigationMenuTriggerStyle()}>Impact</a>
 						{/snippet}
 					</NavigationMenu.Link>
-				</NavigationMenu.Item>
+				</NavigationMenu.Item> -->
 				<NavigationMenu.Item>
 					<NavigationMenu.Trigger>Support</NavigationMenu.Trigger>
 					<NavigationMenu.Content>
@@ -216,6 +191,7 @@
 	features: { icon: typeof Icon; text: string }[],
 )}
 	<section
+		id={title.replaceAll(' ', '-').toLowerCase()}
 		class="{direction == 'left' ? 'bg-muted/50' : ''} py-16 md:py-24 lg:py-32"
 	>
 		<div class="container mx-auto px-4 lg:px-8">
