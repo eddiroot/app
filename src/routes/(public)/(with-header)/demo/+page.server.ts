@@ -38,7 +38,7 @@ export const actions = {
 		}
 
 		const embed = {
-			title: 'New Onboarding Request',
+			title: 'New Demo Request',
 			fields: [
 				{
 					name: 'Name',
@@ -53,7 +53,7 @@ export const actions = {
 		};
 
 		try {
-			await fetch(env.WEBHOOK_NOTIFICATIONS_ONBOARDING, {
+			await fetch(env.WEBHOOK_NOTIFICATIONS_DEMO, {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify({ embeds: [embed] }),
