@@ -46,7 +46,7 @@
 					<Card.Header>
 						<div class="mb-4 flex items-center justify-center">
 							<div class="bg-primary rounded-2xl p-4 shadow-sm">
-								<eventType.icon class="h-8 w-8" />
+								<eventType.icon class="h-8 w-8 text-white" />
 							</div>
 						</div>
 						<div class="space-y-3 text-center">
