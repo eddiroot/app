@@ -16,12 +16,8 @@ import { getCampusesByUserId } from '$lib/server/db/service/school';
 import { generateUniqueFileName, uploadBufferHelper } from '$lib/server/obj';
 import { getPermissions } from '$lib/utils';
 import { error, fail, redirect } from '@sveltejs/kit';
-import type { Actions, PageServerLoad } from './$types';
 
-export const load: PageServerLoad = async ({
-	params,
-	locals: { security },
-}) => {
+export const load = async ({ params, locals: { security } }) => {
 	const user = security.isAuthenticated().getUser();
 	const newsId = parseInt(params.id, 10);
 
@@ -57,7 +53,7 @@ export const load: PageServerLoad = async ({
 	return { categories, userCampuses, newsItem, images, user };
 };
 
-export const actions: Actions = {
+export const actions = {
 	default: async ({ params, request, locals: { security } }) => {
 		const user = security.isAuthenticated().getUser();
 		const newsId = parseInt(params.id, 10);

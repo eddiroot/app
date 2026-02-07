@@ -43,15 +43,9 @@
 </script>
 
 <div class="mb-6 flex items-center justify-between">
-	<div>
-		<h1 class="text-2xl font-bold">Timetabling</h1>
-		<p class="text-muted-foreground mt-1">
-			Welcome to eddi-Timetabling, your one-stop solution for managing your
-			school timetables efficiently.
-		</p>
-	</div>
+	<h1 class="text-2xl font-bold">Timetables</h1>
 	<Dialog.Root bind:open={dialogOpen}>
-		<Dialog.Trigger class={buttonVariants({ variant: 'outline' })}>
+		<Dialog.Trigger class={buttonVariants({ variant: 'default' })}>
 			<PlusIcon />
 			Create New</Dialog.Trigger
 		>
@@ -139,7 +133,7 @@
 			<CalendarIcon class="text-muted-foreground mx-auto mb-4 h-12 w-12" />
 			<Card.Title class="mb-2 text-lg">No timetables yet</Card.Title>
 			<Card.Description class="mb-4">
-				Get started by creating your first timetable for your school.
+				Get started by creating a timetable with the button above.
 			</Card.Description>
 		</Card.Content>
 	</Card.Root>
@@ -160,14 +154,14 @@
 									>{ttAndSem.tt.name}</Card.Title
 								>
 								<div class="mt-1 flex items-center gap-2">
-									<Badge variant="secondary" class="text-xs">
+									<Badge>
 										{ttAndSem.tt.year}
 									</Badge>
-									<Badge variant="secondary" class="text-xs">
-										{ttAndSem.sch_sem.number}
+									<Badge variant="secondary">
+										Semester {ttAndSem.sch_sem.number}
 									</Badge>
 									{#if ttAndSem.tt.isArchived}
-										<Badge variant="outline" class="gap-1 text-xs">
+										<Badge variant="outline" class="gap-1">
 											<ArchiveIcon class="h-3 w-3" />
 											Archived
 										</Badge>

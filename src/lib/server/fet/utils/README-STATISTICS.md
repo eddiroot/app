@@ -198,7 +198,7 @@ for (const [dayNumber, dayUtil] of stats.summary.dayUtilization.entries()) {
 import { generateStudentStatistics } from '$lib/server/db/utils/student-statistics';
 import type { PageServerLoad } from './$types';
 
-export const load: PageServerLoad = async ({ params }) => {
+export const load = async ({ params }) => {
 	const timetableDraftId = parseInt(params.timetableDraftId);
 
 	const students = await generateStudentStatistics(timetableDraftId);

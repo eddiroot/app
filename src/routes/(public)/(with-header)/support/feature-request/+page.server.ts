@@ -25,7 +25,11 @@ export const actions = {
 				},
 				{ name: 'Email', value: form.data.email, inline: true },
 				{ name: 'Feature', value: form.data.featureTitle, inline: false },
-				{ name: 'Description', value: form.data.featureDescription, inline: false },
+				{
+					name: 'Description',
+					value: form.data.featureDescription,
+					inline: false,
+				},
 			],
 			color: 0x3b82f6,
 			timestamp: new Date().toISOString(),

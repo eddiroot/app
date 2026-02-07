@@ -154,7 +154,7 @@ export async function getSubjectOfferingsBySubjectId(subjectId: number) {
 	return subjectOfferings; // Returns both subjectOffering and subject data
 }
 
-export async function getSubjectOfferingsByForTimetableByTimetableId(
+export async function getSubjectOfferingsForTimetableByTimetableId(
 	timetableId: number,
 ) {
 	const [timetableData] = await db
@@ -179,7 +179,11 @@ export async function getSubjectOfferingsByForTimetableByTimetableId(
 	];
 
 	const subjectOfferings = await db
-		.select({ subjectOffering: table.subjectOffering, subject: table.subject })
+		.select({
+			subjectOffering: table.subjectOffering,
+			subject: table.subject,
+			yearLevel: table.schoolYearLevel,
+		})
 		.from(table.subjectOffering)
 		.innerJoin(
 			table.subject,

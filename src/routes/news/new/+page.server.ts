@@ -9,9 +9,8 @@ import { getCampusesByUserId } from '$lib/server/db/service/school';
 import { generateUniqueFileName, uploadBufferHelper } from '$lib/server/obj';
 import { getPermissions } from '$lib/utils';
 import { error, fail, redirect } from '@sveltejs/kit';
-import type { Actions, PageServerLoad } from './$types';
 
-export const load: PageServerLoad = async ({ locals: { security } }) => {
+export const load = async ({ locals: { security } }) => {
 	const user = security.isAuthenticated().getUser();
 
 	// Check if user has permission to create news
@@ -29,7 +28,7 @@ export const load: PageServerLoad = async ({ locals: { security } }) => {
 	return { categories, userCampuses, user };
 };
 
-export const actions: Actions = {
+export const actions = {
 	default: async ({ request, locals: { security } }) => {
 		const user = security.isAuthenticated().getUser();
 

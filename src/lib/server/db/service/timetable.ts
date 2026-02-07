@@ -13,9 +13,12 @@ import { and, asc, count, eq, ilike, inArray, or } from 'drizzle-orm';
 // ============================================================================
 export async function getTimetableByTimetableId(timetableId: number) {
 	const [timetable] = await db
-
 		.select()
 		.from(table.timetable)
+		.innerJoin(
+			table.schoolSemester,
+			eq(table.timetable.schoolSemesterId, table.schoolSemester.id),
+		)
 		.where(eq(table.timetable.id, timetableId))
 		.limit(1);
 

@@ -5,10 +5,9 @@ import {
 } from '$lib/server/db/service';
 import { message, superValidate } from 'sveltekit-superforms';
 import { zod4 } from 'sveltekit-superforms/adapters';
-import type { Actions, PageServerLoad } from './$types.js';
 import { createTimetableSchema } from './schema.js';
 
-export const load: PageServerLoad = async ({ locals: { security } }) => {
+export const load = async ({ locals: { security } }) => {
 	const user = security.isAuthenticated().isAdmin().getUser();
 	const timetablesAndSemesters = await getSchoolTimetablesBySchoolId(
 		user.schoolId,
@@ -22,7 +21,7 @@ export const load: PageServerLoad = async ({ locals: { security } }) => {
 	};
 };
 
-export const actions: Actions = {
+export const actions = {
 	createTimetable: async ({ request, locals: { security } }) => {
 		const user = security.isAuthenticated().isAdmin().getUser();
 

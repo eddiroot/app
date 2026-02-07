@@ -7,9 +7,8 @@ import {
 } from '$lib/server/db/service/news';
 import { getPermissions } from '$lib/utils';
 import { error, fail, redirect } from '@sveltejs/kit';
-import type { Actions, PageServerLoad } from './$types';
 
-export const load: PageServerLoad = async ({ locals: { security } }) => {
+export const load = async ({ locals: { security } }) => {
 	const user = security.isAuthenticated().getUser();
 
 	// Get user's draft news articles
@@ -26,7 +25,7 @@ export const load: PageServerLoad = async ({ locals: { security } }) => {
 	return { user, drafts: draftsWithImages };
 };
 
-export const actions: Actions = {
+export const actions = {
 	publish: async ({ request, locals: { security } }) => {
 		const user = security.isAuthenticated().getUser();
 

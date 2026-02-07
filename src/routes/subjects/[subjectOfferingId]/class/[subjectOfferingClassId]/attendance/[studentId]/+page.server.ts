@@ -3,12 +3,8 @@ import {
 	getSubjectOfferingClassDetailsById,
 	getUserById,
 } from '$lib/server/db/service';
-import type { PageServerLoad } from './$types';
 
-export const load: PageServerLoad = async ({
-	locals: { security },
-	params,
-}) => {
+export const load = async ({ locals: { security }, params }) => {
 	security.isAuthenticated();
 
 	const studentId = params.studentId;

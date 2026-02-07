@@ -3,12 +3,8 @@ import {
 	getUserProfileById /*, getStudentGrades */,
 } from '$lib/server/db/service';
 import { redirect } from '@sveltejs/kit';
-import type { PageServerLoad } from './$types';
 
-export const load: PageServerLoad = async ({
-	params,
-	locals: { security },
-}) => {
+export const load = async ({ params, locals: { security } }) => {
 	const currentUser = security.isAuthenticated().getUser();
 	const targetUserId = params.userId;
 

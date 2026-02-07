@@ -6,16 +6,12 @@ import {
 } from '$lib/server/db/service';
 import { message, superValidate } from 'sveltekit-superforms';
 import { zod4 } from 'sveltekit-superforms/adapters';
-import type { Actions, PageServerLoad } from './$types.js';
 import {
 	createTimetableDraftSchema,
 	publishTimetableDraftSchema,
 } from './schema';
 
-export const load: PageServerLoad = async ({
-	locals: { security },
-	params,
-}) => {
+export const load = async ({ locals: { security }, params }) => {
 	const user = security.isAuthenticated().isAdmin().getUser();
 	if (!user) {
 		throw new Error('User not found');
@@ -37,7 +33,7 @@ export const load: PageServerLoad = async ({
 	};
 };
 
-export const actions: Actions = {
+export const actions = {
 	createTimetableDraft: async ({ request, locals: { security }, params }) => {
 		const user = security.isAuthenticated().isAdmin().getUser();
 

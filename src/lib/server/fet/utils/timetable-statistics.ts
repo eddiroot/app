@@ -1,4 +1,4 @@
-import type { StudentStatistic } from '../../../../routes/admin/timetables/[timetableId]/[timetableDraftId]/result/student-columns';
+import type { StudentStatistic } from '../../../../routes/admin/timetables/[timetableId]/draft/[timetableDraftId]/result/student-columns';
 import { generateStudentStatistics } from './student-statistics';
 import type { TeacherStatistic } from './teacher-statistics';
 import { generateTeacherStatistics } from './teacher-statistics';

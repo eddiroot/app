@@ -53,18 +53,16 @@
 		},
 	});
 
-	const { form: createFormData, enhance, constraints } = createDraftForm;
-	const {
-		form: publishFormData,
-		enhance: publishEnhance,
-		constraints: publishConstraints,
-	} = publishDraftForm;
+	const { form: createFormData, enhance } = createDraftForm;
+	const { form: publishFormData, enhance: publishEnhance } = publishDraftForm;
 </script>
 
 <div class="mb-6 flex items-center justify-between">
 	<div>
-		<h1 class="text-2xl font-bold">Timetabling</h1>
-		<h1 class="text-1xl font-bold">{data.timetable.name}</h1>
+		<h1 class="text-2xl font-bold">{data.timetable.tt.name}</h1>
+		<p class="text-lg">
+			{data.timetable.tt.year} - Semester {data.timetable.sch_sem.number}
+		</p>
 	</div>
 	<div class="flex gap-2">
 		<Dialog.Root bind:open={publishDialogOpen}>
@@ -157,7 +155,6 @@
 				</form>
 			</Dialog.Content>
 		</Dialog.Root>
-
 		<Dialog.Root bind:open={dialogOpen}>
 			<Dialog.Trigger class={buttonVariants({ variant: 'outline' })}>
 				<PlusIcon />
@@ -215,7 +212,9 @@
 {:else}
 	<div class="grid gap-4">
 		{#each data.timetableDrafts as draft}
-			<a href={`/admin/timetables/${data.timetable.id}/${draft.id}/times`}>
+			<a
+				href={`/admin/timetables/${data.timetable.tt.id}/draft/${draft.id}/times`}
+			>
 				<Card.Root>
 					<Card.Header class="flex items-center justify-between">
 						<div class="flex items-center gap-4">

@@ -1,7 +1,7 @@
 import { db } from '$lib/server/db/index';
 import { calculateDurationMinutes } from '$lib/utils';
 import { and, eq, inArray } from 'drizzle-orm';
-import type { StudentStatistic } from '../../../../routes/admin/timetables/[timetableId]/[timetableDraftId]/result/student-columns';
+import type { StudentStatistic } from '../../../../routes/admin/timetables/[timetableId]/draft/[timetableDraftId]/result/student-columns';
 import * as table from '../../db/schema';
 import { user } from '../../db/schema/user';
 
