@@ -90,7 +90,6 @@ export function setupWebSocket(
 	;(socket as any).markAsRecentlyCreated = markAsRecentlyCreated
 
 	socket.on('connect', () => {
-		console.log('Socket.IO connected:', socket.id)
 		// Initialize with whiteboardId
 		socket.emit('init', { whiteboardId })
 	})
@@ -147,13 +146,11 @@ export function setupWebSocket(
 	socket.on('lock', (data: WebSocketMessage) => {
 		if (data.whiteboardId !== whiteboardId) return
 		// Lock events are handled by the page component
-		console.log('Received lock event:', data.isLocked)
 	})
 
 	socket.on('unlock', (data: WebSocketMessage) => {
 		if (data.whiteboardId !== whiteboardId) return
 		// Unlock events are handled by the page component
-		console.log('Received unlock event:', data.isLocked)
 	})
 
 	socket.on('error', (data: { message: string }) => {
@@ -161,7 +158,7 @@ export function setupWebSocket(
 	})
 
 	socket.on('disconnect', () => {
-		console.log('Socket.IO disconnected')
+		// Connection closed
 	})
 
 	return socket
@@ -223,7 +220,6 @@ async function handleAddMessage(
 	if (messageData.object) {
 		// Check if this is an echo of an object we just created
 		if (recentlyCreatedObjects.has(messageData.object.id!)) {
-			console.log('Ignoring echo of locally created object:', messageData.object.id)
 			return
 		}
 
