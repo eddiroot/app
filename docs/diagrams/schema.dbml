@@ -1220,6 +1220,8 @@ table task.whiteboard {
   task_block_id integer [not null, unique]
   title text
   is_locked boolean [not null, default: false]
+  created_at "timestamp (3)" [not null, default: `now()`]
+  updated_at "timestamp (3)" [not null, default: `now()`]
 }
 
 table task.whiteboard_object {

@@ -235,7 +235,7 @@ export const whiteboard = taskSchema.table('whiteboard', {
 		.references(() => taskBlock.id, { onDelete: 'cascade' }),
 	title: text('title'),
 	isLocked: boolean('is_locked').notNull().default(false),
-	...standardTimestamp,
+	...timestamps,
 })
 
 export type Whiteboard = typeof whiteboard.$inferSelect

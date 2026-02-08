@@ -1,6 +1,7 @@
 import { taskBlockTypeEnum } from '$lib/enums'
 import {
 	createTaskBlock,
+	createWhiteboard,
 	deleteTaskBlock,
 	updateTaskBlock,
 } from '$lib/server/db/service'
@@ -43,6 +44,14 @@ export async function POST({ request }: { request: Request }) {
 			config: config as Record<string, unknown>,
 			index,
 		})
+
+		// If this is a whiteboard block, create the whiteboard entry
+		if (type === 'whiteboard') {
+			await createWhiteboard({
+				taskBlockId: block.id,
+				title: (config as { title?: string }).title || null,
+			})
+		}
 
 		return json({ block })
 	} catch (error) {

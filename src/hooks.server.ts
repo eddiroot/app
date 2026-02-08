@@ -1,3 +1,4 @@
+import { building, dev } from '$app/environment'
 import * as auth from '$lib/server/auth'
 import { db } from '$lib/server/db'
 import * as table from '$lib/server/db/schema'
