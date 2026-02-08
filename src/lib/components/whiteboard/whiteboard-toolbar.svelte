@@ -38,12 +38,14 @@
 		onAddText,
 		onAddImage,
 		onEraserTool,
-		onClearCanvas
+		onClearCanvas,
 	}: Props = $props();
 </script>
 
 <div class="absolute top-8 left-1/2 z-10 -translate-x-1/2 transform">
-	<div class="bg-background/20 border-border/50 rounded-md border shadow-sm backdrop-blur-sm">
+	<div
+		class="bg-background/20 border-border/50 rounded-md border shadow-sm backdrop-blur-sm"
+	>
 		<div class="flex items-center gap-1 px-4 py-2">
 			<!-- Selection Tool -->
 			<Tooltip.Root>
@@ -111,7 +113,8 @@
 			<Tooltip.Root>
 				<Tooltip.Trigger>
 					<Button
-						variant={selectedTool === 'shapes' && currentShapeType === 'rectangle'
+						variant={selectedTool === 'shapes' &&
+						currentShapeType === 'rectangle'
 							? 'default'
 							: 'ghost'}
 						size="icon"
@@ -145,7 +148,8 @@
 			<Tooltip.Root>
 				<Tooltip.Trigger>
 					<Button
-						variant={selectedTool === 'shapes' && currentShapeType === 'triangle'
+						variant={selectedTool === 'shapes' &&
+						currentShapeType === 'triangle'
 							? 'default'
 							: 'ghost'}
 						size="icon"
@@ -207,7 +211,12 @@
 			<!-- Clear Canvas -->
 			<Tooltip.Root>
 				<Tooltip.Trigger>
-					<Button variant="ghost" size="icon" onclick={onClearCanvas} class="h-9 w-9">
+					<Button
+						variant="ghost"
+						size="icon"
+						onclick={onClearCanvas}
+						class="h-9 w-9"
+					>
 						<TrashIcon />
 					</Button>
 				</Tooltip.Trigger>

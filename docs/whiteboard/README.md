@@ -61,13 +61,13 @@ src/lib/components/whiteboard/
 
 ## Technology Stack
 
-| Technology | Purpose |
-|------------|---------|
-| **Fabric.js** | Canvas manipulation and object management |
-| **Socket.IO** | Real-time WebSocket communication |
-| **Svelte 5** | UI components with reactive state |
-| **TypeScript** | Type-safe code |
-| **UUID** | Unique object identification |
+| Technology     | Purpose                                   |
+| -------------- | ----------------------------------------- |
+| **Fabric.js**  | Canvas manipulation and object management |
+| **Socket.IO**  | Real-time WebSocket communication         |
+| **Svelte 5**   | UI components with reactive state         |
+| **TypeScript** | Type-safe code                            |
+| **UUID**       | Unique object identification              |
 
 ## Quick Start for Developers
 
@@ -88,19 +88,19 @@ src/lib/components/whiteboard/
 
 ## Documentation Index
 
-| Document | Description |
-|----------|-------------|
-| [Types & Interfaces](./types.md) | TypeScript types, interfaces, and constants |
-| [Tools & Interactions](./tools.md) | Toolbar tools and user interactions |
-| [Canvas Events](./canvas-events.md) | Event handling system |
-| [Canvas Actions](./canvas-actions.md) | Action functions (zoom, delete, clear, etc.) |
-| [Control Points](./control-points.md) | Custom control point system |
-| [History System](./history.md) | Undo/redo implementation |
-| [Keyboard Shortcuts](./keyboard-shortcuts.md) | Keyboard commands |
-| [WebSocket Sync](./websocket.md) | Real-time collaboration |
-| [Shapes](./shapes.md) | Shape factory functions |
-| [UI Components](./ui-components.md) | Svelte component documentation |
-| [Integration](./integration.md) | Task block integration and database schema |
+| Document                                      | Description                                  |
+| --------------------------------------------- | -------------------------------------------- |
+| [Types & Interfaces](./types.md)              | TypeScript types, interfaces, and constants  |
+| [Tools & Interactions](./tools.md)            | Toolbar tools and user interactions          |
+| [Canvas Events](./canvas-events.md)           | Event handling system                        |
+| [Canvas Actions](./canvas-actions.md)         | Action functions (zoom, delete, clear, etc.) |
+| [Control Points](./control-points.md)         | Custom control point system                  |
+| [History System](./history.md)                | Undo/redo implementation                     |
+| [Keyboard Shortcuts](./keyboard-shortcuts.md) | Keyboard commands                            |
+| [WebSocket Sync](./websocket.md)              | Real-time collaboration                      |
+| [Shapes](./shapes.md)                         | Shape factory functions                      |
+| [UI Components](./ui-components.md)           | Svelte component documentation               |
+| [Integration](./integration.md)               | Task block integration and database schema   |
 
 ## Related Files Outside Component Directory
 

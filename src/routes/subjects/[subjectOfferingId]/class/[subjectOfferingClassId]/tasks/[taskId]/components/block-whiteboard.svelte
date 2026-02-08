@@ -20,14 +20,16 @@
 		viewMode,
 		whiteboardMap,
 		whiteboardLockStates,
-		isTeacher
+		isTeacher,
 	}: WhiteboardBlockProps & {
 		whiteboardMap?: Record<number, number>;
 		whiteboardLockStates?: Record<number, boolean>;
 		isTeacher?: boolean;
 	} = $props();
 
-	const { taskId, subjectOfferingId, subjectOfferingClassId } = $derived(page.params);
+	const { taskId, subjectOfferingId, subjectOfferingClassId } = $derived(
+		page.params,
+	);
 
 	const whiteboardId = $derived(whiteboardMap?.[blockId] ?? null);
 	let isLocked = $state(false);
@@ -46,10 +48,7 @@
 		if (!browser || !whiteboardId) return;
 
 		// Connect to Socket.IO server
-		socket = io({
-			path: '/socket.io/',
-			transports: ['websocket', 'polling']
-		});
+		socket = io({ path: '/socket.io/', transports: ['websocket', 'polling'] });
 
 		socket.on('connect', () => {
 			// Initialize with whiteboardId
@@ -88,29 +87,30 @@
 
 			const response = await fetch(
 				`/subjects/${subjectOfferingId}/class/${subjectOfferingClassId}/tasks/${taskId}?/toggleWhiteboardLock`,
-				{
-					method: 'POST',
-					body: formData
-				}
+				{ method: 'POST', body: formData },
 			);
 
 			const result = await response.json();
 
 			if (result.type === 'success' && result.data) {
-				let actionData = typeof result.data === 'string' ? JSON.parse(result.data) : result.data;
+				let actionData =
+					typeof result.data === 'string'
+						? JSON.parse(result.data)
+						: result.data;
 
 				// Handle devalue format
 				if (Array.isArray(actionData)) {
 					const reconstructed = {
 						type: actionData[1],
-						data: {
-							isLocked: actionData[3]
-						}
+						data: { isLocked: actionData[3] },
 					};
 					actionData = reconstructed;
 				}
 
-				if (actionData.type === 'success' && actionData.data?.isLocked !== undefined) {
+				if (
+					actionData.type === 'success' &&
+					actionData.data?.isLocked !== undefined
+				) {
 					const newLockState = actionData.data.isLocked;
 
 					// Update local state immediately for reactivity
@@ -126,27 +126,25 @@
 						const lockMessage = newLockState ? 'lock' : 'unlock';
 						socket.emit(lockMessage, {
 							isLocked: newLockState,
-							whiteboardId: whiteboardId
+							whiteboardId: whiteboardId,
 						});
 					}
 
 					// Show toast notification
 					if (newLockState) {
 						toast.success('Whiteboard locked', {
-							description: 'Students can now only view and pan the whiteboard'
+							description: 'Students can now only view and pan the whiteboard',
 						});
 					} else {
 						toast.success('Whiteboard unlocked', {
-							description: 'Students can now edit the whiteboard'
+							description: 'Students can now edit the whiteboard',
 						});
 					}
 				}
 			}
 		} catch (err) {
 			console.error('Lock toggle failed:', err);
-			toast.error('Failed to toggle lock', {
-				description: 'Please try again'
-			});
+			toast.error('Failed to toggle lock', { description: 'Please try again' });
 		} finally {
 			isTogglingLock = false;
 		}
@@ -179,14 +177,17 @@
 					/>
 				</div>
 				<p class="text-muted-foreground text-sm">
-					Each whiteboard block has its own unique whiteboard. Access it through preview mode.
+					Each whiteboard block has its own unique whiteboard. Access it through
+					preview mode.
 				</p>
 			</Card.Content>
 		</Card.Root>
 	{:else if whiteboardId}
 		<div class="rounded-lg border p-6">
 			<div class="text-center">
-				<PresentationIcon class="text-muted-foreground mx-auto mb-3 h-12 w-12" />
+				<PresentationIcon
+					class="text-muted-foreground mx-auto mb-3 h-12 w-12"
+				/>
 				<h3 class="mb-2 text-lg font-semibold break-words">
 					{config.title || 'Interactive Whiteboard'}
 				</h3>
@@ -196,7 +197,12 @@
 				{#if isTeacher}
 					<Tooltip.Root>
 						<Tooltip.Trigger>
-							<Button variant="ghost" size="icon" onclick={toggleLock} disabled={isTogglingLock}>
+							<Button
+								variant="ghost"
+								size="icon"
+								onclick={toggleLock}
+								disabled={isTogglingLock}
+							>
 								{#if isLocked}
 									<svg
 										xmlns="http://www.w3.org/2000/svg"
@@ -240,7 +246,9 @@
 	{:else}
 		<div class="rounded-lg border p-6 text-center">
 			<PresentationIcon class="text-muted-foreground mx-auto mb-3 h-12 w-12" />
-			<p class="text-muted-foreground">Whiteboard not found. Please try refreshing the page.</p>
+			<p class="text-muted-foreground">
+				Whiteboard not found. Please try refreshing the page.
+			</p>
 		</div>
 	{/if}
 </div>

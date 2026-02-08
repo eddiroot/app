@@ -57,7 +57,9 @@ export class CanvasHistory {
 
 		// Clear redo stack when a new action is performed by this user
 		if (command.userId === this.currentUserId) {
-			this.redoStack = this.redoStack.filter((c) => c.userId !== this.currentUserId)
+			this.redoStack = this.redoStack.filter(
+				(c) => c.userId !== this.currentUserId,
+			)
 		}
 
 		// Limit stack size
@@ -69,13 +71,17 @@ export class CanvasHistory {
 	/**
 	 * Record an add command (object was created)
 	 */
-	recordAdd(objectId: string, objectData: Record<string, unknown>, userId: string) {
+	recordAdd(
+		objectId: string,
+		objectData: Record<string, unknown>,
+		userId: string,
+	) {
 		this.pushCommand({
 			type: 'add',
 			objectId,
 			objectData,
 			timestamp: Date.now(),
-			userId
+			userId,
 		})
 	}
 
@@ -86,7 +92,7 @@ export class CanvasHistory {
 		objectId: string,
 		beforeState: Record<string, unknown>,
 		afterState: Record<string, unknown>,
-		userId: string
+		userId: string,
 	) {
 		this.pushCommand({
 			type: 'modify',
@@ -95,27 +101,34 @@ export class CanvasHistory {
 			beforeState,
 			afterState,
 			timestamp: Date.now(),
-			userId
+			userId,
 		})
 	}
 
 	/**
 	 * Record a delete command (object was removed)
 	 */
-	recordDelete(objectId: string, objectData: Record<string, unknown>, userId: string) {
+	recordDelete(
+		objectId: string,
+		objectData: Record<string, unknown>,
+		userId: string,
+	) {
 		this.pushCommand({
 			type: 'delete',
 			objectId,
 			objectData,
 			timestamp: Date.now(),
-			userId
+			userId,
 		})
 	}
 
 	/**
 	 * Record a batch delete command (multiple objects were removed together, e.g., eraser or clear all)
 	 */
-	recordBatchDelete(objects: Array<{ id: string; data: Record<string, unknown> }>, userId: string) {
+	recordBatchDelete(
+		objects: Array<{ id: string; data: Record<string, unknown> }>,
+		userId: string,
+	) {
 		if (objects.length === 0) return
 		this.pushCommand({
 			type: 'batch-delete',
@@ -123,14 +136,19 @@ export class CanvasHistory {
 			objectData: {}, // Not used for batch
 			batchObjects: objects,
 			timestamp: Date.now(),
-			userId
+			userId,
 		})
 	}
 
 	/**
 	 * Record a layer change command (object z-index was changed)
 	 */
-	recordLayer(objectId: string, previousIndex: number, newIndex: number, userId: string) {
+	recordLayer(
+		objectId: string,
+		previousIndex: number,
+		newIndex: number,
+		userId: string,
+	) {
 		this.pushCommand({
 			type: 'layer',
 			objectId,
@@ -138,7 +156,7 @@ export class CanvasHistory {
 			previousIndex,
 			newIndex,
 			timestamp: Date.now(),
-			userId
+			userId,
 		})
 	}
 
@@ -192,14 +210,18 @@ export class CanvasHistory {
 	 * Check if undo is available for the current user
 	 */
 	canUndo(): boolean {
-		return this.undoStack.some((command) => command.userId === this.currentUserId)
+		return this.undoStack.some(
+			(command) => command.userId === this.currentUserId,
+		)
 	}
 
 	/**
 	 * Check if redo is available for the current user
 	 */
 	canRedo(): boolean {
-		return this.redoStack.some((command) => command.userId === this.currentUserId)
+		return this.redoStack.some(
+			(command) => command.userId === this.currentUserId,
+		)
 	}
 
 	/**
@@ -234,7 +256,7 @@ export async function applyUndo(
 	canvas: Canvas,
 	command: Command,
 	sendCanvasUpdate: (data: Record<string, unknown>) => void,
-	controlPointManager?: ControlPointManager
+	controlPointManager?: ControlPointManager,
 ): Promise<void> {
 	if (command.type === 'add') {
 		// Undo an add = delete the object
@@ -247,15 +269,17 @@ export async function applyUndo(
 			canvas.remove(obj)
 			canvas.renderAll()
 
-			sendCanvasUpdate({
-				type: 'delete',
-				objects: [{ id: command.objectId }]
-			})
+			sendCanvasUpdate({ type: 'delete', objects: [{ id: command.objectId }] })
 		}
 	} else if (command.type === 'delete') {
 		// Undo a delete = restore the object
 		if (command.objectData) {
-			await restoreObjectFromData(canvas, command.objectData, sendCanvasUpdate, controlPointManager)
+			await restoreObjectFromData(
+				canvas,
+				command.objectData,
+				sendCanvasUpdate,
+				controlPointManager,
+			)
 		}
 	} else if (command.type === 'modify') {
 		// Undo a modify = restore the before state
@@ -277,17 +301,19 @@ export async function applyUndo(
 				const objData = obj.toObject()
 				// @ts-expect-error - custom id property
 				objData.id = obj.id
-				sendCanvasUpdate({
-					type: 'modify',
-					object: objData
-				})
+				sendCanvasUpdate({ type: 'modify', object: objData })
 			}
 		}
 	} else if (command.type === 'batch-delete') {
 		// Undo a batch delete = restore all objects
 		if (command.batchObjects && command.batchObjects.length > 0) {
 			for (const objInfo of command.batchObjects) {
-				await restoreObjectFromData(canvas, objInfo.data, sendCanvasUpdate, controlPointManager)
+				await restoreObjectFromData(
+					canvas,
+					objInfo.data,
+					sendCanvasUpdate,
+					controlPointManager,
+				)
 			}
 		}
 	} else if (command.type === 'layer') {
@@ -315,7 +341,7 @@ export async function applyUndo(
 					type: 'layer',
 					action: 'moveTo',
 					object: objData,
-					index: command.previousIndex
+					index: command.previousIndex,
 				})
 			}
 		}
@@ -330,12 +356,17 @@ export async function applyRedo(
 	canvas: Canvas,
 	command: Command,
 	sendCanvasUpdate: (data: Record<string, unknown>) => void,
-	controlPointManager?: ControlPointManager
+	controlPointManager?: ControlPointManager,
 ): Promise<void> {
 	if (command.type === 'add') {
 		// Redo an add = restore the object
 		if (command.objectData) {
-			await restoreObjectFromData(canvas, command.objectData, sendCanvasUpdate, controlPointManager)
+			await restoreObjectFromData(
+				canvas,
+				command.objectData,
+				sendCanvasUpdate,
+				controlPointManager,
+			)
 		}
 	} else if (command.type === 'delete') {
 		// Redo a delete = delete the object again
@@ -348,10 +379,7 @@ export async function applyRedo(
 			canvas.remove(obj)
 			canvas.renderAll()
 
-			sendCanvasUpdate({
-				type: 'delete',
-				objects: [{ id: command.objectId }]
-			})
+			sendCanvasUpdate({ type: 'delete', objects: [{ id: command.objectId }] })
 		}
 	} else if (command.type === 'modify') {
 		// Redo a modify = apply the after state
@@ -372,10 +400,7 @@ export async function applyRedo(
 				const objData = obj.toObject()
 				// @ts-expect-error - custom id property
 				objData.id = obj.id
-				sendCanvasUpdate({
-					type: 'modify',
-					object: objData
-				})
+				sendCanvasUpdate({ type: 'modify', object: objData })
 			}
 		}
 	} else if (command.type === 'batch-delete') {
@@ -398,7 +423,7 @@ export async function applyRedo(
 			if (deletedIds.length > 0) {
 				sendCanvasUpdate({
 					type: 'delete',
-					objects: deletedIds.map((id) => ({ id }))
+					objects: deletedIds.map((id) => ({ id })),
 				})
 			}
 		}
@@ -427,7 +452,7 @@ export async function applyRedo(
 					type: 'layer',
 					action: 'moveTo',
 					object: objData,
-					index: command.newIndex
+					index: command.newIndex,
 				})
 			}
 		}
@@ -441,7 +466,7 @@ async function restoreObjectFromData(
 	canvas: Canvas,
 	objectData: Record<string, unknown>,
 	sendCanvasUpdate: (data: Record<string, unknown>) => void,
-	controlPointManager?: ControlPointManager
+	controlPointManager?: ControlPointManager,
 ): Promise<void> {
 	// Use Fabric's enlivenObjects to recreate the object
 	const { util } = await import('fabric')
@@ -454,18 +479,12 @@ async function restoreObjectFromData(
 			obj.id = objectData.id
 			// Disable default fabric.js controls and borders - we use custom control points
 			// @ts-expect-error - Type assertion needed for enliven result
-			obj.set({
-				hasControls: false,
-				hasBorders: false
-			})
+			obj.set({ hasControls: false, hasBorders: false })
 			// Ensure images use center origin
 			// @ts-expect-error - Type assertion needed for enliven result
 			if (obj.type === 'image') {
 				// @ts-expect-error - Type assertion needed for enliven result
-				obj.set({
-					originX: 'center',
-					originY: 'center'
-				})
+				obj.set({ originX: 'center', originY: 'center' })
 			}
 			// @ts-expect-error - Type assertion needed for enliven result
 			canvas.add(obj)
@@ -473,17 +492,18 @@ async function restoreObjectFromData(
 			// If this object is selected, add control points
 			const activeObject = canvas.getActiveObject()
 			// @ts-expect-error - Type assertion needed
-			if (activeObject && activeObject.id === objectData.id && controlPointManager) {
+			if (
+				activeObject &&
+				activeObject.id === objectData.id &&
+				controlPointManager
+			) {
 				// @ts-expect-error - Type assertion needed
 				controlPointManager.addControlPoints(objectData.id as string, obj, true)
 			}
 
 			canvas.renderAll()
 
-			sendCanvasUpdate({
-				type: 'add',
-				object: objectData
-			})
+			sendCanvasUpdate({ type: 'add', object: objectData })
 		}
 	}
 }

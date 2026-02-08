@@ -20,7 +20,7 @@ export const whiteboard = pgTable('whiteboard', {
 		.unique() // One whiteboard per task block
 		.references(() => taskBlock.id, { onDelete: 'cascade' }),
 	title: text('title'),
-	...timestamps
+	...timestamps,
 });
 ```
 
@@ -99,9 +99,11 @@ Already correctly implements:
 1. When a whiteboard task block is created via `createTaskBlock()`:
 
    ```typescript
-   const taskBlock = await createTaskBlock(taskId, taskBlockTypeEnum.whiteboard, {
-   	title: 'My Whiteboard'
-   });
+   const taskBlock = await createTaskBlock(
+   	taskId,
+   	taskBlockTypeEnum.whiteboard,
+   	{ title: 'My Whiteboard' },
+   );
    ```
 
 2. A whiteboard is automatically created:
@@ -173,12 +175,7 @@ When rendering a whiteboard task block, you need to:
 The whiteboard component should send an init message immediately after connection:
 
 ```typescript
-socket.send(
-	JSON.stringify({
-		type: 'init',
-		whiteboardId: whiteboardIdNum
-	})
-);
+socket.send(JSON.stringify({ type: 'init', whiteboardId: whiteboardIdNum }));
 ```
 
 ## Data Migration
@@ -202,7 +199,10 @@ import { db } from '$lib/server/db';
 import * as table from '$lib/server/db/schema';
 import { eq } from 'drizzle-orm';
 import { taskBlockTypeEnum } from '$lib/enums';
-import { createWhiteboard, getWhiteboardByTaskBlockId } from '$lib/server/db/service/task';
+import {
+	createWhiteboard,
+	getWhiteboardByTaskBlockId,
+} from '$lib/server/db/service/task';
 
 // Get all whiteboard task blocks
 const whiteboardBlocks = await db

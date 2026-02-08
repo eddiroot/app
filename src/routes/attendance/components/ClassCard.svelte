@@ -11,7 +11,8 @@
 
 	let hasAttendance = $derived(record.attendance !== null);
 	let isPresent = $derived(
-		record.attendance?.status === subjectClassAllocationAttendanceStatus.present
+		record.attendance?.status ===
+			subjectClassAllocationAttendanceStatus.present,
 	);
 	let hasNote = $derived(!!record.attendance?.noteGuardian);
 </script>
@@ -36,7 +37,11 @@
 		<!-- Main content -->
 		<div class="flex-1">
 			<div class="mb-1 flex items-center justify-between">
-				<div class="text-sm font-medium {hasAttendance ? '' : 'text-muted-foreground'}">
+				<div
+					class="text-sm font-medium {hasAttendance
+						? ''
+						: 'text-muted-foreground'}"
+				>
 					{record.subject.name} - {record.subjectOfferingClass.name}
 				</div>
 
@@ -69,7 +74,7 @@
 							? 'Explained Absence'
 							: 'Unexplained Absence'
 					: 'Scheduled'}
-				- {formatTimestampAsTime(new Date(record.subjectClassAllocation.date))}
+				- {formatTimestampAsTime(new Date(record.subjectClassAllocation.start))}
 			</div>
 		</div>
 	</Card.Content>

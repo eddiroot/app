@@ -4,7 +4,7 @@
 	import * as Dialog from '$lib/components/ui/dialog';
 	import { Input } from '$lib/components/ui/input';
 	import { Label } from '$lib/components/ui/label';
-	import type { SchoolTerm } from '$lib/server/db/schema/schools';
+	import type { SchoolTerm } from '$lib/server/db/schema';
 
 	interface Props {
 		open: boolean;
@@ -12,9 +12,7 @@
 		mode: 'create' | 'edit';
 		semesterId: number;
 		semesterName: string;
-		currentYear: number;
 		term?: SchoolTerm;
-		onSuccess: (data?: any) => void;
 	}
 
 	let {
@@ -23,36 +21,13 @@
 		mode,
 		semesterId,
 		semesterName,
-		currentYear,
 		term,
-		onSuccess
 	}: Props = $props();
 
 	let isSubmitting = $state(false);
-	let formError = $state('');
-
-	let termName = $state(term?.name || '');
-	let startDate = $state(
-		term?.startDate ? new Date(term.startDate).toISOString().split('T')[0] : ''
-	);
-	let endDate = $state(term?.endDate ? new Date(term.endDate).toISOString().split('T')[0] : '');
-
-	// Reset form when term changes
-	$effect(() => {
-		termName = term?.name || '';
-		startDate = term?.startDate ? new Date(term.startDate).toISOString().split('T')[0] : '';
-		endDate = term?.endDate ? new Date(term.endDate).toISOString().split('T')[0] : '';
-		formError = '';
-	});
-
-	function handleOpenChange(newOpen: boolean) {
-		if (!isSubmitting) {
-			onOpenChange(newOpen);
-		}
-	}
 </script>
 
-<Dialog.Root {open} onOpenChange={handleOpenChange}>
+<Dialog.Root {open} {onOpenChange}>
 	<Dialog.Content class="sm:max-w-[500px]">
 		<Dialog.Header>
 			<Dialog.Title>
@@ -70,62 +45,64 @@
 			action={mode === 'create' ? '?/createTerm' : '?/updateTerm'}
 			use:enhance={() => {
 				isSubmitting = true;
-				formError = '';
-				return async ({ result, update }) => {
+				return async ({ update }) => {
 					isSubmitting = false;
-					if (result.type === 'success') {
-						await update();
-						onSuccess(result.data);
-						onOpenChange(false);
-					} else if (result.type === 'failure') {
-						formError = 'An error occurred';
-					}
+					await update();
+					onOpenChange(false);
 				};
 			}}
 		>
-			<input type="hidden" name="currentYear" value={currentYear} />
+			<input
+				type="hidden"
+				name="currentYear"
+				defaultValue={new Date().getFullYear().toString()}
+			/>
 			{#if mode === 'create'}
-				<input type="hidden" name="semesterId" value={semesterId} />
+				<input type="hidden" name="semesterId" defaultValue={semesterId} />
 			{:else if term}
-				<input type="hidden" name="termId" value={term.id} />
+				<input type="hidden" name="termId" defaultValue={term.id} />
 			{/if}
 
 			<div class="grid gap-4 py-4">
 				<div class="grid gap-2">
-					<Label for="startDate">Start Date</Label>
+					<Label for="start">Start Date</Label>
 					<Input
-						id="startDate"
-						name="startDate"
+						id="start"
+						name="start"
 						type="date"
-						bind:value={startDate}
+						defaultValue={term ? term.start.toISOString().split('T')[0] : ''}
 						required
 						disabled={isSubmitting}
 					/>
 				</div>
 
 				<div class="grid gap-2">
-					<Label for="endDate">End Date</Label>
+					<Label for="end">End Date</Label>
 					<Input
-						id="endDate"
-						name="endDate"
+						id="end"
+						name="end"
 						type="date"
-						bind:value={endDate}
+						defaultValue={term ? term.end.toISOString().split('T')[0] : ''}
 						required
 						disabled={isSubmitting}
 					/>
 				</div>
-
-				{#if formError}
-					<p class="text-destructive text-sm">{formError}</p>
-				{/if}
 			</div>
 
 			<Dialog.Footer>
-				<Button type="button" variant="outline" onclick={() => handleOpenChange(false)}>
+				<Button
+					type="button"
+					variant="outline"
+					onclick={() => onOpenChange(false)}
+				>
 					Cancel
 				</Button>
 				<Button type="submit" disabled={isSubmitting}>
-					{isSubmitting ? 'Saving...' : mode === 'create' ? 'Create Term' : 'Save Changes'}
+					{isSubmitting
+						? 'Saving...'
+						: mode === 'create'
+							? 'Create Term'
+							: 'Save Changes'}
 				</Button>
 			</Dialog.Footer>
 		</form>

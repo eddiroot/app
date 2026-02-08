@@ -21,7 +21,10 @@
 	const showAuthorInfo = $derived(() => {
 		const currentThread = thread();
 		if (!currentThread) return false;
-		return shouldShowUserInfo(currentThread.thread.isAnonymous, data.currentUser.type);
+		return shouldShowUserInfo(
+			currentThread.thread.isAnonymous,
+			data.currentUser.type,
+		);
 	});
 
 	const authorFullName = $derived(() => {
@@ -31,18 +34,21 @@
 		return convertToFullName(
 			currentThread.user.firstName,
 			currentThread.user.middleName,
-			currentThread.user.lastName
+			currentThread.user.lastName,
 		);
 	});
 
 	const answers = $derived(
 		() =>
-			responses()?.filter((r) => r.response.type === 'answer' && !r.response.parentResponseId) || []
+			responses()?.filter(
+				(r) => r.response.type === 'answer' && !r.response.parentResponseId,
+			) || [],
 	);
 	const comments = $derived(
 		() =>
-			responses()?.filter((r) => r.response.type === 'comment' && !r.response.parentResponseId) ||
-			[]
+			responses()?.filter(
+				(r) => r.response.type === 'comment' && !r.response.parentResponseId,
+			) || [],
 	);
 
 	let isGeneratingSummary = $state(false);
@@ -56,7 +62,10 @@
 			<Card.Root>
 				<Card.Header class="flex items-center justify-between">
 					<Card.Title class="text-xl font-bold">Post Summary</Card.Title>
-					<Button variant="secondary" onclick={() => (isHidingSummary = !isHidingSummary)}>
+					<Button
+						variant="secondary"
+						onclick={() => (isHidingSummary = !isHidingSummary)}
+					>
 						{isHidingSummary ? 'Show Summary' : 'Hide Summary'}
 					</Button>
 				</Card.Header>
@@ -73,8 +82,13 @@
 				<div class="flex items-start gap-4">
 					<Avatar.Root class="ring-border h-12 w-12 ring-2">
 						{#if showAuthorInfo()}
-							<Avatar.Image src={thread()?.user?.avatarUrl || ''} alt={authorFullName()} />
-							<Avatar.Fallback class="bg-primary text-primary-foreground font-semibold">
+							<Avatar.Image
+								src={thread()?.user?.avatarPath || ''}
+								alt={authorFullName()}
+							/>
+							<Avatar.Fallback
+								class="bg-primary text-primary-foreground font-semibold"
+							>
 								{authorFullName()
 									.split(' ')
 									.map((n) => n[0])
@@ -93,7 +107,9 @@
 							<Badge class="font-medium">
 								{getThreadTypeDisplay(thread()!.thread.type)}
 							</Badge>
-							<div class="text-muted-foreground flex items-center gap-1 text-sm">
+							<div
+								class="text-muted-foreground flex items-center gap-1 text-sm"
+							>
 								<Clock class="h-3 w-3" />
 								{formatTimestamp(thread()!.thread.createdAt)}
 							</div>
@@ -102,14 +118,22 @@
 							<h1 class="text-2xl leading-tight font-bold">
 								{thread()!.thread.title}
 							</h1>
-							<div class="text-muted-foreground mt-1 flex items-center gap-1 text-sm">
+							<div
+								class="text-muted-foreground mt-1 flex items-center gap-1 text-sm"
+							>
 								<User class="h-3 w-3" />
 								by {authorFullName()}
 							</div>
 						</div>
 					</div>
 				</div>
-				<Card.Action>
+				<Card.Action class="flex gap-2">
+					<LikeButton
+						action="?/toggleThreadLike"
+						size="lg"
+						initialLiked={data.threadLikes?.userLiked || false}
+						initialCount={data.threadLikes?.count || 0}
+					/>
 					<form
 						method="POST"
 						action="?/generateSummary"
@@ -125,6 +149,7 @@
 						<Button
 							variant="outline"
 							type="submit"
+							size="lg"
 							disabled={isGeneratingSummary || !!form?.summary}
 						>
 							{#if isGeneratingSummary}
@@ -141,13 +166,6 @@
 					{@html thread()?.thread.content || 'No content available'}
 				</div>
 			</Card.Content>
-			<Card.Footer>
-				<LikeButton
-					action="?/toggleThreadLike"
-					initialLiked={data.threadLikes?.userLiked || false}
-					initialCount={data.threadLikes?.count || 0}
-				/>
-			</Card.Footer>
 		</Card.Root>
 
 		<!-- Answers Section (for questions) -->
@@ -159,7 +177,11 @@
 				</div>
 				<div class="border-t">
 					{#each answers() as response}
-						<ResponseItem {response} threadType={thread()?.thread.type || 'discussion'} {data} />
+						<ResponseItem
+							{response}
+							threadType={thread()?.thread.type || 'discussion'}
+							{data}
+						/>
 					{/each}
 				</div>
 			</div>
@@ -171,13 +193,18 @@
 				<div class="mb-3 flex items-center gap-2 px-4">
 					<MessageSquare class="text-primary h-5 w-5" />
 					<h2 class="text-lg font-semibold">
-						{responses()?.length === comments().length ? 'Responses' : 'Comments'} ({comments()
-							.length})
+						{responses()?.length === comments().length
+							? 'Responses'
+							: 'Comments'} ({comments().length})
 					</h2>
 				</div>
 				<div class="border-t">
 					{#each comments() as response}
-						<ResponseItem {response} threadType={thread()!.thread.type} {data} />
+						<ResponseItem
+							{response}
+							threadType={thread()!.thread.type}
+							{data}
+						/>
 					{/each}
 				</div>
 			</div>
@@ -186,7 +213,9 @@
 		<!-- No Responses Message -->
 		{#if !responses() || responses()!.length === 0}
 			<Card.Root class="border-dashed">
-				<Card.Content class="flex flex-col items-center justify-center py-8 text-center">
+				<Card.Content
+					class="flex flex-col items-center justify-center py-8 text-center"
+				>
 					<MessageSquare class="text-muted-foreground mb-3 h-12 w-12" />
 					<p class="text-muted-foreground">No responses yet.</p>
 					<p class="text-muted-foreground text-sm">
@@ -211,7 +240,9 @@
 {:else}
 	<div class="flex h-64 items-center justify-center">
 		<Card.Root class="border-dashed">
-			<Card.Content class="flex flex-col items-center justify-center py-8 text-center">
+			<Card.Content
+				class="flex flex-col items-center justify-center py-8 text-center"
+			>
 				<MessageSquare class="text-muted-foreground mb-3 h-12 w-12" />
 				<p class="text-muted-foreground">Thread not found.</p>
 			</Card.Content>

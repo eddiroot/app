@@ -60,7 +60,11 @@ Extend `ControlPointHandler` in `control-points.ts`:
 
 ```typescript
 export class RectangleControlPoints extends ControlPointHandler {
-	addControlPoints(objectId: string, obj: fabric.Object, visible: boolean = true): void {
+	addControlPoints(
+		objectId: string,
+		obj: fabric.Object,
+		visible: boolean = true,
+	): void {
 		// Create control point circles at key positions
 		// For rectangles: 4 corners + 4 midpoints = 8 control points
 	}
@@ -69,7 +73,11 @@ export class RectangleControlPoints extends ControlPointHandler {
 		// Update control point positions when object moves/transforms
 	}
 
-	updateObjectFromControlPoint(controlPointId: string, newX: number, newY: number): void {
+	updateObjectFromControlPoint(
+		controlPointId: string,
+		newX: number,
+		newY: number,
+	): void {
 		// Update the object's geometry when a control point is dragged
 		// This is the most complex part - requires understanding object's coordinate system
 	}
@@ -107,10 +115,7 @@ if (fabricObj.type === 'rect') {
 
 // In handleAddMessage:
 if (obj.type === 'rect') {
-	obj.set({
-		hasControls: false,
-		hasBorders: false
-	});
+	obj.set({ hasControls: false, hasBorders: false });
 }
 ```
 
@@ -148,7 +153,9 @@ const handleShapeOptionsChange = (options: any) => {
 	if (activeObject && controlPointManager?.isControlPoint(activeObject)) {
 		const linkedObjectId = (activeObject as any).linkedObjectId;
 		if (linkedObjectId) {
-			const linkedObj = canvas.getObjects().find((o: any) => o.id === linkedObjectId);
+			const linkedObj = canvas
+				.getObjects()
+				.find((o: any) => o.id === linkedObjectId);
 			if (linkedObj) {
 				activeObject = linkedObj;
 			}
@@ -178,7 +185,7 @@ const circle = new fabric.Circle({
 	hasBorders: false, // No fabric.js borders
 	hoverCursor: 'move',
 	evented: true, // Receives events
-	excludeFromExport: true // Don't save to canvas JSON
+	excludeFromExport: true, // Don't save to canvas JSON
 });
 
 // Custom properties for identification
@@ -196,7 +203,11 @@ In `canvas-events.ts`:
 // In object:moving handler:
 if (ctx.controlPointManager?.isControlPoint(target)) {
 	const center = target.getCenterPoint();
-	ctx.controlPointManager.updateObjectFromControlPoint(target.id, center.x, center.y);
+	ctx.controlPointManager.updateObjectFromControlPoint(
+		target.id,
+		center.x,
+		center.y,
+	);
 	return; // CRITICAL: Don't proceed to sync
 }
 
@@ -229,7 +240,7 @@ const matrix = line.calcTransformMatrix();
 // Convert point to absolute coordinates
 const absolutePoint = fabric.util.transformPoint(
 	new fabric.Point(point.x - line.pathOffset.x, point.y - line.pathOffset.y),
-	matrix
+	matrix,
 );
 ```
 
@@ -242,7 +253,7 @@ For complex transformations, sometimes you need to recreate the object:
 const objectId = obj.id;
 const props = {
 	stroke: obj.stroke,
-	strokeWidth: obj.strokeWidth
+	strokeWidth: obj.strokeWidth,
 	// ... other properties
 };
 
@@ -254,7 +265,7 @@ const newObj = new fabric.Polyline(newPoints, {
 	id: objectId,
 	...props,
 	hasControls: false,
-	hasBorders: false
+	hasBorders: false,
 });
 
 // Add to canvas

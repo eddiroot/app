@@ -1,12 +1,8 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import * as Card from '$lib/components/ui/card';
-	import type {
-		CampusEvent,
-		SchoolEvent,
-		SubjectOfferingClassEvent,
-		SubjectOfferingEvent
-	} from '$lib/server/db/schema/events';
+	import { eventTypeEnum } from '$lib/enums.js';
+	import type { Event } from '$lib/server/db/schema/event';
 	import { formatTimestampAsTime } from '$lib/utils';
 	import BookOpenIcon from '@lucide/svelte/icons/book-open';
 	import CalendarIcon from '@lucide/svelte/icons/calendar';
@@ -16,12 +12,8 @@
 	import { generateSubjectColors } from '../../routes/calendar/utils.js';
 
 	interface EventCardProps {
-		event: SchoolEvent | CampusEvent | SubjectOfferingEvent | SubjectOfferingClassEvent;
-		eventType: 'school' | 'campus' | 'subject' | 'class';
-		subjectInfo?: {
-			name: string;
-			className?: string;
-		};
+		event: Event;
+		subjectInfo?: { name: string; className?: string };
 		subjectColor?: number;
 		showTime?: boolean;
 		rsvpStatus?: 'required' | 'completed' | 'none';
@@ -29,11 +21,10 @@
 
 	let {
 		event,
-		eventType,
 		subjectInfo,
 		subjectColor,
 		showTime = true,
-		rsvpStatus = 'none'
+		rsvpStatus = 'none',
 	}: EventCardProps = $props();
 
 	let isHovered = $state(false);
@@ -46,8 +37,9 @@
 					? 'var(--destructive)'
 					: 'color-mix(in srgb, var(--destructive) 50%, transparent)',
 				borderTopColor: 'var(--destructive)',
-				backgroundColor: 'color-mix(in srgb, var(--destructive) 10%, var(--background))',
-				textColor: 'var(--foreground)'
+				backgroundColor:
+					'color-mix(in srgb, var(--destructive) 10%, var(--background))',
+				textColor: 'var(--foreground)',
 			};
 		}
 
@@ -57,30 +49,35 @@
 					? 'var(--success)'
 					: 'color-mix(in srgb, var(--success) 50%, transparent)',
 				borderTopColor: 'var(--success)',
-				backgroundColor: 'color-mix(in srgb, var(--success) 10%, var(--background))',
-				textColor: 'var(--foreground)'
+				backgroundColor:
+					'color-mix(in srgb, var(--success) 10%, var(--background))',
+				textColor: 'var(--foreground)',
 			};
 		}
 
 		// For subject and class events, use the same color scheme as timetable cards
-		if ((eventType === 'subject' || eventType === 'class') && subjectColor !== undefined) {
+		if (
+			(event.type === eventTypeEnum.subject ||
+				event.type === eventTypeEnum.class) &&
+			subjectColor !== undefined
+		) {
 			const colors = generateSubjectColors(subjectColor);
 			return {
 				borderColor: isHovered ? colors.borderTop : colors.borderAround,
 				borderTopColor: colors.borderTop,
 				backgroundColor: colors.background,
-				textColor: colors.text
+				textColor: colors.text,
 			};
 		}
 
-		if (eventType === 'school') {
+		if (event.type === eventTypeEnum.school) {
 			return {
 				borderColor: isHovered
 					? 'var(--primary)'
 					: 'color-mix(in srgb, var(--primary) 50%, transparent)',
 				borderTopColor: 'var(--primary)',
 				backgroundColor: 'var(--background)',
-				textColor: 'var(--foreground)'
+				textColor: 'var(--foreground)',
 			};
 		}
 
@@ -90,19 +87,19 @@
 				: 'color-mix(in srgb, var(--secondary) 50%, transparent)',
 			borderTopColor: 'var(--secondary)',
 			backgroundColor: 'var(--background)',
-			textColor: 'var(--foreground)'
+			textColor: 'var(--foreground)',
 		};
 	});
 
 	const eventIcon = $derived(() => {
-		switch (eventType) {
-			case 'school':
+		switch (event.type) {
+			case eventTypeEnum.school:
 				return SchoolIcon;
-			case 'campus':
+			case eventTypeEnum.campus:
 				return MapPinIcon;
-			case 'subject':
+			case eventTypeEnum.subject:
 				return BookOpenIcon;
-			case 'class':
+			case eventTypeEnum.class:
 				return CalendarIcon;
 			default:
 				return CalendarIcon;
@@ -112,7 +109,7 @@
 	function handleClick() {
 		if (rsvpStatus === 'required') {
 			// Navigate to RSVP page
-			goto(`/timetable/${eventType}/${event.id}/rsvp`);
+			goto(`/timetable/${event.type}/${event.id}/rsvp`);
 		}
 	}
 </script>
@@ -128,9 +125,10 @@
 	>
 		<Card.Root
 			class="h-full overflow-hidden border-2 border-t-4 px-2 pt-0 shadow-lg transition-colors duration-300"
-			style="border-color: {eventColors().borderColor}; border-top-color: {eventColors()
-				.borderTopColor}; background-color: {eventColors().backgroundColor}; color: {eventColors()
-				.textColor};"
+			style="border-color: {eventColors()
+				.borderColor}; border-top-color: {eventColors()
+				.borderTopColor}; background-color: {eventColors()
+				.backgroundColor}; color: {eventColors().textColor};"
 		>
 			<Card.Header class="p-1">
 				{@const Icon = eventIcon()}
@@ -149,14 +147,16 @@
 							class="flex items-center gap-1 text-xs text-ellipsis whitespace-nowrap"
 						>
 							<ClockIcon class="h-3 w-3" />
-							{formatTimestampAsTime(event.startTimestamp)} - {formatTimestampAsTime(
-								event.endTimestamp
+							{formatTimestampAsTime(event.start)} - {formatTimestampAsTime(
+								event.end,
 							)}
 						</Card.Description>
 					{/if}
 
 					{#if subjectInfo}
-						<Card.Description class="text-xs font-medium text-ellipsis whitespace-nowrap">
+						<Card.Description
+							class="text-xs font-medium text-ellipsis whitespace-nowrap"
+						>
 							{subjectInfo.name}{#if subjectInfo.className}
 								- {subjectInfo.className}{/if}
 						</Card.Description>
@@ -176,9 +176,10 @@
 	>
 		<Card.Root
 			class="h-full overflow-hidden border-2 border-t-4 px-2 pt-0 shadow-lg transition-colors duration-300"
-			style="border-color: {eventColors().borderColor}; border-top-color: {eventColors()
-				.borderTopColor}; background-color: {eventColors().backgroundColor}; color: {eventColors()
-				.textColor};"
+			style="border-color: {eventColors()
+				.borderColor}; border-top-color: {eventColors()
+				.borderTopColor}; background-color: {eventColors()
+				.backgroundColor}; color: {eventColors().textColor};"
 		>
 			<Card.Header class="p-1">
 				{@const Icon = eventIcon()}
@@ -197,14 +198,16 @@
 							class="flex items-center gap-1 text-xs text-ellipsis whitespace-nowrap"
 						>
 							<ClockIcon class="h-3 w-3" />
-							{formatTimestampAsTime(event.startTimestamp)} - {formatTimestampAsTime(
-								event.endTimestamp
+							{formatTimestampAsTime(event.start)} - {formatTimestampAsTime(
+								event.end,
 							)}
 						</Card.Description>
 					{/if}
 
 					{#if subjectInfo}
-						<Card.Description class="text-xs font-medium text-ellipsis whitespace-nowrap">
+						<Card.Description
+							class="text-xs font-medium text-ellipsis whitespace-nowrap"
+						>
 							{subjectInfo.name}{#if subjectInfo.className}
 								- {subjectInfo.className}{/if}
 						</Card.Description>

@@ -20,99 +20,93 @@
 	const adminSections = [
 		{
 			title: 'School',
-			description: "Configure your school's name, logo, branding, and theme settings",
+			description:
+				"Configure your school's name, logo, branding, and theme settings",
 			icon: SchoolIcon,
-			href: '/admin/school'
+			href: '/admin/school',
 		},
 		{
 			title: 'Campuses',
 			description: 'Manage campuses and their associated contact information',
 			icon: MapPinIcon,
-			href: '/admin/campuses'
+			href: '/admin/campuses',
 		},
 		{
 			title: 'Terms',
 			description: 'Set up terms and semesters for the school year',
 			icon: Calendar1,
-			href: '/admin/terms'
+			href: '/admin/terms',
 		},
 		{
 			title: 'Buildings',
 			description: 'Configure the buildings on your campus',
 			icon: BuildingIcon,
-			href: '/admin/buildings'
+			href: '/admin/buildings',
 		},
 		{
 			title: 'Spaces',
-			description: 'Manage the learning and activity spaces within each building',
+			description:
+				'Manage the learning and activity spaces within each building',
 			icon: DoorOpenIcon,
-			href: '/admin/spaces'
+			href: '/admin/spaces',
 		},
 		{
 			title: 'Users',
-			description: 'Manage user accounts for students, staff, guardians, and administrators',
+			description:
+				'Manage user accounts for students, staff, guardians, and administrators',
 			icon: UsersIcon,
-			href: '/admin/users'
+			href: '/admin/users',
 		},
 		{
 			title: 'Subjects',
 			description: 'Define the subjects that your school offers',
 			icon: BookOpenIcon,
-			href: '/admin/subjects'
+			href: '/admin/subjects',
 		},
 		{
 			title: 'Timetables',
-			description: 'Set up school periods, schedules, and generate class timetables',
+			description:
+				'Set up school periods, schedules, and generate class timetables',
 			icon: CalendarDaysIcon,
-			href: '/admin/timetables'
+			href: '/admin/timetables',
 		},
 		{
 			title: 'Allocations',
-			description: 'Assign students and teachers to classes and manage enrollments',
+			description:
+				'Assign students and teachers to classes and manage enrollments',
 			icon: ContactIcon,
-			href: '/admin/allocations'
+			href: '/admin/allocations',
 		},
 		{
 			title: 'Events',
-			description: 'Create and manage school, campus, subject, and class-level events',
+			description:
+				'Create and manage school, campus, subject, and class-level events',
 			icon: BusIcon,
-			href: '/admin/events'
+			href: '/admin/events',
 		},
 		{
 			title: 'Interviews',
 			description: 'Configure and manage parent-teacher interview sessions',
 			icon: MessageSquareIcon,
-			href: '/admin/interviews'
+			href: '/admin/interviews',
 		},
 		{
 			title: 'Behaviours',
 			description: 'Configure student behaviours that teachers can quickly log',
 			icon: LecternIcon,
-			href: '/admin/behaviours'
-		}
+			href: '/admin/behaviours',
+		},
 	];
 
-	const stats = [
-		{
-			title: 'Students',
-			value: data.stats.totalStudents,
-			icon: UsersIcon
-		},
+	const stats = () => [
+		{ title: 'Students', value: data.stats.totalStudents, icon: UsersIcon },
 		{
 			title: 'Teachers',
 			value: data.stats.totalTeachers,
-			icon: GraduationCapIcon
+			icon: GraduationCapIcon,
 		},
-		{
-			title: 'Admins',
-			value: data.stats.totalAdmins,
-			icon: UserRoundCogIcon
-		},
-		{
-			title: 'Subjects',
-			value: data.stats.totalSubjects,
-			icon: BookOpenIcon
-		}
+		{ title: 'Admins', value: data.stats.totalAdmins, icon: UserRoundCogIcon },
+		{ title: 'Subjects', value: data.stats.totalSubjects, icon: BookOpenIcon },
 	];
 </script>
 
@@ -132,7 +126,9 @@
 									<section.icon class="text-primary-foreground" />
 								</div>
 								<div class="flex-1">
-									<Card.Title class="text-lg font-semibold">{section.title}</Card.Title>
+									<Card.Title class="text-lg font-semibold"
+										>{section.title}</Card.Title
+									>
 								</div>
 							</div>
 							<Card.Description>{section.description}</Card.Description>
@@ -147,7 +143,7 @@
 	<div class="space-y-4">
 		<h2 class="text-2xl font-semibold tracking-tight">Stats</h2>
 		<div class="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-			{#each stats as stat}
+			{#each stats() as stat}
 				<Card.Root>
 					<Card.Header class="flex items-center justify-between">
 						<Card.Title class="text-primary">{stat.title}</Card.Title>

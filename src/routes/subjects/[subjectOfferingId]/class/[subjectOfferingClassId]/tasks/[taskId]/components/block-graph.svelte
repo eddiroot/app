@@ -12,7 +12,13 @@
 	import type { PlotData, Root } from 'plotly.js-dist-min';
 	import { onMount } from 'svelte';
 
-	let { config, onConfigUpdate, response, onResponseUpdate, viewMode }: GraphBlockProps = $props();
+	let {
+		config,
+		onConfigUpdate,
+		response,
+		onResponseUpdate,
+		viewMode,
+	}: GraphBlockProps = $props();
 
 	let plotContainer: Root | undefined = $state();
 	let Plotly: typeof import('plotly.js-dist-min');
@@ -34,7 +40,7 @@
 			'#8b5cf6': '#a78bfa',
 			'#06b6d4': '#22d3ee',
 			'#ec4899': '#f472b6',
-			'#84cc16': '#a3e635'
+			'#84cc16': '#a3e635',
 		};
 
 		return colorMap[originalColor] || originalColor;
@@ -69,10 +75,7 @@
 			type: 'scatter',
 			mode: 'lines',
 			name: plot.label,
-			line: {
-				color,
-				width: 2
-			}
+			line: { color, width: 2 },
 		};
 
 		if (isDashed && trace.line) {
@@ -88,7 +91,7 @@
 			zeroline: true,
 			zerolinecolor: isDark ? '#374151' : '#d1d5db',
 			gridcolor: isDark ? '#374151' : '#e5e7eb',
-			color: isDark ? '#e5e7eb' : '#374151'
+			color: isDark ? '#e5e7eb' : '#374151',
 		};
 	}
 
@@ -102,9 +105,15 @@
 			if (trace) traces.push(trace);
 		});
 
-		if ((viewMode === ViewMode.ANSWER || viewMode === ViewMode.REVIEW) && response?.studentPlots) {
+		if (
+			(viewMode === ViewMode.ANSWER || viewMode === ViewMode.REVIEW) &&
+			response?.studentPlots
+		) {
 			response.studentPlots.forEach((plot) => {
-				const trace = createTrace({ ...plot, color: plot.color || '#ef4444' }, true);
+				const trace = createTrace(
+					{ ...plot, color: plot.color || '#ef4444' },
+					true,
+				);
 				if (trace) traces.push(trace);
 			});
 		}
@@ -114,32 +123,36 @@
 			xaxis: {
 				title: { text: config.xAxisLabel },
 				range: [config.xRange.min, config.xRange.max],
-				...getAxisStyle()
+				...getAxisStyle(),
 			},
 			yaxis: {
 				title: { text: config.yAxisLabel },
 				range: [config.yRange.min, config.yRange.max],
-				...getAxisStyle()
+				...getAxisStyle(),
 			},
 			showlegend: traces.length > 1,
 			responsive: true,
 			height: 500,
 			paper_bgcolor: 'rgba(0,0,0,0)',
 			plot_bgcolor: 'rgba(0,0,0,0)',
-			font: {
-				color: mode.current === 'dark' ? '#e5e7eb' : '#374151'
-			}
+			font: { color: mode.current === 'dark' ? '#e5e7eb' : '#374151' },
 		};
 
-		await Plotly.react(plotContainer, traces, layout, { displayModeBar: false });
+		await Plotly.react(plotContainer, traces, layout, {
+			displayModeBar: false,
+		});
 	}
 
-	function createPlot(defaultColor: string, labelPrefix: string, count: number) {
+	function createPlot(
+		defaultColor: string,
+		labelPrefix: string,
+		count: number,
+	) {
 		return {
 			id: crypto.randomUUID(),
 			equation: 'x',
 			color: defaultColor,
-			label: `${labelPrefix} ${count + 1}`
+			label: `${labelPrefix} ${count + 1}`,
 		};
 	}
 
@@ -148,7 +161,7 @@
 		action: 'add' | 'remove' | 'update',
 		index?: number,
 		field?: string,
-		value?: string
+		value?: string,
 	) {
 		if (isStatic) {
 			let staticPlots = [...config.staticPlots];
@@ -157,7 +170,12 @@
 				staticPlots.push(createPlot('#3b82f6', 'Plot', staticPlots.length));
 			} else if (action === 'remove' && index !== undefined) {
 				staticPlots = staticPlots.filter((_, i) => i !== index);
-			} else if (action === 'update' && index !== undefined && field && value !== undefined) {
+			} else if (
+				action === 'update' &&
+				index !== undefined &&
+				field &&
+				value !== undefined
+			) {
 				staticPlots[index] = { ...staticPlots[index], [field]: value };
 			}
 
@@ -167,10 +185,17 @@
 			let studentPlots = [...response.studentPlots];
 
 			if (action === 'add') {
-				studentPlots.push(createPlot('#ef4444', 'My Plot', studentPlots.length));
+				studentPlots.push(
+					createPlot('#ef4444', 'My Plot', studentPlots.length),
+				);
 			} else if (action === 'remove' && index !== undefined) {
 				studentPlots = studentPlots.filter((_, i) => i !== index);
-			} else if (action === 'update' && index !== undefined && field && value !== undefined) {
+			} else if (
+				action === 'update' &&
+				index !== undefined &&
+				field &&
+				value !== undefined
+			) {
 				studentPlots[index] = { ...studentPlots[index], [field]: value };
 			}
 
@@ -206,7 +231,10 @@
 						id="graph-title"
 						value={config.title}
 						oninput={(e) =>
-							onConfigUpdate({ ...config, title: (e.target as HTMLInputElement).value })}
+							onConfigUpdate({
+								...config,
+								title: (e.target as HTMLInputElement).value,
+							})}
 						placeholder="Graph title"
 					/>
 				</div>
@@ -217,7 +245,10 @@
 						id="x-axis-label"
 						value={config.xAxisLabel}
 						oninput={(e) =>
-							onConfigUpdate({ ...config, xAxisLabel: (e.target as HTMLInputElement).value })}
+							onConfigUpdate({
+								...config,
+								xAxisLabel: (e.target as HTMLInputElement).value,
+							})}
 						placeholder="x"
 					/>
 				</div>
@@ -228,7 +259,10 @@
 						id="y-axis-label"
 						value={config.yAxisLabel}
 						oninput={(e) =>
-							onConfigUpdate({ ...config, yAxisLabel: (e.target as HTMLInputElement).value })}
+							onConfigUpdate({
+								...config,
+								yAxisLabel: (e.target as HTMLInputElement).value,
+							})}
 						placeholder="y"
 					/>
 				</div>
@@ -245,7 +279,10 @@
 							oninput={(e) =>
 								onConfigUpdate({
 									...config,
-									xRange: { ...config.xRange, min: Number((e.target as HTMLInputElement).value) }
+									xRange: {
+										...config.xRange,
+										min: Number((e.target as HTMLInputElement).value),
+									},
 								})}
 							placeholder="Min"
 						/>
@@ -255,7 +292,10 @@
 							oninput={(e) =>
 								onConfigUpdate({
 									...config,
-									xRange: { ...config.xRange, max: Number((e.target as HTMLInputElement).value) }
+									xRange: {
+										...config.xRange,
+										max: Number((e.target as HTMLInputElement).value),
+									},
 								})}
 							placeholder="Max"
 						/>
@@ -271,7 +311,10 @@
 							oninput={(e) =>
 								onConfigUpdate({
 									...config,
-									yRange: { ...config.yRange, min: Number((e.target as HTMLInputElement).value) }
+									yRange: {
+										...config.yRange,
+										min: Number((e.target as HTMLInputElement).value),
+									},
 								})}
 							placeholder="Min"
 						/>
@@ -281,7 +324,10 @@
 							oninput={(e) =>
 								onConfigUpdate({
 									...config,
-									yRange: { ...config.yRange, max: Number((e.target as HTMLInputElement).value) }
+									yRange: {
+										...config.yRange,
+										max: Number((e.target as HTMLInputElement).value),
+									},
 								})}
 							placeholder="Max"
 						/>
@@ -309,7 +355,7 @@
 									'update',
 									index,
 									'equation',
-									(e.target as HTMLInputElement).value
+									(e.target as HTMLInputElement).value,
 								)}
 							placeholder="e.g., x^2, sin(x), 2*x+1"
 						/>
@@ -318,13 +364,25 @@
 							type="color"
 							value={plot.color || '#3b82f6'}
 							oninput={(e) =>
-								updatePlots(true, 'update', index, 'color', (e.target as HTMLInputElement).value)}
+								updatePlots(
+									true,
+									'update',
+									index,
+									'color',
+									(e.target as HTMLInputElement).value,
+								)}
 						/>
 
 						<Input
 							value={plot.label}
 							oninput={(e) =>
-								updatePlots(true, 'update', index, 'label', (e.target as HTMLInputElement).value)}
+								updatePlots(
+									true,
+									'update',
+									index,
+									'label',
+									(e.target as HTMLInputElement).value,
+								)}
 							placeholder="Plot label"
 						/>
 						<Button
@@ -339,7 +397,8 @@
 
 				{#if config.staticPlots.length === 0}
 					<p class="text-muted-foreground py-4 text-center text-sm">
-						No static plots configured. Add some example equations for students to see.
+						No static plots configured. Add some example equations for students
+						to see.
 					</p>
 				{/if}
 			</div>
@@ -371,7 +430,7 @@
 									'update',
 									index,
 									'equation',
-									(e.target as HTMLInputElement).value
+									(e.target as HTMLInputElement).value,
 								)}
 							placeholder="e.g., x^2, sin(x), 2*x+1"
 						/>
@@ -380,13 +439,25 @@
 							type="color"
 							value={plot.color || '#ef4444'}
 							oninput={(e) =>
-								updatePlots(false, 'update', index, 'color', (e.target as HTMLInputElement).value)}
+								updatePlots(
+									false,
+									'update',
+									index,
+									'color',
+									(e.target as HTMLInputElement).value,
+								)}
 						/>
 
 						<Input
 							value={plot.label}
 							oninput={(e) =>
-								updatePlots(false, 'update', index, 'label', (e.target as HTMLInputElement).value)}
+								updatePlots(
+									false,
+									'update',
+									index,
+									'label',
+									(e.target as HTMLInputElement).value,
+								)}
 							placeholder="Plot label"
 						/>
 						<Button
@@ -429,7 +500,9 @@
 					{/each}
 				</div>
 			{:else}
-				<div class="text-muted-foreground py-4 text-center">No student plots submitted.</div>
+				<div class="text-muted-foreground py-4 text-center">
+					No student plots submitted.
+				</div>
 			{/if}
 		{/if}
 

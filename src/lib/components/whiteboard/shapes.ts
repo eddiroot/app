@@ -11,12 +11,12 @@ export const createLine = (
 	y1: number,
 	x2: number,
 	y2: number,
-	options: LineOptions
+	options: LineOptions,
 ) => {
 	const line = new fabric.Polyline(
 		[
 			{ x: x1, y: y1 },
-			{ x: x2, y: y2 }
+			{ x: x2, y: y2 },
 		],
 		{
 			id: uuidv4(),
@@ -27,8 +27,8 @@ export const createLine = (
 			selectable: false, // Start as non-selectable during drawing, set to true when finalized
 			hasControls: false,
 			hasBorders: false,
-			strokeUniform: true
-		}
+			strokeUniform: true,
+		},
 	)
 
 	return line
@@ -43,7 +43,7 @@ export const createShapeFromPoints = (
 	y1: number,
 	x2: number,
 	y2: number,
-	options: ShapeOptions
+	options: ShapeOptions,
 ) => {
 	// Calculate dimensions from the two points
 	const left = Math.min(x1, x2)
@@ -70,7 +70,7 @@ export const createShapeFromPoints = (
 				selectable: false, // Start as non-selectable during drawing, set to true when finalized
 				hasControls: false,
 				hasBorders: false,
-				strokeUniform: true
+				strokeUniform: true,
 			})
 			return ellipse
 		}
@@ -91,7 +91,7 @@ export const createShapeFromPoints = (
 				selectable: false, // Start as non-selectable during drawing, set to true when finalized
 				hasControls: false,
 				hasBorders: false,
-				strokeUniform: true
+				strokeUniform: true,
 			})
 			return rect
 		}
@@ -112,7 +112,7 @@ export const createShapeFromPoints = (
 				selectable: false, // Start as non-selectable during drawing, set to true when finalized
 				hasControls: false,
 				hasBorders: false,
-				strokeUniform: true
+				strokeUniform: true,
 			})
 			return triangle
 		}
@@ -129,7 +129,7 @@ export const createTextFromPoints = (
 	y1: number,
 	x2: number,
 	y2: number,
-	options: TextOptions
+	options: TextOptions,
 ) => {
 	// Calculate dimensions from the two points
 	const left = Math.min(x1, x2)
@@ -156,7 +156,7 @@ export const createTextFromPoints = (
 		hasBorders: false,
 		// Use top-left origin (default for textboxes)
 		originX: 'left',
-		originY: 'top'
+		originY: 'top',
 	})
 
 	return text

@@ -3,7 +3,13 @@ import { v4 as uuidv4 } from 'uuid'
 import { ZOOM_LIMITS } from './constants'
 import type { ControlPointManager } from './control-points'
 import * as Shapes from './shapes'
-import type { DrawOptions, LineOptions, ShapeOptions, TextOptions, WhiteboardTool } from './types'
+import type {
+	DrawOptions,
+	LineOptions,
+	ShapeOptions,
+	TextOptions,
+	WhiteboardTool,
+} from './types'
 
 /**
  * Context object containing all state and callbacks needed by event handlers
@@ -63,11 +69,13 @@ export interface CanvasEventContext {
 	sendImageUpdate: (
 		objectId: string,
 		objectData: Record<string, unknown>,
-		immediate: boolean
+		immediate: boolean,
 	) => void
 	clearEraserState: () => void
 	// Callback for batch eraser deletions (for history recording)
-	onEraserComplete?: (deletedObjects: Array<{ id: string; data: Record<string, unknown> }>) => void
+	onEraserComplete?: (
+		deletedObjects: Array<{ id: string; data: Record<string, unknown> }>,
+	) => void
 	floatingMenuRef?: {
 		updateTextOptions?: (options: Partial<TextOptions>) => void
 		updateShapeOptions?: (options: Partial<ShapeOptions>) => void
@@ -95,7 +103,12 @@ export const createObjectMovingHandler = (ctx: CanvasEventContext) => {
 			// This is a control point circle, update the associated line/shape
 			const center = target.getCenterPoint()
 			// @ts-expect-error - custom id property
-			ctx.controlPointManager.updateObjectFromControlPoint(target.id, center.x, center.y, true) // true = isLive
+			ctx.controlPointManager.updateObjectFromControlPoint(
+				target.id,
+				center.x,
+				center.y,
+				true,
+			) // true = isLive
 			return // Don't proceed to sync - control points are client-side only
 		}
 
@@ -121,7 +134,8 @@ export const createObjectMovingHandler = (ctx: CanvasEventContext) => {
 		const objectId = target.id
 
 		// Use unified throttle for all objects including images
-		const objData = target.type === 'textbox' ? target.toObject(['text']) : target.toObject()
+		const objData =
+			target.type === 'textbox' ? target.toObject(['text']) : target.toObject()
 		objData.id = objectId
 
 		// For images, mark that we're moving one
@@ -142,11 +156,7 @@ export const createObjectMovingHandler = (ctx: CanvasEventContext) => {
 			moveThrottleTimeout = setTimeout(() => {
 				// Send all pending updates
 				pendingMoveUpdates.forEach((data, id) => {
-					ctx.sendCanvasUpdate({
-						type: 'modify',
-						object: data,
-						live: true
-					})
+					ctx.sendCanvasUpdate({ type: 'modify', object: data, live: true })
 				})
 				pendingMoveUpdates.clear()
 				moveThrottleTimeout = null
@@ -160,7 +170,8 @@ export const createObjectMovingHandler = (ctx: CanvasEventContext) => {
  */
 export const createObjectScalingHandler = (ctx: CanvasEventContext) => {
 	return ({ target }: { target: fabric.Object }) => {
-		const objData = target.type === 'textbox' ? target.toObject(['text']) : target.toObject()
+		const objData =
+			target.type === 'textbox' ? target.toObject(['text']) : target.toObject()
 		// @ts-expect-error - custom id property
 		const objectId = target.id
 		objData.id = objectId
@@ -178,11 +189,7 @@ export const createObjectScalingHandler = (ctx: CanvasEventContext) => {
 			if (moveThrottleTimeout === null) {
 				moveThrottleTimeout = setTimeout(() => {
 					pendingMoveUpdates.forEach((data, id) => {
-						ctx.sendCanvasUpdate({
-							type: 'modify',
-							object: data,
-							live: true
-						})
+						ctx.sendCanvasUpdate({ type: 'modify', object: data, live: true })
 					})
 					pendingMoveUpdates.clear()
 					moveThrottleTimeout = null
@@ -211,7 +218,8 @@ export const createObjectRotatingHandler = (ctx: CanvasEventContext) => {
 			}
 		}
 
-		const objData = target.type === 'textbox' ? target.toObject(['text']) : target.toObject()
+		const objData =
+			target.type === 'textbox' ? target.toObject(['text']) : target.toObject()
 		// @ts-expect-error - custom id property
 		const objectId = target.id
 		objData.id = objectId
@@ -229,11 +237,7 @@ export const createObjectRotatingHandler = (ctx: CanvasEventContext) => {
 			if (moveThrottleTimeout === null) {
 				moveThrottleTimeout = setTimeout(() => {
 					pendingMoveUpdates.forEach((data, id) => {
-						ctx.sendCanvasUpdate({
-							type: 'modify',
-							object: data,
-							live: true
-						})
+						ctx.sendCanvasUpdate({ type: 'modify', object: data, live: true })
 					})
 					pendingMoveUpdates.clear()
 					moveThrottleTimeout = null
@@ -253,7 +257,12 @@ export const createObjectModifiedHandler = (ctx: CanvasEventContext) => {
 			// Send final update with isLive=false to persist to database
 			const center = target.getCenterPoint()
 			// @ts-expect-error - custom id property
-			ctx.controlPointManager.updateObjectFromControlPoint(target.id, center.x, center.y, false) // false = not live, persist to DB
+			ctx.controlPointManager.updateObjectFromControlPoint(
+				target.id,
+				center.x,
+				center.y,
+				false,
+			) // false = not live, persist to DB
 			return
 		}
 
@@ -270,20 +279,17 @@ export const createObjectModifiedHandler = (ctx: CanvasEventContext) => {
 			const objData = target.toObject()
 			// @ts-expect-error - custom id property
 			objData.id = target.id
-			ctx.sendCanvasUpdate({
-				type: 'modify',
-				object: objData
-			})
+			ctx.sendCanvasUpdate({ type: 'modify', object: objData })
 		} else {
 			// For textbox objects, include the 'text' property
-			const objData = target.type === 'textbox' ? target.toObject(['text']) : target.toObject()
+			const objData =
+				target.type === 'textbox'
+					? target.toObject(['text'])
+					: target.toObject()
 			// @ts-expect-error - custom id property
 			objData.id = target.id
 			// Immediate updates for non-image objects
-			ctx.sendCanvasUpdate({
-				type: 'modify',
-				object: objData
-			})
+			ctx.sendCanvasUpdate({ type: 'modify', object: objData })
 		}
 	}
 }
@@ -291,7 +297,10 @@ export const createObjectModifiedHandler = (ctx: CanvasEventContext) => {
 /**
  * Creates mouse:up event handler
  */
-export const createMouseUpHandler = (canvas: fabric.Canvas, ctx: CanvasEventContext) => {
+export const createMouseUpHandler = (
+	canvas: fabric.Canvas,
+	ctx: CanvasEventContext,
+) => {
 	return () => {
 		if (ctx.getIsPanMode()) {
 			ctx.setIsPanMode(false)
@@ -333,10 +342,7 @@ export const createMouseUpHandler = (canvas: fabric.Canvas, ctx: CanvasEventCont
 				// @ts-expect-error - custom markAsRecentlyCreated property
 				ctx.sendCanvasUpdate.socket.markAsRecentlyCreated(tempShape.id)
 			}
-			ctx.sendCanvasUpdate({
-				type: 'add',
-				object: objData
-			})
+			ctx.sendCanvasUpdate({ type: 'add', object: objData })
 
 			// Re-enable history recording AFTER shape is finalized
 			// The page component will detect this and record the add action
@@ -363,7 +369,7 @@ export const createMouseUpHandler = (canvas: fabric.Canvas, ctx: CanvasEventCont
 					strokeColour: (tempShape.stroke as string) || '#1E1E1E',
 					fillColour: (tempShape.fill as string) || 'transparent',
 					strokeDashArray: (tempShape.strokeDashArray as number[]) || [],
-					opacity: tempShape.opacity || 1
+					opacity: tempShape.opacity || 1,
 				})
 			}, 0)
 
@@ -386,10 +392,7 @@ export const createMouseUpHandler = (canvas: fabric.Canvas, ctx: CanvasEventCont
 			const objData = tempLine.toObject()
 			// @ts-expect-error - custom id property
 			objData.id = tempLine.id
-			ctx.sendCanvasUpdate({
-				type: 'add',
-				object: objData
-			})
+			ctx.sendCanvasUpdate({ type: 'add', object: objData })
 
 			// Re-enable history recording AFTER line is finalized
 			ctx.setIsDrawingObject?.(false)
@@ -424,7 +427,9 @@ export const createMouseUpHandler = (canvas: fabric.Canvas, ctx: CanvasEventCont
 				} else if (tempLine.type === 'group') {
 					// For arrow groups, get properties from the line object
 					const group = tempLine as fabric.Group
-					const lineObj = group.getObjects().find((obj) => obj.type === 'polyline')
+					const lineObj = group
+						.getObjects()
+						.find((obj) => obj.type === 'polyline')
 					if (lineObj) {
 						strokeWidth = (lineObj.strokeWidth as number) || 2
 						strokeColour = (lineObj.stroke as string) || '#1E1E1E'
@@ -437,7 +442,7 @@ export const createMouseUpHandler = (canvas: fabric.Canvas, ctx: CanvasEventCont
 					strokeWidth,
 					strokeColour,
 					strokeDashArray,
-					opacity
+					opacity,
 				})
 			}, 0)
 
@@ -460,7 +465,10 @@ export const createMouseUpHandler = (canvas: fabric.Canvas, ctx: CanvasEventCont
 			const originalOpacities = ctx.getOriginalOpacities()
 
 			// Collect all objects for batch history recording (with original opacity restored)
-			const batchDeletedObjects: Array<{ id: string; data: Record<string, unknown> }> = []
+			const batchDeletedObjects: Array<{
+				id: string
+				data: Record<string, unknown>
+			}> = []
 
 			// First pass: collect all object data with original opacity restored
 			objectsToDelete.forEach((obj) => {
@@ -493,10 +501,7 @@ export const createMouseUpHandler = (canvas: fabric.Canvas, ctx: CanvasEventCont
 				}
 				canvas.remove(obj)
 				// Send delete message to other users
-				ctx.sendCanvasUpdate({
-					type: 'delete',
-					object: { id: objectId }
-				})
+				ctx.sendCanvasUpdate({ type: 'delete', object: { id: objectId } })
 			})
 
 			// Clear eraser state
@@ -521,24 +526,21 @@ export const createMouseUpHandler = (canvas: fabric.Canvas, ctx: CanvasEventCont
 /**
  * Creates path:created event handler
  */
-export const createPathCreatedHandler = (canvas: fabric.Canvas, ctx: CanvasEventContext) => {
+export const createPathCreatedHandler = (
+	canvas: fabric.Canvas,
+	ctx: CanvasEventContext,
+) => {
 	return ({ path }: { path: fabric.Path }) => {
 		// @ts-expect-error - custom id property
 		path.id = uuidv4()
 
 		// Disable default controls and borders - we use custom control points
-		path.set({
-			hasControls: false,
-			hasBorders: false
-		})
+		path.set({ hasControls: false, hasBorders: false })
 
 		const objData = path.toObject()
 		// @ts-expect-error - custom id property
 		objData.id = path.id
-		ctx.sendCanvasUpdate({
-			type: 'add',
-			object: objData
-		})
+		ctx.sendCanvasUpdate({ type: 'add', object: objData })
 
 		// Fire object:finalized event so history is recorded
 		// @ts-expect-error - custom event
@@ -566,7 +568,7 @@ export const createTextChangedHandler = (ctx: CanvasEventContext) => {
 			ctx.sendCanvasUpdate({
 				type: 'modify',
 				object: objData,
-				live: false // Not live, should persist
+				live: false, // Not live, should persist
 			})
 			textChangeTimeout = null
 		}, 150)
@@ -578,7 +580,7 @@ export const createTextChangedHandler = (ctx: CanvasEventContext) => {
 		ctx.sendCanvasUpdate({
 			type: 'modify',
 			object: objData,
-			live: true // Live update, won't persist to DB
+			live: true, // Live update, won't persist to DB
 		})
 	}
 }
@@ -602,7 +604,7 @@ export const createTextEditingExitedHandler = (ctx: CanvasEventContext) => {
 		ctx.sendCanvasUpdate({
 			type: 'modify',
 			object: objData,
-			live: false // Final update, should persist to DB
+			live: false, // Final update, should persist to DB
 		})
 	}
 }
@@ -643,10 +645,15 @@ export const createSelectionCreatedHandler = (ctx: CanvasEventContext) => {
 					// @ts-expect-error - custom id property
 					const objId = obj.id
 					// Check if control points already exist for this object
-					const handler = obj.type === 'polyline' ? ctx.controlPointManager.getLineHandler() : null
+					const handler =
+						obj.type === 'polyline'
+							? ctx.controlPointManager.getLineHandler()
+							: null
 					const existingPoints = handler
 						? handler.getControlPointsForObject(objId)
-						: ctx.controlPointManager.getAllControlPoints().filter((cp) => cp.objectId === objId)
+						: ctx.controlPointManager
+								.getAllControlPoints()
+								.filter((cp) => cp.objectId === objId)
 					if (existingPoints.length === 0) {
 						// Create control points for this object (visible by default)
 						ctx.controlPointManager.addControlPoints(objId, obj, true)
@@ -676,7 +683,7 @@ export const createSelectionCreatedHandler = (ctx: CanvasEventContext) => {
 					colour: obj.fill?.toString() || '#4A5568',
 					// @ts-expect-error - textbox properties
 					textAlign: obj.textAlign || 'left',
-					opacity: obj.opacity ?? 1
+					opacity: obj.opacity ?? 1,
 				})
 			} else if (
 				obj.type === 'rect' ||
@@ -692,7 +699,7 @@ export const createSelectionCreatedHandler = (ctx: CanvasEventContext) => {
 					strokeColour: obj.stroke?.toString() || '#4A5568',
 					fillColour: obj.fill?.toString() || 'transparent',
 					strokeDashArray: obj.strokeDashArray || [],
-					opacity: obj.opacity ?? 1
+					opacity: obj.opacity ?? 1,
 				})
 			} else if (obj.type === 'polyline') {
 				// Show line options panel
@@ -702,7 +709,7 @@ export const createSelectionCreatedHandler = (ctx: CanvasEventContext) => {
 					strokeWidth: obj.strokeWidth || 2,
 					strokeColour: obj.stroke?.toString() || '#4A5568',
 					strokeDashArray: obj.strokeDashArray || [],
-					opacity: obj.opacity ?? 1
+					opacity: obj.opacity ?? 1,
 				})
 			} else if (obj.type === 'group') {
 				// Arrows are groups - show arrow options panel
@@ -715,7 +722,7 @@ export const createSelectionCreatedHandler = (ctx: CanvasEventContext) => {
 						strokeWidth: lineObj.strokeWidth || 2,
 						strokeColour: lineObj.stroke?.toString() || '#4A5568',
 						strokeDashArray: lineObj.strokeDashArray || [],
-						opacity: lineObj.opacity ?? 1
+						opacity: lineObj.opacity ?? 1,
 					})
 				}
 			} else if (obj.type === 'path') {
@@ -725,15 +732,13 @@ export const createSelectionCreatedHandler = (ctx: CanvasEventContext) => {
 				ctx.floatingMenuRef?.updateDrawOptions?.({
 					brushSize: obj.strokeWidth || 6,
 					brushColour: obj.stroke?.toString() || '#4A5568',
-					opacity: obj.opacity ?? 1
+					opacity: obj.opacity ?? 1,
 				})
 			} else if (obj.type === 'image') {
 				// Images - show image options panel (only opacity applies)
 				ctx.floatingMenuRef?.setActiveMenuPanel?.('image')
 				// Sync image properties to menu (only opacity makes sense)
-				ctx.floatingMenuRef?.updateShapeOptions?.({
-					opacity: obj.opacity ?? 1
-				})
+				ctx.floatingMenuRef?.updateShapeOptions?.({ opacity: obj.opacity ?? 1 })
 			}
 		}
 	}
@@ -802,7 +807,7 @@ export const createSelectionUpdatedHandler = (ctx: CanvasEventContext) => {
 					colour: obj.fill?.toString() || '#4A5568',
 					// @ts-expect-error - textbox properties
 					textAlign: obj.textAlign || 'left',
-					opacity: obj.opacity ?? 1
+					opacity: obj.opacity ?? 1,
 				})
 			} else if (
 				obj.type === 'rect' ||
@@ -818,7 +823,7 @@ export const createSelectionUpdatedHandler = (ctx: CanvasEventContext) => {
 					strokeColour: obj.stroke?.toString() || '#4A5568',
 					fillColour: obj.fill?.toString() || 'transparent',
 					strokeDashArray: obj.strokeDashArray || [],
-					opacity: obj.opacity ?? 1
+					opacity: obj.opacity ?? 1,
 				})
 			} else if (obj.type === 'polyline') {
 				// Show line options panel
@@ -828,7 +833,7 @@ export const createSelectionUpdatedHandler = (ctx: CanvasEventContext) => {
 					strokeWidth: obj.strokeWidth || 2,
 					strokeColour: obj.stroke?.toString() || '#4A5568',
 					strokeDashArray: obj.strokeDashArray || [],
-					opacity: obj.opacity ?? 1
+					opacity: obj.opacity ?? 1,
 				})
 			} else if (obj.type === 'group') {
 				// Arrows are groups - show arrow options panel
@@ -841,7 +846,7 @@ export const createSelectionUpdatedHandler = (ctx: CanvasEventContext) => {
 						strokeWidth: lineObj.strokeWidth || 2,
 						strokeColour: lineObj.stroke?.toString() || '#4A5568',
 						strokeDashArray: lineObj.strokeDashArray || [],
-						opacity: lineObj.opacity ?? 1
+						opacity: lineObj.opacity ?? 1,
 					})
 				}
 			} else if (obj.type === 'path') {
@@ -851,15 +856,13 @@ export const createSelectionUpdatedHandler = (ctx: CanvasEventContext) => {
 				ctx.floatingMenuRef?.updateDrawOptions?.({
 					brushSize: obj.strokeWidth || 6,
 					brushColour: obj.stroke?.toString() || '#4A5568',
-					opacity: obj.opacity ?? 1
+					opacity: obj.opacity ?? 1,
 				})
 			} else if (obj.type === 'image') {
 				// Images - show image options panel (only opacity applies)
 				ctx.floatingMenuRef?.setActiveMenuPanel?.('image')
 				// Sync image properties to menu (only opacity makes sense)
-				ctx.floatingMenuRef?.updateShapeOptions?.({
-					opacity: obj.opacity ?? 1
-				})
+				ctx.floatingMenuRef?.updateShapeOptions?.({ opacity: obj.opacity ?? 1 })
 			}
 		}
 	}
@@ -891,7 +894,10 @@ export const createSelectionClearedHandler = (ctx: CanvasEventContext) => {
 /**
  * Creates mouse:wheel event handler
  */
-export const createMouseWheelHandler = (canvas: fabric.Canvas, ctx: CanvasEventContext) => {
+export const createMouseWheelHandler = (
+	canvas: fabric.Canvas,
+	ctx: CanvasEventContext,
+) => {
 	return (opt: fabric.TEvent<WheelEvent>) => {
 		const delta = opt.e.deltaY
 
@@ -911,7 +917,10 @@ export const createMouseWheelHandler = (canvas: fabric.Canvas, ctx: CanvasEventC
 /**
  * Creates mouse:down event handler
  */
-export const createMouseDownHandler = (canvas: fabric.Canvas, ctx: CanvasEventContext) => {
+export const createMouseDownHandler = (
+	canvas: fabric.Canvas,
+	ctx: CanvasEventContext,
+) => {
 	return (opt: fabric.TPointerEventInfo<fabric.TPointerEvent>) => {
 		const evt = opt.e
 
@@ -926,8 +935,10 @@ export const createMouseDownHandler = (canvas: fabric.Canvas, ctx: CanvasEventCo
 			canvas.discardActiveObject()
 			canvas.setCursor('grabbing')
 
-			const clientX = 'clientX' in evt ? evt.clientX : evt.touches?.[0]?.clientX || 0
-			const clientY = 'clientY' in evt ? evt.clientY : evt.touches?.[0]?.clientY || 0
+			const clientX =
+				'clientX' in evt ? evt.clientX : evt.touches?.[0]?.clientX || 0
+			const clientY =
+				'clientY' in evt ? evt.clientY : evt.touches?.[0]?.clientY || 0
 			ctx.setPanStartPos({ x: clientX, y: clientY })
 
 			opt.e.preventDefault()
@@ -938,8 +949,10 @@ export const createMouseDownHandler = (canvas: fabric.Canvas, ctx: CanvasEventCo
 				canvas.selection = false
 				canvas.setCursor('grab')
 
-				const clientX = 'clientX' in evt ? evt.clientX : evt.touches?.[0]?.clientX || 0
-				const clientY = 'clientY' in evt ? evt.clientY : evt.touches?.[0]?.clientY || 0
+				const clientX =
+					'clientX' in evt ? evt.clientX : evt.touches?.[0]?.clientX || 0
+				const clientY =
+					'clientY' in evt ? evt.clientY : evt.touches?.[0]?.clientY || 0
 				ctx.setPanStartPos({ x: clientX, y: clientY })
 
 				opt.e.preventDefault()
@@ -959,7 +972,7 @@ export const createMouseDownHandler = (canvas: fabric.Canvas, ctx: CanvasEventCo
 					pointer.y,
 					pointer.x,
 					pointer.y,
-					ctx.getCurrentShapeOptions()
+					ctx.getCurrentShapeOptions(),
 				)
 				if (tempShape) {
 					canvas.add(tempShape)
@@ -1032,7 +1045,7 @@ export const createMouseDownHandler = (canvas: fabric.Canvas, ctx: CanvasEventCo
 					hasBorders: false,
 					originX: 'left',
 					originY: 'top',
-					selectable: false // Start as non-selectable, will be set to true after finalized event
+					selectable: false, // Start as non-selectable, will be set to true after finalized event
 				})
 
 				// Ensure dimensions are calculated correctly
@@ -1066,10 +1079,7 @@ export const createMouseDownHandler = (canvas: fabric.Canvas, ctx: CanvasEventCo
 					// @ts-expect-error - custom markAsRecentlyCreated property
 					ctx.sendCanvasUpdate.socket.markAsRecentlyCreated(textbox.id)
 				}
-				ctx.sendCanvasUpdate({
-					type: 'add',
-					object: objData
-				})
+				ctx.sendCanvasUpdate({ type: 'add', object: objData })
 
 				// Re-enable history recording after text is created and sent
 				ctx.setIsDrawingObject?.(false)
@@ -1098,7 +1108,7 @@ export const createMouseDownHandler = (canvas: fabric.Canvas, ctx: CanvasEventCo
 						fontWeight: String(textbox.fontWeight || 'normal'),
 						colour: textbox.fill as string,
 						textAlign: textbox.textAlign,
-						opacity: textbox.opacity || 1
+						opacity: textbox.opacity || 1,
 					})
 				}, 0)
 
@@ -1119,7 +1129,7 @@ export const createMouseDownHandler = (canvas: fabric.Canvas, ctx: CanvasEventCo
 					startPoint.y,
 					startPoint.x,
 					startPoint.y,
-					ctx.getCurrentLineOptions()
+					ctx.getCurrentLineOptions(),
 				)
 				ctx.setTempShape(tempLine)
 				ctx.setTempLine(tempLine)
@@ -1162,7 +1172,10 @@ export const createMouseDownHandler = (canvas: fabric.Canvas, ctx: CanvasEventCo
 /**
  * Creates mouse:move event handler
  */
-export const createMouseMoveHandler = (canvas: fabric.Canvas, ctx: CanvasEventContext) => {
+export const createMouseMoveHandler = (
+	canvas: fabric.Canvas,
+	ctx: CanvasEventContext,
+) => {
 	return (opt: fabric.TPointerEventInfo<fabric.TPointerEvent>) => {
 		if (ctx.getIsPanMode()) {
 			const e = opt.e
@@ -1177,7 +1190,11 @@ export const createMouseMoveHandler = (canvas: fabric.Canvas, ctx: CanvasEventCo
 			ctx.setPanStartPos({ x: clientX, y: clientY })
 
 			canvas.setCursor('grabbing')
-		} else if (ctx.getIsDrawingShape() && ctx.getTempShape() && ctx.getCurrentShapeType()) {
+		} else if (
+			ctx.getIsDrawingShape() &&
+			ctx.getTempShape() &&
+			ctx.getCurrentShapeType()
+		) {
 			// Update the shape being drawn
 			const pointer = canvas.getScenePoint(opt.e)
 			const startPoint = ctx.getStartPoint()
@@ -1192,7 +1209,7 @@ export const createMouseMoveHandler = (canvas: fabric.Canvas, ctx: CanvasEventCo
 				startPoint.y,
 				pointer.x,
 				pointer.y,
-				ctx.getCurrentShapeOptions()
+				ctx.getCurrentShapeOptions(),
 			)
 
 			if (tempShape && oldTempShape) {
@@ -1228,7 +1245,7 @@ export const createMouseMoveHandler = (canvas: fabric.Canvas, ctx: CanvasEventCo
 				startPoint.y,
 				pointer.x,
 				pointer.y,
-				ctx.getCurrentLineOptions()
+				ctx.getCurrentLineOptions(),
 			)
 
 			if (tempLine) {
@@ -1251,8 +1268,8 @@ export const createMouseMoveHandler = (canvas: fabric.Canvas, ctx: CanvasEventCo
 						strokeWidth: 5,
 						selectable: false,
 						evented: false,
-						excludeFromExport: true
-					}
+						excludeFromExport: true,
+					},
 				)
 
 				canvas.add(trailLine)
@@ -1327,7 +1344,10 @@ export const createMouseMoveHandler = (canvas: fabric.Canvas, ctx: CanvasEventCo
 /**
  * Setup all canvas event handlers
  */
-export const setupCanvasEvents = (canvas: fabric.Canvas, ctx: CanvasEventContext) => {
+export const setupCanvasEvents = (
+	canvas: fabric.Canvas,
+	ctx: CanvasEventContext,
+) => {
 	canvas.on('object:moving', createObjectMovingHandler(ctx))
 	canvas.on('object:scaling', createObjectScalingHandler(ctx))
 	canvas.on('object:rotating', createObjectRotatingHandler(ctx))

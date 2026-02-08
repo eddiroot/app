@@ -10,14 +10,20 @@ Canvas actions are stateless functions that perform specific operations on the c
 
 ```typescript
 interface CanvasActionContext {
-  canvas: fabric.Canvas
-  sendCanvasUpdate: (data: Record<string, unknown>) => void
-  onImageAdded?: (img: fabric.FabricImage) => void
-  socket?: any
-  controlPointManager?: ControlPointManager
-  onClearComplete?: (deletedObjects: Array<{ id: string; data: Record<string, unknown> }>) => void
-  setClearingCanvas?: (value: boolean) => void
-  onLayerChange?: (objectId: string, previousIndex: number, newIndex: number) => void
+	canvas: fabric.Canvas;
+	sendCanvasUpdate: (data: Record<string, unknown>) => void;
+	onImageAdded?: (img: fabric.FabricImage) => void;
+	socket?: any;
+	controlPointManager?: ControlPointManager;
+	onClearComplete?: (
+		deletedObjects: Array<{ id: string; data: Record<string, unknown> }>,
+	) => void;
+	setClearingCanvas?: (value: boolean) => void;
+	onLayerChange?: (
+		objectId: string,
+		previousIndex: number,
+		newIndex: number,
+	) => void;
 }
 ```
 
@@ -31,12 +37,13 @@ Handles uploading and adding an image to the canvas.
 
 ```typescript
 async function handleImageUpload(
-  file: File,
-  ctx: CanvasActionContext
-): Promise<fabric.FabricImage | null>
+	file: File,
+	ctx: CanvasActionContext,
+): Promise<fabric.FabricImage | null>;
 ```
 
 **Process:**
+
 1. Read file as data URL using FileReader
 2. Create Fabric.js Image from data URL
 3. Assign unique ID
@@ -47,11 +54,12 @@ async function handleImageUpload(
 8. Call `onImageAdded` callback
 
 **Example:**
+
 ```typescript
-const file = event.target.files[0]
-const image = await handleImageUpload(file, ctx)
+const file = event.target.files[0];
+const image = await handleImageUpload(file, ctx);
 if (image) {
-  canvas.setActiveObject(image)
+	canvas.setActiveObject(image);
 }
 ```
 
@@ -64,10 +72,11 @@ if (image) {
 Clears all objects from the canvas.
 
 ```typescript
-function clearCanvas(ctx: CanvasActionContext): void
+function clearCanvas(ctx: CanvasActionContext): void;
 ```
 
 **Process:**
+
 1. Collect all deletable objects (excluding control points)
 2. Store object data for history
 3. Remove all control points
@@ -86,12 +95,15 @@ function clearCanvas(ctx: CanvasActionContext): void
 Deletes all currently selected objects.
 
 ```typescript
-function deleteSelectedObjects(ctx: CanvasActionContext): Array<{ id: string; data: Record<string, unknown> }>
+function deleteSelectedObjects(
+	ctx: CanvasActionContext,
+): Array<{ id: string; data: Record<string, unknown> }>;
 ```
 
 **Returns:** Array of deleted object info for history recording.
 
 **Process:**
+
 1. Get active objects from selection
 2. For each object (excluding control points):
    - Remove associated control points
@@ -110,17 +122,18 @@ function deleteSelectedObjects(ctx: CanvasActionContext): Array<{ id: string; da
 Increases zoom level by the configured step.
 
 ```typescript
-function zoomIn(ctx: CanvasActionContext): number
+function zoomIn(ctx: CanvasActionContext): number;
 ```
 
 **Returns:** New zoom level.
 
 **Implementation:**
+
 ```typescript
-const currentZoom = canvas.getZoom()
-const newZoom = Math.min(currentZoom * ZOOM_LIMITS.step, ZOOM_LIMITS.max)
-canvas.zoomToPoint(canvas.getCenterPoint(), newZoom)
-return newZoom
+const currentZoom = canvas.getZoom();
+const newZoom = Math.min(currentZoom * ZOOM_LIMITS.step, ZOOM_LIMITS.max);
+canvas.zoomToPoint(canvas.getCenterPoint(), newZoom);
+return newZoom;
 ```
 
 ### `zoomOut(ctx)`
@@ -128,7 +141,7 @@ return newZoom
 Decreases zoom level by the configured step.
 
 ```typescript
-function zoomOut(ctx: CanvasActionContext): number
+function zoomOut(ctx: CanvasActionContext): number;
 ```
 
 **Returns:** New zoom level.
@@ -138,7 +151,7 @@ function zoomOut(ctx: CanvasActionContext): number
 Resets zoom to 100% (1.0).
 
 ```typescript
-function resetZoom(ctx: CanvasActionContext): number
+function resetZoom(ctx: CanvasActionContext): number;
 ```
 
 **Returns:** 1.0
@@ -148,15 +161,16 @@ function resetZoom(ctx: CanvasActionContext): number
 Resets viewport to origin (0,0) with current zoom maintained.
 
 ```typescript
-function recenterView(ctx: CanvasActionContext): void
+function recenterView(ctx: CanvasActionContext): void;
 ```
 
 **Implementation:**
+
 ```typescript
-const vpt = canvas.viewportTransform
-vpt[4] = 0  // Reset X translation
-vpt[5] = 0  // Reset Y translation
-canvas.setViewportTransform(vpt)
+const vpt = canvas.viewportTransform;
+vpt[4] = 0; // Reset X translation
+vpt[5] = 0; // Reset Y translation
+canvas.setViewportTransform(vpt);
 ```
 
 ---
@@ -170,7 +184,7 @@ Layer actions change the z-index (stacking order) of objects.
 Moves selected object to the top of the stack.
 
 ```typescript
-function bringToFront(ctx: CanvasActionContext): void
+function bringToFront(ctx: CanvasActionContext): void;
 ```
 
 **Server sync:** Sends `layer` message with `action: 'bringToFront'`.
@@ -180,7 +194,7 @@ function bringToFront(ctx: CanvasActionContext): void
 Moves selected object to the bottom of the stack.
 
 ```typescript
-function sendToBack(ctx: CanvasActionContext): void
+function sendToBack(ctx: CanvasActionContext): void;
 ```
 
 **Server sync:** Sends `layer` message with `action: 'sendToBack'`.
@@ -190,7 +204,7 @@ function sendToBack(ctx: CanvasActionContext): void
 Moves selected object one step up in the stack.
 
 ```typescript
-function moveForward(ctx: CanvasActionContext): void
+function moveForward(ctx: CanvasActionContext): void;
 ```
 
 **Server sync:** Sends `layer` message with `action: 'moveForward'`.
@@ -200,7 +214,7 @@ function moveForward(ctx: CanvasActionContext): void
 Moves selected object one step down in the stack.
 
 ```typescript
-function moveBackward(ctx: CanvasActionContext): void
+function moveBackward(ctx: CanvasActionContext): void;
 ```
 
 **Server sync:** Sends `layer` message with `action: 'moveBackward'`.
@@ -209,25 +223,26 @@ function moveBackward(ctx: CanvasActionContext): void
 
 ```typescript
 function bringToFront(ctx: CanvasActionContext): void {
-  const activeObject = ctx.canvas.getActiveObject()
-  if (!activeObject || ctx.controlPointManager?.isControlPoint(activeObject)) return
-  
-  const previousIndex = ctx.canvas.getObjects().indexOf(activeObject)
-  ctx.canvas.bringObjectToFront(activeObject)
-  const newIndex = ctx.canvas.getObjects().indexOf(activeObject)
-  
-  // Ensure control points stay on top
-  ctx.controlPointManager?.bringAllControlPointsToFront()
-  
-  // Notify for history recording
-  ctx.onLayerChange?.(activeObject.id, previousIndex, newIndex)
-  
-  // Sync with server
-  ctx.sendCanvasUpdate({
-    type: 'layer',
-    object: { id: activeObject.id },
-    action: 'bringToFront'
-  })
+	const activeObject = ctx.canvas.getActiveObject();
+	if (!activeObject || ctx.controlPointManager?.isControlPoint(activeObject))
+		return;
+
+	const previousIndex = ctx.canvas.getObjects().indexOf(activeObject);
+	ctx.canvas.bringObjectToFront(activeObject);
+	const newIndex = ctx.canvas.getObjects().indexOf(activeObject);
+
+	// Ensure control points stay on top
+	ctx.controlPointManager?.bringAllControlPointsToFront();
+
+	// Notify for history recording
+	ctx.onLayerChange?.(activeObject.id, previousIndex, newIndex);
+
+	// Sync with server
+	ctx.sendCanvasUpdate({
+		type: 'layer',
+		object: { id: activeObject.id },
+		action: 'bringToFront',
+	});
 }
 ```
 
@@ -241,30 +256,29 @@ Applies opacity to an object and syncs with server.
 
 ```typescript
 function applyOpacity(
-  object: fabric.Object,
-  opacity: number,
-  ctx: CanvasActionContext
-): void
+	object: fabric.Object,
+	opacity: number,
+	ctx: CanvasActionContext,
+): void;
 ```
 
 **Parameters:**
+
 - `object`: The target object
 - `opacity`: Value from 0 to 1
 - `ctx`: Action context
 
 **Implementation:**
+
 ```typescript
 function applyOpacity(object, opacity, ctx) {
-  object.set({ opacity })
-  object.setCoords()
-  ctx.canvas.renderAll()
-  
-  const objData = object.toObject()
-  objData.id = object.id
-  ctx.sendCanvasUpdate({
-    type: 'modify',
-    object: objData
-  })
+	object.set({ opacity });
+	object.setCoords();
+	ctx.canvas.renderAll();
+
+	const objData = object.toObject();
+	objData.id = object.id;
+	ctx.sendCanvasUpdate({ type: 'modify', object: objData });
 }
 ```
 
@@ -277,12 +291,13 @@ function applyOpacity(object, opacity, ctx) {
 Converts hex color to rgba string.
 
 ```typescript
-function hexToRgba(hex: string, alpha: number): string
+function hexToRgba(hex: string, alpha: number): string;
 ```
 
 **Example:**
+
 ```typescript
-hexToRgba('#ff0000', 0.5)  // 'rgba(255, 0, 0, 0.5)'
+hexToRgba('#ff0000', 0.5); // 'rgba(255, 0, 0, 0.5)'
 ```
 
 ### `calculateDistance(x1, y1, x2, y2)`
@@ -290,7 +305,12 @@ hexToRgba('#ff0000', 0.5)  // 'rgba(255, 0, 0, 0.5)'
 Calculates Euclidean distance between two points.
 
 ```typescript
-function calculateDistance(x1: number, y1: number, x2: number, y2: number): number
+function calculateDistance(
+	x1: number,
+	y1: number,
+	x2: number,
+	y2: number,
+): number;
 ```
 
 ---
@@ -300,21 +320,21 @@ function calculateDistance(x1: number, y1: number, x2: number, y2: number): numb
 ```typescript
 // In the page component
 const actionContext: CanvasActionContext = {
-  canvas,
-  sendCanvasUpdate: (data) => socket.emit(data.type, { ...data, whiteboardId }),
-  controlPointManager,
-  onLayerChange: (objectId, prevIndex, newIndex) => {
-    history.recordLayer(objectId, prevIndex, newIndex, userId)
-  },
-  onClearComplete: (deletedObjects) => {
-    history.recordBatchDelete(deletedObjects, userId)
-  }
-}
+	canvas,
+	sendCanvasUpdate: (data) => socket.emit(data.type, { ...data, whiteboardId }),
+	controlPointManager,
+	onLayerChange: (objectId, prevIndex, newIndex) => {
+		history.recordLayer(objectId, prevIndex, newIndex, userId);
+	},
+	onClearComplete: (deletedObjects) => {
+		history.recordBatchDelete(deletedObjects, userId);
+	},
+};
 
 // Use actions
-zoomIn(actionContext)
-deleteSelectedObjects(actionContext)
-bringToFront(actionContext)
+zoomIn(actionContext);
+deleteSelectedObjects(actionContext);
+bringToFront(actionContext);
 ```
 
 ---

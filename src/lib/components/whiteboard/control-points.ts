@@ -30,10 +30,7 @@ export abstract class ControlPointHandler {
 		const scale = 1 / zoom // Inverse scale to maintain constant visual size
 
 		this.controlPoints.forEach((cp) => {
-			cp.circle.set({
-				radius: 6 * scale,
-				strokeWidth: 2 * scale
-			})
+			cp.circle.set({ radius: 6 * scale, strokeWidth: 2 * scale })
 			cp.circle.setCoords()
 		})
 	}
@@ -41,17 +38,25 @@ export abstract class ControlPointHandler {
 	/**
 	 * Add control points for an object
 	 */
-	abstract addControlPoints(objectId: string, obj: fabric.Object, visible?: boolean): void
+	abstract addControlPoints(
+		objectId: string,
+		obj: fabric.Object,
+		visible?: boolean,
+	): void
 
 	/**
 	 * Remove control points for an object
 	 */
 	removeControlPoints(objectId: string): void {
-		const pointsToRemove = this.controlPoints.filter((cp) => cp.objectId === objectId)
+		const pointsToRemove = this.controlPoints.filter(
+			(cp) => cp.objectId === objectId,
+		)
 		pointsToRemove.forEach((cp) => {
 			this.canvas.remove(cp.circle)
 		})
-		this.controlPoints = this.controlPoints.filter((cp) => cp.objectId !== objectId)
+		this.controlPoints = this.controlPoints.filter(
+			(cp) => cp.objectId !== objectId,
+		)
 		this.canvas.renderAll()
 	}
 
@@ -95,7 +100,11 @@ export abstract class ControlPointHandler {
 	/**
 	 * Update the object when a control point is dragged
 	 */
-	abstract updateObjectFromControlPoint(controlPointId: string, newX: number, newY: number): void
+	abstract updateObjectFromControlPoint(
+		controlPointId: string,
+		newX: number,
+		newY: number,
+	): void
 
 	/**
 	 * Get all control points for a specific object
@@ -136,7 +145,7 @@ export abstract class ControlPointHandler {
 		controlPointId: string,
 		objectId: string,
 		pointIndex: number,
-		selectable: boolean = true
+		selectable: boolean = true,
 	): fabric.Circle {
 		// Get current zoom to size control points correctly from the start
 		const zoom = this.canvas.getZoom()
@@ -156,7 +165,7 @@ export abstract class ControlPointHandler {
 			hasBorders: false,
 			hoverCursor: 'move',
 			evented: true,
-			excludeFromExport: true // Exclude from canvas serialization
+			excludeFromExport: true, // Exclude from canvas serialization
 		})
 
 		// Add custom properties to identify this as a control point
@@ -173,7 +182,11 @@ export abstract class ControlPointHandler {
  * Control point handler for polylines (lines and arrows)
  */
 export class LineControlPoints extends ControlPointHandler {
-	addControlPoints(objectId: string, obj: fabric.Object, visible: boolean = true): void {
+	addControlPoints(
+		objectId: string,
+		obj: fabric.Object,
+		visible: boolean = true,
+	): void {
 		const line = obj as fabric.Polyline
 		const points = line.points
 		if (!points || points.length < 2) return
@@ -186,8 +199,11 @@ export class LineControlPoints extends ControlPointHandler {
 			const point = points[pointIndex]
 			// Transform the point to absolute coordinates
 			const absolutePoint = fabric.util.transformPoint(
-				new fabric.Point(point.x - line.pathOffset.x, point.y - line.pathOffset.y),
-				matrix
+				new fabric.Point(
+					point.x - line.pathOffset.x,
+					point.y - line.pathOffset.y,
+				),
+				matrix,
 			)
 
 			const controlPointId = `${objectId}-cp-${pointIndex}`
@@ -196,7 +212,7 @@ export class LineControlPoints extends ControlPointHandler {
 				absolutePoint.y,
 				controlPointId,
 				objectId,
-				pointIndex
+				pointIndex,
 			)
 
 			// Set initial visibility
@@ -209,7 +225,7 @@ export class LineControlPoints extends ControlPointHandler {
 				id: controlPointId,
 				circle,
 				objectId,
-				pointIndex
+				pointIndex,
 			})
 		})
 
@@ -233,37 +249,41 @@ export class LineControlPoints extends ControlPointHandler {
 		controlPoints.forEach((cp) => {
 			const point = points[cp.pointIndex]
 			const absolutePoint = fabric.util.transformPoint(
-				new fabric.Point(point.x - line.pathOffset.x, point.y - line.pathOffset.y),
-				matrix
+				new fabric.Point(
+					point.x - line.pathOffset.x,
+					point.y - line.pathOffset.y,
+				),
+				matrix,
 			)
-			cp.circle.set({
-				left: absolutePoint.x,
-				top: absolutePoint.y
-			})
+			cp.circle.set({ left: absolutePoint.x, top: absolutePoint.y })
 			cp.circle.setCoords()
 		})
 
 		this.canvas.renderAll()
 	}
 
-	updateObjectFromControlPoint(controlPointId: string, newX: number, newY: number): void {
+	updateObjectFromControlPoint(
+		controlPointId: string,
+		newX: number,
+		newY: number,
+	): void {
 		// Find the control point
-		const controlPoint = this.controlPoints.find((cp) => cp.id === controlPointId)
+		const controlPoint = this.controlPoints.find(
+			(cp) => cp.id === controlPointId,
+		)
 		if (!controlPoint) return
 
 		// Update the control point circle position immediately
-		controlPoint.circle.set({
-			left: newX,
-			top: newY
-		})
+		controlPoint.circle.set({ left: newX, top: newY })
 		controlPoint.circle.setCoords()
 
 		// Find the line on the canvas
 		const line = this.canvas
 			.getObjects()
-			.find((obj: any) => obj.id === controlPoint.objectId && obj.type === 'polyline') as
-			| fabric.Polyline
-			| undefined
+			.find(
+				(obj: any) =>
+					obj.id === controlPoint.objectId && obj.type === 'polyline',
+			) as fabric.Polyline | undefined
 		if (!line || !line.points) return
 
 		// Get the line's current transformation matrix
@@ -272,8 +292,11 @@ export class LineControlPoints extends ControlPointHandler {
 		// Convert all current points to absolute coordinates
 		const absolutePoints = line.points.map((point) => {
 			return fabric.util.transformPoint(
-				new fabric.Point(point.x - line.pathOffset.x, point.y - line.pathOffset.y),
-				matrix
+				new fabric.Point(
+					point.x - line.pathOffset.x,
+					point.y - line.pathOffset.y,
+				),
+				matrix,
 			)
 		})
 
@@ -286,7 +309,7 @@ export class LineControlPoints extends ControlPointHandler {
 			stroke: line.stroke,
 			strokeWidth: line.strokeWidth,
 			strokeDashArray: line.strokeDashArray,
-			opacity: line.opacity
+			opacity: line.opacity,
 		}
 
 		// Remove old line
@@ -302,7 +325,7 @@ export class LineControlPoints extends ControlPointHandler {
 			selectable: true,
 			hasControls: false,
 			hasBorders: false,
-			strokeUniform: true
+			strokeUniform: true,
 		})
 
 		this.canvas.add(newLine)
@@ -312,16 +335,13 @@ export class LineControlPoints extends ControlPointHandler {
 
 		// Update other control point positions
 		const otherControlPoints = this.controlPoints.filter(
-			(cp) => cp.objectId === controlPoint.objectId && cp.id !== controlPointId
+			(cp) => cp.objectId === controlPoint.objectId && cp.id !== controlPointId,
 		)
 
 		const newMatrix = newLine.calcTransformMatrix()
 		otherControlPoints.forEach((cp) => {
 			const point = absolutePoints[cp.pointIndex]
-			cp.circle.set({
-				left: point.x,
-				top: point.y
-			})
+			cp.circle.set({ left: point.x, top: point.y })
 			cp.circle.setCoords()
 		})
 
@@ -333,14 +353,17 @@ export class LineControlPoints extends ControlPointHandler {
 	 * Returns the new line object so it can be sent to other users
 	 */
 	getUpdatedLine(controlPointId: string): fabric.Polyline | null {
-		const controlPoint = this.controlPoints.find((cp) => cp.id === controlPointId)
+		const controlPoint = this.controlPoints.find(
+			(cp) => cp.id === controlPointId,
+		)
 		if (!controlPoint) return null
 
 		const line = this.canvas
 			.getObjects()
-			.find((obj: any) => obj.id === controlPoint.objectId && obj.type === 'polyline') as
-			| fabric.Polyline
-			| undefined
+			.find(
+				(obj: any) =>
+					obj.id === controlPoint.objectId && obj.type === 'polyline',
+			) as fabric.Polyline | undefined
 
 		return line || null
 	}
@@ -384,18 +407,13 @@ export abstract class BoundingBoxControlPoints extends ControlPointHandler {
 
 		// Update control point circles
 		this.controlPoints.forEach((cp) => {
-			cp.circle.set({
-				radius: 6 * scale,
-				strokeWidth: 2 * scale
-			})
+			cp.circle.set({ radius: 6 * scale, strokeWidth: 2 * scale })
 			cp.circle.setCoords()
 		})
 
 		// Update edge lines
 		this.edgeLines.forEach((line) => {
-			line.set({
-				strokeWidth: 1.5 * scale
-			})
+			line.set({ strokeWidth: 1.5 * scale })
 			line.setCoords()
 		})
 
@@ -413,10 +431,10 @@ export abstract class BoundingBoxControlPoints extends ControlPointHandler {
 			if (obj) {
 				// Update just the rotation handle position
 				const rotationCp = this.controlPoints.find(
-					(cp) => cp.objectId === objectId && cp.pointIndex === 12
+					(cp) => cp.objectId === objectId && cp.pointIndex === 12,
 				)
 				const topMidpointCp = this.controlPoints.find(
-					(cp) => cp.objectId === objectId && cp.pointIndex === 8
+					(cp) => cp.objectId === objectId && cp.pointIndex === 8,
 				)
 
 				if (rotationCp && topMidpointCp) {
@@ -431,7 +449,7 @@ export abstract class BoundingBoxControlPoints extends ControlPointHandler {
 
 					rotationCp.circle.set({
 						left: center.x + normalizedX * (vectorLength + rotationDistance),
-						top: center.y + normalizedY * (vectorLength + rotationDistance)
+						top: center.y + normalizedY * (vectorLength + rotationDistance),
 					})
 					rotationCp.circle.setCoords()
 				}
@@ -444,7 +462,11 @@ export abstract class BoundingBoxControlPoints extends ControlPointHandler {
  * Control point handler for rectangles
  */
 export class RectangleControlPoints extends BoundingBoxControlPoints {
-	addControlPoints(objectId: string, obj: fabric.Object, visible: boolean = true): void {
+	addControlPoints(
+		objectId: string,
+		obj: fabric.Object,
+		visible: boolean = true,
+	): void {
 		const rect = obj as fabric.Rect
 		const left = rect.left || 0
 		const top = rect.top || 0
@@ -466,7 +488,7 @@ export class RectangleControlPoints extends BoundingBoxControlPoints {
 				{ x: -width / 2, y: -height / 2 }, // Top-left
 				{ x: width / 2, y: -height / 2 }, // Top-right
 				{ x: width / 2, y: height / 2 }, // Bottom-right
-				{ x: -width / 2, y: height / 2 } // Bottom-left
+				{ x: -width / 2, y: height / 2 }, // Bottom-left
 			]
 		} else {
 			// Top-left origin (default)
@@ -474,13 +496,13 @@ export class RectangleControlPoints extends BoundingBoxControlPoints {
 				{ x: 0, y: 0 }, // Top-left
 				{ x: width, y: 0 }, // Top-right
 				{ x: width, y: height }, // Bottom-right
-				{ x: 0, y: height } // Bottom-left
+				{ x: 0, y: height }, // Bottom-left
 			]
 		}
 
 		// Transform corners to absolute coordinates
 		const absoluteCorners = corners.map((corner) =>
-			fabric.util.transformPoint(new fabric.Point(corner.x, corner.y), matrix)
+			fabric.util.transformPoint(new fabric.Point(corner.x, corner.y), matrix),
 		)
 
 		// Create control points at corners (selectable to allow dragging)
@@ -492,7 +514,7 @@ export class RectangleControlPoints extends BoundingBoxControlPoints {
 				controlPointId,
 				objectId,
 				index,
-				true // Must be selectable for dragging
+				true, // Must be selectable for dragging
 			)
 			circle.set({ visible })
 			this.canvas.add(circle)
@@ -500,7 +522,7 @@ export class RectangleControlPoints extends BoundingBoxControlPoints {
 				id: controlPointId,
 				circle,
 				objectId,
-				pointIndex: index
+				pointIndex: index,
 			})
 		})
 
@@ -510,26 +532,26 @@ export class RectangleControlPoints extends BoundingBoxControlPoints {
 				x: (absoluteCorners[0].x + absoluteCorners[1].x) / 2,
 				y: (absoluteCorners[0].y + absoluteCorners[1].y) / 2,
 				edgeIndex: 4, // Top edge
-				cursor: 'ns-resize'
+				cursor: 'ns-resize',
 			},
 			{
 				x: (absoluteCorners[1].x + absoluteCorners[2].x) / 2,
 				y: (absoluteCorners[1].y + absoluteCorners[2].y) / 2,
 				edgeIndex: 5, // Right edge
-				cursor: 'ew-resize'
+				cursor: 'ew-resize',
 			},
 			{
 				x: (absoluteCorners[2].x + absoluteCorners[3].x) / 2,
 				y: (absoluteCorners[2].y + absoluteCorners[3].y) / 2,
 				edgeIndex: 6, // Bottom edge
-				cursor: 'ns-resize'
+				cursor: 'ns-resize',
 			},
 			{
 				x: (absoluteCorners[3].x + absoluteCorners[0].x) / 2,
 				y: (absoluteCorners[3].y + absoluteCorners[0].y) / 2,
 				edgeIndex: 7, // Left edge
-				cursor: 'ew-resize'
-			}
+				cursor: 'ew-resize',
+			},
 		]
 
 		// Add edge midpoint control points (indices 8-11, selectable for dragging)
@@ -542,12 +564,9 @@ export class RectangleControlPoints extends BoundingBoxControlPoints {
 				controlPointId,
 				objectId,
 				pointIndex,
-				true // Must be selectable for dragging
+				true, // Must be selectable for dragging
 			)
-			circle.set({
-				visible,
-				hoverCursor: midpoint.cursor
-			})
+			circle.set({ visible, hoverCursor: midpoint.cursor })
 			// Mark this as an edge midpoint
 			;(circle as any).isEdgeMidpoint = true
 			;(circle as any).edgeIndex = midpoint.edgeIndex
@@ -557,7 +576,7 @@ export class RectangleControlPoints extends BoundingBoxControlPoints {
 				id: controlPointId,
 				circle,
 				objectId,
-				pointIndex
+				pointIndex,
 			})
 		})
 
@@ -579,7 +598,7 @@ export class RectangleControlPoints extends BoundingBoxControlPoints {
 			rotationControlPointId,
 			objectId,
 			12,
-			true
+			true,
 		)
 		rotationCircle.set({ visible, hoverCursor: 'crosshair' })
 		this.canvas.add(rotationCircle)
@@ -587,7 +606,7 @@ export class RectangleControlPoints extends BoundingBoxControlPoints {
 			id: rotationControlPointId,
 			circle: rotationCircle,
 			objectId,
-			pointIndex: 12
+			pointIndex: 12,
 		})
 
 		this.bringControlPointsToFront()
@@ -596,11 +615,15 @@ export class RectangleControlPoints extends BoundingBoxControlPoints {
 
 	removeControlPoints(objectId: string): void {
 		// Remove corner control points
-		const pointsToRemove = this.controlPoints.filter((cp) => cp.objectId === objectId)
+		const pointsToRemove = this.controlPoints.filter(
+			(cp) => cp.objectId === objectId,
+		)
 		pointsToRemove.forEach((cp) => {
 			this.canvas.remove(cp.circle)
 		})
-		this.controlPoints = this.controlPoints.filter((cp) => cp.objectId !== objectId)
+		this.controlPoints = this.controlPoints.filter(
+			(cp) => cp.objectId !== objectId,
+		)
 
 		// Remove edge lines
 		const edgeLinesToRemove: string[] = []
@@ -673,7 +696,7 @@ export class RectangleControlPoints extends BoundingBoxControlPoints {
 				{ x: -width / 2, y: -height / 2 }, // Top-left
 				{ x: width / 2, y: -height / 2 }, // Top-right
 				{ x: width / 2, y: height / 2 }, // Bottom-right
-				{ x: -width / 2, y: height / 2 } // Bottom-left
+				{ x: -width / 2, y: height / 2 }, // Bottom-left
 			]
 		} else {
 			// Top-left origin (default)
@@ -681,23 +704,20 @@ export class RectangleControlPoints extends BoundingBoxControlPoints {
 				{ x: 0, y: 0 }, // Top-left
 				{ x: width, y: 0 }, // Top-right
 				{ x: width, y: height }, // Bottom-right
-				{ x: 0, y: height } // Bottom-left
+				{ x: 0, y: height }, // Bottom-left
 			]
 		}
 
 		// Transform to absolute coordinates
 		const absoluteCorners = corners.map((corner) =>
-			fabric.util.transformPoint(new fabric.Point(corner.x, corner.y), matrix)
+			fabric.util.transformPoint(new fabric.Point(corner.x, corner.y), matrix),
 		)
 
 		// Update corner control points (indices 0-3)
 		controlPoints.forEach((cp) => {
 			if (cp.pointIndex >= 0 && cp.pointIndex <= 3) {
 				const corner = absoluteCorners[cp.pointIndex]
-				cp.circle.set({
-					left: corner.x,
-					top: corner.y
-				})
+				cp.circle.set({ left: corner.x, top: corner.y })
 				cp.circle.setCoords()
 			}
 		})
@@ -707,32 +727,31 @@ export class RectangleControlPoints extends BoundingBoxControlPoints {
 			{
 				x: (absoluteCorners[0].x + absoluteCorners[1].x) / 2,
 				y: (absoluteCorners[0].y + absoluteCorners[1].y) / 2,
-				pointIndex: 8 // Top edge
+				pointIndex: 8, // Top edge
 			},
 			{
 				x: (absoluteCorners[1].x + absoluteCorners[2].x) / 2,
 				y: (absoluteCorners[1].y + absoluteCorners[2].y) / 2,
-				pointIndex: 9 // Right edge
+				pointIndex: 9, // Right edge
 			},
 			{
 				x: (absoluteCorners[2].x + absoluteCorners[3].x) / 2,
 				y: (absoluteCorners[2].y + absoluteCorners[3].y) / 2,
-				pointIndex: 10 // Bottom edge
+				pointIndex: 10, // Bottom edge
 			},
 			{
 				x: (absoluteCorners[3].x + absoluteCorners[0].x) / 2,
 				y: (absoluteCorners[3].y + absoluteCorners[0].y) / 2,
-				pointIndex: 11 // Left edge
-			}
+				pointIndex: 11, // Left edge
+			},
 		]
 
 		edgeMidpoints.forEach((midpoint) => {
-			const cp = controlPoints.find((cp) => cp.pointIndex === midpoint.pointIndex)
+			const cp = controlPoints.find(
+				(cp) => cp.pointIndex === midpoint.pointIndex,
+			)
 			if (cp) {
-				cp.circle.set({
-					left: midpoint.x,
-					top: midpoint.y
-				})
+				cp.circle.set({ left: midpoint.x, top: midpoint.y })
 				cp.circle.setCoords()
 			}
 		})
@@ -751,13 +770,12 @@ export class RectangleControlPoints extends BoundingBoxControlPoints {
 			const normalizedX = vectorX / vectorLength
 			const normalizedY = vectorY / vectorLength
 			const rotationDistance = this.getRotationHandleDistance()
-			const rotationX = center.x + normalizedX * (vectorLength + rotationDistance)
-			const rotationY = center.y + normalizedY * (vectorLength + rotationDistance)
+			const rotationX =
+				center.x + normalizedX * (vectorLength + rotationDistance)
+			const rotationY =
+				center.y + normalizedY * (vectorLength + rotationDistance)
 
-			rotationCp.circle.set({
-				left: rotationX,
-				top: rotationY
-			})
+			rotationCp.circle.set({ left: rotationX, top: rotationY })
 			rotationCp.circle.setCoords()
 		}
 
@@ -766,7 +784,7 @@ export class RectangleControlPoints extends BoundingBoxControlPoints {
 			{ start: 0, end: 1 }, // Top
 			{ start: 1, end: 2 }, // Right
 			{ start: 2, end: 3 }, // Bottom
-			{ start: 3, end: 0 } // Left
+			{ start: 3, end: 0 }, // Left
 		]
 
 		edges.forEach(({ start, end }, index) => {
@@ -779,7 +797,7 @@ export class RectangleControlPoints extends BoundingBoxControlPoints {
 					x1: startCorner.x,
 					y1: startCorner.y,
 					x2: endCorner.x,
-					y2: endCorner.y
+					y2: endCorner.y,
 				})
 				edgeLine.setCoords()
 			}
@@ -788,9 +806,15 @@ export class RectangleControlPoints extends BoundingBoxControlPoints {
 		this.canvas.renderAll()
 	}
 
-	updateObjectFromControlPoint(controlPointId: string, newX: number, newY: number): void {
+	updateObjectFromControlPoint(
+		controlPointId: string,
+		newX: number,
+		newY: number,
+	): void {
 		// Check if this is a control point (corner or edge midpoint)
-		const controlPoint = this.controlPoints.find((cp) => cp.id === controlPointId)
+		const controlPoint = this.controlPoints.find(
+			(cp) => cp.id === controlPointId,
+		)
 
 		if (controlPoint) {
 			// Check if it's a corner control point (0-3) or edge midpoint (8-11) or rotation (12)
@@ -798,7 +822,10 @@ export class RectangleControlPoints extends BoundingBoxControlPoints {
 				// This is a corner control point
 				this.updateFromCorner(controlPoint, newX, newY)
 				return
-			} else if (controlPoint.pointIndex >= 8 && controlPoint.pointIndex <= 11) {
+			} else if (
+				controlPoint.pointIndex >= 8 &&
+				controlPoint.pointIndex <= 11
+			) {
 				// This is an edge midpoint control point
 				const edgeIndex = (controlPoint.circle as any).edgeIndex
 				this.updateFromEdgeMidpoint(controlPoint, edgeIndex, newX, newY)
@@ -819,12 +846,16 @@ export class RectangleControlPoints extends BoundingBoxControlPoints {
 		}
 	}
 
-	private updateFromRotation(controlPoint: ControlPoint, newX: number, newY: number): void {
+	private updateFromRotation(
+		controlPoint: ControlPoint,
+		newX: number,
+		newY: number,
+	): void {
 		const rect = this.canvas
 			.getObjects()
-			.find((obj: any) => obj.id === controlPoint.objectId && obj.type === 'rect') as
-			| fabric.Rect
-			| undefined
+			.find(
+				(obj: any) => obj.id === controlPoint.objectId && obj.type === 'rect',
+			) as fabric.Rect | undefined
 		if (!rect) return
 
 		const center = rect.getCenterPoint()
@@ -848,33 +879,31 @@ export class RectangleControlPoints extends BoundingBoxControlPoints {
 		controlPoint: ControlPoint,
 		edgeIndex: number,
 		newX: number,
-		newY: number
+		newY: number,
 	): void {
 		// Update the control point position immediately
-		controlPoint.circle.set({
-			left: newX,
-			top: newY
-		})
+		controlPoint.circle.set({ left: newX, top: newY })
 		controlPoint.circle.setCoords()
 
 		// Call updateFromEdge with the object ID and edge index
 		this.updateFromEdge(controlPoint.objectId, edgeIndex, newX, newY)
 	}
 
-	private updateFromCorner(controlPoint: ControlPoint, newX: number, newY: number): void {
+	private updateFromCorner(
+		controlPoint: ControlPoint,
+		newX: number,
+		newY: number,
+	): void {
 		// Update the control point position immediately
-		controlPoint.circle.set({
-			left: newX,
-			top: newY
-		})
+		controlPoint.circle.set({ left: newX, top: newY })
 		controlPoint.circle.setCoords()
 
 		// Find the rectangle
 		const rect = this.canvas
 			.getObjects()
-			.find((obj: any) => obj.id === controlPoint.objectId && obj.type === 'rect') as
-			| fabric.Rect
-			| undefined
+			.find(
+				(obj: any) => obj.id === controlPoint.objectId && obj.type === 'rect',
+			) as fabric.Rect | undefined
 		if (!rect) return
 
 		const width = rect.width || 0
@@ -888,7 +917,7 @@ export class RectangleControlPoints extends BoundingBoxControlPoints {
 			new fabric.Point(-width / 2, -height / 2), // Top-left (0)
 			new fabric.Point(width / 2, -height / 2), // Top-right (1)
 			new fabric.Point(width / 2, height / 2), // Bottom-right (2)
-			new fabric.Point(-width / 2, height / 2) // Bottom-left (3)
+			new fabric.Point(-width / 2, height / 2), // Bottom-left (3)
 		].map((corner) => fabric.util.transformPoint(corner, matrix))
 
 		// Determine which corner is the opposite/anchor corner
@@ -896,10 +925,12 @@ export class RectangleControlPoints extends BoundingBoxControlPoints {
 		const anchorCorner = corners[oppositeCornerIndex]
 
 		// Store the anchor corner's CURRENT position (we'll keep it fixed)
-		const anchorCornerCP = this.getControlPointsForObject(controlPoint.objectId).find(
-			(cp) => cp.pointIndex === oppositeCornerIndex
-		)
-		const anchorPosition = anchorCornerCP ? anchorCornerCP.circle.getCenterPoint() : anchorCorner
+		const anchorCornerCP = this.getControlPointsForObject(
+			controlPoint.objectId,
+		).find((cp) => cp.pointIndex === oppositeCornerIndex)
+		const anchorPosition = anchorCornerCP
+			? anchorCornerCP.circle.getCenterPoint()
+			: anchorCorner
 
 		// The new dragged position
 		const draggedCorner = new fabric.Point(newX, newY)
@@ -925,9 +956,13 @@ export class RectangleControlPoints extends BoundingBoxControlPoints {
 
 		// New center is halfway between anchor and dragged corner
 		const newCenterX =
-			anchorPosition.x + (widthProjection * widthAxisX) / 2 + (heightProjection * heightAxisX) / 2
+			anchorPosition.x +
+			(widthProjection * widthAxisX) / 2 +
+			(heightProjection * heightAxisX) / 2
 		const newCenterY =
-			anchorPosition.y + (widthProjection * widthAxisY) / 2 + (heightProjection * heightAxisY) / 2
+			anchorPosition.y +
+			(widthProjection * widthAxisY) / 2 +
+			(heightProjection * heightAxisY) / 2
 
 		// Store rectangle properties INCLUDING ANGLE
 		const rectId = (rect as any).id
@@ -937,7 +972,7 @@ export class RectangleControlPoints extends BoundingBoxControlPoints {
 			strokeWidth: rect.strokeWidth,
 			strokeDashArray: rect.strokeDashArray,
 			opacity: rect.opacity,
-			angle: angle
+			angle: angle,
 		}
 
 		// Remove old rectangle
@@ -961,7 +996,7 @@ export class RectangleControlPoints extends BoundingBoxControlPoints {
 			hasBorders: false,
 			strokeUniform: true,
 			originX: 'center',
-			originY: 'center'
+			originY: 'center',
 		})
 
 		this.canvas.add(newRect)
@@ -976,12 +1011,15 @@ export class RectangleControlPoints extends BoundingBoxControlPoints {
 	/**
 	 * Update edge lines based on actual corner positions
 	 */
-	private updateEdgeLinesFromCorners(objectId: string, cornerPositions: fabric.Point[]): void {
+	private updateEdgeLinesFromCorners(
+		objectId: string,
+		cornerPositions: fabric.Point[],
+	): void {
 		const edges = [
 			{ start: 0, end: 1, edgeIndex: 4 }, // Top
 			{ start: 1, end: 2, edgeIndex: 5 }, // Right
 			{ start: 2, end: 3, edgeIndex: 6 }, // Bottom
-			{ start: 3, end: 0, edgeIndex: 7 } // Left
+			{ start: 3, end: 0, edgeIndex: 7 }, // Left
 		]
 
 		edges.forEach(({ start, end, edgeIndex }) => {
@@ -994,18 +1032,25 @@ export class RectangleControlPoints extends BoundingBoxControlPoints {
 					x1: startCorner.x,
 					y1: startCorner.y,
 					x2: endCorner.x,
-					y2: endCorner.y
+					y2: endCorner.y,
 				})
 				edgeLine.setCoords()
 			}
 		})
 	}
 
-	private updateFromEdge(objectId: string, edgeIndex: number, newX: number, newY: number): void {
+	private updateFromEdge(
+		objectId: string,
+		edgeIndex: number,
+		newX: number,
+		newY: number,
+	): void {
 		// Find the rectangle
 		const rect = this.canvas
 			.getObjects()
-			.find((obj: any) => obj.id === objectId && obj.type === 'rect') as fabric.Rect | undefined
+			.find((obj: any) => obj.id === objectId && obj.type === 'rect') as
+			| fabric.Rect
+			| undefined
 		if (!rect) return
 
 		const width = rect.width || 0
@@ -1040,7 +1085,8 @@ export class RectangleControlPoints extends BoundingBoxControlPoints {
 				const oppositeEdgeY = center.y + perpY * oppositeEdgeOffset
 				// Distance from new mouse position to opposite edge (in perpendicular direction)
 				const distanceFromOpposite =
-					(newPoint.x - oppositeEdgeX) * perpX + (newPoint.y - oppositeEdgeY) * perpY
+					(newPoint.x - oppositeEdgeX) * perpX +
+					(newPoint.y - oppositeEdgeY) * perpY
 				// New height is this distance (with correct sign)
 				newHeight = Math.max(10, Math.abs(distanceFromOpposite))
 				// New center is halfway between mouse and opposite edge
@@ -1063,7 +1109,8 @@ export class RectangleControlPoints extends BoundingBoxControlPoints {
 				const oppositeEdgeY = center.y + perpY * oppositeEdgeOffset
 				// Distance from new mouse position to opposite edge (in perpendicular direction)
 				const distanceFromOpposite =
-					(newPoint.x - oppositeEdgeX) * perpX + (newPoint.y - oppositeEdgeY) * perpY
+					(newPoint.x - oppositeEdgeX) * perpX +
+					(newPoint.y - oppositeEdgeY) * perpY
 				// New width is this distance (with correct sign)
 				newWidth = Math.max(10, Math.abs(distanceFromOpposite))
 				// New center is halfway between mouse and opposite edge
@@ -1081,7 +1128,7 @@ export class RectangleControlPoints extends BoundingBoxControlPoints {
 			strokeWidth: rect.strokeWidth,
 			strokeDashArray: rect.strokeDashArray,
 			opacity: rect.opacity,
-			angle: angle
+			angle: angle,
 		}
 
 		// Remove old rectangle
@@ -1105,7 +1152,7 @@ export class RectangleControlPoints extends BoundingBoxControlPoints {
 			hasBorders: false,
 			strokeUniform: true,
 			originX: 'center',
-			originY: 'center'
+			originY: 'center',
 		})
 
 		this.canvas.add(newRect)
@@ -1121,7 +1168,11 @@ export class RectangleControlPoints extends BoundingBoxControlPoints {
  * Control point handler for ellipses
  */
 export class EllipseControlPoints extends BoundingBoxControlPoints {
-	addControlPoints(objectId: string, obj: fabric.Object, visible: boolean = true): void {
+	addControlPoints(
+		objectId: string,
+		obj: fabric.Object,
+		visible: boolean = true,
+	): void {
 		const ellipse = obj as fabric.Ellipse
 		const rx = ellipse.rx || 0
 		const ry = ellipse.ry || 0
@@ -1138,12 +1189,12 @@ export class EllipseControlPoints extends BoundingBoxControlPoints {
 			{ x: -(rx + padding), y: -(ry + padding) }, // Top-left
 			{ x: rx + padding, y: -(ry + padding) }, // Top-right
 			{ x: rx + padding, y: ry + padding }, // Bottom-right
-			{ x: -(rx + padding), y: ry + padding } // Bottom-left
+			{ x: -(rx + padding), y: ry + padding }, // Bottom-left
 		]
 
 		// Transform corners to absolute coordinates
 		const absoluteCorners = corners.map((corner) =>
-			fabric.util.transformPoint(new fabric.Point(corner.x, corner.y), matrix)
+			fabric.util.transformPoint(new fabric.Point(corner.x, corner.y), matrix),
 		)
 
 		// Create control points at corners (indices 0-3)
@@ -1155,7 +1206,7 @@ export class EllipseControlPoints extends BoundingBoxControlPoints {
 				controlPointId,
 				objectId,
 				index,
-				true
+				true,
 			)
 			circle.set({ visible })
 			this.canvas.add(circle)
@@ -1163,7 +1214,7 @@ export class EllipseControlPoints extends BoundingBoxControlPoints {
 				id: controlPointId,
 				circle,
 				objectId,
-				pointIndex: index
+				pointIndex: index,
 			})
 		})
 
@@ -1172,23 +1223,23 @@ export class EllipseControlPoints extends BoundingBoxControlPoints {
 			{
 				x: (absoluteCorners[0].x + absoluteCorners[1].x) / 2,
 				y: (absoluteCorners[0].y + absoluteCorners[1].y) / 2,
-				pointIndex: 8 // Top edge
+				pointIndex: 8, // Top edge
 			},
 			{
 				x: (absoluteCorners[1].x + absoluteCorners[2].x) / 2,
 				y: (absoluteCorners[1].y + absoluteCorners[2].y) / 2,
-				pointIndex: 9 // Right edge
+				pointIndex: 9, // Right edge
 			},
 			{
 				x: (absoluteCorners[2].x + absoluteCorners[3].x) / 2,
 				y: (absoluteCorners[2].y + absoluteCorners[3].y) / 2,
-				pointIndex: 10 // Bottom edge
+				pointIndex: 10, // Bottom edge
 			},
 			{
 				x: (absoluteCorners[3].x + absoluteCorners[0].x) / 2,
 				y: (absoluteCorners[3].y + absoluteCorners[0].y) / 2,
-				pointIndex: 11 // Left edge
-			}
+				pointIndex: 11, // Left edge
+			},
 		]
 
 		edgeMidpoints.forEach((midpoint) => {
@@ -1199,7 +1250,7 @@ export class EllipseControlPoints extends BoundingBoxControlPoints {
 				controlPointId,
 				objectId,
 				midpoint.pointIndex,
-				true
+				true,
 			)
 			circle.set({ visible })
 			this.canvas.add(circle)
@@ -1207,7 +1258,7 @@ export class EllipseControlPoints extends BoundingBoxControlPoints {
 				id: controlPointId,
 				circle,
 				objectId,
-				pointIndex: midpoint.pointIndex
+				pointIndex: midpoint.pointIndex,
 			})
 		})
 
@@ -1229,7 +1280,7 @@ export class EllipseControlPoints extends BoundingBoxControlPoints {
 			rotationControlPointId,
 			objectId,
 			12,
-			true
+			true,
 		)
 		rotationCircle.set({ visible, hoverCursor: 'crosshair' })
 		this.canvas.add(rotationCircle)
@@ -1237,7 +1288,7 @@ export class EllipseControlPoints extends BoundingBoxControlPoints {
 			id: rotationControlPointId,
 			circle: rotationCircle,
 			objectId,
-			pointIndex: 12
+			pointIndex: 12,
 		})
 		// No connector line - rotation handle is floating
 
@@ -1250,21 +1301,24 @@ export class EllipseControlPoints extends BoundingBoxControlPoints {
 			{ start: 0, end: 1 }, // Top
 			{ start: 1, end: 2 }, // Right
 			{ start: 2, end: 3 }, // Bottom
-			{ start: 3, end: 0 } // Left
+			{ start: 3, end: 0 }, // Left
 		]
 
 		edges.forEach(({ start, end }, index) => {
 			const edgeId = `${objectId}-edge-${index}`
 			const startCorner = absoluteCorners[start]
 			const endCorner = absoluteCorners[end]
-			const edgeLine = new fabric.Line([startCorner.x, startCorner.y, endCorner.x, endCorner.y], {
-				stroke: 'oklch(0.8 0.05 39.0427)', // Light orange, reduced saturation
-				strokeWidth: 1.5 * scale,
-				selectable: false,
-				evented: false,
-				excludeFromExport: true,
-				visible
-			})
+			const edgeLine = new fabric.Line(
+				[startCorner.x, startCorner.y, endCorner.x, endCorner.y],
+				{
+					stroke: 'oklch(0.8 0.05 39.0427)', // Light orange, reduced saturation
+					strokeWidth: 1.5 * scale,
+					selectable: false,
+					evented: false,
+					excludeFromExport: true,
+					visible,
+				},
+			)
 			;(edgeLine as any).id = edgeId
 			;(edgeLine as any).linkedObjectId = objectId
 			this.canvas.add(edgeLine)
@@ -1277,11 +1331,15 @@ export class EllipseControlPoints extends BoundingBoxControlPoints {
 
 	removeControlPoints(objectId: string): void {
 		// Remove control points
-		const pointsToRemove = this.controlPoints.filter((cp) => cp.objectId === objectId)
+		const pointsToRemove = this.controlPoints.filter(
+			(cp) => cp.objectId === objectId,
+		)
 		pointsToRemove.forEach((cp) => {
 			this.canvas.remove(cp.circle)
 		})
-		this.controlPoints = this.controlPoints.filter((cp) => cp.objectId !== objectId)
+		this.controlPoints = this.controlPoints.filter(
+			(cp) => cp.objectId !== objectId,
+		)
 
 		// Remove edge lines
 		const edgeLinesToRemove: string[] = []
@@ -1360,22 +1418,19 @@ export class EllipseControlPoints extends BoundingBoxControlPoints {
 			{ x: -(rx + padding), y: -(ry + padding) }, // Top-left
 			{ x: rx + padding, y: -(ry + padding) }, // Top-right
 			{ x: rx + padding, y: ry + padding }, // Bottom-right
-			{ x: -(rx + padding), y: ry + padding } // Bottom-left
+			{ x: -(rx + padding), y: ry + padding }, // Bottom-left
 		]
 
 		// Transform to absolute coordinates
 		const absoluteCorners = corners.map((corner) =>
-			fabric.util.transformPoint(new fabric.Point(corner.x, corner.y), matrix)
+			fabric.util.transformPoint(new fabric.Point(corner.x, corner.y), matrix),
 		)
 
 		// Update corner control points (indices 0-3)
 		controlPoints.forEach((cp) => {
 			if (cp.pointIndex >= 0 && cp.pointIndex <= 3) {
 				const corner = absoluteCorners[cp.pointIndex]
-				cp.circle.set({
-					left: corner.x,
-					top: corner.y
-				})
+				cp.circle.set({ left: corner.x, top: corner.y })
 				cp.circle.setCoords()
 			}
 		})
@@ -1385,32 +1440,31 @@ export class EllipseControlPoints extends BoundingBoxControlPoints {
 			{
 				x: (absoluteCorners[0].x + absoluteCorners[1].x) / 2,
 				y: (absoluteCorners[0].y + absoluteCorners[1].y) / 2,
-				pointIndex: 8 // Top edge
+				pointIndex: 8, // Top edge
 			},
 			{
 				x: (absoluteCorners[1].x + absoluteCorners[2].x) / 2,
 				y: (absoluteCorners[1].y + absoluteCorners[2].y) / 2,
-				pointIndex: 9 // Right edge
+				pointIndex: 9, // Right edge
 			},
 			{
 				x: (absoluteCorners[2].x + absoluteCorners[3].x) / 2,
 				y: (absoluteCorners[2].y + absoluteCorners[3].y) / 2,
-				pointIndex: 10 // Bottom edge
+				pointIndex: 10, // Bottom edge
 			},
 			{
 				x: (absoluteCorners[3].x + absoluteCorners[0].x) / 2,
 				y: (absoluteCorners[3].y + absoluteCorners[0].y) / 2,
-				pointIndex: 11 // Left edge
-			}
+				pointIndex: 11, // Left edge
+			},
 		]
 
 		edgeMidpoints.forEach((midpoint) => {
-			const cp = controlPoints.find((cp) => cp.pointIndex === midpoint.pointIndex)
+			const cp = controlPoints.find(
+				(cp) => cp.pointIndex === midpoint.pointIndex,
+			)
 			if (cp) {
-				cp.circle.set({
-					left: midpoint.x,
-					top: midpoint.y
-				})
+				cp.circle.set({ left: midpoint.x, top: midpoint.y })
 				cp.circle.setCoords()
 			}
 		})
@@ -1429,13 +1483,12 @@ export class EllipseControlPoints extends BoundingBoxControlPoints {
 			const normalizedX = vectorX / vectorLength
 			const normalizedY = vectorY / vectorLength
 			const rotationDistance = this.getRotationHandleDistance()
-			const rotationX = center.x + normalizedX * (vectorLength + rotationDistance)
-			const rotationY = center.y + normalizedY * (vectorLength + rotationDistance)
+			const rotationX =
+				center.x + normalizedX * (vectorLength + rotationDistance)
+			const rotationY =
+				center.y + normalizedY * (vectorLength + rotationDistance)
 
-			rotationCp.circle.set({
-				left: rotationX,
-				top: rotationY
-			})
+			rotationCp.circle.set({ left: rotationX, top: rotationY })
 			rotationCp.circle.setCoords()
 		}
 
@@ -1444,7 +1497,7 @@ export class EllipseControlPoints extends BoundingBoxControlPoints {
 			{ start: 0, end: 1 }, // Top
 			{ start: 1, end: 2 }, // Right
 			{ start: 2, end: 3 }, // Bottom
-			{ start: 3, end: 0 } // Left
+			{ start: 3, end: 0 }, // Left
 		]
 
 		edges.forEach(({ start, end }, index) => {
@@ -1457,7 +1510,7 @@ export class EllipseControlPoints extends BoundingBoxControlPoints {
 					x1: startCorner.x,
 					y1: startCorner.y,
 					x2: endCorner.x,
-					y2: endCorner.y
+					y2: endCorner.y,
 				})
 				edgeLine.setCoords()
 			}
@@ -1466,15 +1519,18 @@ export class EllipseControlPoints extends BoundingBoxControlPoints {
 		this.canvas.renderAll()
 	}
 
-	updateObjectFromControlPoint(controlPointId: string, newX: number, newY: number): void {
-		const controlPoint = this.controlPoints.find((cp) => cp.id === controlPointId)
+	updateObjectFromControlPoint(
+		controlPointId: string,
+		newX: number,
+		newY: number,
+	): void {
+		const controlPoint = this.controlPoints.find(
+			(cp) => cp.id === controlPointId,
+		)
 		if (!controlPoint) return
 
 		// Update the control point position immediately
-		controlPoint.circle.set({
-			left: newX,
-			top: newY
-		})
+		controlPoint.circle.set({ left: newX, top: newY })
 		controlPoint.circle.setCoords()
 
 		// Handle different control point types
@@ -1490,12 +1546,17 @@ export class EllipseControlPoints extends BoundingBoxControlPoints {
 		}
 	}
 
-	private updateFromCorner(controlPoint: ControlPoint, newX: number, newY: number): void {
+	private updateFromCorner(
+		controlPoint: ControlPoint,
+		newX: number,
+		newY: number,
+	): void {
 		const ellipse = this.canvas
 			.getObjects()
-			.find((obj: any) => obj.id === controlPoint.objectId && obj.type === 'ellipse') as
-			| fabric.Ellipse
-			| undefined
+			.find(
+				(obj: any) =>
+					obj.id === controlPoint.objectId && obj.type === 'ellipse',
+			) as fabric.Ellipse | undefined
 		if (!ellipse) return
 
 		const rx = ellipse.rx || 0
@@ -1509,7 +1570,7 @@ export class EllipseControlPoints extends BoundingBoxControlPoints {
 			new fabric.Point(-rx, -ry), // Top-left (0)
 			new fabric.Point(rx, -ry), // Top-right (1)
 			new fabric.Point(rx, ry), // Bottom-right (2)
-			new fabric.Point(-rx, ry) // Bottom-left (3)
+			new fabric.Point(-rx, ry), // Bottom-left (3)
 		].map((corner) => fabric.util.transformPoint(corner, matrix))
 
 		// Determine which corner is the opposite/anchor corner
@@ -1517,10 +1578,12 @@ export class EllipseControlPoints extends BoundingBoxControlPoints {
 		const anchorCorner = corners[oppositeCornerIndex]
 
 		// Get the anchor corner control point's actual position
-		const anchorCornerCP = this.getControlPointsForObject(controlPoint.objectId).find(
-			(cp) => cp.pointIndex === oppositeCornerIndex
-		)
-		const anchorPosition = anchorCornerCP ? anchorCornerCP.circle.getCenterPoint() : anchorCorner
+		const anchorCornerCP = this.getControlPointsForObject(
+			controlPoint.objectId,
+		).find((cp) => cp.pointIndex === oppositeCornerIndex)
+		const anchorPosition = anchorCornerCP
+			? anchorCornerCP.circle.getCenterPoint()
+			: anchorCorner
 
 		// The new dragged position
 		const draggedCorner = new fabric.Point(newX, newY)
@@ -1546,9 +1609,13 @@ export class EllipseControlPoints extends BoundingBoxControlPoints {
 
 		// New center is halfway between anchor and dragged corner
 		const newCenterX =
-			anchorPosition.x + (widthProjection * widthAxisX) / 2 + (heightProjection * heightAxisX) / 2
+			anchorPosition.x +
+			(widthProjection * widthAxisX) / 2 +
+			(heightProjection * heightAxisX) / 2
 		const newCenterY =
-			anchorPosition.y + (widthProjection * widthAxisY) / 2 + (heightProjection * heightAxisY) / 2
+			anchorPosition.y +
+			(widthProjection * widthAxisY) / 2 +
+			(heightProjection * heightAxisY) / 2
 
 		// Store ellipse properties
 		const ellipseId = (ellipse as any).id
@@ -1558,7 +1625,7 @@ export class EllipseControlPoints extends BoundingBoxControlPoints {
 			strokeWidth: ellipse.strokeWidth,
 			strokeDashArray: ellipse.strokeDashArray,
 			opacity: ellipse.opacity,
-			angle: angle
+			angle: angle,
 		}
 
 		// Remove old ellipse
@@ -1582,7 +1649,7 @@ export class EllipseControlPoints extends BoundingBoxControlPoints {
 			hasBorders: false,
 			strokeUniform: true,
 			originX: 'center',
-			originY: 'center'
+			originY: 'center',
 		})
 
 		this.canvas.add(newEllipse)
@@ -1592,12 +1659,17 @@ export class EllipseControlPoints extends BoundingBoxControlPoints {
 		this.canvas.renderAll()
 	}
 
-	private updateFromEdge(controlPoint: ControlPoint, newX: number, newY: number): void {
+	private updateFromEdge(
+		controlPoint: ControlPoint,
+		newX: number,
+		newY: number,
+	): void {
 		const ellipse = this.canvas
 			.getObjects()
-			.find((obj: any) => obj.id === controlPoint.objectId && obj.type === 'ellipse') as
-			| fabric.Ellipse
-			| undefined
+			.find(
+				(obj: any) =>
+					obj.id === controlPoint.objectId && obj.type === 'ellipse',
+			) as fabric.Ellipse | undefined
 		if (!ellipse) return
 
 		const rx = ellipse.rx || 0
@@ -1632,7 +1704,8 @@ export class EllipseControlPoints extends BoundingBoxControlPoints {
 				const oppositeEdgeY = center.y + perpY * oppositeEdgeOffset
 				// Distance from new mouse position to opposite edge (in perpendicular direction)
 				const distanceFromOpposite =
-					(newPoint.x - oppositeEdgeX) * perpX + (newPoint.y - oppositeEdgeY) * perpY
+					(newPoint.x - oppositeEdgeX) * perpX +
+					(newPoint.y - oppositeEdgeY) * perpY
 				// New ry is half this distance
 				newRy = Math.max(10, Math.abs(distanceFromOpposite) / 2)
 				// New center is halfway between mouse and opposite edge
@@ -1655,7 +1728,8 @@ export class EllipseControlPoints extends BoundingBoxControlPoints {
 				const oppositeEdgeY = center.y + perpY * oppositeEdgeOffset
 				// Distance from new mouse position to opposite edge (in perpendicular direction)
 				const distanceFromOpposite =
-					(newPoint.x - oppositeEdgeX) * perpX + (newPoint.y - oppositeEdgeY) * perpY
+					(newPoint.x - oppositeEdgeX) * perpX +
+					(newPoint.y - oppositeEdgeY) * perpY
 				// New rx is half this distance
 				newRx = Math.max(10, Math.abs(distanceFromOpposite) / 2)
 				// New center is halfway between mouse and opposite edge
@@ -1673,7 +1747,7 @@ export class EllipseControlPoints extends BoundingBoxControlPoints {
 			strokeWidth: ellipse.strokeWidth,
 			strokeDashArray: ellipse.strokeDashArray,
 			opacity: ellipse.opacity,
-			angle: angle
+			angle: angle,
 		}
 
 		// Remove old ellipse
@@ -1697,7 +1771,7 @@ export class EllipseControlPoints extends BoundingBoxControlPoints {
 			hasBorders: false,
 			strokeUniform: true,
 			originX: 'center',
-			originY: 'center'
+			originY: 'center',
 		})
 
 		this.canvas.add(newEllipse)
@@ -1706,12 +1780,17 @@ export class EllipseControlPoints extends BoundingBoxControlPoints {
 		this.canvas.renderAll()
 	}
 
-	private updateFromRotation(controlPoint: ControlPoint, newX: number, newY: number): void {
+	private updateFromRotation(
+		controlPoint: ControlPoint,
+		newX: number,
+		newY: number,
+	): void {
 		const ellipse = this.canvas
 			.getObjects()
-			.find((obj: any) => obj.id === controlPoint.objectId && obj.type === 'ellipse') as
-			| fabric.Ellipse
-			| undefined
+			.find(
+				(obj: any) =>
+					obj.id === controlPoint.objectId && obj.type === 'ellipse',
+			) as fabric.Ellipse | undefined
 		if (!ellipse) return
 
 		const center = ellipse.getCenterPoint()
@@ -1736,7 +1815,11 @@ export class EllipseControlPoints extends BoundingBoxControlPoints {
  * Control point handler for triangles
  */
 export class TriangleControlPoints extends BoundingBoxControlPoints {
-	addControlPoints(objectId: string, obj: fabric.Object, visible: boolean = true): void {
+	addControlPoints(
+		objectId: string,
+		obj: fabric.Object,
+		visible: boolean = true,
+	): void {
 		const triangle = obj as fabric.Triangle
 		const width = triangle.width || 0
 		const height = triangle.height || 0
@@ -1753,12 +1836,12 @@ export class TriangleControlPoints extends BoundingBoxControlPoints {
 			{ x: -(width / 2 + padding), y: -(height / 2 + padding) }, // Top-left
 			{ x: width / 2 + padding, y: -(height / 2 + padding) }, // Top-right
 			{ x: width / 2 + padding, y: height / 2 + padding }, // Bottom-right
-			{ x: -(width / 2 + padding), y: height / 2 + padding } // Bottom-left
+			{ x: -(width / 2 + padding), y: height / 2 + padding }, // Bottom-left
 		]
 
 		// Transform corners to absolute coordinates
 		const absoluteCorners = corners.map((corner) =>
-			fabric.util.transformPoint(new fabric.Point(corner.x, corner.y), matrix)
+			fabric.util.transformPoint(new fabric.Point(corner.x, corner.y), matrix),
 		)
 
 		// Create control points at corners (indices 0-3)
@@ -1770,7 +1853,7 @@ export class TriangleControlPoints extends BoundingBoxControlPoints {
 				controlPointId,
 				objectId,
 				index,
-				true
+				true,
 			)
 			circle.set({ visible })
 			this.canvas.add(circle)
@@ -1778,7 +1861,7 @@ export class TriangleControlPoints extends BoundingBoxControlPoints {
 				id: controlPointId,
 				circle,
 				objectId,
-				pointIndex: index
+				pointIndex: index,
 			})
 		})
 
@@ -1787,23 +1870,23 @@ export class TriangleControlPoints extends BoundingBoxControlPoints {
 			{
 				x: (absoluteCorners[0].x + absoluteCorners[1].x) / 2,
 				y: (absoluteCorners[0].y + absoluteCorners[1].y) / 2,
-				pointIndex: 8 // Top edge
+				pointIndex: 8, // Top edge
 			},
 			{
 				x: (absoluteCorners[1].x + absoluteCorners[2].x) / 2,
 				y: (absoluteCorners[1].y + absoluteCorners[2].y) / 2,
-				pointIndex: 9 // Right edge
+				pointIndex: 9, // Right edge
 			},
 			{
 				x: (absoluteCorners[2].x + absoluteCorners[3].x) / 2,
 				y: (absoluteCorners[2].y + absoluteCorners[3].y) / 2,
-				pointIndex: 10 // Bottom edge
+				pointIndex: 10, // Bottom edge
 			},
 			{
 				x: (absoluteCorners[3].x + absoluteCorners[0].x) / 2,
 				y: (absoluteCorners[3].y + absoluteCorners[0].y) / 2,
-				pointIndex: 11 // Left edge
-			}
+				pointIndex: 11, // Left edge
+			},
 		]
 
 		edgeMidpoints.forEach((midpoint) => {
@@ -1814,7 +1897,7 @@ export class TriangleControlPoints extends BoundingBoxControlPoints {
 				controlPointId,
 				objectId,
 				midpoint.pointIndex,
-				true
+				true,
 			)
 			circle.set({ visible })
 			this.canvas.add(circle)
@@ -1822,7 +1905,7 @@ export class TriangleControlPoints extends BoundingBoxControlPoints {
 				id: controlPointId,
 				circle,
 				objectId,
-				pointIndex: midpoint.pointIndex
+				pointIndex: midpoint.pointIndex,
 			})
 		})
 
@@ -1844,7 +1927,7 @@ export class TriangleControlPoints extends BoundingBoxControlPoints {
 			rotationControlPointId,
 			objectId,
 			12,
-			true
+			true,
 		)
 		rotationCircle.set({ visible, hoverCursor: 'crosshair' })
 		this.canvas.add(rotationCircle)
@@ -1852,7 +1935,7 @@ export class TriangleControlPoints extends BoundingBoxControlPoints {
 			id: rotationControlPointId,
 			circle: rotationCircle,
 			objectId,
-			pointIndex: 12
+			pointIndex: 12,
 		})
 
 		// Create light solid border lines (4 edges)
@@ -1864,21 +1947,24 @@ export class TriangleControlPoints extends BoundingBoxControlPoints {
 			{ start: 0, end: 1 }, // Top
 			{ start: 1, end: 2 }, // Right
 			{ start: 2, end: 3 }, // Bottom
-			{ start: 3, end: 0 } // Left
+			{ start: 3, end: 0 }, // Left
 		]
 
 		edges.forEach(({ start, end }, index) => {
 			const edgeId = `${objectId}-edge-${index}`
 			const startCorner = absoluteCorners[start]
 			const endCorner = absoluteCorners[end]
-			const edgeLine = new fabric.Line([startCorner.x, startCorner.y, endCorner.x, endCorner.y], {
-				stroke: 'oklch(0.8 0.05 39.0427)', // Light orange, reduced saturation
-				strokeWidth: 1.5 * scale,
-				selectable: false,
-				evented: false,
-				excludeFromExport: true,
-				visible
-			})
+			const edgeLine = new fabric.Line(
+				[startCorner.x, startCorner.y, endCorner.x, endCorner.y],
+				{
+					stroke: 'oklch(0.8 0.05 39.0427)', // Light orange, reduced saturation
+					strokeWidth: 1.5 * scale,
+					selectable: false,
+					evented: false,
+					excludeFromExport: true,
+					visible,
+				},
+			)
 			;(edgeLine as any).id = edgeId
 			;(edgeLine as any).linkedObjectId = objectId
 			this.canvas.add(edgeLine)
@@ -1891,11 +1977,15 @@ export class TriangleControlPoints extends BoundingBoxControlPoints {
 
 	removeControlPoints(objectId: string): void {
 		// Remove control points
-		const pointsToRemove = this.controlPoints.filter((cp) => cp.objectId === objectId)
+		const pointsToRemove = this.controlPoints.filter(
+			(cp) => cp.objectId === objectId,
+		)
 		pointsToRemove.forEach((cp) => {
 			this.canvas.remove(cp.circle)
 		})
-		this.controlPoints = this.controlPoints.filter((cp) => cp.objectId !== objectId)
+		this.controlPoints = this.controlPoints.filter(
+			(cp) => cp.objectId !== objectId,
+		)
 
 		// Remove edge lines
 		const edgeLinesToRemove: string[] = []
@@ -1974,22 +2064,19 @@ export class TriangleControlPoints extends BoundingBoxControlPoints {
 			{ x: -(width / 2 + padding), y: -(height / 2 + padding) }, // Top-left
 			{ x: width / 2 + padding, y: -(height / 2 + padding) }, // Top-right
 			{ x: width / 2 + padding, y: height / 2 + padding }, // Bottom-right
-			{ x: -(width / 2 + padding), y: height / 2 + padding } // Bottom-left
+			{ x: -(width / 2 + padding), y: height / 2 + padding }, // Bottom-left
 		]
 
 		// Transform to absolute coordinates
 		const absoluteCorners = corners.map((corner) =>
-			fabric.util.transformPoint(new fabric.Point(corner.x, corner.y), matrix)
+			fabric.util.transformPoint(new fabric.Point(corner.x, corner.y), matrix),
 		)
 
 		// Update corner control points (indices 0-3)
 		controlPoints.forEach((cp) => {
 			if (cp.pointIndex >= 0 && cp.pointIndex <= 3) {
 				const corner = absoluteCorners[cp.pointIndex]
-				cp.circle.set({
-					left: corner.x,
-					top: corner.y
-				})
+				cp.circle.set({ left: corner.x, top: corner.y })
 				cp.circle.setCoords()
 			}
 		})
@@ -1999,32 +2086,31 @@ export class TriangleControlPoints extends BoundingBoxControlPoints {
 			{
 				x: (absoluteCorners[0].x + absoluteCorners[1].x) / 2,
 				y: (absoluteCorners[0].y + absoluteCorners[1].y) / 2,
-				pointIndex: 8 // Top edge
+				pointIndex: 8, // Top edge
 			},
 			{
 				x: (absoluteCorners[1].x + absoluteCorners[2].x) / 2,
 				y: (absoluteCorners[1].y + absoluteCorners[2].y) / 2,
-				pointIndex: 9 // Right edge
+				pointIndex: 9, // Right edge
 			},
 			{
 				x: (absoluteCorners[2].x + absoluteCorners[3].x) / 2,
 				y: (absoluteCorners[2].y + absoluteCorners[3].y) / 2,
-				pointIndex: 10 // Bottom edge
+				pointIndex: 10, // Bottom edge
 			},
 			{
 				x: (absoluteCorners[3].x + absoluteCorners[0].x) / 2,
 				y: (absoluteCorners[3].y + absoluteCorners[0].y) / 2,
-				pointIndex: 11 // Left edge
-			}
+				pointIndex: 11, // Left edge
+			},
 		]
 
 		edgeMidpoints.forEach((midpoint) => {
-			const cp = controlPoints.find((cp) => cp.pointIndex === midpoint.pointIndex)
+			const cp = controlPoints.find(
+				(cp) => cp.pointIndex === midpoint.pointIndex,
+			)
 			if (cp) {
-				cp.circle.set({
-					left: midpoint.x,
-					top: midpoint.y
-				})
+				cp.circle.set({ left: midpoint.x, top: midpoint.y })
 				cp.circle.setCoords()
 			}
 		})
@@ -2045,10 +2131,7 @@ export class TriangleControlPoints extends BoundingBoxControlPoints {
 			const rotationX = center.x + normalizedX * (vectorLength + 30)
 			const rotationY = center.y + normalizedY * (vectorLength + 30)
 
-			rotationCp.circle.set({
-				left: rotationX,
-				top: rotationY
-			})
+			rotationCp.circle.set({ left: rotationX, top: rotationY })
 			rotationCp.circle.setCoords()
 		}
 
@@ -2057,7 +2140,7 @@ export class TriangleControlPoints extends BoundingBoxControlPoints {
 			{ start: 0, end: 1 }, // Top
 			{ start: 1, end: 2 }, // Right
 			{ start: 2, end: 3 }, // Bottom
-			{ start: 3, end: 0 } // Left
+			{ start: 3, end: 0 }, // Left
 		]
 
 		edges.forEach(({ start, end }, index) => {
@@ -2070,7 +2153,7 @@ export class TriangleControlPoints extends BoundingBoxControlPoints {
 					x1: startCorner.x,
 					y1: startCorner.y,
 					x2: endCorner.x,
-					y2: endCorner.y
+					y2: endCorner.y,
 				})
 				edgeLine.setCoords()
 			}
@@ -2079,15 +2162,18 @@ export class TriangleControlPoints extends BoundingBoxControlPoints {
 		this.canvas.renderAll()
 	}
 
-	updateObjectFromControlPoint(controlPointId: string, newX: number, newY: number): void {
-		const controlPoint = this.controlPoints.find((cp) => cp.id === controlPointId)
+	updateObjectFromControlPoint(
+		controlPointId: string,
+		newX: number,
+		newY: number,
+	): void {
+		const controlPoint = this.controlPoints.find(
+			(cp) => cp.id === controlPointId,
+		)
 		if (!controlPoint) return
 
 		// Update the control point position immediately
-		controlPoint.circle.set({
-			left: newX,
-			top: newY
-		})
+		controlPoint.circle.set({ left: newX, top: newY })
 		controlPoint.circle.setCoords()
 
 		// Handle different control point types
@@ -2103,12 +2189,17 @@ export class TriangleControlPoints extends BoundingBoxControlPoints {
 		}
 	}
 
-	private updateFromCorner(controlPoint: ControlPoint, newX: number, newY: number): void {
+	private updateFromCorner(
+		controlPoint: ControlPoint,
+		newX: number,
+		newY: number,
+	): void {
 		const triangle = this.canvas
 			.getObjects()
-			.find((obj: any) => obj.id === controlPoint.objectId && obj.type === 'triangle') as
-			| fabric.Triangle
-			| undefined
+			.find(
+				(obj: any) =>
+					obj.id === controlPoint.objectId && obj.type === 'triangle',
+			) as fabric.Triangle | undefined
 		if (!triangle) return
 
 		const width = triangle.width || 0
@@ -2122,7 +2213,7 @@ export class TriangleControlPoints extends BoundingBoxControlPoints {
 			new fabric.Point(-width / 2, -height / 2), // Top-left (0)
 			new fabric.Point(width / 2, -height / 2), // Top-right (1)
 			new fabric.Point(width / 2, height / 2), // Bottom-right (2)
-			new fabric.Point(-width / 2, height / 2) // Bottom-left (3)
+			new fabric.Point(-width / 2, height / 2), // Bottom-left (3)
 		].map((corner) => fabric.util.transformPoint(corner, matrix))
 
 		// Determine which corner is the opposite/anchor corner
@@ -2130,10 +2221,12 @@ export class TriangleControlPoints extends BoundingBoxControlPoints {
 		const anchorCorner = corners[oppositeCornerIndex]
 
 		// Get the anchor corner control point's actual position
-		const anchorCornerCP = this.getControlPointsForObject(controlPoint.objectId).find(
-			(cp) => cp.pointIndex === oppositeCornerIndex
-		)
-		const anchorPosition = anchorCornerCP ? anchorCornerCP.circle.getCenterPoint() : anchorCorner
+		const anchorCornerCP = this.getControlPointsForObject(
+			controlPoint.objectId,
+		).find((cp) => cp.pointIndex === oppositeCornerIndex)
+		const anchorPosition = anchorCornerCP
+			? anchorCornerCP.circle.getCenterPoint()
+			: anchorCorner
 
 		// The new dragged position
 		const draggedCorner = new fabric.Point(newX, newY)
@@ -2157,9 +2250,13 @@ export class TriangleControlPoints extends BoundingBoxControlPoints {
 
 		// New center is halfway between anchor and dragged corner
 		const newCenterX =
-			anchorPosition.x + (widthProjection * widthAxisX) / 2 + (heightProjection * heightAxisX) / 2
+			anchorPosition.x +
+			(widthProjection * widthAxisX) / 2 +
+			(heightProjection * heightAxisX) / 2
 		const newCenterY =
-			anchorPosition.y + (widthProjection * widthAxisY) / 2 + (heightProjection * heightAxisY) / 2
+			anchorPosition.y +
+			(widthProjection * widthAxisY) / 2 +
+			(heightProjection * heightAxisY) / 2
 
 		// Store triangle properties
 		const triangleId = (triangle as any).id
@@ -2169,7 +2266,7 @@ export class TriangleControlPoints extends BoundingBoxControlPoints {
 			strokeWidth: triangle.strokeWidth,
 			strokeDashArray: triangle.strokeDashArray,
 			opacity: triangle.opacity,
-			angle: angle
+			angle: angle,
 		}
 
 		// Remove old triangle
@@ -2193,7 +2290,7 @@ export class TriangleControlPoints extends BoundingBoxControlPoints {
 			hasBorders: false,
 			strokeUniform: true,
 			originX: 'center',
-			originY: 'center'
+			originY: 'center',
 		})
 
 		this.canvas.add(newTriangle)
@@ -2203,12 +2300,17 @@ export class TriangleControlPoints extends BoundingBoxControlPoints {
 		this.canvas.renderAll()
 	}
 
-	private updateFromEdge(controlPoint: ControlPoint, newX: number, newY: number): void {
+	private updateFromEdge(
+		controlPoint: ControlPoint,
+		newX: number,
+		newY: number,
+	): void {
 		const triangle = this.canvas
 			.getObjects()
-			.find((obj: any) => obj.id === controlPoint.objectId && obj.type === 'triangle') as
-			| fabric.Triangle
-			| undefined
+			.find(
+				(obj: any) =>
+					obj.id === controlPoint.objectId && obj.type === 'triangle',
+			) as fabric.Triangle | undefined
 		if (!triangle) return
 
 		const width = triangle.width || 0
@@ -2241,7 +2343,8 @@ export class TriangleControlPoints extends BoundingBoxControlPoints {
 				const oppositeEdgeY = center.y + perpY * oppositeEdgeOffset
 				// Distance from new mouse position to opposite edge
 				const distanceFromOpposite =
-					(newPoint.x - oppositeEdgeX) * perpX + (newPoint.y - oppositeEdgeY) * perpY
+					(newPoint.x - oppositeEdgeX) * perpX +
+					(newPoint.y - oppositeEdgeY) * perpY
 				// New height
 				newHeight = Math.max(10, Math.abs(distanceFromOpposite))
 				// New center is halfway between mouse and opposite edge
@@ -2262,7 +2365,8 @@ export class TriangleControlPoints extends BoundingBoxControlPoints {
 				const oppositeEdgeY = center.y + perpY * oppositeEdgeOffset
 				// Distance from new mouse position to opposite edge
 				const distanceFromOpposite =
-					(newPoint.x - oppositeEdgeX) * perpX + (newPoint.y - oppositeEdgeY) * perpY
+					(newPoint.x - oppositeEdgeX) * perpX +
+					(newPoint.y - oppositeEdgeY) * perpY
 				// New width
 				newWidth = Math.max(10, Math.abs(distanceFromOpposite))
 				// New center is halfway between mouse and opposite edge
@@ -2280,7 +2384,7 @@ export class TriangleControlPoints extends BoundingBoxControlPoints {
 			strokeWidth: triangle.strokeWidth,
 			strokeDashArray: triangle.strokeDashArray,
 			opacity: triangle.opacity,
-			angle: angle
+			angle: angle,
 		}
 
 		// Remove old triangle
@@ -2304,7 +2408,7 @@ export class TriangleControlPoints extends BoundingBoxControlPoints {
 			hasBorders: false,
 			strokeUniform: true,
 			originX: 'center',
-			originY: 'center'
+			originY: 'center',
 		})
 
 		this.canvas.add(newTriangle)
@@ -2313,12 +2417,17 @@ export class TriangleControlPoints extends BoundingBoxControlPoints {
 		this.canvas.renderAll()
 	}
 
-	private updateFromRotation(controlPoint: ControlPoint, newX: number, newY: number): void {
+	private updateFromRotation(
+		controlPoint: ControlPoint,
+		newX: number,
+		newY: number,
+	): void {
 		const triangle = this.canvas
 			.getObjects()
-			.find((obj: any) => obj.id === controlPoint.objectId && obj.type === 'triangle') as
-			| fabric.Triangle
-			| undefined
+			.find(
+				(obj: any) =>
+					obj.id === controlPoint.objectId && obj.type === 'triangle',
+			) as fabric.Triangle | undefined
 		if (!triangle) return
 
 		const center = triangle.getCenterPoint()
@@ -2343,7 +2452,11 @@ export class TriangleControlPoints extends BoundingBoxControlPoints {
  * Control point handler for textboxes
  */
 export class TextboxControlPoints extends BoundingBoxControlPoints {
-	addControlPoints(objectId: string, obj: fabric.Object, visible: boolean = true): void {
+	addControlPoints(
+		objectId: string,
+		obj: fabric.Object,
+		visible: boolean = true,
+	): void {
 		const textbox = obj as fabric.Textbox
 		const width = textbox.width || 0
 		const height = textbox.height || 0
@@ -2364,13 +2477,13 @@ export class TextboxControlPoints extends BoundingBoxControlPoints {
 			{ x: -padding, y: -padding }, // Top-left
 			{ x: width + padding, y: -padding }, // Top-right
 			{ x: width + padding, y: height + padding }, // Bottom-right
-			{ x: -padding, y: height + padding } // Bottom-left
+			{ x: -padding, y: height + padding }, // Bottom-left
 		]
 
 		// Rotate each corner around the origin (top-left) and add the textbox position
 		const corners = localCorners.map((corner) => ({
 			x: left + corner.x * cos - corner.y * sin,
-			y: top + corner.x * sin + corner.y * cos
+			y: top + corner.x * sin + corner.y * cos,
 		}))
 
 		// Create control points at corners (indices 0-3)
@@ -2382,7 +2495,7 @@ export class TextboxControlPoints extends BoundingBoxControlPoints {
 				controlPointId,
 				objectId,
 				index,
-				true
+				true,
 			)
 			circle.set({ visible })
 			this.canvas.add(circle)
@@ -2390,7 +2503,7 @@ export class TextboxControlPoints extends BoundingBoxControlPoints {
 				id: controlPointId,
 				circle,
 				objectId,
-				pointIndex: index
+				pointIndex: index,
 			})
 		})
 
@@ -2399,23 +2512,23 @@ export class TextboxControlPoints extends BoundingBoxControlPoints {
 			{
 				x: (corners[0].x + corners[1].x) / 2,
 				y: (corners[0].y + corners[1].y) / 2,
-				pointIndex: 8 // Top edge
+				pointIndex: 8, // Top edge
 			},
 			{
 				x: (corners[1].x + corners[2].x) / 2,
 				y: (corners[1].y + corners[2].y) / 2,
-				pointIndex: 9 // Right edge
+				pointIndex: 9, // Right edge
 			},
 			{
 				x: (corners[2].x + corners[3].x) / 2,
 				y: (corners[2].y + corners[3].y) / 2,
-				pointIndex: 10 // Bottom edge
+				pointIndex: 10, // Bottom edge
 			},
 			{
 				x: (corners[3].x + corners[0].x) / 2,
 				y: (corners[3].y + corners[0].y) / 2,
-				pointIndex: 11 // Left edge
-			}
+				pointIndex: 11, // Left edge
+			},
 		]
 
 		edgeMidpoints.forEach((midpoint) => {
@@ -2426,7 +2539,7 @@ export class TextboxControlPoints extends BoundingBoxControlPoints {
 				controlPointId,
 				objectId,
 				midpoint.pointIndex,
-				true
+				true,
 			)
 			circle.set({ visible })
 			this.canvas.add(circle)
@@ -2434,7 +2547,7 @@ export class TextboxControlPoints extends BoundingBoxControlPoints {
 				id: controlPointId,
 				circle,
 				objectId,
-				pointIndex: midpoint.pointIndex
+				pointIndex: midpoint.pointIndex,
 			})
 		})
 
@@ -2470,21 +2583,24 @@ pointIndex: 12
 			{ start: 0, end: 1 }, // Top
 			{ start: 1, end: 2 }, // Right
 			{ start: 2, end: 3 }, // Bottom
-			{ start: 3, end: 0 } // Left
+			{ start: 3, end: 0 }, // Left
 		]
 
 		edges.forEach(({ start, end }, index) => {
 			const edgeId = `${objectId}-edge-${index}`
 			const startCorner = corners[start]
 			const endCorner = corners[end]
-			const edgeLine = new fabric.Line([startCorner.x, startCorner.y, endCorner.x, endCorner.y], {
-				stroke: 'oklch(0.8 0.05 39.0427)',
-				strokeWidth: 1.5 * scale,
-				selectable: false,
-				evented: false,
-				excludeFromExport: true,
-				visible
-			})
+			const edgeLine = new fabric.Line(
+				[startCorner.x, startCorner.y, endCorner.x, endCorner.y],
+				{
+					stroke: 'oklch(0.8 0.05 39.0427)',
+					strokeWidth: 1.5 * scale,
+					selectable: false,
+					evented: false,
+					excludeFromExport: true,
+					visible,
+				},
+			)
 			;(edgeLine as any).id = edgeId
 			;(edgeLine as any).linkedObjectId = objectId
 			this.canvas.add(edgeLine)
@@ -2496,11 +2612,15 @@ pointIndex: 12
 	}
 
 	removeControlPoints(objectId: string): void {
-		const pointsToRemove = this.controlPoints.filter((cp) => cp.objectId === objectId)
+		const pointsToRemove = this.controlPoints.filter(
+			(cp) => cp.objectId === objectId,
+		)
 		pointsToRemove.forEach((cp) => {
 			this.canvas.remove(cp.circle)
 		})
-		this.controlPoints = this.controlPoints.filter((cp) => cp.objectId !== objectId)
+		this.controlPoints = this.controlPoints.filter(
+			(cp) => cp.objectId !== objectId,
+		)
 
 		const edgeLinesToRemove: string[] = []
 		this.edgeLines.forEach((line, id) => {
@@ -2568,13 +2688,13 @@ pointIndex: 12
 			{ x: -padding, y: -padding }, // Top-left
 			{ x: width + padding, y: -padding }, // Top-right
 			{ x: width + padding, y: height + padding }, // Bottom-right
-			{ x: -padding, y: height + padding } // Bottom-left
+			{ x: -padding, y: height + padding }, // Bottom-left
 		]
 
 		// Rotate each corner around the origin (top-left) and add the textbox position
 		const corners = localCorners.map((corner) => ({
 			x: left + corner.x * cos - corner.y * sin,
-			y: top + corner.x * sin + corner.y * cos
+			y: top + corner.x * sin + corner.y * cos,
 		}))
 
 		// Update corner control points
@@ -2588,18 +2708,32 @@ pointIndex: 12
 
 		// Update edge midpoints
 		const edgeMidpoints = [
-			{ x: (corners[0].x + corners[1].x) / 2, y: (corners[0].y + corners[1].y) / 2, pointIndex: 8 },
-			{ x: (corners[1].x + corners[2].x) / 2, y: (corners[1].y + corners[2].y) / 2, pointIndex: 9 },
+			{
+				x: (corners[0].x + corners[1].x) / 2,
+				y: (corners[0].y + corners[1].y) / 2,
+				pointIndex: 8,
+			},
+			{
+				x: (corners[1].x + corners[2].x) / 2,
+				y: (corners[1].y + corners[2].y) / 2,
+				pointIndex: 9,
+			},
 			{
 				x: (corners[2].x + corners[3].x) / 2,
 				y: (corners[2].y + corners[3].y) / 2,
-				pointIndex: 10
+				pointIndex: 10,
 			},
-			{ x: (corners[3].x + corners[0].x) / 2, y: (corners[3].y + corners[0].y) / 2, pointIndex: 11 }
+			{
+				x: (corners[3].x + corners[0].x) / 2,
+				y: (corners[3].y + corners[0].y) / 2,
+				pointIndex: 11,
+			},
 		]
 
 		edgeMidpoints.forEach((midpoint) => {
-			const cp = controlPoints.find((cp) => cp.pointIndex === midpoint.pointIndex)
+			const cp = controlPoints.find(
+				(cp) => cp.pointIndex === midpoint.pointIndex,
+			)
 			if (cp) {
 				cp.circle.set({ left: midpoint.x, top: midpoint.y })
 				cp.circle.setCoords()
@@ -2619,7 +2753,7 @@ pointIndex: 12
 			{ start: 0, end: 1 },
 			{ start: 1, end: 2 },
 			{ start: 2, end: 3 },
-			{ start: 3, end: 0 }
+			{ start: 3, end: 0 },
 		]
 
 		edges.forEach(({ start, end }, index) => {
@@ -2630,7 +2764,7 @@ pointIndex: 12
 					x1: corners[start].x,
 					y1: corners[start].y,
 					x2: corners[end].x,
-					y2: corners[end].y
+					y2: corners[end].y,
 				})
 				edgeLine.setCoords()
 			}
@@ -2639,8 +2773,14 @@ pointIndex: 12
 		this.canvas.renderAll()
 	}
 
-	updateObjectFromControlPoint(controlPointId: string, newX: number, newY: number): void {
-		const controlPoint = this.controlPoints.find((cp) => cp.id === controlPointId)
+	updateObjectFromControlPoint(
+		controlPointId: string,
+		newX: number,
+		newY: number,
+	): void {
+		const controlPoint = this.controlPoints.find(
+			(cp) => cp.id === controlPointId,
+		)
 		if (!controlPoint) return
 
 		controlPoint.circle.set({ left: newX, top: newY })
@@ -2655,12 +2795,17 @@ pointIndex: 12
 		}
 	}
 
-	private updateFromCorner(controlPoint: ControlPoint, newX: number, newY: number): void {
+	private updateFromCorner(
+		controlPoint: ControlPoint,
+		newX: number,
+		newY: number,
+	): void {
 		const textbox = this.canvas
 			.getObjects()
-			.find((obj: any) => obj.id === controlPoint.objectId && obj.type === 'textbox') as
-			| fabric.Textbox
-			| undefined
+			.find(
+				(obj: any) =>
+					obj.id === controlPoint.objectId && obj.type === 'textbox',
+			) as fabric.Textbox | undefined
 		if (!textbox) return
 
 		// Maintain aspect ratio like images - diagonal movement only
@@ -2672,7 +2817,7 @@ pointIndex: 12
 			{ x: textbox.left || 0, y: textbox.top || 0 },
 			{ x: (textbox.left || 0) + width, y: textbox.top || 0 },
 			{ x: (textbox.left || 0) + width, y: (textbox.top || 0) + height },
-			{ x: textbox.left || 0, y: (textbox.top || 0) + height }
+			{ x: textbox.left || 0, y: (textbox.top || 0) + height },
 		]
 
 		const anchorCorner = corners[oppositeIndex]
@@ -2710,7 +2855,7 @@ pointIndex: 12
 			left: newLeft,
 			top: newTop,
 			width: finalWidth,
-			fontSize: newFontSize
+			fontSize: newFontSize,
 		})
 		textbox.initDimensions()
 		textbox.setCoords()
@@ -2719,12 +2864,17 @@ pointIndex: 12
 		this.canvas.renderAll()
 	}
 
-	private updateFromEdge(controlPoint: ControlPoint, newX: number, newY: number): void {
+	private updateFromEdge(
+		controlPoint: ControlPoint,
+		newX: number,
+		newY: number,
+	): void {
 		const textbox = this.canvas
 			.getObjects()
-			.find((obj: any) => obj.id === controlPoint.objectId && obj.type === 'textbox') as
-			| fabric.Textbox
-			| undefined
+			.find(
+				(obj: any) =>
+					obj.id === controlPoint.objectId && obj.type === 'textbox',
+			) as fabric.Textbox | undefined
 		if (!textbox) return
 
 		const width = textbox.width || 0
@@ -2760,7 +2910,9 @@ pointIndex: 12
 			const finalWidth = Math.max(50, newWidth)
 			const finalHeight = Math.max(20, newHeight)
 
-			const scaleFactor = Math.sqrt((finalWidth * finalHeight) / (width * height))
+			const scaleFactor = Math.sqrt(
+				(finalWidth * finalHeight) / (width * height),
+			)
 			const newFontSize = Math.max(8, (textbox.fontSize || 16) * scaleFactor)
 
 			// Right edge stays fixed, left edge moves
@@ -2771,7 +2923,7 @@ pointIndex: 12
 				left: newLeft,
 				top: newTop,
 				width: finalWidth,
-				fontSize: newFontSize
+				fontSize: newFontSize,
 			})
 			textbox.initDimensions()
 			textbox.setCoords()
@@ -2789,7 +2941,9 @@ pointIndex: 12
 			const finalWidth = Math.max(50, newWidth)
 			const finalHeight = Math.max(20, newHeight)
 
-			const scaleFactor = Math.sqrt((finalWidth * finalHeight) / (width * height))
+			const scaleFactor = Math.sqrt(
+				(finalWidth * finalHeight) / (width * height),
+			)
 			const newFontSize = Math.max(8, (textbox.fontSize || 16) * scaleFactor)
 
 			// Top and left edges stay fixed
@@ -2797,7 +2951,7 @@ pointIndex: 12
 				left: leftEdge,
 				top: topEdge,
 				width: finalWidth,
-				fontSize: newFontSize
+				fontSize: newFontSize,
 			})
 			textbox.initDimensions()
 			textbox.setCoords()
@@ -2806,12 +2960,17 @@ pointIndex: 12
 		}
 	}
 
-	private updateFromRotation(controlPoint: ControlPoint, newX: number, newY: number): void {
+	private updateFromRotation(
+		controlPoint: ControlPoint,
+		newX: number,
+		newY: number,
+	): void {
 		const textbox = this.canvas
 			.getObjects()
-			.find((obj: any) => obj.id === controlPoint.objectId && obj.type === 'textbox') as
-			| fabric.Textbox
-			| undefined
+			.find(
+				(obj: any) =>
+					obj.id === controlPoint.objectId && obj.type === 'textbox',
+			) as fabric.Textbox | undefined
 		if (!textbox) return
 
 		// Get the center point for rotation
@@ -2839,7 +2998,11 @@ pointIndex: 12
  * Control point handler for images
  */
 export class ImageControlPoints extends BoundingBoxControlPoints {
-	addControlPoints(objectId: string, obj: fabric.Object, visible: boolean = true): void {
+	addControlPoints(
+		objectId: string,
+		obj: fabric.Object,
+		visible: boolean = true,
+	): void {
 		const image = obj as fabric.Image
 		const width = image.width || 0
 		const height = image.height || 0
@@ -2868,15 +3031,27 @@ export class ImageControlPoints extends BoundingBoxControlPoints {
 		// Images use center origin, so corners are at ±width/2, ±height/2
 		// When clipped, we need to offset by the clip position
 		const corners = [
-			{ x: clipOffsetX - effectiveWidth / 2, y: clipOffsetY - effectiveHeight / 2 }, // Top-left
-			{ x: clipOffsetX + effectiveWidth / 2, y: clipOffsetY - effectiveHeight / 2 }, // Top-right
-			{ x: clipOffsetX + effectiveWidth / 2, y: clipOffsetY + effectiveHeight / 2 }, // Bottom-right
-			{ x: clipOffsetX - effectiveWidth / 2, y: clipOffsetY + effectiveHeight / 2 } // Bottom-left
+			{
+				x: clipOffsetX - effectiveWidth / 2,
+				y: clipOffsetY - effectiveHeight / 2,
+			}, // Top-left
+			{
+				x: clipOffsetX + effectiveWidth / 2,
+				y: clipOffsetY - effectiveHeight / 2,
+			}, // Top-right
+			{
+				x: clipOffsetX + effectiveWidth / 2,
+				y: clipOffsetY + effectiveHeight / 2,
+			}, // Bottom-right
+			{
+				x: clipOffsetX - effectiveWidth / 2,
+				y: clipOffsetY + effectiveHeight / 2,
+			}, // Bottom-left
 		]
 
 		// Transform to absolute coordinates (this applies scale, rotation, and translation)
 		const absoluteCorners = corners.map((corner) =>
-			fabric.util.transformPoint(new fabric.Point(corner.x, corner.y), matrix)
+			fabric.util.transformPoint(new fabric.Point(corner.x, corner.y), matrix),
 		)
 
 		// Create corner control points (indices 0-3)
@@ -2888,11 +3063,16 @@ export class ImageControlPoints extends BoundingBoxControlPoints {
 				controlPointId,
 				objectId,
 				index,
-				true
+				true,
 			)
 			circle.set({ visible })
 			this.canvas.add(circle)
-			this.controlPoints.push({ id: controlPointId, circle, objectId, pointIndex: index })
+			this.controlPoints.push({
+				id: controlPointId,
+				circle,
+				objectId,
+				pointIndex: index,
+			})
 		})
 
 		// Create edge midpoint control points (indices 8-11)
@@ -2900,23 +3080,23 @@ export class ImageControlPoints extends BoundingBoxControlPoints {
 			{
 				x: (absoluteCorners[0].x + absoluteCorners[1].x) / 2,
 				y: (absoluteCorners[0].y + absoluteCorners[1].y) / 2,
-				pointIndex: 8
+				pointIndex: 8,
 			},
 			{
 				x: (absoluteCorners[1].x + absoluteCorners[2].x) / 2,
 				y: (absoluteCorners[1].y + absoluteCorners[2].y) / 2,
-				pointIndex: 9
+				pointIndex: 9,
 			},
 			{
 				x: (absoluteCorners[2].x + absoluteCorners[3].x) / 2,
 				y: (absoluteCorners[2].y + absoluteCorners[3].y) / 2,
-				pointIndex: 10
+				pointIndex: 10,
 			},
 			{
 				x: (absoluteCorners[3].x + absoluteCorners[0].x) / 2,
 				y: (absoluteCorners[3].y + absoluteCorners[0].y) / 2,
-				pointIndex: 11
-			}
+				pointIndex: 11,
+			},
 		]
 
 		edgeMidpoints.forEach((midpoint) => {
@@ -2927,7 +3107,7 @@ export class ImageControlPoints extends BoundingBoxControlPoints {
 				controlPointId,
 				objectId,
 				midpoint.pointIndex,
-				true
+				true,
 			)
 			circle.set({ visible })
 			this.canvas.add(circle)
@@ -2935,7 +3115,7 @@ export class ImageControlPoints extends BoundingBoxControlPoints {
 				id: controlPointId,
 				circle,
 				objectId,
-				pointIndex: midpoint.pointIndex
+				pointIndex: midpoint.pointIndex,
 			})
 		})
 
@@ -2957,7 +3137,7 @@ export class ImageControlPoints extends BoundingBoxControlPoints {
 			rotationControlPointId,
 			objectId,
 			12,
-			true
+			true,
 		)
 		rotationCircle.set({ visible, hoverCursor: 'crosshair' })
 		this.canvas.add(rotationCircle)
@@ -2965,7 +3145,7 @@ export class ImageControlPoints extends BoundingBoxControlPoints {
 			id: rotationControlPointId,
 			circle: rotationCircle,
 			objectId,
-			pointIndex: 12
+			pointIndex: 12,
 		})
 
 		// Create border lines
@@ -2976,7 +3156,7 @@ export class ImageControlPoints extends BoundingBoxControlPoints {
 			{ start: 0, end: 1 },
 			{ start: 1, end: 2 },
 			{ start: 2, end: 3 },
-			{ start: 3, end: 0 }
+			{ start: 3, end: 0 },
 		]
 
 		edges.forEach(({ start, end }, index) => {
@@ -2986,7 +3166,7 @@ export class ImageControlPoints extends BoundingBoxControlPoints {
 					absoluteCorners[start].x,
 					absoluteCorners[start].y,
 					absoluteCorners[end].x,
-					absoluteCorners[end].y
+					absoluteCorners[end].y,
 				],
 				{
 					stroke: 'oklch(0.8 0.05 39.0427)',
@@ -2994,8 +3174,8 @@ export class ImageControlPoints extends BoundingBoxControlPoints {
 					selectable: false,
 					evented: false,
 					excludeFromExport: true,
-					visible
-				}
+					visible,
+				},
 			)
 			;(edgeLine as any).id = edgeId
 			;(edgeLine as any).linkedObjectId = objectId
@@ -3008,9 +3188,13 @@ export class ImageControlPoints extends BoundingBoxControlPoints {
 	}
 
 	removeControlPoints(objectId: string): void {
-		const pointsToRemove = this.controlPoints.filter((cp) => cp.objectId === objectId)
+		const pointsToRemove = this.controlPoints.filter(
+			(cp) => cp.objectId === objectId,
+		)
 		pointsToRemove.forEach((cp) => this.canvas.remove(cp.circle))
-		this.controlPoints = this.controlPoints.filter((cp) => cp.objectId !== objectId)
+		this.controlPoints = this.controlPoints.filter(
+			(cp) => cp.objectId !== objectId,
+		)
 
 		const edgeLinesToRemove: string[] = []
 		this.edgeLines.forEach((line, id) => {
@@ -3027,7 +3211,8 @@ export class ImageControlPoints extends BoundingBoxControlPoints {
 		const points = this.controlPoints.filter((cp) => cp.objectId === objectId)
 		points.forEach((cp) => cp.circle.set({ visible: false }))
 		this.edgeLines.forEach((line) => {
-			if ((line as any).linkedObjectId === objectId) line.set({ visible: false })
+			if ((line as any).linkedObjectId === objectId)
+				line.set({ visible: false })
 		})
 		this.canvas.renderAll()
 	}
@@ -3069,15 +3254,27 @@ export class ImageControlPoints extends BoundingBoxControlPoints {
 		// Define corners in local coordinates (unscaled, relative to center origin)
 		// When clipped, we need to offset by the clip position
 		const corners = [
-			{ x: clipOffsetX - effectiveWidth / 2, y: clipOffsetY - effectiveHeight / 2 },
-			{ x: clipOffsetX + effectiveWidth / 2, y: clipOffsetY - effectiveHeight / 2 },
-			{ x: clipOffsetX + effectiveWidth / 2, y: clipOffsetY + effectiveHeight / 2 },
-			{ x: clipOffsetX - effectiveWidth / 2, y: clipOffsetY + effectiveHeight / 2 }
+			{
+				x: clipOffsetX - effectiveWidth / 2,
+				y: clipOffsetY - effectiveHeight / 2,
+			},
+			{
+				x: clipOffsetX + effectiveWidth / 2,
+				y: clipOffsetY - effectiveHeight / 2,
+			},
+			{
+				x: clipOffsetX + effectiveWidth / 2,
+				y: clipOffsetY + effectiveHeight / 2,
+			},
+			{
+				x: clipOffsetX - effectiveWidth / 2,
+				y: clipOffsetY + effectiveHeight / 2,
+			},
 		]
 
 		// Transform to absolute coordinates (matrix handles scale, rotation, translation)
 		const absoluteCorners = corners.map((corner) =>
-			fabric.util.transformPoint(new fabric.Point(corner.x, corner.y), matrix)
+			fabric.util.transformPoint(new fabric.Point(corner.x, corner.y), matrix),
 		)
 
 		// Update corners
@@ -3085,7 +3282,7 @@ export class ImageControlPoints extends BoundingBoxControlPoints {
 			if (cp.pointIndex >= 0 && cp.pointIndex <= 3) {
 				cp.circle.set({
 					left: absoluteCorners[cp.pointIndex].x,
-					top: absoluteCorners[cp.pointIndex].y
+					top: absoluteCorners[cp.pointIndex].y,
 				})
 				cp.circle.setCoords()
 			}
@@ -3096,27 +3293,29 @@ export class ImageControlPoints extends BoundingBoxControlPoints {
 			{
 				x: (absoluteCorners[0].x + absoluteCorners[1].x) / 2,
 				y: (absoluteCorners[0].y + absoluteCorners[1].y) / 2,
-				pointIndex: 8
+				pointIndex: 8,
 			},
 			{
 				x: (absoluteCorners[1].x + absoluteCorners[2].x) / 2,
 				y: (absoluteCorners[1].y + absoluteCorners[2].y) / 2,
-				pointIndex: 9
+				pointIndex: 9,
 			},
 			{
 				x: (absoluteCorners[2].x + absoluteCorners[3].x) / 2,
 				y: (absoluteCorners[2].y + absoluteCorners[3].y) / 2,
-				pointIndex: 10
+				pointIndex: 10,
 			},
 			{
 				x: (absoluteCorners[3].x + absoluteCorners[0].x) / 2,
 				y: (absoluteCorners[3].y + absoluteCorners[0].y) / 2,
-				pointIndex: 11
-			}
+				pointIndex: 11,
+			},
 		]
 
 		edgeMidpoints.forEach((midpoint) => {
-			const cp = controlPoints.find((cp) => cp.pointIndex === midpoint.pointIndex)
+			const cp = controlPoints.find(
+				(cp) => cp.pointIndex === midpoint.pointIndex,
+			)
 			if (cp) {
 				cp.circle.set({ left: midpoint.x, top: midpoint.y })
 				cp.circle.setCoords()
@@ -3135,7 +3334,7 @@ export class ImageControlPoints extends BoundingBoxControlPoints {
 			const normalizedY = vectorY / vectorLength
 			rotationCp.circle.set({
 				left: center.x + normalizedX * (vectorLength + 30),
-				top: center.y + normalizedY * (vectorLength + 30)
+				top: center.y + normalizedY * (vectorLength + 30),
 			})
 			rotationCp.circle.setCoords()
 		}
@@ -3145,7 +3344,7 @@ export class ImageControlPoints extends BoundingBoxControlPoints {
 			{ start: 0, end: 1 },
 			{ start: 1, end: 2 },
 			{ start: 2, end: 3 },
-			{ start: 3, end: 0 }
+			{ start: 3, end: 0 },
 		]
 
 		edges.forEach(({ start, end }, index) => {
@@ -3156,7 +3355,7 @@ export class ImageControlPoints extends BoundingBoxControlPoints {
 					x1: absoluteCorners[start].x,
 					y1: absoluteCorners[start].y,
 					x2: absoluteCorners[end].x,
-					y2: absoluteCorners[end].y
+					y2: absoluteCorners[end].y,
 				})
 				edgeLine.setCoords()
 			}
@@ -3165,8 +3364,14 @@ export class ImageControlPoints extends BoundingBoxControlPoints {
 		this.canvas.renderAll()
 	}
 
-	updateObjectFromControlPoint(controlPointId: string, newX: number, newY: number): void {
-		const controlPoint = this.controlPoints.find((cp) => cp.id === controlPointId)
+	updateObjectFromControlPoint(
+		controlPointId: string,
+		newX: number,
+		newY: number,
+	): void {
+		const controlPoint = this.controlPoints.find(
+			(cp) => cp.id === controlPointId,
+		)
 		if (!controlPoint) return
 
 		controlPoint.circle.set({ left: newX, top: newY })
@@ -3181,12 +3386,16 @@ export class ImageControlPoints extends BoundingBoxControlPoints {
 		}
 	}
 
-	private updateFromCorner(controlPoint: ControlPoint, newX: number, newY: number): void {
+	private updateFromCorner(
+		controlPoint: ControlPoint,
+		newX: number,
+		newY: number,
+	): void {
 		const image = this.canvas
 			.getObjects()
-			.find((obj: any) => obj.id === controlPoint.objectId && obj.type === 'image') as
-			| fabric.Image
-			| undefined
+			.find(
+				(obj: any) => obj.id === controlPoint.objectId && obj.type === 'image',
+			) as fabric.Image | undefined
 		if (!image) return
 
 		// Maintain aspect ratio for corners
@@ -3197,9 +3406,9 @@ export class ImageControlPoints extends BoundingBoxControlPoints {
 		const angleRad = (angle * Math.PI) / 180
 
 		const oppositeIndex = (controlPoint.pointIndex + 2) % 4
-		const anchorCornerCP = this.getControlPointsForObject(controlPoint.objectId).find(
-			(cp) => cp.pointIndex === oppositeIndex
-		)
+		const anchorCornerCP = this.getControlPointsForObject(
+			controlPoint.objectId,
+		).find((cp) => cp.pointIndex === oppositeIndex)
 
 		// Get the anchor corner position from the control point
 		const anchorPosition = anchorCornerCP
@@ -3264,7 +3473,7 @@ export class ImageControlPoints extends BoundingBoxControlPoints {
 			left: newCenterX,
 			top: newCenterY,
 			scaleX: newScaleX,
-			scaleY: newScaleY
+			scaleY: newScaleY,
 		})
 		image.setCoords()
 
@@ -3272,12 +3481,16 @@ export class ImageControlPoints extends BoundingBoxControlPoints {
 		this.canvas.renderAll()
 	}
 
-	private updateFromEdge(controlPoint: ControlPoint, newX: number, newY: number): void {
+	private updateFromEdge(
+		controlPoint: ControlPoint,
+		newX: number,
+		newY: number,
+	): void {
 		const image = this.canvas
 			.getObjects()
-			.find((obj: any) => obj.id === controlPoint.objectId && obj.type === 'image') as
-			| fabric.Image
-			| undefined
+			.find(
+				(obj: any) => obj.id === controlPoint.objectId && obj.type === 'image',
+			) as fabric.Image | undefined
 		if (!image) return
 
 		const originalWidth = image.width || 0
@@ -3310,7 +3523,8 @@ export class ImageControlPoints extends BoundingBoxControlPoints {
 				const oppositeEdgeY = center.y + perpY * oppositeEdgeOffset
 				// Distance from new mouse position to opposite edge (in perpendicular direction)
 				const distanceFromOpposite =
-					(newPoint.x - oppositeEdgeX) * perpX + (newPoint.y - oppositeEdgeY) * perpY
+					(newPoint.x - oppositeEdgeX) * perpX +
+					(newPoint.y - oppositeEdgeY) * perpY
 				// New height is this distance
 				newHeight = Math.max(20, Math.abs(distanceFromOpposite))
 				// New center is halfway between mouse and opposite edge
@@ -3333,7 +3547,8 @@ export class ImageControlPoints extends BoundingBoxControlPoints {
 				const oppositeEdgeY = center.y + perpY * oppositeEdgeOffset
 				// Distance from new mouse position to opposite edge (in perpendicular direction)
 				const distanceFromOpposite =
-					(newPoint.x - oppositeEdgeX) * perpX + (newPoint.y - oppositeEdgeY) * perpY
+					(newPoint.x - oppositeEdgeX) * perpX +
+					(newPoint.y - oppositeEdgeY) * perpY
 				// New width is this distance
 				newWidth = Math.max(20, Math.abs(distanceFromOpposite))
 				// New center is halfway between mouse and opposite edge
@@ -3351,7 +3566,7 @@ export class ImageControlPoints extends BoundingBoxControlPoints {
 			left: newCenterX,
 			top: newCenterY,
 			scaleX: newScaleX,
-			scaleY: newScaleY
+			scaleY: newScaleY,
 		})
 		image.setCoords()
 
@@ -3359,12 +3574,16 @@ export class ImageControlPoints extends BoundingBoxControlPoints {
 		this.canvas.renderAll()
 	}
 
-	private updateFromRotation(controlPoint: ControlPoint, newX: number, newY: number): void {
+	private updateFromRotation(
+		controlPoint: ControlPoint,
+		newX: number,
+		newY: number,
+	): void {
 		const image = this.canvas
 			.getObjects()
-			.find((obj: any) => obj.id === controlPoint.objectId && obj.type === 'image') as
-			| fabric.Image
-			| undefined
+			.find(
+				(obj: any) => obj.id === controlPoint.objectId && obj.type === 'image',
+			) as fabric.Image | undefined
 		if (!image) return
 
 		const center = image.getCenterPoint()
@@ -3383,7 +3602,11 @@ export class ImageControlPoints extends BoundingBoxControlPoints {
  * Control point handler for paths (freehand drawings)
  */
 export class PathControlPoints extends BoundingBoxControlPoints {
-	addControlPoints(objectId: string, obj: fabric.Object, visible: boolean = true): void {
+	addControlPoints(
+		objectId: string,
+		obj: fabric.Object,
+		visible: boolean = true,
+	): void {
 		// DISABLED: All control points for brush/path objects due to bugs
 		/*
 const path = obj as fabric.Path
@@ -3510,9 +3733,13 @@ this.canvas.renderAll()
 	}
 
 	removeControlPoints(objectId: string): void {
-		const pointsToRemove = this.controlPoints.filter((cp) => cp.objectId === objectId)
+		const pointsToRemove = this.controlPoints.filter(
+			(cp) => cp.objectId === objectId,
+		)
 		pointsToRemove.forEach((cp) => this.canvas.remove(cp.circle))
-		this.controlPoints = this.controlPoints.filter((cp) => cp.objectId !== objectId)
+		this.controlPoints = this.controlPoints.filter(
+			(cp) => cp.objectId !== objectId,
+		)
 
 		const edgeLinesToRemove: string[] = []
 		this.edgeLines.forEach((line, id) => {
@@ -3529,7 +3756,8 @@ this.canvas.renderAll()
 		const points = this.controlPoints.filter((cp) => cp.objectId === objectId)
 		points.forEach((cp) => cp.circle.set({ visible: false }))
 		this.edgeLines.forEach((line) => {
-			if ((line as any).linkedObjectId === objectId) line.set({ visible: false })
+			if ((line as any).linkedObjectId === objectId)
+				line.set({ visible: false })
 		})
 		this.canvas.renderAll()
 	}
@@ -3553,31 +3781,48 @@ this.canvas.renderAll()
 			{ x: bounds.left, y: bounds.top },
 			{ x: bounds.left + bounds.width, y: bounds.top },
 			{ x: bounds.left + bounds.width, y: bounds.top + bounds.height },
-			{ x: bounds.left, y: bounds.top + bounds.height }
+			{ x: bounds.left, y: bounds.top + bounds.height },
 		]
 
 		// Update corners
 		controlPoints.forEach((cp) => {
 			if (cp.pointIndex >= 0 && cp.pointIndex <= 3) {
-				cp.circle.set({ left: corners[cp.pointIndex].x, top: corners[cp.pointIndex].y })
+				cp.circle.set({
+					left: corners[cp.pointIndex].x,
+					top: corners[cp.pointIndex].y,
+				})
 				cp.circle.setCoords()
 			}
 		})
 
 		// Update edge midpoints
 		const edgeMidpoints = [
-			{ x: (corners[0].x + corners[1].x) / 2, y: (corners[0].y + corners[1].y) / 2, pointIndex: 8 },
-			{ x: (corners[1].x + corners[2].x) / 2, y: (corners[1].y + corners[2].y) / 2, pointIndex: 9 },
+			{
+				x: (corners[0].x + corners[1].x) / 2,
+				y: (corners[0].y + corners[1].y) / 2,
+				pointIndex: 8,
+			},
+			{
+				x: (corners[1].x + corners[2].x) / 2,
+				y: (corners[1].y + corners[2].y) / 2,
+				pointIndex: 9,
+			},
 			{
 				x: (corners[2].x + corners[3].x) / 2,
 				y: (corners[2].y + corners[3].y) / 2,
-				pointIndex: 10
+				pointIndex: 10,
 			},
-			{ x: (corners[3].x + corners[0].x) / 2, y: (corners[3].y + corners[0].y) / 2, pointIndex: 11 }
+			{
+				x: (corners[3].x + corners[0].x) / 2,
+				y: (corners[3].y + corners[0].y) / 2,
+				pointIndex: 11,
+			},
 		]
 
 		edgeMidpoints.forEach((midpoint) => {
-			const cp = controlPoints.find((cp) => cp.pointIndex === midpoint.pointIndex)
+			const cp = controlPoints.find(
+				(cp) => cp.pointIndex === midpoint.pointIndex,
+			)
 			if (cp) {
 				cp.circle.set({ left: midpoint.x, top: midpoint.y })
 				cp.circle.setCoords()
@@ -3597,7 +3842,7 @@ this.canvas.renderAll()
 			const rotationDistance = this.getRotationHandleDistance()
 			rotationCp.circle.set({
 				left: center.x + normalizedX * (vectorLength + rotationDistance),
-				top: center.y + normalizedY * (vectorLength + rotationDistance)
+				top: center.y + normalizedY * (vectorLength + rotationDistance),
 			})
 			rotationCp.circle.setCoords()
 		}
@@ -3607,7 +3852,7 @@ this.canvas.renderAll()
 			{ start: 0, end: 1 },
 			{ start: 1, end: 2 },
 			{ start: 2, end: 3 },
-			{ start: 3, end: 0 }
+			{ start: 3, end: 0 },
 		]
 
 		edges.forEach(({ start, end }, index) => {
@@ -3618,7 +3863,7 @@ this.canvas.renderAll()
 					x1: corners[start].x,
 					y1: corners[start].y,
 					x2: corners[end].x,
-					y2: corners[end].y
+					y2: corners[end].y,
 				})
 				edgeLine.setCoords()
 			}
@@ -3627,8 +3872,14 @@ this.canvas.renderAll()
 		this.canvas.renderAll()
 	}
 
-	updateObjectFromControlPoint(controlPointId: string, newX: number, newY: number): void {
-		const controlPoint = this.controlPoints.find((cp) => cp.id === controlPointId)
+	updateObjectFromControlPoint(
+		controlPointId: string,
+		newX: number,
+		newY: number,
+	): void {
+		const controlPoint = this.controlPoints.find(
+			(cp) => cp.id === controlPointId,
+		)
 		if (!controlPoint) return
 
 		controlPoint.circle.set({ left: newX, top: newY })
@@ -3643,12 +3894,16 @@ this.canvas.renderAll()
 		}
 	}
 
-	private updateFromCorner(controlPoint: ControlPoint, newX: number, newY: number): void {
+	private updateFromCorner(
+		controlPoint: ControlPoint,
+		newX: number,
+		newY: number,
+	): void {
 		const path = this.canvas
 			.getObjects()
-			.find((obj: any) => obj.id === controlPoint.objectId && obj.type === 'path') as
-			| fabric.Path
-			| undefined
+			.find(
+				(obj: any) => obj.id === controlPoint.objectId && obj.type === 'path',
+			) as fabric.Path | undefined
 		if (!path) return
 
 		// Scale path around opposite corner
@@ -3658,7 +3913,7 @@ this.canvas.renderAll()
 			{ x: bounds.left, y: bounds.top },
 			{ x: bounds.left + bounds.width, y: bounds.top },
 			{ x: bounds.left + bounds.width, y: bounds.top + bounds.height },
-			{ x: bounds.left, y: bounds.top + bounds.height }
+			{ x: bounds.left, y: bounds.top + bounds.height },
 		]
 
 		const anchorCorner = corners[oppositeIndex]
@@ -3671,7 +3926,7 @@ this.canvas.renderAll()
 			scaleX: (path.scaleX || 1) * scaleX,
 			scaleY: (path.scaleY || 1) * scaleY,
 			left: (newX + anchorCorner.x) / 2,
-			top: (newY + anchorCorner.y) / 2
+			top: (newY + anchorCorner.y) / 2,
 		})
 		path.setCoords()
 
@@ -3679,12 +3934,16 @@ this.canvas.renderAll()
 		this.canvas.renderAll()
 	}
 
-	private updateFromEdge(controlPoint: ControlPoint, newX: number, newY: number): void {
+	private updateFromEdge(
+		controlPoint: ControlPoint,
+		newX: number,
+		newY: number,
+	): void {
 		const path = this.canvas
 			.getObjects()
-			.find((obj: any) => obj.id === controlPoint.objectId && obj.type === 'path') as
-			| fabric.Path
-			| undefined
+			.find(
+				(obj: any) => obj.id === controlPoint.objectId && obj.type === 'path',
+			) as fabric.Path | undefined
 		if (!path) return
 
 		// Scale path from edge
@@ -3715,12 +3974,16 @@ this.canvas.renderAll()
 		this.canvas.renderAll()
 	}
 
-	private updateFromRotation(controlPoint: ControlPoint, newX: number, newY: number): void {
+	private updateFromRotation(
+		controlPoint: ControlPoint,
+		newX: number,
+		newY: number,
+	): void {
 		const path = this.canvas
 			.getObjects()
-			.find((obj: any) => obj.id === controlPoint.objectId && obj.type === 'path') as
-			| fabric.Path
-			| undefined
+			.find(
+				(obj: any) => obj.id === controlPoint.objectId && obj.type === 'path',
+			) as fabric.Path | undefined
 		if (!path) return
 
 		const center = path.getCenterPoint()
@@ -3746,7 +4009,12 @@ export class CropOverlay {
 	private handles: fabric.Circle[] = []
 	private imageId: string | null = null
 	private originalImage: fabric.Image | null = null
-	private cropBounds: { left: number; top: number; width: number; height: number } | null = null
+	private cropBounds: {
+		left: number
+		top: number
+		width: number
+		height: number
+	} | null = null
 	private isDragging = false
 	private dragStartPoint: { x: number; y: number } | null = null
 	private activeHandle: number = -1 // -1 = none, 0-3 = corners, 4-7 = edges
@@ -3766,7 +4034,12 @@ export class CropOverlay {
 	 */
 	startCrop(
 		image: fabric.Image,
-		onCropChange?: (bounds: { left: number; top: number; width: number; height: number }) => void
+		onCropChange?: (bounds: {
+			left: number
+			top: number
+			width: number
+			height: number
+		}) => void,
 	): void {
 		this.imageId = (image as any).id
 		this.originalImage = image
@@ -3782,7 +4055,7 @@ export class CropOverlay {
 			left: center.x - width / 2,
 			top: center.y - height / 2,
 			width: width,
-			height: height
+			height: height,
 		}
 
 		// Make image non-selectable during crop
@@ -3814,7 +4087,7 @@ export class CropOverlay {
 			strokeDashArray: [5 * scale, 5 * scale],
 			selectable: false,
 			evented: false,
-			excludeFromExport: true
+			excludeFromExport: true,
 		})
 		;(this.cropRect as any).isCropElement = true
 
@@ -3826,12 +4099,18 @@ export class CropOverlay {
 		// Create corner handles (0-3)
 		const corners = [
 			{ x: this.cropBounds.left, y: this.cropBounds.top }, // Top-left
-			{ x: this.cropBounds.left + this.cropBounds.width, y: this.cropBounds.top }, // Top-right
 			{
 				x: this.cropBounds.left + this.cropBounds.width,
-				y: this.cropBounds.top + this.cropBounds.height
+				y: this.cropBounds.top,
+			}, // Top-right
+			{
+				x: this.cropBounds.left + this.cropBounds.width,
+				y: this.cropBounds.top + this.cropBounds.height,
 			}, // Bottom-right
-			{ x: this.cropBounds.left, y: this.cropBounds.top + this.cropBounds.height } // Bottom-left
+			{
+				x: this.cropBounds.left,
+				y: this.cropBounds.top + this.cropBounds.height,
+			}, // Bottom-left
 		]
 
 		corners.forEach((corner, index) => {
@@ -3848,7 +4127,7 @@ export class CropOverlay {
 				hasControls: false,
 				hasBorders: false,
 				hoverCursor: this.getCornerCursor(index),
-				excludeFromExport: true
+				excludeFromExport: true,
 			})
 			;(handle as any).isCropHandle = true
 			;(handle as any).handleIndex = index
@@ -3859,16 +4138,22 @@ export class CropOverlay {
 
 		// Create edge midpoint handles (4-7)
 		const edgeMidpoints = [
-			{ x: this.cropBounds.left + this.cropBounds.width / 2, y: this.cropBounds.top }, // Top
+			{
+				x: this.cropBounds.left + this.cropBounds.width / 2,
+				y: this.cropBounds.top,
+			}, // Top
 			{
 				x: this.cropBounds.left + this.cropBounds.width,
-				y: this.cropBounds.top + this.cropBounds.height / 2
+				y: this.cropBounds.top + this.cropBounds.height / 2,
 			}, // Right
 			{
 				x: this.cropBounds.left + this.cropBounds.width / 2,
-				y: this.cropBounds.top + this.cropBounds.height
+				y: this.cropBounds.top + this.cropBounds.height,
 			}, // Bottom
-			{ x: this.cropBounds.left, y: this.cropBounds.top + this.cropBounds.height / 2 } // Left
+			{
+				x: this.cropBounds.left,
+				y: this.cropBounds.top + this.cropBounds.height / 2,
+			}, // Left
 		]
 
 		edgeMidpoints.forEach((point, index) => {
@@ -3885,7 +4170,7 @@ export class CropOverlay {
 				hasControls: false,
 				hasBorders: false,
 				hoverCursor: this.getEdgeCursor(index),
-				excludeFromExport: true
+				excludeFromExport: true,
 			})
 			;(handle as any).isCropHandle = true
 			;(handle as any).handleIndex = 4 + index
@@ -3956,7 +4241,7 @@ Z
 			selectable: false,
 			evented: false,
 			excludeFromExport: true,
-			fillRule: 'evenodd' // This creates the hole effect
+			fillRule: 'evenodd', // This creates the hole effect
 		})
 		;(overlay as any).isCropElement = true
 
@@ -3984,8 +4269,10 @@ Z
 		let { left, top, width, height } = this.cropBounds
 
 		// Get image bounds for constraining
-		const imgWidth = (this.originalImage.width || 0) * (this.originalImage.scaleX || 1)
-		const imgHeight = (this.originalImage.height || 0) * (this.originalImage.scaleY || 1)
+		const imgWidth =
+			(this.originalImage.width || 0) * (this.originalImage.scaleX || 1)
+		const imgHeight =
+			(this.originalImage.height || 0) * (this.originalImage.scaleY || 1)
 		const center = this.originalImage.getCenterPoint()
 		const imgLeft = center.x - imgWidth / 2
 		const imgTop = center.y - imgHeight / 2
@@ -4085,7 +4372,7 @@ Z
 			width: this.cropBounds.width,
 			height: this.cropBounds.height,
 			strokeWidth: 2 * scale,
-			strokeDashArray: [5 * scale, 5 * scale]
+			strokeDashArray: [5 * scale, 5 * scale],
 		})
 		this.cropRect.setCoords()
 
@@ -4095,26 +4382,38 @@ Z
 		// Update corner handles
 		const corners = [
 			{ x: this.cropBounds.left, y: this.cropBounds.top },
-			{ x: this.cropBounds.left + this.cropBounds.width, y: this.cropBounds.top },
 			{
 				x: this.cropBounds.left + this.cropBounds.width,
-				y: this.cropBounds.top + this.cropBounds.height
+				y: this.cropBounds.top,
 			},
-			{ x: this.cropBounds.left, y: this.cropBounds.top + this.cropBounds.height }
+			{
+				x: this.cropBounds.left + this.cropBounds.width,
+				y: this.cropBounds.top + this.cropBounds.height,
+			},
+			{
+				x: this.cropBounds.left,
+				y: this.cropBounds.top + this.cropBounds.height,
+			},
 		]
 
 		// Update edge midpoints
 		const edgeMidpoints = [
-			{ x: this.cropBounds.left + this.cropBounds.width / 2, y: this.cropBounds.top },
+			{
+				x: this.cropBounds.left + this.cropBounds.width / 2,
+				y: this.cropBounds.top,
+			},
 			{
 				x: this.cropBounds.left + this.cropBounds.width,
-				y: this.cropBounds.top + this.cropBounds.height / 2
+				y: this.cropBounds.top + this.cropBounds.height / 2,
 			},
 			{
 				x: this.cropBounds.left + this.cropBounds.width / 2,
-				y: this.cropBounds.top + this.cropBounds.height
+				y: this.cropBounds.top + this.cropBounds.height,
 			},
-			{ x: this.cropBounds.left, y: this.cropBounds.top + this.cropBounds.height / 2 }
+			{
+				x: this.cropBounds.left,
+				y: this.cropBounds.top + this.cropBounds.height / 2,
+			},
 		]
 
 		this.handles.forEach((handle, index) => {
@@ -4123,7 +4422,7 @@ Z
 				left: point.x,
 				top: point.y,
 				radius: (index < 4 ? 8 : 6) * scale,
-				strokeWidth: 2 * scale
+				strokeWidth: 2 * scale,
 			})
 			handle.setCoords()
 		})
@@ -4174,7 +4473,12 @@ Z
 	/**
 	 * Get current crop bounds
 	 */
-	getCropBounds(): { left: number; top: number; width: number; height: number } | null {
+	getCropBounds(): {
+		left: number
+		top: number
+		width: number
+		height: number
+	} | null {
 		return this.cropBounds
 	}
 
@@ -4255,7 +4559,7 @@ Z
 			top: cropTop - (image.height || 0) / 2,
 			width: cropWidth,
 			height: cropHeight,
-			absolutePositioned: false
+			absolutePositioned: false,
 		})
 
 		// Adjust image position so the visible part is centered where it was
@@ -4276,7 +4580,7 @@ Z
 			scaleX: newScaleX,
 			scaleY: newScaleY,
 			left: newCenterX,
-			top: newCenterY
+			top: newCenterY,
 		})
 		image.setCoords()
 
@@ -4285,14 +4589,11 @@ Z
 				left: clipRect.left,
 				top: clipRect.top,
 				width: clipRect.width,
-				height: clipRect.height
+				height: clipRect.height,
 			},
 			scaleX: newScaleX,
 			scaleY: newScaleY,
-			position: {
-				left: newCenterX,
-				top: newCenterY
-			}
+			position: { left: newCenterX, top: newCenterY },
 		}
 
 		this.endCrop()
@@ -4328,7 +4629,10 @@ export class ControlPointManager {
 	private triangleHandler: TriangleControlPoints
 	private sendCanvasUpdate?: (data: Record<string, unknown>) => void
 
-	constructor(canvas: fabric.Canvas, sendCanvasUpdate?: (data: Record<string, unknown>) => void) {
+	constructor(
+		canvas: fabric.Canvas,
+		sendCanvasUpdate?: (data: Record<string, unknown>) => void,
+	) {
 		this.canvas = canvas
 		this.sendCanvasUpdate = sendCanvasUpdate
 
@@ -4359,7 +4663,11 @@ export class ControlPointManager {
 	/**
 	 * Add control points for an object based on its type
 	 */
-	addControlPoints(objectId: string, obj: fabric.Object, visible: boolean = true): void {
+	addControlPoints(
+		objectId: string,
+		obj: fabric.Object,
+		visible: boolean = true,
+	): void {
 		const handler = this.handlers.get(obj.type || '')
 		if (handler) {
 			handler.addControlPoints(objectId, obj, visible)
@@ -4420,7 +4728,7 @@ export class ControlPointManager {
 		controlPointId: string,
 		newX: number,
 		newY: number,
-		isLive: boolean = true
+		isLive: boolean = true,
 	): void {
 		// Find which handler has this control point
 		for (const handler of this.handlers.values()) {
@@ -4447,12 +4755,12 @@ export class ControlPointManager {
 								scaleX: image.scaleX,
 								scaleY: image.scaleY,
 								angle: image.angle,
-								opacity: image.opacity
+								opacity: image.opacity,
 							}
 							this.sendCanvasUpdate({
 								type: 'modify',
 								object: objData,
-								live: isLive
+								live: isLive,
 							})
 						} else if (modifiedObj && modifiedObj.type === 'polyline') {
 							// Create a clean serialization with just the essential data
@@ -4468,12 +4776,9 @@ export class ControlPointManager {
 								selectable: true,
 								hasControls: false,
 								hasBorders: false,
-								isControlPointUpdate: true // Mark this as a control point update
+								isControlPointUpdate: true, // Mark this as a control point update
 							}
-							this.sendCanvasUpdate({
-								type: 'modify',
-								object: objData
-							})
+							this.sendCanvasUpdate({ type: 'modify', object: objData })
 						} else if (modifiedObj && modifiedObj.type === 'rect') {
 							// Send rectangle updates
 							const rect = modifiedObj as fabric.Rect
@@ -4494,12 +4799,9 @@ export class ControlPointManager {
 								originY: 'center',
 								selectable: true,
 								hasControls: false,
-								hasBorders: false
+								hasBorders: false,
 							}
-							this.sendCanvasUpdate({
-								type: 'modify',
-								object: objData
-							})
+							this.sendCanvasUpdate({ type: 'modify', object: objData })
 						} else if (modifiedObj && modifiedObj.type === 'ellipse') {
 							// Send ellipse updates
 							const ellipse = modifiedObj as fabric.Ellipse
@@ -4520,12 +4822,9 @@ export class ControlPointManager {
 								originY: 'center',
 								selectable: true,
 								hasControls: false,
-								hasBorders: false
+								hasBorders: false,
 							}
-							this.sendCanvasUpdate({
-								type: 'modify',
-								object: objData
-							})
+							this.sendCanvasUpdate({ type: 'modify', object: objData })
 						} else if (modifiedObj && modifiedObj.type === 'triangle') {
 							// Send triangle updates
 							const triangle = modifiedObj as fabric.Triangle
@@ -4546,12 +4845,12 @@ export class ControlPointManager {
 								originY: 'center',
 								selectable: true,
 								hasControls: false,
-								hasBorders: false
+								hasBorders: false,
 							}
 							this.sendCanvasUpdate({
 								type: 'modify',
 								object: objData,
-								live: isLive
+								live: isLive,
 							})
 						} else if (modifiedObj && modifiedObj.type === 'textbox') {
 							// Send textbox updates
@@ -4572,12 +4871,12 @@ export class ControlPointManager {
 								angle: textbox.angle,
 								selectable: true,
 								hasControls: false,
-								hasBorders: false
+								hasBorders: false,
 							}
 							this.sendCanvasUpdate({
 								type: 'modify',
 								object: objData,
-								live: isLive
+								live: isLive,
 							})
 						}
 					}
@@ -4640,7 +4939,9 @@ export class ControlPointManager {
 				if (!processedObjects.has(cp.objectId)) {
 					processedObjects.add(cp.objectId)
 					// Find the object and update its control points
-					const obj = this.canvas.getObjects().find((o: any) => o.id === cp.objectId)
+					const obj = this.canvas
+						.getObjects()
+						.find((o: any) => o.id === cp.objectId)
 					if (obj) {
 						handler.updateControlPoints(cp.objectId, obj)
 					}

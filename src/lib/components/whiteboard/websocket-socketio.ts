@@ -20,9 +20,7 @@ interface WebSocketMessage {
 		| 'layer'
 		| 'lock'
 		| 'unlock'
-	whiteboard?: {
-		objects: SerializedObject[]
-	}
+	whiteboard?: { objects: SerializedObject[] }
 	object?: SerializedObject
 	objects?: SerializedObject[]
 	live?: boolean
@@ -78,12 +76,12 @@ export function setupWebSocket(
 	url: string,
 	canvas: fabric.Canvas,
 	whiteboardId: number,
-	options?: WebSocketOptions
+	options?: WebSocketOptions,
 ): Socket {
 	// Connect to Socket.IO server
 	const socket = io({
 		path: '/socket.io/',
-		transports: ['websocket', 'polling']
+		transports: ['websocket', 'polling'],
 	})
 
 	// Expose the markAsRecentlyCreated function on the socket for external use
@@ -102,7 +100,12 @@ export function setupWebSocket(
 		if (data.whiteboardId !== whiteboardId) return
 
 		options?.onLoadStart?.()
-		await handleLoadMessage(canvas, data, options?.onLoadEnd, options?.controlPointManager)
+		await handleLoadMessage(
+			canvas,
+			data,
+			options?.onLoadEnd,
+			options?.controlPointManager,
+		)
 	})
 
 	socket.on('add', async (data: WebSocketMessage) => {
@@ -171,10 +174,12 @@ async function handleLoadMessage(
 	canvas: fabric.Canvas,
 	messageData: WebSocketMessage,
 	onLoadEnd?: (objects: fabric.FabricObject[]) => void,
-	controlPointManager?: ControlPointManager
+	controlPointManager?: ControlPointManager,
 ): Promise<void> {
 	if (messageData.whiteboard && messageData.whiteboard.objects.length > 0) {
-		const objects = await fabric.util.enlivenObjects(messageData.whiteboard.objects)
+		const objects = await fabric.util.enlivenObjects(
+			messageData.whiteboard.objects,
+		)
 		canvas.clear()
 
 		const fabricObjects: fabric.FabricObject[] = []
@@ -190,10 +195,7 @@ async function handleLoadMessage(
 			fabricObj.hasBorders = false
 			// Ensure images use center origin
 			if (fabricObj.type === 'image') {
-				fabricObj.set({
-					originX: 'center',
-					originY: 'center'
-				})
+				fabricObj.set({ originX: 'center', originY: 'center' })
 			}
 			canvas.add(fabricObj)
 			fabricObjects.push(fabricObj)
@@ -215,7 +217,7 @@ async function handleLoadMessage(
 async function handleAddMessage(
 	canvas: fabric.Canvas,
 	messageData: WebSocketMessage,
-	controlPointManager?: ControlPointManager
+	controlPointManager?: ControlPointManager,
 ): Promise<void> {
 	if (messageData.object) {
 		// Check if this is an echo of an object we just created
@@ -228,16 +230,10 @@ async function handleAddMessage(
 		obj.id = messageData.object.id
 		// Disable fabric.js default controls and borders for all objects
 		// Custom control points will be shown on selection
-		obj.set({
-			hasControls: false,
-			hasBorders: false
-		})
+		obj.set({ hasControls: false, hasBorders: false })
 		// Ensure images use center origin
 		if (obj.type === 'image') {
-			obj.set({
-				originX: 'center',
-				originY: 'center'
-			})
+			obj.set({ originX: 'center', originY: 'center' })
 		}
 		canvas.add(obj)
 		// DO NOT create control points automatically - they'll be created on user selection
@@ -252,7 +248,7 @@ async function handleAddMessage(
 function handleModifyMessage(
 	canvas: fabric.Canvas,
 	messageData: WebSocketMessage,
-	controlPointManager?: ControlPointManager
+	controlPointManager?: ControlPointManager,
 ): void {
 	if (!messageData.object) return
 
@@ -286,7 +282,7 @@ function handleModifyMessage(
 				scaleX: messageData.object.scaleX,
 				scaleY: messageData.object.scaleY,
 				angle: messageData.object.angle,
-				opacity: messageData.object.opacity
+				opacity: messageData.object.opacity,
 			})
 			obj.setCoords()
 			canvas.renderAll() // Immediate synchronous render
@@ -298,13 +294,16 @@ function handleModifyMessage(
 			const textbox = obj as fabric.Textbox
 
 			// Use set() method with text property explicitly
-			textbox.set({
-				text: messageData.object.text as string
-			})
+			textbox.set({ text: messageData.object.text as string })
 
 			// Then update other properties (excluding text, type, and id to avoid duplication/warnings)
 			// eslint-disable-next-line @typescript-eslint/no-unused-vars
-			const { text: _text, type: _type, id: _id, ...otherProps } = messageData.object
+			const {
+				text: _text,
+				type: _type,
+				id: _id,
+				...otherProps
+			} = messageData.object
 			if (Object.keys(otherProps).length > 0) {
 				textbox.set(otherProps as Partial<fabric.FabricObjectProps>)
 			}
@@ -327,12 +326,18 @@ function handleModifyMessage(
 
 		// For polylines with control point updates, completely replace the object
 		// Only do this if specifically marked as a control point update
-		if (obj.type === 'polyline' && controlPointManager && messageData.object.isControlPointUpdate) {
+		if (
+			obj.type === 'polyline' &&
+			controlPointManager &&
+			messageData.object.isControlPointUpdate
+		) {
 			// @ts-expect-error - Custom id property
 			const objId = obj.id
 			// DON'T create control points - they should only exist if user selected the line
 			// Remove old control points only if they exist
-			const existingPoints = controlPointManager.getLineHandler().getControlPointsForObject(objId)
+			const existingPoints = controlPointManager
+				.getLineHandler()
+				.getControlPointsForObject(objId)
 			if (existingPoints.length > 0) {
 				controlPointManager.removeControlPoints(objId)
 			}
@@ -347,7 +352,7 @@ function handleModifyMessage(
 				opacity: messageData.object.opacity as number,
 				selectable: true,
 				hasControls: false,
-				hasBorders: false
+				hasBorders: false,
 			})
 			canvas.add(newLine)
 			// DON'T recreate control points - user must select the line to see them
@@ -356,13 +361,20 @@ function handleModifyMessage(
 		}
 
 		// For polylines and images being moved normally, ONLY update control points if they already exist
-		if ((obj.type === 'polyline' || obj.type === 'image') && controlPointManager) {
+		if (
+			(obj.type === 'polyline' || obj.type === 'image') &&
+			controlPointManager
+		) {
 			// @ts-expect-error - Custom id property
 			const objId = obj.id
 			const existingPoints =
 				obj.type === 'polyline'
-					? controlPointManager.getLineHandler().getControlPointsForObject(objId)
-					: controlPointManager.getAllControlPoints().filter((cp) => cp.objectId === objId)
+					? controlPointManager
+							.getLineHandler()
+							.getControlPointsForObject(objId)
+					: controlPointManager
+							.getAllControlPoints()
+							.filter((cp) => cp.objectId === objId)
 			// Only update if control points already exist (user has selected this object)
 			if (existingPoints.length > 0) {
 				controlPointManager.updateControlPoints(objId, obj)
@@ -380,10 +392,11 @@ function handleModifyMessage(
 function handleDeleteMessage(
 	canvas: fabric.Canvas,
 	messageData: WebSocketMessage,
-	controlPointManager?: ControlPointManager
+	controlPointManager?: ControlPointManager,
 ): void {
 	const objects = canvas.getObjects()
-	const objectsToRemove = messageData.objects || (messageData.object ? [messageData.object] : [])
+	const objectsToRemove =
+		messageData.objects || (messageData.object ? [messageData.object] : [])
 	objectsToRemove.forEach((objData: SerializedObject) => {
 		// @ts-expect-error - Custom id property
 		const obj = objects.find((o) => o.id === objData.id)
@@ -402,7 +415,10 @@ function handleDeleteMessage(
 /**
  * Handles 'layer' message - updates the z-index/layering of an object
  */
-function handleLayerMessage(canvas: fabric.Canvas, messageData: WebSocketMessage): void {
+function handleLayerMessage(
+	canvas: fabric.Canvas,
+	messageData: WebSocketMessage,
+): void {
 	if (!messageData.object || !messageData.action) return
 
 	const objects = canvas.getObjects()

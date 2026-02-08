@@ -3,12 +3,12 @@
 ## Database Structure:
 
 TIMETABLE(tt_id,.....)
-CONTSTRAINTS(con_id, con_name, con_type, con_params_json)
+CONSTRAINTS(con_id, con_name, con_type, con_params_json)
 TIMETABLE_CONSTRAINTS(tt_id, con_id)
 
 ## Background:
 
-Every constraint has a weight. A weight of 100% mean that this constraint must be respected. A lower value mean it should be respected, it's not necessary. It's pretty difficult to explain the exact function, but a simple illustration is the following: 50% weight mean that in average FET retries two times to place an activity without a conflict. If FET isn't able to place the activity without a conflict after average 2 times it keeps the conflict and tries to place the next activity.
+Every constraint has a weight. A weight of 100% mean that this constraint must be respected. A lower value mean it should be respected, it's not necessary. It's pretty difficult to explain the exact function, but a simple illustration is the following: 50% weight means that on average FET retries two times to place an activity without a conflict. If FET isn't able to place the activity without a conflict after average 2 times it keeps the conflict and tries to place the next activity.
 
 ## List of available FET constraints:
 

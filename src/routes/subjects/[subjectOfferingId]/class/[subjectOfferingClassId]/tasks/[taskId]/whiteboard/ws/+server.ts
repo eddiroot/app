@@ -4,7 +4,7 @@ import {
 	deleteWhiteboardObjects,
 	getWhiteboardObjects,
 	saveWhiteboardObject,
-	updateWhiteboardObject
+	updateWhiteboardObject,
 } from '$lib/server/db/service'
 import type { Socket } from './$types.js'
 
@@ -25,14 +25,17 @@ export const socket: Socket = {
 			peer.send(
 				JSON.stringify({
 					type: 'error',
-					message: 'No whiteboard ID specified'
-				})
+					message: 'No whiteboard ID specified',
+				}),
 			)
 			return
 		}
 
 		// Update the peer's whiteboard if a new one is specified
-		if (parsedMessage.whiteboardId && parsedMessage.whiteboardId !== peerWhiteboards.get(peer)) {
+		if (
+			parsedMessage.whiteboardId &&
+			parsedMessage.whiteboardId !== peerWhiteboards.get(peer)
+		) {
 			// Unsubscribe from old whiteboard
 			const oldWhiteboardId = peerWhiteboards.get(peer)
 			if (oldWhiteboardId) {
@@ -48,15 +51,15 @@ export const socket: Socket = {
 				const objects = await getWhiteboardObjects(whiteboardId)
 				const whiteboardObjects = objects.map((obj) => ({
 					id: obj.objectId,
-					...(obj.objectData as Record<string, unknown>)
+					...(obj.objectData as Record<string, unknown>),
 				}))
 
 				peer.send(
 					JSON.stringify({
 						type: 'load',
 						whiteboardId,
-						whiteboard: { objects: whiteboardObjects }
-					})
+						whiteboard: { objects: whiteboardObjects },
+					}),
 				)
 			} catch (error) {
 				console.error('Failed to load whiteboard from database:', error)
@@ -83,15 +86,15 @@ export const socket: Socket = {
 						const objects = await getWhiteboardObjects(newWhiteboardId)
 						const whiteboardObjects = objects.map((obj) => ({
 							id: obj.objectId,
-							...(obj.objectData as Record<string, unknown>)
+							...(obj.objectData as Record<string, unknown>),
 						}))
 
 						peer.send(
 							JSON.stringify({
 								type: 'load',
 								whiteboardId: newWhiteboardId,
-								whiteboard: { objects: whiteboardObjects }
-							})
+								whiteboard: { objects: whiteboardObjects },
+							}),
 						)
 					} catch (error) {
 						console.error('Failed to load whiteboard from database:', error)
@@ -102,29 +105,28 @@ export const socket: Socket = {
 				await clearWhiteboard(whiteboardId)
 				peer.publish(
 					`whiteboard-${whiteboardId}`,
-					JSON.stringify({
-						type: 'clear',
-						whiteboardId
-					})
+					JSON.stringify({ type: 'clear', whiteboardId }),
 				)
-			} else if (parsedMessage.type === 'add' || parsedMessage.type === 'create') {
+			} else if (
+				parsedMessage.type === 'add' ||
+				parsedMessage.type === 'create'
+			) {
 				const newObject = parsedMessage.object
 
 				await saveWhiteboardObject({
 					objectId: newObject.id,
 					objectData: newObject,
-					whiteboardId
+					whiteboardId,
 				})
 
 				peer.publish(
 					`whiteboard-${whiteboardId}`,
-					JSON.stringify({
-						type: 'add',
-						object: newObject,
-						whiteboardId
-					})
+					JSON.stringify({ type: 'add', object: newObject, whiteboardId }),
 				)
-			} else if (parsedMessage.type === 'remove' || parsedMessage.type === 'delete') {
+			} else if (
+				parsedMessage.type === 'remove' ||
+				parsedMessage.type === 'delete'
+			) {
 				if (parsedMessage.objects) {
 					const objectsToRemove = parsedMessage.objects
 					const objectIds = objectsToRemove.map((obj: { id: string }) => obj.id)
@@ -136,8 +138,8 @@ export const socket: Socket = {
 						JSON.stringify({
 							type: 'delete',
 							objects: objectsToRemove,
-							whiteboardId
-						})
+							whiteboardId,
+						}),
 					)
 				} else if (parsedMessage.object) {
 					const objectToRemove = parsedMessage.object
@@ -149,17 +151,24 @@ export const socket: Socket = {
 						JSON.stringify({
 							type: 'delete',
 							objects: [objectToRemove],
-							whiteboardId
-						})
+							whiteboardId,
+						}),
 					)
 				}
-			} else if (parsedMessage.type === 'update' || parsedMessage.type === 'modify') {
+			} else if (
+				parsedMessage.type === 'update' ||
+				parsedMessage.type === 'modify'
+			) {
 				const updatedObject = parsedMessage.object
 				const isLiveUpdate = parsedMessage.live || false // Flag for live vs final updates
 
 				// For live updates, skip database writes to improve performance
 				if (!isLiveUpdate) {
-					await updateWhiteboardObject(updatedObject.id, updatedObject, whiteboardId)
+					await updateWhiteboardObject(
+						updatedObject.id,
+						updatedObject,
+						whiteboardId,
+					)
 				}
 
 				// Always broadcast the update to other connected clients
@@ -168,8 +177,8 @@ export const socket: Socket = {
 					JSON.stringify({
 						type: 'modify',
 						object: updatedObject,
-						whiteboardId
-					})
+						whiteboardId,
+					}),
 				)
 			} else if (parsedMessage.type === 'layer') {
 				// Handle layering changes
@@ -177,7 +186,11 @@ export const socket: Socket = {
 				const action = parsedMessage.action
 
 				// Update the object in the database to reflect the new z-index
-				await updateWhiteboardObject(layeredObject.id, layeredObject, whiteboardId)
+				await updateWhiteboardObject(
+					layeredObject.id,
+					layeredObject,
+					whiteboardId,
+				)
 
 				// Broadcast the layering change to other clients
 				peer.publish(
@@ -186,10 +199,13 @@ export const socket: Socket = {
 						type: 'layer',
 						object: layeredObject,
 						action: action,
-						whiteboardId
-					})
+						whiteboardId,
+					}),
 				)
-			} else if (parsedMessage.type === 'lock' || parsedMessage.type === 'unlock') {
+			} else if (
+				parsedMessage.type === 'lock' ||
+				parsedMessage.type === 'unlock'
+			) {
 				// Handle lock/unlock events (broadcasted from API endpoint)
 				// Just forward to all connected clients
 				peer.publish(
@@ -197,8 +213,8 @@ export const socket: Socket = {
 					JSON.stringify({
 						type: parsedMessage.type,
 						isLocked: parsedMessage.isLocked,
-						whiteboardId
-					})
+						whiteboardId,
+					}),
 				)
 			}
 		} catch (error) {
@@ -207,8 +223,8 @@ export const socket: Socket = {
 				JSON.stringify({
 					type: 'error',
 					message: 'Failed to persist changes',
-					whiteboardId
-				})
+					whiteboardId,
+				}),
 			)
 		}
 	},
@@ -219,5 +235,5 @@ export const socket: Socket = {
 			peer.unsubscribe(`whiteboard-${whiteboardId}`)
 			peerWhiteboards.delete(peer)
 		}
-	}
+	},
 }

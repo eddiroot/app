@@ -17,11 +17,15 @@
 				<div class="flex h-full w-full">
 					<!-- Left side - Logo container -->
 					<div class="bg-muted/5 flex w-40 items-center justify-center pl-1">
-						<img src="/logos/vcaa.jpg" alt="VCAA Logo" class="max-h-20 max-w-full object-contain" />
+						<img
+							src="/logos/vcaa.jpg"
+							alt="VCAA Logo"
+							class="max-h-20 max-w-full object-contain"
+						/>
 					</div>
 					<!-- Right side - Learning area name -->
 					<div class="flex items-center px-3">
-						<h3 class="text-base font-medium break-words">
+						<h3 class="text-base font-medium wrap-break-word">
 							{learningAreaName}
 						</h3>
 					</div>
@@ -37,11 +41,15 @@
 			<div class="flex h-full w-full">
 				<!-- Left side - Logo container -->
 				<div class="bg-muted/5 flex w-40 items-center justify-center pl-1">
-					<img src="/logos/vcaa.jpg" alt="VCAA Logo" class="max-h-20 max-w-full object-contain" />
+					<img
+						src="/logos/vcaa.jpg"
+						alt="VCAA Logo"
+						class="max-h-20 max-w-full object-contain"
+					/>
 				</div>
 				<!-- Right side - Learning area name -->
 				<div class="flex items-center px-3">
-					<h3 class="text-base font-medium break-words">
+					<h3 class="text-base font-medium wrap-break-word">
 						{learningAreaName}
 					</h3>
 				</div>

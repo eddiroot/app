@@ -31,13 +31,17 @@
 			: colors.borderAround}; border-top-color: {colors.borderTop}; color: {colors.text};"
 	>
 		<Card.Header class="p-1">
-			<Card.Title class="overflow-hidden pt-2 text-base text-ellipsis whitespace-nowrap">
+			<Card.Title
+				class="overflow-hidden pt-2 text-base text-ellipsis whitespace-nowrap"
+			>
 				{cls.subject.name}
 			</Card.Title>
 			{#if showTime || showRoom}
-				<Card.Description class="overflow-hidden text-xs text-ellipsis whitespace-nowrap">
+				<Card.Description
+					class="overflow-hidden text-xs text-ellipsis whitespace-nowrap"
+				>
 					{#if showTime}
-						{cls.classAllocation.startTime} - {cls.classAllocation.endTime}
+						{cls.classAllocation.start} - {cls.classAllocation.end}
 					{/if}
 					{#if showTime && showRoom}
 						{' '}

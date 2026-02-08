@@ -6,17 +6,18 @@
 	import { Label } from '$lib/components/ui/label';
 	import * as Select from '$lib/components/ui/select';
 	import * as Table from '$lib/components/ui/table';
-	import { convertToFullName } from '$lib/utils.js';
+	import { convertToFullName } from '$lib/utils';
+	import ArchiveIcon from '@lucide/svelte/icons/archive';
 	import PlusIcon from '@lucide/svelte/icons/plus';
 	import SearchIcon from '@lucide/svelte/icons/search';
-	import Trash2Icon from '@lucide/svelte/icons/trash-2';
 	import { superForm } from 'sveltekit-superforms';
 	import { zod4 } from 'sveltekit-superforms/adapters';
 	import { createAllocationSchema } from './schema.js';
 
 	let { data } = $props();
 
-	const createForm = superForm(data.createForm, {
+	let dataCreateForm = () => data.createForm;
+	const createForm = superForm(dataCreateForm(), {
 		validators: zod4(createAllocationSchema),
 		onUpdated: ({ form }) => {
 			if (form.valid) {
@@ -24,13 +25,12 @@
 				$createFormData.userId = '';
 				$createFormData.subjectOfferingClassId = '0';
 			}
-		}
+		},
 	});
 
-	const { form: createFormData, enhance: createEnhance, errors: createFormErrors } = createForm;
+	const { form: createFormData, enhance: createEnhance } = createForm;
 
 	let createDialogOpen = $state(false);
-
 	let searchTerm = $state('');
 
 	const filteredAllocations = $derived(() => {
@@ -39,7 +39,7 @@
 			const userName = convertToFullName(
 				allocation.user.firstName,
 				allocation.user.middleName,
-				allocation.user.lastName
+				allocation.user.lastName,
 			);
 			const subjectName = allocation.subject?.name;
 			const className = allocation.subjectOfferingClass?.name;
@@ -52,7 +52,9 @@
 		});
 	});
 
-	function getSubjectDisplayName(subjectClass: (typeof data.subjectOfferingClasses)[number]) {
+	function getSubjectDisplayName(
+		subjectClass: (typeof data.subjectOfferingClasses)[number],
+	) {
 		return `${subjectClass.subjectName} - ${subjectClass.name}`;
 	}
 </script>
@@ -60,7 +62,8 @@
 <div class="flex h-full flex-col space-y-2">
 	<h1 class="text-3xl font-bold tracking-tight">Allocations</h1>
 	<p class="text-muted-foreground">
-		Manage which users are allocated to which classes and their roles within them.
+		Manage which users are allocated to which classes and their roles within
+		them.
 	</p>
 
 	<div class="flex min-h-0 flex-1 flex-col">
@@ -86,7 +89,12 @@
 					<Dialog.Header>
 						<Dialog.Title>Create New Allocation</Dialog.Title>
 					</Dialog.Header>
-					<form method="POST" action="?/create" use:createEnhance class="space-y-4">
+					<form
+						method="POST"
+						action="?/create"
+						use:createEnhance
+						class="space-y-4"
+					>
 						<div class="space-y-2">
 							<Label for="user">Student</Label>
 							<Select.Root type="single" bind:value={$createFormData.userId}>
@@ -94,7 +102,11 @@
 									{#if $createFormData.userId}
 										{#each data.users as user}
 											{#if user.id === $createFormData.userId}
-												{convertToFullName(user.firstName, user.middleName, user.lastName)} - {user.email}
+												{convertToFullName(
+													user.firstName,
+													user.middleName,
+													user.lastName,
+												)} - {user.email}
 											{/if}
 										{/each}
 									{:else}
@@ -104,16 +116,27 @@
 								<Select.Content>
 									{#each data.users as user}
 										<Select.Item value={user.id}>
-											{convertToFullName(user.firstName, user.middleName, user.lastName)} - {user.email}
+											{convertToFullName(
+												user.firstName,
+												user.middleName,
+												user.lastName,
+											)} - {user.email}
 										</Select.Item>
 									{/each}
 								</Select.Content>
 							</Select.Root>
-							<input type="hidden" name="userId" bind:value={$createFormData.userId} />
+							<input
+								type="hidden"
+								name="userId"
+								bind:value={$createFormData.userId}
+							/>
 						</div>
 						<div class="space-y-2">
 							<Label for="class">Class</Label>
-							<Select.Root type="single" bind:value={$createFormData.subjectOfferingClassId}>
+							<Select.Root
+								type="single"
+								bind:value={$createFormData.subjectOfferingClassId}
+							>
 								<Select.Trigger class="w-full">
 									{#if $createFormData.subjectOfferingClassId}
 										{#each data.subjectOfferingClasses as subjectClass}
@@ -140,7 +163,11 @@
 							/>
 						</div>
 						<div class="flex justify-end gap-2">
-							<Button type="button" variant="outline" onclick={() => (createDialogOpen = false)}>
+							<Button
+								type="button"
+								variant="outline"
+								onclick={() => (createDialogOpen = false)}
+							>
 								Cancel
 							</Button>
 							<Button type="submit">Create Allocation</Button>
@@ -171,7 +198,7 @@
 										{convertToFullName(
 											allocation.user.firstName,
 											allocation.user.middleName,
-											allocation.user.lastName
+											allocation.user.lastName,
 										)}
 									</div>
 									<div class="text-muted-foreground text-sm">
@@ -190,13 +217,16 @@
 							</Table.Cell>
 							<Table.Cell class="text-right">
 								<Button size="sm" variant="destructive" disabled>
-									<Trash2Icon />
+									<ArchiveIcon />
 								</Button>
 							</Table.Cell>
 						</Table.Row>
 					{:else}
 						<Table.Row>
-							<Table.Cell colspan={5} class="text-center py-8 text-muted-foreground">
+							<Table.Cell
+								colspan={5}
+								class="text-center py-8 text-muted-foreground"
+							>
 								No allocations found
 							</Table.Cell>
 						</Table.Row>

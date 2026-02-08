@@ -18,13 +18,14 @@
 
 	let dialogOpen = $state(false);
 
-	const form = superForm(data.createTimetableForm, {
+	const dataForm = () => data.createTimetableForm;
+	const form = superForm(dataForm(), {
 		validators: zod4(createTimetableSchema),
 		onUpdated: ({ form }) => {
 			if (form.valid) {
 				dialogOpen = false;
 			}
-		}
+		},
 	});
 
 	const { form: formData, enhance, constraints } = form;
@@ -33,24 +34,18 @@
 	const filteredSemesters = $derived(() => {
 		if (!$formData.schoolYear) return [];
 		return data.semesters
-			.filter((semester) => semester.schoolYear === $formData.schoolYear)
+			.filter((semester) => semester.year === $formData.schoolYear)
 			.map((semester) => ({
 				value: semester.id,
-				label: semester.name ?? 'Unnamed Semester'
+				label: `Semester ${semester.number}`,
 			}));
 	});
 </script>
 
 <div class="mb-6 flex items-center justify-between">
-	<div>
-		<h1 class="text-2xl font-bold">Timetabling</h1>
-		<p class="text-muted-foreground mt-1">
-			Welcome to eddi-Timetabling, your one-stop solution for managing your school timetables
-			efficiently.
-		</p>
-	</div>
+	<h1 class="text-2xl font-bold">Timetables</h1>
 	<Dialog.Root bind:open={dialogOpen}>
-		<Dialog.Trigger class={buttonVariants({ variant: 'outline' })}>
+		<Dialog.Trigger class={buttonVariants({ variant: 'default' })}>
 			<PlusIcon />
 			Create New</Dialog.Trigger
 		>
@@ -64,7 +59,11 @@
 						<Form.Control>
 							{#snippet children({ props })}
 								<Form.Label>Name</Form.Label>
-								<Input {...props} bind:value={$formData.name} placeholder="Term 1" />
+								<Input
+									{...props}
+									bind:value={$formData.name}
+									placeholder="Term 1"
+								/>
 							{/snippet}
 						</Form.Control>
 						<Form.FieldErrors />
@@ -111,7 +110,11 @@
 					{/if}
 				</div>
 				<Dialog.Footer>
-					<Button type="button" variant="outline" onclick={() => (dialogOpen = false)}>
+					<Button
+						type="button"
+						variant="outline"
+						onclick={() => (dialogOpen = false)}
+					>
 						Cancel
 					</Button>
 					<Button type="submit" class="gap-2">
@@ -130,7 +133,7 @@
 			<CalendarIcon class="text-muted-foreground mx-auto mb-4 h-12 w-12" />
 			<Card.Title class="mb-2 text-lg">No timetables yet</Card.Title>
 			<Card.Description class="mb-4">
-				Get started by creating your first timetable for your school.
+				Get started by creating a timetable with the button above.
 			</Card.Description>
 		</Card.Content>
 	</Card.Root>
@@ -141,20 +144,24 @@
 				<Card.Root>
 					<Card.Header class="flex items-center justify-between">
 						<div class="flex items-center gap-4">
-							<div class="bg-primary/10 flex h-12 w-12 items-center justify-center rounded-lg">
+							<div
+								class="bg-primary/10 flex h-12 w-12 items-center justify-center rounded-lg"
+							>
 								<CalendarIcon class="text-primary h-6 w-6" />
 							</div>
 							<div class="flex flex-col">
-								<Card.Title class="text-lg font-semibold">{ttAndSem.tt.name}</Card.Title>
+								<Card.Title class="text-lg font-semibold"
+									>{ttAndSem.tt.name}</Card.Title
+								>
 								<div class="mt-1 flex items-center gap-2">
-									<Badge variant="secondary" class="text-xs">
-										{ttAndSem.tt.schoolYear}
+									<Badge>
+										{ttAndSem.tt.year}
 									</Badge>
-									<Badge variant="secondary" class="text-xs">
-										{ttAndSem.sch_sem.name}
+									<Badge variant="secondary">
+										Semester {ttAndSem.sch_sem.number}
 									</Badge>
 									{#if ttAndSem.tt.isArchived}
-										<Badge variant="outline" class="gap-1 text-xs">
+										<Badge variant="outline" class="gap-1">
 											<ArchiveIcon class="h-3 w-3" />
 											Archived
 										</Badge>
@@ -169,4 +176,6 @@
 	</div>
 {/if}
 
-<div class="text-muted-foreground mt-8 border-t pt-4 text-center text-sm">Powered by FET</div>
+<div class="text-muted-foreground mt-8 border-t pt-4 text-center text-sm">
+	Powered by FET
+</div>

@@ -1,9 +1,16 @@
 import { userTypeEnum } from '$lib/enums'
-import { getWhiteboardWithTask, toggleWhiteboardLock } from '$lib/server/db/service'
+import {
+	getWhiteboardWithTask,
+	toggleWhiteboardLock,
+} from '$lib/server/db/service'
 import { error, fail } from '@sveltejs/kit'
 import type { Actions } from './$types'
 
-export const load = async ({ params }: { params: { whiteboardId: string; taskId: string } }) => {
+export const load = async ({
+	params,
+}: {
+	params: { whiteboardId: string; taskId: string }
+}) => {
 	const whiteboardId = parseInt(params.whiteboardId, 10)
 	const taskId = parseInt(params.taskId, 10)
 
@@ -39,15 +46,10 @@ export const actions = {
 		try {
 			const updatedWhiteboard = await toggleWhiteboardLock(whiteboardId)
 
-			return {
-				type: 'success',
-				data: {
-					isLocked: updatedWhiteboard.isLocked
-				}
-			}
+			return { type: 'success', data: { isLocked: updatedWhiteboard.isLocked } }
 		} catch (err) {
 			console.error('Error toggling whiteboard lock:', err)
 			return fail(500, { error: 'Failed to toggle whiteboard lock' })
 		}
-	}
+	},
 } satisfies Actions

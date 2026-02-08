@@ -28,16 +28,15 @@
 					editorBox = { current: editorBox!.current };
 				},
 				onUpdate: ({ editor }) => {
-					onConfigUpdate({
-						html: editor.getHTML()
-					});
+					onConfigUpdate({ html: editor.getHTML() });
 				},
 				editorProps: {
 					attributes: {
-						class: 'p-6 prose dark:prose-invert focus:outline-none min-h-32 max-w-none break-words'
-					}
-				}
-			})
+						class:
+							'p-6 prose dark:prose-invert focus:outline-none min-h-32 max-w-none break-words',
+					},
+				},
+			}),
 		};
 	});
 
@@ -74,26 +73,32 @@
 				<ItalicIcon />
 			</Button>
 			<Button
-				onclick={() => editorBox?.current.chain().focus().toggleCodeBlock().run()}
+				onclick={() =>
+					editorBox?.current.chain().focus().toggleCodeBlock().run()}
 				variant={editorBox.current.isActive('codeBlock') ? 'default' : 'ghost'}
 			>
 				<CodeIcon />
 			</Button>
 			<Button
-				onclick={() => editorBox?.current.chain().focus().toggleBlockquote().run()}
+				onclick={() =>
+					editorBox?.current.chain().focus().toggleBlockquote().run()}
 				variant={editorBox.current.isActive('blockquote') ? 'default' : 'ghost'}
 			>
 				<QuoteIcon />
 			</Button>
 			<Button
-				onclick={() => editorBox?.current.chain().focus().toggleBulletList().run()}
+				onclick={() =>
+					editorBox?.current.chain().focus().toggleBulletList().run()}
 				variant={editorBox.current.isActive('bulletList') ? 'default' : 'ghost'}
 			>
 				<ListIcon />
 			</Button>
 			<Button
-				onclick={() => editorBox?.current.chain().focus().toggleOrderedList().run()}
-				variant={editorBox.current.isActive('orderedList') ? 'default' : 'ghost'}
+				onclick={() =>
+					editorBox?.current.chain().focus().toggleOrderedList().run()}
+				variant={editorBox.current.isActive('orderedList')
+					? 'default'
+					: 'ghost'}
 			>
 				<ListOrderedIcon />
 			</Button>

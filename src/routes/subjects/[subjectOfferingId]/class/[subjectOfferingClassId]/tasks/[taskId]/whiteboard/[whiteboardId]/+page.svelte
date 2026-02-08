@@ -12,7 +12,7 @@
 		DEFAULT_SHAPE_OPTIONS,
 		DEFAULT_TEXT_OPTIONS,
 		IMAGE_THROTTLE_MS,
-		ZOOM_LIMITS
+		ZOOM_LIMITS,
 	} from '$lib/components/whiteboard/constants';
 	import type { ToolState } from '$lib/components/whiteboard/tools';
 	import type {
@@ -20,7 +20,7 @@
 		LineOptions,
 		ShapeOptions,
 		TextOptions,
-		WhiteboardTool
+		WhiteboardTool,
 	} from '$lib/components/whiteboard/types';
 	import { hexToRgba } from '$lib/components/whiteboard/utils';
 	import WhiteboardZoomControls from '$lib/components/whiteboard/whiteboard-controls.svelte';
@@ -105,7 +105,10 @@
 	// Flag to track if clear all is happening (to batch deletions)
 	let isClearingCanvas = false;
 	// Batch storage for clear all deletions
-	let clearAllDeletedObjects: Array<{ id: string; data: Record<string, unknown> }> = [];
+	let clearAllDeletedObjects: Array<{
+		id: string;
+		data: Record<string, unknown>;
+	}> = [];
 
 	// Helper function to mark objects as remotely modified (prevents history recording)
 	const markRemoteModification = (objectId: string) => {
@@ -122,7 +125,8 @@
 	let currentDrawOptions = $state<DrawOptions>({ ...DEFAULT_DRAW_OPTIONS });
 	let currentLineOptions = $state<LineOptions>({ ...DEFAULT_LINE_OPTIONS });
 
-	const { whiteboardId, taskId, subjectOfferingId, subjectOfferingClassId } = $derived(page.params);
+	const { whiteboardId, taskId, subjectOfferingId, subjectOfferingClassId } =
+		$derived(page.params);
 	const whiteboardIdNum = $derived(parseInt(whiteboardId ?? '0'));
 
 	// Throttling mechanism for image updates only
@@ -138,17 +142,17 @@
 	};
 
 	// Throttled update function specifically for image movements
-	const sendImageUpdate = (objectId: string, objectData: any, immediate = false) => {
+	const sendImageUpdate = (
+		objectId: string,
+		objectData: any,
+		immediate = false,
+	) => {
 		// Store the latest state for this image
 		imageUpdateQueue.set(objectId, objectData);
 
 		if (immediate) {
 			// Send immediately for final positions (persist to database)
-			sendCanvasUpdate({
-				type: 'modify',
-				object: objectData,
-				live: false
-			});
+			sendCanvasUpdate({ type: 'modify', object: objectData, live: false });
 			imageUpdateQueue.delete(objectId);
 			return;
 		}
@@ -170,14 +174,10 @@
 					scaleX: objData.scaleX,
 					scaleY: objData.scaleY,
 					angle: objData.angle,
-					opacity: objData.opacity
+					opacity: objData.opacity,
 				};
 
-				sendCanvasUpdate({
-					type: 'modify',
-					object: updateData,
-					live: true
-				});
+				sendCanvasUpdate({ type: 'modify', object: updateData, live: true });
 			});
 			imageUpdateQueue.clear();
 			imageThrottleTimeout = null;
@@ -196,7 +196,7 @@
 		hoveredObjectsForDeletion,
 		originalOpacities,
 		tempShape,
-		tempText
+		tempText,
 	});
 
 	// Helper to apply tool state updates
@@ -239,7 +239,7 @@
 			state,
 			clearEraserState,
 			clearShapeDrawingState,
-			clearTextDrawingState
+			clearTextDrawingState,
 		);
 		applyToolState(state);
 	};
@@ -251,7 +251,7 @@
 			state,
 			clearEraserState,
 			clearShapeDrawingState,
-			clearTextDrawingState
+			clearTextDrawingState,
 		);
 		applyToolState(state);
 	};
@@ -263,7 +263,7 @@
 			state,
 			clearEraserState,
 			clearShapeDrawingState,
-			clearTextDrawingState
+			clearTextDrawingState,
 		);
 		applyToolState(state);
 	};
@@ -275,7 +275,7 @@
 			state,
 			clearShapeDrawingState,
 			clearTextDrawingState,
-			clearEraserState
+			clearEraserState,
 		);
 		applyToolState(state);
 	};
@@ -287,7 +287,7 @@
 			state,
 			clearEraserState,
 			clearShapeDrawingState,
-			clearTextDrawingState
+			clearTextDrawingState,
 		);
 		applyToolState(state);
 	};
@@ -311,7 +311,7 @@
 			state,
 			clearEraserState,
 			clearShapeDrawingState,
-			clearTextDrawingState
+			clearTextDrawingState,
 		);
 		applyToolState(state);
 		// Trigger the file input
@@ -341,10 +341,10 @@
 						strokeColour: '#1E1E1E',
 						fillColour: 'transparent',
 						strokeDashArray: [],
-						opacity: img.opacity || 1
+						opacity: img.opacity || 1,
 					});
 				}, 100); // Small delay to ensure selection:created runs first
-			}
+			},
 		});
 	};
 
@@ -363,7 +363,7 @@
 					canUndo = history.canUndo();
 					canRedo = history.canRedo();
 				}
-			}
+			},
 		});
 	};
 
@@ -374,9 +374,13 @@
 
 	const zoomIn = () => {
 		if (!canvas) return;
-		CanvasActions.zoomIn({ canvas, sendCanvasUpdate, controlPointManager }, ZOOM_LIMITS, (zoom) => {
-			currentZoom = zoom;
-		});
+		CanvasActions.zoomIn(
+			{ canvas, sendCanvasUpdate, controlPointManager },
+			ZOOM_LIMITS,
+			(zoom) => {
+				currentZoom = zoom;
+			},
+		);
 	};
 
 	const zoomOut = () => {
@@ -386,15 +390,18 @@
 			ZOOM_LIMITS,
 			(zoom) => {
 				currentZoom = zoom;
-			}
+			},
 		);
 	};
 
 	const resetZoom = () => {
 		if (!canvas) return;
-		CanvasActions.resetZoom({ canvas, sendCanvasUpdate, controlPointManager }, (zoom) => {
-			currentZoom = zoom;
-		});
+		CanvasActions.resetZoom(
+			{ canvas, sendCanvasUpdate, controlPointManager },
+			(zoom) => {
+				currentZoom = zoom;
+			},
+		);
 	};
 
 	const recenterView = () => {
@@ -405,7 +412,9 @@
 	};
 
 	const goBack = () => {
-		goto(`/subjects/${subjectOfferingId}/class/${subjectOfferingClassId}/tasks/${taskId}`);
+		goto(
+			`/subjects/${subjectOfferingId}/class/${subjectOfferingClassId}/tasks/${taskId}`,
+		);
 	};
 
 	// Apply lock state to canvas
@@ -454,7 +463,7 @@
 				fontWeight: options.fontWeight,
 				fill: options.colour,
 				textAlign: options.textAlign,
-				opacity: options.opacity
+				opacity: options.opacity,
 			});
 
 			// Recalculate textbox dimensions to fit the text with new font size
@@ -463,7 +472,10 @@
 
 			// Update control points if they exist
 			if (controlPointManager) {
-				controlPointManager.updateControlPoints((activeObject as any).id, activeObject);
+				controlPointManager.updateControlPoints(
+					(activeObject as any).id,
+					activeObject,
+				);
 			}
 
 			canvas.renderAll();
@@ -472,15 +484,17 @@
 
 			// Record history for option change (only if not loading)
 			if (!isLoadingFromServer && !isApplyingHistory) {
-				history.recordModify((activeObject as any).id, previousData, objData, data.user.id);
+				history.recordModify(
+					(activeObject as any).id,
+					previousData,
+					objData,
+					data.user.id,
+				);
 				canUndo = history.canUndo();
 				canRedo = history.canRedo();
 			}
 
-			sendCanvasUpdate({
-				type: 'modify',
-				object: objData
-			});
+			sendCanvasUpdate({ type: 'modify', object: objData });
 		}
 	};
 	const handleShapeOptionsChange = (options: any) => {
@@ -494,7 +508,9 @@
 		if (activeObject && controlPointManager?.isControlPoint(activeObject)) {
 			const linkedObjectId = (activeObject as any).linkedObjectId;
 			if (linkedObjectId) {
-				const linkedObj = canvas.getObjects().find((o: any) => o.id === linkedObjectId);
+				const linkedObj = canvas
+					.getObjects()
+					.find((o: any) => o.id === linkedObjectId);
 				if (linkedObj) {
 					activeObject = linkedObj;
 				}
@@ -515,9 +531,7 @@
 
 			// For images, only apply opacity (other properties don't make sense for images)
 			if (activeObject.type === 'image') {
-				activeObject.set({
-					opacity: options.opacity
-				});
+				activeObject.set({ opacity: options.opacity });
 			} else {
 				// Get the center point before changing stroke width
 				const centerBefore = activeObject.getCenterPoint();
@@ -526,10 +540,13 @@
 				activeObject.set({
 					strokeWidth: options.strokeWidth,
 					stroke: options.strokeColour,
-					fill: options.fillColour === 'transparent' ? 'transparent' : options.fillColour,
+					fill:
+						options.fillColour === 'transparent'
+							? 'transparent'
+							: options.fillColour,
 					strokeDashArray: options.strokeDashArray,
 					opacity: options.opacity,
-					strokeUniform: true // This makes stroke not scale with object
+					strokeUniform: true, // This makes stroke not scale with object
 				});
 
 				// Get the center point after changing stroke width
@@ -542,7 +559,7 @@
 				) {
 					activeObject.set({
 						left: activeObject.left! + (centerBefore.x - centerAfter.x),
-						top: activeObject.top! + (centerBefore.y - centerAfter.y)
+						top: activeObject.top! + (centerBefore.y - centerAfter.y),
 					});
 					activeObject.setCoords();
 				}
@@ -553,15 +570,17 @@
 
 			// Record history for option change (only if not loading)
 			if (!isLoadingFromServer && !isApplyingHistory) {
-				history.recordModify((activeObject as any).id, previousData, objData, data.user.id);
+				history.recordModify(
+					(activeObject as any).id,
+					previousData,
+					objData,
+					data.user.id,
+				);
 				canUndo = history.canUndo();
 				canRedo = history.canRedo();
 			}
 
-			sendCanvasUpdate({
-				type: 'modify',
-				object: objData
-			});
+			sendCanvasUpdate({ type: 'modify', object: objData });
 		}
 	};
 
@@ -581,7 +600,7 @@
 			activeObject.set({
 				strokeWidth: options.brushSize,
 				stroke: options.brushColour,
-				opacity: options.opacity
+				opacity: options.opacity,
 			});
 			canvas.renderAll();
 			const objData = activeObject.toObject();
@@ -589,15 +608,17 @@
 
 			// Record history for option change (only if not loading)
 			if (!isLoadingFromServer && !isApplyingHistory) {
-				history.recordModify((activeObject as any).id, previousData, objData, data.user.id);
+				history.recordModify(
+					(activeObject as any).id,
+					previousData,
+					objData,
+					data.user.id,
+				);
 				canUndo = history.canUndo();
 				canRedo = history.canRedo();
 			}
 
-			sendCanvasUpdate({
-				type: 'modify',
-				object: objData
-			});
+			sendCanvasUpdate({ type: 'modify', object: objData });
 		}
 
 		// Also update the brush for future drawing
@@ -634,7 +655,9 @@
 		if (activeObject && controlPointManager?.isControlPoint(activeObject)) {
 			const linkedObjectId = (activeObject as any).linkedObjectId;
 			if (linkedObjectId) {
-				const linkedObj = canvas.getObjects().find((o: any) => o.id === linkedObjectId);
+				const linkedObj = canvas
+					.getObjects()
+					.find((o: any) => o.id === linkedObjectId);
 				if (linkedObj) {
 					activeObject = linkedObj;
 				}
@@ -662,7 +685,7 @@
 					stroke: options.strokeColour,
 					strokeDashArray: options.strokeDashArray,
 					opacity: options.opacity,
-					strokeUniform: true // This makes stroke not scale with object
+					strokeUniform: true, // This makes stroke not scale with object
 				});
 
 				// Get the center point after changing stroke width
@@ -675,14 +698,17 @@
 				) {
 					activeObject.set({
 						left: activeObject.left! + (centerBefore.x - centerAfter.x),
-						top: activeObject.top! + (centerBefore.y - centerAfter.y)
+						top: activeObject.top! + (centerBefore.y - centerAfter.y),
 					});
 					activeObject.setCoords();
 				}
 
 				// Update control points if they exist
 				if (controlPointManager) {
-					controlPointManager.updateControlPoints(activeObject.id, activeObject);
+					controlPointManager.updateControlPoints(
+						activeObject.id,
+						activeObject,
+					);
 				}
 			} else if (activeObject.type === 'group') {
 				// Handle arrow group - update all objects in the group
@@ -693,7 +719,7 @@
 							stroke: options.strokeColour,
 							strokeDashArray: options.strokeDashArray,
 							opacity: options.opacity,
-							strokeUniform: true
+							strokeUniform: true,
 						});
 					}
 				});
@@ -704,20 +730,26 @@
 
 			// Record history for option change (only if not loading)
 			if (!isLoadingFromServer && !isApplyingHistory) {
-				history.recordModify((activeObject as any).id, previousData, objData, data.user.id);
+				history.recordModify(
+					(activeObject as any).id,
+					previousData,
+					objData,
+					data.user.id,
+				);
 				canUndo = history.canUndo();
 				canRedo = history.canRedo();
 			}
 
-			sendCanvasUpdate({
-				type: 'modify',
-				object: objData
-			});
+			sendCanvasUpdate({ type: 'modify', object: objData });
 		}
 	};
 
 	// Layering handlers with history tracking
-	const layerChangeCallback = (objectId: string, previousIndex: number, newIndex: number) => {
+	const layerChangeCallback = (
+		objectId: string,
+		previousIndex: number,
+		newIndex: number,
+	) => {
 		if (!history || !data.user?.id) return;
 		if (previousIndex !== newIndex) {
 			history.recordLayer(objectId, previousIndex, newIndex, data.user.id);
@@ -732,7 +764,7 @@
 			canvas,
 			sendCanvasUpdate,
 			controlPointManager,
-			onLayerChange: layerChangeCallback
+			onLayerChange: layerChangeCallback,
 		});
 	};
 
@@ -742,7 +774,7 @@
 			canvas,
 			sendCanvasUpdate,
 			controlPointManager,
-			onLayerChange: layerChangeCallback
+			onLayerChange: layerChangeCallback,
 		});
 	};
 
@@ -752,7 +784,7 @@
 			canvas,
 			sendCanvasUpdate,
 			controlPointManager,
-			onLayerChange: layerChangeCallback
+			onLayerChange: layerChangeCallback,
 		});
 	};
 
@@ -762,7 +794,7 @@
 			canvas,
 			sendCanvasUpdate,
 			controlPointManager,
-			onLayerChange: layerChangeCallback
+			onLayerChange: layerChangeCallback,
 		});
 	};
 
@@ -798,7 +830,9 @@
 		if (result.success && result.imageId) {
 			// Remove old control points and create new ones for cropped size
 			if (controlPointManager) {
-				const image = canvas.getObjects().find((o: any) => o.id === result.imageId);
+				const image = canvas
+					.getObjects()
+					.find((o: any) => o.id === result.imageId);
 				if (image) {
 					controlPointManager.removeControlPoints(result.imageId);
 					controlPointManager.addControlPoints(result.imageId, image, true);
@@ -809,10 +843,7 @@
 			// Sync crop to other users
 			sendCanvasUpdate({
 				type: 'modify',
-				object: {
-					id: result.imageId,
-					...result.cropData
-				}
+				object: { id: result.imageId, ...result.cropData },
 			});
 		}
 		canvas.renderAll();
@@ -881,7 +912,8 @@
 
 		// Check if currently editing text
 		const activeObject = canvas.getActiveObject();
-		const isEditingText = activeObject?.isType('textbox') && (activeObject as any).isEditing;
+		const isEditingText =
+			activeObject?.isType('textbox') && (activeObject as any).isEditing;
 
 		// Escape key switches to select mode
 		if (event.key === 'Escape') {
@@ -916,7 +948,7 @@
 				canUndo = history?.canUndo() || false;
 				canRedo = history?.canRedo() || false;
 			},
-			mousePosition: lastMousePosition
+			mousePosition: lastMousePosition,
 		};
 
 		// Ctrl/Cmd + Z - Undo
@@ -1058,16 +1090,20 @@
 			fabric = await import('fabric');
 			CanvasActions = await import('$lib/components/whiteboard/canvas-actions');
 			CanvasEvents = await import('$lib/components/whiteboard/canvas-events');
-			const HistoryModule = await import('$lib/components/whiteboard/canvas-history');
+			const HistoryModule =
+				await import('$lib/components/whiteboard/canvas-history');
 			CanvasHistory = HistoryModule.CanvasHistory;
 			applyRedo = HistoryModule.applyRedo;
 			applyUndo = HistoryModule.applyUndo;
 			Tools = await import('$lib/components/whiteboard/tools');
-			WebSocketHandler = await import('$lib/components/whiteboard/websocket-socketio');
-			const ControlPointsModule = await import('$lib/components/whiteboard/control-points');
+			WebSocketHandler =
+				await import('$lib/components/whiteboard/websocket-socketio');
+			const ControlPointsModule =
+				await import('$lib/components/whiteboard/control-points');
 			ControlPointManager = ControlPointsModule.ControlPointManager;
 			CropOverlayClass = ControlPointsModule.CropOverlay;
-			KeyboardShortcuts = await import('$lib/components/whiteboard/keyboard-shortcuts');
+			KeyboardShortcuts =
+				await import('$lib/components/whiteboard/keyboard-shortcuts');
 
 			// Initialize history
 			history = new CanvasHistory();
@@ -1085,12 +1121,14 @@
 			canvas = new fabric.Canvas(whiteboardCanvas, {
 				preserveObjectStacking: true,
 				perPixelTargetFind: true,
-				targetFindTolerance: 5
+				targetFindTolerance: 5,
 			});
 
 			resizeCanvas = () => {
 				if (!whiteboardCanvas || !canvas) return;
-				const whiteContainer = whiteboardCanvas.closest('.rounded-lg.border-2.bg-white');
+				const whiteContainer = whiteboardCanvas.closest(
+					'.rounded-lg.border-2.bg-white',
+				);
 				if (whiteContainer) {
 					const rect = whiteContainer.getBoundingClientRect();
 					const width = rect.width - 4;
@@ -1099,10 +1137,7 @@
 					whiteboardCanvas.width = width;
 					whiteboardCanvas.height = height;
 
-					canvas.setDimensions({
-						width: width,
-						height: height
-					});
+					canvas.setDimensions({ width: width, height: height });
 					canvas.renderAll();
 				}
 			};
@@ -1129,12 +1164,18 @@
 					onLoadStart: () => {
 						// Set flag to prevent history recording during load
 						isLoadingFromServer = true;
-						console.log('Loading objects from server - history recording disabled');
+						console.log(
+							'Loading objects from server - history recording disabled',
+						);
 					},
 					onLoadEnd: (objects) => {
 						// Reset flag after load completes
 						isLoadingFromServer = false;
-						console.log('Finished loading', objects.length, 'objects - history recording enabled');
+						console.log(
+							'Finished loading',
+							objects.length,
+							'objects - history recording enabled',
+						);
 					},
 					onRemoteActionStart: () => {
 						// Set flag to prevent history recording during remote actions from other users
@@ -1143,8 +1184,8 @@
 					onRemoteActionEnd: () => {
 						// Reset flag after remote action completes
 						isLoadingFromServer = false;
-					}
-				}
+					},
+				},
 			);
 
 			// Expose socket on sendCanvasUpdate for access by event handlers (after socket is created)
@@ -1267,7 +1308,7 @@
 
 				// Eraser batch delete callback
 				onEraserComplete: (
-					deletedObjects: Array<{ id: string; data: Record<string, unknown> }>
+					deletedObjects: Array<{ id: string; data: Record<string, unknown> }>,
 				) => {
 					if (!history || !data.user?.id || deletedObjects.length === 0) return;
 					// Mark all deleted object IDs so object:removed doesn't double-record them
@@ -1278,7 +1319,9 @@
 					canRedo = history.canRedo();
 					// Clear after a short delay
 					setTimeout(() => {
-						deletedObjects.forEach((obj) => eraserDeletedObjectIds.delete(obj.id));
+						deletedObjects.forEach((obj) =>
+							eraserDeletedObjectIds.delete(obj.id),
+						);
 					}, 100);
 				},
 
@@ -1286,7 +1329,7 @@
 				floatingMenuRef: floatingMenuRef || undefined,
 
 				// Control point manager
-				controlPointManager
+				controlPointManager,
 			};
 
 			CanvasEvents.setupCanvasEvents(canvas, canvasEventContext);
@@ -1311,7 +1354,10 @@
 				}
 
 				// Skip edge lines (bounding box lines for control points) - they are client-side only
-				if ((e.target as any).linkedObjectId && e.target.id?.includes('-edge-')) {
+				if (
+					(e.target as any).linkedObjectId &&
+					e.target.id?.includes('-edge-')
+				) {
 					return;
 				}
 
@@ -1351,7 +1397,8 @@
 			// Track object modifications (store previous state before modification)
 			const objectStates = new Map<string, Record<string, unknown>>();
 			canvas.on('object:modified', (e: any) => {
-				if (isApplyingHistory || isLoadingFromServer || !e.target || !history) return;
+				if (isApplyingHistory || isLoadingFromServer || !e.target || !history)
+					return;
 				const objectId = e.target.id;
 				if (objectId && data.user?.id) {
 					const previousData = objectStates.get(objectId);
@@ -1377,7 +1424,9 @@
 					// Capture the linked object's state before modification
 					const linkedObjectId = (e.target as any).linkedObjectId;
 					if (linkedObjectId && !objectStates.has(linkedObjectId)) {
-						const linkedObj = canvas.getObjects().find((o: any) => o.id === linkedObjectId);
+						const linkedObj = canvas
+							.getObjects()
+							.find((o: any) => o.id === linkedObjectId);
 						if (linkedObj) {
 							const state = linkedObj.toObject();
 							state.id = linkedObjectId;
@@ -1423,7 +1472,11 @@
 				if (cropOverlay && e.target && cropOverlay.isCropHandle(e.target)) {
 					const handleIndex = cropOverlay.getHandleIndex(e.target);
 					if (handleIndex >= 0) {
-						cropOverlay.updateFromHandle(handleIndex, e.target.left, e.target.top);
+						cropOverlay.updateFromHandle(
+							handleIndex,
+							e.target.left,
+							e.target.top,
+						);
 					}
 				}
 			});
@@ -1440,11 +1493,18 @@
 						const linkedObjectId = (e.target as any).linkedObjectId;
 						if (linkedObjectId) {
 							const previousData = objectStates.get(linkedObjectId);
-							const linkedObj = canvas.getObjects().find((o: any) => o.id === linkedObjectId);
+							const linkedObj = canvas
+								.getObjects()
+								.find((o: any) => o.id === linkedObjectId);
 							if (linkedObj && previousData) {
 								const newData = linkedObj.toObject();
 								newData.id = linkedObjectId;
-								history.recordModify(linkedObjectId, previousData, newData, data.user.id);
+								history.recordModify(
+									linkedObjectId,
+									previousData,
+									newData,
+									data.user.id,
+								);
 								objectStates.delete(linkedObjectId);
 								canUndo = history.canUndo();
 								canRedo = history.canRedo();
@@ -1456,7 +1516,8 @@
 
 			// Track finalized objects (shapes/lines that were being drawn and are now complete)
 			canvas.on('object:finalized', (e: any) => {
-				if (isApplyingHistory || isLoadingFromServer || !e.target || !history) return;
+				if (isApplyingHistory || isLoadingFromServer || !e.target || !history)
+					return;
 				// Skip control points
 				if (controlPointManager.isControlPoint(e.target)) return;
 				const objectId = e.target.id;
@@ -1491,7 +1552,8 @@
 				// Skip control points - they are client-side only
 				if (controlPointManager.isControlPoint(e.target)) return;
 				// Skip edge lines (bounding box lines for control points) - they are client-side only
-				if ((e.target as any).linkedObjectId && e.target.id?.includes('-edge-')) return;
+				if ((e.target as any).linkedObjectId && e.target.id?.includes('-edge-'))
+					return;
 				// Skip objects marked as excludeFromExport (like edge lines) - they are client-side only
 				if ((e.target as any).excludeFromExport === true) return;
 				// Skip temporary objects (selectable: false) - these are being removed during drawing
@@ -1557,7 +1619,10 @@
 
 					if (whiteboardCanvas) {
 						const rect = whiteboardCanvas.getBoundingClientRect();
-						const point = new fabric.Point(centerX - rect.left, centerY - rect.top);
+						const point = new fabric.Point(
+							centerX - rect.left,
+							centerY - rect.top,
+						);
 						canvas.zoomToPoint(point, constrainedZoom);
 						currentZoom = constrainedZoom; // Update zoom state
 
@@ -1666,14 +1731,16 @@
 							try {
 								const res = await fetch(e.currentTarget.action, {
 									method: 'POST',
-									body: formData
+									body: formData,
 								});
 								const result = await res.json();
 
 								// Handle SvelteKit's devalue serialization format
 								if (result.type === 'success' && result.data) {
 									let actionData =
-										typeof result.data === 'string' ? JSON.parse(result.data) : result.data;
+										typeof result.data === 'string'
+											? JSON.parse(result.data)
+											: result.data;
 
 									// If actionData is an array (devalue format), reconstruct the object
 									if (Array.isArray(actionData)) {
@@ -1682,13 +1749,16 @@
 										const reconstructed = {
 											type: actionData[1], // "success"
 											data: {
-												isLocked: actionData[3] // the actual boolean value
-											}
+												isLocked: actionData[3], // the actual boolean value
+											},
 										};
 										actionData = reconstructed;
 									}
 
-									if (actionData.type === 'success' && actionData.data?.isLocked !== undefined) {
+									if (
+										actionData.type === 'success' &&
+										actionData.data?.isLocked !== undefined
+									) {
 										const newLockState = actionData.data.isLocked;
 										isLocked = newLockState;
 										applyCanvasLockState(newLockState);
@@ -1697,11 +1767,12 @@
 										if (toast) {
 											if (newLockState) {
 												toast.success('Whiteboard locked', {
-													description: 'Students can now only view and pan the whiteboard'
+													description:
+														'Students can now only view and pan the whiteboard',
 												});
 											} else {
 												toast.success('Whiteboard unlocked', {
-													description: 'Students can now edit the whiteboard'
+													description: 'Students can now edit the whiteboard',
 												});
 											}
 										}
@@ -1710,7 +1781,7 @@
 											const lockMessage = newLockState ? 'lock' : 'unlock';
 											socket.emit(lockMessage, {
 												isLocked: newLockState,
-												whiteboardId: whiteboardIdNum
+												whiteboardId: whiteboardIdNum,
 											});
 										}
 									}
@@ -1732,9 +1803,14 @@
 									stroke-width="2"
 									stroke-linecap="round"
 									stroke-linejoin="round"
-									><rect width="18" height="11" x="3" y="11" rx="2" ry="2" /><path
-										d="M7 11V7a5 5 0 0 1 10 0v4"
-									/></svg
+									><rect
+										width="18"
+										height="11"
+										x="3"
+										y="11"
+										rx="2"
+										ry="2"
+									/><path d="M7 11V7a5 5 0 0 1 10 0v4" /></svg
 								>
 							{:else}
 								<svg
@@ -1747,9 +1823,14 @@
 									stroke-width="2"
 									stroke-linecap="round"
 									stroke-linejoin="round"
-									><rect width="18" height="11" x="3" y="11" rx="2" ry="2" /><path
-										d="M7 11V7a5 5 0 0 1 9.9-1"
-									/></svg
+									><rect
+										width="18"
+										height="11"
+										x="3"
+										y="11"
+										rx="2"
+										ry="2"
+									/><path d="M7 11V7a5 5 0 0 1 9.9-1" /></svg
 								>
 							{/if}
 						</Button>
@@ -1759,10 +1840,17 @@
 		</header>
 
 		<!-- Whiteboard Canvas -->
-		<main class="relative flex flex-1 items-center justify-center overflow-hidden p-4">
+		<main
+			class="relative flex flex-1 items-center justify-center overflow-hidden p-4"
+		>
 			{#if isLocked && !isTeacher}
-				<div class="absolute top-8 left-1/2 z-50 w-auto max-w-2xl -translate-x-1/2">
-					<Alert.Root variant="default" class="border-border/50 bg-background/20 backdrop-blur-sm">
+				<div
+					class="absolute top-8 left-1/2 z-50 w-auto max-w-2xl -translate-x-1/2"
+				>
+					<Alert.Root
+						variant="default"
+						class="border-border/50 bg-background/20 backdrop-blur-sm"
+					>
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
 							width="16"
@@ -1780,7 +1868,8 @@
 						</svg>
 						<Alert.Title>View Only Mode</Alert.Title>
 						<Alert.Description>
-							This whiteboard is locked by your teacher. You can pan and zoom to view content.
+							This whiteboard is locked by your teacher. You can pan and zoom to
+							view content.
 						</Alert.Description>
 					</Alert.Root>
 				</div>
@@ -1803,7 +1892,9 @@
 				/>
 			{/if}
 
-			<div class="flex h-full w-full rounded-lg border-2 bg-white shadow-lg dark:bg-neutral-700">
+			<div
+				class="flex h-full w-full rounded-lg border-2 bg-white shadow-lg dark:bg-neutral-700"
+			>
 				<canvas bind:this={whiteboardCanvas} class="h-full w-full"></canvas>
 			</div>
 

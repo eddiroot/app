@@ -1,0 +1,3 @@
+npm run db:diagram
+npm run format
+npm run check

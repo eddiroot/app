@@ -1,227 +1,83 @@
-import { schoolSpaceTypeEnum, yearLevelEnum } from '$lib/enums';
-import { getTermsByYear } from '$lib/server/vic-school-terms';
-import * as schema from '../../schema';
-import type { Database } from '../types';
-import { DEMO_YEAR_LEVELS, type DemoYearLevelIds } from './consts';
-import type { DemoSchoolData } from './types';
+import { schoolSpaceTypeEnum, yearLevelEnum } from '$lib/enums'
+import { eq } from 'drizzle-orm'
+import * as schema from '../../schema'
+import type { Database } from '../types'
+import type { DemoSchoolData } from './types'
 
-export async function seedDemoSchool(db: Database): Promise<DemoSchoolData> {
+export async function seedDemoSchool(
+	db: Database,
+	eddiSchool: schema.School,
+): Promise<DemoSchoolData> {
 	// Create school
 	const [school] = await db
 		.insert(schema.school)
-		.values({
-			name: 'Demo School',
-			countryCode: 'AU',
-			stateCode: 'VIC'
-		})
-		.returning();
+		.values({ name: 'Demo School', countryCode: 'AU', stateCode: 'VIC' })
+		.returning()
 
-	console.log(`Created Demo School (ID: ${school.id})`);
+	const eddiBehaviourLevels = await db
+		.select()
+		.from(schema.schoolBehaviourLevel)
+		.where(eq(schema.schoolBehaviourLevel.schoolId, eddiSchool.id))
 
-	// Create behaviour levels for the school
-	const [level1, level2, level3, level4, level5] = await db
-		.insert(schema.behaviourLevel)
-		.values([
-			{
+	for (const eddiLevel of eddiBehaviourLevels) {
+		const [demoBehaviourLevel] = await db
+			.insert(schema.schoolBehaviourLevel)
+			.values({
 				schoolId: school.id,
-				level: 1,
-				name: 'Minor Infringement'
-			},
-			{
-				schoolId: school.id,
-				level: 2,
-				name: 'Repeated Minor Infringement'
-			},
-			{
-				schoolId: school.id,
-				level: 3,
-				name: 'Continual Minor Infringement'
-			},
-			{
-				schoolId: school.id,
-				level: 4,
-				name: 'Serious Incident'
-			},
-			{
-				schoolId: school.id,
-				level: 5,
-				name: 'Very Serious Incident'
-			}
-		])
-		.returning();
+				level: eddiLevel.level,
+				name: eddiLevel.name,
+			})
+			.returning()
 
-	await db
-		.insert(schema.behaviour)
-		.values([
-			{
-				schoolId: school.id,
-				levelId: level1.id,
-				name: 'Out of uniform',
-				description: 'Student not wearing correct school uniform'
-			},
-			{
-				schoolId: school.id,
-				levelId: level1.id,
-				name: 'Late to class',
-				description: 'Student arrived late without valid reason'
-			},
-			{
-				schoolId: school.id,
-				levelId: level1.id,
-				name: 'Forgot materials',
-				description: 'Student came to class without required materials or equipment'
-			},
-			{
-				schoolId: school.id,
-				levelId: level1.id,
-				name: 'Talking out of turn',
-				description: 'Student speaking without permission during instruction'
-			},
-			{
-				schoolId: school.id,
-				levelId: level1.id,
-				name: 'Off-task behaviour',
-				description: 'Student not focused on assigned work'
-			},
-			{
-				schoolId: school.id,
-				levelId: level2.id,
-				name: 'Repeated lateness',
-				description: 'Student consistently arriving late to class'
-			},
-			{
-				schoolId: school.id,
-				levelId: level2.id,
-				name: 'Incomplete homework',
-				description: 'Student did not complete assigned homework'
-			},
-			{
-				schoolId: school.id,
-				levelId: level2.id,
-				name: 'Minor damage to property',
-				description: 'Student caused minor damage to school property'
-			},
-			{
-				schoolId: school.id,
-				levelId: level2.id,
-				name: 'Distracting other students',
-				description: 'Student disrupting the learning of others'
-			},
-			{
-				schoolId: school.id,
-				levelId: level3.id,
-				name: 'Hurtful teasing',
-				description: 'Student making hurtful comments to others'
-			},
-			{
-				schoolId: school.id,
-				levelId: level3.id,
-				name: 'Bullying (isolated)',
-				description: 'Isolated instance of bullying behaviour'
-			},
-			{
-				schoolId: school.id,
-				levelId: level3.id,
-				name: 'Safety violation',
-				description: 'Student not following safety requirements'
-			},
-			{
-				schoolId: school.id,
-				levelId: level3.id,
-				name: 'Defiance',
-				description: 'Student refusing to follow reasonable instructions'
-			},
-			{
-				schoolId: school.id,
-				levelId: level3.id,
-				name: 'Creating dangerous situation',
-				description: 'Student behaviour created a potentially dangerous situation'
-			},
-			{
-				schoolId: school.id,
-				levelId: level4.id,
-				name: 'Physical violence',
-				description: 'Student engaged in physical violence towards another person'
-			},
-			{
-				schoolId: school.id,
-				levelId: level4.id,
-				name: 'Aggressive behaviour',
-				description: 'Student displayed overly aggressive behaviour'
-			},
-			{
-				schoolId: school.id,
-				levelId: level4.id,
-				name: 'Theft',
-				description: 'Student stole property belonging to another person or the school'
-			},
-			{
-				schoolId: school.id,
-				levelId: level4.id,
-				name: 'Undermining authority',
-				description: 'Student behaviour undermined the authority of the teacher'
-			},
-			{
-				schoolId: school.id,
-				levelId: level4.id,
-				name: 'Offensive behaviour',
-				description: 'Behaviour clearly very offensive to others'
-			},
-			{
-				schoolId: school.id,
-				levelId: level5.id,
-				name: 'Excessive violence',
-				description: 'Student engaged in excessive physical violence'
-			},
-			{
-				schoolId: school.id,
-				levelId: level5.id,
-				name: 'Repeated theft',
-				description: 'Student engaged in premeditated or repeated theft'
-			},
-			{
-				schoolId: school.id,
-				levelId: level5.id,
-				name: 'Contempt for wellbeing',
-				description: 'Behaviour showing contempt for the wellbeing of others or the school'
-			}
-		])
-		.returning();
+		const eddiBehaviours = await db
+			.select()
+			.from(schema.schoolBehaviour)
+			.where(eq(schema.schoolBehaviour.levelId, eddiLevel.id))
 
-	console.log('  Created behaviours');
+		for (const eddiBehaviour of eddiBehaviours) {
+			await db
+				.insert(schema.schoolBehaviour)
+				.values({
+					schoolId: school.id,
+					levelId: demoBehaviourLevel.id,
+					name: eddiBehaviour.name,
+					description: eddiBehaviour.description,
+				})
+		}
+	}
 
 	// Create campus
 	const [campus] = await db
-		.insert(schema.campus)
+		.insert(schema.schoolCampus)
 		.values({
 			schoolId: school.id,
 			name: 'Main Campus',
 			address: '123 Education Street, Melbourne VIC 3000',
-			description: 'Primary campus of Demo School'
+			description: 'Primary campus of Demo School',
 		})
-		.returning();
-
-	console.log(`  Created campus: ${campus.name}`);
+		.returning()
 
 	// Create buildings
 	const [middleSchool, seniorSchool, gymnasium] = await db
 		.insert(schema.schoolBuilding)
 		.values([
 			{
-				campusId: campus.id,
+				schoolCampusId: campus.id,
 				name: 'Middle School Building',
-				description: 'All year 7-9 classrooms.'
+				description: 'All year 7-9 classrooms.',
 			},
 			{
-				campusId: campus.id,
+				schoolCampusId: campus.id,
 				name: 'Senior School Building',
-				description: 'All year 10-12 classrooms.'
+				description: 'All year 10-12 classrooms.',
 			},
-			{ campusId: campus.id, name: 'Gymnasium', description: 'Gymnasium and sporting facilities.' }
+			{
+				schoolCampusId: campus.id,
+				name: 'Gymnasium',
+				description: 'Gymnasium and sporting facilities.',
+			},
 		])
-		.returning();
-
-	console.log('  Created buildings: Middle School, Senior School, Gymnasium');
+		.returning()
 
 	// Create spaces
 	const spaces = await db
@@ -229,203 +85,195 @@ export async function seedDemoSchool(db: Database): Promise<DemoSchoolData> {
 		.values([
 			// Middle School
 			{
-				buildingId: middleSchool.id,
+				schoolBuildingId: middleSchool.id,
 				name: 'Science Lab ML.01',
 				type: schoolSpaceTypeEnum.laboratory,
-				capacity: 30
+				capacity: 30,
 			},
 			{
-				buildingId: middleSchool.id,
+				schoolBuildingId: middleSchool.id,
 				name: 'Science Lab ML.02',
 				type: schoolSpaceTypeEnum.laboratory,
-				capacity: 30
+				capacity: 30,
 			},
 			{
-				buildingId: middleSchool.id,
+				schoolBuildingId: middleSchool.id,
 				name: 'Classroom MC.01',
 				type: schoolSpaceTypeEnum.classroom,
-				capacity: 30
+				capacity: 30,
 			},
 			{
-				buildingId: middleSchool.id,
+				schoolBuildingId: middleSchool.id,
 				name: 'Classroom MC.02',
 				type: schoolSpaceTypeEnum.classroom,
-				capacity: 30
+				capacity: 30,
 			},
 			{
-				buildingId: middleSchool.id,
+				schoolBuildingId: middleSchool.id,
 				name: 'Classroom MC.03',
 				type: schoolSpaceTypeEnum.classroom,
-				capacity: 30
+				capacity: 30,
 			},
 			{
-				buildingId: middleSchool.id,
+				schoolBuildingId: middleSchool.id,
 				name: 'Classroom MC.11',
 				type: schoolSpaceTypeEnum.classroom,
-				capacity: 30
+				capacity: 30,
 			},
 			{
-				buildingId: middleSchool.id,
+				schoolBuildingId: middleSchool.id,
 				name: 'Classroom MC.12',
 				type: schoolSpaceTypeEnum.classroom,
-				capacity: 30
+				capacity: 30,
 			},
 			{
-				buildingId: middleSchool.id,
+				schoolBuildingId: middleSchool.id,
 				name: 'Classroom MC.13',
 				type: schoolSpaceTypeEnum.classroom,
-				capacity: 30
+				capacity: 30,
 			},
 			// Senior School
 			{
-				buildingId: seniorSchool.id,
+				schoolBuildingId: seniorSchool.id,
 				name: 'Science Lab SL.01',
 				type: schoolSpaceTypeEnum.laboratory,
-				capacity: 30
+				capacity: 30,
 			},
 			{
-				buildingId: seniorSchool.id,
+				schoolBuildingId: seniorSchool.id,
 				name: 'Science Lab SL.02',
 				type: schoolSpaceTypeEnum.laboratory,
-				capacity: 30
+				capacity: 30,
 			},
 			{
-				buildingId: seniorSchool.id,
+				schoolBuildingId: seniorSchool.id,
 				name: 'Classroom SC.01',
 				type: schoolSpaceTypeEnum.classroom,
-				capacity: 30
+				capacity: 30,
 			},
 			{
-				buildingId: seniorSchool.id,
+				schoolBuildingId: seniorSchool.id,
 				name: 'Classroom SC.02',
 				type: schoolSpaceTypeEnum.classroom,
-				capacity: 30
+				capacity: 30,
 			},
 			{
-				buildingId: seniorSchool.id,
+				schoolBuildingId: seniorSchool.id,
 				name: 'Classroom SC.03',
 				type: schoolSpaceTypeEnum.classroom,
-				capacity: 30
+				capacity: 30,
 			},
 			{
-				buildingId: seniorSchool.id,
+				schoolBuildingId: seniorSchool.id,
 				name: 'Classroom SC.11',
 				type: schoolSpaceTypeEnum.classroom,
-				capacity: 30
+				capacity: 30,
 			},
 			{
-				buildingId: seniorSchool.id,
+				schoolBuildingId: seniorSchool.id,
 				name: 'Classroom SC.12',
 				type: schoolSpaceTypeEnum.classroom,
-				capacity: 30
+				capacity: 30,
 			},
 			{
-				buildingId: seniorSchool.id,
+				schoolBuildingId: seniorSchool.id,
 				name: 'Classroom SC.13',
 				type: schoolSpaceTypeEnum.classroom,
-				capacity: 30
+				capacity: 30,
 			},
 			// Gymnasium
 			{
-				buildingId: gymnasium.id,
+				schoolBuildingId: gymnasium.id,
 				name: 'Courts',
 				type: schoolSpaceTypeEnum.gymnasium,
-				capacity: 120
+				capacity: 120,
 			},
 			{
-				buildingId: gymnasium.id,
+				schoolBuildingId: gymnasium.id,
 				name: 'Swimming Pool',
 				type: schoolSpaceTypeEnum.pool,
-				capacity: 40
-			}
+				capacity: 40,
+			},
 		])
-		.returning();
-
-	console.log(`  Created ${spaces.length} school spaces`);
+		.returning()
 
 	// Create year levels (Foundation to Year 12)
-	const yearLevels = await seedYearLevels(db, school.id);
-	console.log(`  Created ${Object.keys(yearLevels).length} year levels`);
+	const yearLevels = await seedYearLevels(db, school.id)
 
 	// Create semesters and terms
-	await seedSchoolTerms(db, school.id);
+	const semestersAndTerms = await seedSchoolSemestersAndTerms(db, school.id)
 
 	return {
 		school,
+		semestersAndTerms,
 		campus,
 		buildings: { middleSchool, seniorSchool, gymnasium },
 		spaces,
-		yearLevels
-	};
+		yearLevels,
+	}
 }
 
-async function seedYearLevels(db: Database, schoolId: number): Promise<DemoYearLevelIds> {
+async function seedYearLevels(db: Database, schoolId: number) {
 	const yearLevels = await db
-		.insert(schema.yearLevel)
-		.values(
-			DEMO_YEAR_LEVELS.map((level) => ({
-				schoolId,
-				yearLevel: level
-			}))
-		)
-		.returning();
-
-	// DEMO_YEAR_LEVELS order is: [year7, year8, year9, year10, none]
-	const yearLevelMap = new Map(yearLevels.map((yl) => [yl.yearLevel, yl.id]));
+		.insert(schema.schoolYearLevel)
+		.values([
+			{ schoolId, code: yearLevelEnum.none },
+			{ schoolId, code: yearLevelEnum.year7 },
+			{ schoolId, code: yearLevelEnum.year8 },
+			{ schoolId, code: yearLevelEnum.year9 },
+			{ schoolId, code: yearLevelEnum.year10 },
+		])
+		.returning()
 
 	return {
-		none: yearLevelMap.get(yearLevelEnum.none)!,
-		7: yearLevelMap.get(yearLevelEnum.year7)!,
-		8: yearLevelMap.get(yearLevelEnum.year8)!,
-		9: yearLevelMap.get(yearLevelEnum.year9)!,
-		10: yearLevelMap.get(yearLevelEnum.year10)!
-	};
+		none: yearLevels[0],
+		year7: yearLevels[1],
+		year8: yearLevels[2],
+		year9: yearLevels[3],
+		year10: yearLevels[4],
+	}
 }
 
-async function seedSchoolTerms(db: Database, schoolId: number) {
-	const currentYear = new Date().getFullYear();
-	const yearsToCreate = 5;
+async function seedSchoolSemestersAndTerms(db: Database, schoolId: number) {
+	const year = new Date().getFullYear()
 
-	for (let yearOffset = 0; yearOffset < yearsToCreate; yearOffset++) {
-		const year = currentYear + yearOffset;
-		const victorianTerms = getTermsByYear(year);
-		if (!victorianTerms) continue;
+	const [semester1, semester2] = await db
+		.insert(schema.schoolSemester)
+		.values([
+			{ schoolId, number: 1, year },
+			{ schoolId, number: 2, year },
+		])
+		.returning()
 
-		const semester1Terms = victorianTerms.filter((t) => t.termNumber <= 2);
-		const semester2Terms = victorianTerms.filter((t) => t.termNumber > 2);
+	const terms = await db
+		.insert(schema.schoolTerm)
+		.values([
+			{
+				number: 1,
+				start: new Date(year, 1, 1),
+				end: new Date(year, 3, 30),
+				schoolSemesterId: semester1.id,
+			},
+			{
+				number: 2,
+				start: new Date(year, 4, 1),
+				end: new Date(year, 6, 30),
+				schoolSemesterId: semester1.id,
+			},
+			{
+				number: 3,
+				start: new Date(year, 7, 1),
+				end: new Date(year, 9, 30),
+				schoolSemesterId: semester2.id,
+			},
+			{
+				number: 4,
+				start: new Date(year, 10, 1),
+				end: new Date(year, 11, 31),
+				schoolSemesterId: semester2.id,
+			},
+		])
+		.returning()
 
-		if (semester1Terms.length > 0) {
-			const [sem1] = await db
-				.insert(schema.schoolSemester)
-				.values({ schoolId, semNumber: 1, schoolYear: year })
-				.returning();
-
-			for (const term of semester1Terms) {
-				await db.insert(schema.schoolTerm).values({
-					schoolSemesterId: sem1.id,
-					termNumber: term.termNumber,
-					startDate: term.startDate,
-					endDate: term.endDate
-				});
-			}
-		}
-
-		if (semester2Terms.length > 0) {
-			const [sem2] = await db
-				.insert(schema.schoolSemester)
-				.values({ schoolId, semNumber: 2, schoolYear: year })
-				.returning();
-
-			for (const term of semester2Terms) {
-				await db.insert(schema.schoolTerm).values({
-					schoolSemesterId: sem2.id,
-					termNumber: term.termNumber,
-					startDate: term.startDate,
-					endDate: term.endDate
-				});
-			}
-		}
-	}
-
-	console.log(`  Created ${yearsToCreate} years of semesters and terms`);
+	return { semesters: [semester1, semester2], terms }
 }

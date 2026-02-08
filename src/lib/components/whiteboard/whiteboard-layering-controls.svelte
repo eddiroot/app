@@ -14,7 +14,8 @@
 		onMoveBackward?: () => void;
 	}
 
-	let { onBringToFront, onSendToBack, onMoveForward, onMoveBackward }: Props = $props();
+	let { onBringToFront, onSendToBack, onMoveForward, onMoveBackward }: Props =
+		$props();
 </script>
 
 <!-- Layering Controls -->

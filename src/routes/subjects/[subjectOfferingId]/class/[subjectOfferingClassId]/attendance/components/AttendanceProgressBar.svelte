@@ -8,96 +8,47 @@
 		classEndTime,
 		components = $bindable([]),
 		showSlider = $bindable(false),
-		currentTime,
 		attendanceId,
-		disabled = false
+		disabled = false,
 	}: {
-		classStartTime: string;
-		classEndTime: string;
+		classStartTime: Date;
+		classEndTime: Date;
 		components?: SubjectClassAllocationAttendanceComponent[];
 		showSlider?: boolean;
-		currentTime: string;
 		attendanceId?: number;
 		disabled?: boolean;
 	} = $props();
 
-	// Parse time strings to get seconds since midnight
-	function parseTime(timeStr: string): number {
-		const parts = timeStr.split(':').map(Number);
-		if (parts.length === 3) {
-			return parts[0] * 3600 + parts[1] * 60 + parts[2];
-		}
-		return parts[0] * 3600 + parts[1] * 60;
+	function timeToPercent(time: Date): number {
+		if (time <= classStartTime) return 0;
+		if (time >= classEndTime) return 100;
+		const totalDuration = classEndTime.getTime() - classStartTime.getTime();
+		const elapsed = time.getTime() - classStartTime.getTime();
+		return (elapsed / totalDuration) * 100;
 	}
 
-	// Convert seconds since midnight to time string HH:MM:SS
-	function secondsToTimeString(seconds: number): string {
-		const hours = Math.floor(seconds / 3600);
-		const mins = Math.floor((seconds % 3600) / 60);
-		const secs = Math.floor(seconds % 60);
-		return `${hours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+	function percentToTime(percent: number): Date {
+		const totalDuration = classEndTime.getTime() - classStartTime.getTime();
+		const timeOffset = (percent / 100) * totalDuration;
+		return new Date(classStartTime.getTime() + timeOffset);
 	}
 
-	// Format time for display (HH:MM AM/PM)
-	function formatTimeForDisplay(timeStr: string): string {
-		const seconds = parseTime(timeStr);
-		const hours = Math.floor(seconds / 3600);
-		const mins = Math.floor((seconds % 3600) / 60);
-		const period = hours >= 12 ? 'PM' : 'AM';
-		const displayHours = hours > 12 ? hours - 12 : hours === 0 ? 12 : hours;
-		return `${displayHours}:${mins.toString().padStart(2, '0')} ${period}`;
-	}
-
-	const classStartSeconds = $derived(parseTime(classStartTime));
-	const classEndSeconds = $derived(parseTime(classEndTime));
-	const totalSeconds = $derived(classEndSeconds - classStartSeconds);
-	const currentSeconds = $derived(parseTime(currentTime));
-
-	// Convert time to percentage of class duration
-	function timeToPercent(timeStr: string): number {
-		const seconds = parseTime(timeStr);
-		const relativeSeconds = seconds - classStartSeconds;
-		return (relativeSeconds / totalSeconds) * 100;
-	}
-
-	// Convert percentage to time string
-	function percentToTime(percent: number): string {
-		const relativeSeconds = (percent / 100) * totalSeconds;
-		const absoluteSeconds = classStartSeconds + relativeSeconds;
-		return secondsToTimeString(absoluteSeconds);
-	}
-
-	// Calculate breakpoint times for draggable handles
 	const breakpoints = $derived(
-		components.length > 0 ? components.slice(0, -1).map((comp) => comp.endTime) : []
+		components.length > 0
+			? components.slice(0, -1).map((comp) => comp.end)
+			: [],
 	);
 
-	function handleSliderChange(index: number, newTime: string) {
+	function handleSliderChange(index: number, newTime: Date) {
 		const updated = [...components];
-
-		// Update the end time of current component and start time of next
-		updated[index] = { ...updated[index], endTime: newTime };
-		updated[index + 1] = { ...updated[index + 1], startTime: newTime };
-
+		updated[index] = { ...updated[index], end: newTime };
+		updated[index + 1] = { ...updated[index + 1], start: newTime };
 		components = updated;
 	}
 
-	let originalComponents: SubjectClassAllocationAttendanceComponent[] = [];
+	let originalComponents: SubjectClassAllocationAttendanceComponent[] =
+		$derived(components);
 	let isSaving = $state(false);
-
-	function handleBarClick() {
-		if (!showSlider) {
-			// Store original state when opening slider
-			originalComponents = JSON.parse(JSON.stringify(components));
-		}
-		showSlider = !showSlider;
-	}
-
-	function handleCancel() {
-		// Restore original state
-		components = originalComponents;
-		showSlider = false;
-	}
 
 	async function handleSave() {
 		if (!attendanceId) return;
@@ -106,20 +57,11 @@
 		try {
 			const formData = new FormData();
 			formData.append('attendanceId', attendanceId.toString());
-			formData.append(
-				'components',
-				JSON.stringify(
-					components.map((c) => ({
-						id: c.id,
-						startTime: c.startTime,
-						endTime: c.endTime
-					}))
-				)
-			);
+			formData.append('components', JSON.stringify(components));
 
 			const response = await fetch('?/updateComponents', {
 				method: 'POST',
-				body: formData
+				body: formData,
 			});
 
 			if (response.ok) {
@@ -137,7 +79,7 @@
 {#if !showSlider}
 	<button
 		type="button"
-		onclick={handleBarClick}
+		onclick={() => (showSlider = !showSlider)}
 		aria-label="Toggle attendance time range editor"
 		{disabled}
 		class="bg-muted/50 relative flex h-2 w-full overflow-hidden rounded-b-md border transition-all {disabled
@@ -145,28 +87,21 @@
 			: 'hover:h-3'}"
 	>
 		{#each components as component}
-			{@const componentStartSeconds = parseTime(component.startTime)}
-			{@const componentEndSeconds = parseTime(component.endTime)}
-			{@const cappedEndSeconds = Math.min(componentEndSeconds, currentSeconds)}
-			{@const visibleStartSeconds = Math.max(componentStartSeconds, classStartSeconds)}
-			{@const visibleEndSeconds = Math.max(
-				visibleStartSeconds,
-				Math.min(cappedEndSeconds, classEndSeconds)
-			)}
-			{@const visibleDuration = visibleEndSeconds - visibleStartSeconds}
-			{@const widthPercent = (visibleDuration / totalSeconds) * 100}
+			{@const totalDuration = classEndTime.getTime() - classStartTime.getTime()}
+			{@const componentDuration =
+				component.end.getTime() - component.start.getTime()}
+			{@const widthPercent = (componentDuration / totalDuration) * 100}
 			{@const colorClass =
 				component.type === subjectClassAllocationAttendanceComponentType.absent
 					? 'bg-destructive/40'
-					: component.type === subjectClassAllocationAttendanceComponentType.classPass
+					: component.type ===
+						  subjectClassAllocationAttendanceComponentType.classPass
 						? 'bg-warning/40'
 						: 'bg-success/40'}
-			{#if visibleDuration > 0}
-				<div
-					class="{colorClass} h-full"
-					style="width: {widthPercent}%; transition: width 0.1s linear;"
-				></div>
-			{/if}
+			<div
+				class="{colorClass} h-full"
+				style="width: {widthPercent}%; transition: width 0.1s linear;"
+			></div>
 		{/each}
 	</button>
 {:else}
@@ -178,12 +113,17 @@
 				class="absolute inset-x-0 top-1/2 flex h-2 -translate-y-1/2 overflow-hidden rounded-full"
 			>
 				{#each components as component}
-					{@const componentDuration = parseTime(component.endTime) - parseTime(component.startTime)}
-					{@const widthPercent = (componentDuration / totalSeconds) * 100}
+					{@const totalDuration =
+						classEndTime.getTime() - classStartTime.getTime()}
+					{@const componentDuration =
+						component.end.getTime() - component.start.getTime()}
+					{@const widthPercent = (componentDuration / totalDuration) * 100}
 					{@const colorClass =
-						component.type === subjectClassAllocationAttendanceComponentType.absent
+						component.type ===
+						subjectClassAllocationAttendanceComponentType.absent
 							? 'bg-destructive/40'
-							: component.type === subjectClassAllocationAttendanceComponentType.classPass
+							: component.type ===
+								  subjectClassAllocationAttendanceComponentType.classPass
 								? 'bg-warning/40'
 								: 'bg-success/40'}
 					<div class="{colorClass} h-full" style="width: {widthPercent}%"></div>
@@ -203,15 +143,20 @@
 						onmousedown={(e) => {
 							e.preventDefault();
 							const startX = e.clientX;
-							const startTime = breakpointTime;
-							const rect = e.currentTarget.closest('.relative.h-8')?.getBoundingClientRect();
+							const start = breakpointTime;
+							const rect = e.currentTarget
+								.closest('.relative.h-8')
+								?.getBoundingClientRect();
 							if (!rect) return;
 
 							function onMouseMove(moveEvent: MouseEvent) {
 								const deltaX = moveEvent.clientX - startX;
 								const deltaPercent = (deltaX / rect?.width!) * 100;
-								const currentPercent = timeToPercent(startTime);
-								const newPercent = Math.max(0, Math.min(100, currentPercent + deltaPercent));
+								const currentPercent = timeToPercent(start);
+								const newPercent = Math.max(
+									0,
+									Math.min(100, currentPercent + deltaPercent),
+								);
 								const newTime = percentToTime(newPercent);
 								handleSliderChange(index, newTime);
 							}
@@ -228,7 +173,10 @@
 						<span
 							class="text-muted-foreground absolute top-8 left-1/2 -translate-x-1/2 text-xs font-medium whitespace-nowrap"
 						>
-							{formatTimeForDisplay(breakpointTime)}
+							{breakpointTime.toLocaleTimeString([], {
+								hour: '2-digit',
+								minute: '2-digit',
+							})}
 						</span>
 					</button>
 				</div>
@@ -251,10 +199,21 @@
 				</div>
 			</div>
 			<div class="flex gap-2">
-				<Button variant="outline" size="sm" onclick={handleCancel} disabled={isSaving}
-					>Cancel</Button
+				<Button
+					variant="outline"
+					size="sm"
+					onclick={() => {
+						components = originalComponents;
+						showSlider = false;
+					}}
+					disabled={isSaving}>Cancel</Button
 				>
-				<Button variant="default" size="sm" onclick={handleSave} disabled={isSaving}>
+				<Button
+					variant="default"
+					size="sm"
+					onclick={handleSave}
+					disabled={isSaving}
+				>
 					{isSaving ? 'Saving...' : 'Save'}
 				</Button>
 			</div>

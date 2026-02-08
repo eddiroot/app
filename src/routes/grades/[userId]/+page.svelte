@@ -1,13 +1,25 @@
 <script lang="ts">
-	import { Avatar, AvatarFallback, AvatarImage } from '$lib/components/ui/avatar';
+	import {
+		Avatar,
+		AvatarFallback,
+		AvatarImage,
+	} from '$lib/components/ui/avatar';
 	import { Badge } from '$lib/components/ui/badge';
-	import { Card, CardContent, CardHeader, CardTitle } from '$lib/components/ui/card';
+	import {
+		Card,
+		CardContent,
+		CardHeader,
+		CardTitle,
+	} from '$lib/components/ui/card';
 	import { Progress } from '$lib/components/ui/progress';
 	import BookOpen from '@lucide/svelte/icons/book-open';
 
 	let { data } = $props();
 
-	function getInitials(firstName: string | null, lastName: string | null): string {
+	function getInitials(
+		firstName: string | null,
+		lastName: string | null,
+	): string {
 		return `${firstName?.charAt(0) || ''}${lastName?.charAt(0) || ''}`.toUpperCase();
 	}
 
@@ -15,7 +27,9 @@
 		return type.charAt(0).toUpperCase() + type.slice(1);
 	}
 
-	function getRoleBadgeVariant(type: string): 'default' | 'secondary' | 'destructive' | 'outline' {
+	function getRoleBadgeVariant(
+		type: string,
+	): 'default' | 'secondary' | 'destructive' | 'outline' {
 		switch (type) {
 			case 'student':
 				return 'default';
@@ -34,7 +48,7 @@
 			data.profile.honorific,
 			data.profile.firstName,
 			data.profile.middleName,
-			data.profile.lastName
+			data.profile.lastName,
 		].filter(Boolean);
 		return parts.join(' ');
 	}
@@ -44,7 +58,7 @@
 		return new Date(date).toLocaleDateString('en-AU', {
 			year: 'numeric',
 			month: 'long',
-			day: 'numeric'
+			day: 'numeric',
 		});
 	}
 
@@ -75,7 +89,10 @@
 	<div class="mb-6">
 		<div class="flex items-center gap-4">
 			<Avatar class="h-12 w-12">
-				<AvatarImage src={data.profile.avatarUrl} alt="Profile picture of {getFullName()}" />
+				<AvatarImage
+					src={data.profile.avatarPath}
+					alt="Profile picture of {getFullName()}"
+				/>
 				<AvatarFallback class="text-sm font-semibold">
 					{getInitials(data.profile.firstName, data.profile.lastName)}
 				</AvatarFallback>
@@ -86,7 +103,10 @@
 					{getFullName()}'s Grades
 				</h1>
 				<div class="flex items-center gap-2">
-					<Badge variant={getRoleBadgeVariant(data.profile.type)} class="text-xs">
+					<Badge
+						variant={getRoleBadgeVariant(data.profile.type)}
+						class="text-xs"
+					>
 						{formatUserType(data.profile.type)}
 					</Badge>
 				</div>
@@ -120,19 +140,29 @@
 								<div class="space-y-3">
 									<!-- Subject Name -->
 									<div class="space-y-1">
-										<h3 class="text-foreground hover:text-primary font-semibold transition-colors">
+										<h3
+											class="text-foreground hover:text-primary font-semibold transition-colors"
+										>
 											{subject.subjectName}
 										</h3>
 									</div>
 
 									<!-- Grade Display -->
 									<div class="flex items-center justify-between">
-										<span class="text-muted-foreground text-sm">Current Grade:</span>
+										<span class="text-muted-foreground text-sm"
+											>Current Grade:</span
+										>
 										<div class="flex items-center gap-2">
-											<span class="text-lg font-bold {getGradeColor(subject.overallGrade)}">
+											<span
+												class="text-lg font-bold {getGradeColor(
+													subject.overallGrade,
+												)}"
+											>
 												{getLetterGrade(subject.overallGrade)}
 											</span>
-											<span class="text-sm {getGradeColor(subject.overallGrade)}">
+											<span
+												class="text-sm {getGradeColor(subject.overallGrade)}"
+											>
 												({subject.overallGrade}%)
 											</span>
 										</div>
@@ -140,12 +170,17 @@
 
 									<!-- Progress Bar -->
 									<div class="space-y-1">
-										<div class="text-muted-foreground flex justify-between text-xs">
+										<div
+											class="text-muted-foreground flex justify-between text-xs"
+										>
 											<span>Progress</span>
-											<span>{subject.completedTasks}/{subject.totalTasks} tasks</span>
+											<span
+												>{subject.completedTasks}/{subject.totalTasks} tasks</span
+											>
 										</div>
 										<Progress
-											value={(subject.completedTasks / subject.totalTasks) * 100}
+											value={(subject.completedTasks / subject.totalTasks) *
+												100}
 											class="h-2"
 										/>
 									</div>

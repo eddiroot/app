@@ -7,7 +7,11 @@
 	import * as ScrollArea from '$lib/components/ui/scroll-area/index.js';
 	import { Textarea } from '$lib/components/ui/textarea';
 	import { convertToFullName, formatTimestampAsDate } from '$lib/utils';
-	import { getLocalTimeZone, today, type DateValue } from '@internationalized/date';
+	import {
+		getLocalTimeZone,
+		today,
+		type DateValue,
+	} from '@internationalized/date';
 	import XCircleIcon from '@lucide/svelte/icons/x-circle';
 	import { superForm } from 'sveltekit-superforms';
 	import { zod4 } from 'sveltekit-superforms/adapters';
@@ -20,7 +24,7 @@
 		hasClassesOnDate,
 		isDateInFuture,
 		isDateToday,
-		type ScheduleWithAttendanceRecord
+		type ScheduleWithAttendanceRecord,
 	} from './utils.js';
 
 	let { data } = $props();
@@ -34,7 +38,7 @@
 			if (result.type === 'success') {
 				showAbsenceDialog = false;
 			}
-		}
+		},
 	});
 
 	const { form: formData, enhance } = form;
@@ -43,7 +47,11 @@
 		const student = records[0]?.user;
 		if (!student) return 'Unknown Student';
 
-		return convertToFullName(student.firstName, student.middleName, student.lastName);
+		return convertToFullName(
+			student.firstName,
+			student.middleName,
+			student.lastName,
+		);
 	}
 
 	function openAbsenceDialog(studentId: string): void {
@@ -53,7 +61,10 @@
 		showAbsenceDialog = true;
 	}
 
-	function isDateDisabled(date: DateValue, records: ScheduleWithAttendanceRecord[]): boolean {
+	function isDateDisabled(
+		date: DateValue,
+		records: ScheduleWithAttendanceRecord[],
+	): boolean {
 		const jsDate = date.toDate(getLocalTimeZone());
 		const today = new Date();
 		today.setHours(0, 0, 0, 0);
@@ -64,7 +75,7 @@
 
 		// For past dates, only enable if they have attendance or schedule records
 		return !records.some((record) => {
-			const recordDate = new Date(record.subjectClassAllocation.date);
+			const recordDate = new Date(record.subjectClassAllocation.start);
 			return jsDate.getTime() === recordDate.getTime();
 		});
 	}
@@ -76,15 +87,19 @@
 
 	function getAttendanceStyleForDay(
 		records: ScheduleWithAttendanceRecord[],
-		day: DateValue
+		day: DateValue,
 	): string {
 		const status = getAttendanceStatusForDay(records, day);
 		return getAttendanceStyleClasses(status);
 	}
 
-	function shouldShowMarkAbsentButton(records: ScheduleWithAttendanceRecord[]): boolean {
+	function shouldShowMarkAbsentButton(
+		records: ScheduleWithAttendanceRecord[],
+	): boolean {
 		const recordsForDate = getRecordsForDate(records, selectedDate);
-		const hasAttendanceRecords = recordsForDate.some((record) => record.attendance !== null);
+		const hasAttendanceRecords = recordsForDate.some(
+			(record) => record.attendance !== null,
+		);
 
 		return (
 			(isDateInFuture(selectedDate) || isDateToday(selectedDate)) &&
@@ -125,7 +140,9 @@
 				</Calendar>
 			</Card.Content>
 
-			<Card.Footer class="flex min-h-0 flex-1 flex-col border-t p-0 [.border-t]:pt-0">
+			<Card.Footer
+				class="flex min-h-0 flex-1 flex-col border-t p-0 [.border-t]:pt-0"
+			>
 				<ScrollArea.Root class="min-h-20 w-full px-4" type="always">
 					<div class="mb-4 flex flex-col gap-2">
 						{#if shouldShowMarkAbsentButton(records)}
@@ -150,7 +167,9 @@
 						{/each}
 
 						{#if !hasClassesOnDate(records, selectedDate)}
-							<div class="text-muted-foreground">No classes scheduled for this date</div>
+							<div class="text-muted-foreground">
+								No classes scheduled for this date
+							</div>
 						{/if}
 					</div>
 					<ScrollArea.Scrollbar orientation="vertical" />
@@ -160,13 +179,16 @@
 	{/each}
 </div>
 
-<Dialog.Root open={showAbsenceDialog} onOpenChange={(open) => (showAbsenceDialog = open)}>
+<Dialog.Root
+	open={showAbsenceDialog}
+	onOpenChange={(open) => (showAbsenceDialog = open)}
+>
 	<Dialog.Content class="sm:max-w-[425px]">
 		<Dialog.Header>
 			<Dialog.Title>Mark Student Absent</Dialog.Title>
 			<Dialog.Description>
 				Are you sure you want to mark this student as absent for {formatTimestampAsDate(
-					selectedDate.toDate(getLocalTimeZone())
+					selectedDate.toDate(getLocalTimeZone()),
 				)}?
 			</Dialog.Description>
 		</Dialog.Header>
@@ -188,8 +210,10 @@
 				<Form.FieldErrors />
 			</Form.Field>
 			<Dialog.Footer>
-				<Button type="button" variant="outline" onclick={() => (showAbsenceDialog = false)}
-					>Cancel</Button
+				<Button
+					type="button"
+					variant="outline"
+					onclick={() => (showAbsenceDialog = false)}>Cancel</Button
 				>
 				<Button type="submit" variant="destructive">Mark Absent</Button>
 			</Dialog.Footer>

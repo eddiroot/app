@@ -28,7 +28,7 @@
 		onUndo,
 		onRedo,
 		canUndo = false,
-		canRedo = false
+		canRedo = false,
 	}: Props = $props();
 </script>
 
@@ -77,7 +77,12 @@
 			<Tooltip.Content>Zoom Out</Tooltip.Content>
 		</Tooltip.Root>
 
-		<Button variant="ghost" size="sm" onclick={onResetZoom} class="h-8 px-2 font-mono text-xs">
+		<Button
+			variant="ghost"
+			size="sm"
+			onclick={onResetZoom}
+			class="h-8 px-2 font-mono text-xs"
+		>
 			{Math.round(currentZoom * 100)}%
 		</Button>
 
@@ -94,7 +99,12 @@
 
 		<Tooltip.Root>
 			<Tooltip.Trigger>
-				<Button variant="ghost" size="icon" onclick={onRecenterView} class="h-8 w-8">
+				<Button
+					variant="ghost"
+					size="icon"
+					onclick={onRecenterView}
+					class="h-8 w-8"
+				>
 					<HomeIcon />
 				</Button>
 			</Tooltip.Trigger>

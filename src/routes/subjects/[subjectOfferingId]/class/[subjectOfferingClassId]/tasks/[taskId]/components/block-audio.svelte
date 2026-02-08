@@ -15,7 +15,7 @@
 	let duration = $state(0);
 	let fileInput: HTMLInputElement | undefined = $state();
 
-	function handleFileUpload(event: Event) {
+	async function handleFileUpload(event: Event) {
 		const target = event.target as HTMLInputElement;
 		const file = target.files?.[0];
 
@@ -34,16 +34,36 @@
 			return;
 		}
 
-		const reader = new FileReader();
-		reader.onload = (e) => {
-			const result = e.target?.result as string;
-			onConfigUpdate({
-				...config,
-				path: result,
-				altText: file.name
+		try {
+			const formData = new FormData();
+			formData.append('file', file);
+
+			const uploadResponse = await fetch('?/uploadFile', {
+				method: 'POST',
+				body: formData,
 			});
-		};
-		reader.readAsDataURL(file);
+
+			const result = await uploadResponse.json();
+
+			if (result.type === 'failure') {
+				throw new Error(result.data?.error || 'Upload failed');
+			}
+
+			const data = result.type === 'success' ? result.data : result;
+
+			if (!data.url) {
+				throw new Error('No URL returned from upload');
+			}
+
+			await onConfigUpdate({ ...config, path: data.url, altText: file.name });
+		} catch (error) {
+			console.error('Upload error:', error);
+			alert(
+				error instanceof Error
+					? error.message
+					: 'Failed to upload audio. Please try again.',
+			);
+		}
 	}
 
 	function togglePlayPause() {
@@ -114,7 +134,9 @@
 					{config.path ? 'Replace Audio File' : 'Choose Audio File'}
 				</Button>
 				{#if config.altText}
-					<p class="text-muted-foreground text-sm">Selected: {config.altText}</p>
+					<p class="text-muted-foreground text-sm">
+						Selected: {config.altText}
+					</p>
 				{/if}
 			</div>
 

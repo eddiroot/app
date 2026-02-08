@@ -17,11 +17,15 @@
 				if (!a.news.isPinned && b.news.isPinned) return 1;
 
 				// Then sort by publication date (most recent first)
-				const dateA = a.news.publishedAt ? new Date(a.news.publishedAt).getTime() : 0;
-				const dateB = b.news.publishedAt ? new Date(b.news.publishedAt).getTime() : 0;
+				const dateA = a.news.publishedAt
+					? new Date(a.news.publishedAt).getTime()
+					: 0;
+				const dateB = b.news.publishedAt
+					? new Date(b.news.publishedAt).getTime()
+					: 0;
 				return dateB - dateA;
 			})
-			.slice(0, 5)
+			.slice(0, 5),
 	);
 
 	// Helper function to truncate text for preview
@@ -36,16 +40,17 @@
 		if (!date) return '';
 		return new Intl.DateTimeFormat('en-AU', {
 			day: 'numeric',
-			month: 'short'
+			month: 'short',
 		}).format(new Date(date));
 	};
 </script>
 
-<div class="grid h-full grid-cols-1 gap-6 overflow-y-auto p-8 xl:grid-cols-[1fr_1fr_1fr]">
-	<!-- Today's Events -->
+<div
+	class="grid h-full grid-cols-1 gap-6 overflow-y-auto p-8 xl:grid-cols-[1fr_1fr_1fr]"
+>
 	<Card.Root class="h-full overflow-hidden shadow-none">
 		<Card.Header>
-			<Card.Title class="text-xl">Today's Events</Card.Title>
+			<Card.Title class="text-xl">Your Day</Card.Title>
 		</Card.Header>
 		<Card.Content class="h-full overflow-hidden">
 			{#if data.userClasses && data.userClasses.length > 0}
@@ -62,7 +67,9 @@
 					</div>
 				</ScrollArea>
 			{:else}
-				<p class="text-muted-foreground text-center">No classes scheduled for today.</p>
+				<p class="text-muted-foreground text-center">
+					No events or classes scheduled for today.
+				</p>
 			{/if}
 		</Card.Content>
 	</Card.Root>
@@ -78,8 +85,8 @@
 					<div class="space-y-4 pr-4">
 						{#each data.announcements as announcement (announcement.announcement.id)}
 							<a
-								href="/subjects/{announcement.subjectOffering.id}/discussion/{announcement
-									.announcement.id}"
+								href="/subjects/{announcement.subjectOffering
+									.id}/discussion/{announcement.announcement.id}"
 								class="hover:bg-muted/50 block rounded-lg transition-colors"
 							>
 								<div class="border-border rounded-lg border-2 p-4">
@@ -96,7 +103,9 @@
 													{formatTimestamp(announcement.announcement.createdAt)}
 												</span>
 											</div>
-											<p class="text-muted-foreground mt-2 line-clamp-3 text-sm">
+											<p
+												class="text-muted-foreground mt-2 line-clamp-3 text-sm"
+											>
 												{announcement.announcement.content}
 											</p>
 										</div>
@@ -107,16 +116,21 @@
 					</div>
 				</ScrollArea>
 			{:else}
-				<p class="text-muted-foreground text-center">No recent announcements.</p>
+				<p class="text-muted-foreground text-center">
+					No recent announcements.
+				</p>
 			{/if}
 		</Card.Content>
 	</Card.Root>
 
 	<!-- School News -->
-	<Card.Root class="h-full overflow-hidden border-2 shadow-none">
+	<Card.Root class="h-full overflow-hidden shadow-none">
 		<Card.Header class="flex flex-row items-center justify-between space-y-0">
 			<Card.Title class="text-xl">School News</Card.Title>
-			<a href="/news" class="text-primary hover:text-primary/80 text-sm transition-colors">
+			<a
+				href="/news"
+				class="text-primary hover:text-primary/80 text-sm transition-colors"
+			>
 				View all
 			</a>
 		</Card.Header>

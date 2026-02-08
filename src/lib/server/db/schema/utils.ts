@@ -1,50 +1,47 @@
 import {
-	jsonb,
-	pgSchema,
+	boolean,
+	integer,
+	text,
+	time,
 	timestamp,
-	vector
-} from 'drizzle-orm/pg-core';
-import { yearLevelEnum } from '../../../enums';
+	uuid,
+} from 'drizzle-orm/pg-core'
 
-export const utilsSchema = pgSchema('utils');
+export const idUUID = uuid('id').defaultRandom().primaryKey()
+export const idINT = integer('id')
+	.primaryKey()
+	.generatedAlwaysAsIdentity({ startWith: 1000 })
+
+export const isArchived = boolean().notNull().default(false)
+
+export const standardTimestamp = (name: string) =>
+	timestamp(name, {
+		mode: 'date', // Date mode for performance
+		precision: 3, // Millisecond precision
+		withTimezone: false, // Schools use local time without timezone
+	})
+export const standardTime = (name: string) =>
+	time(name, {
+		precision: 3, // Millisecond precision
+		withTimezone: false, // Schools use local time without timezone
+	})
 
 export const timestamps = {
-	createdAt: timestamp({ mode: 'date' }).defaultNow().notNull(),
-	updatedAt: timestamp({ mode: 'date' })
+	createdAt: standardTimestamp('created_at').defaultNow().notNull(),
+	updatedAt: standardTimestamp('updated_at')
 		.defaultNow()
 		.$onUpdate(() => new Date())
-		.notNull()
-};
+		.notNull(),
+}
 
+export const essentials = { id: idINT, isArchived, ...timestamps }
+export const essentialsUUID = { id: idUUID, isArchived, ...timestamps }
+export const essentialsNoId = { isArchived, ...timestamps }
 
-// Enums used across multiple schema files - defined here to avoid circular dependencies
-export const yearLevelEnumPg = utilsSchema.enum('enum_year_level', [
-	yearLevelEnum.none,
-	yearLevelEnum.foundation,
-	yearLevelEnum.year1,
-	yearLevelEnum.year2,
-	yearLevelEnum.year3,
-	yearLevelEnum.year4,
-	yearLevelEnum.year5,
-	yearLevelEnum.year6,
-	yearLevelEnum.year7,
-	yearLevelEnum.year8,
-	yearLevelEnum.year9,
-	yearLevelEnum.year10,
-	yearLevelEnum.year11,
-	yearLevelEnum.year12
-]);
+export const hexColor = text().notNull().default('#FFFFFF')
 
-export const embeddings = {
-	embedding: vector('embedding', { dimensions: 768 }),
-	embeddingMetadata: jsonb('embedding_metadata').$type<{
-		qualityScore?: number;
-		usageCount?: number;
-		lastUsedAt?: Date;
-		userId?: string;
-		subjectId?: number;
-		curriculumSubjectId?: number;
-		yearLevel?: yearLevelEnum;
-		[key: string]: unknown;
-	}>()
-};
+export function enumToPgEnum<T extends Record<string, string>>(
+	myEnum: T,
+): [T[keyof T], ...T[keyof T][]] {
+	return Object.values(myEnum) as [T[keyof T], ...T[keyof T][]]
+}

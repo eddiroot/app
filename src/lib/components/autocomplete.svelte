@@ -30,7 +30,7 @@
 		emptyText = 'No results found.',
 		onselect,
 		disabled = false,
-		class: className = ''
+		class: className = '',
 	}: Props = $props();
 
 	let open = $state(false);
@@ -46,7 +46,7 @@
 	const filteredOptions = $derived(() => {
 		if (!searchValue) return options;
 		return options.filter((option) =>
-			option.label.toLowerCase().includes(searchValue.toLowerCase())
+			option.label.toLowerCase().includes(searchValue.toLowerCase()),
 		);
 	});
 
@@ -93,7 +93,10 @@
 						class="cursor-pointer"
 					>
 						<Check
-							class={cn('mr-2 h-4 w-4', value === option.value ? 'opacity-100' : 'opacity-0')}
+							class={cn(
+								'mr-2 h-4 w-4',
+								value === option.value ? 'opacity-100' : 'opacity-0',
+							)}
 						/>
 						{option.label}
 					</Command.Item>

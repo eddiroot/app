@@ -3,13 +3,14 @@ import type { taskBlockTypeEnum } from '$lib/enums'
 
 const API_BASE = '/api/tasks'
 
-export async function updateTaskTitle(request: { taskId: number; title: string }) {
+export async function updateTaskTitle(request: {
+	taskId: number
+	title: string
+}) {
 	const response = await fetch(API_BASE, {
 		method: 'PATCH',
-		headers: {
-			'Content-Type': 'application/json'
-		},
-		body: JSON.stringify(request)
+		headers: { 'Content-Type': 'application/json' },
+		body: JSON.stringify(request),
 	})
 
 	const data = await response.json()
@@ -29,10 +30,8 @@ export async function createBlock(request: {
 }) {
 	const response = await fetch(`${API_BASE}/blocks`, {
 		method: 'POST',
-		headers: {
-			'Content-Type': 'application/json'
-		},
-		body: JSON.stringify(request)
+		headers: { 'Content-Type': 'application/json' },
+		body: JSON.stringify(request),
 	})
 
 	const data = await response.json()
@@ -64,10 +63,8 @@ export async function updateBlock(request: {
 }) {
 	const response = await fetch(`${API_BASE}/blocks`, {
 		method: 'PATCH',
-		headers: {
-			'Content-Type': 'application/json'
-		},
-		body: JSON.stringify(request)
+		headers: { 'Content-Type': 'application/json' },
+		body: JSON.stringify(request),
 	})
 
 	const data = await response.json()
@@ -81,7 +78,7 @@ export async function updateBlock(request: {
 
 export async function deleteBlock(blockId: number) {
 	const response = await fetch(`${API_BASE}/blocks?blockId=${blockId}`, {
-		method: 'DELETE'
+		method: 'DELETE',
 	})
 
 	const data = await response.json()
@@ -93,13 +90,13 @@ export async function deleteBlock(blockId: number) {
 	return data
 }
 
-export async function updateBlockOrder(request: { blockOrder: { id: number; index: number }[] }) {
+export async function updateBlockOrder(request: {
+	blockOrder: { id: number; index: number }[]
+}) {
 	const response = await fetch(`${API_BASE}/blocks/order`, {
 		method: 'PUT',
-		headers: {
-			'Content-Type': 'application/json'
-		},
-		body: JSON.stringify(request)
+		headers: { 'Content-Type': 'application/json' },
+		body: JSON.stringify(request),
 	})
 
 	const data = await response.json()
@@ -114,18 +111,12 @@ export async function updateBlockOrder(request: { blockOrder: { id: number; inde
 export async function upsertBlockResponse(
 	taskBlockId: number,
 	classTaskId: number,
-	response: unknown
+	response: unknown,
 ) {
 	const result = await fetch(`${API_BASE}/blocks/responses`, {
 		method: 'POST',
-		headers: {
-			'Content-Type': 'application/json'
-		},
-		body: JSON.stringify({
-			taskBlockId,
-			classTaskId,
-			response
-		})
+		headers: { 'Content-Type': 'application/json' },
+		body: JSON.stringify({ taskBlockId, classTaskId, response }),
 	})
 
 	if (!result.ok) {

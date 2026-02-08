@@ -16,13 +16,13 @@
 	import { superForm } from 'sveltekit-superforms';
 	import { zod4 } from 'sveltekit-superforms/adapters';
 	import { rsvpSchema } from '../../../schemas';
-	import type { PageData } from './$types';
 
-	let { data }: { data: PageData } = $props();
+	let { data } = $props();
 
-	const form = superForm(data.form, {
+	let dataForm = () => data.form;
+	const form = superForm(dataForm(), {
 		validators: zod4(rsvpSchema),
-		resetForm: false
+		resetForm: false,
 	});
 
 	const { form: formData, enhance, submitting } = form;
@@ -33,36 +33,35 @@
 				return {
 					icon: School,
 					title: 'School Event',
-					description: 'This event affects all students and staff across the school'
+					description:
+						'This event affects all students and staff across the school',
 				};
 			case 'campus':
 				return {
 					icon: MapPin,
 					title: 'Campus Event',
-					description: 'This event affects all students and staff on this campus'
+					description:
+						'This event affects all students and staff on this campus',
 				};
 			case 'subject':
 				return {
 					icon: BookOpen,
 					title: 'Subject Event',
-					description: 'This event affects all students in this subject'
+					description: 'This event affects all students in this subject',
 				};
 			case 'class':
 				return {
 					icon: Users,
 					title: 'Class Event',
-					description: 'This event affects all students in this class'
+					description: 'This event affects all students in this class',
 				};
 			default:
-				return {
-					icon: Calendar,
-					title: 'Event',
-					description: 'Event details'
-				};
+				return { icon: Calendar, title: 'Event', description: 'Event details' };
 		}
 	}
 
-	const eventTypeInfo = getEventTypeInfo(data.eventType);
+	let dataEventType = () => data.eventType;
+	const eventTypeInfo = getEventTypeInfo(dataEventType());
 </script>
 
 <div class="space-y-6 p-8">
@@ -73,7 +72,9 @@
 		</Button.Root>
 		<div>
 			<h1 class="text-2xl font-bold tracking-tight">RSVP Required</h1>
-			<p class="text-muted-foreground text-sm">Please confirm your attendance for this event</p>
+			<p class="text-muted-foreground text-sm">
+				Please confirm your attendance for this event
+			</p>
 		</div>
 	</div>
 
@@ -101,13 +102,13 @@
 				<div class="flex flex-col gap-3 text-sm">
 					<div class="flex items-center gap-2">
 						<Calendar class="text-muted-foreground h-4 w-4" />
-						<span>{formatTimestampAsDate(data.event.startTimestamp)}</span>
+						<span>{formatTimestampAsDate(data.event.start)}</span>
 					</div>
 					<div class="flex items-center gap-2">
 						<Clock class="text-muted-foreground h-4 w-4" />
 						<span>
-							{formatTimestampAsTime(data.event.startTimestamp)} - {formatTimestampAsTime(
-								data.event.endTimestamp
+							{formatTimestampAsTime(data.event.start)} - {formatTimestampAsTime(
+								data.event.end,
 							)}
 						</span>
 					</div>
@@ -137,7 +138,11 @@
 					<Form.Control>
 						{#snippet children({ props })}
 							<div class="flex items-center space-x-3">
-								<Checkbox {...props} bind:checked={$formData.willAttend} id={props.id} />
+								<Checkbox
+									{...props}
+									bind:checked={$formData.willAttend}
+									id={props.id}
+								/>
 								<div class="grid gap-1.5 leading-none">
 									<Label
 										for={props.id}

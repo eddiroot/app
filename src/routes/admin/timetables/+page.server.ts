@@ -1,47 +1,52 @@
 import {
-	createSchoolTimetable,
+	createTimetable,
 	getSchoolTimetablesBySchoolId,
-	getSemestersBySchoolId
-} from '$lib/server/db/service';
-import { message, superValidate } from 'sveltekit-superforms';
-import { zod4 } from 'sveltekit-superforms/adapters';
-import type { Actions, PageServerLoad } from './$types.js';
-import { createTimetableSchema } from './schema.js';
+	getSemestersBySchoolId,
+} from '$lib/server/db/service'
+import { message, superValidate } from 'sveltekit-superforms'
+import { zod4 } from 'sveltekit-superforms/adapters'
+import { createTimetableSchema } from './schema.js'
 
-export const load: PageServerLoad = async ({ locals: { security } }) => {
-	const user = security.isAuthenticated().isSchoolAdmin().getUser();
-	const timetablesAndSemesters = await getSchoolTimetablesBySchoolId(user.schoolId);
-	const semesters = await getSemestersBySchoolId(user.schoolId);
+export const load = async ({ locals: { security } }) => {
+	const user = security.isAuthenticated().isAdmin().getUser()
+	const timetablesAndSemesters = await getSchoolTimetablesBySchoolId(
+		user.schoolId,
+	)
+	const semesters = await getSemestersBySchoolId(user.schoolId)
 
 	return {
 		timetablesAndSemesters: timetablesAndSemesters,
 		createTimetableForm: await superValidate(zod4(createTimetableSchema)),
-		semesters
-	};
-};
+		semesters,
+	}
+}
 
-export const actions: Actions = {
+export const actions = {
 	createTimetable: async ({ request, locals: { security } }) => {
-		const user = security.isAuthenticated().isSchoolAdmin().getUser();
+		const user = security.isAuthenticated().isAdmin().getUser()
 
-		const form = await superValidate(request, zod4(createTimetableSchema));
+		const form = await superValidate(request, zod4(createTimetableSchema))
 
 		if (!form.valid) {
-			return message(form, 'Please check your inputs and try again.', { status: 400 });
+			return message(form, 'Please check your inputs and try again.', {
+				status: 400,
+			})
 		}
 
 		try {
-			await createSchoolTimetable({
-				schoolId: user.schoolId,
+			await createTimetable({
 				name: form.data.name,
-				schoolYear: form.data.schoolYear,
-				schoolSemesterId: form.data.schoolSemester
-			});
+				schoolId: user.schoolId,
+				schoolSemesterId: form.data.schoolSemester,
+				year: form.data.schoolYear,
+			})
 
-			return message(form, 'Timetable created successfully!');
+			return message(form, 'Timetable created successfully!')
 		} catch (error) {
-			console.error('Error creating timetable:', error);
-			return message(form, 'Failed to create timetable. Please try again.', { status: 500 });
+			console.error('Error creating timetable:', error)
+			return message(form, 'Failed to create timetable. Please try again.', {
+				status: 500,
+			})
 		}
-	}
-};
+	},
+}

@@ -12,17 +12,26 @@ export interface CanvasActionContext {
 	socket?: any
 	controlPointManager?: ControlPointManager
 	// Callback for batch clear operations (for history recording)
-	onClearComplete?: (deletedObjects: Array<{ id: string; data: Record<string, unknown> }>) => void
+	onClearComplete?: (
+		deletedObjects: Array<{ id: string; data: Record<string, unknown> }>,
+	) => void
 	// Callback to set flag before clearing (to prevent individual history recording)
 	setClearingCanvas?: (value: boolean) => void
 	// Callback for layer changes (for history recording)
-	onLayerChange?: (objectId: string, previousIndex: number, newIndex: number) => void
+	onLayerChange?: (
+		objectId: string,
+		previousIndex: number,
+		newIndex: number,
+	) => void
 }
 
 /**
  * Handles image upload from file input
  */
-export function handleImageUpload(event: Event, context: CanvasActionContext): void {
+export function handleImageUpload(
+	event: Event,
+	context: CanvasActionContext,
+): void {
 	const target = event.target as HTMLInputElement
 	const file = target.files?.[0]
 
@@ -61,7 +70,7 @@ export function handleImageUpload(event: Event, context: CanvasActionContext): v
 					originX: 'center',
 					originY: 'center',
 					hasControls: false,
-					hasBorders: false
+					hasBorders: false,
 				})
 
 				context.canvas.add(img)
@@ -77,10 +86,7 @@ export function handleImageUpload(event: Event, context: CanvasActionContext): v
 					// @ts-expect-error - Custom id property
 					socket.markAsRecentlyCreated(img.id)
 				}
-				context.sendCanvasUpdate({
-					type: 'add',
-					object: objData
-				})
+				context.sendCanvasUpdate({ type: 'add', object: objData })
 
 				// Notify that image was added (for switching tool and showing menu)
 				context.onImageAdded?.(img)
@@ -103,7 +109,8 @@ export function handleImageUpload(event: Event, context: CanvasActionContext): v
 export function clearCanvas(context: CanvasActionContext): void {
 	// Collect all objects for batch history recording (exclude control points)
 	const allObjects = context.canvas.getObjects()
-	const objectsToDelete: Array<{ id: string; data: Record<string, unknown> }> = []
+	const objectsToDelete: Array<{ id: string; data: Record<string, unknown> }> =
+		[]
 
 	allObjects.forEach((obj) => {
 		// Skip control points
@@ -131,9 +138,7 @@ export function clearCanvas(context: CanvasActionContext): void {
 		context.onClearComplete?.(objectsToDelete)
 	}
 
-	context.sendCanvasUpdate({
-		type: 'clear'
-	})
+	context.sendCanvasUpdate({ type: 'clear' })
 }
 
 /**
@@ -151,10 +156,7 @@ export function deleteSelected(context: CanvasActionContext): void {
 			objData.id = obj.id
 			return objData
 		})
-		context.sendCanvasUpdate({
-			type: 'delete',
-			objects: objectsData
-		})
+		context.sendCanvasUpdate({ type: 'delete', objects: objectsData })
 	}
 }
 
@@ -173,10 +175,16 @@ export interface ZoomLimits {
 export function zoomIn(
 	context: CanvasActionContext,
 	zoomLimits: ZoomLimits,
-	setCurrentZoom: (zoom: number) => void
+	setCurrentZoom: (zoom: number) => void,
 ): void {
-	const newZoom = Math.min(context.canvas.getZoom() * zoomLimits.step, zoomLimits.max)
-	const center = new fabric.Point(context.canvas.width! / 2, context.canvas.height! / 2)
+	const newZoom = Math.min(
+		context.canvas.getZoom() * zoomLimits.step,
+		zoomLimits.max,
+	)
+	const center = new fabric.Point(
+		context.canvas.width! / 2,
+		context.canvas.height! / 2,
+	)
 	context.canvas.zoomToPoint(center, newZoom)
 	setCurrentZoom(newZoom)
 
@@ -192,10 +200,16 @@ export function zoomIn(
 export function zoomOut(
 	context: CanvasActionContext,
 	zoomLimits: ZoomLimits,
-	setCurrentZoom: (zoom: number) => void
+	setCurrentZoom: (zoom: number) => void,
 ): void {
-	const newZoom = Math.max(context.canvas.getZoom() / zoomLimits.step, zoomLimits.min)
-	const center = new fabric.Point(context.canvas.width! / 2, context.canvas.height! / 2)
+	const newZoom = Math.max(
+		context.canvas.getZoom() / zoomLimits.step,
+		zoomLimits.min,
+	)
+	const center = new fabric.Point(
+		context.canvas.width! / 2,
+		context.canvas.height! / 2,
+	)
 	context.canvas.zoomToPoint(center, newZoom)
 	setCurrentZoom(newZoom)
 
@@ -210,10 +224,13 @@ export function zoomOut(
  */
 export function resetZoom(
 	context: CanvasActionContext,
-	setCurrentZoom: (zoom: number) => void
+	setCurrentZoom: (zoom: number) => void,
 ): void {
 	// Use the same center point as zoomIn/zoomOut for consistent behavior
-	const center = new fabric.Point(context.canvas.width! / 2, context.canvas.height! / 2)
+	const center = new fabric.Point(
+		context.canvas.width! / 2,
+		context.canvas.height! / 2,
+	)
 	context.canvas.zoomToPoint(center, 1)
 	setCurrentZoom(1)
 
@@ -230,7 +247,7 @@ export function resetZoom(
  */
 export function recenterView(
 	context: CanvasActionContext,
-	setCurrentZoom: (zoom: number) => void
+	setCurrentZoom: (zoom: number) => void,
 ): void {
 	// Reset the viewport transform to center the view
 	context.canvas.setViewportTransform([1, 0, 0, 1, 0, 0])
@@ -277,7 +294,7 @@ export function bringToFront(context: CanvasActionContext): void {
 	context.sendCanvasUpdate({
 		type: 'layer',
 		action: 'bringToFront',
-		object: objData
+		object: objData,
 	})
 }
 
@@ -315,7 +332,7 @@ export function sendToBack(context: CanvasActionContext): void {
 	context.sendCanvasUpdate({
 		type: 'layer',
 		action: 'sendToBack',
-		object: objData
+		object: objData,
 	})
 }
 
@@ -353,7 +370,7 @@ export function moveForward(context: CanvasActionContext): void {
 	context.sendCanvasUpdate({
 		type: 'layer',
 		action: 'moveForward',
-		object: objData
+		object: objData,
 	})
 }
 
@@ -391,14 +408,17 @@ export function moveBackward(context: CanvasActionContext): void {
 	context.sendCanvasUpdate({
 		type: 'layer',
 		action: 'moveBackward',
-		object: objData
+		object: objData,
 	})
 }
 
 /**
  * Applies opacity to the selected object
  */
-export function applyOpacityToSelected(context: CanvasActionContext, opacity: number): void {
+export function applyOpacityToSelected(
+	context: CanvasActionContext,
+	opacity: number,
+): void {
 	const activeObject = context.canvas.getActiveObject()
 	if (!activeObject) return
 
@@ -408,8 +428,5 @@ export function applyOpacityToSelected(context: CanvasActionContext, opacity: nu
 	const objData = activeObject.toObject()
 	// @ts-expect-error - Custom id property
 	objData.id = activeObject.id
-	context.sendCanvasUpdate({
-		type: 'modify',
-		object: objData
-	})
+	context.sendCanvasUpdate({ type: 'modify', object: objData })
 }

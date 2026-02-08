@@ -4,16 +4,21 @@
 	import * as Dialog from '$lib/components/ui/dialog/index.js';
 	import { Input } from '$lib/components/ui/input/index.js';
 	import Label from '$lib/components/ui/label/label.svelte';
-	import { validateCSVFile, type CSVValidationResult } from '$lib/utils.js';
+	import { validateCSVFile, type CSVValidationResult } from '$lib/utils';
 	import CheckIcon from '@lucide/svelte/icons/check';
 	import XIcon from '@lucide/svelte/icons/x';
-	import { fileProxy, superForm, type Infer, type SuperValidated } from 'sveltekit-superforms';
+	import {
+		fileProxy,
+		superForm,
+		type Infer,
+		type SuperValidated,
+	} from 'sveltekit-superforms';
 	import { zod4 } from 'sveltekit-superforms/adapters';
 	import {
 		buildingsImportSchema,
 		optionalColumns,
 		requiredColumns,
-		type BuildingsImportSchema
+		type BuildingsImportSchema,
 	} from './schema.js';
 
 	type Props = {
@@ -25,7 +30,8 @@
 
 	let csvValidationResult = $state<CSVValidationResult | null>(null);
 
-	const { form, errors, enhance, submitting } = superForm(data, {
+	let dataFunc = () => data;
+	const { form, errors, enhance, submitting } = superForm(dataFunc(), {
 		validators: zod4(buildingsImportSchema),
 		resetForm: false,
 		onResult: ({ result }) => {
@@ -34,7 +40,7 @@
 				open = false;
 				csvValidationResult = null;
 			}
-		}
+		},
 	});
 
 	function handleDialogClose() {
@@ -49,9 +55,11 @@
 
 	file.subscribe((files) => {
 		if (files && files.length > 0 && files[0].size > 0) {
-			validateCSVFile(files[0], requiredColumns, optionalColumns).then((result) => {
-				csvValidationResult = result;
-			});
+			validateCSVFile(files[0], requiredColumns, optionalColumns).then(
+				(result) => {
+					csvValidationResult = result;
+				},
+			);
 		} else {
 			csvValidationResult = null;
 		}
@@ -64,8 +72,8 @@
 			<Dialog.Header>
 				<Dialog.Title>Import Buildings from CSV</Dialog.Title>
 				<Dialog.Description>
-					Upload a CSV file to import buildings. The file must contain the required columns listed
-					below.
+					Upload a CSV file to import buildings. The file must contain the
+					required columns listed below.
 				</Dialog.Description>
 			</Dialog.Header>
 
@@ -122,13 +130,17 @@
 									<span class="font-medium text-green-600">CSV is valid</span>
 								{:else}
 									<XIcon class="size-5 text-red-600" />
-									<span class="font-medium text-red-600">CSV validation failed</span>
+									<span class="font-medium text-red-600"
+										>CSV validation failed</span
+									>
 								{/if}
 							</div>
 
 							{#if csvValidationResult.missingColumns.length > 0}
 								<div class="mb-3">
-									<p class="mb-1 text-sm font-medium text-red-600">Missing required columns:</p>
+									<p class="mb-1 text-sm font-medium text-red-600">
+										Missing required columns:
+									</p>
 									<div class="flex flex-wrap gap-1">
 										{#each csvValidationResult.missingColumns as column}
 											<span
@@ -143,7 +155,9 @@
 
 							{#if csvValidationResult.foundColumns.length > 0}
 								<div class="mb-3">
-									<p class="mb-1 text-sm font-medium text-green-600">Found columns:</p>
+									<p class="mb-1 text-sm font-medium text-green-600">
+										Found columns:
+									</p>
 									<div class="flex flex-wrap gap-1">
 										{#each csvValidationResult.foundColumns as column}
 											<span
@@ -178,10 +192,18 @@
 			</div>
 
 			<Dialog.Footer class="mt-6">
-				<Button type="button" variant="outline" onclick={handleDialogClose} disabled={$submitting}>
+				<Button
+					type="button"
+					variant="outline"
+					onclick={handleDialogClose}
+					disabled={$submitting}
+				>
 					Cancel
 				</Button>
-				<Button type="submit" disabled={!csvValidationResult?.isValid || $submitting}>
+				<Button
+					type="submit"
+					disabled={!csvValidationResult?.isValid || $submitting}
+				>
 					{$submitting ? 'Importing...' : 'Import Buildings'}
 				</Button>
 			</Dialog.Footer>

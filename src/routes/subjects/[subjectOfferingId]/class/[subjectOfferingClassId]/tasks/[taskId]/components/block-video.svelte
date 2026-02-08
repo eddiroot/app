@@ -12,18 +12,18 @@
 	// Extract YouTube video ID from various URL formats
 	function extractYouTubeId(url: string): string | null {
 		if (!url) return null;
-		
+
 		const patterns = [
 			/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([a-zA-Z0-9_-]{11})/,
 			/youtube\.com\/v\/([a-zA-Z0-9_-]{11})/,
-			/youtube\.com\/watch\?.*v=([a-zA-Z0-9_-]{11})/
+			/youtube\.com\/watch\?.*v=([a-zA-Z0-9_-]{11})/,
 		];
-		
+
 		for (const pattern of patterns) {
 			const match = url.match(pattern);
 			if (match) return match[1];
 		}
-		
+
 		return null;
 	}
 
@@ -51,7 +51,9 @@
 
 	// Get video ID for current config
 	let videoId = $derived(extractYouTubeId(config.url));
-	let isValidUrl = $derived(config.url.trim() === '' || isValidYouTubeUrl(config.url));
+	let isValidUrl = $derived(
+		config.url.trim() === '' || isValidYouTubeUrl(config.url),
+	);
 </script>
 
 <div class="flex w-full flex-col gap-4">
@@ -111,13 +113,26 @@
 				{#if config.url.trim() !== '' && !isValidUrl}
 					<div class="rounded-lg border border-amber-200 bg-amber-50 p-4">
 						<div class="flex items-start gap-2">
-							<svg class="h-5 w-5 text-amber-600 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.98-.833-2.75 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+							<svg
+								class="mt-0.5 h-5 w-5 text-amber-600"
+								fill="none"
+								stroke="currentColor"
+								viewBox="0 0 24 24"
+							>
+								<path
+									stroke-linecap="round"
+									stroke-linejoin="round"
+									stroke-width="2"
+									d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.98-.833-2.75 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"
+								></path>
 							</svg>
 							<div>
-								<h4 class="text-sm font-medium text-amber-800">Invalid YouTube URL</h4>
+								<h4 class="text-sm font-medium text-amber-800">
+									Invalid YouTube URL
+								</h4>
 								<p class="mt-1 text-sm text-amber-700">
-									Please check the URL format and make sure it's a valid YouTube link.
+									Please check the URL format and make sure it's a valid YouTube
+									link.
 								</p>
 							</div>
 						</div>
@@ -137,7 +152,7 @@
 								class="h-full w-full"
 							></iframe>
 						</div>
-						<div class="flex items-center gap-2 text-sm text-muted-foreground">
+						<div class="text-muted-foreground flex items-center gap-2 text-sm">
 							<ExternalLinkIcon class="h-4 w-4" />
 							<a
 								href={config.url}
@@ -150,10 +165,14 @@
 						</div>
 					</div>
 				{:else if config.url.trim() === ''}
-					<div class="flex h-48 w-full items-center justify-center rounded-lg border border-dashed">
+					<div
+						class="flex h-48 w-full items-center justify-center rounded-lg border border-dashed"
+					>
 						<div class="text-center">
 							<VideoIcon class="text-muted-foreground mx-auto h-12 w-12" />
-							<p class="text-muted-foreground mt-2 text-sm">No video URL provided</p>
+							<p class="text-muted-foreground mt-2 text-sm">
+								No video URL provided
+							</p>
 							<p class="text-muted-foreground text-xs">
 								Enter a YouTube URL above to embed a video.
 							</p>
@@ -178,27 +197,35 @@
 							></iframe>
 						</div>
 						{#if config.altText}
-							<p class="mt-2 text-sm text-muted-foreground text-center">
+							<p class="text-muted-foreground mt-2 text-center text-sm">
 								{config.altText}
 							</p>
 						{/if}
 					</Card.Content>
 				</Card.Root>
 			{:else if config.url.trim() !== '' && !isValidUrl}
-				<div class="flex h-48 w-full items-center justify-center rounded-lg border border-dashed border-red-300 bg-red-50">
+				<div
+					class="flex h-48 w-full items-center justify-center rounded-lg border border-dashed border-red-300 bg-red-50"
+				>
 					<div class="text-center">
-						<VideoIcon class="text-red-400 mx-auto h-12 w-12" />
-						<p class="text-red-600 mt-2 text-sm font-medium">Invalid video URL</p>
-						<p class="text-red-500 text-xs">
+						<VideoIcon class="mx-auto h-12 w-12 text-red-400" />
+						<p class="mt-2 text-sm font-medium text-red-600">
+							Invalid video URL
+						</p>
+						<p class="text-xs text-red-500">
 							Please contact your teacher to fix this video link.
 						</p>
 					</div>
 				</div>
 			{:else}
-				<div class="flex h-48 w-full items-center justify-center rounded-lg border border-dashed">
+				<div
+					class="flex h-48 w-full items-center justify-center rounded-lg border border-dashed"
+				>
 					<div class="text-center">
 						<VideoIcon class="text-muted-foreground mx-auto h-12 w-12" />
-						<p class="text-muted-foreground mt-2 text-sm">No video configured</p>
+						<p class="text-muted-foreground mt-2 text-sm">
+							No video configured
+						</p>
 						<p class="text-muted-foreground text-xs">
 							Please configure this video block in the task editor.
 						</p>

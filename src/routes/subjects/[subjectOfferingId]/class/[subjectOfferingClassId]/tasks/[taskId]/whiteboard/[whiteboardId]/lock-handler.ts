@@ -1,5 +1,9 @@
 // Lock handler for whiteboard
-export function applyLockState(canvas: any, locked: boolean, isTeacher: boolean) {
+export function applyLockState(
+	canvas: any,
+	locked: boolean,
+	isTeacher: boolean,
+) {
 	if (!canvas) return
 
 	if (locked && !isTeacher) {
@@ -28,7 +32,7 @@ export function handleLockMessage(
 	isLocked: { value: boolean },
 	canvas: any,
 	isTeacher: boolean,
-	applyLock: typeof applyLockState
+	applyLock: typeof applyLockState,
 ) {
 	if (data.type === 'lock' || data.type === 'unlock') {
 		isLocked.value = data.isLocked

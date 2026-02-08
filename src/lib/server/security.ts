@@ -1,59 +1,59 @@
-import { userTypeEnum } from '$lib/enums';
-import { error, redirect, type RequestEvent } from '@sveltejs/kit';
+import { userTypeEnum } from '$lib/enums'
+import { error, redirect, type RequestEvent } from '@sveltejs/kit'
 
 export class Security {
-	private readonly user?: import('$lib/server/auth').SessionValidationResult['user'];
+	private readonly user?: import('$lib/server/auth').SessionValidationResult['user']
 
-	constructor(private readonly event: RequestEvent) {
-		this.user = event.locals.user;
+	constructor(event: RequestEvent) {
+		this.user = event.locals.user
 	}
 
 	isAuthenticated() {
 		if (!this.user) {
-			redirect(303, '/login');
+			redirect(303, '/login')
 		}
-		return this;
+		return this
 	}
 
 	isStudent() {
 		if (!this.user?.type || this.user.type !== userTypeEnum.student) {
-			error(403, 'not student');
+			error(403, 'not student')
 		}
-		return this;
+		return this
 	}
 
 	isTeacher() {
 		if (!this.user?.type || this.user.type !== userTypeEnum.teacher) {
-			error(403, 'not teacher');
+			error(403, 'not teacher')
 		}
-		return this;
+		return this
 	}
 
 	isGuardian() {
 		if (!this.user?.type || this.user.type !== userTypeEnum.guardian) {
-			error(403, 'not guardian');
+			error(403, 'not guardian')
 		}
-		return this;
+		return this
 	}
 
 	isPrincipal() {
 		if (!this.user?.type || this.user.type !== userTypeEnum.principal) {
-			error(403, 'not principal');
+			error(403, 'not principal')
 		}
-		return this;
+		return this
 	}
 
-	isSchoolAdmin() {
-		if (!this.user?.type || this.user.type !== userTypeEnum.schoolAdmin) {
-			error(403, 'not school admin');
+	isAdmin() {
+		if (!this.user?.type || this.user.type !== userTypeEnum.admin) {
+			error(403, 'not school admin')
 		}
-		return this;
+		return this
 	}
 
 	getUser() {
 		if (!this.user) {
-			redirect(303, '/login');
+			redirect(303, '/login')
 		}
-		return this.user;
+		return this.user
 	}
 }

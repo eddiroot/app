@@ -1,35 +1,29 @@
 // Task
-export * from './task.js';
+export * from './task.js'
 
 // School
-export * from './schools.js';
+export * from './school.js'
 
 // Timetable
-export * from './timetables.js';
+export * from './timetable.js'
 
 // Subject
-export * from './subjects.js';
+export * from './subject.js'
 
 // Class
-export * from './classes.js';
-
-// Course Map
-export * from './coursemap.js';
+export * from './class.js'
 
 // User
-export * from './user.js';
+export * from './user.js'
 
 // Resource
-export * from './resource.js';
+export * from './resource.js'
 
 // Events
-export * from './events.js';
-
-// Curriculum
-export * from './curriculum.js';
-
-// Vector
-export * from './vector.js';
+export * from './event.js'
 
 // News
-export * from './news.js';
+export * from './news.js'
+
+// Create
+export * from './create.js'

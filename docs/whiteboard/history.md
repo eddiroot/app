@@ -14,9 +14,9 @@ Central class managing the undo/redo stacks.
 
 ```typescript
 class CanvasHistory {
-  private undoStack: Command[] = []
-  private redoStack: Command[] = []
-  private maxSize: number = 50
+	private undoStack: Command[] = [];
+	private redoStack: Command[] = [];
+	private maxSize: number = 50;
 }
 ```
 
@@ -24,22 +24,22 @@ class CanvasHistory {
 
 ```typescript
 interface Command {
-  type: 'add' | 'modify' | 'delete' | 'batch-delete' | 'layer'
-  objectId: string
-  userId: string
-  timestamp: number
-  objectData: Record<string, unknown>
-  
-  // For modify commands
-  beforeState?: Record<string, unknown>
-  afterState?: Record<string, unknown>
-  
-  // For batch-delete commands
-  batchObjects?: Array<{ id: string; data: Record<string, unknown> }>
-  
-  // For layer commands
-  previousIndex?: number
-  newIndex?: number
+	type: 'add' | 'modify' | 'delete' | 'batch-delete' | 'layer';
+	objectId: string;
+	userId: string;
+	timestamp: number;
+	objectData: Record<string, unknown>;
+
+	// For modify commands
+	beforeState?: Record<string, unknown>;
+	afterState?: Record<string, unknown>;
+
+	// For batch-delete commands
+	batchObjects?: Array<{ id: string; data: Record<string, unknown> }>;
+
+	// For layer commands
+	previousIndex?: number;
+	newIndex?: number;
 }
 ```
 
@@ -210,11 +210,11 @@ Executes an undo operation on the canvas.
 
 ```typescript
 async function applyUndo(
-  command: Command,
-  canvas: fabric.Canvas,
-  sendCanvasUpdate: (data: Record<string, unknown>) => void,
-  controlPointManager?: ControlPointManager
-): Promise<void>
+	command: Command,
+	canvas: fabric.Canvas,
+	sendCanvasUpdate: (data: Record<string, unknown>) => void,
+	controlPointManager?: ControlPointManager,
+): Promise<void>;
 ```
 
 ### applyRedo
@@ -223,11 +223,11 @@ Executes a redo operation on the canvas.
 
 ```typescript
 async function applyRedo(
-  command: Command,
-  canvas: fabric.Canvas,
-  sendCanvasUpdate: (data: Record<string, unknown>) => void,
-  controlPointManager?: ControlPointManager
-): Promise<void>
+	command: Command,
+	canvas: fabric.Canvas,
+	sendCanvasUpdate: (data: Record<string, unknown>) => void,
+	controlPointManager?: ControlPointManager,
+): Promise<void>;
 ```
 
 ---
@@ -236,33 +236,33 @@ async function applyRedo(
 
 ```typescript
 // Initialize history
-const history = new CanvasHistory()
+const history = new CanvasHistory();
 
 // Record an add
-const rectId = uuidv4()
-const rectData = rect.toObject()
-rectData.id = rectId
-history.recordAdd(rectId, rectData, userId)
+const rectId = uuidv4();
+const rectData = rect.toObject();
+rectData.id = rectId;
+history.recordAdd(rectId, rectData, userId);
 
 // Record a modify (before + after)
-history.recordModifyStart(rectId, { left: 100, top: 100 })
-rect.set({ left: 200, top: 150 })
-history.recordModifyEnd(rectId, { left: 200, top: 150 }, userId)
+history.recordModifyStart(rectId, { left: 100, top: 100 });
+rect.set({ left: 200, top: 150 });
+history.recordModifyEnd(rectId, { left: 200, top: 150 }, userId);
 
 // Perform undo
 if (history.canUndo()) {
-  const command = history.popUndo()
-  await applyUndo(command, canvas, sendCanvasUpdate, controlPointManager)
-  history.pushToRedo(command)
-  updateHistoryState()
+	const command = history.popUndo();
+	await applyUndo(command, canvas, sendCanvasUpdate, controlPointManager);
+	history.pushToRedo(command);
+	updateHistoryState();
 }
 
 // Perform redo
 if (history.canRedo()) {
-  const command = history.popRedo()
-  await applyRedo(command, canvas, sendCanvasUpdate, controlPointManager)
-  history.pushToUndo(command)
-  updateHistoryState()
+	const command = history.popRedo();
+	await applyRedo(command, canvas, sendCanvasUpdate, controlPointManager);
+	history.pushToUndo(command);
+	updateHistoryState();
 }
 ```
 
@@ -273,6 +273,7 @@ if (history.canRedo()) {
 ### Per-User History
 
 History is tracked per-user. Commands include `userId` for potential future features like:
+
 - Showing who made each change
 - Filtering history by user
 - Collaborative undo (undo only your changes)
@@ -298,6 +299,7 @@ When a new action is recorded, the redo stack is cleared. This prevents inconsis
 ### Control Points Exclusion
 
 Control points are client-side only and are NOT included in history:
+
 - They're excluded from object serialization
 - Undo/redo recreates objects without control points
 - Control points are re-added on selection
@@ -345,14 +347,14 @@ handleObjectMoving(e) {
 handleObjectModified(e) {
   const obj = e.target
   const beforeState = movingObjectBeforeState.get(obj.id)
-  
+
   if (beforeState) {
     history.recordModifyStart(obj.id, beforeState)
     history.recordModifyEnd(obj.id, {
       left: obj.left,
       top: obj.top
     }, userId)
-    
+
     movingObjectBeforeState.delete(obj.id)
   }
 }
@@ -366,8 +368,8 @@ handleObjectModified(e) {
 
 ```typescript
 function updateHistoryState() {
-  canUndoState = history.canUndo()
-  canRedoState = history.canRedo()
+	canUndoState = history.canUndo();
+	canRedoState = history.canRedo();
 }
 ```
 
@@ -376,17 +378,17 @@ function updateHistoryState() {
 ```typescript
 // Ctrl+Z / Cmd+Z for undo
 if ((e.ctrlKey || e.metaKey) && e.key === 'z' && !e.shiftKey) {
-  performUndo()
+	performUndo();
 }
 
 // Ctrl+Shift+Z / Cmd+Shift+Z for redo
 if ((e.ctrlKey || e.metaKey) && e.key === 'z' && e.shiftKey) {
-  performRedo()
+	performRedo();
 }
 
 // Ctrl+Y / Cmd+Y for redo (alternative)
 if ((e.ctrlKey || e.metaKey) && e.key === 'y') {
-  performRedo()
+	performRedo();
 }
 ```
 
@@ -400,19 +402,19 @@ Clear is recorded as a single batch-delete command containing all deleted object
 
 ```typescript
 function clearCanvas(ctx) {
-  const deletedObjects = []
-  
-  ctx.canvas.getObjects().forEach(obj => {
-    if (!controlPointManager.isControlPoint(obj)) {
-      deletedObjects.push({ id: obj.id, data: obj.toObject() })
-    }
-  })
-  
-  // Record before clearing
-  ctx.onClearComplete?.(deletedObjects)  // Triggers recordBatchDelete
-  
-  // Then clear
-  ctx.canvas.clear()
+	const deletedObjects = [];
+
+	ctx.canvas.getObjects().forEach((obj) => {
+		if (!controlPointManager.isControlPoint(obj)) {
+			deletedObjects.push({ id: obj.id, data: obj.toObject() });
+		}
+	});
+
+	// Record before clearing
+	ctx.onClearComplete?.(deletedObjects); // Triggers recordBatchDelete
+
+	// Then clear
+	ctx.canvas.clear();
 }
 ```
 
@@ -422,12 +424,12 @@ Pasted objects are recorded as individual add commands:
 
 ```typescript
 async function pasteFromClipboard(ctx) {
-  for (const objData of clipboard) {
-    const newId = uuidv4()
-    // ... create object ...
-    
-    ctx.history?.recordAdd(newId, sendData, ctx.userId)
-  }
+	for (const objData of clipboard) {
+		const newId = uuidv4();
+		// ... create object ...
+
+		ctx.history?.recordAdd(newId, sendData, ctx.userId);
+	}
 }
 ```
 

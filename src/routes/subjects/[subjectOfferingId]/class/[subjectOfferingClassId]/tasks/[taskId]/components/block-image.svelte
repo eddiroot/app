@@ -33,22 +33,39 @@
 		uploading = true;
 
 		try {
-			// Create a data URL for immediate preview
-			const reader = new FileReader();
-			reader.onload = function (e) {
-				if (e.target && e.target.result && typeof e.target.result === 'string') {
-					const newConfig = {
-						...config,
-						path: e.target.result,
-						altText: config.altText || file.name.replace(/\.[^/.]+$/, '')
-					};
-					onConfigUpdate(newConfig);
-				}
+			const formData = new FormData();
+			formData.append('file', file);
+
+			const uploadResponse = await fetch('?/uploadFile', {
+				method: 'POST',
+				body: formData,
+			});
+
+			const result = await uploadResponse.json();
+
+			if (result.type === 'failure') {
+				throw new Error(result.data?.error || 'Upload failed');
+			}
+
+			const data = result.type === 'success' ? result.data : result;
+
+			if (!data.url) {
+				throw new Error('No URL returned from upload');
+			}
+
+			const newConfig = {
+				...config,
+				path: data.url,
+				altText: config.altText || file.name.replace(/\.[^/.]+$/, ''),
 			};
-			reader.readAsDataURL(file);
+			await onConfigUpdate(newConfig);
 		} catch (error) {
 			console.error('Upload error:', error);
-			alert('Failed to process image. Please try again.');
+			alert(
+				error instanceof Error
+					? error.message
+					: 'Failed to upload image. Please try again.',
+			);
 		} finally {
 			uploading = false;
 			// Clear the input
@@ -61,7 +78,7 @@
 	function triggerFileUpload() {
 		// Find the file input and click it
 		const input = document.querySelector(
-			'input[type="file"][accept="image/*"]'
+			'input[type="file"][accept="image/*"]',
 		) as HTMLInputElement;
 		input?.click();
 	}
@@ -90,7 +107,12 @@
 							<UploadIcon class="h-4 w-4" />
 							{uploading ? 'Uploading...' : 'Upload Resource'}
 						</Button>
-						<input type="file" accept="image/*" onchange={handleFileUpload} class="hidden" />
+						<input
+							type="file"
+							accept="image/*"
+							onchange={handleFileUpload}
+							class="hidden"
+						/>
 					</div>
 				{/if}
 
@@ -116,7 +138,9 @@
 				{#if config.path}
 					<div class="space-y-2">
 						<Label>Preview</Label>
-						<div class="flex justify-center rounded-lg border border-dashed p-4">
+						<div
+							class="flex justify-center rounded-lg border border-dashed p-4"
+						>
 							<img
 								src={config.path}
 								alt={config.altText || 'Image preview'}
@@ -178,10 +202,14 @@
 					</Card.Content>
 				</Card.Root>
 			{:else}
-				<div class="flex h-48 w-full items-center justify-center rounded-lg border border-dashed">
+				<div
+					class="flex h-48 w-full items-center justify-center rounded-lg border border-dashed"
+				>
 					<div class="text-center">
 						<ImageIcon class="text-muted-foreground mx-auto h-12 w-12" />
-						<p class="text-muted-foreground mt-2 text-sm">No image configured</p>
+						<p class="text-muted-foreground mt-2 text-sm">
+							No image configured
+						</p>
 						<p class="text-muted-foreground text-xs">
 							Please configure this image block in the task editor.
 						</p>

@@ -11,15 +11,17 @@
 	import { toast } from 'svelte-sonner';
 	import { superForm } from 'sveltekit-superforms';
 	import { zod4 } from 'sveltekit-superforms/adapters';
-	import type { PageData } from './$types.js';
-	import { createTimetableDraftSchema, publishTimetableDraftSchema } from './schema.js';
+	import {
+		createTimetableDraftSchema,
+		publishTimetableDraftSchema,
+	} from './schema.js';
 
-	let { data }: { data: PageData } = $props();
-
+	let { data } = $props();
 	let dialogOpen = $state(false);
 	let publishDialogOpen = $state(false);
 
-	const createDraftForm = superForm(data.createTimetableForm, {
+	let dataCreateTimetableForm = () => data.createTimetableForm;
+	const createDraftForm = superForm(dataCreateTimetableForm(), {
 		validators: zod4(createTimetableDraftSchema),
 		onUpdated: ({ form }) => {
 			if (form.valid) {
@@ -30,46 +32,49 @@
 			} else if (form.message) {
 				toast.error(form.message);
 			}
-		}
+		},
 	});
 
-	const publishDraftForm = superForm(data.publishTimetableDraftForm, {
+	let dataPublishTimetableDraftForm = () => data.publishTimetableDraftForm;
+	const publishDraftForm = superForm(dataPublishTimetableDraftForm(), {
 		validators: zod4(publishTimetableDraftSchema),
 		onUpdated: ({ form }) => {
 			if (form.valid) {
 				publishDialogOpen = false;
 				if (form.message) {
 					toast.success(form.message, {
-						description: 'The timetable is now available to students and teachers.'
+						description:
+							'The timetable is now available to students and teachers.',
 					});
 				}
 			} else if (form.message) {
 				toast.error(form.message);
 			}
-		}
+		},
 	});
 
-	const { form: createFormData, enhance, constraints } = createDraftForm;
-	const {
-		form: publishFormData,
-		enhance: publishEnhance,
-		constraints: publishConstraints
-	} = publishDraftForm;
+	const { form: createFormData, enhance } = createDraftForm;
+	const { form: publishFormData, enhance: publishEnhance } = publishDraftForm;
 </script>
 
 <div class="mb-6 flex items-center justify-between">
 	<div>
-		<h1 class="text-2xl font-bold">Timetabling</h1>
-		<h1 class="text-1xl font-bold">{data.timetable.name}</h1>
+		<h1 class="text-2xl font-bold">{data.timetable.tt.name}</h1>
+		<p class="text-lg">
+			{data.timetable.tt.year} - Semester {data.timetable.sch_sem.number}
+		</p>
 	</div>
 	<div class="flex gap-2">
 		<Dialog.Root bind:open={publishDialogOpen}>
-			<Dialog.Trigger class={buttonVariants({ variant: 'default' })}>Publish Draft</Dialog.Trigger>
+			<Dialog.Trigger class={buttonVariants({ variant: 'default' })}
+				>Publish Draft</Dialog.Trigger
+			>
 			<Dialog.Content class="sm:max-w-[500px]">
 				<Dialog.Header>
 					<Dialog.Title>Publish Timetable Draft</Dialog.Title>
 					<Dialog.Description>
-						Select a draft to publish. This will make it available to students and teachers.
+						Select a draft to publish. This will make it available to students
+						and teachers.
 					</Dialog.Description>
 				</Dialog.Header>
 				<form method="POST" action="?/publishTimetableDraft" use:publishEnhance>
@@ -99,15 +104,20 @@
 														class="h-4 w-4"
 													/>
 													<div class="flex flex-1 items-center gap-3">
-														<CalendarIcon class="text-muted-foreground h-5 w-5" />
+														<CalendarIcon
+															class="text-muted-foreground h-5 w-5"
+														/>
 														<div class="flex-1">
 															<div class="font-medium">{draft.name}</div>
 															<div class="text-muted-foreground text-xs">
-																Created {draft.createdAt.toLocaleDateString(undefined, {
-																	year: 'numeric',
-																	month: 'short',
-																	day: 'numeric'
-																})}
+																Created {draft.createdAt.toLocaleDateString(
+																	undefined,
+																	{
+																		year: 'numeric',
+																		month: 'short',
+																		day: 'numeric',
+																	},
+																)}
 															</div>
 														</div>
 														{#if draft.isArchived}
@@ -127,12 +137,17 @@
 						{/if}
 					</div>
 					<Dialog.Footer>
-						<Button type="button" variant="outline" onclick={() => (publishDialogOpen = false)}>
+						<Button
+							type="button"
+							variant="outline"
+							onclick={() => (publishDialogOpen = false)}
+						>
 							Cancel
 						</Button>
 						<Button
 							type="submit"
-							disabled={!$publishFormData.draftId || data.timetableDrafts.length === 0}
+							disabled={!$publishFormData.draftId ||
+								data.timetableDrafts.length === 0}
 						>
 							Publish Selected Draft
 						</Button>
@@ -140,7 +155,6 @@
 				</form>
 			</Dialog.Content>
 		</Dialog.Root>
-
 		<Dialog.Root bind:open={dialogOpen}>
 			<Dialog.Trigger class={buttonVariants({ variant: 'outline' })}>
 				<PlusIcon />
@@ -156,14 +170,22 @@
 							<Form.Control>
 								{#snippet children({ props })}
 									<Form.Label>Name</Form.Label>
-									<Input {...props} bind:value={$createFormData.name} placeholder="Version 1.0" />
+									<Input
+										{...props}
+										bind:value={$createFormData.name}
+										placeholder="Version 1.0"
+									/>
 								{/snippet}
 							</Form.Control>
 							<Form.FieldErrors />
 						</Form.Field>
 					</div>
 					<Dialog.Footer>
-						<Button type="button" variant="outline" onclick={() => (dialogOpen = false)}>
+						<Button
+							type="button"
+							variant="outline"
+							onclick={() => (dialogOpen = false)}
+						>
 							Cancel
 						</Button>
 						<Button type="submit" class="gap-2">
@@ -190,21 +212,27 @@
 {:else}
 	<div class="grid gap-4">
 		{#each data.timetableDrafts as draft}
-			<a href={`/admin/timetables/${data.timetable.id}/${draft.id}/times`}>
+			<a
+				href={`/admin/timetables/${data.timetable.tt.id}/draft/${draft.id}/times`}
+			>
 				<Card.Root>
 					<Card.Header class="flex items-center justify-between">
 						<div class="flex items-center gap-4">
-							<div class="bg-primary/10 flex h-12 w-12 items-center justify-center rounded-lg">
+							<div
+								class="bg-primary/10 flex h-12 w-12 items-center justify-center rounded-lg"
+							>
 								<CalendarIcon class="text-primary h-6 w-6" />
 							</div>
 							<div class="flex flex-col">
-								<Card.Title class="text-lg font-semibold">{draft.name}</Card.Title>
+								<Card.Title class="text-lg font-semibold"
+									>{draft.name}</Card.Title
+								>
 								<div class="mt-1 flex items-center gap-2">
 									<Badge variant="secondary" class="text-xs">
 										{draft.createdAt.toLocaleDateString(undefined, {
 											year: 'numeric',
 											month: 'short',
-											day: 'numeric'
+											day: 'numeric',
 										})}
 									</Badge>
 									{#if draft.isArchived}
@@ -223,4 +251,6 @@
 	</div>
 {/if}
 
-<div class="text-muted-foreground mt-8 border-t pt-4 text-center text-sm">Powered by FET</div>
+<div class="text-muted-foreground mt-8 border-t pt-4 text-center text-sm">
+	Powered by FET
+</div>

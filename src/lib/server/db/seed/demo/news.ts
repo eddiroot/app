@@ -1,15 +1,19 @@
-import { newsPriorityEnum, newsStatusEnum, newsVisibilityEnum } from '$lib/enums';
-import * as schema from '../../schema';
-import type { Database } from '../types';
-import type { DemoSchoolData, DemoUserData } from './types';
+import {
+	newsPriorityEnum,
+	newsStatusEnum,
+	newsVisibilityEnum,
+} from '$lib/enums'
+import * as schema from '../../schema'
+import type { Database } from '../types'
+import type { DemoSchoolData, DemoUserData } from './types'
 
 export async function seedDemoNews(
 	db: Database,
 	schoolData: DemoSchoolData,
-	userData: DemoUserData
+	userData: DemoUserData,
 ): Promise<void> {
-	const { school, campus } = schoolData;
-	const { admin, teachers } = userData;
+	const { school, campus } = schoolData
+	const { admin, teachers } = userData
 
 	// Create news categories
 	const newsCategories = await db
@@ -19,30 +23,29 @@ export async function seedDemoNews(
 				name: 'School Announcements',
 				description: 'General school announcements and updates',
 				color: '#3B82F6', // Blue
-				
+				schoolId: school.id,
 			},
 			{
 				name: 'Academic News',
 				description: 'Academic achievements and educational updates',
 				color: '#10B981', // Green
-				
+				schoolId: school.id,
 			},
 			{
 				name: 'Sports & Activities',
-				description: 'Sports events, extracurricular activities, and student achievements',
+				description:
+					'Sports events, extracurricular activities, and student achievements',
 				color: '#F59E0B', // Orange
-				
+				schoolId: school.id,
 			},
 			{
 				name: 'Community Events',
 				description: 'Community involvement and special events',
 				color: '#8B5CF6', // Purple
-				
-			}
+				schoolId: school.id,
+			},
 		])
-		.returning();
-
-	console.log(`  Created ${newsCategories.length} news categories`);
+		.returning()
 
 	// Create news articles
 	await db.insert(schema.news).values([
@@ -54,33 +57,39 @@ export async function seedDemoNews(
 					{ type: 'paragraph', content: `Dear ${school.name} Community,` },
 					{
 						type: 'paragraph',
-						content: `We are thrilled to welcome everyone back to ${school.name} for the 2025 academic year! After a wonderful summer break, our campus is buzzing with excitement as students return to their classrooms and teachers prepare for another year of inspiring education.`
+						content: `We are thrilled to welcome everyone back to ${school.name} for the 2025 academic year! After a wonderful summer break, our campus is buzzing with excitement as students return to their classrooms and teachers prepare for another year of inspiring education.`,
 					},
 					{
 						type: 'paragraph',
 						content:
-							'This year, we have some exciting new initiatives planned, including enhanced STEM programs, updated library resources, and improved playground facilities. Our dedicated teaching staff has been working hard during the break to prepare engaging lessons and activities for all year levels.'
+							'This year, we have some exciting new initiatives planned, including enhanced STEM programs, updated library resources, and improved playground facilities. Our dedicated teaching staff has been working hard during the break to prepare engaging lessons and activities for all year levels.',
 					},
-					{ type: 'paragraph', content: 'Important reminders for the start of term:' },
+					{
+						type: 'paragraph',
+						content: 'Important reminders for the start of term:',
+					},
 					{
 						type: 'list',
 						items: [
 							'School starts at 8:00 AM sharp',
 							'Please ensure students bring their water bottles daily',
 							'Uniform requirements are strictly enforced',
-							'Parent-teacher meetings will be scheduled in Week 3'
-						]
+							'Parent-teacher meetings will be scheduled in Week 3',
+						],
 					},
 					{
 						type: 'paragraph',
 						content:
-							"We look forward to working together to make 2025 a successful and memorable year for all our students. If you have any questions or concerns, please don't hesitate to contact the school office."
+							"We look forward to working together to make 2025 a successful and memorable year for all our students. If you have any questions or concerns, please don't hesitate to contact the school office.",
 					},
-					{ type: 'paragraph', content: 'Warm regards,<br>School Administration Team' }
-				]
+					{
+						type: 'paragraph',
+						content: 'Warm regards,<br>School Administration Team',
+					},
+				],
 			},
 			schoolId: school.id,
-			campusId: campus.id,
+			schoolCampusId: campus.id,
 			categoryId: newsCategories[0].id,
 			authorId: admin.id,
 			status: newsStatusEnum.published,
@@ -89,7 +98,6 @@ export async function seedDemoNews(
 			publishedAt: new Date(),
 			isPinned: true,
 			viewCount: 0,
-			
 		},
 		{
 			title: 'Year 9 Science Fair Competition Results',
@@ -100,12 +108,12 @@ export async function seedDemoNews(
 					{
 						type: 'paragraph',
 						content:
-							'We are proud to announce the results of our annual Year 9 Science Fair, which took place last Friday in the school gymnasium.'
+							'We are proud to announce the results of our annual Year 9 Science Fair, which took place last Friday in the school gymnasium.',
 					},
 					{
 						type: 'paragraph',
 						content:
-							'This year\'s theme was "Sustainability and Innovation," and our students rose to the challenge with incredible projects that demonstrated both scientific rigor and creative problem-solving.'
+							'This year\'s theme was "Sustainability and Innovation," and our students rose to the challenge with incredible projects that demonstrated both scientific rigor and creative problem-solving.',
 					},
 					{ type: 'heading', level: 3, content: 'Prize Winners:' },
 					{
@@ -114,18 +122,18 @@ export async function seedDemoNews(
 							'1st Place: "Solar-Powered Water Filtration System" by Student One',
 							'2nd Place: "Biodegradable Plastic from Orange Peels" by Student Two',
 							'3rd Place: "Wind Energy Generation Model" by Student Three',
-							'People\'s Choice Award: "Sustainable Garden Ecosystem" by various students'
-						]
+							'People\'s Choice Award: "Sustainable Garden Ecosystem" by various students',
+						],
 					},
 					{
 						type: 'paragraph',
 						content:
-							'All participants should be proud of their efforts. The projects will be on display in the Science Lab A for the next two weeks.'
-					}
-				]
+							'All participants should be proud of their efforts. The projects will be on display in the Science Lab A for the next two weeks.',
+					},
+				],
 			},
 			schoolId: school.id,
-			campusId: campus.id,
+			schoolCampusId: campus.id,
 			categoryId: newsCategories[1].id,
 			authorId: teachers[2].id, // Science Teacher
 			status: newsStatusEnum.published,
@@ -134,7 +142,6 @@ export async function seedDemoNews(
 			publishedAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
 			isPinned: false,
 			viewCount: 15,
-			
 		},
 		{
 			title: 'Basketball Team Wins Regional Championship',
@@ -144,12 +151,12 @@ export async function seedDemoNews(
 				blocks: [
 					{
 						type: 'paragraph',
-						content: `What an amazing weekend for ${school.name} Basketball! Our senior team has brought home the Regional Championship trophy after an outstanding tournament performance.`
+						content: `What an amazing weekend for ${school.name} Basketball! Our senior team has brought home the Regional Championship trophy after an outstanding tournament performance.`,
 					},
 					{
 						type: 'paragraph',
 						content:
-							'The team showed exceptional teamwork, determination, and sportsmanship throughout the three-day tournament.'
+							'The team showed exceptional teamwork, determination, and sportsmanship throughout the three-day tournament.',
 					},
 					{ type: 'heading', level: 3, content: 'Tournament Results:' },
 					{
@@ -157,18 +164,18 @@ export async function seedDemoNews(
 						items: [
 							'Quarter-final: def. Westside Academy 65-58',
 							'Semi-final: def. Northshore College 71-62',
-							'Final: def. Central High School 78-65'
-						]
+							'Final: def. Central High School 78-65',
+						],
 					},
 					{
 						type: 'paragraph',
 						content:
-							'The team will now advance to the State Championships next month. We encourage all students and families to come out and support our champions!'
-					}
-				]
+							'The team will now advance to the State Championships next month. We encourage all students and families to come out and support our champions!',
+					},
+				],
 			},
 			schoolId: school.id,
-			campusId: campus.id,
+			schoolCampusId: campus.id,
 			categoryId: newsCategories[2].id,
 			authorId: teachers[3].id, // PE Teacher
 			status: newsStatusEnum.published,
@@ -177,7 +184,6 @@ export async function seedDemoNews(
 			publishedAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000),
 			isPinned: true,
 			viewCount: 42,
-			
 		},
 		{
 			title: 'Library Renovation Project Update',
@@ -188,7 +194,7 @@ export async function seedDemoNews(
 					{
 						type: 'paragraph',
 						content:
-							'We are excited to provide an update on our library renovation project, which has been progressing smoothly since construction began in January.'
+							'We are excited to provide an update on our library renovation project, which has been progressing smoothly since construction began in January.',
 					},
 					{ type: 'heading', level: 3, content: "What's New:" },
 					{
@@ -198,18 +204,18 @@ export async function seedDemoNews(
 							'Collaborative learning spaces for group projects',
 							'Updated computer lab with 30 new stations',
 							'Accessible ramps and wider doorways',
-							'Quiet reading nooks with comfortable seating'
-						]
+							'Quiet reading nooks with comfortable seating',
+						],
 					},
 					{
 						type: 'paragraph',
 						content:
-							'We expect the renovation to be completed by late March, with a grand reopening celebration planned for early April.'
-					}
-				]
+							'We expect the renovation to be completed by late March, with a grand reopening celebration planned for early April.',
+					},
+				],
 			},
 			schoolId: school.id,
-			campusId: campus.id,
+			schoolCampusId: campus.id,
 			categoryId: newsCategories[0].id,
 			authorId: admin.id,
 			status: newsStatusEnum.published,
@@ -218,7 +224,6 @@ export async function seedDemoNews(
 			publishedAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000),
 			isPinned: false,
 			viewCount: 28,
-			
 		},
 		{
 			title: "Drama Club Presents: A Midsummer Night's Dream",
@@ -228,7 +233,7 @@ export async function seedDemoNews(
 				blocks: [
 					{
 						type: 'paragraph',
-						content: `The ${school.name} Drama Club is thrilled to announce our spring production of William Shakespeare's "A Midsummer Night's Dream"!`
+						content: `The ${school.name} Drama Club is thrilled to announce our spring production of William Shakespeare's "A Midsummer Night's Dream"!`,
 					},
 					{ type: 'heading', level: 3, content: 'Show Details:' },
 					{
@@ -238,18 +243,18 @@ export async function seedDemoNews(
 							'Time: 7:00 PM (doors open at 6:30 PM)',
 							'Location: School Auditorium',
 							'Tickets: $12 adults, $8 students/seniors',
-							'Duration: Approximately 2 hours with one intermission'
-						]
+							'Duration: Approximately 2 hours with one intermission',
+						],
 					},
 					{
 						type: 'paragraph',
 						content:
-							'Come and support our talented students in what promises to be a magical theatrical experience!'
-					}
-				]
+							'Come and support our talented students in what promises to be a magical theatrical experience!',
+					},
+				],
 			},
 			schoolId: school.id,
-			campusId: campus.id,
+			schoolCampusId: campus.id,
 			categoryId: newsCategories[2].id,
 			authorId: teachers[1].id, // English Teacher
 			status: newsStatusEnum.published,
@@ -258,7 +263,6 @@ export async function seedDemoNews(
 			publishedAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
 			isPinned: false,
 			viewCount: 35,
-			
 		},
 		{
 			title: 'Community Garden Project Launch',
@@ -268,7 +272,7 @@ export async function seedDemoNews(
 				blocks: [
 					{
 						type: 'paragraph',
-						content: `We are excited to announce the launch of the ${school.name} Community Garden Project, a collaborative initiative that brings together students, families, and staff to create a sustainable learning environment.`
+						content: `We are excited to announce the launch of the ${school.name} Community Garden Project, a collaborative initiative that brings together students, families, and staff to create a sustainable learning environment.`,
 					},
 					{ type: 'heading', level: 3, content: 'How to Get Involved:' },
 					{
@@ -277,18 +281,18 @@ export async function seedDemoNews(
 							'Volunteer for weekend planting sessions',
 							'Donate seeds, tools, or materials',
 							'Join the Garden Committee as a parent representative',
-							'Participate in harvest festivals and educational workshops'
-						]
+							'Participate in harvest festivals and educational workshops',
+						],
 					},
 					{
 						type: 'paragraph',
 						content:
-							'Our first community planting day is scheduled for Saturday, March 10th from 9:00 AM to 2:00 PM.'
-					}
-				]
+							'Our first community planting day is scheduled for Saturday, March 10th from 9:00 AM to 2:00 PM.',
+					},
+				],
 			},
 			schoolId: school.id,
-			campusId: campus.id,
+			schoolCampusId: campus.id,
 			categoryId: newsCategories[3].id,
 			authorId: teachers[2].id, // Science Teacher
 			status: newsStatusEnum.published,
@@ -297,7 +301,6 @@ export async function seedDemoNews(
 			publishedAt: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000),
 			isPinned: false,
 			viewCount: 22,
-			
 		},
 		{
 			title: 'Parent-Teacher Conference Scheduling Now Open',
@@ -308,7 +311,7 @@ export async function seedDemoNews(
 					{
 						type: 'paragraph',
 						content:
-							'We are pleased to announce that online booking for Term 1 parent-teacher conferences is now open through our school portal.'
+							'We are pleased to announce that online booking for Term 1 parent-teacher conferences is now open through our school portal.',
 					},
 					{ type: 'heading', level: 3, content: 'Conference Details:' },
 					{
@@ -318,18 +321,18 @@ export async function seedDemoNews(
 							'Times: 3:30 PM - 7:00 PM each day',
 							'Duration: 15 minutes per appointment',
 							'Options: In-person or video conference',
-							'Booking deadline: March 15th'
-						]
+							'Booking deadline: March 15th',
+						],
 					},
 					{
 						type: 'paragraph',
 						content:
-							"We encourage all parents to take advantage of this opportunity to connect with their child's teachers."
-					}
-				]
+							"We encourage all parents to take advantage of this opportunity to connect with their child's teachers.",
+					},
+				],
 			},
 			schoolId: school.id,
-			campusId: campus.id,
+			schoolCampusId: campus.id,
 			categoryId: newsCategories[0].id,
 			authorId: admin.id,
 			status: newsStatusEnum.published,
@@ -338,9 +341,6 @@ export async function seedDemoNews(
 			publishedAt: new Date(Date.now() - 12 * 24 * 60 * 60 * 1000),
 			isPinned: false,
 			viewCount: 67,
-			
-		}
-	]);
-
-	console.log('  Created 7 news articles');
+		},
+	])
 }

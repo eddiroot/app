@@ -1,7 +1,11 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import ChangePasswordForm from '$lib/components/change-password-form.svelte';
-	import { Avatar, AvatarFallback, AvatarImage } from '$lib/components/ui/avatar';
+	import {
+		Avatar,
+		AvatarFallback,
+		AvatarImage,
+	} from '$lib/components/ui/avatar';
 	import { Badge } from '$lib/components/ui/badge';
 	import { Button } from '$lib/components/ui/button';
 	import BookOpen from '@lucide/svelte/icons/book-open';
@@ -14,7 +18,10 @@
 	let { data, form } = $props();
 	let showChangePasswordForm = $state(false);
 
-	function getInitials(firstName: string | null, lastName: string | null): string {
+	function getInitials(
+		firstName: string | null,
+		lastName: string | null,
+	): string {
 		return `${firstName?.charAt(0) || ''}${lastName?.charAt(0) || ''}`.toUpperCase();
 	}
 
@@ -22,7 +29,9 @@
 		return type.charAt(0).toUpperCase() + type.slice(1);
 	}
 
-	function getRoleBadgeVariant(type: string): 'default' | 'secondary' | 'destructive' | 'outline' {
+	function getRoleBadgeVariant(
+		type: string,
+	): 'default' | 'secondary' | 'destructive' | 'outline' {
 		switch (type) {
 			case 'student':
 				return 'default';
@@ -41,7 +50,7 @@
 			data.profile.honorific,
 			data.profile.firstName,
 			data.profile.middleName,
-			data.profile.lastName
+			data.profile.lastName,
 		].filter(Boolean);
 		return parts.join(' ');
 	}
@@ -51,7 +60,7 @@
 		return new Date(date).toLocaleDateString('en-AU', {
 			year: 'numeric',
 			month: 'long',
-			day: 'numeric'
+			day: 'numeric',
 		});
 	}
 
@@ -75,16 +84,22 @@
 		goto(`/grades/${data.profile.id}`);
 	}
 
-	// Show change password button if it's the user's own profile or if current user is admin
-	const canChangePassword = data.isOwnProfile || data.isAdmin;
+	const canChangePassword = (function getCanChangePassword() {
+		return data.isOwnProfile || data.isAdmin;
+	})();
 </script>
 
 <div class="container mx-auto max-w-6xl p-6">
 	<header class="bg-card rounded-lg border p-6 shadow-sm">
-		<div class="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
+		<div
+			class="flex flex-col gap-6 md:flex-row md:items-center md:justify-between"
+		>
 			<div class="flex items-center gap-4">
 				<Avatar class="h-16 w-16 md:h-20 md:w-20">
-					<AvatarImage src={data.profile.avatarUrl} alt="Profile picture of {getFullName()}" />
+					<AvatarImage
+						src={data.profile.avatarPath}
+						alt="Profile picture of {getFullName()}"
+					/>
 					<AvatarFallback class="text-lg font-semibold">
 						{getInitials(data.profile.firstName, data.profile.lastName)}
 					</AvatarFallback>
@@ -96,7 +111,10 @@
 					</h2>
 
 					<div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-4">
-						<Badge variant={getRoleBadgeVariant(data.profile.type)} class="w-fit">
+						<Badge
+							variant={getRoleBadgeVariant(data.profile.type)}
+							class="w-fit"
+						>
 							{formatUserType(data.profile.type)}
 						</Badge>
 

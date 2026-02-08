@@ -15,8 +15,16 @@ export interface KeyboardShortcutContext {
 	sendCanvasUpdate: (data: Record<string, unknown>) => void
 	controlPointManager?: ControlPointManager
 	history?: {
-		recordAdd: (objectId: string, objectData: Record<string, unknown>, userId: string) => void
-		recordDelete: (objectId: string, objectData: Record<string, unknown>, userId: string) => void
+		recordAdd: (
+			objectId: string,
+			objectData: Record<string, unknown>,
+			userId: string,
+		) => void
+		recordDelete: (
+			objectId: string,
+			objectData: Record<string, unknown>,
+			userId: string,
+		) => void
 		canUndo: () => boolean
 		canRedo: () => boolean
 	}
@@ -38,7 +46,8 @@ export function copySelected(ctx: KeyboardShortcutContext): boolean {
 		// Skip control points
 		if (ctx.controlPointManager?.isControlPoint(obj)) return
 
-		const objData = obj.type === 'textbox' ? obj.toObject(['text']) : obj.toObject()
+		const objData =
+			obj.type === 'textbox' ? obj.toObject(['text']) : obj.toObject()
 		// @ts-expect-error - Custom id property
 		objData.id = obj.id
 		clipboard.push(objData)
@@ -51,7 +60,9 @@ export function copySelected(ctx: KeyboardShortcutContext): boolean {
  * Pastes objects from the internal clipboard onto the canvas
  * Objects are centered under the mouse cursor position
  */
-export async function pasteFromClipboard(ctx: KeyboardShortcutContext): Promise<boolean> {
+export async function pasteFromClipboard(
+	ctx: KeyboardShortcutContext,
+): Promise<boolean> {
 	if (clipboard.length === 0) return false
 
 	const pastedObjects: fabric.Object[] = []
@@ -87,7 +98,7 @@ export async function pasteFromClipboard(ctx: KeyboardShortcutContext): Promise<
 		// Convert mouse position to canvas coordinates (accounting for zoom and pan)
 		const pointer = ctx.canvas.getPointer({
 			clientX: ctx.mousePosition.x,
-			clientY: ctx.mousePosition.y
+			clientY: ctx.mousePosition.y,
 		} as MouseEvent)
 		targetX = pointer.x
 		targetY = pointer.y
@@ -121,30 +132,22 @@ export async function pasteFromClipboard(ctx: KeyboardShortcutContext): Promise<
 			obj.id = newId
 
 			// Disable default fabric.js controls and borders - we use custom control points
-			obj.set({
-				hasControls: false,
-				hasBorders: false
-			})
+			obj.set({ hasControls: false, hasBorders: false })
 
 			// Ensure images use center origin
 			if (obj.type === 'image') {
-				obj.set({
-					originX: 'center',
-					originY: 'center'
-				})
+				obj.set({ originX: 'center', originY: 'center' })
 			}
 
 			ctx.canvas.add(obj)
 			pastedObjects.push(obj)
 
 			// Send update to other users
-			const sendData = obj.type === 'textbox' ? obj.toObject(['text']) : obj.toObject()
+			const sendData =
+				obj.type === 'textbox' ? obj.toObject(['text']) : obj.toObject()
 			// @ts-expect-error - Custom id property
 			sendData.id = obj.id
-			ctx.sendCanvasUpdate({
-				type: 'add',
-				object: sendData
-			})
+			ctx.sendCanvasUpdate({ type: 'add', object: sendData })
 
 			// Record history for the paste operation
 			if (ctx.history && ctx.userId) {
@@ -158,7 +161,9 @@ export async function pasteFromClipboard(ctx: KeyboardShortcutContext): Promise<
 		if (pastedObjects.length === 1) {
 			ctx.canvas.setActiveObject(pastedObjects[0])
 		} else {
-			const selection = new fabric.ActiveSelection(pastedObjects, { canvas: ctx.canvas })
+			const selection = new fabric.ActiveSelection(pastedObjects, {
+				canvas: ctx.canvas,
+			})
 			ctx.canvas.setActiveObject(selection)
 		}
 		ctx.canvas.renderAll()
@@ -171,7 +176,9 @@ export async function pasteFromClipboard(ctx: KeyboardShortcutContext): Promise<
 /**
  * Cuts the currently selected object(s) (copy + delete)
  */
-export async function cutSelected(ctx: KeyboardShortcutContext): Promise<boolean> {
+export async function cutSelected(
+	ctx: KeyboardShortcutContext,
+): Promise<boolean> {
 	const copied = copySelected(ctx)
 	if (!copied) return false
 
@@ -192,7 +199,8 @@ export async function cutSelected(ctx: KeyboardShortcutContext): Promise<boolean
 
 			// Record deletion in history
 			if (ctx.history && ctx.userId) {
-				const objData = obj.type === 'textbox' ? obj.toObject(['text']) : obj.toObject()
+				const objData =
+					obj.type === 'textbox' ? obj.toObject(['text']) : obj.toObject()
 				objData.id = objectId
 				ctx.history.recordDelete(objectId, objData, ctx.userId)
 			}
@@ -206,10 +214,7 @@ export async function cutSelected(ctx: KeyboardShortcutContext): Promise<boolean
 	ctx.canvas.renderAll()
 
 	if (objectsData.length > 0) {
-		ctx.sendCanvasUpdate({
-			type: 'delete',
-			objects: objectsData
-		})
+		ctx.sendCanvasUpdate({ type: 'delete', objects: objectsData })
 	}
 
 	ctx.updateHistoryState?.()
@@ -219,7 +224,9 @@ export async function cutSelected(ctx: KeyboardShortcutContext): Promise<boolean
 /**
  * Duplicates the currently selected object(s) in place with offset
  */
-export async function duplicateSelected(ctx: KeyboardShortcutContext): Promise<boolean> {
+export async function duplicateSelected(
+	ctx: KeyboardShortcutContext,
+): Promise<boolean> {
 	const copied = copySelected(ctx)
 	if (!copied) return false
 
@@ -237,7 +244,8 @@ export function selectAll(ctx: KeyboardShortcutContext): boolean {
 		// Skip objects that aren't selectable
 		if (!obj.selectable) return false
 		// Skip edge lines (marked with excludeFromExport)
-		if ((obj as unknown as { excludeFromExport?: boolean }).excludeFromExport) return false
+		if ((obj as unknown as { excludeFromExport?: boolean }).excludeFromExport)
+			return false
 		return true
 	})
 
@@ -267,7 +275,9 @@ export function selectAll(ctx: KeyboardShortcutContext): boolean {
 		}
 	} else {
 		// For multiple objects, create an ActiveSelection
-		const selection = new fabric.ActiveSelection(objects, { canvas: ctx.canvas })
+		const selection = new fabric.ActiveSelection(objects, {
+			canvas: ctx.canvas,
+		})
 		ctx.canvas.setActiveObject(selection)
 		// Add control points for each object in the selection
 		if (ctx.controlPointManager) {

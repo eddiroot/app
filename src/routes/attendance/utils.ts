@@ -1,49 +1,76 @@
-import { subjectClassAllocationAttendanceStatus } from '$lib/enums.js';
-import { CalendarDate, getLocalTimeZone, type DateValue } from '@internationalized/date';
-import type { ScheduleWithAttendanceRecord } from './+page.server.js';
+import { subjectClassAllocationAttendanceStatus } from '$lib/enums.js'
+import {
+	type Subject,
+	type SubjectClassAllocation,
+	type SubjectClassAllocationAttendance,
+	type SubjectOfferingClass,
+	type User,
+} from '$lib/server/db/schema'
+import {
+	CalendarDate,
+	getLocalTimeZone,
+	type DateValue,
+} from '@internationalized/date'
 
-export type { ScheduleWithAttendanceRecord };
+export type ScheduleWithAttendanceRecord = {
+	user: Pick<
+		User,
+		'id' | 'firstName' | 'middleName' | 'lastName' | 'avatarPath'
+	>
+	subjectClassAllocation: Pick<SubjectClassAllocation, 'id' | 'start' | 'end'>
+	subjectOfferingClass: Pick<SubjectOfferingClass, 'id' | 'name'>
+	subject: Pick<Subject, 'name'>
+	attendance: SubjectClassAllocationAttendance | null
+}
 
 export function getRecordsForDate(
 	records: ScheduleWithAttendanceRecord[],
-	selectedDate: DateValue | undefined
+	selectedDate: DateValue | undefined,
 ): ScheduleWithAttendanceRecord[] {
-	if (!selectedDate || !records?.length) return [];
+	if (!selectedDate || !records?.length) return []
 
 	return records.filter((record) => {
-		const recordDate = dateValueToCalendarDate(new Date(record.subjectClassAllocation.date));
-		return selectedDate.compare(recordDate) === 0;
-	});
+		const recordDate = dateValueToCalendarDate(
+			new Date(record.subjectClassAllocation.start),
+		)
+		return selectedDate.compare(recordDate) === 0
+	})
 }
 
 export function hasClassesOnDate(
 	records: ScheduleWithAttendanceRecord[],
-	selectedDate: DateValue | undefined
+	selectedDate: DateValue | undefined,
 ): boolean {
-	return getRecordsForDate(records, selectedDate).length > 0;
+	return getRecordsForDate(records, selectedDate).length > 0
 }
 
-export type AttendanceStatus = 'all-present' | 'all-absent' | 'mixed' | 'none';
+export type AttendanceStatus = 'all-present' | 'all-absent' | 'mixed' | 'none'
 
 export function getAttendanceStatusForDay(
 	records: ScheduleWithAttendanceRecord[],
-	day: DateValue
+	day: DateValue,
 ): AttendanceStatus {
-	const recordsForDay = getRecordsForDate(records, day);
-	const attendanceRecords = recordsForDay.filter((record) => record.attendance !== null);
+	const recordsForDay = getRecordsForDate(records, day)
+	const attendanceRecords = recordsForDay.filter(
+		(record) => record.attendance !== null,
+	)
 
-	if (!attendanceRecords.length) return 'none';
+	if (!attendanceRecords.length) return 'none'
 
 	const allPresent = attendanceRecords.every(
-		(record) => record.attendance?.status === subjectClassAllocationAttendanceStatus.present
-	);
+		(record) =>
+			record.attendance?.status ===
+			subjectClassAllocationAttendanceStatus.present,
+	)
 	const allAbsent = attendanceRecords.every(
-		(record) => record.attendance?.status === subjectClassAllocationAttendanceStatus.absent
-	);
+		(record) =>
+			record.attendance?.status ===
+			subjectClassAllocationAttendanceStatus.absent,
+	)
 
-	if (allPresent) return 'all-present';
-	if (allAbsent) return 'all-absent';
-	return 'mixed';
+	if (allPresent) return 'all-present'
+	if (allAbsent) return 'all-absent'
+	return 'mixed'
 }
 
 export function getAttendanceStyleClasses(status: AttendanceStatus): string {
@@ -54,32 +81,36 @@ export function getAttendanceStyleClasses(status: AttendanceStatus): string {
 			'!bg-destructive hover:!bg-destructive !text-destructive-foreground hover:!text-destructive-foreground',
 		mixed:
 			'!bg-secondary hover:!bg-secondary !text-secondary-foreground hover:!text-secondary-foreground',
-		none: ''
-	};
+		none: '',
+	}
 
-	return statusStyles[status];
+	return statusStyles[status]
 }
 
 export function dateValueToCalendarDate(date: Date): CalendarDate {
-	return new CalendarDate(date.getFullYear(), date.getMonth() + 1, date.getDate());
+	return new CalendarDate(
+		date.getFullYear(),
+		date.getMonth() + 1,
+		date.getDate(),
+	)
 }
 
 export function isDateInFuture(date: DateValue | undefined): boolean {
-	if (!date) return false;
-	const selectedDate = date.toDate(getLocalTimeZone());
-	const today = new Date();
-	today.setHours(0, 0, 0, 0);
-	selectedDate.setHours(0, 0, 0, 0);
-	return selectedDate > today;
+	if (!date) return false
+	const selectedDate = date.toDate(getLocalTimeZone())
+	const today = new Date()
+	today.setHours(0, 0, 0, 0)
+	selectedDate.setHours(0, 0, 0, 0)
+	return selectedDate > today
 }
 
 export function isDateToday(date: DateValue | undefined): boolean {
-	if (!date) return false;
-	const selectedDate = date.toDate(getLocalTimeZone());
-	const today = new Date();
+	if (!date) return false
+	const selectedDate = date.toDate(getLocalTimeZone())
+	const today = new Date()
 	return (
 		selectedDate.getFullYear() === today.getFullYear() &&
 		selectedDate.getMonth() === today.getMonth() &&
 		selectedDate.getDate() === today.getDate()
-	);
+	)
 }

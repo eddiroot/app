@@ -24,14 +24,10 @@
 		campusId: 0,
 		name: '',
 		address: '',
-		description: ''
+		description: '',
 	});
 
-	let createFormData = $state({
-		name: '',
-		address: '',
-		description: ''
-	});
+	let createFormData = $state({ name: '', address: '', description: '' });
 
 	function openEditDialog(campus: any) {
 		selectedCampus = campus;
@@ -39,7 +35,7 @@
 			campusId: campus.id,
 			name: campus.name,
 			address: campus.address,
-			description: campus.description || ''
+			description: campus.description || '',
 		};
 		editDialogOpen = true;
 	}
@@ -55,11 +51,7 @@
 	}
 
 	function openCreateDialog() {
-		createFormData = {
-			name: '',
-			address: '',
-			description: ''
-		};
+		createFormData = { name: '', address: '', description: '' };
 		createDialogOpen = true;
 	}
 </script>
@@ -83,19 +75,28 @@
 								<BuildingIcon class="text-secondary-foreground h-5 w-5" />
 							</div>
 							<div class="flex-1">
-								<Card.Title class="text-lg font-semibold">{campus.name}</Card.Title>
+								<Card.Title class="text-lg font-semibold"
+									>{campus.name}</Card.Title
+								>
 							</div>
 							<DropdownMenu.Root>
 								<DropdownMenu.Trigger>
 									{#snippet child({ props })}
-										<Button {...props} variant="ghost" size="sm" class="h-8 w-8 p-0">
+										<Button
+											{...props}
+											variant="ghost"
+											size="sm"
+											class="h-8 w-8 p-0"
+										>
 											<span class="sr-only">Open menu</span>
 											<MoreHorizontalIcon />
 										</Button>
 									{/snippet}
 								</DropdownMenu.Trigger>
 								<DropdownMenu.Content align="end" class="w-[160px]">
-									<DropdownMenu.Item onclick={() => openEditDialog(campus)}>Edit</DropdownMenu.Item>
+									<DropdownMenu.Item onclick={() => openEditDialog(campus)}
+										>Edit</DropdownMenu.Item
+									>
 									<DropdownMenu.Item
 										onclick={() => openArchiveDialog(campus)}
 										class="text-destructive focus:text-destructive"
@@ -106,7 +107,9 @@
 							</DropdownMenu.Root>
 						</div>
 						<div class="space-y-2 overflow-hidden">
-							<div class="text-muted-foreground flex items-center gap-2 text-sm">
+							<div
+								class="text-muted-foreground flex items-center gap-2 text-sm"
+							>
 								<MapPinIcon class="h-4 w-4 shrink-0" />
 								<span class="truncate">{campus.address}</span>
 							</div>
@@ -131,25 +134,36 @@
 							<DropdownMenu.Root>
 								<DropdownMenu.Trigger>
 									{#snippet child({ props })}
-										<Button {...props} variant="ghost" size="sm" class="h-8 w-8 p-0">
+										<Button
+											{...props}
+											variant="ghost"
+											size="sm"
+											class="h-8 w-8 p-0"
+										>
 											<span class="sr-only">Open menu</span>
 											<MoreHorizontalIcon />
 										</Button>
 									{/snippet}
 								</DropdownMenu.Trigger>
 								<DropdownMenu.Content align="end" class="w-[160px]">
-									<DropdownMenu.Item onclick={() => openUnarchiveDialog(campus)}>
+									<DropdownMenu.Item
+										onclick={() => openUnarchiveDialog(campus)}
+									>
 										Unarchive
 									</DropdownMenu.Item>
 								</DropdownMenu.Content>
 							</DropdownMenu.Root>
 						</div>
 						<div class="space-y-2 overflow-hidden">
-							<div class="text-muted-foreground flex items-center gap-2 text-sm">
+							<div
+								class="text-muted-foreground flex items-center gap-2 text-sm"
+							>
 								<MapPinIcon class="h-4 w-4 shrink-0" />
 								<span class="truncate">{campus.address}</span>
 							</div>
-							<Card.Description class="text-muted-foreground line-clamp-3 overflow-hidden">
+							<Card.Description
+								class="text-muted-foreground line-clamp-3 overflow-hidden"
+							>
 								{campus.description}
 							</Card.Description>
 						</div>
@@ -160,11 +174,15 @@
 	</div>
 
 	{#if data.campuses.length === 0}
-		<div class="flex h-48 items-center justify-center rounded-lg border border-dashed">
+		<div
+			class="flex h-48 items-center justify-center rounded-lg border border-dashed"
+		>
 			<div class="text-center">
 				<BuildingIcon class="text-muted-foreground mx-auto h-12 w-12" />
 				<h3 class="mt-2 text-sm font-semibold">No campuses</h3>
-				<p class="text-muted-foreground mt-1 text-sm">Get started by creating a new campus.</p>
+				<p class="text-muted-foreground mt-1 text-sm">
+					Get started by creating a new campus.
+				</p>
 			</div>
 		</div>
 	{/if}
@@ -195,12 +213,22 @@
 			<div class="grid gap-4 py-4">
 				<div class="grid gap-2">
 					<Label for="create-name">Campus Name</Label>
-					<Input id="create-name" name="name" bind:value={createFormData.name} required />
+					<Input
+						id="create-name"
+						name="name"
+						bind:value={createFormData.name}
+						required
+					/>
 				</div>
 
 				<div class="grid gap-2">
 					<Label for="create-address">Address</Label>
-					<Input id="create-address" name="address" bind:value={createFormData.address} required />
+					<Input
+						id="create-address"
+						name="address"
+						bind:value={createFormData.address}
+						required
+					/>
 				</div>
 
 				<div class="grid gap-2">
@@ -213,7 +241,11 @@
 				</div>
 			</div>
 			<Dialog.Footer>
-				<Button type="button" variant="outline" onclick={() => (createDialogOpen = false)}>
+				<Button
+					type="button"
+					variant="outline"
+					onclick={() => (createDialogOpen = false)}
+				>
 					Cancel
 				</Button>
 				<Button type="submit">Create Campus</Button>
@@ -228,7 +260,8 @@
 		<Dialog.Header>
 			<Dialog.Title>Edit Campus</Dialog.Title>
 			<Dialog.Description>
-				Make changes to the campus information here. Click save when you're done.
+				Make changes to the campus information here. Click save when you're
+				done.
 			</Dialog.Description>
 		</Dialog.Header>
 		<form
@@ -244,25 +277,47 @@
 			}}
 		>
 			<div class="grid gap-4 py-4">
-				<input type="hidden" name="campusId" bind:value={editFormData.campusId} />
+				<input
+					type="hidden"
+					name="campusId"
+					bind:value={editFormData.campusId}
+				/>
 
 				<div class="grid gap-2">
 					<Label for="name">Campus Name</Label>
-					<Input id="name" name="name" bind:value={editFormData.name} required />
+					<Input
+						id="name"
+						name="name"
+						bind:value={editFormData.name}
+						required
+					/>
 				</div>
 
 				<div class="grid gap-2">
 					<Label for="address">Address</Label>
-					<Input id="address" name="address" bind:value={editFormData.address} required />
+					<Input
+						id="address"
+						name="address"
+						bind:value={editFormData.address}
+						required
+					/>
 				</div>
 
 				<div class="grid gap-2">
 					<Label for="description">Description (Optional)</Label>
-					<Textarea id="description" name="description" bind:value={editFormData.description} />
+					<Textarea
+						id="description"
+						name="description"
+						bind:value={editFormData.description}
+					/>
 				</div>
 			</div>
 			<Dialog.Footer>
-				<Button type="button" variant="outline" onclick={() => (editDialogOpen = false)}>
+				<Button
+					type="button"
+					variant="outline"
+					onclick={() => (editDialogOpen = false)}
+				>
 					Cancel
 				</Button>
 				<Button type="submit">Save Changes</Button>
@@ -277,8 +332,8 @@
 		<Dialog.Header>
 			<Dialog.Title>Archive Campus</Dialog.Title>
 			<Dialog.Description>
-				Are you sure you want to archive "{selectedCampus?.name}"? This action will hide the campus
-				from the active list but can be undone later.
+				Are you sure you want to archive "{selectedCampus?.name}"? This action
+				will hide the campus from the active list but can be undone later.
 			</Dialog.Description>
 		</Dialog.Header>
 		<form
@@ -295,7 +350,11 @@
 			}}
 		>
 			<Dialog.Footer>
-				<Button type="button" variant="outline" onclick={() => (archiveDialogOpen = false)}>
+				<Button
+					type="button"
+					variant="outline"
+					onclick={() => (archiveDialogOpen = false)}
+				>
 					Cancel
 				</Button>
 				<Button type="submit" variant="destructive">Archive Campus</Button>
@@ -310,8 +369,8 @@
 		<Dialog.Header>
 			<Dialog.Title>Unarchive Campus</Dialog.Title>
 			<Dialog.Description>
-				Are you sure you want to unarchive "{selectedCampus?.name}"? This action will restore the
-				campus to the active list.
+				Are you sure you want to unarchive "{selectedCampus?.name}"? This action
+				will restore the campus to the active list.
 			</Dialog.Description>
 		</Dialog.Header>
 		<form
@@ -328,7 +387,11 @@
 			}}
 		>
 			<Dialog.Footer>
-				<Button type="button" variant="outline" onclick={() => (unarchiveDialogOpen = false)}>
+				<Button
+					type="button"
+					variant="outline"
+					onclick={() => (unarchiveDialogOpen = false)}
+				>
 					Cancel
 				</Button>
 				<Button type="submit">Unarchive Campus</Button>

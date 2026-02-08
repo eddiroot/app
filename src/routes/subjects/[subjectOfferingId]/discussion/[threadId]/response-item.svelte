@@ -13,7 +13,7 @@
 		response,
 		threadType,
 		data,
-		depth = 0
+		depth = 0,
 	}: {
 		response: any;
 		threadType: string;
@@ -33,7 +33,7 @@
 			response.response.isAnonymous,
 			data.thread?.thread?.isAnonymous || false,
 			isOPResponse(),
-			data.currentUser.type
+			data.currentUser.type,
 		);
 	});
 
@@ -44,7 +44,7 @@
 		return convertToFullName(
 			response.user.firstName,
 			response.user.middleName,
-			response.user.lastName
+			response.user.lastName,
 		);
 	});
 
@@ -58,7 +58,7 @@
 
 	const responseLikeInfo = $derived(() => {
 		const likeData = data.responseLikes?.find(
-			(like: any) => like.responseId === response.response.id
+			(like: any) => like.responseId === response.response.id,
 		);
 		return likeData || { count: 0, userLiked: false };
 	});
@@ -74,7 +74,7 @@
 	<div class="flex items-start gap-3">
 		<Avatar.Root class="h-8 w-8">
 			{#if showAuthorInfo()}
-				<Avatar.Image src={response.user.avatarUrl || ''} alt={authorName()} />
+				<Avatar.Image src={response.user.avatarPath || ''} alt={authorName()} />
 				<Avatar.Fallback class="text-xs font-medium">
 					{authorName()
 						.split(' ')

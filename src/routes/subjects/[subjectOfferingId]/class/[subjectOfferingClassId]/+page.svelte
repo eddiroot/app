@@ -8,26 +8,31 @@
 	const sortedAssessments = $derived(
 		data.assessments
 			? [...data.assessments].sort(
-					(a, b) => new Date(b.task.createdAt).getTime() - new Date(a.task.createdAt).getTime()
+					(a, b) =>
+						new Date(b.task.createdAt).getTime() -
+						new Date(a.task.createdAt).getTime(),
 				)
-			: []
+			: [],
 	);
 
 	const sortedTasks = $derived(
 		data.tasks
 			? [...data.tasks].sort(
-					(a, b) => new Date(b.task.createdAt).getTime() - new Date(a.task.createdAt).getTime()
+					(a, b) =>
+						new Date(b.task.createdAt).getTime() -
+						new Date(a.task.createdAt).getTime(),
 				)
-			: []
+			: [],
 	);
 
 	const sortedResources = $derived(
 		data.resources
 			? [...data.resources].sort(
 					(a, b) =>
-						new Date(b.resource.createdAt).getTime() - new Date(a.resource.createdAt).getTime()
+						new Date(b.resource.createdAt).getTime() -
+						new Date(a.resource.createdAt).getTime(),
 				)
-			: []
+			: [],
 	);
 </script>
 
@@ -41,7 +46,10 @@
 			</h1>
 			<p class="text-muted-foreground mt-1">
 				Teacher: {data.thisSubjectOfferingTeachers
-					.map((teacher) => `${teacher.teacher.firstName} ${teacher.teacher.lastName}`)
+					.map(
+						(teacher) =>
+							`${teacher.teacher.firstName} ${teacher.teacher.lastName}`,
+					)
 					.join(', ')}
 			</p>
 		</div>
@@ -70,18 +78,23 @@
 											<span class="text-foreground text-base font-semibold"
 												>{announcement.title}</span
 											>
-											<span class="text-muted-foreground text-sm leading-relaxed"
+											<span
+												class="text-muted-foreground text-sm leading-relaxed"
 												>{announcement.content}</span
 											>
 											<span class="text-muted-foreground mt-1 text-xs"
-												>{new Date(announcement.createdAt).toLocaleString()}</span
+												>{new Date(
+													announcement.createdAt,
+												).toLocaleString()}</span
 											>
 										</div>
 									</div>
 								</a>
 							{/each}
 						{:else}
-							<div class="text-muted-foreground text-sm">No announcements yet.</div>
+							<div class="text-muted-foreground text-sm">
+								No announcements yet.
+							</div>
 						{/if}
 					</div>
 				</ScrollArea>
@@ -131,23 +144,27 @@
 									>
 										<div class="flex items-start justify-between">
 											<div class="flex-1">
-												<h4 class="text-foreground text-sm font-medium">{assessment.task.title}</h4>
+												<h4 class="text-foreground text-sm font-medium">
+													{assessment.task.title}
+												</h4>
 												{#if assessment.task.description}
-													<p class="text-muted-foreground mt-1 text-sm leading-relaxed">
+													<p
+														class="text-muted-foreground mt-1 text-sm leading-relaxed"
+													>
 														{assessment.task.description}
 													</p>
 												{/if}
 												<div class="mt-1 flex items-center gap-2">
-													{#if assessment.subjectOfferingClassTask.dueDate}
+													{#if assessment.subjectOfferingClassTask.due}
 														<span class="text-muted-foreground text-xs"
 															>Due: {new Date(
-																assessment.subjectOfferingClassTask.dueDate
+																assessment.subjectOfferingClassTask.due,
 															).toLocaleDateString()}</span
 														>
 													{/if}
 													<span class="text-muted-foreground text-xs"
 														>Created: {new Date(
-															assessment.task.createdAt
+															assessment.task.createdAt,
 														).toLocaleDateString()}</span
 													>
 												</div>
@@ -157,7 +174,9 @@
 								</a>
 							{/each}
 						{:else}
-							<div class="text-muted-foreground text-sm">No assessments found.</div>
+							<div class="text-muted-foreground text-sm">
+								No assessments found.
+							</div>
 						{/if}
 					</div>
 				</ScrollArea>
@@ -181,9 +200,13 @@
 										class="border-border hover:bg-muted/50 cursor-pointer rounded-lg border p-3 transition-colors"
 									>
 										<div class="flex flex-col">
-											<span class="text-foreground text-base font-semibold">{task.task.title}</span>
+											<span class="text-foreground text-base font-semibold"
+												>{task.task.title}</span
+											>
 											{#if task.task.description}
-												<p class="text-muted-foreground mt-1 text-sm leading-relaxed">
+												<p
+													class="text-muted-foreground mt-1 text-sm leading-relaxed"
+												>
 													{task.task.description}
 												</p>
 											{/if}
@@ -194,15 +217,17 @@
 														>{task.task.type}</span
 													>
 												{/if}
-												{#if task.subjectOfferingClassTask.dueDate}
+												{#if task.subjectOfferingClassTask.due}
 													<span class="text-muted-foreground text-xs"
 														>Due: {new Date(
-															task.subjectOfferingClassTask.dueDate
+															task.subjectOfferingClassTask.due,
 														).toLocaleDateString()}</span
 													>
 												{/if}
 												<span class="text-muted-foreground text-xs"
-													>Created: {new Date(task.task.createdAt).toLocaleDateString()}</span
+													>Created: {new Date(
+														task.task.createdAt,
+													).toLocaleDateString()}</span
 												>
 											</div>
 										</div>
@@ -210,7 +235,9 @@
 								</a>
 							{/each}
 						{:else}
-							<div class="text-muted-foreground text-sm">No lessons or homework found.</div>
+							<div class="text-muted-foreground text-sm">
+								No lessons or homework found.
+							</div>
 						{/if}
 					</div>
 				</ScrollArea>
@@ -230,9 +257,11 @@
 								<ResourceCard
 									resource={{
 										id: resource.resource.id,
-										fileName: resource.resourceRelation.title || resource.resource.fileName,
-										fileSize: resource.resource.fileSize || 0,
-										resourceType: resource.resource.resourceType || 'file'
+										fileName:
+											resource.resourceRelation.title ||
+											resource.resource.fileName,
+										fileSize: resource.resource.fileSize,
+										fileType: resource.resource.fileType,
 									}}
 									variant="default"
 									showRemoveButton={false}
@@ -246,7 +275,9 @@
 								/>
 							{/each}
 						{:else}
-							<div class="text-muted-foreground text-sm">No resources found.</div>
+							<div class="text-muted-foreground text-sm">
+								No resources found.
+							</div>
 						{/if}
 					</div>
 				</ScrollArea>

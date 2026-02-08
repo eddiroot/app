@@ -4,7 +4,7 @@
 	import {
 		FlexRender,
 		createSvelteTable,
-		renderComponent
+		renderComponent,
 	} from '$lib/components/ui/data-table/index.js';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
 	import { Input } from '$lib/components/ui/input/index.js';
@@ -18,7 +18,7 @@
 		type VisibilityState,
 		getCoreRowModel,
 		getFilteredRowModel,
-		getSortedRowModel
+		getSortedRowModel,
 	} from '@tanstack/table-core';
 	import TypeBadge from '../../../lib/components/type-badge.svelte';
 
@@ -30,42 +30,44 @@
 			header: ({ table }) =>
 				renderComponent(DataTableCheckbox, {
 					checked: table.getIsAllPageRowsSelected(),
-					indeterminate: table.getIsSomePageRowsSelected() && !table.getIsAllPageRowsSelected(),
+					indeterminate:
+						table.getIsSomePageRowsSelected() &&
+						!table.getIsAllPageRowsSelected(),
 					onCheckedChange: (value) => table.toggleAllPageRowsSelected(!!value),
-					'aria-label': 'Select all'
+					'aria-label': 'Select all',
 				}),
 			cell: ({ row }) =>
 				renderComponent(DataTableCheckbox, {
 					checked: row.getIsSelected(),
 					onCheckedChange: (value) => row.toggleSelected(!!value),
-					'aria-label': 'Select row'
+					'aria-label': 'Select row',
 				}),
 			enableSorting: false,
-			enableHiding: false
+			enableHiding: false,
 		},
 		{
 			accessorKey: 'firstName',
 			header: 'First Name',
 			filterFn: 'includesString',
-			size: 150
+			size: 150,
 		},
 		{
 			accessorKey: 'middleName',
 			header: 'Middle Name',
 			filterFn: 'includesString',
-			size: 150
+			size: 150,
 		},
 		{
 			accessorKey: 'lastName',
 			header: 'Last Name',
 			filterFn: 'includesString',
-			size: 150
+			size: 150,
 		},
 		{
 			accessorKey: 'email',
 			header: 'Email',
 			filterFn: 'includesString',
-			size: 200
+			size: 200,
 		},
 		{
 			accessorKey: 'type',
@@ -75,22 +77,20 @@
 			cell: ({ getValue }) => {
 				const type = getValue() as string;
 				return renderComponent(TypeBadge, { type });
-			}
+			},
 		},
 		{
 			accessorKey: 'yearLevel',
 			header: 'Year Level',
 			filterFn: 'includesString',
-			size: 100
-		}
+			size: 100,
+		},
 	];
 
 	let sorting = $state<SortingState>([]);
 	let columnFilters = $state<ColumnFiltersState>([]);
 	let rowSelection = $state<RowSelectionState>({});
-	let columnVisibility = $state<VisibilityState>({
-		middleName: false
-	});
+	let columnVisibility = $state<VisibilityState>({ middleName: false });
 
 	const table = createSvelteTable({
 		get data() {
@@ -109,7 +109,7 @@
 			},
 			get columnFilters() {
 				return columnFilters;
-			}
+			},
 		},
 		getCoreRowModel: getCoreRowModel(),
 		getSortedRowModel: getSortedRowModel(),
@@ -141,18 +141,19 @@
 			} else {
 				rowSelection = updater;
 			}
-		}
+		},
 	});
 </script>
 
 <div class="flex h-full flex-col space-y-2">
-	<h1 class="text-3xl font-bold tracking-tight">All Users</h1>
+	<h1 class="text-3xl font-bold tracking-tight">Users</h1>
 	<div class="flex min-h-0 flex-1 flex-col">
 		<div class="flex items-center py-4">
 			<Input
 				placeholder="Filter emails..."
 				value={(table.getColumn('email')?.getFilterValue() as string) ?? ''}
-				oninput={(e) => table.getColumn('email')?.setFilterValue(e.currentTarget.value)}
+				oninput={(e) =>
+					table.getColumn('email')?.setFilterValue(e.currentTarget.value)}
 				onchange={(e) => {
 					table.getColumn('email')?.setFilterValue(e.currentTarget.value);
 				}}
@@ -167,9 +168,13 @@
 					{/snippet}
 				</DropdownMenu.Trigger>
 				<DropdownMenu.Content align="end">
-					{#each table.getAllColumns().filter((col) => col.getCanHide()) as column (column.id)}
+					{#each table
+						.getAllColumns()
+						.filter((col) => col.getCanHide()) as column (column.id)}
 						<DropdownMenu.CheckboxItem
-							bind:checked={() => column.getIsVisible(), (v) => column.toggleVisibility(!!v)}
+							bind:checked={
+								() => column.getIsVisible(), (v) => column.toggleVisibility(!!v)
+							}
 						>
 							{column.id == 'type' ? 'Type' : column.columnDef.header}
 						</DropdownMenu.CheckboxItem>
@@ -200,13 +205,18 @@
 						<Table.Row data-state={row.getIsSelected() && 'selected'}>
 							{#each row.getVisibleCells() as cell (cell.id)}
 								<Table.Cell class="[&:has([role=checkbox])]:pl-3">
-									<FlexRender content={cell.column.columnDef.cell} context={cell.getContext()} />
+									<FlexRender
+										content={cell.column.columnDef.cell}
+										context={cell.getContext()}
+									/>
 								</Table.Cell>
 							{/each}
 						</Table.Row>
 					{:else}
 						<Table.Row>
-							<Table.Cell colspan={columns.length} class="h-24 text-center">No results.</Table.Cell>
+							<Table.Cell colspan={columns.length} class="h-24 text-center"
+								>No results.</Table.Cell
+							>
 						</Table.Row>
 					{/each}
 				</Table.Body>

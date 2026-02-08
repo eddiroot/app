@@ -5,11 +5,15 @@
 	import * as Collapsible from '$lib/components/ui/collapsible/index.js';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
 	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
-	import type { userTypeEnum } from '$lib/enums';
-	import type { Campus, School, Subject, SubjectOffering } from '$lib/server/db/schema';
-	import { convertToFullName, getPermissions, userPermissions } from '$lib/utils';
+	import { userPermissions, type userTypeEnum } from '$lib/enums';
+	import {
+		type School,
+		type SchoolCampus,
+		type Subject,
+		type SubjectOffering,
+	} from '$lib/server/db/schema';
+	import { convertToFullName, getPermissions } from '$lib/utils';
 	import BarChart3Icon from '@lucide/svelte/icons/bar-chart-3';
-	import BookOpenIcon from '@lucide/svelte/icons/book-open';
 	import BookOpenCheckIcon from '@lucide/svelte/icons/book-open-check';
 	import BookOpenTextIcon from '@lucide/svelte/icons/book-open-text';
 	import BowArrowIcon from '@lucide/svelte/icons/bow-arrow';
@@ -24,27 +28,26 @@
 	import LogOutIcon from '@lucide/svelte/icons/log-out';
 	import MapIcon from '@lucide/svelte/icons/map';
 	import MessagesSquareIcon from '@lucide/svelte/icons/messages-square';
+	import MoonIcon from '@lucide/svelte/icons/moon';
 	import OrbitIcon from '@lucide/svelte/icons/orbit';
 	import PiIcon from '@lucide/svelte/icons/pi';
 	import RouteIcon from '@lucide/svelte/icons/route';
+	import SunIcon from '@lucide/svelte/icons/sun';
 	import UserIcon from '@lucide/svelte/icons/user';
 	import UsersIcon from '@lucide/svelte/icons/users';
 	import WrenchIcon from '@lucide/svelte/icons/wrench';
+	import { resetMode, setMode } from 'mode-watcher';
 
 	let {
 		subjects,
 		user,
 		school,
-		campuses
+		campuses,
 	}: {
 		subjects: Array<{
 			subject: Subject;
 			subjectOffering: SubjectOffering;
-			classes: Array<{
-				id: number;
-				name: string;
-				subOfferingId: number;
-			}>;
+			classes: Array<{ id: number; name: string; subOfferingId: number }>;
 		}>;
 		user: {
 			id: string;
@@ -55,7 +58,7 @@
 			lastName: string;
 		} | null;
 		school: School | null;
-		campuses: Campus[];
+		campuses: SchoolCampus[];
 	} = $props();
 
 	const headerItems = [
@@ -63,75 +66,53 @@
 			title: 'Dashboard',
 			url: '/dashboard',
 			icon: LayoutDashboardIcon,
-			requiredPermission: userPermissions.viewDashboard
+			requiredPermission: userPermissions.viewDashboard,
 		},
 		{
 			title: 'Admin',
 			url: '/admin',
 			icon: WrenchIcon,
-			requiredPermission: userPermissions.viewAdmin
+			requiredPermission: userPermissions.viewAdmin,
 		},
 		{
 			title: 'Calendar',
 			url: '/calendar',
 			icon: CalendarDaysIcon,
-			requiredPermission: userPermissions.viewCalendar
+			requiredPermission: userPermissions.viewCalendar,
 		},
 		{
 			title: 'Attendance',
 			url: '/attendance',
 			icon: UsersIcon,
-			requiredPermission: userPermissions.viewGuardianAttendance
-		}
+			requiredPermission: userPermissions.viewGuardianAttendance,
+		},
 	];
 
 	const subjectItems = [
+		{ title: 'Discussion', url: 'discussion', icon: MessagesSquareIcon },
 		{
-			title: 'Home',
-			url: '',
-			icon: HomeIcon
-		},
-		{
-			title: 'Discussion',
-			url: 'discussion',
-			icon: MessagesSquareIcon
-		},
-		{
-			title: 'Course Map',
+			title: 'Curriculum',
 			url: 'curriculum',
 			icon: RouteIcon,
-			requiredPermission: userPermissions.viewCourseMap
-		}
+			requiredPermission: userPermissions.viewCourseMap,
+		},
 	];
 
 	const classItems = [
-		{
-			title: 'Home',
-			url: '',
-			icon: HomeIcon
-		},
+		{ title: 'Home', url: '', icon: HomeIcon },
 		{
 			title: 'Attendance',
 			url: 'attendance',
 			icon: UsersIcon,
-			requiredPermission: userPermissions.viewClassAttendance
+			requiredPermission: userPermissions.viewClassAttendance,
 		},
-		{
-			title: 'Tasks',
-			url: 'tasks',
-			icon: BookOpenCheckIcon
-		},
+		{ title: 'Tasks', url: 'tasks', icon: BookOpenCheckIcon },
 		{
 			title: 'Analytics',
 			url: 'analytics',
 			icon: BarChart3Icon,
-			requiredPermission: userPermissions.viewAnalytics
+			requiredPermission: userPermissions.viewAnalytics,
 		},
-		{
-			title: 'Grades',
-			url: 'grades',
-			icon: BookOpenIcon
-		}
 	];
 
 	const subjectNameToIcon = (name: string) => {
@@ -161,11 +142,15 @@
 	const fullName = convertToFullName(
 		userData()?.firstName,
 		userData()?.middleName,
-		userData()?.lastName
+		userData()?.lastName,
 	);
 	let form: HTMLFormElement | null = $state(null);
+	let openSubjectIds = $state<number[]>([]);
 
-	function getInitials(firstName: string | null, lastName: string | null): string {
+	function getInitials(
+		firstName: string | null,
+		lastName: string | null,
+	): string {
 		return `${firstName?.charAt(0) || ''}${lastName?.charAt(0) || ''}`.toUpperCase();
 	}
 
@@ -178,7 +163,9 @@
 	}
 
 	function isClassActive(subjectOfferingId: string, classId: string): boolean {
-		return page.url.pathname.startsWith(`/subjects/${subjectOfferingId}/class/${classId}`);
+		return page.url.pathname.startsWith(
+			`/subjects/${subjectOfferingId}/class/${classId}`,
+		);
 	}
 
 	function isSubjectSubItemActive(subjectId: string, subUrl: string): boolean {
@@ -187,33 +174,36 @@
 		if (subUrl === '') return page.url.pathname === subjectBasePath;
 
 		const expectedPath = `${subjectBasePath}/${subUrl}`;
-		return page.url.pathname === expectedPath || page.url.pathname.startsWith(expectedPath + '/');
+		return (
+			page.url.pathname === expectedPath ||
+			page.url.pathname.startsWith(expectedPath + '/')
+		);
 	}
 
 	function isClassSubItemActive(
 		subjectOfferingId: string,
 		classId: string,
-		subUrl: string
+		subUrl: string,
 	): boolean {
 		const classBasePath = `/subjects/${subjectOfferingId}/class/${classId}`;
 
 		if (subUrl === '') return page.url.pathname === classBasePath;
 
 		const expectedPath = `${classBasePath}/${subUrl}`;
-		return page.url.pathname === expectedPath || page.url.pathname.startsWith(expectedPath + '/');
+		return (
+			page.url.pathname === expectedPath ||
+			page.url.pathname.startsWith(expectedPath + '/')
+		);
 	}
 
 	const campusesData = () => campuses;
-	let currentCampus = $state(campusesData().length > 0 ? campusesData()[0] : null);
+	let currentCampus = $state(
+		campusesData().length > 0 ? campusesData()[0] : null,
+	);
 	const permissions = $state(getPermissions(userData()?.type));
 </script>
 
-<Sidebar.Root
-	collapsible="icon"
-	class="top-(--header-height) h-[calc(100svh-var(--header-height))]!"
-	side="left"
-	variant="inset"
->
+<Sidebar.Root collapsible="icon" side="left" variant="inset">
 	<Sidebar.Header>
 		<Sidebar.Menu>
 			<Sidebar.MenuItem>
@@ -221,20 +211,22 @@
 					<DropdownMenu.Trigger>
 						{#snippet child({ props })}
 							<Sidebar.MenuButton
-								side="left"
 								size="lg"
 								class="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
 								{...props}
 							>
 								<Avatar.Root class="h-8 w-8 rounded-lg">
 									<Avatar.Image
-										src={school?.logoUrl || '/favicon.png'}
+										src={school?.logoPath || '/favicon.png'}
 										alt="{school?.name || 'school'} logo"
 									/>
 								</Avatar.Root>
 								<div class="grid flex-1 text-left text-sm leading-tight">
-									<span class="truncate font-medium">{school?.name || 'No school found'}</span>
-									<span class="truncate text-xs">{currentCampus?.name || 'No campus selected'}</span
+									<span class="truncate font-medium"
+										>{school?.name || 'No school found'}</span
+									>
+									<span class="truncate text-xs"
+										>{currentCampus?.name || 'No campus selected'}</span
 									>
 								</div>
 								<ChevronsUpDownIcon className="ml-auto size-4" />
@@ -265,7 +257,6 @@
 						{#if !item.requiredPermission || permissions.includes(item.requiredPermission)}
 							<Sidebar.MenuItem>
 								<Sidebar.MenuButton
-									side="left"
 									isActive={isMainItemActive(item.url)}
 									tooltipContent={item.title}
 								>
@@ -284,40 +275,65 @@
 		</Sidebar.Group>
 		{#if subjects.length > 0}
 			<Sidebar.Group>
-				<Sidebar.GroupLabel>
-					<a href="/subjects" class="text-lg font-semibold">Subjects</a>
+				<Sidebar.GroupLabel class="text-lg font-semibold">
+					Subjects
 				</Sidebar.GroupLabel>
 				<Sidebar.Menu>
 					{#each subjects as subject (subject.subject.id)}
+						{@const subjectOfferingId = subject.subjectOffering.id}
 						<Collapsible.Root
 							class="group/collapsible"
-							open={isSubjectActive(subject.subjectOffering.id.toString())}
+							open={openSubjectIds.includes(subjectOfferingId)}
 						>
 							<Collapsible.Trigger>
 								{#snippet child({ props })}
-									<a
-										href={sidebar.leftOpen ? undefined : `/subjects/${subject.subjectOffering.id}`}
-										onclick={() => {
-											if (!sidebar.leftOpen) {
-												sidebar.setLeftOpen(true);
+									<Sidebar.MenuButton
+										tooltipContent={subject.subject.name}
+										isActive={isSubjectActive(
+											subject.subjectOffering.id.toString(),
+										)}
+										{...props}
+										onclick={(e) => {
+											// If the sidebar is open, normal state toggling
+											if (sidebar.open) {
+												if (openSubjectIds.includes(subjectOfferingId)) {
+													openSubjectIds = openSubjectIds.filter(
+														(id) => id !== subjectOfferingId,
+													);
+												} else {
+													openSubjectIds = [
+														...openSubjectIds,
+														subjectOfferingId,
+													];
+												}
 											}
+
+											// If the sidebar is closed but the clicked subject is not open
+											if (
+												!sidebar.open &&
+												!openSubjectIds.includes(subjectOfferingId)
+											) {
+												openSubjectIds = [...openSubjectIds, subjectOfferingId];
+											}
+
+											// Open the sidebar if it's closed
+											if (!sidebar.open) {
+												sidebar.setOpen(true);
+											}
+
+											e.preventDefault();
 										}}
 									>
-										<Sidebar.MenuButton
-											side="left"
-											tooltipContent={subject.subject.name}
-											isActive={isSubjectActive(subject.subjectOffering.id.toString())}
-											{...props}
+										{@const IconComponent = subjectNameToIcon(
+											subject.subject.name,
+										)}
+										<IconComponent class="mr-2" />
+										<span class="whitespace-nowrap">{subject.subject.name}</span
 										>
-											{@const IconComponent = subjectNameToIcon(subject.subject.name)}
-											<IconComponent class="mr-2" />
-
-											<span class="whitespace-nowrap">{subject.subject.name}</span>
-											<ChevronDownIcon
-												class="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-180"
-											/>
-										</Sidebar.MenuButton>
-									</a>
+										<ChevronDownIcon
+											class="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-180"
+										/>
+									</Sidebar.MenuButton>
 								{/snippet}
 							</Collapsible.Trigger>
 							<Collapsible.Content>
@@ -328,7 +344,7 @@
 												<Sidebar.MenuSubButton
 													isActive={isSubjectSubItemActive(
 														subject.subjectOffering.id.toString(),
-														item.url
+														item.url,
 													)}
 												>
 													{#snippet child({ props })}
@@ -345,16 +361,13 @@
 										{/if}
 									{/each}
 									{#each subject.classes as classItem (classItem.id)}
-										<Collapsible.Root
-											class="group/collapsible-class"
-											open={isSubjectActive(subject.subjectOffering.id.toString())}
-										>
+										<Collapsible.Root class="group/collapsible-class">
 											<Collapsible.Trigger>
 												{#snippet child({ props })}
 													<Sidebar.MenuSubButton
 														isActive={isClassActive(
 															subject.subjectOffering.id.toString(),
-															classItem.id.toString()
+															classItem.id.toString(),
 														)}
 														{...props}
 													>
@@ -375,7 +388,7 @@
 																	isActive={isClassSubItemActive(
 																		subject.subjectOffering.id.toString(),
 																		classItem.id.toString(),
-																		item.url
+																		item.url,
 																	)}
 																>
 																	{#snippet child({ props })}
@@ -410,7 +423,6 @@
 					<DropdownMenu.Trigger>
 						{#snippet child({ props })}
 							<Sidebar.MenuButton
-								side="left"
 								size="lg"
 								class="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
 								{...props}
@@ -418,7 +430,10 @@
 								<Avatar.Root class="h-8 w-8 rounded-lg">
 									<Avatar.Image alt={fullName} />
 									<Avatar.Fallback class="rounded-lg"
-										>{getInitials(user?.firstName || '?', user?.lastName || '?')}</Avatar.Fallback
+										>{getInitials(
+											user?.firstName || '?',
+											user?.lastName || '?',
+										)}</Avatar.Fallback
 									>
 								</Avatar.Root>
 								<div class="grid flex-1 text-left text-sm leading-tight">
@@ -429,14 +444,46 @@
 							</Sidebar.MenuButton>
 						{/snippet}
 					</DropdownMenu.Trigger>
-					<DropdownMenu.Content side={sidebar.isMobile ? 'bottom' : 'right'} align="end">
-						<DropdownMenu.Item class="cursor-pointer" onclick={() => goto(`/profile/${user?.id}`)}>
+					<DropdownMenu.Content
+						side={sidebar.isMobile ? 'bottom' : 'right'}
+						align="end"
+					>
+						<DropdownMenu.Item
+							class="cursor-pointer"
+							onclick={() => goto(`/profile/${user?.id}`)}
+						>
 							<UserIcon />
 							Profile
 						</DropdownMenu.Item>
 						<DropdownMenu.Separator />
+						<DropdownMenu.Sub>
+							<DropdownMenu.SubTrigger>
+								<SunIcon
+									class="h-[1.2rem] w-[1.2rem] scale-100 rotate-0 transition-all dark:scale-0 dark:-rotate-90"
+								/>
+								<MoonIcon
+									class="absolute h-[1.2rem] w-[1.2rem] scale-0 rotate-90 transition-all dark:scale-100 dark:rotate-0"
+								/>
+								Theme</DropdownMenu.SubTrigger
+							>
+							<DropdownMenu.SubContent>
+								<DropdownMenu.Item onclick={() => setMode('light')}
+									>Light</DropdownMenu.Item
+								>
+								<DropdownMenu.Item onclick={() => setMode('dark')}
+									>Dark</DropdownMenu.Item
+								>
+								<DropdownMenu.Item onclick={() => resetMode()}
+									>System</DropdownMenu.Item
+								>
+							</DropdownMenu.SubContent>
+						</DropdownMenu.Sub>
+						<DropdownMenu.Separator />
 						<form method="post" action="/?/logout" bind:this={form}>
-							<DropdownMenu.Item class="cursor-pointer" onclick={() => form!.submit()}>
+							<DropdownMenu.Item
+								class="cursor-pointer"
+								onclick={() => form!.submit()}
+							>
 								<LogOutIcon />
 								<input type="submit" value="Logout" class="cursor-pointer" />
 							</DropdownMenu.Item>
@@ -446,4 +493,5 @@
 			</Sidebar.MenuItem>
 		</Sidebar.Menu>
 	</Sidebar.Footer>
+	<Sidebar.Rail />
 </Sidebar.Root>

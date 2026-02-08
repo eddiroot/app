@@ -8,7 +8,7 @@
 		itemId,
 		initialLiked = false,
 		initialCount = 0,
-		size = 'sm'
+		size = 'sm',
 	}: {
 		action: string;
 		itemId?: number;
@@ -17,47 +17,24 @@
 		size?: ButtonSize;
 	} = $props();
 
-	// Safe to ignore - initial state won't change after mount
-	// svelte-ignore state_referenced_locally
-	let liked = $state(initialLiked);
-	// svelte-ignore state_referenced_locally
-	let count = $state(initialCount);
+	let liked = $derived(initialLiked);
+	let count = $derived(initialCount);
 	let isSubmitting = $state(false);
 </script>
 
-<form
-	method="POST"
-	{action}
-	use:enhance={() => {
-		// Optimistic update
-		const previousLiked = liked;
-		const previousCount = count;
-
-		liked = !liked;
-		count = liked ? count + 1 : count - 1;
-		isSubmitting = true;
-
-		return async ({ result, update }) => {
-			isSubmitting = false;
-
-			if (result.type === 'success' && result.data?.success) {
-				// Server confirmed the action
-				await update();
-			} else {
-				// Revert on error
-				liked = previousLiked;
-				count = previousCount;
-			}
-		};
-	}}
->
+<form method="POST" {action} use:enhance>
 	{#if itemId !== undefined}
 		<input type="hidden" name="responseId" value={itemId} />
 	{/if}
-	<Button type="submit" variant="ghost" {size} disabled={isSubmitting}>
-		<Heart class={liked ? 'fill-current' : ''} />
-		{#if count > 0}
-			<span class="text-xs font-medium">{count}</span>
-		{/if}
+	<Button
+		type="submit"
+		variant={itemId !== undefined ? 'ghost' : 'outline'}
+		{size}
+		disabled={isSubmitting}
+	>
+		<Heart class={liked ? 'fill-primary stroke-primary' : ''} />
+		<span class="font-mono {itemId !== undefined ? 'text-xs' : 'text-sm'}"
+			>{count}</span
+		>
 	</Button>
 </form>
