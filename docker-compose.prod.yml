@@ -11,6 +11,8 @@ services:
       POSTGRES_DB: eddi
     volumes:
       - dbdata:/var/lib/postgresql
+    networks:
+      - default
 
   obj:
     image: minio/minio
@@ -24,6 +26,8 @@ services:
       MINIO_ROOT_PASSWORD: minio123
     volumes:
       - objdata:/data
+    networks:
+      - default
 
   obj_buckets:
     image: minio/mc
@@ -37,6 +41,8 @@ services:
       /usr/bin/mc mb myminio/schools;
       exit 0;
       "
+    networks:
+      - default
 
   app:
     build: .
@@ -48,6 +54,9 @@ services:
     depends_on:
       - db
       - obj
+    networks:
+      - default
+      - dokploy-network
 
   fet:
     build:
@@ -68,7 +77,15 @@ services:
         # Default command - keep container running
         CMD ["tail", "-f", "/dev/null"]
     restart: unless-stopped
+    networks:
+      - default
 
 volumes:
   dbdata:
   objdata:
+
+networks:
+  dokploy-network:
+    external: true
+  default:
+    driver: bridge
