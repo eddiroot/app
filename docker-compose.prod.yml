@@ -33,7 +33,7 @@ services:
     image: minio/mc
     depends_on:
       - obj
-    restart: unless-stopped
+    restart: 'no'
     entrypoint: >
       /bin/sh -c "
       sleep 10;
