@@ -14,9 +14,14 @@ export const init: ServerInit = async () => {
 	db.select()
 		.from(table.school)
 		.limit(1)
-		.catch(() => {
-			console.error('Database appears to be offline. Exiting...');
-			process.exit(1);
+		.catch((error) => {
+			console.error(
+				'There was a problem querying the database:',
+				error.message,
+			);
+			console.error('DB_HOST:', process.env.DB_HOST);
+			console.error('DB_PORT:', process.env.DB_PORT);
+			console.error('DB_NAME:', process.env.DB_NAME);
 		});
 };
 

@@ -40,10 +40,35 @@ services:
       exit 0;
       "
 
+  app:
+    build: .
+    restart: unless-stopped
+    ports:
+      - 3001:3000
+    env_file:
+      - path: .env
+    depends_on:
+      - db
+      - obj
+
   fet:
     build:
-      context: ./infra/fet
-      dockerfile: Dockerfile
+      context: .
+      dockerfile_inline: |
+        FROM ubuntu:latest
+
+        # Install FET and dependencies
+        RUN apt update && \
+            apt install -y fet && \
+            apt clean && \
+            rm -rf /var/lib/apt/lists/*
+
+        # Create working directory structure for timetable processing
+        WORKDIR /app
+        RUN mkdir -p /app/timetables
+
+        # Default command - keep container running
+        CMD ["tail", "-f", "/dev/null"]
     restart: unless-stopped
 
 volumes:

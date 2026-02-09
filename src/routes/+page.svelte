@@ -38,6 +38,35 @@
 	</div>
 </section>
 
+<!-- About Us Section -->
+<section class="bg-muted/50 py-16 md:py-24 lg:py-32">
+	<div class="container mx-auto px-4 lg:px-8">
+		<div class="grid gap-8 md:grid-cols-2 md:items-center lg:gap-12 xl:gap-20">
+			<div>
+				<img
+					class="h-auto w-full rounded-lg shadow-xl"
+					src="/screenshots/about.png"
+					alt="the eddi team"
+				/>
+			</div>
+			<div class="space-y-6">
+				<h2 class="scroll-m-20 text-3xl font-bold tracking-tight lg:text-4xl">
+					Our Mission
+				</h2>
+				<p class="text-muted-foreground text-xl">
+					At Eddi, we are passionate about transforming education through
+					technology. Our mission is to create an open-source platform that
+					empowers schools to manage their operations efficiently while
+					fostering a collaborative and engaging learning environment. We
+					believe that by providing educators with the right tools, we can
+					enhance the educational experience for both teachers and students,
+					ultimately leading to better learning outcomes.
+				</p>
+			</div>
+		</div>
+	</div>
+</section>
+
 {#snippet section(
 	title: string,
 	description: string,
