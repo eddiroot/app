@@ -125,7 +125,7 @@ Please note we cannot provide any guarantees at this stage on whether we will re
 ## Setup
 
 ```bash
-docker compose up -d
+docker compose -f docker-compose.dev.yml up -d
 npm install
 npm run db:push
 npm run db:seed
@@ -135,8 +135,8 @@ npm run dev
 ## Reset
 
 ```bash
-docker compose down --volumes
-docker compose up --detach
+docker compose -f docker-compose.dev.yml down --volumes
+docker compose -f docker-compose.dev.yml up --detach
 npm run db:push
 npm run db:seed
 npm run dev
