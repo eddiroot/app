@@ -19,9 +19,6 @@ export const init: ServerInit = async () => {
 				'There was a problem querying the database:',
 				error.message,
 			);
-			console.error('DB_HOST:', process.env.DB_HOST);
-			console.error('DB_PORT:', process.env.DB_PORT);
-			console.error('DB_NAME:', process.env.DB_NAME);
 		});
 };
 

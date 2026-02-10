@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
+	import Favicon from '$lib/assets/favicon.png';
 	import * as Avatar from '$lib/components/ui/avatar/index.js';
 	import * as Collapsible from '$lib/components/ui/collapsible/index.js';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
@@ -217,7 +218,7 @@
 							>
 								<Avatar.Root class="h-8 w-8 rounded-lg">
 									<Avatar.Image
-										src={school?.logoPath || '/favicon.png'}
+										src={school?.logoPath || Favicon}
 										alt="{school?.name || 'school'} logo"
 									/>
 								</Avatar.Root>

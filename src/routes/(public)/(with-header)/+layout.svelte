@@ -1,4 +1,5 @@
 <script>
+	import PublicFooter from '$lib/components/public-footer.svelte';
 	import PublicHeader from '$lib/components/public-header.svelte';
 
 	let { children } = $props();
@@ -6,3 +7,4 @@
 
 <PublicHeader />
 {@render children()}
+<PublicFooter />
