@@ -19,8 +19,10 @@
 	import ZapIcon from '@lucide/svelte/icons/zap';
 
 	import DarkDiscussions from '$lib/assets/screenshots/dark-discussions.png';
+	import DarkNews from '$lib/assets/screenshots/dark-news.png';
 	import DarkTasks from '$lib/assets/screenshots/dark-tasks.png';
 	import LightDiscussions from '$lib/assets/screenshots/light-discussions.png';
+	import LightNews from '$lib/assets/screenshots/light-news.png';
 	import LightTasks from '$lib/assets/screenshots/light-tasks.png';
 </script>
 
@@ -196,11 +198,7 @@
 	'News',
 	'Keep everyone informed with instant updates and announcements.',
 	'left',
-	{
-		lightSrc: '/screenshots/news.png',
-		darkSrc: '/screenshots/news.png',
-		caption: 'News interface',
-	},
+	{ lightSrc: LightNews, darkSrc: DarkNews, caption: 'News interface' },
 	[
 		{ icon: MegaphoneIcon, text: 'Instant push notifications' },
 		{ icon: CalendarIcon, text: 'Schedule announcements' },

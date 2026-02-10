@@ -642,12 +642,7 @@
 								{#if newsItem.category || newsItem.campus}
 									<div class="mt-3 flex flex-wrap gap-2">
 										{#if newsItem.category}
-											<Badge
-												variant="secondary"
-												class="text-xs"
-												style="background-color: {newsItem.category.color ||
-													'var(--secondary)'}; color: var(--secondary-foreground);"
-											>
+											<Badge variant="secondary" class="text-xs">
 												{@html highlightSearchTerm(
 													newsItem.category.name,
 													searchQuery,
@@ -801,12 +796,7 @@
 								{#if newsItem.category || newsItem.campus}
 									<div class="mt-3 flex flex-wrap gap-2">
 										{#if newsItem.category}
-											<Badge
-												variant="secondary"
-												class="text-xs"
-												style="background-color: {newsItem.category.color ||
-													'var(--secondary)'}; color: var(--secondary-foreground);"
-											>
+											<Badge variant="secondary" class="text-xs">
 												{@html highlightSearchTerm(
 													newsItem.category.name,
 													searchQuery,

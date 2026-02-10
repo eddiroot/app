@@ -50,7 +50,7 @@ export async function seedDemoNews(
 	// Create news articles
 	await db.insert(schema.news).values([
 		{
-			title: 'Welcome Back to School Year 2025',
+			title: 'Welcome Back to School Year 2026',
 			excerpt: `We are excited to welcome all students, teachers, and families back for another fantastic year at ${school.name}.`,
 			content: {
 				blocks: [
@@ -71,7 +71,7 @@ export async function seedDemoNews(
 					{
 						type: 'list',
 						items: [
-							'School starts at 8:00 AM sharp',
+							'School starts at 8:30 AM sharp',
 							'Please ensure students bring their water bottles daily',
 							'Uniform requirements are strictly enforced',
 							'Parent-teacher meetings will be scheduled in Week 3',
@@ -80,7 +80,7 @@ export async function seedDemoNews(
 					{
 						type: 'paragraph',
 						content:
-							"We look forward to working together to make 2025 a successful and memorable year for all our students. If you have any questions or concerns, please don't hesitate to contact the school office.",
+							"We look forward to working together to make 2026 a successful and memorable year for all our students. If you have any questions or concerns, please don't hesitate to contact the school office.",
 					},
 					{
 						type: 'paragraph',
