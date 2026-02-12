@@ -1,6 +1,6 @@
 <script lang="ts">
 	import * as Card from '$lib/components/ui/card';
-	import { generateSubjectColors } from '$lib/utils';
+	import { formatTimestampAsTime, generateSubjectColors } from '$lib/utils';
 
 	interface Props {
 		cls: any;
@@ -32,16 +32,16 @@
 	>
 		<Card.Header class="p-1">
 			<Card.Title
-				class="overflow-hidden pt-2 text-base text-ellipsis whitespace-nowrap"
+				class="overflow-hidden text-base font-medium text-ellipsis whitespace-nowrap"
 			>
 				{cls.subject.name}
 			</Card.Title>
 			{#if showTime || showRoom}
-				<Card.Description
-					class="overflow-hidden text-xs text-ellipsis whitespace-nowrap"
-				>
+				<Card.Description class="text-xs text-ellipsis whitespace-nowrap">
 					{#if showTime}
-						{cls.classAllocation.start} - {cls.classAllocation.end}
+						{formatTimestampAsTime(new Date(cls.classAllocation.start))} - {formatTimestampAsTime(
+							new Date(cls.classAllocation.end),
+						)}
 					{/if}
 					{#if showTime && showRoom}
 						{' '}

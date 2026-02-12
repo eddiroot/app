@@ -133,7 +133,7 @@
 				{@const Icon = eventIcon()}
 				<div class="flex items-start justify-between gap-1">
 					<Card.Title
-						class="flex-1 overflow-hidden text-base font-medium text-ellipsis whitespace-nowrap"
+						class="flex-1 overflow-hidden text-left text-base font-medium text-ellipsis whitespace-nowrap"
 					>
 						{event.name}
 					</Card.Title>
@@ -184,7 +184,7 @@
 				{@const Icon = eventIcon()}
 				<div class="flex items-start justify-between gap-1">
 					<Card.Title
-						class="flex-1 overflow-hidden text-base font-medium text-ellipsis whitespace-nowrap"
+						class="flex-1 overflow-hidden text-left text-base font-medium text-ellipsis whitespace-nowrap"
 					>
 						{event.name}
 					</Card.Title>
