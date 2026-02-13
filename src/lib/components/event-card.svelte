@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import * as Card from '$lib/components/ui/card';
+	import * as Tooltip from '$lib/components/ui/tooltip';
 	import { eventTypeEnum } from '$lib/enums.js';
 	import type { Event } from '$lib/server/db/schema/event';
 	import { formatTimestampAsTime, generateSubjectColors } from '$lib/utils';
@@ -113,106 +114,102 @@
 	}
 </script>
 
-{#if rsvpStatus === 'required'}
-	<button
-		class="block h-full w-full cursor-pointer"
-		onclick={handleClick}
-		onmouseover={() => (isHovered = true)}
-		onmouseleave={() => (isHovered = false)}
-		onfocus={() => (isHovered = true)}
-		onblur={() => (isHovered = false)}
+{#snippet cardContent()}
+	<Card.Root
+		class="h-full overflow-hidden border-2 border-t-4 px-2 pt-0 shadow-lg transition-colors duration-300"
+		style="border-color: {eventColors()
+			.borderColor}; border-top-color: {eventColors()
+			.borderTopColor}; background-color: {eventColors()
+			.backgroundColor}; color: {eventColors().textColor};"
 	>
-		<Card.Root
-			class="h-full overflow-hidden border-2 border-t-4 px-2 pt-0 shadow-lg transition-colors duration-300"
-			style="border-color: {eventColors()
-				.borderColor}; border-top-color: {eventColors()
-				.borderTopColor}; background-color: {eventColors()
-				.backgroundColor}; color: {eventColors().textColor};"
-		>
-			<Card.Header class="p-1">
-				{@const Icon = eventIcon()}
-				<div class="flex items-start justify-between gap-1">
-					<Card.Title
-						class="flex-1 overflow-hidden text-left text-base font-medium text-ellipsis whitespace-nowrap"
-					>
-						{event.name}
-					</Card.Title>
-					<Icon class="mt-0.5 h-3 w-3 shrink-0" />
-				</div>
+		<Card.Header class="p-1">
+			{@const Icon = eventIcon()}
+			<div class="flex items-start justify-between gap-1">
+				<Card.Title
+					class="flex-1 overflow-hidden text-left text-base font-medium overflow-ellipsis whitespace-nowrap"
+				>
+					{event.name}
+				</Card.Title>
+				<Icon class="mt-0.5 h-3 w-3 shrink-0" />
+			</div>
 
-				<div class="space-y-1">
-					{#if showTime}
-						<Card.Description
-							class="flex items-center gap-1 text-xs text-ellipsis whitespace-nowrap"
-						>
-							<ClockIcon class="h-3 w-3" />
+			<div class="space-y-1">
+				{#if showTime}
+					<Card.Description
+						class="flex items-center gap-1 text-xs overflow-ellipsis whitespace-nowrap"
+					>
+						<ClockIcon class="h-3 w-3 shrink-0" />
+						<span class="overflow-hidden overflow-ellipsis">
 							{formatTimestampAsTime(event.start)} - {formatTimestampAsTime(
 								event.end,
 							)}
-						</Card.Description>
-					{/if}
+						</span>
+					</Card.Description>
+				{/if}
 
-					{#if subjectInfo}
-						<Card.Description
-							class="text-xs font-medium text-ellipsis whitespace-nowrap"
-						>
-							{subjectInfo.name}{#if subjectInfo.className}
-								- {subjectInfo.className}{/if}
-						</Card.Description>
-					{/if}
-				</div>
-			</Card.Header>
-		</Card.Root>
-	</button>
-{:else}
-	<div
-		class="block h-full"
-		role="group"
-		onmouseover={() => (isHovered = true)}
-		onmouseleave={() => (isHovered = false)}
-		onfocus={() => (isHovered = true)}
-		onblur={() => (isHovered = false)}
-	>
-		<Card.Root
-			class="h-full overflow-hidden border-2 border-t-4 px-2 pt-0 shadow-lg transition-colors duration-300"
-			style="border-color: {eventColors()
-				.borderColor}; border-top-color: {eventColors()
-				.borderTopColor}; background-color: {eventColors()
-				.backgroundColor}; color: {eventColors().textColor};"
-		>
-			<Card.Header class="p-1">
-				{@const Icon = eventIcon()}
-				<div class="flex items-start justify-between gap-1">
-					<Card.Title
-						class="flex-1 overflow-hidden text-left text-base font-medium text-ellipsis whitespace-nowrap"
+				{#if subjectInfo}
+					<Card.Description
+						class="overflow-hidden text-xs font-medium overflow-ellipsis whitespace-nowrap"
 					>
-						{event.name}
-					</Card.Title>
-					<Icon class="mt-0.5 h-3 w-3 shrink-0" />
-				</div>
+						{subjectInfo.name}{#if subjectInfo.className}
+							- {subjectInfo.className}{/if}
+					</Card.Description>
+				{/if}
+			</div>
+		</Card.Header>
+	</Card.Root>
+{/snippet}
 
-				<div class="space-y-1">
-					{#if showTime}
-						<Card.Description
-							class="flex items-center gap-1 text-xs text-ellipsis whitespace-nowrap"
-						>
-							<ClockIcon class="h-3 w-3" />
-							{formatTimestampAsTime(event.start)} - {formatTimestampAsTime(
-								event.end,
-							)}
-						</Card.Description>
-					{/if}
+{#snippet tooltipContent()}
+	<Tooltip.Content>
+		<div class="space-y-1">
+			<p class="font-semibold">{event.name}</p>
+			{#if showTime}
+				<p class="text-sm">
+					{formatTimestampAsTime(event.start)} - {formatTimestampAsTime(
+						event.end,
+					)}
+				</p>
+			{/if}
+			{#if subjectInfo}
+				<p class="text-sm">
+					{subjectInfo.name}{#if subjectInfo.className}
+						- {subjectInfo.className}{/if}
+				</p>
+			{/if}
+			{#if rsvpStatus === 'required'}
+				<p class="text-destructive text-sm font-medium">RSVP Required</p>
+			{:else if rsvpStatus === 'completed'}
+				<p class="text-success text-sm font-medium">RSVP Completed</p>
+			{/if}
+		</div>
+	</Tooltip.Content>
+{/snippet}
 
-					{#if subjectInfo}
-						<Card.Description
-							class="text-xs font-medium text-ellipsis whitespace-nowrap"
-						>
-							{subjectInfo.name}{#if subjectInfo.className}
-								- {subjectInfo.className}{/if}
-						</Card.Description>
-					{/if}
-				</div>
-			</Card.Header>
-		</Card.Root>
-	</div>
-{/if}
+<Tooltip.Provider>
+	<Tooltip.Root>
+		{#if rsvpStatus === 'required'}
+			<Tooltip.Trigger
+				class="block h-full w-full cursor-pointer"
+				onclick={handleClick}
+				onmouseover={() => (isHovered = true)}
+				onmouseleave={() => (isHovered = false)}
+				onfocus={() => (isHovered = true)}
+				onblur={() => (isHovered = false)}
+			>
+				{@render cardContent()}
+			</Tooltip.Trigger>
+		{:else}
+			<Tooltip.Trigger
+				class="block h-full w-full"
+				onmouseover={() => (isHovered = true)}
+				onmouseleave={() => (isHovered = false)}
+				onfocus={() => (isHovered = true)}
+				onblur={() => (isHovered = false)}
+			>
+				{@render cardContent()}
+			</Tooltip.Trigger>
+		{/if}
+		{@render tooltipContent()}
+	</Tooltip.Root>
+</Tooltip.Provider>
