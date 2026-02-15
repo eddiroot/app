@@ -53,11 +53,13 @@ export const actions = {
 		}
 
 		try {
-			await fetch(env.WEBHOOK_NOTIFICATIONS_DEMO, {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({ embeds: [embed] }),
-			})
+			if (env.WEBHOOK_NOTIFICATIONS_DEMO) {
+				await fetch(env.WEBHOOK_NOTIFICATIONS_DEMO, {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify({ embeds: [embed] }),
+				})
+			}
 		} catch (webhookError) {
 			console.error('Failed to send webhook:', webhookError)
 		}

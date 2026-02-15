@@ -491,14 +491,16 @@ async function restoreObjectFromData(
 
 			// If this object is selected, add control points
 			const activeObject = canvas.getActiveObject()
-			// @ts-expect-error - Type assertion needed
 			if (
 				activeObject &&
-				activeObject.id === objectData.id &&
+				(activeObject as any).id === objectData.id &&
 				controlPointManager
 			) {
-				// @ts-expect-error - Type assertion needed
-				controlPointManager.addControlPoints(objectData.id as string, obj, true)
+				controlPointManager.addControlPoints(
+					objectData.id as string,
+					obj as any,
+					true,
+				)
 			}
 
 			canvas.renderAll()

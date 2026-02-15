@@ -6,18 +6,17 @@ import {
 	saveWhiteboardObject,
 	updateWhiteboardObject,
 } from '$lib/server/db/service'
-import type { Socket } from './$types.js'
 
 // Store peer subscriptions with their whiteboardId
-const peerWhiteboards = new Map<object, number>()
+const peerWhiteboards = new Map<any, number>()
 
-export const socket: Socket = {
-	async open(peer) {
+export const socket = {
+	async open(peer: any) {
 		// Wait for client to send init message with whiteboardId
 		// Don't load anything until we know which whiteboard to use
 	},
 
-	async message(peer, message) {
+	async message(peer: any, message: any) {
 		const parsedMessage = JSON.parse(String(message))
 		const whiteboardId = parsedMessage.whiteboardId || peerWhiteboards.get(peer)
 
@@ -229,7 +228,7 @@ export const socket: Socket = {
 		}
 	},
 
-	close(peer) {
+	close(peer: any) {
 		const whiteboardId = peerWhiteboards.get(peer)
 		if (whiteboardId) {
 			peer.unsubscribe(`whiteboard-${whiteboardId}`)

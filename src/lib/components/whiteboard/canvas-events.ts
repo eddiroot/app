@@ -102,9 +102,8 @@ export const createObjectMovingHandler = (ctx: CanvasEventContext) => {
 		if (ctx.controlPointManager?.isControlPoint(target)) {
 			// This is a control point circle, update the associated line/shape
 			const center = target.getCenterPoint()
-			// @ts-expect-error - custom id property
 			ctx.controlPointManager.updateObjectFromControlPoint(
-				target.id,
+				(target as any).id,
 				center.x,
 				center.y,
 				true,
@@ -256,9 +255,8 @@ export const createObjectModifiedHandler = (ctx: CanvasEventContext) => {
 		if (ctx.controlPointManager?.isControlPoint(target)) {
 			// Send final update with isLive=false to persist to database
 			const center = target.getCenterPoint()
-			// @ts-expect-error - custom id property
 			ctx.controlPointManager.updateObjectFromControlPoint(
-				target.id,
+				(target as any).id,
 				center.x,
 				center.y,
 				false,
