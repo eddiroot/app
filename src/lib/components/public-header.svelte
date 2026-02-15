@@ -45,7 +45,7 @@
 {/snippet}
 
 <header class="container mx-auto px-4 py-6 lg:px-8">
-	<nav class="grid grid-cols-3 items-center">
+	<nav class="flex items-center justify-between sm:grid sm:grid-cols-3">
 		<a href="/">
 			<h1 class="text-2xl font-bold">eddi</h1>
 		</a>
@@ -140,7 +140,8 @@
 				<NavigationMenu.Item>
 					<NavigationMenu.Link>
 						{#snippet child()}
-							<a href="/pricing" class={navigationMenuTriggerStyle()}>Pricing</a
+							<a href="/#pricing" class={navigationMenuTriggerStyle()}
+								>Pricing</a
 							>
 						{/snippet}
 					</NavigationMenu.Link>
@@ -148,7 +149,7 @@
 			</NavigationMenu.List>
 		</NavigationMenu.Root>
 		{#if !page.url.pathname.startsWith('/demo')}
-			<div class="flex justify-end">
+			<div class="hidden justify-end sm:flex">
 				<Button href="/demo" size="lg">Book a demo</Button>
 			</div>
 		{/if}

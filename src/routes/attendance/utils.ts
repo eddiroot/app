@@ -1,11 +1,11 @@
-import { subjectClassAllocationAttendanceStatus } from '$lib/enums.js'
-import {
-	type Subject,
-	type SubjectClassAllocation,
-	type SubjectClassAllocationAttendance,
-	type SubjectOfferingClass,
-	type User,
-} from '$lib/server/db/schema'
+import { subjectClassAllocationAttendanceStatus } from '$lib/enums.js';
+import type {
+	Subject,
+	SubjectClassAllocation,
+	SubjectClassAllocationAttendance,
+	SubjectOfferingClass,
+	User,
+} from '$lib/server/db/schema';
 import {
 	CalendarDate,
 	getLocalTimeZone,

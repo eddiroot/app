@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
+	import HeroClayStudents from '$lib/assets/hero-clay-students.jpeg';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { Input } from '$lib/components/ui/input/index.js';
 	import { Label } from '$lib/components/ui/label/index.js';
@@ -81,8 +82,8 @@
 	</div>
 	<div class="bg-muted relative hidden lg:block">
 		<img
-			src="/hero-clay-students.jpeg"
-			alt="clay students in a classroom"
+			src={HeroClayStudents}
+			alt="students in a classroom"
 			class="absolute inset-0 h-full w-full object-cover dark:brightness-[0.4]"
 		/>
 	</div>

@@ -8,19 +8,6 @@ The all-in-one teaching, learning, and admin software suite for schools.
 - Make school admin effortless and dramatically simplify everyday tasks.
 - Give schools back control of their data and reduce the number of systems they need to run.
 
-## Onboard Screen
-
-- [ ] Hero image should be larger, probably make it the background to section the page and make it look scrollable
-- [ ] Add an intro before the feature section
-
-## Dashboard
-
-- [ ] Consider hierarchy for section i.e timetable should be much clearer and larger than school news, assessments > school news
-
-## Subject Home
-
-- [ ] Again consider hierarchy, dont need contacts to be as large as classes or assessments, remove contacts and move email next to teacher's name at the top
-
 # Features
 
 - **General**
@@ -138,7 +125,7 @@ Please note we cannot provide any guarantees at this stage on whether we will re
 ## Setup
 
 ```bash
-docker compose up -d
+docker compose -f docker-compose.dev.yml up -d
 npm install
 npm run db:push
 npm run db:seed
@@ -148,8 +135,8 @@ npm run dev
 ## Reset
 
 ```bash
-docker compose down --volumes
-docker compose up --detach
+docker compose -f docker-compose.dev.yml down --volumes
+docker compose -f docker-compose.dev.yml up --detach
 npm run db:push
 npm run db:seed
 npm run dev
