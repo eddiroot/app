@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { enhance } from '$app/forms';
 	import { invalidateAll } from '$app/navigation';
 	import Autocomplete from '$lib/components/autocomplete.svelte';
 	import * as Accordion from '$lib/components/ui/accordion/index.js';
@@ -43,7 +44,6 @@
 	let yearLevel = $derived(yearLevels().length > 0 ? yearLevels()[0] : null);
 	let createDialogOpen = $state(false);
 	let infoDialogOpen = $state(false);
-	let autoCreating = $state(false);
 	let groupName = $state('');
 	let creatingGroup = $state(false);
 
@@ -104,29 +104,6 @@
 			console.error('Error creating group:', error);
 		} finally {
 			creatingGroup = false;
-		}
-	}
-
-	async function autoCreateGroups() {
-		if (!yearLevel) return;
-
-		autoCreating = true;
-		try {
-			const formData = new FormData();
-			formData.append('yearLevelId', yearLevel.id.toString());
-
-			const response = await fetch('?/autoCreateGroups', {
-				method: 'POST',
-				body: formData,
-			});
-
-			if (response.ok) {
-				await invalidateAll();
-			}
-		} catch (error) {
-			console.error('Error auto-creating groups:', error);
-		} finally {
-			autoCreating = false;
 		}
 	}
 
@@ -236,15 +213,17 @@
 			</Button>
 		</div>
 		<div class="flex gap-2">
-			<Button
-				type="button"
-				variant="secondary"
-				onclick={autoCreateGroups}
-				disabled={!yearLevel || autoCreating}
-			>
-				<WandSparkles />
-				{autoCreating ? 'Creating...' : 'Auto Create Groups'}
-			</Button>
+			<form method="POST" action="?/autoCreateGroups" use:enhance>
+				<input
+					type="hidden"
+					name="yearLevelId"
+					value={yearLevel ? yearLevel.id.toString() : ''}
+				/>
+				<Button type="submit" variant="secondary" disabled={!yearLevel}>
+					<WandSparkles />
+					Auto Create Groups
+				</Button>
+			</form>
 			<Button
 				type="button"
 				variant="outline"

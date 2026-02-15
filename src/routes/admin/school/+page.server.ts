@@ -2,6 +2,7 @@ import { getSchoolById, updateSchool } from '$lib/server/db/service';
 import {
 	deleteFile,
 	generateUniqueFileName,
+	getPresignedUrl,
 	uploadBufferHelper,
 } from '$lib/server/obj';
 import { error } from '@sveltejs/kit';
@@ -17,12 +18,17 @@ export const load = async ({ locals: { security } }) => {
 		throw error(404, 'School not found');
 	}
 
+	let logoUrl = null;
+	if (school.logoPath) {
+		logoUrl = await getPresignedUrl(school.logoPath);
+	}
+
 	const form = await superValidate(
 		{ name: school?.name || '' },
 		zod4(schoolFormSchema),
 	);
 
-	return { form, school };
+	return { form, school, logoUrl };
 };
 
 export const actions = {
@@ -45,15 +51,10 @@ export const actions = {
 
 			let logoPath = school.logoPath || undefined;
 
-			// Handle logo upload if provided
 			if (form.data.logo && form.data.logo.size > 0) {
-				// Delete existing logo if it exists
 				if (school.logoPath) {
 					try {
-						// Extract the object name from the URL
-						const urlParts = school.logoPath.split('/');
-						const objectName = urlParts.slice(-1)[0];
-						await deleteFile(objectName);
+						await deleteFile(school.logoPath);
 					} catch (deleteError) {
 						console.warn('Could not delete existing logo:', deleteError);
 					}
@@ -63,14 +64,12 @@ export const actions = {
 				const uniqueFileName = generateUniqueFileName(form.data.logo.name);
 				logoPath = await uploadBufferHelper(
 					buffer,
-					uniqueFileName,
+					`${school.id}/logos/${uniqueFileName}`,
 					form.data.logo.type,
 				);
 			}
 
-			// Update school with new details and logo URL
 			await updateSchool(user.schoolId, form.data.name, logoPath);
-
 			return withFiles({ form });
 		} catch (error) {
 			console.error('Error updating school:', error);

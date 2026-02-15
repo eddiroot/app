@@ -1,6 +1,7 @@
 import { newsStatusEnum, newsVisibilityEnum } from '$lib/enums.js';
 import { db } from '$lib/server/db';
 import * as table from '$lib/server/db/schema';
+import { getPresignedUrl } from '$lib/server/obj';
 import { and, asc, desc, eq, gte, isNull, lte, or, sql } from 'drizzle-orm';
 
 // News CRUD operations
@@ -382,29 +383,15 @@ export async function getNewsResources(
 		resources.map(async (item) => {
 			let imageUrl = `/api/resources?resourceId=${item.resource.id}&action=download`;
 
-			// If schoolId is provided, generate a presigned URL for direct image access
 			if (schoolId) {
 				try {
-					const { getPresignedUrl } = await import('$lib/server/obj');
-					const schoolIdStr = schoolId.toString();
-
-					// Object key format: remove schoolId prefix if it exists
-					const objectName = item.resource.objectKey.startsWith(schoolIdStr)
-						? item.resource.objectKey.substring(schoolIdStr.length + 1)
-						: item.resource.objectKey;
-
-					imageUrl = await getPresignedUrl(
-						schoolIdStr,
-						objectName,
-						24 * 60 * 60,
-					); // 24 hour expiry
+					imageUrl = await getPresignedUrl(item.resource.objectKey);
 				} catch (error) {
 					console.error(
 						'Error generating presigned URL for resource:',
 						item.resource.id,
 						error,
 					);
-					// Fallback to API endpoint
 				}
 			}
 

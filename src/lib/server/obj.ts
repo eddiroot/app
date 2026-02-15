@@ -1,7 +1,6 @@
 import { env } from '$env/dynamic/private';
 import * as Minio from 'minio';
 
-if (!env.OBJ_URL_PREFIX) throw new Error('OBJ_URL_PREFIX is not set');
 if (!env.OBJ_ENDPOINT) throw new Error('OBJ_ENDPOINT is not set');
 if (!env.OBJ_PORT) throw new Error('OBJ_PORT is not set');
 if (!env.OBJ_USE_SSL) throw new Error('OBJ_USE_SSL is not set');
@@ -19,7 +18,7 @@ const minioClient = new Minio.Client({
 const BUCKET_NAME = 'schools';
 
 async function uploadBuffer(
-	objectName: string,
+	pathExBucket: string,
 	buffer: Buffer,
 	contentType?: string,
 ) {
@@ -27,7 +26,7 @@ async function uploadBuffer(
 		const metaData = contentType ? { 'Content-Type': contentType } : {};
 		const res = await minioClient.putObject(
 			BUCKET_NAME,
-			objectName,
+			pathExBucket,
 			buffer,
 			buffer.length,
 			metaData,
@@ -41,16 +40,16 @@ async function uploadBuffer(
 
 export async function uploadBufferHelper(
 	buffer: Buffer,
-	objectName: string,
+	pathExBucket: string,
 	contentType?: string,
 ): Promise<string> {
-	await uploadBuffer(objectName, buffer, contentType);
-	return `${env.OBJ_URL_PREFIX}/${BUCKET_NAME}/${objectName}`;
+	await uploadBuffer(pathExBucket, buffer, contentType);
+	return pathExBucket;
 }
 
-export async function deleteFile(objectName: string): Promise<void> {
+export async function deleteFile(pathExBucket: string): Promise<void> {
 	try {
-		await minioClient.removeObject(BUCKET_NAME, objectName);
+		await minioClient.removeObject(BUCKET_NAME, pathExBucket);
 	} catch (error) {
 		console.error('Error deleting file:', error);
 		throw error;
@@ -81,16 +80,13 @@ export async function listFiles(
 }
 
 export async function getPresignedUrl(
-	schoolId: string,
-	objectName: string,
+	pathExBucket: string,
 	expiry: number = 5 * 60, // 5 minutes in seconds
 ): Promise<string> {
-	const fullObjectName = `${schoolId}/${objectName}`;
-
 	try {
 		const url = await minioClient.presignedGetObject(
 			BUCKET_NAME,
-			fullObjectName,
+			pathExBucket,
 			expiry,
 		);
 		return url;

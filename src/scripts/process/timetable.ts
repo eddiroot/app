@@ -48,8 +48,7 @@ export async function processTimetableQueue() {
 
 			// Retrieve the timetable file from object storage
 			const fileUrl = await getPresignedUrl(
-				schoolId,
-				`${timetableId}/${timetableDraftId}/input/${fileName}`,
+				`${schoolId}/${timetableId}/${timetableDraftId}/input/${fileName}`,
 				15 * 60, // 15 minutes
 			);
 

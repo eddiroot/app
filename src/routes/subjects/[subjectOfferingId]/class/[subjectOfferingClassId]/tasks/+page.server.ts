@@ -54,14 +54,7 @@ export const load = async ({
 	const resourcesWithUrls = await Promise.all(
 		resources.map(async (row) => {
 			try {
-				const schoolId = user.schoolId.toString();
-
-				// Strip schoolId prefix if it exists to avoid double-prefixing
-				const objectName = row.resource.objectKey.startsWith(schoolId)
-					? row.resource.objectKey.substring(schoolId.length + 1)
-					: row.resource.objectKey;
-
-				const downloadUrl = await getPresignedUrl(schoolId, objectName);
+				const downloadUrl = await getPresignedUrl(row.resource.objectKey);
 				return { ...row, downloadUrl };
 			} catch (error) {
 				console.error(
