@@ -4533,7 +4533,12 @@ Z
 	/**
 	 * Apply the crop to the image using clipPath
 	 */
-	applyCrop(): { success: boolean; imageId: string | null; cropData: any } {
+	applyCrop(): {
+		success: boolean
+		imageId: string | null
+		cropData: any
+		newImage?: fabric.FabricObject
+	} {
 		if (!this.originalImage || !this.cropBounds) {
 			return { success: false, imageId: null, cropData: null }
 		}
@@ -4546,6 +4551,7 @@ Z
 		const scaleX = image.scaleX || 1
 		const scaleY = image.scaleY || 1
 		const angle = image.angle || 0
+		const opacity = image.opacity || 1
 		const imgWidth = (image.width || 0) * scaleX
 		const imgHeight = (image.height || 0) * scaleY
 		const imgLeft = center.x - imgWidth / 2
@@ -4557,7 +4563,70 @@ Z
 		const cropWidth = this.cropBounds.width / scaleX
 		const cropHeight = this.cropBounds.height / scaleY
 
-		// Create a clip path in image's local coordinates
+		// Crop center in canvas coordinates
+		const newCenterX = this.cropBounds.left + this.cropBounds.width / 2
+		const newCenterY = this.cropBounds.top + this.cropBounds.height / 2
+
+		// Calculate the new scale to make the cropped area fill the display bounds
+		const newScaleX = this.cropBounds.width / cropWidth
+		const newScaleY = this.cropBounds.height / cropHeight
+
+		// Create a temporary canvas with just the cropped pixels
+		// This ensures the new image's center IS the crop center, so rotation works correctly
+		const imgElement = (image as any)._element as
+			| HTMLImageElement
+			| HTMLCanvasElement
+		if (imgElement) {
+			const tempCanvas = document.createElement('canvas')
+			tempCanvas.width = Math.round(cropWidth)
+			tempCanvas.height = Math.round(cropHeight)
+			const tempCtx = tempCanvas.getContext('2d')
+			if (tempCtx) {
+				tempCtx.drawImage(
+					imgElement,
+					Math.round(cropLeft),
+					Math.round(cropTop),
+					Math.round(cropWidth),
+					Math.round(cropHeight),
+					0,
+					0,
+					Math.round(cropWidth),
+					Math.round(cropHeight),
+				)
+
+				// Create new fabric Image from the cropped canvas
+				const croppedImg = new fabric.FabricImage(tempCanvas, {
+					left: newCenterX,
+					top: newCenterY,
+					originX: 'center',
+					originY: 'center',
+					scaleX: newScaleX,
+					scaleY: newScaleY,
+					angle: angle,
+					opacity: opacity,
+					hasControls: false,
+					hasBorders: false,
+					selectable: true,
+				})
+				;(croppedImg as any).id = imageId
+
+				// Remove old image and add new cropped image
+				this.canvas.remove(image)
+				this.canvas.add(croppedImg)
+				croppedImg.setCoords()
+
+				this.endCrop()
+
+				return {
+					success: true,
+					imageId,
+					cropData: null, // Will send full object data instead
+					newImage: croppedImg,
+				}
+			}
+		}
+
+		// Fallback: use clipPath approach if canvas extraction fails
 		const clipRect = new fabric.Rect({
 			left: cropLeft - (image.width || 0) / 2,
 			top: cropTop - (image.height || 0) / 2,
@@ -4566,20 +4635,7 @@ Z
 			absolutePositioned: false,
 		})
 
-		// Adjust image position so the visible part is centered where it was
-		const newCenterX = this.cropBounds.left + this.cropBounds.width / 2
-		const newCenterY = this.cropBounds.top + this.cropBounds.height / 2
-
-		// Instead of changing width/height and applying clipPath,
-		// we keep the original width/height but adjust scaleX/scaleY
-		// The clipPath coordinates need to stay relative to the ORIGINAL dimensions
 		image.clipPath = clipRect
-
-		// Calculate the new scale to make the cropped area fill the display bounds
-		const newScaleX = this.cropBounds.width / cropWidth
-		const newScaleY = this.cropBounds.height / cropHeight
-
-		// Update the image with new scale and position
 		image.set({
 			scaleX: newScaleX,
 			scaleY: newScaleY,

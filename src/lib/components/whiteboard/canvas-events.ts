@@ -132,20 +132,22 @@ export const createObjectMovingHandler = (ctx: CanvasEventContext) => {
 		// @ts-expect-error - custom id property
 		const objectId = target.id
 
-		// Use unified throttle for all objects including images
+		// For images, use lightweight sendImageUpdate to avoid sending massive base64/clipPath data
+		if (target.type === 'image') {
+			ctx.setIsMovingImage(true)
+			const objData = target.toObject()
+			objData.id = objectId
+			ctx.sendImageUpdate(objectId, objData, false)
+			return
+		}
+
+		// For non-image objects, use unified throttle
 		const objData =
 			target.type === 'textbox' ? target.toObject(['text']) : target.toObject()
 		objData.id = objectId
 
-		// For images, mark that we're moving one
-		if (target.type === 'image') {
-			ctx.setIsMovingImage(true)
-		}
-
-		// Remove type property to avoid fabric.js warning (except for images which need it)
-		if (target.type !== 'image') {
-			delete objData.type
-		}
+		// Remove type property to avoid fabric.js warning
+		delete objData.type
 
 		// Store the latest state for this object
 		pendingMoveUpdates.set(objectId, objData)

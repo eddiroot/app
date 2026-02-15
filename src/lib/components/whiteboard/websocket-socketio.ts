@@ -273,32 +273,32 @@ function handleModifyMessage(
 			return
 		}
 
-// For live updates, use fast path - only update defined properties
-if (isLiveUpdate) {
-// Build update object with only defined properties to avoid setting undefined values
-const liveUpdate: Record<string, unknown> = {}
-const liveProps = [
-'left',
-'top',
-'scaleX',
-'scaleY',
-'angle',
-'opacity',
-'width',
-'height',
-'rx',
-'ry',
-] as const
-for (const prop of liveProps) {
-if (messageData.object[prop] !== undefined) {
-liveUpdate[prop] = messageData.object[prop]
-}
-}
-obj.set(liveUpdate as Partial<fabric.FabricObjectProps>)
-obj.setCoords()
-canvas.renderAll() // Immediate synchronous render
-return
-}
+		// For live updates, use fast path - only update defined properties
+		if (isLiveUpdate) {
+			// Build update object with only defined properties to avoid setting undefined values
+			const liveUpdate: Record<string, unknown> = {}
+			const liveProps = [
+				'left',
+				'top',
+				'scaleX',
+				'scaleY',
+				'angle',
+				'opacity',
+				'width',
+				'height',
+				'rx',
+				'ry',
+			] as const
+			for (const prop of liveProps) {
+				if (messageData.object[prop] !== undefined) {
+					liveUpdate[prop] = messageData.object[prop]
+				}
+			}
+			obj.set(liveUpdate as Partial<fabric.FabricObjectProps>)
+			obj.setCoords()
+			canvas.renderAll() // Immediate synchronous render
+			return
+		}
 
 		// Full update path for non-live (persisted) updates
 		if (obj.type === 'textbox' && 'text' in messageData.object) {
@@ -325,6 +325,34 @@ return
 
 			// Mark as dirty to force re-render
 			textbox.dirty = true
+		} else if (obj.type === 'image' && messageData.object.clipPath) {
+			// For images with clipPath, handle clipPath separately to avoid setting plain object
+			// eslint-disable-next-line @typescript-eslint/no-unused-vars
+			const {
+				type: _type,
+				id: _id,
+				clipPath: serializedClipPath,
+				src: _src,
+				...updateProps
+			} = messageData.object
+			obj.set(updateProps as Partial<fabric.FabricObjectProps>)
+			// Enliven the clipPath from serialized data to a proper fabric object
+			if (serializedClipPath && typeof serializedClipPath === 'object') {
+				fabric.util
+					.enlivenObjects([serializedClipPath])
+					.then((enlivenedObjects) => {
+						if (enlivenedObjects.length > 0) {
+							;(obj as fabric.FabricObject).clipPath =
+								enlivenedObjects[0] as fabric.FabricObject
+							obj.dirty = true
+							obj.setCoords()
+							canvas.renderAll()
+						}
+					})
+					.catch(() => {
+						// If clipPath enlivening fails, continue without it
+					})
+			}
 		} else {
 			// Full update for all other objects - exclude type and id properties
 			// eslint-disable-next-line @typescript-eslint/no-unused-vars

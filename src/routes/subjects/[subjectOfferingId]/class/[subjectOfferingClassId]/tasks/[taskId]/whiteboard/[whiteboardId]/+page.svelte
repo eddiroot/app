@@ -157,9 +157,9 @@
 			return;
 		}
 
-		// Throttle live image updates to reduce network traffic
+		// Throttle live image updates (true throttle, not debounce - fires during drag, not just after)
 		if (imageThrottleTimeout !== null) {
-			clearTimeout(imageThrottleTimeout);
+			return; // Already have a pending send, just queue the latest data
 		}
 
 		imageThrottleTimeout = setTimeout(() => {
@@ -828,23 +828,33 @@
 		isCropping = false;
 
 		if (result.success && result.imageId) {
-			// Remove old control points and create new ones for cropped size
-			if (controlPointManager) {
-				const image = canvas
-					.getObjects()
-					.find((o: any) => o.id === result.imageId);
-				if (image) {
+			// Use the new image if canvas-based crop succeeded, otherwise find the existing one
+			const image =
+				result.newImage ||
+				canvas.getObjects().find((o: any) => o.id === result.imageId);
+
+			if (image) {
+				// Remove old control points and create new ones for cropped size
+				if (controlPointManager) {
 					controlPointManager.removeControlPoints(result.imageId);
 					controlPointManager.addControlPoints(result.imageId, image, true);
 					canvas.setActiveObject(image);
 				}
-			}
 
-			// Sync crop to other users
-			sendCanvasUpdate({
-				type: 'modify',
-				object: { id: result.imageId, ...result.cropData },
-			});
+				// Sync crop to other users
+				if (result.newImage) {
+					// Canvas-based crop: send full object data (new image with cropped pixels)
+					const objData = image.toObject();
+					(objData as any).id = result.imageId;
+					sendCanvasUpdate({ type: 'modify', object: objData });
+				} else if (result.cropData) {
+					// Fallback clipPath crop: send crop data
+					sendCanvasUpdate({
+						type: 'modify',
+						object: { id: result.imageId, ...result.cropData },
+					});
+				}
+			}
 		}
 		canvas.renderAll();
 		cropOverlay = null;
