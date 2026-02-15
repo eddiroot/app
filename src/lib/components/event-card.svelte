@@ -108,7 +108,7 @@
 	function handleClick() {
 		if (rsvpStatus === 'required') {
 			// Navigate to RSVP page
-			goto(`/timetable/${event.type}/${event.id}/rsvp`);
+			goto(`/calendar/${event.type}/${event.id}/rsvp`);
 		}
 	}
 </script>

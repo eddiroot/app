@@ -27,6 +27,10 @@
 
 	const { form: formData, enhance, submitting } = form;
 
+	function goBack() {
+		history.back();
+	}
+
 	function getEventTypeInfo(eventType: string) {
 		switch (eventType) {
 			case 'school':
@@ -67,7 +71,7 @@
 <div class="space-y-6 p-8">
 	<!-- Header -->
 	<div class="flex items-center gap-4">
-		<Button.Root variant="ghost" size="icon" href="/timetable">
+		<Button.Root variant="ghost" size="icon" onclick={goBack}>
 			<ArrowLeft />
 		</Button.Root>
 		<div>
