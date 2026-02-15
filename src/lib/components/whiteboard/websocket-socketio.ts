@@ -273,21 +273,32 @@ function handleModifyMessage(
 			return
 		}
 
-		// For live updates, use fast path - only update essential properties
-		if (isLiveUpdate) {
-			// Fast path for live updates - minimal property updates
-			obj.set({
-				left: messageData.object.left,
-				top: messageData.object.top,
-				scaleX: messageData.object.scaleX,
-				scaleY: messageData.object.scaleY,
-				angle: messageData.object.angle,
-				opacity: messageData.object.opacity,
-			})
-			obj.setCoords()
-			canvas.renderAll() // Immediate synchronous render
-			return
-		}
+// For live updates, use fast path - only update defined properties
+if (isLiveUpdate) {
+// Build update object with only defined properties to avoid setting undefined values
+const liveUpdate: Record<string, unknown> = {}
+const liveProps = [
+'left',
+'top',
+'scaleX',
+'scaleY',
+'angle',
+'opacity',
+'width',
+'height',
+'rx',
+'ry',
+] as const
+for (const prop of liveProps) {
+if (messageData.object[prop] !== undefined) {
+liveUpdate[prop] = messageData.object[prop]
+}
+}
+obj.set(liveUpdate as Partial<fabric.FabricObjectProps>)
+obj.setCoords()
+canvas.renderAll() // Immediate synchronous render
+return
+}
 
 		// Full update path for non-live (persisted) updates
 		if (obj.type === 'textbox' && 'text' in messageData.object) {
