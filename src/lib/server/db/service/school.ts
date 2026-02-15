@@ -5,7 +5,7 @@ import {
 } from '$lib/enums.js';
 import { db } from '$lib/server/db';
 import * as table from '$lib/server/db/schema';
-import { and, asc, count, desc, eq, inArray } from 'drizzle-orm';
+import { and, asc, count, eq, inArray } from 'drizzle-orm';
 
 export async function getUsersBySchoolId(
 	schoolId: number,
@@ -453,41 +453,21 @@ export async function getSubjectsBySchoolIdAndYearLevel(
 	return subjects;
 }
 
-export async function getSemestersBySchoolId(
-	schoolId: number,
-	includeArchived: boolean = false,
-) {
+export async function getSemestersBySchoolId(schoolId: number) {
 	const semesters = await db
 		.select()
 		.from(table.schoolSemester)
-		.where(
-			and(
-				eq(table.schoolSemester.schoolId, schoolId),
-				includeArchived
-					? undefined
-					: eq(table.schoolSemester.isArchived, false),
-			),
-		)
+		.where(eq(table.schoolSemester.schoolId, schoolId))
 		.orderBy(asc(table.schoolSemester.year), asc(table.schoolSemester.number));
 
 	return semesters;
 }
 
-export async function getSemestersWithTermsBySchoolId(
-	schoolId: number,
-	includeArchived: boolean = false,
-) {
+export async function getSemestersWithTermsBySchoolId(schoolId: number) {
 	const semesters = await db
 		.select()
 		.from(table.schoolSemester)
-		.where(
-			and(
-				eq(table.schoolSemester.schoolId, schoolId),
-				includeArchived
-					? undefined
-					: eq(table.schoolSemester.isArchived, false),
-			),
-		)
+		.where(eq(table.schoolSemester.schoolId, schoolId))
 		.orderBy(asc(table.schoolSemester.year), asc(table.schoolSemester.number));
 
 	if (semesters.length === 0) {
@@ -499,13 +479,8 @@ export async function getSemestersWithTermsBySchoolId(
 	const terms = await db
 		.select()
 		.from(table.schoolTerm)
-		.where(
-			and(
-				inArray(table.schoolTerm.schoolSemesterId, semesterIds),
-				includeArchived ? undefined : eq(table.schoolTerm.isArchived, false),
-			),
-		)
-		.orderBy(desc(table.schoolTerm.start));
+		.where(inArray(table.schoolTerm.schoolSemesterId, semesterIds))
+		.orderBy(table.schoolTerm.number);
 
 	return semesters.map((semester) => ({
 		...semester,
@@ -544,4 +519,14 @@ export async function getSchoolSemesterById(semesterId: number) {
 		.limit(1);
 
 	return semesters.length > 0 ? semesters[0] : null;
+}
+
+export async function deleteSchoolSemester(semesterId: number) {
+	await db
+		.delete(table.schoolSemester)
+		.where(eq(table.schoolSemester.id, semesterId));
+}
+
+export async function deleteSchoolTerm(termId: number) {
+	await db.delete(table.schoolTerm).where(eq(table.schoolTerm.id, termId));
 }

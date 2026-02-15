@@ -54,7 +54,7 @@ export const load = async ({ locals: { security }, params }) => {
 		>
 	> = {};
 	for (const yearLevel of yearLevels) {
-		subjectOfferingsByYearLevel[yearLevel.id] =
+		subjectOfferingsByYearLevel[yearLevel.code] =
 			await getSubjectOfferingsByYearLevelIdForTimetableByTimetableId(
 				parseInt(params.timetableId, 10),
 				yearLevel.id,

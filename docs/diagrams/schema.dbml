@@ -619,7 +619,6 @@ table school.sch_cmps {
 
 table school.sch_sem {
   id integer [pk, not null]
-  isArchived boolean [not null, default: false]
   created_at "timestamp (3)" [not null, default: `now()`]
   updated_at "timestamp (3)" [not null, default: `now()`]
   year integer [not null]
@@ -651,7 +650,6 @@ table school.sch_space {
 
 table school.sch_term {
   id integer [pk, not null]
-  isArchived boolean [not null, default: false]
   created_at "timestamp (3)" [not null, default: `now()`]
   updated_at "timestamp (3)" [not null, default: `now()`]
   number integer [not null]
@@ -1085,7 +1083,7 @@ table timetable.tt_group {
   created_at "timestamp (3)" [not null, default: `now()`]
   updated_at "timestamp (3)" [not null, default: `now()`]
   name text [not null]
-  yearLevel integer [not null]
+  yearLevelId integer [not null]
   tt_draft_id integer [not null]
 
   indexes {
@@ -1475,7 +1473,7 @@ ref tt_draft_con_tt_draft_id_tt_draft_id_fk: timetable.tt_draft_con.tt_draft_id 
 
 ref tt_draft_con_con_id_con_id_fk: timetable.tt_draft_con.con_id > timetable.con.id [delete: cascade, update: no action]
 
-ref tt_group_yearLevel_sch_yl_id_fk: timetable.tt_group.yearLevel > school.sch_yl.id [delete: cascade, update: no action]
+ref tt_group_yearLevelId_sch_yl_id_fk: timetable.tt_group.yearLevelId > school.sch_yl.id [delete: cascade, update: no action]
 
 ref tt_group_tt_draft_id_tt_draft_id_fk: timetable.tt_group.tt_draft_id > timetable.tt_draft.id [delete: cascade, update: no action]
 

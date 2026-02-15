@@ -77,7 +77,7 @@ function buildStudentsList(
 
 	// Process all rows from studentGroups
 	for (const row of studentGroups) {
-		const yearLevelKey = row.yearLevel.toString();
+		const yearLevelKey = row.yearLevelId.toString();
 		const groupId = row.groupId;
 		const groupName = row.groupName;
 

@@ -19,13 +19,28 @@
 	let { data } = $props();
 
 	let yearLevels = $derived(() => {
-		return data.students
-			.map((student) => student.yearLevel)
-			.filter((value, index, self) => self.indexOf(value) === index)
-			.sort();
+		const uniqueValues = [...new Set(data.students.map((s) => s.yearLevel))];
+		return uniqueValues
+			.map((value) => {
+				const student = data.students.find((s) => s.yearLevel === value);
+				return { id: student!.yearLevelId, value };
+			})
+			.sort((a, b) => {
+				const aFmtd = parseInt(a.value);
+				const bFmtd = parseInt(b.value);
+				if (isNaN(aFmtd) && isNaN(bFmtd)) {
+					return a.value.localeCompare(b.value);
+				} else if (isNaN(aFmtd)) {
+					return 1;
+				} else if (isNaN(bFmtd)) {
+					return -1;
+				} else {
+					return aFmtd - bFmtd;
+				}
+			});
 	});
 
-	let yearLevel = $derived(data.defaultYearLevel);
+	let yearLevel = $derived(yearLevels().length > 0 ? yearLevels()[0] : null);
 	let createDialogOpen = $state(false);
 	let infoDialogOpen = $state(false);
 	let autoCreating = $state(false);
@@ -34,31 +49,28 @@
 
 	let filteredGroups = $derived(() => {
 		if (!yearLevel) return [];
-		return data.groups.filter(
-			(group) => group.yearLevel.toString() === yearLevel,
-		);
+		return data.groups.filter((group) => group.yearLevelId === yearLevel?.id);
 	});
 
-	// Get student options for a specific group (exclude students already in that group)
 	function getStudentOptionsForGroup(groupId: number) {
 		if (!yearLevel) return [];
 
 		const studentsInGroup = data.studentsByGroupId[groupId] || [];
 		const studentIdsInGroup = new Set(studentsInGroup.map((s) => s.id));
 
-		// Get all students for the year level, excluding those already in this specific group
 		const availableStudents = data.students.filter(
 			(student) =>
-				student.yearLevel === yearLevel && !studentIdsInGroup.has(student.id),
+				student.yearLevel === yearLevel?.value &&
+				!studentIdsInGroup.has(student.id),
 		);
 
 		return availableStudents.map((student) => ({
 			value: student.id,
-			label: convertToFullName(
+			label: `${convertToFullName(
 				student.firstName,
 				student.middleName,
 				student.lastName,
-			),
+			)} (${student.email})`,
 		}));
 	}
 
@@ -75,7 +87,7 @@
 		creatingGroup = true;
 		try {
 			const formData = new FormData();
-			formData.append('yearLevel', yearLevel);
+			formData.append('yearLevelId', yearLevel.id.toString());
 			formData.append('name', groupName);
 
 			const response = await fetch('?/createGroup', {
@@ -95,14 +107,13 @@
 		}
 	}
 
-	// Auto-create groups based on subjects
 	async function autoCreateGroups() {
 		if (!yearLevel) return;
 
 		autoCreating = true;
 		try {
 			const formData = new FormData();
-			formData.append('yearLevel', yearLevel);
+			formData.append('yearLevelId', yearLevel.id.toString());
 
 			const response = await fetch('?/autoCreateGroups', {
 				method: 'POST',
@@ -191,14 +202,30 @@
 	<h1 class="text-2xl leading-tight font-bold">Student Groups</h1>
 	<div class="flex justify-between">
 		<div class="flex gap-2">
-			<Select.Root type="single" name="yearLevel" bind:value={yearLevel}>
+			<Select.Root
+				type="single"
+				name="yearLevel"
+				onValueChange={(id) => {
+					if (!id) {
+						yearLevel = null;
+					} else {
+						const newYearLevel = yearLevels().find(
+							(yl) => yl.id.toString() === id,
+						);
+						if (newYearLevel) {
+							yearLevel = newYearLevel;
+						}
+					}
+				}}
+				value={yearLevel ? yearLevel.id.toString() : ''}
+			>
 				<Select.Trigger class="w-[180px]">
-					{yearLevel ?? 'Select a year level'}
+					{yearLevel ? yearLevel.value : 'Select a year level'}
 				</Select.Trigger>
 				<Select.Content>
-					{#each yearLevels() as yearLevelValue}
-						<Select.Item value={yearLevelValue} label={yearLevelValue}>
-							{yearLevelValue}
+					{#each yearLevels() as yl}
+						<Select.Item value={yl.id.toString()} label={yl.value}>
+							{yl.value}
 						</Select.Item>
 					{/each}
 				</Select.Content>
@@ -211,11 +238,11 @@
 		<div class="flex gap-2">
 			<Button
 				type="button"
-				variant="outline"
+				variant="secondary"
 				onclick={autoCreateGroups}
 				disabled={!yearLevel || autoCreating}
 			>
-				<WandSparkles class="mr-2 h-4 w-4" />
+				<WandSparkles />
 				{autoCreating ? 'Creating...' : 'Auto Create Groups'}
 			</Button>
 			<Button
@@ -223,9 +250,8 @@
 				variant="outline"
 				size="icon"
 				onclick={() => (infoDialogOpen = true)}
-				class="ml-auto"
 			>
-				<InfoIcon class="h-4 w-4" />
+				<InfoIcon />
 			</Button>
 		</div>
 	</div>
@@ -244,15 +270,14 @@
 									</Badge>
 								</div>
 								<Button
-									variant="ghost"
+									variant="destructive"
 									size="sm"
 									onclick={(e) => {
 										e.stopPropagation();
 										deleteGroup(group.id);
 									}}
-									class="text-destructive hover:text-destructive"
 								>
-									<Trash2Icon class="h-4 w-4" />
+									<Trash2Icon />
 								</Button>
 							</div>
 						</Accordion.Trigger>
@@ -384,22 +409,25 @@
 		>
 			<li>
 				Create groups that represent the classes or subjects that students will
-				be attending. - For example, if there is a Year 10 English class, create
-				a group named "Year 10 English".
+				be attending. For example, if there is a Year 10 English class, create a
+				group named "Year 10 English".
 			</li>
 			<li>
 				Assign students to these groups based on the classes they are enrolled
-				in. - A student taking Year 10 English and Year 10 Math would be
-				assigned to both the "Year 10 English" and "Year 10 Math" groups.
+				in. A student taking Year 10 English and Year 10 Math would be assigned
+				to both the "Year 10 English" and "Year 10 Math" groups.
 			</li>
 			<li>
-				When creating activities, link them to the appropriate groups. - For
+				When creating activities, link them to the appropriate groups. For
 				instance, the activity for the Year 10 English class should be
-				associated with the "Year 10 English" group. NOTE: The more groups the
-				better, so if you have 60 students that need to do English, however you
-				can only have 30 students per class, then you should have 2 groups such
-				as "Year 10 English A" and "Year 10 English B" to ensure the students
-				can be split into different classes.
+				associated with the "Year 10 English" group.
+			</li>
+
+			<li>
+				The more groups the better. If you have 60 students that need to do
+				English, however you can only have 30 students per class, then you
+				should have 2 groups such as "Year 10 English A" and "Year 10 English B"
+				to ensure the students are split into different classes.
 			</li>
 		</ol>
 	</Dialog.Content>

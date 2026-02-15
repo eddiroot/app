@@ -289,18 +289,17 @@ export async function getTimetableDraftStudentGroupsWithCountsByTimetableDraftId
 		)
 		.innerJoin(
 			table.schoolYearLevel,
-			eq(table.timetableGroup.yearLevel, table.schoolYearLevel.id),
+			eq(table.timetableGroup.yearLevelId, table.schoolYearLevel.id),
 		)
 		.where(eq(table.timetableGroup.timetableDraftId, timetableDraftId))
 		.groupBy(
 			table.timetableGroup.id,
 			table.timetableGroup.name,
-			table.timetableGroup.yearLevel,
+			table.timetableGroup.yearLevelId,
+			table.schoolYearLevel.id,
+			table.schoolYearLevel.code,
 		)
-		.orderBy(
-			asc(table.timetableGroup.yearLevel),
-			asc(table.timetableGroup.name),
-		);
+		.orderBy(asc(table.schoolYearLevel.code), asc(table.timetableGroup.name));
 	return groups;
 }
 
@@ -314,7 +313,7 @@ export async function getAllStudentGroupsByTimetableDraftId(
 		.select({
 			groupId: table.timetableGroup.id,
 			groupName: table.timetableGroup.name,
-			yearLevel: table.timetableGroup.yearLevel,
+			yearLevelId: table.timetableGroup.yearLevelId,
 			userId: table.timetableGroupMember.userId,
 			userFirstName: table.user.firstName,
 			userLastName: table.user.lastName,
@@ -326,11 +325,7 @@ export async function getAllStudentGroupsByTimetableDraftId(
 		)
 		.leftJoin(table.user, eq(table.timetableGroupMember.userId, table.user.id))
 		.where(eq(table.timetableGroup.timetableDraftId, timetableDraftId))
-		.orderBy(
-			asc(table.timetableGroup.yearLevel),
-			asc(table.timetableGroup.name),
-			asc(table.user.firstName),
-		);
+		.orderBy(asc(table.timetableGroup.name), asc(table.user.firstName));
 
 	return groupsWithMembers;
 }
@@ -342,7 +337,7 @@ export async function createTimetableDraftStudentGroup(
 ) {
 	const [group] = await db
 		.insert(table.timetableGroup)
-		.values({ timetableDraftId, yearLevel: yearLevelId, name })
+		.values({ timetableDraftId, yearLevelId, name })
 		.returning();
 
 	return group;
@@ -419,7 +414,7 @@ export async function assignStudentsToGroupsRandomly(
 		.from(table.timetableGroup)
 		.innerJoin(
 			table.schoolYearLevel,
-			eq(table.timetableGroup.yearLevel, table.schoolYearLevel.id),
+			eq(table.timetableGroup.yearLevelId, table.schoolYearLevel.id),
 		)
 		.where(
 			and(
@@ -550,6 +545,7 @@ export async function getStudentsByGroupId(groupId: number) {
 			lastName: table.user.lastName,
 			avatarPath: table.user.avatarPath,
 			yearLevel: table.schoolYearLevel.code,
+			yearLevelId: table.schoolYearLevel.id,
 		})
 		.from(table.timetableGroupMember)
 		.innerJoin(table.user, eq(table.timetableGroupMember.userId, table.user.id))
@@ -595,6 +591,7 @@ export async function getStudentsForTimetable(
 			lastName: table.user.lastName,
 			avatarPath: table.user.avatarPath,
 			yearLevel: table.schoolYearLevel.code,
+			yearLevelId: table.schoolYearLevel.id,
 		})
 		.from(table.user)
 		.innerJoin(
@@ -1078,7 +1075,7 @@ export async function getActivityGroupsByActivityId(activityId: number) {
 		.select({
 			id: table.timetableGroup.id,
 			timetableDraftId: table.timetableGroup.timetableDraftId,
-			yearLevel: table.timetableGroup.yearLevel,
+			yearLevelId: table.timetableGroup.yearLevelId,
 			name: table.timetableGroup.name,
 		})
 		.from(table.timetableActivityAssignedGroup)
@@ -1093,7 +1090,7 @@ export async function getActivityGroupsByActivityId(activityId: number) {
 			eq(table.timetableActivityAssignedGroup.timetableActivityId, activityId),
 		)
 		.orderBy(
-			asc(table.timetableGroup.yearLevel),
+			asc(table.timetableGroup.yearLevelId),
 			asc(table.timetableGroup.name),
 		);
 

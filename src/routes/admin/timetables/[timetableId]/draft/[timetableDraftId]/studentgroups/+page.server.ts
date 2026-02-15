@@ -13,34 +13,33 @@ import { fail } from '@sveltejs/kit';
 export const load = async ({ locals: { security }, params }) => {
 	const user = security.isAuthenticated().isAdmin().getUser();
 	const timetableId = parseInt(params.timetableId);
+	const timetableDraftId = parseInt(params.timetableDraftId);
 
-	// Get all students for the school
 	const students = await getStudentsForTimetable(timetableId, user.schoolId);
-	const groups = await getTimetableDraftGroupsByTimetableDraftId(timetableId);
-	const defaultYearLevel = students.length > 0 ? students[0].yearLevel : '';
+	const groups =
+		await getTimetableDraftGroupsByTimetableDraftId(timetableDraftId);
 
-	// Get students for each group
 	const studentsByGroupId: Record<number, typeof students> = {};
 	for (const group of groups) {
 		const groupStudents = await getStudentsByGroupId(group.id);
 		studentsByGroupId[group.id] = groupStudents;
 	}
 
-	return { defaultYearLevel, students, groups, studentsByGroupId };
+	return { students, groups, studentsByGroupId };
 };
 
 export const actions = {
 	createGroup: async ({ request, params, locals: { security } }) => {
 		security.isAuthenticated().isAdmin();
 
-		const timetableId = parseInt(params.timetableId, 10);
-		if (isNaN(timetableId)) {
-			return fail(400, { error: 'Invalid timetable ID' });
+		const timetableDraftId = parseInt(params.timetableDraftId, 10);
+		if (isNaN(timetableDraftId)) {
+			return fail(400, { error: 'Invalid timetable draft ID' });
 		}
 
 		const formData = await request.formData();
 		const name = formData.get('name') as string;
-		const yearLevelId = formData.get('yearLevel');
+		const yearLevelId = formData.get('yearLevelId');
 
 		if (!name || !yearLevelId) {
 			return fail(400, { error: 'Name and year level id are required' });
@@ -52,7 +51,11 @@ export const actions = {
 		}
 
 		try {
-			await createTimetableDraftStudentGroup(timetableId, yearLevelIdInt, name);
+			await createTimetableDraftStudentGroup(
+				timetableDraftId,
+				yearLevelIdInt,
+				name,
+			);
 			return { success: true };
 		} catch (error) {
 			console.error('Error creating group:', error);
@@ -64,7 +67,8 @@ export const actions = {
 		security.isAuthenticated().isAdmin();
 
 		const timetableId = parseInt(params.timetableId, 10);
-		if (isNaN(timetableId)) {
+		const timetableDraftId = parseInt(params.timetableDraftId, 10);
+		if (isNaN(timetableId) || isNaN(timetableDraftId)) {
 			return fail(400, { error: 'Invalid timetable ID' });
 		}
 
@@ -91,7 +95,7 @@ export const actions = {
 			for (const { subject } of subjectOfferings) {
 				const groupName = `${subject.name}`;
 				await createTimetableDraftStudentGroup(
-					timetableId,
+					timetableDraftId,
 					yearLevelIdInt,
 					groupName,
 				);

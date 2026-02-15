@@ -37,6 +37,7 @@ export const timestamps = {
 export const essentials = { id: idINT, isArchived, ...timestamps };
 export const essentialsUUID = { id: idUUID, isArchived, ...timestamps };
 export const essentialsNoId = { isArchived, ...timestamps };
+export const essentialsNoIsArchived = { id: idINT, ...timestamps };
 
 export const hexColor = text().notNull().default('#FFFFFF');
 

@@ -14,7 +14,12 @@ import {
 	schoolSpaceTypeEnum,
 	yearLevelEnum,
 } from '../../../enums';
-import { enumToPgEnum, essentials, standardTimestamp } from './utils';
+import {
+	enumToPgEnum,
+	essentials,
+	essentialsNoIsArchived,
+	standardTimestamp,
+} from './utils';
 
 export const schoolSchema = pgSchema('school');
 
@@ -112,7 +117,7 @@ export type SchoolSpace = typeof schoolSpace.$inferSelect;
 export const schoolSemester = schoolSchema.table(
 	'sch_sem',
 	{
-		...essentials,
+		...essentialsNoIsArchived,
 		year: integer().notNull(),
 		number: integer().notNull(),
 		schoolId: integer('sch_id')
@@ -130,7 +135,7 @@ export type SchoolSemester = typeof schoolSemester.$inferSelect;
 export const schoolTerm = schoolSchema.table(
 	'sch_term',
 	{
-		...essentials,
+		...essentialsNoIsArchived,
 		number: integer().notNull(),
 		start: standardTimestamp('start').notNull(),
 		end: standardTimestamp('end').notNull(),

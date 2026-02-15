@@ -252,5 +252,9 @@
 {/if}
 
 <div class="text-muted-foreground mt-8 border-t pt-4 text-center text-sm">
-	Powered by FET
+	Powered by <a
+		href="https://lalescu.ro/liviu/fet/"
+		target="_blank"
+		class="underline">FET</a
+	>
 </div>

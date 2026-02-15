@@ -29,7 +29,7 @@ export const steps = {
 	},
 	locations: {
 		percentage: 55,
-		url: 'buildings',
+		url: 'locations',
 		label: 'Locations',
 		previous: 'studentgroups',
 		next: 'activities',

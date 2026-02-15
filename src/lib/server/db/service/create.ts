@@ -2,6 +2,7 @@ import { db } from '$lib/server/db';
 import * as table from '$lib/server/db/schema';
 import { hash } from '@node-rs/argon2';
 import { randomInt } from 'crypto';
+import { and, eq, inArray, max, sql } from 'drizzle-orm';
 
 // Schema: School
 export async function createSchool(data: typeof table.school.$inferInsert) {
@@ -70,11 +71,102 @@ export async function createSchoolSemester(
 	return semester;
 }
 
+export async function createSchoolSemesterWithAutoNumber(
+	schoolId: number,
+	year: number,
+) {
+	const [result] = await db
+		.select({ maxNumber: max(table.schoolSemester.number) })
+		.from(table.schoolSemester)
+		.where(eq(table.schoolSemester.year, year));
+	const number = (result?.maxNumber || 0) + 1;
+	return await createSchoolSemester({ schoolId, year, number });
+}
+
 export async function createSchoolTerm(
 	data: typeof table.schoolTerm.$inferInsert,
 ) {
 	const [term] = await db.insert(table.schoolTerm).values(data).returning();
 	return term;
+}
+
+export async function createSchoolTermWithRenumber(semesterId: number) {
+	const semester = await db
+		.select()
+		.from(table.schoolSemester)
+		.where(eq(table.schoolSemester.id, semesterId))
+		.limit(1);
+
+	if (!semester[0]) {
+		throw new Error('Semester not found');
+	}
+
+	const { schoolId, year } = semester[0];
+
+	const semestersThisYear = await db
+		.select({ id: table.schoolSemester.id })
+		.from(table.schoolSemester)
+		.where(
+			and(
+				eq(table.schoolSemester.schoolId, schoolId),
+				eq(table.schoolSemester.year, year),
+			),
+		)
+		.orderBy(table.schoolSemester.number);
+
+	// Find the maximum end date of existing terms
+	const [maxEndResult] = await db
+		.select({ maxEnd: max(table.schoolTerm.end) })
+		.from(table.schoolTerm)
+		.where(
+			inArray(
+				table.schoolTerm.schoolSemesterId,
+				semestersThisYear.map((s) => s.id),
+			),
+		);
+
+	const maxEnd = maxEndResult?.maxEnd;
+	const start = maxEnd
+		? new Date(maxEnd.getTime() + 24 * 60 * 60 * 1000) // Day after the latest term ends
+		: new Date(); // If no terms exist, start now
+	const end = new Date(start.getTime() + 30 * 24 * 60 * 60 * 1000); // 30 days later
+
+	const newTerm = await createSchoolTerm({
+		schoolSemesterId: semesterId,
+		number: 10000, // temporary
+		start,
+		end,
+	});
+
+	// Temporarily set all term numbers to unique negative values to avoid unique constraint conflicts
+	await db
+		.update(table.schoolTerm)
+		.set({ number: sql`-id` })
+		.where(
+			inArray(
+				table.schoolTerm.schoolSemesterId,
+				semestersThisYear.map((s) => s.id),
+			),
+		);
+
+	let termNumber = 1;
+	for (const semester of semestersThisYear) {
+		const semesterTerms = await db
+			.select({ id: table.schoolTerm.id })
+			.from(table.schoolTerm)
+			.where(eq(table.schoolTerm.schoolSemesterId, semester.id))
+			.orderBy(table.schoolTerm.id);
+
+		for (const term of semesterTerms) {
+			await db
+				.update(table.schoolTerm)
+				.set({ number: termNumber })
+				.where(eq(table.schoolTerm.id, term.id));
+			termNumber++;
+		}
+	}
+
+	return newTerm;
 }
 
 export async function createBehaviourLevel(

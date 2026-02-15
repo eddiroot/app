@@ -130,8 +130,8 @@
 
 	const yearLevelOptions = $derived(
 		data.yearLevels.map((yearLevel) => ({
-			value: yearLevel,
-			label: yearLevel,
+			value: yearLevel.id.toString(),
+			label: yearLevel.code,
 		})),
 	);
 
@@ -206,7 +206,7 @@
 	</Select.Trigger>
 	<Select.Content>
 		{#each data.yearLevels as yearLevel}
-			<Select.Item value={yearLevel.id.toString()}>
+			<Select.Item value={yearLevel.code}>
 				{yearLevel.code}
 			</Select.Item>
 		{/each}

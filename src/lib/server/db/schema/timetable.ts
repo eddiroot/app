@@ -130,7 +130,7 @@ export const timetableGroup = timetableSchema.table(
 	{
 		...essentials,
 		name: text('name').notNull(),
-		yearLevel: integer()
+		yearLevelId: integer()
 			.notNull()
 			.references(() => schoolYearLevel.id, { onDelete: 'cascade' }),
 		timetableDraftId: integer('tt_draft_id')
