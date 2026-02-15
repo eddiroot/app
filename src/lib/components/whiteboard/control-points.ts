@@ -1410,7 +1410,7 @@ export class EllipseControlPoints extends BoundingBoxControlPoints {
 		// Add padding to account for stroke width
 		const padding = strokeWidth / 2
 
-		// Get transformation matrix
+		// Get transformation matrix for handling rotations/scaling
 		const matrix = ellipse.calcTransformMatrix()
 
 		// Define corners in local coordinates with padding
@@ -1561,16 +1561,18 @@ export class EllipseControlPoints extends BoundingBoxControlPoints {
 
 		const rx = ellipse.rx || 0
 		const ry = ellipse.ry || 0
+		const strokeWidth = ellipse.strokeWidth || 0
+		const padding = strokeWidth / 2
 		const angle = ellipse.angle || 0
 		const angleRad = (angle * Math.PI) / 180
 
-		// Calculate the four corners in absolute coordinates
+		// Calculate the four corners in absolute coordinates (with padding to match control points)
 		const matrix = ellipse.calcTransformMatrix()
 		const corners: fabric.Point[] = [
-			new fabric.Point(-rx, -ry), // Top-left (0)
-			new fabric.Point(rx, -ry), // Top-right (1)
-			new fabric.Point(rx, ry), // Bottom-right (2)
-			new fabric.Point(-rx, ry), // Bottom-left (3)
+			new fabric.Point(-(rx + padding), -(ry + padding)), // Top-left (0)
+			new fabric.Point(rx + padding, -(ry + padding)), // Top-right (1)
+			new fabric.Point(rx + padding, ry + padding), // Bottom-right (2)
+			new fabric.Point(-(rx + padding), ry + padding), // Bottom-left (3)
 		].map((corner) => fabric.util.transformPoint(corner, matrix))
 
 		// Determine which corner is the opposite/anchor corner
@@ -1603,9 +1605,9 @@ export class EllipseControlPoints extends BoundingBoxControlPoints {
 		const heightAxisY = Math.cos(angleRad)
 		const heightProjection = vectorX * heightAxisX + vectorY * heightAxisY
 
-		// New dimensions (absolute values, minimum 10px)
-		const newRx = Math.max(10, Math.abs(widthProjection) / 2)
-		const newRy = Math.max(10, Math.abs(heightProjection) / 2)
+		// New dimensions (subtract padding from projection, minimum 10px)
+		const newRx = Math.max(10, Math.abs(widthProjection) / 2 - padding)
+		const newRy = Math.max(10, Math.abs(heightProjection) / 2 - padding)
 
 		// New center is halfway between anchor and dragged corner
 		const newCenterX =
@@ -2056,7 +2058,7 @@ export class TriangleControlPoints extends BoundingBoxControlPoints {
 		// Add padding to account for stroke width
 		const padding = strokeWidth / 2
 
-		// Get transformation matrix
+		// Get transformation matrix for handling rotations/scaling
 		const matrix = triangle.calcTransformMatrix()
 
 		// Define corners in local coordinates with padding
@@ -2204,16 +2206,18 @@ export class TriangleControlPoints extends BoundingBoxControlPoints {
 
 		const width = triangle.width || 0
 		const height = triangle.height || 0
+		const strokeWidth = triangle.strokeWidth || 0
+		const padding = strokeWidth / 2
 		const angle = triangle.angle || 0
 		const angleRad = (angle * Math.PI) / 180
 
-		// Calculate the four corners in absolute coordinates
+		// Calculate the four corners in absolute coordinates (with padding to match control points)
 		const matrix = triangle.calcTransformMatrix()
 		const corners: fabric.Point[] = [
-			new fabric.Point(-width / 2, -height / 2), // Top-left (0)
-			new fabric.Point(width / 2, -height / 2), // Top-right (1)
-			new fabric.Point(width / 2, height / 2), // Bottom-right (2)
-			new fabric.Point(-width / 2, height / 2), // Bottom-left (3)
+			new fabric.Point(-(width / 2 + padding), -(height / 2 + padding)), // Top-left (0)
+			new fabric.Point(width / 2 + padding, -(height / 2 + padding)), // Top-right (1)
+			new fabric.Point(width / 2 + padding, height / 2 + padding), // Bottom-right (2)
+			new fabric.Point(-(width / 2 + padding), height / 2 + padding), // Bottom-left (3)
 		].map((corner) => fabric.util.transformPoint(corner, matrix))
 
 		// Determine which corner is the opposite/anchor corner
@@ -2244,9 +2248,9 @@ export class TriangleControlPoints extends BoundingBoxControlPoints {
 		const heightAxisY = Math.cos(angleRad)
 		const heightProjection = vectorX * heightAxisX + vectorY * heightAxisY
 
-		// New dimensions
-		const newWidth = Math.max(10, Math.abs(widthProjection))
-		const newHeight = Math.max(10, Math.abs(heightProjection))
+		// New dimensions (subtract padding from projection)
+		const newWidth = Math.max(10, Math.abs(widthProjection) - 2 * padding)
+		const newHeight = Math.max(10, Math.abs(heightProjection) - 2 * padding)
 
 		// New center is halfway between anchor and dragged corner
 		const newCenterX =
