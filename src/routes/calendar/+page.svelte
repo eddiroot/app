@@ -3,13 +3,9 @@
 	import TimetableCard from '$lib/components/timetable-card.svelte';
 	import * as Button from '$lib/components/ui/button';
 	import { days } from '$lib/utils';
+	import { generateTimeslots, getClassPosition } from '$lib/utils/timetable';
 	import ChevronLeft from '@lucide/svelte/icons/chevron-left';
 	import ChevronRight from '@lucide/svelte/icons/chevron-right';
-	import {
-		generateTimeslots,
-		getClassPosition,
-		getEventPosition,
-	} from '$lib/utils/timetable';
 
 	let { data } = $props();
 
@@ -73,6 +69,105 @@
 		if (!event.requiresRSVP) return 'none';
 		return hasUserRSVPd(event.id) ? 'completed' : 'required';
 	}
+
+	// Helper function to check if two time ranges overlap
+	function timesOverlap(
+		start1: Date,
+		end1: Date,
+		start2: Date,
+		end2: Date,
+	): boolean {
+		return start1 < end2 && start2 < end1;
+	}
+
+	// Get classes for a specific day
+	function getClassesForDay(dayValue: string) {
+		return classAllocation.filter((c) => {
+			const classDate = new Date(c.classAllocation.start);
+			const dayOfWeek = classDate.getDay();
+			const dayIndex = dayOfWeek === 0 ? -1 : dayOfWeek - 1;
+			return (
+				dayIndex >= 0 &&
+				dayIndex < days.length &&
+				days[dayIndex].value === dayValue
+			);
+		});
+	}
+
+	// Get all overlapping items (classes + events) for a given time range on a specific day
+	function getOverlappingItems(
+		dayValue: string,
+		itemStart: Date,
+		itemEnd: Date,
+	) {
+		const items: Array<{
+			id: string;
+			start: Date;
+			end: Date;
+			type: 'class' | 'event';
+		}> = [];
+
+		for (const cls of getClassesForDay(dayValue)) {
+			if (
+				timesOverlap(
+					itemStart,
+					itemEnd,
+					cls.classAllocation.start,
+					cls.classAllocation.end,
+				)
+			) {
+				items.push({
+					id: `class-${cls.subjectOffering.id}-${cls.classAllocation.id}`,
+					start: cls.classAllocation.start,
+					end: cls.classAllocation.end,
+					type: 'class',
+				});
+			}
+		}
+
+		for (const event of getEventsForDay(dayValue)) {
+			if (
+				timesOverlap(itemStart, itemEnd, event.event.start, event.event.end)
+			) {
+				items.push({
+					id: `event-${event.event.id}`,
+					start: event.event.start,
+					end: event.event.end,
+					type: 'event',
+				});
+			}
+		}
+
+		return items;
+	}
+
+	// Get the sorted index of a specific item among its overlapping group (classes first)
+	function getItemIndex(
+		dayValue: string,
+		itemStart: Date,
+		itemEnd: Date,
+		currentId: string,
+	): number {
+		const overlapping = getOverlappingItems(dayValue, itemStart, itemEnd);
+		overlapping.sort((a, b) => {
+			if (a.type !== b.type) return a.type === 'class' ? -1 : 1;
+			const d = a.start.getTime() - b.start.getTime();
+			return d !== 0 ? d : a.end.getTime() - b.end.getTime();
+		});
+		const idx = overlapping.findIndex((item) => item.id === currentId);
+		return idx >= 0 ? idx : 0;
+	}
+
+	// Get total number of overlapping items for a time range on a day
+	function getOverlappingCount(
+		dayValue: string,
+		itemStart: Date,
+		itemEnd: Date,
+	): number {
+		return getOverlappingItems(dayValue, itemStart, itemEnd).length;
+	}
+
+	let hoveredItemId: string | null = $state(null);
 </script>
 
 <div class="bg-background sticky top-0 z-50 space-y-4 p-8">
@@ -159,38 +254,72 @@
 			{/each}
 
 			<!-- Classes for this day -->
-			{#each classAllocation.filter((c) => {
-				const classDate = new Date(c.classAllocation.start);
-				const dayOfWeek = classDate.getDay();
-				const dayIndex = dayOfWeek === 0 ? -1 : dayOfWeek - 1;
-				return dayIndex >= 0 && dayIndex < days.length && days[dayIndex].value === day.value;
-			}) as cls}
+			{#each getClassesForDay(day.value) as cls}
 				{@const position = getClassPosition(
 					dayStartHour,
 					cls.classAllocation.start,
 					cls.classAllocation.end,
 					slotHeightPx,
 				)}
+				{@const itemId = `class-${cls.subjectOffering.id}-${cls.classAllocation.id}`}
+				{@const count = getOverlappingCount(
+					day.value,
+					cls.classAllocation.start,
+					cls.classAllocation.end,
+				)}
+				{@const idx = getItemIndex(
+					day.value,
+					cls.classAllocation.start,
+					cls.classAllocation.end,
+					itemId,
+				)}
+				{@const hovered = hoveredItemId === itemId}
 				<div
-					class="absolute right-1 left-1 hover:z-10"
-					style="top: {position.top}; height: {position.height};"
+					role="presentation"
+					class="absolute transition-all duration-200"
+					style="top: {position.top}; height: {position.height};{hovered
+						? ` min-height: ${slotHeightPx}px;`
+						: ''} left: {hovered ? 0 : idx * (100 / count)}%; width: {hovered
+						? 100
+						: 100 / count}%; z-index: {hovered ? 50 : 30 - idx};"
+					onmouseenter={() => (hoveredItemId = itemId)}
+					onmouseleave={() => (hoveredItemId = null)}
 				>
 					<TimetableCard {cls} href="/subjects/{cls.subjectOffering.id}" />
 				</div>
 			{/each}
 			<!-- Events for this day -->
-			{#each getEventsForDay(day.value) as event, eventIndex}
-				{@const position = getEventPosition(
+			{#each getEventsForDay(day.value) as event}
+				{@const position = getClassPosition(
 					dayStartHour,
 					event.event.start,
 					event.event.end,
-					eventIndex,
 					slotHeightPx,
 				)}
 				{@const rsvpStatus = getRSVPStatus(event)}
+				{@const itemId = `event-${event.event.id}`}
+				{@const count = getOverlappingCount(
+					day.value,
+					event.event.start,
+					event.event.end,
+				)}
+				{@const idx = getItemIndex(
+					day.value,
+					event.event.start,
+					event.event.end,
+					itemId,
+				)}
+				{@const hovered = hoveredItemId === itemId}
 				<div
-					class="absolute right-3 left-1 hover:z-10"
-					style="top: {position.top}; height: {position.height};"
+					role="presentation"
+					class="absolute transition-all duration-200"
+					style="top: {position.top}; height: {position.height};{hovered
+						? ` min-height: ${slotHeightPx - 30}px;`
+						: ''} left: {hovered ? 0 : idx * (100 / count)}%; width: {hovered
+						? 100
+						: 100 / count}%; z-index: {hovered ? 50 : 10 - idx};"
+					onmouseenter={() => (hoveredItemId = itemId)}
+					onmouseleave={() => (hoveredItemId = null)}
 				>
 					<EventCard
 						event={event.event}

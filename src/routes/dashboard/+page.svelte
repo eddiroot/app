@@ -79,8 +79,35 @@
 		return start1 < end2 && start2 < end1;
 	}
 
-	// Helper function to get all events that overlap with a class
-	function getOverlappingEvents(classStart: Date, classEnd: Date) {
+	// Unified helper: get all items (classes + events) that overlap a given time range
+	function getOverlappingItems(itemStart: Date, itemEnd: Date) {
+		const items: Array<{
+			id: string;
+			start: Date;
+			end: Date;
+			type: 'class' | 'event';
+		}> = [];
+
+		if (data.userClasses) {
+			for (const cls of data.userClasses) {
+				if (
+					timesOverlap(
+						itemStart,
+						itemEnd,
+						cls.classAllocation.start,
+						cls.classAllocation.end,
+					)
+				) {
+					items.push({
+						id: `class-${cls.subjectOffering.id}-${cls.classAllocation.id}`,
+						start: cls.classAllocation.start,
+						end: cls.classAllocation.end,
+						type: 'class',
+					});
+				}
+			}
+		}
+
 		const allEvents = [
 			...(data.schoolEvents || []),
 			...(data.campusEvents || []),
@@ -88,64 +115,43 @@
 			...(data.subjectOfferingClassEvents || []),
 		];
 
-		return allEvents.filter((e) =>
-			timesOverlap(classStart, classEnd, e.event.start, e.event.end),
-		);
+		for (const e of allEvents) {
+			if (timesOverlap(itemStart, itemEnd, e.event.start, e.event.end)) {
+				items.push({
+					id: `event-${e.event.id}`,
+					start: e.event.start,
+					end: e.event.end,
+					type: 'event',
+				});
+			}
+		}
+
+		return items;
 	}
 
-	// Helper function to calculate event width based on event index and total overlapping count
-	function getEventWidth(eventIndex: number, overlappingCount: number): number {
-		if (overlappingCount <= 0) return 30;
-		const increment = 30 / overlappingCount;
-		const startingWidth = 100 - (overlappingCount - 1) * increment;
-		console.log(
-			'Event index:',
-			eventIndex,
-			'Overlapping count:',
-			overlappingCount,
-			'Calculated width:',
-			startingWidth + eventIndex * increment,
-		);
-		return startingWidth + eventIndex * increment;
-	}
-
-	function getEventZPositionAmongOverlapping(
-		eventindex: number,
-		overlappingCount: number,
+	// Get the sorted index of a specific item among its overlapping group
+	function getItemIndex(
+		itemStart: Date,
+		itemEnd: Date,
+		currentId: string,
 	): number {
-		return 10 - eventindex;
+		const overlapping = getOverlappingItems(itemStart, itemEnd);
+		overlapping.sort((a, b) => {
+			// Classes first, then events
+			if (a.type !== b.type) return a.type === 'class' ? -1 : 1;
+			const d = a.start.getTime() - b.start.getTime();
+			return d !== 0 ? d : a.end.getTime() - b.end.getTime();
+		});
+		const idx = overlapping.findIndex((item) => item.id === currentId);
+		return idx >= 0 ? idx : 0;
 	}
 
-	// Helper function to get overlapping event count
-	function getOverlappingEventCount(eventStart: Date, eventEnd: Date): number {
-		return getOverlappingEvents(eventStart, eventEnd).length;
+	// Get total number of overlapping items for a time range
+	function getOverlappingCount(itemStart: Date, itemEnd: Date): number {
+		return getOverlappingItems(itemStart, itemEnd).length;
 	}
 
-	// Helper function to get event index among overlapping events
-	function getEventIndexAmongOverlapping(
-		eventStart: Date,
-		eventEnd: Date,
-		currentEventId: number,
-	): number {
-		const overlappingEvents = getOverlappingEvents(eventStart, eventEnd);
-		const index = overlappingEvents.findIndex(
-			(e) => e.event.id === currentEventId,
-		);
-		return index >= 0 ? index : 0;
-	}
-
-	// Helper function to calculate class width based on overlapping events
-	function getClassWidth(classStart: Date, classEnd: Date): number {
-		const overlappingCount = getOverlappingEventCount(classStart, classEnd);
-		return overlappingCount > 0 ? 70 : 100;
-	}
-
-	let hoveredEventId: number | null = $state(null);
-
-	// Helper function to get z-index for class
-	function getClassZIndex(): string {
-		return 'z-30';
-	}
+	let hoveredItemId: string | null = $state(null);
 </script>
 
 <div
@@ -193,13 +199,29 @@
 									cls.classAllocation.end,
 									slotHeightPx,
 								)}
-								{@const classWidth = getClassWidth(
+								{@const itemId = `class-${cls.subjectOffering.id}-${cls.classAllocation.id}`}
+								{@const count = getOverlappingCount(
 									cls.classAllocation.start,
 									cls.classAllocation.end,
 								)}
+								{@const idx = getItemIndex(
+									cls.classAllocation.start,
+									cls.classAllocation.end,
+									itemId,
+								)}
+								{@const hovered = hoveredItemId === itemId}
 								<div
-									class="absolute {getClassZIndex()}"
-									style="top: {position.top}; height: {position.height}; left: 0; width: {classWidth}%;"
+									role="presentation"
+									class="absolute transition-all duration-200"
+									style="top: {position.top}; height: {position.height};{hovered
+										? ` min-height: ${slotHeightPx}px;`
+										: ''} left: {hovered
+										? 0
+										: idx * (100 / count)}%; width: {hovered
+										? 100
+										: 100 / count}%; z-index: {hovered ? 50 : 30 - idx};"
+									onmouseenter={() => (hoveredItemId = itemId)}
+									onmouseleave={() => (hoveredItemId = null)}
 								>
 									<TimetableCard
 										{cls}
@@ -219,26 +241,29 @@
 									slotHeightPx,
 								)}
 								{@const rsvpStatus = getRSVPStatus(event.event)}
-								{@const overlappingCount = getOverlappingEventCount(
+								{@const itemId = `event-${event.event.id}`}
+								{@const count = getOverlappingCount(
 									event.event.start,
 									event.event.end,
 								)}
-								{@const eventIndex = getEventIndexAmongOverlapping(
+								{@const idx = getItemIndex(
 									event.event.start,
 									event.event.end,
-									event.event.id,
+									itemId,
 								)}
-								{@const eventWidth = getEventWidth(
-									eventIndex,
-									overlappingCount,
-								)}
-								{@const zIndex = getEventZPositionAmongOverlapping(
-									eventIndex,
-									overlappingCount,
-								)}
+								{@const hovered = hoveredItemId === itemId}
 								<div
-									class="absolute transition-all hover:z-50!"
-									style="top: {position.top}; height: {position.height}; width: {eventWidth}%; z-index: {zIndex};"
+									role="presentation"
+									class="absolute transition-all duration-200"
+									style="top: {position.top}; height: {position.height};{hovered
+										? ` min-height: ${slotHeightPx}px;`
+										: ''} left: {hovered
+										? 0
+										: idx * (100 / count)}%; width: {hovered
+										? 100
+										: 100 / count}%; z-index: {hovered ? 50 : 10 - idx};"
+									onmouseenter={() => (hoveredItemId = itemId)}
+									onmouseleave={() => (hoveredItemId = null)}
 								>
 									<EventCard event={event.event} {rsvpStatus} />
 								</div>
@@ -253,26 +278,29 @@
 									slotHeightPx,
 								)}
 								{@const rsvpStatus = getRSVPStatus(event.event)}
-								{@const overlappingCount = getOverlappingEventCount(
+								{@const itemId = `event-${event.event.id}`}
+								{@const count = getOverlappingCount(
 									event.event.start,
 									event.event.end,
 								)}
-								{@const eventIndex = getEventIndexAmongOverlapping(
+								{@const idx = getItemIndex(
 									event.event.start,
 									event.event.end,
-									event.event.id,
+									itemId,
 								)}
-								{@const eventWidth = getEventWidth(
-									eventIndex,
-									overlappingCount,
-								)}
-								{@const zIndex = getEventZPositionAmongOverlapping(
-									eventIndex,
-									overlappingCount,
-								)}
+								{@const hovered = hoveredItemId === itemId}
 								<div
-									class="absolute transition-all hover:z-50!"
-									style="top: {position.top}; height: {position.height}; width: {eventWidth}%; z-index: {zIndex};"
+									role="presentation"
+									class="absolute transition-all duration-200"
+									style="top: {position.top}; height: {position.height};{hovered
+										? ` min-height: ${slotHeightPx}px;`
+										: ''} left: {hovered
+										? 0
+										: idx * (100 / count)}%; width: {hovered
+										? 100
+										: 100 / count}%; z-index: {hovered ? 50 : 10 - idx};"
+									onmouseenter={() => (hoveredItemId = itemId)}
+									onmouseleave={() => (hoveredItemId = null)}
 								>
 									<EventCard event={event.event} {rsvpStatus} />
 								</div>
@@ -287,26 +315,29 @@
 									slotHeightPx,
 								)}
 								{@const rsvpStatus = getRSVPStatus(event.event)}
-								{@const overlappingCount = getOverlappingEventCount(
+								{@const itemId = `event-${event.event.id}`}
+								{@const count = getOverlappingCount(
 									event.event.start,
 									event.event.end,
 								)}
-								{@const eventIndex = getEventIndexAmongOverlapping(
+								{@const idx = getItemIndex(
 									event.event.start,
 									event.event.end,
-									event.event.id,
+									itemId,
 								)}
-								{@const eventWidth = getEventWidth(
-									eventIndex,
-									overlappingCount,
-								)}
-								{@const zIndex = getEventZPositionAmongOverlapping(
-									eventIndex,
-									overlappingCount,
-								)}
+								{@const hovered = hoveredItemId === itemId}
 								<div
-									class="absolute transition-all hover:z-50!"
-									style="top: {position.top}; height: {position.height}; width: {eventWidth}%; z-index: {zIndex};"
+									role="presentation"
+									class="absolute transition-all duration-200"
+									style="top: {position.top}; height: {position.height};{hovered
+										? ` min-height: ${slotHeightPx}px;`
+										: ''} left: {hovered
+										? 0
+										: idx * (100 / count)}%; width: {hovered
+										? 100
+										: 100 / count}%; z-index: {hovered ? 50 : 10 - idx};"
+									onmouseenter={() => (hoveredItemId = itemId)}
+									onmouseleave={() => (hoveredItemId = null)}
 								>
 									<EventCard
 										event={event.event}
@@ -326,26 +357,29 @@
 									slotHeightPx,
 								)}
 								{@const rsvpStatus = getRSVPStatus(event.event)}
-								{@const overlappingCount = getOverlappingEventCount(
+								{@const itemId = `event-${event.event.id}`}
+								{@const count = getOverlappingCount(
 									event.event.start,
 									event.event.end,
 								)}
-								{@const eventIndex = getEventIndexAmongOverlapping(
+								{@const idx = getItemIndex(
 									event.event.start,
 									event.event.end,
-									event.event.id,
+									itemId,
 								)}
-								{@const eventWidth = getEventWidth(
-									eventIndex,
-									overlappingCount,
-								)}
-								{@const zIndex = getEventZPositionAmongOverlapping(
-									eventIndex,
-									overlappingCount,
-								)}
+								{@const hovered = hoveredItemId === itemId}
 								<div
-									class="absolute transition-all hover:z-50!"
-									style="top: {position.top}; height: {position.height}; width: {eventWidth}%; z-index: {zIndex};"
+									role="presentation"
+									class="absolute transition-all duration-200"
+									style="top: {position.top}; height: {position.height};{hovered
+										? ` min-height: ${slotHeightPx}px;`
+										: ''} left: {hovered
+										? 0
+										: idx * (100 / count)}%; width: {hovered
+										? 100
+										: 100 / count}%; z-index: {hovered ? 50 : 10 - idx};"
+									onmouseenter={() => (hoveredItemId = itemId)}
+									onmouseleave={() => (hoveredItemId = null)}
 								>
 									<EventCard
 										event={event.event}

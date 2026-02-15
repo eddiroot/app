@@ -1,6 +1,5 @@
 <script lang="ts">
 	import * as Card from '$lib/components/ui/card';
-	import * as Tooltip from '$lib/components/ui/tooltip';
 	import { formatTimestampAsTime, generateSubjectColors } from '$lib/utils';
 
 	interface Props {
@@ -48,37 +47,11 @@
 	</Card.Root>
 {/snippet}
 
-{#snippet tooltipContent()}
-	<Tooltip.Content>
-		<div class="space-y-1">
-			<p class="font-semibold">{cls.subject.name}</p>
-			{#if showTime}
-				<p class="text-sm">
-					{formatTimestampAsTime(new Date(cls.classAllocation.start))} - {formatTimestampAsTime(
-						new Date(cls.classAllocation.end),
-					)}
-				</p>
-			{/if}
-			{#if showRoom}
-				<p class="text-sm">{cls.schoolSpace.name}</p>
-			{/if}
-		</div>
-	</Tooltip.Content>
-{/snippet}
-
-<Tooltip.Provider>
-	<Tooltip.Root>
-		<Tooltip.Trigger
-			class="block h-full w-full"
-			onmouseover={() => (isHovered = true)}
-			onmouseleave={() => (isHovered = false)}
-			onfocus={() => (isHovered = true)}
-			onblur={() => (isHovered = false)}
-		>
-			<a {href} class="block h-full">
-				{@render cardContent()}
-			</a>
-		</Tooltip.Trigger>
-		{@render tooltipContent()}
-	</Tooltip.Root>
-</Tooltip.Provider>
+<a
+	{href}
+	class="block h-full w-full"
+	onmouseenter={() => (isHovered = true)}
+	onmouseleave={() => (isHovered = false)}
+>
+	{@render cardContent()}
+</a>

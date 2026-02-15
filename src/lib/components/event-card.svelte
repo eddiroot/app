@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import * as Card from '$lib/components/ui/card';
-	import * as Tooltip from '$lib/components/ui/tooltip';
 	import { eventTypeEnum } from '$lib/enums.js';
 	import type { Event } from '$lib/server/db/schema/event';
 	import { formatTimestampAsTime, generateSubjectColors } from '$lib/utils';
@@ -160,56 +159,22 @@
 	</Card.Root>
 {/snippet}
 
-{#snippet tooltipContent()}
-	<Tooltip.Content>
-		<div class="space-y-1">
-			<p class="font-semibold">{event.name}</p>
-			{#if showTime}
-				<p class="text-sm">
-					{formatTimestampAsTime(event.start)} - {formatTimestampAsTime(
-						event.end,
-					)}
-				</p>
-			{/if}
-			{#if subjectInfo}
-				<p class="text-sm">
-					{subjectInfo.name}{#if subjectInfo.className}
-						- {subjectInfo.className}{/if}
-				</p>
-			{/if}
-			{#if rsvpStatus === 'required'}
-				<p class="text-destructive text-sm font-medium">RSVP Required</p>
-			{:else if rsvpStatus === 'completed'}
-				<p class="text-success text-sm font-medium">RSVP Completed</p>
-			{/if}
-		</div>
-	</Tooltip.Content>
-{/snippet}
-
-<Tooltip.Provider>
-	<Tooltip.Root>
-		{#if rsvpStatus === 'required'}
-			<Tooltip.Trigger
-				class="block h-full w-full cursor-pointer"
-				onclick={handleClick}
-				onmouseover={() => (isHovered = true)}
-				onmouseleave={() => (isHovered = false)}
-				onfocus={() => (isHovered = true)}
-				onblur={() => (isHovered = false)}
-			>
-				{@render cardContent()}
-			</Tooltip.Trigger>
-		{:else}
-			<Tooltip.Trigger
-				class="block h-full w-full"
-				onmouseover={() => (isHovered = true)}
-				onmouseleave={() => (isHovered = false)}
-				onfocus={() => (isHovered = true)}
-				onblur={() => (isHovered = false)}
-			>
-				{@render cardContent()}
-			</Tooltip.Trigger>
-		{/if}
-		{@render tooltipContent()}
-	</Tooltip.Root>
-</Tooltip.Provider>
+{#if rsvpStatus === 'required'}
+	<button
+		class="block h-full w-full cursor-pointer"
+		onclick={handleClick}
+		onmouseenter={() => (isHovered = true)}
+		onmouseleave={() => (isHovered = false)}
+	>
+		{@render cardContent()}
+	</button>
+{:else}
+	<div
+		class="block h-full w-full"
+		role="presentation"
+		onmouseenter={() => (isHovered = true)}
+		onmouseleave={() => (isHovered = false)}
+	>
+		{@render cardContent()}
+	</div>
+{/if}
