@@ -3,16 +3,16 @@ export function convertToFullName(
 	middleName: string | null | undefined,
 	lastName: string | null | undefined,
 ): string {
-	const parts: string[] = []
+	const parts: string[] = [];
 	if (firstName) {
-		parts.push(firstName)
+		parts.push(firstName);
 	}
 	if (middleName) {
-		parts.push(middleName)
+		parts.push(middleName);
 	}
 	if (lastName) {
-		parts.push(lastName)
+		parts.push(lastName);
 	}
 
-	return parts.join(' ').trim()
+	return parts.join(' ').trim();
 }

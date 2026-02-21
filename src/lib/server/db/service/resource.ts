@@ -1,6 +1,6 @@
-import { db } from '$lib/server/db'
-import * as table from '$lib/server/db/schema'
-import { and, eq } from 'drizzle-orm'
+import { db } from '$lib/server/db';
+import * as table from '$lib/server/db/schema';
+import { and, eq } from 'drizzle-orm';
 
 export async function getResourceById(resourceId: number) {
 	const [resource] = await db
@@ -12,9 +12,9 @@ export async function getResourceById(resourceId: number) {
 				eq(table.resource.isArchived, false),
 			),
 		)
-		.limit(1)
+		.limit(1);
 
-	return resource || null
+	return resource || null;
 }
 
 export async function archiveResource(resourceId: number) {
@@ -22,7 +22,7 @@ export async function archiveResource(resourceId: number) {
 		.update(table.resource)
 		.set({ isArchived: true })
 		.where(eq(table.resource.id, resourceId))
-		.returning()
+		.returning();
 
-	return resource
+	return resource;
 }

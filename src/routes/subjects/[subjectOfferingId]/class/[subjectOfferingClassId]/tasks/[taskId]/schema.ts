@@ -1,7 +1,7 @@
-import { gradeReleaseEnum, quizModeEnum, taskStatusEnum } from '$lib/enums'
-import { z } from 'zod'
+import { gradeReleaseEnum, quizModeEnum, taskStatusEnum } from '$lib/enums';
+import { z } from 'zod';
 
-export const statusFormSchema = z.object({ status: z.enum(taskStatusEnum) })
+export const statusFormSchema = z.object({ status: z.enum(taskStatusEnum) });
 
 export const quizSettingsFormSchema = z
 	.object({
@@ -15,9 +15,9 @@ export const quizSettingsFormSchema = z
 		(data) => {
 			// If quiz mode is scheduled, start time is required
 			if (data.quizMode === quizModeEnum.scheduled) {
-				return data.quizStart !== undefined
+				return data.quizStart !== undefined;
 			}
-			return true
+			return true;
 		},
 		{
 			message: 'Start time is required for scheduled quizzes',
@@ -28,9 +28,9 @@ export const quizSettingsFormSchema = z
 		(data) => {
 			// If quiz mode is not 'none', duration is required
 			if (data.quizMode !== quizModeEnum.none) {
-				return data.quizDurationMinutes !== undefined
+				return data.quizDurationMinutes !== undefined;
 			}
-			return true
+			return true;
 		},
 		{
 			message: 'Duration is required for timed quizzes',
@@ -41,9 +41,9 @@ export const quizSettingsFormSchema = z
 		(data) => {
 			// If quiz mode is not 'none', grade release is required
 			if (data.quizMode !== quizModeEnum.none) {
-				return data.gradeRelease !== undefined
+				return data.gradeRelease !== undefined;
 			}
-			return true
+			return true;
 		},
 		{
 			message: 'Grade release setting is required for quizzes',
@@ -54,19 +54,19 @@ export const quizSettingsFormSchema = z
 		(data) => {
 			// If grade release is scheduled, release time is required
 			if (data.gradeRelease === gradeReleaseEnum.scheduled) {
-				return data.gradeReleaseTime !== undefined
+				return data.gradeReleaseTime !== undefined;
 			}
-			return true
+			return true;
 		},
 		{
 			message: 'Release time is required for scheduled grade release',
 			path: ['gradeReleaseTime'],
 		},
-	)
+	);
 
 // Schema for start quiz form
-export const startQuizFormSchema = z.object({})
+export const startQuizFormSchema = z.object({});
 
-export type StatusFormSchema = typeof statusFormSchema
-export type QuizSettingsFormSchema = typeof quizSettingsFormSchema
-export type StartQuizFormSchema = typeof startQuizFormSchema
+export type StatusFormSchema = typeof statusFormSchema;
+export type QuizSettingsFormSchema = typeof quizSettingsFormSchema;
+export type StartQuizFormSchema = typeof startQuizFormSchema;

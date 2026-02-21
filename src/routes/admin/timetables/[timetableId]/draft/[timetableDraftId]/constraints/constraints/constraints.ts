@@ -1,4 +1,4 @@
-import { z } from 'zod'
+import { z } from 'zod';
 
 /**
  * Basic Compulsory Time Constraint
@@ -8,9 +8,9 @@ export const basicCompulsoryTimeSchema = z.object({
 	Weight_Percentage: z.number().min(1).max(100),
 	Active: z.boolean().default(true),
 	Comments: z.string().nullable().optional(),
-})
+});
 
-export type BasicCompulsoryTimeForm = z.infer<typeof basicCompulsoryTimeSchema>
+export type BasicCompulsoryTimeForm = z.infer<typeof basicCompulsoryTimeSchema>;
 
 /**
  * Basic Compulsory Space Constraint
@@ -20,11 +20,11 @@ export const basicCompulsorySpaceSchema = z.object({
 	Weight_Percentage: z.number().min(1).max(100),
 	Active: z.boolean().default(true),
 	Comments: z.string().nullable().optional(),
-})
+});
 
 export type BasicCompulsorySpaceForm = z.infer<
 	typeof basicCompulsorySpaceSchema
->
+>;
 
 /**
  * Teachers Max Gaps Per Week Constraint
@@ -35,9 +35,9 @@ export const teachersMaxGapsSchema = z.object({
 	Max_Gaps: z.number().min(0).max(20),
 	Active: z.boolean().default(true),
 	Comments: z.string().nullable().optional(),
-})
+});
 
-export type TeachersMaxGapsForm = z.infer<typeof teachersMaxGapsSchema>
+export type TeachersMaxGapsForm = z.infer<typeof teachersMaxGapsSchema>;
 
 /**
  * Minimum Days Between Activities Constraint
@@ -51,11 +51,11 @@ export const minDaysBetweenActivitiesSchema = z.object({
 	Activity_Id: z.array(z.union([z.string(), z.number()])).min(2),
 	Active: z.boolean().default(true),
 	Comments: z.string().nullable().optional(),
-})
+});
 
 export type MinDaysBetweenActivitiesForm = z.infer<
 	typeof minDaysBetweenActivitiesSchema
->
+>;
 
 /**
  * Subject Preferred Rooms Constraint
@@ -77,11 +77,11 @@ export const subjectPreferredRoomsSchema = z.object({
 		}),
 	Active: z.boolean().default(true),
 	Comments: z.string().nullable().optional(),
-})
+});
 
 export type SubjectPreferredRoomsForm = z.infer<
 	typeof subjectPreferredRoomsSchema
->
+>;
 
 /**
  * Room Not Available Times Constraint
@@ -103,23 +103,23 @@ export const roomNotAvailableTimesSchema = z.object({
 		.min(1, { message: 'At least one time slot is required' })
 		.refine(
 			(times) => {
-				const seen = new Set<string>()
+				const seen = new Set<string>();
 				return times.every((time) => {
-					const key = `${time.Day}-${time.Period}`
-					if (seen.has(key)) return false
-					seen.add(key)
-					return true
-				})
+					const key = `${time.Day}-${time.Period}`;
+					if (seen.has(key)) return false;
+					seen.add(key);
+					return true;
+				});
 			},
 			{ message: 'Duplicate time slots are not allowed' },
 		),
 	Active: z.boolean().default(true),
 	Comments: z.string().nullable().optional(),
-})
+});
 
 export type RoomNotAvailableTimesForm = z.infer<
 	typeof roomNotAvailableTimesSchema
->
+>;
 
 /**
  * Map constraint FET names to their schemas
@@ -131,13 +131,13 @@ export const constraintSchemas = {
 	ConstraintMinDaysBetweenActivities: minDaysBetweenActivitiesSchema,
 	ConstraintSubjectPreferredRooms: subjectPreferredRoomsSchema,
 	ConstraintRoomNotAvailableTimes: roomNotAvailableTimesSchema,
-} as const
+} as const;
 
 /**
  * Get schema for a specific constraint by FET name
  */
 export function getConstraintSchema(fetName: string): z.ZodSchema | null {
-	return constraintSchemas[fetName as keyof typeof constraintSchemas] || null
+	return constraintSchemas[fetName as keyof typeof constraintSchemas] || null;
 }
 
 /**
@@ -147,7 +147,7 @@ export function validateConstraintParameters(
 	fetName: string,
 	parameters: unknown,
 ): { success: true; data: unknown } | { success: false; errors: z.ZodError } {
-	const schema = getConstraintSchema(fetName)
+	const schema = getConstraintSchema(fetName);
 	if (!schema) {
 		return {
 			success: false,
@@ -158,12 +158,12 @@ export function validateConstraintParameters(
 					path: [],
 				},
 			]),
-		}
+		};
 	}
 
-	const result = schema.safeParse(parameters)
+	const result = schema.safeParse(parameters);
 	if (result.success) {
-		return { success: true, data: result.data }
+		return { success: true, data: result.data };
 	}
-	return { success: false, errors: result.error }
+	return { success: false, errors: result.error };
 }

@@ -1,8 +1,8 @@
-import { index, integer, pgSchema, text, uuid } from 'drizzle-orm/pg-core'
-import { user } from './user'
-import { essentials } from './utils'
+import { index, integer, pgSchema, text, uuid } from 'drizzle-orm/pg-core';
+import { user } from './user';
+import { essentials } from './utils';
 
-export const resourceSchema = pgSchema('resource')
+export const resourceSchema = pgSchema('resource');
 
 export const resource = resourceSchema.table(
 	'res',
@@ -18,6 +18,6 @@ export const resource = resourceSchema.table(
 			.references(() => user.id, { onDelete: 'cascade' }),
 	},
 	(self) => [index().on(self.uploadedBy)],
-)
+);
 
-export type Resource = typeof resource.$inferSelect
+export type Resource = typeof resource.$inferSelect;

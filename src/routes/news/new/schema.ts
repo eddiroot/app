@@ -1,6 +1,6 @@
-import { newsVisibilityEnum } from '$lib/enums'
-import { imagesSchema } from '$lib/schema/resource'
-import { z } from 'zod'
+import { newsVisibilityEnum } from '$lib/enums';
+import { imagesSchema } from '$lib/schema/resource';
+import { z } from 'zod';
 
 export const newsFormSchema = z.object({
 	title: z
@@ -28,6 +28,6 @@ export const newsFormSchema = z.object({
 	expiresAt: z.date().optional(),
 	images: imagesSchema.optional(),
 	action: z.enum(['save_draft', 'publish']).default('save_draft'),
-})
+});
 
-export type NewsFormSchema = typeof newsFormSchema
+export type NewsFormSchema = typeof newsFormSchema;

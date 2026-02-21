@@ -4,12 +4,12 @@
  */
 
 // Import form components
-import BasicCompulsorySpaceForm from '../constraint-forms/basic-compulsory-space-form.svelte'
-import BasicCompulsoryTimeForm from '../constraint-forms/basic-compulsory-time-form.svelte'
-import MinDaysBetweenActivitiesForm from '../constraint-forms/min-days-between-activities-form.svelte'
-import RoomNotAvailableTimesForm from '../constraint-forms/room-not-available-times-form.svelte'
-import SubjectPreferredRoomsForm from '../constraint-forms/subject-preferred-rooms-form.svelte'
-import TeachersMaxGapsForm from '../constraint-forms/teachers-max-gaps-form.svelte'
+import BasicCompulsorySpaceForm from '../constraint-forms/basic-compulsory-space-form.svelte';
+import BasicCompulsoryTimeForm from '../constraint-forms/basic-compulsory-time-form.svelte';
+import MinDaysBetweenActivitiesForm from '../constraint-forms/min-days-between-activities-form.svelte';
+import RoomNotAvailableTimesForm from '../constraint-forms/room-not-available-times-form.svelte';
+import SubjectPreferredRoomsForm from '../constraint-forms/subject-preferred-rooms-form.svelte';
+import TeachersMaxGapsForm from '../constraint-forms/teachers-max-gaps-form.svelte';
 
 // List of FET constraint names that have custom forms implemented
 export const implementedConstraints = [
@@ -19,7 +19,7 @@ export const implementedConstraints = [
 	'ConstraintMinDaysBetweenActivities',
 	'ConstraintBasicCompulsoryTime',
 	'ConstraintBasicCompulsorySpace',
-]
+];
 
 /**
  * Get the appropriate form component for a constraint using a switch statement
@@ -30,19 +30,19 @@ export function getConstraintFormComponent(fetName: string) {
 	switch (fetName) {
 		// Time Constraints
 		case 'ConstraintSubjectPreferredRooms':
-			return SubjectPreferredRoomsForm
+			return SubjectPreferredRoomsForm;
 		case 'ConstraintRoomNotAvailableTimes':
-			return RoomNotAvailableTimesForm
+			return RoomNotAvailableTimesForm;
 		case 'ConstraintTeachersMaxGapsPerWeek':
-			return TeachersMaxGapsForm
+			return TeachersMaxGapsForm;
 		case 'ConstraintMinDaysBetweenActivities':
-			return MinDaysBetweenActivitiesForm
+			return MinDaysBetweenActivitiesForm;
 		case 'ConstraintBasicCompulsoryTime':
-			return BasicCompulsoryTimeForm
+			return BasicCompulsoryTimeForm;
 		case 'ConstraintBasicCompulsorySpace':
-			return BasicCompulsorySpaceForm
+			return BasicCompulsorySpaceForm;
 		default:
-			return null
+			return null;
 	}
 }
 
@@ -52,7 +52,7 @@ export function getConstraintFormComponent(fetName: string) {
  * @returns True if the constraint has a custom form, false otherwise
  */
 export function hasCustomForm(fetName: string): boolean {
-	return implementedConstraints.includes(fetName)
+	return implementedConstraints.includes(fetName);
 }
 
 /**
@@ -65,5 +65,5 @@ export function requiresEnhancedProps(fetName: string): boolean {
 		'ConstraintSubjectPreferredRooms',
 		'ConstraintMinDaysBetweenActivities',
 		'ConstraintRoomNotAvailableTimes',
-	].includes(fetName)
+	].includes(fetName);
 }

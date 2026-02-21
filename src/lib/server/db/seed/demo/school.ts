@@ -1,8 +1,8 @@
-import { schoolSpaceTypeEnum, yearLevelEnum } from '$lib/enums'
-import { eq } from 'drizzle-orm'
-import * as schema from '../../schema'
-import type { Database } from '../types'
-import type { DemoSchoolData } from './types'
+import { schoolSpaceTypeEnum, yearLevelEnum } from '$lib/enums';
+import { eq } from 'drizzle-orm';
+import * as schema from '../../schema';
+import type { Database } from '../types';
+import type { DemoSchoolData } from './types';
 
 export async function seedDemoSchool(
 	db: Database,
@@ -12,12 +12,12 @@ export async function seedDemoSchool(
 	const [school] = await db
 		.insert(schema.school)
 		.values({ name: 'Demo School', countryCode: 'AU', stateCode: 'VIC' })
-		.returning()
+		.returning();
 
 	const eddiBehaviourLevels = await db
 		.select()
 		.from(schema.schoolBehaviourLevel)
-		.where(eq(schema.schoolBehaviourLevel.schoolId, eddiSchool.id))
+		.where(eq(schema.schoolBehaviourLevel.schoolId, eddiSchool.id));
 
 	for (const eddiLevel of eddiBehaviourLevels) {
 		const [demoBehaviourLevel] = await db
@@ -27,12 +27,12 @@ export async function seedDemoSchool(
 				level: eddiLevel.level,
 				name: eddiLevel.name,
 			})
-			.returning()
+			.returning();
 
 		const eddiBehaviours = await db
 			.select()
 			.from(schema.schoolBehaviour)
-			.where(eq(schema.schoolBehaviour.levelId, eddiLevel.id))
+			.where(eq(schema.schoolBehaviour.levelId, eddiLevel.id));
 
 		for (const eddiBehaviour of eddiBehaviours) {
 			await db
@@ -42,7 +42,7 @@ export async function seedDemoSchool(
 					levelId: demoBehaviourLevel.id,
 					name: eddiBehaviour.name,
 					description: eddiBehaviour.description,
-				})
+				});
 		}
 	}
 
@@ -55,7 +55,7 @@ export async function seedDemoSchool(
 			address: '123 Education Street, Melbourne VIC 3000',
 			description: 'Primary campus of Demo School',
 		})
-		.returning()
+		.returning();
 
 	// Create buildings
 	const [middleSchool, seniorSchool, gymnasium] = await db
@@ -77,7 +77,7 @@ export async function seedDemoSchool(
 				description: 'Gymnasium and sporting facilities.',
 			},
 		])
-		.returning()
+		.returning();
 
 	// Create spaces
 	const spaces = await db
@@ -195,13 +195,13 @@ export async function seedDemoSchool(
 				capacity: 40,
 			},
 		])
-		.returning()
+		.returning();
 
 	// Create year levels (Foundation to Year 12)
-	const yearLevels = await seedYearLevels(db, school.id)
+	const yearLevels = await seedYearLevels(db, school.id);
 
 	// Create semesters and terms
-	const semestersAndTerms = await seedSchoolSemestersAndTerms(db, school.id)
+	const semestersAndTerms = await seedSchoolSemestersAndTerms(db, school.id);
 
 	return {
 		school,
@@ -210,7 +210,7 @@ export async function seedDemoSchool(
 		buildings: { middleSchool, seniorSchool, gymnasium },
 		spaces,
 		yearLevels,
-	}
+	};
 }
 
 async function seedYearLevels(db: Database, schoolId: number) {
@@ -223,7 +223,7 @@ async function seedYearLevels(db: Database, schoolId: number) {
 			{ schoolId, code: yearLevelEnum.year9 },
 			{ schoolId, code: yearLevelEnum.year10 },
 		])
-		.returning()
+		.returning();
 
 	return {
 		none: yearLevels[0],
@@ -231,11 +231,11 @@ async function seedYearLevels(db: Database, schoolId: number) {
 		year8: yearLevels[2],
 		year9: yearLevels[3],
 		year10: yearLevels[4],
-	}
+	};
 }
 
 async function seedSchoolSemestersAndTerms(db: Database, schoolId: number) {
-	const year = new Date().getFullYear()
+	const year = new Date().getFullYear();
 
 	const [semester1, semester2] = await db
 		.insert(schema.schoolSemester)
@@ -243,7 +243,7 @@ async function seedSchoolSemestersAndTerms(db: Database, schoolId: number) {
 			{ schoolId, number: 1, year },
 			{ schoolId, number: 2, year },
 		])
-		.returning()
+		.returning();
 
 	const terms = await db
 		.insert(schema.schoolTerm)
@@ -273,7 +273,7 @@ async function seedSchoolSemestersAndTerms(db: Database, schoolId: number) {
 				schoolSemesterId: semester2.id,
 			},
 		])
-		.returning()
+		.returning();
 
-	return { semesters: [semester1, semester2], terms }
+	return { semesters: [semester1, semester2], terms };
 }

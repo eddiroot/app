@@ -1,5 +1,5 @@
-import { sql } from 'drizzle-orm'
-import { check } from 'drizzle-orm/gel-core'
+import { sql } from 'drizzle-orm';
+import { check } from 'drizzle-orm/gel-core';
 import {
 	boolean,
 	index,
@@ -10,15 +10,15 @@ import {
 	unique,
 	uuid,
 	type AnyPgColumn,
-} from 'drizzle-orm/pg-core'
+} from 'drizzle-orm/pg-core';
 import {
 	subjectClassAllocationAttendanceComponentType,
 	subjectClassAllocationAttendanceStatus,
 	subjectThreadResponseTypeEnum,
 	subjectThreadTypeEnum,
-} from '../../../enums'
-import { curriculumItem } from './curriculum'
-import { resource } from './resource'
+} from '../../../enums';
+import { curriculumItem } from './curriculum';
+import { resource } from './resource';
 import {
 	gradeScale,
 	school,
@@ -26,12 +26,12 @@ import {
 	schoolCampus,
 	schoolSpace,
 	schoolYearLevel,
-} from './school'
-import { timetableDraft } from './timetable'
-import { user } from './user'
-import { enumToPgEnum, essentials, standardTimestamp } from './utils'
+} from './school';
+import { timetableDraft } from './timetable';
+import { user } from './user';
+import { enumToPgEnum, essentials, standardTimestamp } from './utils';
 
-export const subjectSchema = pgSchema('subject')
+export const subjectSchema = pgSchema('subject');
 
 // e.g. Mathematicss, Science, History
 export const subjectGroup = subjectSchema.table(
@@ -45,9 +45,9 @@ export const subjectGroup = subjectSchema.table(
 			.references(() => school.id, { onDelete: 'cascade' }),
 	},
 	(self) => [index().on(self.schoolId)],
-)
+);
 
-export type SubjectGroup = typeof subjectGroup.$inferSelect
+export type SubjectGroup = typeof subjectGroup.$inferSelect;
 
 // e.g. Year 9 Maths, Year 10 Science
 export const subject = subjectSchema.table(
@@ -71,9 +71,9 @@ export const subject = subjectSchema.table(
 		index().on(self.subjectGroupId),
 		index().on(self.schoolYearLevelId),
 	],
-)
+);
 
-export type Subject = typeof subject.$inferSelect
+export type Subject = typeof subject.$inferSelect;
 
 // e.g. Year 9 Maths 2025, Year 10 Science 2026
 export const subjectOffering = subjectSchema.table(
@@ -96,9 +96,9 @@ export const subjectOffering = subjectSchema.table(
 		index().on(self.schoolCampusId),
 		index().on(self.gradeScaleId),
 	],
-)
+);
 
-export type SubjectOffering = typeof subjectOffering.$inferSelect
+export type SubjectOffering = typeof subjectOffering.$inferSelect;
 
 export const subjectOfferingClass = subjectSchema.table(
 	'sub_off_cls',
@@ -119,9 +119,9 @@ export const subjectOfferingClass = subjectSchema.table(
 		index().on(self.timetableDraftId),
 		index().on(self.subOfferingId),
 	],
-)
+);
 
-export type SubjectOfferingClass = typeof subjectOfferingClass.$inferSelect
+export type SubjectOfferingClass = typeof subjectOfferingClass.$inferSelect;
 
 export const subjectClassAllocation = subjectSchema.table(
 	'sub_off_cls_allo',
@@ -141,14 +141,14 @@ export const subjectClassAllocation = subjectSchema.table(
 		index().on(self.subjectOfferingClassId),
 		index().on(self.schoolSpaceId),
 	],
-)
+);
 
-export type SubjectClassAllocation = typeof subjectClassAllocation.$inferSelect
+export type SubjectClassAllocation = typeof subjectClassAllocation.$inferSelect;
 
 export const subjectClassAllocationAttendanceStatusEnumPg = subjectSchema.enum(
 	'enum_sub_cls_allo_att_stat',
 	enumToPgEnum(subjectClassAllocationAttendanceStatus),
-)
+);
 
 export const subjectClassAllocationAttendance = subjectSchema.table(
 	'sub_off_cls_allo_att',
@@ -169,16 +169,16 @@ export const subjectClassAllocationAttendance = subjectSchema.table(
 		index().on(self.subjectClassAllocationId),
 		index().on(self.userId),
 	],
-)
+);
 
 export type SubjectClassAllocationAttendance =
-	typeof subjectClassAllocationAttendance.$inferSelect
+	typeof subjectClassAllocationAttendance.$inferSelect;
 
 export const subjectClassAllocationAttendanceComponentTypeEnumPg =
 	subjectSchema.enum(
 		'enum_sub_off_cls_allo_att_comp_type',
 		enumToPgEnum(subjectClassAllocationAttendanceComponentType),
-	)
+	);
 
 export const subjectClassAllocationAttendanceComponent = subjectSchema.table(
 	'sub_off_cls_allo_att_comp',
@@ -197,10 +197,10 @@ export const subjectClassAllocationAttendanceComponent = subjectSchema.table(
 		check('valid_time_range', sql`${self.end} > ${self.start}`),
 		index().on(self.attendanceId),
 	],
-)
+);
 
 export type SubjectClassAllocationAttendanceComponent =
-	typeof subjectClassAllocationAttendanceComponent.$inferSelect
+	typeof subjectClassAllocationAttendanceComponent.$inferSelect;
 
 export const attendanceBehaviour = subjectSchema.table(
 	'att_behaviour',
@@ -219,14 +219,14 @@ export const attendanceBehaviour = subjectSchema.table(
 		index().on(self.attendanceId),
 		index().on(self.behaviourId),
 	],
-)
+);
 
-export type AttendanceBehaviour = typeof attendanceBehaviour.$inferSelect
+export type AttendanceBehaviour = typeof attendanceBehaviour.$inferSelect;
 
 export const subjectThreadTypeEnumPg = subjectSchema.enum(
 	'enum_sub_thread_type',
 	enumToPgEnum(subjectThreadTypeEnum),
-)
+);
 
 export const subjectThread = subjectSchema.table(
 	'sub_thread',
@@ -245,14 +245,14 @@ export const subjectThread = subjectSchema.table(
 		isArchived: boolean().notNull().default(false),
 	},
 	(self) => [index().on(self.subjectOfferingId), index().on(self.userId)],
-)
+);
 
-export type SubjectThread = typeof subjectThread.$inferSelect
+export type SubjectThread = typeof subjectThread.$inferSelect;
 
 export const subjectThreadResponseTypeEnumPg = subjectSchema.enum(
 	'enum_sub_thread_res_type',
 	enumToPgEnum(subjectThreadResponseTypeEnum),
-)
+);
 
 export const subjectThreadResponse = subjectSchema.table(
 	'sub_thread_resp',
@@ -277,9 +277,9 @@ export const subjectThreadResponse = subjectSchema.table(
 		index().on(self.userId),
 		index().on(self.parentResponseId),
 	],
-)
+);
 
-export type SubjectThreadResponse = typeof subjectThreadResponse.$inferSelect
+export type SubjectThreadResponse = typeof subjectThreadResponse.$inferSelect;
 
 export const subjectThreadLike = subjectSchema.table(
 	'sub_thread_like',
@@ -296,9 +296,9 @@ export const subjectThreadLike = subjectSchema.table(
 		index().on(self.subjectThreadId),
 		index().on(self.userId),
 	],
-)
+);
 
-export type SubjectThreadLike = typeof subjectThreadLike.$inferSelect
+export type SubjectThreadLike = typeof subjectThreadLike.$inferSelect;
 
 export const subjectThreadResponseLike = subjectSchema.table(
 	'sub_thread_resp_like',
@@ -315,10 +315,10 @@ export const subjectThreadResponseLike = subjectSchema.table(
 		index().on(self.subjectThreadResponseId),
 		index().on(self.userId),
 	],
-)
+);
 
 export type SubjectThreadResponseLike =
-	typeof subjectThreadResponseLike.$inferSelect
+	typeof subjectThreadResponseLike.$inferSelect;
 
 export const subjectOfferingClassResource = subjectSchema.table(
 	'sub_off_cls_res',
@@ -346,10 +346,10 @@ export const subjectOfferingClassResource = subjectSchema.table(
 		index().on(self.curriculumItemId),
 		index().on(self.authorId),
 	],
-)
+);
 
 export type SubjectOfferingClassResource =
-	typeof subjectOfferingClassResource.$inferSelect
+	typeof subjectOfferingClassResource.$inferSelect;
 
 export const subjectSelectionConstraint = subjectSchema.table(
 	'sub_sel_constraint',
@@ -367,10 +367,10 @@ export const subjectSelectionConstraint = subjectSchema.table(
 		max: integer(),
 	},
 	(self) => [index().on(self.schoolId), index().on(self.yearLevel)],
-)
+);
 
 export type SubjectSelectionConstraint =
-	typeof subjectSelectionConstraint.$inferSelect
+	typeof subjectSelectionConstraint.$inferSelect;
 
 export const subjectSelectionConstraintSubject = subjectSchema.table(
 	'constraint_subject',
@@ -387,7 +387,7 @@ export const subjectSelectionConstraintSubject = subjectSchema.table(
 		index().on(self.constraintId),
 		index().on(self.subjectId),
 	],
-)
+);
 
 export type SubjectSelectionConstraintSubject =
-	typeof subjectSelectionConstraintSubject.$inferSelect
+	typeof subjectSelectionConstraintSubject.$inferSelect;

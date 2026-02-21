@@ -1,6 +1,6 @@
-import { taskTypeEnum } from '$lib/enums'
-import { filesOptionalSchema } from '$lib/schema/resource'
-import { z } from 'zod'
+import { taskTypeEnum } from '$lib/enums';
+import { filesOptionalSchema } from '$lib/schema/resource';
+import { z } from 'zod';
 
 export const formSchema = z.object({
 	title: z.string().min(1, 'Title cannot be empty'),
@@ -10,6 +10,6 @@ export const formSchema = z.object({
 	dueDate: z.date().optional(),
 	week: z.number().optional(),
 	files: filesOptionalSchema,
-})
+});
 
-export type FormSchema = typeof formSchema
+export type FormSchema = typeof formSchema;

@@ -2,18 +2,18 @@ import {
 	newsPriorityEnum,
 	newsStatusEnum,
 	newsVisibilityEnum,
-} from '$lib/enums'
-import * as schema from '../../schema'
-import type { Database } from '../types'
-import type { DemoSchoolData, DemoUserData } from './types'
+} from '$lib/enums';
+import * as schema from '../../schema';
+import type { Database } from '../types';
+import type { DemoSchoolData, DemoUserData } from './types';
 
 export async function seedDemoNews(
 	db: Database,
 	schoolData: DemoSchoolData,
 	userData: DemoUserData,
 ): Promise<void> {
-	const { school, campus } = schoolData
-	const { admin, teachers } = userData
+	const { school, campus } = schoolData;
+	const { admin, teachers } = userData;
 
 	// Create news categories
 	const newsCategories = await db
@@ -45,7 +45,7 @@ export async function seedDemoNews(
 				schoolId: school.id,
 			},
 		])
-		.returning()
+		.returning();
 
 	// Create news articles
 	await db.insert(schema.news).values([
@@ -342,5 +342,5 @@ export async function seedDemoNews(
 			isPinned: false,
 			viewCount: 67,
 		},
-	])
+	]);
 }

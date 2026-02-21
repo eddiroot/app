@@ -1,11 +1,11 @@
-import * as schema from '../../schema'
-import type { Database } from '../types'
+import * as schema from '../../schema';
+import type { Database } from '../types';
 
 export async function seedEddiSchool(db: Database) {
 	const [eddiSchool] = await db
 		.insert(schema.school)
 		.values({ name: 'eddi', countryCode: 'AU', stateCode: 'VIC' })
-		.returning()
+		.returning();
 
 	// Create standard behaviour levels and behaviours
 	const [level1, level2, level3, level4, level5] = await db
@@ -25,7 +25,7 @@ export async function seedEddiSchool(db: Database) {
 			{ schoolId: eddiSchool.id, level: 4, name: 'Serious Incident' },
 			{ schoolId: eddiSchool.id, level: 5, name: 'Very Serious Incident' },
 		])
-		.returning()
+		.returning();
 
 	await db
 		.insert(schema.schoolBehaviour)
@@ -169,7 +169,7 @@ export async function seedEddiSchool(db: Database) {
 					'Behaviour showing contempt for the wellbeing of others or the school',
 			},
 		])
-		.returning()
+		.returning();
 
-	return eddiSchool
+	return eddiSchool;
 }

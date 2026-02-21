@@ -6,19 +6,19 @@ import {
 	text,
 	unique,
 	uuid,
-} from 'drizzle-orm/pg-core'
-import { eventTypeEnum } from '../../../enums'
-import { school, schoolCampus } from './school'
-import { subjectOffering, subjectOfferingClass } from './subject'
-import { user } from './user'
-import { enumToPgEnum, essentials, standardTimestamp } from './utils'
+} from 'drizzle-orm/pg-core';
+import { eventTypeEnum } from '../../../enums';
+import { school, schoolCampus } from './school';
+import { subjectOffering, subjectOfferingClass } from './subject';
+import { user } from './user';
+import { enumToPgEnum, essentials, standardTimestamp } from './utils';
 
-export const eventSchema = pgSchema('event')
+export const eventSchema = pgSchema('event');
 
 export const eventTypeEnumPg = eventSchema.enum(
 	'enum_event_type',
 	enumToPgEnum(eventTypeEnum),
-)
+);
 
 export const event = eventSchema.table(
 	'evt',
@@ -50,9 +50,9 @@ export const event = eventSchema.table(
 		index().on(self.subjectOfferingId),
 		index().on(self.subjectOfferingClassId),
 	],
-)
+);
 
-export type Event = typeof event.$inferSelect
+export type Event = typeof event.$inferSelect;
 
 export const eventRSVP = eventSchema.table(
 	'evt_rsvp',
@@ -65,6 +65,6 @@ export const eventRSVP = eventSchema.table(
 		isAttending: boolean().notNull(),
 	},
 	(self) => [unique().on(self.userId, self.eventId), index().on(self.userId)],
-)
+);
 
-export type EventRSVP = typeof eventRSVP.$inferSelect
+export type EventRSVP = typeof eventRSVP.$inferSelect;

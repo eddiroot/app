@@ -1,7 +1,7 @@
-import { eventTypeEnum } from '$lib/enums'
-import { db } from '$lib/server/db'
-import * as table from '$lib/server/db/schema'
-import { and, asc, desc, eq, gte, lt } from 'drizzle-orm'
+import { eventTypeEnum } from '$lib/enums';
+import { db } from '$lib/server/db';
+import * as table from '$lib/server/db/schema';
+import { and, asc, desc, eq, gte, lt } from 'drizzle-orm';
 
 export async function getSchoolEventsBySchoolId(
 	schoolId: number,
@@ -17,9 +17,9 @@ export async function getSchoolEventsBySchoolId(
 				includeArchived ? undefined : eq(table.event.isArchived, false),
 			),
 		)
-		.orderBy(desc(table.event.start))
+		.orderBy(desc(table.event.start));
 
-	return events
+	return events;
 }
 
 export async function getSchoolEventsForWeekBySchoolId(
@@ -27,11 +27,11 @@ export async function getSchoolEventsForWeekBySchoolId(
 	weekStartDate: Date,
 	includeArchived: boolean = false,
 ) {
-	const weekStart = new Date(weekStartDate)
-	weekStart.setHours(0, 0, 0, 0)
+	const weekStart = new Date(weekStartDate);
+	weekStart.setHours(0, 0, 0, 0);
 
-	const weekEnd = new Date(weekStart)
-	weekEnd.setDate(weekEnd.getDate() + 7)
+	const weekEnd = new Date(weekStart);
+	weekEnd.setDate(weekEnd.getDate() + 7);
 
 	const events = await db
 		.select({ event: table.event })
@@ -45,9 +45,9 @@ export async function getSchoolEventsForWeekBySchoolId(
 				includeArchived ? undefined : eq(table.event.isArchived, false),
 			),
 		)
-		.orderBy(asc(table.event.start))
+		.orderBy(asc(table.event.start));
 
-	return events
+	return events;
 }
 
 export async function updateSchoolEvent(
@@ -58,9 +58,9 @@ export async function updateSchoolEvent(
 		.update(table.event)
 		.set(updates)
 		.where(eq(table.event.id, eventId))
-		.returning()
+		.returning();
 
-	return updatedEvent
+	return updatedEvent;
 }
 
 // Campus Event Functions
@@ -79,9 +79,9 @@ export async function getCampusEventsByCampusId(
 				includeArchived ? undefined : eq(table.event.isArchived, false),
 			),
 		)
-		.orderBy(desc(table.event.start))
+		.orderBy(desc(table.event.start));
 
-	return events
+	return events;
 }
 
 export async function getCampusEventsForWeekByCampusId(
@@ -89,11 +89,11 @@ export async function getCampusEventsForWeekByCampusId(
 	weekStartDate: Date,
 	includeArchived: boolean = false,
 ) {
-	const weekStart = new Date(weekStartDate)
-	weekStart.setHours(0, 0, 0, 0)
+	const weekStart = new Date(weekStartDate);
+	weekStart.setHours(0, 0, 0, 0);
 
-	const weekEnd = new Date(weekStart)
-	weekEnd.setDate(weekEnd.getDate() + 7)
+	const weekEnd = new Date(weekStart);
+	weekEnd.setDate(weekEnd.getDate() + 7);
 
 	const events = await db
 		.select()
@@ -107,9 +107,9 @@ export async function getCampusEventsForWeekByCampusId(
 				includeArchived ? undefined : eq(table.event.isArchived, false),
 			),
 		)
-		.orderBy(asc(table.event.start))
+		.orderBy(asc(table.event.start));
 
-	return events
+	return events;
 }
 
 export async function getCampusEventsForWeekByUserId(
@@ -117,11 +117,11 @@ export async function getCampusEventsForWeekByUserId(
 	weekStartDate: Date,
 	includeArchived: boolean = false,
 ) {
-	const weekStart = new Date(weekStartDate)
-	weekStart.setHours(0, 0, 0, 0)
+	const weekStart = new Date(weekStartDate);
+	weekStart.setHours(0, 0, 0, 0);
 
-	const weekEnd = new Date(weekStart)
-	weekEnd.setDate(weekEnd.getDate() + 7)
+	const weekEnd = new Date(weekStart);
+	weekEnd.setDate(weekEnd.getDate() + 7);
 
 	const events = await db
 		.select({ event: table.event })
@@ -143,9 +143,9 @@ export async function getCampusEventsForWeekByUserId(
 				includeArchived ? undefined : eq(table.event.isArchived, false),
 			),
 		)
-		.orderBy(asc(table.event.start))
+		.orderBy(asc(table.event.start));
 
-	return events
+	return events;
 }
 
 export async function updateCampusEvent(
@@ -156,9 +156,9 @@ export async function updateCampusEvent(
 		.update(table.event)
 		.set(updates)
 		.where(eq(table.event.id, eventId))
-		.returning()
+		.returning();
 
-	return updatedEvent
+	return updatedEvent;
 }
 
 // Subject Offering Event Functions
@@ -189,9 +189,9 @@ export async function getSubjectOfferingEventsBySchoolId(
 				includeArchived ? undefined : eq(table.event.isArchived, false),
 			),
 		)
-		.orderBy(desc(table.event.start))
+		.orderBy(desc(table.event.start));
 
-	return events
+	return events;
 }
 
 export async function getSubjectOfferingEventsForWeekBySchoolId(
@@ -199,11 +199,11 @@ export async function getSubjectOfferingEventsForWeekBySchoolId(
 	weekStartDate: Date,
 	includeArchived: boolean = false,
 ) {
-	const weekStart = new Date(weekStartDate)
-	weekStart.setHours(0, 0, 0, 0)
+	const weekStart = new Date(weekStartDate);
+	weekStart.setHours(0, 0, 0, 0);
 
-	const weekEnd = new Date(weekStart)
-	weekEnd.setDate(weekEnd.getDate() + 7)
+	const weekEnd = new Date(weekStart);
+	weekEnd.setDate(weekEnd.getDate() + 7);
 
 	const events = await db
 		.select({
@@ -229,9 +229,9 @@ export async function getSubjectOfferingEventsForWeekBySchoolId(
 				includeArchived ? undefined : eq(table.event.isArchived, false),
 			),
 		)
-		.orderBy(asc(table.event.start))
+		.orderBy(asc(table.event.start));
 
-	return events
+	return events;
 }
 
 export async function getSubjectOfferingEventsForWeekByUserId(
@@ -239,11 +239,11 @@ export async function getSubjectOfferingEventsForWeekByUserId(
 	weekStartDate: Date,
 	includeArchived: boolean = false,
 ) {
-	const weekStart = new Date(weekStartDate)
-	weekStart.setHours(0, 0, 0, 0)
+	const weekStart = new Date(weekStartDate);
+	weekStart.setHours(0, 0, 0, 0);
 
-	const weekEnd = new Date(weekStart)
-	weekEnd.setDate(weekEnd.getDate() + 7)
+	const weekEnd = new Date(weekStart);
+	weekEnd.setDate(weekEnd.getDate() + 7);
 
 	const events = await db
 		.select({
@@ -273,9 +273,9 @@ export async function getSubjectOfferingEventsForWeekByUserId(
 				includeArchived ? undefined : eq(table.event.isArchived, false),
 			),
 		)
-		.orderBy(asc(table.event.start))
+		.orderBy(asc(table.event.start));
 
-	return events
+	return events;
 }
 
 export async function updateSubjectOfferingEvent(
@@ -286,9 +286,9 @@ export async function updateSubjectOfferingEvent(
 		.update(table.event)
 		.set(updates)
 		.where(eq(table.event.id, eventId))
-		.returning()
+		.returning();
 
-	return updatedEvent
+	return updatedEvent;
 }
 
 // Subject Offering Class Event Functions
@@ -324,9 +324,9 @@ export async function getSubjectOfferingClassEventsBySchoolId(
 				includeArchived ? undefined : eq(table.event.isArchived, false),
 			),
 		)
-		.orderBy(desc(table.event.start))
+		.orderBy(desc(table.event.start));
 
-	return events
+	return events;
 }
 
 export async function getSubjectOfferingClassEventsForWeekBySchoolId(
@@ -334,11 +334,11 @@ export async function getSubjectOfferingClassEventsForWeekBySchoolId(
 	weekStartDate: Date,
 	includeArchived: boolean = false,
 ) {
-	const weekStart = new Date(weekStartDate)
-	weekStart.setHours(0, 0, 0, 0)
+	const weekStart = new Date(weekStartDate);
+	weekStart.setHours(0, 0, 0, 0);
 
-	const weekEnd = new Date(weekStart)
-	weekEnd.setDate(weekEnd.getDate() + 7)
+	const weekEnd = new Date(weekStart);
+	weekEnd.setDate(weekEnd.getDate() + 7);
 
 	const events = await db
 		.select({
@@ -369,9 +369,9 @@ export async function getSubjectOfferingClassEventsForWeekBySchoolId(
 				includeArchived ? undefined : eq(table.event.isArchived, false),
 			),
 		)
-		.orderBy(asc(table.event.start))
+		.orderBy(asc(table.event.start));
 
-	return events
+	return events;
 }
 
 export async function getSubjectOfferingClassEventsForWeekByUserId(
@@ -379,11 +379,11 @@ export async function getSubjectOfferingClassEventsForWeekByUserId(
 	weekStartDate: Date,
 	includeArchived: boolean = false,
 ) {
-	const weekStart = new Date(weekStartDate)
-	weekStart.setHours(0, 0, 0, 0)
+	const weekStart = new Date(weekStartDate);
+	weekStart.setHours(0, 0, 0, 0);
 
-	const weekEnd = new Date(weekStart)
-	weekEnd.setDate(weekEnd.getDate() + 7)
+	const weekEnd = new Date(weekStart);
+	weekEnd.setDate(weekEnd.getDate() + 7);
 
 	const events = await db
 		.select({
@@ -421,9 +421,9 @@ export async function getSubjectOfferingClassEventsForWeekByUserId(
 				includeArchived ? undefined : eq(table.event.isArchived, false),
 			),
 		)
-		.orderBy(asc(table.event.start))
+		.orderBy(asc(table.event.start));
 
-	return events
+	return events;
 }
 
 export async function updateSubjectOfferingClassEvent(
@@ -434,9 +434,9 @@ export async function updateSubjectOfferingClassEvent(
 		.update(table.event)
 		.set(updates)
 		.where(eq(table.event.id, eventId))
-		.returning()
+		.returning();
 
-	return updatedEvent
+	return updatedEvent;
 }
 
 // RSVP Functions
@@ -452,9 +452,9 @@ export async function upsertEventRSVP(
 			target: [table.eventRSVP.userId, table.eventRSVP.eventId],
 			set: { isAttending },
 		})
-		.returning()
+		.returning();
 
-	return rsvp
+	return rsvp;
 }
 
 export async function getEventRSVP(userId: string, eventId: number) {
@@ -466,18 +466,18 @@ export async function getEventRSVP(userId: string, eventId: number) {
 				eq(table.eventRSVP.userId, userId),
 				eq(table.eventRSVP.eventId, eventId),
 			),
-		)
+		);
 
-	return rsvp
+	return rsvp;
 }
 
 export async function getUserEventRSVPs(userId: string) {
 	const rsvps = await db
 		.select()
 		.from(table.eventRSVP)
-		.where(eq(table.eventRSVP.userId, userId))
+		.where(eq(table.eventRSVP.userId, userId));
 
-	return rsvps
+	return rsvps;
 }
 
 // Get individual event by ID functions
@@ -490,9 +490,9 @@ export async function getEventSchoolById(eventId: number) {
 				eq(table.event.id, eventId),
 				eq(table.event.type, eventTypeEnum.school),
 			),
-		)
+		);
 
-	return events?.length ? events[0] : null
+	return events?.length ? events[0] : null;
 }
 
 export async function getEventCampusById(eventId: number) {
@@ -504,9 +504,9 @@ export async function getEventCampusById(eventId: number) {
 				eq(table.event.id, eventId),
 				eq(table.event.type, eventTypeEnum.campus),
 			),
-		)
+		);
 
-	return events?.length ? events[0] : null
+	return events?.length ? events[0] : null;
 }
 
 export async function getEventSubjectOfferingById(eventId: number) {
@@ -518,9 +518,9 @@ export async function getEventSubjectOfferingById(eventId: number) {
 				eq(table.event.id, eventId),
 				eq(table.event.type, eventTypeEnum.subject),
 			),
-		)
+		);
 
-	return events?.length ? events[0] : null
+	return events?.length ? events[0] : null;
 }
 
 export async function getEventSubjectOfferingClassById(eventId: number) {
@@ -532,7 +532,7 @@ export async function getEventSubjectOfferingClassById(eventId: number) {
 				eq(table.event.id, eventId),
 				eq(table.event.type, eventTypeEnum.class),
 			),
-		)
+		);
 
-	return events?.length ? events[0] : null
+	return events?.length ? events[0] : null;
 }

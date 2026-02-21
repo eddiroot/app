@@ -1,11 +1,11 @@
-import { userTypeEnum } from '$lib/enums'
-import { getUsersBySchoolIdAndType } from '$lib/server/db/service'
+import { userTypeEnum } from '$lib/enums';
+import { getUsersBySchoolIdAndType } from '$lib/server/db/service';
 
 export const load = async ({ locals: { security } }) => {
-	const user = security.isAuthenticated().isAdmin().getUser()
+	const user = security.isAuthenticated().isAdmin().getUser();
 	const teachers = await getUsersBySchoolIdAndType(
 		user.schoolId,
 		userTypeEnum.teacher,
-	)
-	return { teachers }
-}
+	);
+	return { teachers };
+};

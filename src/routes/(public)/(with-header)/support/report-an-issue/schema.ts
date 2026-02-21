@@ -1,4 +1,4 @@
-import { z } from 'zod'
+import { z } from 'zod';
 
 export const formSchema = z.object({
 	firstName: z.string().min(1, 'First name is required'),
@@ -8,6 +8,6 @@ export const formSchema = z.object({
 	issueDescription: z
 		.string()
 		.min(10, 'Please provide more details (at least 10 characters)'),
-})
+});
 
-export type FormSchema = typeof formSchema
+export type FormSchema = typeof formSchema;

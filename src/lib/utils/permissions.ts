@@ -1,8 +1,8 @@
-import { userPermissions, userTypeEnum } from '$lib/enums'
+import { userPermissions, userTypeEnum } from '$lib/enums';
 
 export function getPermissions(userType: userTypeEnum | undefined): string[] {
 	if (!userType) {
-		return []
+		return [];
 	}
 	switch (userType) {
 		case userTypeEnum.student:
@@ -11,7 +11,7 @@ export function getPermissions(userType: userTypeEnum | undefined): string[] {
 				userPermissions.viewDashboard,
 				userPermissions.viewCalendar,
 				userPermissions.viewNews,
-			]
+			];
 		case userTypeEnum.teacher:
 			return [
 				userPermissions.viewTasks,
@@ -24,7 +24,7 @@ export function getPermissions(userType: userTypeEnum | undefined): string[] {
 				userPermissions.createNews,
 				userPermissions.archiveNews,
 				userPermissions.viewCourseMap,
-			]
+			];
 		case userTypeEnum.guardian:
 			return [
 				userPermissions.viewChildGrades,
@@ -33,7 +33,7 @@ export function getPermissions(userType: userTypeEnum | undefined): string[] {
 				userPermissions.viewDashboard,
 				userPermissions.viewGuardianAttendance,
 				userPermissions.viewNews,
-			]
+			];
 		case userTypeEnum.principal:
 			return [
 				userPermissions.manageTeachers,
@@ -45,7 +45,7 @@ export function getPermissions(userType: userTypeEnum | undefined): string[] {
 				userPermissions.createNews,
 				userPermissions.archiveNews,
 				userPermissions.viewCourseMap,
-			]
+			];
 		case userTypeEnum.admin:
 			return [
 				userPermissions.viewAdmin,
@@ -59,8 +59,8 @@ export function getPermissions(userType: userTypeEnum | undefined): string[] {
 				userPermissions.createNews,
 				userPermissions.archiveNews,
 				userPermissions.viewCourseMap,
-			]
+			];
 		default:
-			return []
+			return [];
 	}
 }

@@ -1,7 +1,7 @@
-import { eventTypeEnum } from '../../../../enums'
-import * as schema from '../../schema'
-import type { Database } from '../types'
-import type { DemoSchoolData, DemoSubjectData } from './types'
+import { eventTypeEnum } from '../../../../enums';
+import * as schema from '../../schema';
+import type { Database } from '../types';
+import type { DemoSchoolData, DemoSubjectData } from './types';
 
 // Helper to get a date relative to today
 function getRelativeDate(
@@ -9,10 +9,10 @@ function getRelativeDate(
 	hour: number = 9,
 	minute: number = 0,
 ): Date {
-	const date = new Date()
-	date.setDate(date.getDate() + daysFromNow)
-	date.setHours(hour, minute, 0, 0)
-	return date
+	const date = new Date();
+	date.setDate(date.getDate() + daysFromNow);
+	date.setHours(hour, minute, 0, 0);
+	return date;
 }
 
 // Helper to get next occurrence of a weekday with time (0 = Sunday, 1 = Monday, etc.)
@@ -22,12 +22,12 @@ function getNextWeekday(
 	hour: number,
 	minute: number,
 ): Date {
-	const today = new Date()
-	const currentDay = today.getDay()
-	let daysUntil = weekday - currentDay
-	if (daysUntil <= 0) daysUntil += 7
-	daysUntil += weeksFromNow * 7
-	return getRelativeDate(daysUntil, hour, minute)
+	const today = new Date();
+	const currentDay = today.getDay();
+	let daysUntil = weekday - currentDay;
+	if (daysUntil <= 0) daysUntil += 7;
+	daysUntil += weeksFromNow * 7;
+	return getRelativeDate(daysUntil, hour, minute);
 }
 
 export async function seedDemoEvents(
@@ -35,7 +35,7 @@ export async function seedDemoEvents(
 	schoolData: DemoSchoolData,
 	subjectData: DemoSubjectData,
 ): Promise<void> {
-	const { school, campus } = schoolData
+	const { school, campus } = schoolData;
 
 	// ============================================================================
 	// SCHOOL-WIDE EVENTS
@@ -68,7 +68,7 @@ export async function seedDemoEvents(
 				requiresRSVP: false,
 			},
 		])
-		.returning()
+		.returning();
 
 	// ============================================================================
 	// CAMPUS EVENTS
@@ -117,7 +117,7 @@ export async function seedDemoEvents(
 				requiresRSVP: true,
 			},
 		])
-		.returning()
+		.returning();
 
 	// ============================================================================
 	// SUBJECT OFFERING EVENTS
@@ -134,7 +134,7 @@ export async function seedDemoEvents(
 				requiresRSVP: true,
 			},
 		])
-		.returning()
+		.returning();
 
 	// ============================================================================
 	// CLASS-LEVEL EVENTS
@@ -159,5 +159,5 @@ export async function seedDemoEvents(
 				requiresRSVP: false,
 			},
 		])
-		.returning()
+		.returning();
 }

@@ -17,13 +17,13 @@
 // });
 
 interface SendEmailParams {
-	to: string
-	subject: string
-	text: string
+	to: string;
+	subject: string;
+	text: string;
 }
 
 export function sendEmail({ to, subject, text }: SendEmailParams) {
-	console.log('Sending email:', { to, subject, text })
+	console.log('Sending email:', { to, subject, text });
 	// transporter.sendMail({
 	//   from: '',
 	//   to,

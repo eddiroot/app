@@ -1,38 +1,38 @@
-import { userTypeEnum } from '$lib/enums'
-import type { SubjectThreadResponse } from '$lib/server/db/schema'
+import { userTypeEnum } from '$lib/enums';
+import type { SubjectThreadResponse } from '$lib/server/db/schema';
 
 export function getNestedResponses(
 	allResponses: {
-		response: SubjectThreadResponse
+		response: SubjectThreadResponse;
 		user: {
-			id: string
-			firstName: string
-			middleName: string | null
-			lastName: string
-			avatarPath: string | null
-			type: string
-		}
+			id: string;
+			firstName: string;
+			middleName: string | null;
+			lastName: string;
+			avatarPath: string | null;
+			type: string;
+		};
 	}[],
 ) {
-	const responseMap = new Map()
-	const topLevelResponses = []
+	const responseMap = new Map();
+	const topLevelResponses = [];
 
 	for (const response of allResponses) {
-		responseMap.set(response.response.id, { ...response, replies: [] })
+		responseMap.set(response.response.id, { ...response, replies: [] });
 	}
 
 	for (const response of allResponses) {
 		if (response.response?.parentResponseId) {
-			const parent = responseMap.get(response.response.parentResponseId)
+			const parent = responseMap.get(response.response.parentResponseId);
 			if (parent) {
-				parent.replies.push(responseMap.get(response.response.id))
+				parent.replies.push(responseMap.get(response.response.id));
 			}
 		} else {
-			topLevelResponses.push(responseMap.get(response.response.id))
+			topLevelResponses.push(responseMap.get(response.response.id));
 		}
 	}
 
-	return topLevelResponses
+	return topLevelResponses;
 }
 
 /**
@@ -47,13 +47,13 @@ export function shouldShowUserInfo(
 	isAnonymous: boolean,
 	currentUserType: string,
 ): boolean {
-	if (!isAnonymous) return true
+	if (!isAnonymous) return true;
 
 	// Non-students can always see the name (teachers, staff, etc.)
-	if (currentUserType !== userTypeEnum.student) return true
+	if (currentUserType !== userTypeEnum.student) return true;
 
 	// Students cannot see anonymous authors, even their own
-	return false
+	return false;
 }
 
 /**
@@ -78,33 +78,33 @@ export function shouldShowResponseUserInfo(
 	const effectivelyAnonymous =
 		isOPResponse && threadIsAnonymous
 			? responseIsAnonymous
-			: responseIsAnonymous
+			: responseIsAnonymous;
 
-	return shouldShowUserInfo(effectivelyAnonymous, currentUserType)
+	return shouldShowUserInfo(effectivelyAnonymous, currentUserType);
 }
 
 export function getThreadTypeDisplay(type: string): string {
 	switch (type) {
 		case 'discussion':
-			return 'Discussion'
+			return 'Discussion';
 		case 'question':
-			return 'Question'
+			return 'Question';
 		case 'announcement':
-			return 'Announcement'
+			return 'Announcement';
 		case 'qanda':
-			return 'Q&A'
+			return 'Q&A';
 		default:
-			return 'Thread'
+			return 'Thread';
 	}
 }
 
 export function getResponseTypeDescription(type: string): string {
 	switch (type) {
 		case 'answer':
-			return 'Provide a helpful answer to solve this question'
+			return 'Provide a helpful answer to solve this question';
 		case 'comment':
-			return 'Share your thoughts or ask for clarification'
+			return 'Share your thoughts or ask for clarification';
 		default:
-			return ''
+			return '';
 	}
 }

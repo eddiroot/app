@@ -1,13 +1,13 @@
-import * as schema from '../../schema'
-import type { Database } from '../types'
-import type { DemoSchoolData } from './types'
+import * as schema from '../../schema';
+import type { Database } from '../types';
+import type { DemoSchoolData } from './types';
 
 export async function seedDemoTimetable(
 	db: Database,
 	schoolData: DemoSchoolData,
 ) {
-	const { school, semestersAndTerms } = schoolData
-	const year = new Date().getFullYear()
+	const { school, semestersAndTerms } = schoolData;
+	const year = new Date().getFullYear();
 
 	// Create main timetable
 	const [timetable] = await db
@@ -18,13 +18,13 @@ export async function seedDemoTimetable(
 			year,
 			schoolSemesterId: semestersAndTerms.semesters[0].id,
 		})
-		.returning()
+		.returning();
 
 	// Create a draft for the timetable
 	const [draft] = await db
 		.insert(schema.timetableDraft)
 		.values({ timetableId: timetable.id, name: `Draft 1` })
-		.returning()
+		.returning();
 
 	// Create timetable days (Monday to Friday)
 	await db
@@ -36,7 +36,7 @@ export async function seedDemoTimetable(
 			{ timetableDraftId: draft.id, day: 4 }, // Thursday
 			{ timetableDraftId: draft.id, day: 5 }, // Friday
 		])
-		.returning()
+		.returning();
 
 	// Create timetable periods (6 periods from 8:30am to 3:20pm with breaks)
 	await db
@@ -49,5 +49,5 @@ export async function seedDemoTimetable(
 			{ timetableDraftId: draft.id, start: '13:30:00', end: '14:20:00' }, // Period 5
 			{ timetableDraftId: draft.id, start: '14:30:00', end: '15:20:00' }, // Period 6
 		])
-		.returning()
+		.returning();
 }

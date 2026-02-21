@@ -1,4 +1,4 @@
-import { userTypeEnum } from '$lib/enums.js'
+import { userTypeEnum } from '$lib/enums.js';
 import {
 	getActiveTimetableDraftConstraintsByTimetableDraftId,
 	getAllStudentGroupsByTimetableDraftId,
@@ -13,34 +13,34 @@ import {
 	getTimetableDraftPeriodsByTimetableDraftId,
 	getTimetableQueueByTimetableId,
 	getUsersBySchoolIdAndType,
-} from '$lib/server/db/service'
-import { fail } from '@sveltejs/kit'
-import { processTimetableQueue } from '../../../../../../../scripts/process/timetable.js'
-import { buildFETInput } from './utils.js'
+} from '$lib/server/db/service';
+import { fail } from '@sveltejs/kit';
+import { processTimetableQueue } from '../../../../../../../scripts/process/timetable.js';
+import { buildFETInput } from './utils.js';
 
 export const load = async ({ params, locals: { security }, depends }) => {
-	security.isAuthenticated().isAdmin()
+	security.isAuthenticated().isAdmin();
 
-	const timetableId = parseInt(params.timetableId, 10)
+	const timetableId = parseInt(params.timetableId, 10);
 	if (isNaN(timetableId)) {
-		return fail(400, { error: 'Invalid timetable ID' })
+		return fail(400, { error: 'Invalid timetable ID' });
 	}
 
-	depends('app:queue')
-	const queueEntries = await getTimetableQueueByTimetableId(timetableId)
+	depends('app:queue');
+	const queueEntries = await getTimetableQueueByTimetableId(timetableId);
 
-	return { queueEntries }
-}
+	return { queueEntries };
+};
 
 export const actions = {
 	generateTimetable: async ({ params, locals: { security }, fetch }) => {
-		security.isAuthenticated().isAdmin()
+		security.isAuthenticated().isAdmin();
 
-		const user = security.getUser()
-		const timetableId = parseInt(params.timetableId, 10)
+		const user = security.getUser();
+		const timetableId = parseInt(params.timetableId, 10);
 		const draft = await getTimetableDraftById(
 			parseInt(params.timetableDraftId, 10),
-		)
+		);
 
 		try {
 			const [
@@ -67,7 +67,7 @@ export const actions = {
 				getSubjectsBySchoolId(user.schoolId),
 				getSchoolById(user.schoolId),
 				getActiveTimetableDraftConstraintsByTimetableDraftId(draft.id),
-			])
+			]);
 
 			const xmlContent = await buildFETInput({
 				timetableDays,
@@ -81,7 +81,7 @@ export const actions = {
 				subjects,
 				school,
 				activeConstraints,
-			})
+			});
 
 			// Call the FET API to generate the timetable
 			try {
@@ -93,50 +93,50 @@ export const actions = {
 						draft,
 						fetXmlContent: xmlContent,
 					}),
-				})
+				});
 
 				if (!response.ok) {
-					const errorData = await response.json()
-					throw new Error(errorData.message || 'Failed to generate timetable')
+					const errorData = await response.json();
+					throw new Error(errorData.message || 'Failed to generate timetable');
 				}
 
-				const result = await response.json()
+				const result = await response.json();
 				return {
 					success: true,
 					message:
 						result.message ||
 						'Timetable generation has been queued successfully',
-				}
+				};
 			} catch (apiError) {
-				console.error('Error calling FET API:', apiError)
+				console.error('Error calling FET API:', apiError);
 				// Fallback to manual queue entry if API call fails
 				// await createTimetableQueueEntry(timetableId, user.id, uniqueFileName);
 				return {
 					success: true,
 					message: 'Timetable data queued for processing (fallback mode)',
-				}
+				};
 			}
 		} catch (error) {
-			console.error('Error generating timetable XML:', error)
+			console.error('Error generating timetable XML:', error);
 			return fail(500, {
 				error:
 					'Failed to generate timetable. Please ensure all required data is configured.',
-			})
+			});
 		}
 	},
 	processQueue: async ({ locals: { security } }) => {
-		security.isAuthenticated().isAdmin()
+		security.isAuthenticated().isAdmin();
 
 		try {
 			// Trigger the queue processor
 			processTimetableQueue().catch((err: Error) => {
-				console.error('Background processing error:', err)
-			})
+				console.error('Background processing error:', err);
+			});
 
-			return { success: true, message: 'Queue processing started' }
+			return { success: true, message: 'Queue processing started' };
 		} catch (error) {
-			console.error('Error starting queue processor:', error)
-			return fail(500, { error: 'Failed to start queue processing' })
+			console.error('Error starting queue processor:', error);
+			return fail(500, { error: 'Failed to start queue processing' });
 		}
 	},
-}
+};

@@ -1,3 +1,3 @@
 export const load = async ({ locals: { security } }) => {
-	security.isAuthenticated().isAdmin()
-}
+	security.isAuthenticated().isAdmin();
+};

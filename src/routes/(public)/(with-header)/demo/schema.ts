@@ -1,4 +1,4 @@
-import { z } from 'zod'
+import { z } from 'zod';
 
 export const formSchema = z.object({
 	firstName: z.string().min(1, { message: 'First name is required' }),
@@ -7,6 +7,6 @@ export const formSchema = z.object({
 		.email({ message: 'Please enter a valid email address' })
 		.toLowerCase(),
 	schoolName: z.string().min(1, { message: 'School name is required' }),
-})
+});
 
-export type FormSchema = typeof formSchema
+export type FormSchema = typeof formSchema;

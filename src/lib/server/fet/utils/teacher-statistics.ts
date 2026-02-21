@@ -1,35 +1,35 @@
-import { db } from '$lib/server/db/index'
-import { and, eq, inArray } from 'drizzle-orm'
-import * as table from '../../db/schema'
-import { user } from '../../db/schema/user'
-import type { ClassAllocation } from './student-statistics'
+import { db } from '$lib/server/db/index';
+import { and, eq, inArray } from 'drizzle-orm';
+import * as table from '../../db/schema';
+import { user } from '../../db/schema/user';
+import type { ClassAllocation } from './student-statistics';
 
 /**
  * Represents a teacher's class assignments with allocations
  */
 export type TeacherAssignment = {
-	userId: string
-	userName: string
-	userType: string
-	fetSubjectOfferingClassId: number
-	allocations: ClassAllocation[]
-}
+	userId: string;
+	userName: string;
+	userType: string;
+	fetSubjectOfferingClassId: number;
+	allocations: ClassAllocation[];
+};
 
 /**
  * Teacher statistics for display/analysis
  */
 export type TeacherStatistic = {
-	userId: string
-	userName: string
-	userType: string
-	numberOfAssignedClasses: number
-	totalHoursPerCycle: number
-	averageHoursPerDay: number
-	maxHoursPerDay: number
-	minHoursPerDay: number
-	numberOfFreeDays: number
-	dailyHours: Record<number, number>
-}
+	userId: string;
+	userName: string;
+	userType: string;
+	numberOfAssignedClasses: number;
+	totalHoursPerCycle: number;
+	averageHoursPerDay: number;
+	maxHoursPerDay: number;
+	minHoursPerDay: number;
+	numberOfFreeDays: number;
+	dailyHours: Record<number, number>;
+};
 
 /**
  * Fetches all teachers assigned to FET classes for a given timetable draft
@@ -46,13 +46,13 @@ export async function getTeacherAssignmentsWithAllocations(
 				eq(table.fetSubjectOfferingClass.timetableDraftId, timetableDraftId),
 				eq(table.fetSubjectOfferingClass.isArchived, false),
 			),
-		)
+		);
 
 	if (fetClasses.length === 0) {
-		return []
+		return [];
 	}
 
-	const fetClassIds = fetClasses.map((c) => c.id)
+	const fetClassIds = fetClasses.map((c) => c.id);
 
 	// Get all users (teachers) assigned to these classes
 	const teachersInClasses = await db
@@ -73,7 +73,7 @@ export async function getTeacherAssignmentsWithAllocations(
 				),
 				eq(table.fetSubjectOfferingClassUser.isArchived, false),
 			),
-		)
+		);
 
 	// Get all allocations for these classes
 	const allocations = await db
@@ -108,23 +108,23 @@ export async function getTeacherAssignmentsWithAllocations(
 				),
 				eq(table.fetSubjectClassAllocation.isArchived, false),
 			),
-		)
+		);
 
 	// Get end times for allocations
-	const endPeriodIds = [...new Set(allocations.map((a) => a.endPeriodId))]
+	const endPeriodIds = [...new Set(allocations.map((a) => a.endPeriodId))];
 	const endPeriods = await db
 		.select({ id: table.timetablePeriod.id, end: table.timetablePeriod.end })
 		.from(table.timetablePeriod)
-		.where(inArray(table.timetablePeriod.id, endPeriodIds))
+		.where(inArray(table.timetablePeriod.id, endPeriodIds));
 
-	const endPeriodMap = new Map(endPeriods.map((p) => [p.id, p.end]))
+	const endPeriodMap = new Map(endPeriods.map((p) => [p.id, p.end]));
 
 	// Build assignment objects
-	const assignmentMap = new Map<string, TeacherAssignment>()
+	const assignmentMap = new Map<string, TeacherAssignment>();
 
 	for (const teacherClass of teachersInClasses) {
-		const key = `${teacherClass.userId}-${teacherClass.fetSubOffClassId}`
-		const userName = `${teacherClass.firstName} ${teacherClass.lastName}`
+		const key = `${teacherClass.userId}-${teacherClass.fetSubOffClassId}`;
+		const userName = `${teacherClass.firstName} ${teacherClass.lastName}`;
 
 		if (!assignmentMap.has(key)) {
 			assignmentMap.set(key, {
@@ -133,22 +133,22 @@ export async function getTeacherAssignmentsWithAllocations(
 				userType: teacherClass.userType,
 				fetSubjectOfferingClassId: teacherClass.fetSubOffClassId,
 				allocations: [],
-			})
+			});
 		}
 
-		const assignment = assignmentMap.get(key)!
+		const assignment = assignmentMap.get(key)!;
 
 		// Add allocations for this class
 		const classAllocations = allocations.filter(
 			(a) => a.fetSubOffClassId === teacherClass.fetSubOffClassId,
-		)
+		);
 
 		for (const alloc of classAllocations) {
-			const actualEndTime = endPeriodMap.get(alloc.endPeriodId) || alloc.end
+			const actualEndTime = endPeriodMap.get(alloc.endPeriodId) || alloc.end;
 			const durationMinutes = calculateDurationMinutes(
 				alloc.start,
 				actualEndTime,
-			)
+			);
 
 			assignment.allocations.push({
 				id: alloc.allocationId,
@@ -159,24 +159,24 @@ export async function getTeacherAssignmentsWithAllocations(
 				start: alloc.start,
 				end: actualEndTime,
 				durationMinutes,
-			})
+			});
 		}
 	}
 
-	return Array.from(assignmentMap.values())
+	return Array.from(assignmentMap.values());
 }
 
 /**
  * Calculates duration in minutes between two time strings (HH:MM:SS format)
  */
 function calculateDurationMinutes(start: string, end: string): number {
-	const [startHour, startMin] = start.split(':').map(Number)
-	const [endHour, endMin] = end.split(':').map(Number)
+	const [startHour, startMin] = start.split(':').map(Number);
+	const [endHour, endMin] = end.split(':').map(Number);
 
-	const startTotalMin = startHour * 60 + startMin
-	const endTotalMin = endHour * 60 + endMin
+	const startTotalMin = startHour * 60 + startMin;
+	const endTotalMin = endHour * 60 + endMin;
 
-	return endTotalMin - startTotalMin
+	return endTotalMin - startTotalMin;
 }
 
 /**
@@ -185,16 +185,16 @@ function calculateDurationMinutes(start: string, end: string): number {
 export function aggregateTeacherAssignments(
 	assignments: TeacherAssignment[],
 ): Map<string, TeacherAssignment[]> {
-	const teacherMap = new Map<string, TeacherAssignment[]>()
+	const teacherMap = new Map<string, TeacherAssignment[]>();
 
 	for (const assignment of assignments) {
 		if (!teacherMap.has(assignment.userId)) {
-			teacherMap.set(assignment.userId, [])
+			teacherMap.set(assignment.userId, []);
 		}
-		teacherMap.get(assignment.userId)!.push(assignment)
+		teacherMap.get(assignment.userId)!.push(assignment);
 	}
 
-	return teacherMap
+	return teacherMap;
 }
 
 /**
@@ -216,56 +216,56 @@ export function calculateTeacherStatistic(
 			minHoursPerDay: 0,
 			numberOfFreeDays: 0,
 			dailyHours: {},
-		}
+		};
 	}
 
 	// Get user info from first assignment
-	const userName = assignments[0].userName
-	const userType = assignments[0].userType
-	const numberOfAssignedClasses = assignments.length
+	const userName = assignments[0].userName;
+	const userType = assignments[0].userType;
+	const numberOfAssignedClasses = assignments.length;
 
 	// Collect all allocations across all classes
-	const allAllocations: ClassAllocation[] = []
+	const allAllocations: ClassAllocation[] = [];
 	for (const assignment of assignments) {
-		allAllocations.push(...assignment.allocations)
+		allAllocations.push(...assignment.allocations);
 	}
 
 	// Calculate daily hours
-	const dailyHours = new Map<number, number>()
-	const dailyMinutes = new Map<number, number>()
+	const dailyHours = new Map<number, number>();
+	const dailyMinutes = new Map<number, number>();
 
 	for (const allocation of allAllocations) {
-		const currentMinutes = dailyMinutes.get(allocation.dayNumber) || 0
+		const currentMinutes = dailyMinutes.get(allocation.dayNumber) || 0;
 		dailyMinutes.set(
 			allocation.dayNumber,
 			currentMinutes + allocation.durationMinutes,
-		)
+		);
 	}
 
 	// Convert minutes to hours
 	for (const [day, minutes] of dailyMinutes.entries()) {
-		dailyHours.set(day, minutes / 60)
+		dailyHours.set(day, minutes / 60);
 	}
 
 	// Get all unique days in the cycle
-	const allDays = new Set(allAllocations.map((a) => a.dayNumber))
-	const uniqueDays = Array.from(allDays).sort((a, b) => a - b)
+	const allDays = new Set(allAllocations.map((a) => a.dayNumber));
+	const uniqueDays = Array.from(allDays).sort((a, b) => a - b);
 
 	// Calculate statistics
-	const hoursPerDay = Array.from(dailyHours.values())
-	const totalHoursPerCycle = hoursPerDay.reduce((sum, hours) => sum + hours, 0)
+	const hoursPerDay = Array.from(dailyHours.values());
+	const totalHoursPerCycle = hoursPerDay.reduce((sum, hours) => sum + hours, 0);
 
 	// Calculate average only for days with classes
-	const daysWithClasses = hoursPerDay.length
+	const daysWithClasses = hoursPerDay.length;
 	const averageHoursPerDay =
-		daysWithClasses > 0 ? totalHoursPerCycle / daysWithClasses : 0
+		daysWithClasses > 0 ? totalHoursPerCycle / daysWithClasses : 0;
 
-	const maxHoursPerDay = hoursPerDay.length > 0 ? Math.max(...hoursPerDay) : 0
-	const minHoursPerDay = hoursPerDay.length > 0 ? Math.min(...hoursPerDay) : 0
+	const maxHoursPerDay = hoursPerDay.length > 0 ? Math.max(...hoursPerDay) : 0;
+	const minHoursPerDay = hoursPerDay.length > 0 ? Math.min(...hoursPerDay) : 0;
 
 	// Determine the total number of days in the cycle based on the highest day number
-	const maxDayInCycle = uniqueDays.length > 0 ? Math.max(...uniqueDays) : 0
-	const numberOfFreeDays = maxDayInCycle - daysWithClasses
+	const maxDayInCycle = uniqueDays.length > 0 ? Math.max(...uniqueDays) : 0;
+	const numberOfFreeDays = maxDayInCycle - daysWithClasses;
 
 	return {
 		userId,
@@ -278,7 +278,7 @@ export function calculateTeacherStatistic(
 		minHoursPerDay,
 		numberOfFreeDays: numberOfFreeDays > 0 ? numberOfFreeDays : 0,
 		dailyHours: Object.fromEntries(dailyHours),
-	}
+	};
 }
 
 /**
@@ -289,35 +289,35 @@ export async function generateTeacherStatistics(
 ): Promise<TeacherStatistic[]> {
 	// Fetch all assignments with allocations
 	const assignments =
-		await getTeacherAssignmentsWithAllocations(timetableDraftId)
+		await getTeacherAssignmentsWithAllocations(timetableDraftId);
 
 	// Filter only teachers (exclude students)
 	const teacherAssignments = assignments.filter(
 		(a) => a.userType === 'teacher' || a.userType === 'admin',
-	)
+	);
 
 	// Aggregate by teacher
-	const teacherMap = aggregateTeacherAssignments(teacherAssignments)
+	const teacherMap = aggregateTeacherAssignments(teacherAssignments);
 
 	// Calculate statistics for each teacher
-	const statistics: TeacherStatistic[] = []
+	const statistics: TeacherStatistic[] = [];
 	for (const [userId, userAssignments] of teacherMap.entries()) {
-		const statistic = calculateTeacherStatistic(userId, userAssignments)
-		statistics.push(statistic)
+		const statistic = calculateTeacherStatistic(userId, userAssignments);
+		statistics.push(statistic);
 	}
 
 	// Sort by teacher name
-	statistics.sort((a, b) => a.userName.localeCompare(b.userName))
+	statistics.sort((a, b) => a.userName.localeCompare(b.userName));
 
-	return statistics
+	return statistics;
 }
 
 /**
  * Helper function to get day name from day number (0 = Monday, 4 = Friday)
  */
 export function getDayName(dayNumber: number): string {
-	const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']
-	return days[dayNumber] || 'Unknown'
+	const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
+	return days[dayNumber] || 'Unknown';
 }
 
 /**
@@ -327,7 +327,7 @@ export function getTeacherScheduleSummary(statistic: TeacherStatistic): string {
 	const days = Object.entries(statistic.dailyHours)
 		.sort(([a], [b]) => Number(a) - Number(b))
 		.map(([day, hours]) => `${getDayName(Number(day))}: ${hours.toFixed(2)}h`)
-		.join(', ')
+		.join(', ');
 
-	return `${statistic.userName} (${statistic.numberOfAssignedClasses} classes): ${days}`
+	return `${statistic.userName} (${statistic.numberOfAssignedClasses} classes): ${days}`;
 }

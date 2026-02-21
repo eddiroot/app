@@ -1,8 +1,8 @@
-import { taskStatusEnum, taskTypeEnum } from '$lib/enums'
-import { eq } from 'drizzle-orm'
-import * as schema from '../../schema'
-import type { Database } from '../types'
-import type { DemoSchoolData, DemoSubjectData, DemoUserData } from './types'
+import { taskStatusEnum, taskTypeEnum } from '$lib/enums';
+import { eq } from 'drizzle-orm';
+import * as schema from '../../schema';
+import type { Database } from '../types';
+import type { DemoSchoolData, DemoSubjectData, DemoUserData } from './types';
 
 // Task templates by subject - 3 blank tasks per class
 const TASK_TEMPLATES: Record<
@@ -111,7 +111,7 @@ const TASK_TEMPLATES: Record<
 			type: taskTypeEnum.test,
 		},
 	],
-}
+};
 
 export async function seedDemoTasks(
 	db: Database,
@@ -119,27 +119,27 @@ export async function seedDemoTasks(
 	userData: DemoUserData,
 	subjectData: DemoSubjectData,
 ): Promise<void> {
-	const { offerings, subjects, subjectGroups, classes } = subjectData
+	const { offerings, subjects, subjectGroups, classes } = subjectData;
 
 	// Process each class
 	for (const cls of classes) {
 		// Find the offering for this class
-		const offering = offerings.find((o) => o.id === cls.subOfferingId)
-		if (!offering) continue
+		const offering = offerings.find((o) => o.id === cls.subOfferingId);
+		if (!offering) continue;
 
 		// Find the subject
-		const subject = subjects.find((s) => s.id === offering.subjectId)
-		if (!subject) continue
+		const subject = subjects.find((s) => s.id === offering.subjectId);
+		if (!subject) continue;
 
 		// Find the core subject to get subject name
 		const subjectGroup = subjectGroups.find(
 			(cs) => cs.id === subject.subjectGroupId,
-		)
-		if (!subjectGroup) continue
+		);
+		if (!subjectGroup) continue;
 
-		const subjectName = subjectGroup.name
-		const templates = TASK_TEMPLATES[subjectName]
-		if (!templates) continue
+		const subjectName = subjectGroup.name;
+		const templates = TASK_TEMPLATES[subjectName];
+		if (!templates) continue;
 
 		// Get the first curriculum item for this offering
 		const curriculumItems = await db
@@ -147,28 +147,28 @@ export async function seedDemoTasks(
 			.from(schema.curriculumItem)
 			.where(eq(schema.curriculumItem.subjectOfferingId, offering.id))
 			.orderBy(schema.curriculumItem.startWeek)
-			.limit(1)
+			.limit(1);
 
-		if (curriculumItems.length === 0) continue
-		const firstCurriculumItem = curriculumItems[0]
+		if (curriculumItems.length === 0) continue;
+		const firstCurriculumItem = curriculumItems[0];
 
 		// Get the teacher for this class
 		const classTeachers = await db
 			.select({ userId: schema.userSubjectOfferingClass.userId })
 			.from(schema.userSubjectOfferingClass)
-			.where(eq(schema.userSubjectOfferingClass.subOffClassId, cls.id))
+			.where(eq(schema.userSubjectOfferingClass.subOffClassId, cls.id));
 
 		// Find the teacher (not a student)
-		const teacherIds = userData.teachers.map((t) => t.id)
+		const teacherIds = userData.teachers.map((t) => t.id);
 		const classTeacher = classTeachers.find((ct) =>
 			teacherIds.includes(ct.userId),
-		)
+		);
 
-		if (!classTeacher) continue
+		if (!classTeacher) continue;
 
 		// Create 3 blank tasks for this class linked to the first course map item
 		for (let i = 0; i < templates.length; i++) {
-			const template = templates[i]
+			const template = templates[i];
 
 			// Create the task (linked to offering)
 			const [newTask] = await db
@@ -179,7 +179,7 @@ export async function seedDemoTasks(
 					description: template.description,
 					subjectOfferingId: offering.id,
 				})
-				.returning()
+				.returning();
 
 			// Link task to the class with the course map item
 			await db
@@ -192,7 +192,7 @@ export async function seedDemoTasks(
 					authorId: classTeacher.userId,
 					curriculumItemId: firstCurriculumItem.id,
 					week: firstCurriculumItem.startWeek,
-				})
+				});
 		}
 	}
 }

@@ -1,7 +1,7 @@
-import { env } from '$env/dynamic/private'
-import { Google, MicrosoftEntraId } from 'arctic'
+import { env } from '$env/dynamic/private';
+import { Google, MicrosoftEntraId } from 'arctic';
 
-const isProd = env.APP_ENV === 'production'
+const isProd = env.APP_ENV === 'production';
 
 export const google = new Google(
 	env.GOOGLE_CLIENT_ID,
@@ -9,7 +9,7 @@ export const google = new Google(
 	isProd
 		? 'https://eddi.com.au/login/google/callback'
 		: 'http://localhost:5173/login/google/callback',
-)
+);
 
 export const microsoft = new MicrosoftEntraId(
 	env.MICROSOFT_TENANT_ID,
@@ -18,4 +18,4 @@ export const microsoft = new MicrosoftEntraId(
 	isProd
 		? 'https://eddi.com.au/login/microsoft/callback'
 		: 'http://localhost:5173/login/microsoft/callback',
-)
+);

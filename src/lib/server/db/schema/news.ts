@@ -7,36 +7,36 @@ import {
 	primaryKey,
 	text,
 	uuid,
-} from 'drizzle-orm/pg-core'
+} from 'drizzle-orm/pg-core';
 import {
 	newsPriorityEnum,
 	newsStatusEnum,
 	newsVisibilityEnum,
-} from '../../../enums'
-import { resource } from './resource'
-import { school, schoolCampus } from './school'
-import { user } from './user'
+} from '../../../enums';
+import { resource } from './resource';
+import { school, schoolCampus } from './school';
+import { user } from './user';
 import {
 	enumToPgEnum,
 	essentials,
 	essentialsNoId,
 	standardTimestamp,
-} from './utils'
+} from './utils';
 
-export const newsSchema = pgSchema('news')
+export const newsSchema = pgSchema('news');
 
 export const newsPriorityEnumPg = newsSchema.enum(
 	'enum_news_priority',
 	enumToPgEnum(newsPriorityEnum),
-)
+);
 export const newsStatusEnumPg = newsSchema.enum(
 	'enum_news_status',
 	enumToPgEnum(newsStatusEnum),
-)
+);
 export const newsVisibilityEnumPg = newsSchema.enum(
 	'enum_news_visibility',
 	enumToPgEnum(newsVisibilityEnum),
-)
+);
 
 export const newsCategory = newsSchema.table(
 	'news_category',
@@ -50,9 +50,9 @@ export const newsCategory = newsSchema.table(
 			.references(() => school.id, { onDelete: 'cascade' }),
 	},
 	(self) => [index().on(self.schoolId)],
-)
+);
 
-export type NewsCategory = typeof newsCategory.$inferSelect
+export type NewsCategory = typeof newsCategory.$inferSelect;
 
 export const news = newsSchema.table(
 	'news',
@@ -90,9 +90,9 @@ export const news = newsSchema.table(
 		index().on(self.categoryId),
 		index().on(self.authorId),
 	],
-)
+);
 
-export type News = typeof news.$inferSelect
+export type News = typeof news.$inferSelect;
 
 // Junction table for news resources (attachments, documents, etc.)
 export const newsResource = newsSchema.table(
@@ -116,6 +116,6 @@ export const newsResource = newsSchema.table(
 		index().on(self.resourceId),
 		index().on(self.authorId),
 	],
-)
+);
 
-export type NewsResource = typeof newsResource.$inferSelect
+export type NewsResource = typeof newsResource.$inferSelect;

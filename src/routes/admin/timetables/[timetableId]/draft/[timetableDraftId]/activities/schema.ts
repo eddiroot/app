@@ -1,4 +1,4 @@
-import { z } from 'zod'
+import { z } from 'zod';
 
 export const createActivitySchema = z.object({
 	subjectOfferingId: z.number().int().positive('Subject is required'),
@@ -15,7 +15,7 @@ export const createActivitySchema = z.object({
 		.number()
 		.int()
 		.min(1, 'At least one period per instance is required'),
-})
+});
 
 export const editActivitySchema = z.object({
 	activityId: z.number().min(1, 'Activity ID is required'),
@@ -33,10 +33,10 @@ export const editActivitySchema = z.object({
 		.number()
 		.int()
 		.min(1, 'At least one period per instance is required'),
-})
+});
 
-export const deleteActivitySchema = z.object({ activityId: z.coerce.number() })
+export const deleteActivitySchema = z.object({ activityId: z.coerce.number() });
 
-export type CreateActivitySchema = typeof createActivitySchema
-export type EditActivitySchema = typeof editActivitySchema
-export type DeleteActivitySchema = typeof deleteActivitySchema
+export type CreateActivitySchema = typeof createActivitySchema;
+export type EditActivitySchema = typeof editActivitySchema;
+export type DeleteActivitySchema = typeof deleteActivitySchema;
