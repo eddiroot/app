@@ -1,7 +1,7 @@
-import { userTypeEnum } from '$lib/enums'
-import { db } from '$lib/server/db'
-import * as table from '$lib/server/db/schema'
-import { and, asc, desc, eq, gte, lte } from 'drizzle-orm'
+import { userTypeEnum } from '$lib/enums';
+import { db } from '$lib/server/db';
+import * as table from '$lib/server/db/schema';
+import { and, asc, desc, eq, gte, lte } from 'drizzle-orm';
 
 export async function getSubjectOfferingClassDetailsById(
 	subjectOfferingClassId: number,
@@ -27,9 +27,9 @@ export async function getSubjectOfferingClassDetailsById(
 			eq(table.subjectGroup.id, table.subject.subjectGroupId),
 		)
 		.where(eq(table.subjectOfferingClass.id, subjectOfferingClassId))
-		.limit(1)
+		.limit(1);
 
-	return subjectOfferingClass?.length ? subjectOfferingClass[0] : null
+	return subjectOfferingClass?.length ? subjectOfferingClass[0] : null;
 }
 
 export async function getSubjectClassAllocationsByUserId(userId: string) {
@@ -76,18 +76,18 @@ export async function getSubjectClassAllocationsByUserId(userId: string) {
 			),
 		)
 		.where(eq(table.userSubjectOfferingClass.userId, userId))
-		.orderBy(desc(table.subjectClassAllocation.start))
+		.orderBy(desc(table.subjectClassAllocation.start));
 
-	return classAllocations
+	return classAllocations;
 }
 
 export async function getSubjectClassAllocationsByUserIdForToday(
 	userId: string,
 ) {
-	const startOfDay = new Date()
-	startOfDay.setHours(0, 0, 0, 0)
-	const endOfDay = new Date()
-	endOfDay.setHours(23, 59, 59, 999)
+	const startOfDay = new Date();
+	startOfDay.setHours(0, 0, 0, 0);
+	const endOfDay = new Date();
+	endOfDay.setHours(23, 59, 59, 999);
 	const classAllocation = await db
 		.select({
 			classAllocation: table.subjectClassAllocation,
@@ -137,9 +137,9 @@ export async function getSubjectClassAllocationsByUserIdForToday(
 				lte(table.subjectClassAllocation.start, endOfDay),
 			),
 		)
-		.orderBy(table.subjectClassAllocation.start) // Order by start time (earliest first) for today's schedule
+		.orderBy(table.subjectClassAllocation.start); // Order by start time (earliest first) for today's schedule
 
-	return classAllocation
+	return classAllocation;
 }
 
 export async function getAttendanceComponentsByAttendanceId(
@@ -154,9 +154,9 @@ export async function getAttendanceComponentsByAttendanceId(
 				attendanceId,
 			),
 		)
-		.orderBy(table.subjectClassAllocationAttendanceComponent.start)
+		.orderBy(table.subjectClassAllocationAttendanceComponent.start);
 
-	return components
+	return components;
 }
 
 export async function updateAttendanceComponents(
@@ -169,18 +169,18 @@ export async function updateAttendanceComponents(
 				.set({ start: component.start, end: component.end })
 				.where(
 					eq(table.subjectClassAllocationAttendanceComponent.id, component.id),
-				)
+				);
 		}
-	})
+	});
 }
 
 export async function getSubjectClassAllocationAndStudentAttendancesByClassIdForToday(
 	subjectOfferingClassId: number,
 ) {
-	const startOfDay = new Date()
-	startOfDay.setHours(0, 0, 0, 0)
-	const endOfDay = new Date()
-	endOfDay.setHours(23, 59, 59, 999)
+	const startOfDay = new Date();
+	startOfDay.setHours(0, 0, 0, 0);
+	const endOfDay = new Date();
+	endOfDay.setHours(23, 59, 59, 999);
 
 	const attendances = await db
 		.select({
@@ -233,9 +233,9 @@ export async function getSubjectClassAllocationAndStudentAttendancesByClassIdFor
 				lte(table.subjectClassAllocation.start, endOfDay),
 			),
 		)
-		.orderBy(table.user.lastName, table.user.firstName)
+		.orderBy(table.user.lastName, table.user.firstName);
 
-	return attendances
+	return attendances;
 }
 
 export async function getClassesForUserInSubjectOffering(
@@ -272,9 +272,9 @@ export async function getClassesForUserInSubjectOffering(
 				eq(table.subjectOfferingClass.subOfferingId, subjectOfferingId),
 			),
 		)
-		.orderBy(desc(table.subjectClassAllocation.start))
+		.orderBy(desc(table.subjectClassAllocation.start));
 
-	return classes
+	return classes;
 }
 
 export async function getGuardiansChildrensScheduleWithAttendanceByUserId(
@@ -340,9 +340,9 @@ export async function getGuardiansChildrensScheduleWithAttendanceByUserId(
 			),
 		)
 		.where(eq(table.userRelationship.relatedUserId, userId))
-		.orderBy(desc(table.subjectClassAllocation.start))
+		.orderBy(desc(table.subjectClassAllocation.start));
 
-	return scheduleWithAttendance
+	return scheduleWithAttendance;
 }
 
 export async function getSubjectOfferingClassByAllocationId(
@@ -371,9 +371,9 @@ export async function getSubjectOfferingClassByAllocationId(
 			eq(table.subjectOffering.subjectId, table.subject.id),
 		)
 		.where(eq(table.subjectClassAllocation.id, allocationId))
-		.limit(1)
+		.limit(1);
 
-	return result?.length ? result[0] : null
+	return result?.length ? result[0] : null;
 }
 
 export async function getSubjectOfferingClassesBySchoolId(schoolId: number) {
@@ -407,9 +407,9 @@ export async function getSubjectOfferingClassesBySchoolId(schoolId: number) {
 			asc(table.subject.name),
 			asc(table.subjectOfferingClass.name),
 			asc(table.subjectOffering.year),
-		)
+		);
 
-	return classes
+	return classes;
 }
 
 export async function getAllocationsBySchoolId(schoolId: number) {
@@ -470,24 +470,24 @@ export async function getAllocationsBySchoolId(schoolId: number) {
 			asc(table.subjectOfferingClass.name),
 			asc(table.user.lastName),
 			asc(table.user.firstName),
-		)
+		);
 
-	return allocations
+	return allocations;
 }
 
 export async function archiveUserSubjectOfferingClass(allocationId: number) {
 	await db
 		.update(table.userSubjectOfferingClass)
 		.set({ isArchived: true })
-		.where(eq(table.userSubjectOfferingClass.id, allocationId))
+		.where(eq(table.userSubjectOfferingClass.id, allocationId));
 }
 
 export async function getStudentAttendanceHistoryForClass(
 	studentId: string,
 	subjectOfferingClassId: number,
 ) {
-	const endOfDay = new Date()
-	endOfDay.setHours(23, 59, 59, 999)
+	const endOfDay = new Date();
+	endOfDay.setHours(23, 59, 59, 999);
 
 	const attendanceHistory = await db
 		.select({
@@ -523,9 +523,9 @@ export async function getStudentAttendanceHistoryForClass(
 				lte(table.subjectClassAllocation.start, endOfDay),
 			),
 		)
-		.orderBy(desc(table.subjectClassAllocation.start))
+		.orderBy(desc(table.subjectClassAllocation.start));
 
-	return attendanceHistory
+	return attendanceHistory;
 }
 
 export async function getStudentsBySubjectOfferingClassId(
@@ -554,9 +554,9 @@ export async function getStudentsBySubjectOfferingClassId(
 				eq(table.userSubjectOfferingClass.isArchived, false),
 			),
 		)
-		.orderBy(asc(table.user.lastName), asc(table.user.firstName))
+		.orderBy(asc(table.user.lastName), asc(table.user.firstName));
 
-	return students
+	return students;
 }
 
 export async function getUserSubjectOfferingClassByUserAndClass(
@@ -575,7 +575,7 @@ export async function getUserSubjectOfferingClassByUserAndClass(
 				),
 			),
 		)
-		.limit(1)
+		.limit(1);
 
-	return userClass
+	return userClass;
 }

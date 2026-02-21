@@ -1,12 +1,12 @@
-import { constraintTypeEnum } from '$lib/enums'
+import { constraintTypeEnum } from '$lib/enums';
 
 export interface ConstraintDefinition {
-	fetName: string
-	friendlyName: string
-	description: string
-	type: constraintTypeEnum
-	optional: boolean // whether this constraint is optional or mandatory, null if uncertain
-	repeatable: boolean // whether this constraint can be added multiple times, null if uncertain
+	fetName: string;
+	friendlyName: string;
+	description: string;
+	type: constraintTypeEnum;
+	optional: boolean; // whether this constraint is optional or mandatory, null if uncertain
+	repeatable: boolean; // whether this constraint can be added multiple times, null if uncertain
 }
 
 export const TIME_CONSTRAINTS: ConstraintDefinition[] = [
@@ -580,7 +580,7 @@ export const TIME_CONSTRAINTS: ConstraintDefinition[] = [
 		optional: false,
 		repeatable: true,
 	},
-]
+];
 
 export const SPACE_CONSTRAINTS: ConstraintDefinition[] = [
 	{
@@ -767,6 +767,6 @@ export const SPACE_CONSTRAINTS: ConstraintDefinition[] = [
 		optional: false,
 		repeatable: true,
 	},
-]
+];
 
-export const ALL_CONSTRAINTS = [...TIME_CONSTRAINTS, ...SPACE_CONSTRAINTS]
+export const ALL_CONSTRAINTS = [...TIME_CONSTRAINTS, ...SPACE_CONSTRAINTS];

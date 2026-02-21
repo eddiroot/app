@@ -1,28 +1,28 @@
 import {
 	subjectThreadResponseTypeEnum,
 	subjectThreadTypeEnum,
-} from '$lib/enums'
-import { eq } from 'drizzle-orm'
-import * as schema from '../../schema'
-import type { Database } from '../types'
-import type { DemoSchoolData, DemoSubjectData, DemoUserData } from './types'
+} from '$lib/enums';
+import { eq } from 'drizzle-orm';
+import * as schema from '../../schema';
+import type { Database } from '../types';
+import type { DemoSchoolData, DemoSubjectData, DemoUserData } from './types';
 
 // Seeded random number generator for consistent results
 function seededRandom(seed: number): () => number {
 	return function () {
-		seed = (seed * 1103515245 + 12345) & 0x7fffffff
-		return seed / 0x7fffffff
-	}
+		seed = (seed * 1103515245 + 12345) & 0x7fffffff;
+		return seed / 0x7fffffff;
+	};
 }
 
 // Fisher-Yates shuffle with seeded random
 function shuffle<T>(array: T[], random: () => number): T[] {
-	const result = [...array]
+	const result = [...array];
 	for (let i = result.length - 1; i > 0; i--) {
-		const j = Math.floor(random() * (i + 1))
-		;[result[i], result[j]] = [result[j], result[i]]
+		const j = Math.floor(random() * (i + 1));
+		[result[i], result[j]] = [result[j], result[i]];
 	}
-	return result
+	return result;
 }
 
 // Thread content templates by subject and type
@@ -246,7 +246,7 @@ const THREAD_TEMPLATES: Record<
 			},
 		],
 	},
-}
+};
 
 // Response templates for different thread types
 const RESPONSE_TEMPLATES = {
@@ -292,7 +292,7 @@ const RESPONSE_TEMPLATES = {
 		"That's a fair point. In my experience though...",
 		'Building on what you said...',
 	],
-}
+};
 
 // Teacher announcement templates
 const TEACHER_ANNOUNCEMENTS: Record<
@@ -371,7 +371,7 @@ const TEACHER_ANNOUNCEMENTS: Record<
 				'Our map skills assessment is scheduled for Friday. Please review grid references, scale calculations, and compass directions. Practice maps are available online.',
 		},
 	],
-}
+};
 
 export async function seedDemoThreads(
 	db: Database,
@@ -379,8 +379,8 @@ export async function seedDemoThreads(
 	userData: DemoUserData,
 	subjectData: DemoSubjectData,
 ): Promise<void> {
-	const random = seededRandom(99999)
-	const { offerings, subjects, subjectGroups } = subjectData
+	const random = seededRandom(99999);
+	const { offerings, subjects, subjectGroups } = subjectData;
 
 	// Get students enrolled in each offering
 	const getStudentsInOffering = async (
@@ -389,11 +389,11 @@ export async function seedDemoThreads(
 		const enrollments = await db
 			.select()
 			.from(schema.userSubjectOffering)
-			.where(eq(schema.userSubjectOffering.subOfferingId, offeringId))
+			.where(eq(schema.userSubjectOffering.subOfferingId, offeringId));
 
-		const studentIds = enrollments.map((e) => e.userId)
-		return userData.students.filter((s) => studentIds.includes(s.id))
-	}
+		const studentIds = enrollments.map((e) => e.userId);
+		return userData.students.filter((s) => studentIds.includes(s.id));
+	};
 
 	// Get teachers for an offering
 	const getTeachersInOffering = async (
@@ -402,42 +402,42 @@ export async function seedDemoThreads(
 		const enrollments = await db
 			.select()
 			.from(schema.userSubjectOffering)
-			.where(eq(schema.userSubjectOffering.subOfferingId, offeringId))
+			.where(eq(schema.userSubjectOffering.subOfferingId, offeringId));
 
-		const teacherIds = enrollments.map((e) => e.userId)
-		return userData.teachers.filter((t) => teacherIds.includes(t.id))
-	}
+		const teacherIds = enrollments.map((e) => e.userId);
+		return userData.teachers.filter((t) => teacherIds.includes(t.id));
+	};
 
 	for (const offering of offerings) {
-		const subject = subjects.find((s) => s.id === offering.subjectId)
-		if (!subject) continue
+		const subject = subjects.find((s) => s.id === offering.subjectId);
+		if (!subject) continue;
 
 		const subjectGroup = subjectGroups.find(
 			(cs) => cs.id === subject.subjectGroupId,
-		)
-		if (!subjectGroup) continue
+		);
+		if (!subjectGroup) continue;
 
-		const subjectName = subjectGroup.name
-		const templates = THREAD_TEMPLATES[subjectName]
-		const announcements = TEACHER_ANNOUNCEMENTS[subjectName]
-		if (!templates || !announcements) continue
+		const subjectName = subjectGroup.name;
+		const templates = THREAD_TEMPLATES[subjectName];
+		const announcements = TEACHER_ANNOUNCEMENTS[subjectName];
+		if (!templates || !announcements) continue;
 
-		const studentsInOffering = await getStudentsInOffering(offering.id)
-		const teachersInOffering = await getTeachersInOffering(offering.id)
+		const studentsInOffering = await getStudentsInOffering(offering.id);
+		const teachersInOffering = await getTeachersInOffering(offering.id);
 
-		if (studentsInOffering.length === 0) continue
+		if (studentsInOffering.length === 0) continue;
 
-		const shuffledStudents = shuffle(studentsInOffering, random)
+		const shuffledStudents = shuffle(studentsInOffering, random);
 
 		// Create 1-2 discussions per offering
-		const numDiscussions = 1 + Math.floor(random() * 2)
+		const numDiscussions = 1 + Math.floor(random() * 2);
 		for (
 			let i = 0;
 			i < numDiscussions && i < templates.discussion.length;
 			i++
 		) {
-			const template = templates.discussion[i]
-			const author = shuffledStudents[i % shuffledStudents.length]
+			const template = templates.discussion[i];
+			const author = shuffledStudents[i % shuffledStudents.length];
 
 			const [thread] = await db
 				.insert(schema.subjectThread)
@@ -449,14 +449,14 @@ export async function seedDemoThreads(
 					content: template.content,
 					isAnonymous: random() < 0.1, // 10% anonymous
 				})
-				.returning()
+				.returning();
 
 			// Add 3-6 responses from different students
-			const numResponses = 3 + Math.floor(random() * 4)
+			const numResponses = 3 + Math.floor(random() * 4);
 			const responders = shuffle(
 				shuffledStudents.filter((s) => s.id !== author.id),
 				random,
-			).slice(0, numResponses)
+			).slice(0, numResponses);
 
 			for (const responder of responders) {
 				const responseType =
@@ -464,11 +464,11 @@ export async function seedDemoThreads(
 						? 'agreement'
 						: random() < 0.6
 							? 'discussion'
-							: 'encouragement'
+							: 'encouragement';
 				const responseContent =
 					RESPONSE_TEMPLATES[responseType][
 						Math.floor(random() * RESPONSE_TEMPLATES[responseType].length)
-					]
+					];
 
 				await db.insert(schema.subjectThreadResponse).values({
 					type: subjectThreadResponseTypeEnum.comment,
@@ -476,24 +476,24 @@ export async function seedDemoThreads(
 					userId: responder.id,
 					content: responseContent,
 					isAnonymous: random() < 0.05, // 5% anonymous
-				})
+				});
 			}
 
 			// Add some likes to the thread
-			const numLikes = Math.floor(random() * 8) + 2
-			const likers = shuffle(shuffledStudents, random).slice(0, numLikes)
+			const numLikes = Math.floor(random() * 8) + 2;
+			const likers = shuffle(shuffledStudents, random).slice(0, numLikes);
 			for (const liker of likers) {
 				await db
 					.insert(schema.subjectThreadLike)
-					.values({ subjectThreadId: thread.id, userId: liker.id })
+					.values({ subjectThreadId: thread.id, userId: liker.id });
 			}
 		}
 
 		// Create 1-2 questions per offering
-		const numQuestions = 1 + Math.floor(random() * 2)
+		const numQuestions = 1 + Math.floor(random() * 2);
 		for (let i = 0; i < numQuestions && i < templates.question.length; i++) {
-			const template = templates.question[i]
-			const author = shuffledStudents[(i + 3) % shuffledStudents.length]
+			const template = templates.question[i];
+			const author = shuffledStudents[(i + 3) % shuffledStudents.length];
 
 			const [thread] = await db
 				.insert(schema.subjectThread)
@@ -505,23 +505,23 @@ export async function seedDemoThreads(
 					content: template.content,
 					isAnonymous: random() < 0.15, // 15% anonymous for questions
 				})
-				.returning()
+				.returning();
 
 			// Add 2-5 helpful responses (answers)
-			const numResponses = 2 + Math.floor(random() * 4)
+			const numResponses = 2 + Math.floor(random() * 4);
 			const responders = shuffle(
 				shuffledStudents.filter((s) => s.id !== author.id),
 				random,
-			).slice(0, numResponses)
+			).slice(0, numResponses);
 
 			for (let j = 0; j < responders.length; j++) {
-				const responder = responders[j]
+				const responder = responders[j];
 				const responseType =
-					j === 0 ? 'helpful' : random() < 0.5 ? 'helpful' : 'followUp'
+					j === 0 ? 'helpful' : random() < 0.5 ? 'helpful' : 'followUp';
 				const responseContent =
 					RESPONSE_TEMPLATES[responseType][
 						Math.floor(random() * RESPONSE_TEMPLATES[responseType].length)
-					]
+					];
 
 				const [response] = await db
 					.insert(schema.subjectThreadResponse)
@@ -532,14 +532,14 @@ export async function seedDemoThreads(
 						content: responseContent,
 						isAnonymous: false,
 					})
-					.returning()
+					.returning();
 
 				// Add follow-up response from original author
 				if (j === 0 && random() < 0.7) {
 					const followUpContent =
 						RESPONSE_TEMPLATES.followUp[
 							Math.floor(random() * RESPONSE_TEMPLATES.followUp.length)
-						]
+						];
 
 					await db
 						.insert(schema.subjectThreadResponse)
@@ -550,20 +550,20 @@ export async function seedDemoThreads(
 							content: followUpContent,
 							parentResponseId: response.id,
 							isAnonymous: false,
-						})
+						});
 				}
 
 				// Add likes to helpful responses
 				if (responseType === 'helpful') {
-					const numLikes = Math.floor(random() * 5) + 1
-					const likers = shuffle(shuffledStudents, random).slice(0, numLikes)
+					const numLikes = Math.floor(random() * 5) + 1;
+					const likers = shuffle(shuffledStudents, random).slice(0, numLikes);
 					for (const liker of likers) {
 						await db
 							.insert(schema.subjectThreadResponseLike)
 							.values({
 								subjectThreadResponseId: response.id,
 								userId: liker.id,
-							})
+							});
 					}
 				}
 			}
@@ -571,9 +571,9 @@ export async function seedDemoThreads(
 
 		// Create teacher announcements (1 per offering)
 		if (teachersInOffering.length > 0 && announcements.length > 0) {
-			const teacher = teachersInOffering[0]
-			const announcementIndex = Math.floor(random() * announcements.length)
-			const announcement = announcements[announcementIndex]
+			const teacher = teachersInOffering[0];
+			const announcementIndex = Math.floor(random() * announcements.length);
+			const announcement = announcements[announcementIndex];
 
 			const [thread] = await db
 				.insert(schema.subjectThread)
@@ -585,15 +585,15 @@ export async function seedDemoThreads(
 					content: announcement.content,
 					isAnonymous: false,
 				})
-				.returning()
+				.returning();
 
 			// Students might comment on announcements
 			if (random() < 0.6) {
-				const numComments = 1 + Math.floor(random() * 3)
+				const numComments = 1 + Math.floor(random() * 3);
 				const commenters = shuffle(shuffledStudents, random).slice(
 					0,
 					numComments,
-				)
+				);
 
 				const studentComments = [
 					'Thank you for the reminder!',
@@ -604,11 +604,11 @@ export async function seedDemoThreads(
 					"Can't wait for the field trip!",
 					'Will there be extra practice problems available?',
 					'Thanks for posting this!',
-				]
+				];
 
 				for (const commenter of commenters) {
 					const comment =
-						studentComments[Math.floor(random() * studentComments.length)]
+						studentComments[Math.floor(random() * studentComments.length)];
 					await db
 						.insert(schema.subjectThreadResponse)
 						.values({
@@ -617,7 +617,7 @@ export async function seedDemoThreads(
 							userId: commenter.id,
 							content: comment,
 							isAnonymous: false,
-						})
+						});
 				}
 			}
 		}

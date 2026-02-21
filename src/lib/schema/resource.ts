@@ -1,9 +1,9 @@
-import z from 'zod'
+import z from 'zod';
 
-const MIN_KB_COUNT = 10
-const MIN_UPLOAD_SIZE_BYTES = 10_000 // 10KB
-const MAX_MB_COUNT = 10
-const MAX_UPLOAD_SIZE_BYTES = 10_000_000 // 10MB
+const MIN_KB_COUNT = 10;
+const MIN_UPLOAD_SIZE_BYTES = 10_000; // 10KB
+const MAX_MB_COUNT = 10;
+const MAX_UPLOAD_SIZE_BYTES = 10_000_000; // 10MB
 
 const ACCEPTED_FILE_TYPES = [
 	// Images
@@ -50,15 +50,15 @@ const ACCEPTED_FILE_TYPES = [
 	// Compressed Formats
 	{ mime: 'application/zip', extension: 'ZIP' },
 	{ mime: 'application/x-zip-compressed', extension: 'ZIP' },
-]
+];
 
 export function getFileTypeFromMimeType(mimeType: string): string {
-	if (mimeType.startsWith('image/')) return 'image'
-	if (mimeType.startsWith('video/')) return 'video'
-	if (mimeType.startsWith('audio/')) return 'audio'
-	if (mimeType === 'application/pdf') return 'pdf'
-	if (mimeType.includes('document')) return 'document'
-	return 'document'
+	if (mimeType.startsWith('image/')) return 'image';
+	if (mimeType.startsWith('video/')) return 'video';
+	if (mimeType.startsWith('audio/')) return 'audio';
+	if (mimeType === 'application/pdf') return 'pdf';
+	if (mimeType.includes('document')) return 'document';
+	return 'document';
 }
 
 const fileSchema = z
@@ -68,34 +68,34 @@ const fileSchema = z
 	.mime(
 		ACCEPTED_FILE_TYPES.map((t) => t.mime),
 		'File is not one of the accepted types',
-	)
+	);
 
 const filesSchema = z
 	.array(fileSchema)
 	.min(1, 'At least one file is required')
-	.max(10, 'Maximum 10 files allowed')
+	.max(10, 'Maximum 10 files allowed');
 
 const filesOptionalSchema = z.preprocess((val) => {
-	if (!Array.isArray(val)) return undefined
-	const filtered = val.filter((f) => f !== undefined)
-	return filtered.length === 0 ? undefined : filtered
-}, z.array(fileSchema).max(10, 'Maximum 10 files allowed').optional())
+	if (!Array.isArray(val)) return undefined;
+	const filtered = val.filter((f) => f !== undefined);
+	return filtered.length === 0 ? undefined : filtered;
+}, z.array(fileSchema).max(10, 'Maximum 10 files allowed').optional());
 
 const csvSchema = fileSchema.refine(
 	(file) =>
 		file.type === 'text/csv' || file.name.toLowerCase().endsWith('.csv'),
 	{ message: 'File must be a CSV' },
-)
+);
 
 const imageSchema = fileSchema.refine(
 	(file) => file.type.startsWith('image/'),
 	{ message: 'File must be an image' },
-)
+);
 
 const imagesSchema = z
 	.array(imageSchema)
 	.min(1, 'At least one image is required')
-	.max(10, 'Maximum 10 images allowed')
+	.max(10, 'Maximum 10 images allowed');
 
 export {
 	csvSchema,
@@ -104,4 +104,4 @@ export {
 	filesSchema,
 	imageSchema,
 	imagesSchema,
-}
+};
