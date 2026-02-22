@@ -1,6 +1,7 @@
 import type { Server as HTTPServer } from 'http';
 import type { Http2SecureServer } from 'http2';
 import { Server as SocketIOServer } from 'socket.io';
+import { sessionCookieName, validateSessionToken } from './auth/session.js';
 import {
 	clearWhiteboard,
 	deleteWhiteboardObject,
@@ -10,12 +11,31 @@ import {
 	updateWhiteboardObject,
 } from './db/service/task.js';
 
+function parseCookieValue(cookieHeader: string, name: string): string | null {
+	const match = cookieHeader.match(new RegExp(`(?:^|;\\s*)${name}=([^;]*)`));
+	return match ? decodeURIComponent(match[1]) : null;
+}
+
 export function setupWebSocketServer(
 	httpServer: HTTPServer | Http2SecureServer,
 ) {
 	const io = new SocketIOServer(httpServer, {
 		cors: { origin: '*', methods: ['GET', 'POST'] },
 		path: '/socket.io/',
+	});
+
+	io.use(async (socket, next) => {
+		const cookieHeader = socket.handshake.headers.cookie ?? '';
+		const token = parseCookieValue(cookieHeader, sessionCookieName);
+		if (!token) {
+			return next(new Error('Authentication required'));
+		}
+		const { user } = await validateSessionToken(token);
+		if (!user) {
+			return next(new Error('Invalid or expired session'));
+		}
+		(socket.data as { user: typeof user }).user = user;
+		next();
 	});
 
 	io.on('connection', (socket) => {
@@ -192,10 +212,9 @@ export function setupWebSocketServer(
 				try {
 					const { whiteboardId, isLocked } = data;
 
-					io.to(`whiteboard-${whiteboardId}`).emit('lock', {
-						whiteboardId,
-						isLocked,
-					});
+					socket.broadcast
+						.to(`whiteboard-${whiteboardId}`)
+						.emit('lock', { whiteboardId, isLocked });
 				} catch (error) {
 					console.error('Error in lock:', error);
 					socket.emit('error', { message: 'Failed to lock whiteboard' });
@@ -209,10 +228,9 @@ export function setupWebSocketServer(
 				try {
 					const { whiteboardId, isLocked } = data;
 
-					io.to(`whiteboard-${whiteboardId}`).emit('unlock', {
-						whiteboardId,
-						isLocked,
-					});
+					socket.broadcast
+						.to(`whiteboard-${whiteboardId}`)
+						.emit('unlock', { whiteboardId, isLocked });
 				} catch (error) {
 					console.error('Error in unlock:', error);
 					socket.emit('error', { message: 'Failed to unlock whiteboard' });

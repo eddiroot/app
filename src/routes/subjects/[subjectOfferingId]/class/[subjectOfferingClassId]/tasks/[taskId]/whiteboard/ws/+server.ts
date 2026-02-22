@@ -31,41 +31,6 @@ export const socket = {
 			return;
 		}
 
-		// Update the peer's whiteboard if a new one is specified
-		if (
-			parsedMessage.whiteboardId &&
-			parsedMessage.whiteboardId !== peerWhiteboards.get(peer)
-		) {
-			// Unsubscribe from old whiteboard
-			const oldWhiteboardId = peerWhiteboards.get(peer);
-			if (oldWhiteboardId) {
-				peer.unsubscribe(`whiteboard-${oldWhiteboardId}`);
-			}
-
-			// Subscribe to new whiteboard
-			peerWhiteboards.set(peer, whiteboardId);
-			peer.subscribe(`whiteboard-${whiteboardId}`);
-
-			// Send current state of new whiteboard
-			try {
-				const objects = await getWhiteboardObjects(whiteboardId);
-				const whiteboardObjects = objects.map((obj) => ({
-					id: obj.objectId,
-					...(obj.objectData as Record<string, unknown>),
-				}));
-
-				peer.send(
-					JSON.stringify({
-						type: 'load',
-						whiteboardId,
-						whiteboard: { objects: whiteboardObjects },
-					}),
-				);
-			} catch (error) {
-				console.error('Failed to load whiteboard from database:', error);
-			}
-		}
-
 		try {
 			if (parsedMessage.type === 'init') {
 				// Handle whiteboard initialization with specific ID
