@@ -32,10 +32,10 @@
 			href: '/admin/campuses',
 		},
 		{
-			title: 'Terms',
-			description: 'Set up terms and semesters for the school year',
+			title: 'Semesters & Terms',
+			description: 'Set up the time blocks for the school year',
 			icon: Calendar1,
-			href: '/admin/terms',
+			href: '/admin/semesters-and-terms',
 		},
 		{
 			title: 'Buildings',

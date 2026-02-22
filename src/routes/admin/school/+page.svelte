@@ -40,11 +40,11 @@
 		<!-- Logo Section -->
 		<div class="flex items-center gap-6">
 			<Avatar.Root class="h-20 w-20">
-				{#if data.school?.logoPath}
-					<Avatar.Image src={data.school.logoPath} alt="Current school logo" />
+				{#if data.logoUrl}
+					<Avatar.Image src={data.logoUrl} alt="Current school logo" />
 				{:else}
 					<Avatar.Fallback class="text-lg">
-						{data.school?.name ? getSchoolInitials(data.school.name) : 'SL'}
+						{getSchoolInitials(data.school.name)}
 					</Avatar.Fallback>
 				{/if}
 			</Avatar.Root>

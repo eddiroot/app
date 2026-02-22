@@ -27,6 +27,7 @@
 				subjects={data?.subjects || []}
 				user={user()}
 				school={data?.school || null}
+				schoolLogoUrl={data?.schoolLogoUrl || null}
 				campuses={data?.campuses ?? []}
 			/>
 		{/if}

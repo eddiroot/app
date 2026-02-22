@@ -43,6 +43,7 @@
 		subjects,
 		user,
 		school,
+		schoolLogoUrl,
 		campuses,
 	}: {
 		subjects: Array<{
@@ -59,6 +60,7 @@
 			lastName: string;
 		} | null;
 		school: School | null;
+		schoolLogoUrl: string | null;
 		campuses: SchoolCampus[];
 	} = $props();
 
@@ -218,7 +220,7 @@
 							>
 								<Avatar.Root class="h-8 w-8 rounded-lg">
 									<Avatar.Image
-										src={school?.logoPath || Favicon}
+										src={schoolLogoUrl || Favicon}
 										alt="{school?.name || 'school'} logo"
 									/>
 								</Avatar.Root>
