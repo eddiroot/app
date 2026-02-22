@@ -300,8 +300,50 @@ function handleModifyMessage(
 			return;
 		}
 
-		// Full update path for non-live (persisted) updates
-		if (obj.type === 'textbox' && 'text' in messageData.object) {
+    // For image modify messages that include new src data (e.g., after a crop
+    // operation), obj.set({ src }) does NOT reload the underlying image element
+    // in fabric.js — the remote client keeps showing the old uncropped pixels
+    // with the updated scale/position, making the crop appear at the wrong spot.
+    // Use setSrc() to reload the element in-place (no remove/re-add, so no
+    // spurious object:added history entries on the remote browser).
+    if (obj.type === 'image' && messageData.object.src) {
+      const image = obj as fabric.FabricImage;
+      const objId = (image as any).id;
+      const { src, left, top, scaleX, scaleY, angle, opacity, width, height } =
+        messageData.object;
+      (image as any).setSrc(src as string).then(() => {
+        image.set({
+          left: left as number,
+          top: top as number,
+          scaleX: scaleX as number,
+          scaleY: scaleY as number,
+          angle: angle as number,
+          opacity: opacity as number,
+          width: width as number,
+          height: height as number,
+          originX: 'center',
+          originY: 'center',
+          hasControls: false,
+          hasBorders: false,
+        });
+        image.setCoords();
+        // Refresh control points if they already existed for this object
+        if (controlPointManager) {
+          const existingPoints = controlPointManager
+            .getAllControlPoints()
+            .filter((cp) => cp.objectId === objId);
+          if (existingPoints.length > 0) {
+            controlPointManager.removeControlPoints(objId);
+            controlPointManager.addControlPoints(objId, image, true);
+          }
+        }
+        canvas.renderAll();
+      });
+      return;
+    }
+
+    // Full update path for non-live (persisted) updates
+    if (obj.type === 'textbox' && 'text' in messageData.object) {
 			const textbox = obj as fabric.Textbox;
 
 			// Use set() method with text property explicitly
