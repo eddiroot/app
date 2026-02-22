@@ -1,7 +1,11 @@
-import { schoolSpaceTypeEnum, userTypeEnum, yearLevelEnum } from '$lib/enums.js'
-import { db } from '$lib/server/db'
-import * as table from '$lib/server/db/schema'
-import { and, asc, count, desc, eq, inArray } from 'drizzle-orm'
+import {
+	schoolSpaceTypeEnum,
+	userTypeEnum,
+	yearLevelEnum,
+} from '$lib/enums.js';
+import { db } from '$lib/server/db';
+import * as table from '$lib/server/db/schema';
+import { and, asc, count, eq, inArray } from 'drizzle-orm';
 
 export async function getUsersBySchoolId(
 	schoolId: number,
@@ -34,9 +38,9 @@ export async function getUsersBySchoolId(
 			asc(table.user.type),
 			asc(table.user.lastName),
 			asc(table.user.firstName),
-		)
+		);
 
-	return users
+	return users;
 }
 
 export async function getUsersBySchoolIdAndTypes(
@@ -71,9 +75,9 @@ export async function getUsersBySchoolIdAndTypes(
 			asc(table.user.type),
 			asc(table.user.lastName),
 			asc(table.user.firstName),
-		)
+		);
 
-	return users
+	return users;
 }
 
 export async function getUsersBySchoolIdAndType(
@@ -103,9 +107,9 @@ export async function getUsersBySchoolIdAndType(
 				includeArchived ? undefined : eq(table.user.isArchived, false),
 			),
 		)
-		.orderBy(asc(table.user.lastName), asc(table.user.firstName))
+		.orderBy(asc(table.user.lastName), asc(table.user.firstName));
 
-	return users
+	return users;
 }
 
 export async function checkSchoolExistence(name: string): Promise<boolean> {
@@ -113,8 +117,8 @@ export async function checkSchoolExistence(name: string): Promise<boolean> {
 		.select()
 		.from(table.school)
 		.where(eq(table.school.name, name))
-		.limit(1)
-	return schools.length > 0
+		.limit(1);
+	return schools.length > 0;
 }
 
 export async function getSchoolById(schoolId: number) {
@@ -122,9 +126,9 @@ export async function getSchoolById(schoolId: number) {
 		.select()
 		.from(table.school)
 		.where(eq(table.school.id, schoolId))
-		.limit(1)
+		.limit(1);
 
-	return schools.length > 0 ? schools[0] : null
+	return schools.length > 0 ? schools[0] : null;
 }
 
 export async function getCampusesByUserId(userId: string) {
@@ -135,9 +139,9 @@ export async function getCampusesByUserId(userId: string) {
 			table.schoolCampus,
 			eq(table.userCampus.schoolCampusId, table.schoolCampus.id),
 		)
-		.where(eq(table.userCampus.userId, userId))
+		.where(eq(table.userCampus.userId, userId));
 
-	return campuses.map((row) => row.campus)
+	return campuses.map((row) => row.campus);
 }
 
 export async function getSchoolStatsById(schoolId: number) {
@@ -150,7 +154,7 @@ export async function getSchoolStatsById(schoolId: number) {
 				eq(table.user.type, userTypeEnum.student),
 			),
 		)
-		.limit(1)
+		.limit(1);
 
 	const totalTeachers = await db
 		.select({ count: count() })
@@ -161,7 +165,7 @@ export async function getSchoolStatsById(schoolId: number) {
 				eq(table.user.type, userTypeEnum.teacher),
 			),
 		)
-		.limit(1)
+		.limit(1);
 
 	const totalAdmins = await db
 		.select({ count: count() })
@@ -172,21 +176,21 @@ export async function getSchoolStatsById(schoolId: number) {
 				eq(table.user.type, userTypeEnum.admin),
 			),
 		)
-		.limit(1)
+		.limit(1);
 
 	const totalSubjects = await db
 		.select({ count: count() })
 		.from(table.subject)
 		.where(eq(table.subject.schoolId, schoolId))
 		.groupBy(table.subject.schoolId)
-		.limit(1)
+		.limit(1);
 
 	return {
 		totalStudents: totalStudents[0]?.count || 0,
 		totalTeachers: totalTeachers[0]?.count || 0,
 		totalAdmins: totalAdmins[0]?.count || 0,
 		totalSubjects: totalSubjects[0]?.count || 0,
-	}
+	};
 }
 
 export async function updateSchool(
@@ -198,9 +202,9 @@ export async function updateSchool(
 		.update(table.school)
 		.set({ name, logoPath })
 		.where(eq(table.school.id, schoolId))
-		.returning()
+		.returning();
 
-	return updatedSchool
+	return updatedSchool;
 }
 
 export async function getCampusesBySchoolId(
@@ -216,9 +220,9 @@ export async function getCampusesBySchoolId(
 				includeArchived ? undefined : eq(table.schoolCampus.isArchived, false),
 			),
 		)
-		.orderBy(asc(table.schoolCampus.isArchived), asc(table.schoolCampus.name))
+		.orderBy(asc(table.schoolCampus.isArchived), asc(table.schoolCampus.name));
 
-	return campuses
+	return campuses;
 }
 
 export async function updateCampus(
@@ -231,9 +235,9 @@ export async function updateCampus(
 		.update(table.schoolCampus)
 		.set({ name, address, description: description || undefined })
 		.where(eq(table.schoolCampus.id, campusId))
-		.returning()
+		.returning();
 
-	return updatedCampus
+	return updatedCampus;
 }
 
 export async function archiveCampus(campusId: number) {
@@ -241,9 +245,9 @@ export async function archiveCampus(campusId: number) {
 		.update(table.schoolCampus)
 		.set({ isArchived: true })
 		.where(eq(table.schoolCampus.id, campusId))
-		.returning()
+		.returning();
 
-	return archivedCampus
+	return archivedCampus;
 }
 
 export async function unarchiveCampus(campusId: number) {
@@ -251,9 +255,9 @@ export async function unarchiveCampus(campusId: number) {
 		.update(table.schoolCampus)
 		.set({ isArchived: false })
 		.where(eq(table.schoolCampus.id, campusId))
-		.returning()
+		.returning();
 
-	return unarchivedCampus
+	return unarchivedCampus;
 }
 
 export async function getBuildingsByCampusId(
@@ -271,9 +275,9 @@ export async function getBuildingsByCampusId(
 					: eq(table.schoolBuilding.isArchived, false),
 			),
 		)
-		.orderBy(asc(table.schoolBuilding.name))
+		.orderBy(asc(table.schoolBuilding.name));
 
-	return buildings
+	return buildings;
 }
 
 export async function getBuildingsBySchoolId(
@@ -298,12 +302,12 @@ export async function getBuildingsBySchoolId(
 					: eq(table.schoolBuilding.isArchived, false),
 			),
 		)
-		.orderBy(asc(table.schoolCampus.name), asc(table.schoolBuilding.name))
+		.orderBy(asc(table.schoolCampus.name), asc(table.schoolBuilding.name));
 
 	return buildings.map((row) => ({
 		...row.building,
 		campusName: row.campus.name,
-	}))
+	}));
 }
 
 export async function getSpacesBySchoolId(
@@ -339,9 +343,9 @@ export async function getSpacesBySchoolId(
 				includeArchived ? undefined : eq(table.schoolSpace.isArchived, false),
 			),
 		)
-		.orderBy(table.schoolSpace.name)
+		.orderBy(table.schoolSpace.name);
 
-	return spaces
+	return spaces;
 }
 
 export async function setYearLevelGradeScale(
@@ -352,9 +356,9 @@ export async function setYearLevelGradeScale(
 		.update(table.schoolYearLevel)
 		.set({ gradeScaleId })
 		.where(eq(table.schoolYearLevel.id, yearLevelId))
-		.returning()
+		.returning();
 
-	return updatedYearLevel
+	return updatedYearLevel;
 }
 
 export async function getSpacesByCampusId(
@@ -374,9 +378,9 @@ export async function getSpacesByCampusId(
 				includeArchived ? undefined : eq(table.schoolSpace.isArchived, false),
 			),
 		)
-		.orderBy(table.schoolSpace.name)
+		.orderBy(table.schoolSpace.name);
 
-	return spaces.map((row) => row.space)
+	return spaces.map((row) => row.space);
 }
 
 export async function getSpaceById(
@@ -392,28 +396,28 @@ export async function getSpaceById(
 				includeArchived ? undefined : eq(table.schoolSpace.isArchived, false),
 			),
 		)
-		.limit(1)
+		.limit(1);
 
-	return spaces.length > 0 ? spaces[0] : null
+	return spaces.length > 0 ? spaces[0] : null;
 }
 
 export async function updateSpace(
 	spaceId: number,
 	updates: {
-		name?: string
-		type?: schoolSpaceTypeEnum
-		capacity?: number | null
-		description?: string | null
-		flags?: number
+		name?: string;
+		type?: schoolSpaceTypeEnum;
+		capacity?: number | null;
+		description?: string | null;
+		flags?: number;
 	},
 ) {
 	const [space] = await db
 		.update(table.schoolSpace)
 		.set(updates)
 		.where(eq(table.schoolSpace.id, spaceId))
-		.returning()
+		.returning();
 
-	return space
+	return space;
 }
 
 export async function archiveSpace(spaceId: number) {
@@ -421,9 +425,9 @@ export async function archiveSpace(spaceId: number) {
 		.update(table.schoolSpace)
 		.set({ isArchived: true })
 		.where(eq(table.schoolSpace.id, spaceId))
-		.returning()
+		.returning();
 
-	return space
+	return space;
 }
 
 export async function getSubjectsBySchoolIdAndYearLevel(
@@ -444,69 +448,44 @@ export async function getSubjectsBySchoolIdAndYearLevel(
 				eq(table.subject.isArchived, false),
 			),
 		)
-		.orderBy(asc(table.subject.name))
+		.orderBy(asc(table.subject.name));
 
-	return subjects
+	return subjects;
 }
 
-export async function getSemestersBySchoolId(
-	schoolId: number,
-	includeArchived: boolean = false,
-) {
+export async function getSemestersBySchoolId(schoolId: number) {
 	const semesters = await db
 		.select()
 		.from(table.schoolSemester)
-		.where(
-			and(
-				eq(table.schoolSemester.schoolId, schoolId),
-				includeArchived
-					? undefined
-					: eq(table.schoolSemester.isArchived, false),
-			),
-		)
-		.orderBy(asc(table.schoolSemester.year), asc(table.schoolSemester.number))
+		.where(eq(table.schoolSemester.schoolId, schoolId))
+		.orderBy(asc(table.schoolSemester.year), asc(table.schoolSemester.number));
 
-	return semesters
+	return semesters;
 }
 
-export async function getSemestersWithTermsBySchoolId(
-	schoolId: number,
-	includeArchived: boolean = false,
-) {
+export async function getSemestersWithTermsBySchoolId(schoolId: number) {
 	const semesters = await db
 		.select()
 		.from(table.schoolSemester)
-		.where(
-			and(
-				eq(table.schoolSemester.schoolId, schoolId),
-				includeArchived
-					? undefined
-					: eq(table.schoolSemester.isArchived, false),
-			),
-		)
-		.orderBy(asc(table.schoolSemester.year), asc(table.schoolSemester.number))
+		.where(eq(table.schoolSemester.schoolId, schoolId))
+		.orderBy(asc(table.schoolSemester.year), asc(table.schoolSemester.number));
 
 	if (semesters.length === 0) {
-		return []
+		return [];
 	}
 
-	const semesterIds = semesters.map((semester) => semester.id)
+	const semesterIds = semesters.map((semester) => semester.id);
 
 	const terms = await db
 		.select()
 		.from(table.schoolTerm)
-		.where(
-			and(
-				inArray(table.schoolTerm.schoolSemesterId, semesterIds),
-				includeArchived ? undefined : eq(table.schoolTerm.isArchived, false),
-			),
-		)
-		.orderBy(desc(table.schoolTerm.start))
+		.where(inArray(table.schoolTerm.schoolSemesterId, semesterIds))
+		.orderBy(table.schoolTerm.number);
 
 	return semesters.map((semester) => ({
 		...semester,
 		terms: terms.filter((term) => term.schoolSemesterId === semester.id),
-	}))
+	}));
 }
 
 export async function updateSchoolTerm(
@@ -517,9 +496,9 @@ export async function updateSchoolTerm(
 		.update(table.schoolTerm)
 		.set(updates)
 		.where(eq(table.schoolTerm.id, termId))
-		.returning()
+		.returning();
 
-	return term
+	return term;
 }
 
 export async function getSchoolTermById(termId: number) {
@@ -527,9 +506,9 @@ export async function getSchoolTermById(termId: number) {
 		.select()
 		.from(table.schoolTerm)
 		.where(eq(table.schoolTerm.id, termId))
-		.limit(1)
+		.limit(1);
 
-	return terms.length > 0 ? terms[0] : null
+	return terms.length > 0 ? terms[0] : null;
 }
 
 export async function getSchoolSemesterById(semesterId: number) {
@@ -537,7 +516,17 @@ export async function getSchoolSemesterById(semesterId: number) {
 		.select()
 		.from(table.schoolSemester)
 		.where(eq(table.schoolSemester.id, semesterId))
-		.limit(1)
+		.limit(1);
 
-	return semesters.length > 0 ? semesters[0] : null
+	return semesters.length > 0 ? semesters[0] : null;
+}
+
+export async function deleteSchoolSemester(semesterId: number) {
+	await db
+		.delete(table.schoolSemester)
+		.where(eq(table.schoolSemester.id, semesterId));
+}
+
+export async function deleteSchoolTerm(termId: number) {
+	await db.delete(table.schoolTerm).where(eq(table.schoolTerm.id, termId));
 }

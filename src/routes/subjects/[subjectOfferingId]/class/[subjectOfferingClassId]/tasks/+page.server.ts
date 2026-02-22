@@ -1,6 +1,6 @@
-import { userTypeEnum } from '$lib/enums.js'
-import { fileSchema } from '$lib/schema/resource.js'
-import type { Task } from '$lib/server/db/schema'
+import { userTypeEnum } from '$lib/enums.js';
+import { fileSchema } from '$lib/schema/resource.js';
+import type { Task } from '$lib/server/db/schema';
 import {
 	createResource,
 	createSubjectOfferingClassResource,
@@ -8,111 +8,104 @@ import {
 	getTasksBySubjectOfferingClassId,
 	getTopics,
 	removeResourceFromSubjectOfferingClass,
-} from '$lib/server/db/service'
+} from '$lib/server/db/service';
 import {
 	generateUniqueFileName,
 	getPresignedUrl,
 	uploadBufferHelper,
-} from '$lib/server/obj'
-import { error, fail } from '@sveltejs/kit'
-import { superValidate, withFiles } from 'sveltekit-superforms'
-import { zod4 } from 'sveltekit-superforms/adapters'
-import { z } from 'zod'
+} from '$lib/server/obj';
+import { error, fail } from '@sveltejs/kit';
+import { superValidate, withFiles } from 'sveltekit-superforms';
+import { zod4 } from 'sveltekit-superforms/adapters';
+import { z } from 'zod';
 
 const uploadSchema = z.object({
 	file: fileSchema,
 	title: z.string().optional(),
 	description: z.string().optional(),
 	topicId: z.number().min(1, 'Please select a topic'),
-})
+});
 
 export const load = async ({
 	locals: { security },
 	params: { subjectOfferingId, subjectOfferingClassId },
 }) => {
-	const user = security.isAuthenticated().getUser()
+	const user = security.isAuthenticated().getUser();
 
-	const subjectOfferingClassIdInt = parseInt(subjectOfferingClassId, 10)
+	const subjectOfferingClassIdInt = parseInt(subjectOfferingClassId, 10);
 	if (isNaN(subjectOfferingClassIdInt)) {
-		throw error(400, 'Invalid subject offering class ID')
+		throw error(400, 'Invalid subject offering class ID');
 	}
 
-	const subjectOfferingIdInt = parseInt(subjectOfferingId, 10)
+	const subjectOfferingIdInt = parseInt(subjectOfferingId, 10);
 	if (isNaN(subjectOfferingIdInt)) {
-		throw error(400, 'Invalid subject offering ID')
+		throw error(400, 'Invalid subject offering ID');
 	}
 
 	const tasks = await getTasksBySubjectOfferingClassId(
 		user.id,
 		subjectOfferingClassIdInt,
-	)
+	);
 	const resources = await getResourcesBySubjectOfferingClassId(
 		subjectOfferingClassIdInt,
-	)
-	const topics = await getTopics(subjectOfferingIdInt)
+	);
+	const topics = await getTopics(subjectOfferingIdInt);
 
 	const resourcesWithUrls = await Promise.all(
 		resources.map(async (row) => {
 			try {
-				const schoolId = user.schoolId.toString()
-
-				// Strip schoolId prefix if it exists to avoid double-prefixing
-				const objectName = row.resource.objectKey.startsWith(schoolId)
-					? row.resource.objectKey.substring(schoolId.length + 1)
-					: row.resource.objectKey
-
-				const downloadUrl = await getPresignedUrl(schoolId, objectName)
-				return { ...row, downloadUrl }
+				const downloadUrl = await getPresignedUrl(row.resource.objectKey);
+				return { ...row, downloadUrl };
 			} catch (error) {
 				console.error(
 					`Failed to generate URL for resource ${row.resource.id}:`,
 					error,
-				)
-				return { ...row, downloadUrl: null }
+				);
+				return { ...row, downloadUrl: null };
 			}
 		}),
-	)
+	);
 
-	const form = await superValidate(zod4(uploadSchema))
+	const form = await superValidate(zod4(uploadSchema));
 
 	const topicsWithTasks = topics.map((topic) => ({
 		topic,
 		tasks: [] as { task: Task; status: string }[],
 		resources: [] as typeof resourcesWithUrls,
-	}))
+	}));
 
 	tasks.forEach((task) => {
 		if (
 			user.type === userTypeEnum.student &&
 			task.subjectOfferingClassTask.status !== 'published'
 		)
-			return
+			return;
 
 		const topicEntry = topicsWithTasks.find(
 			(item) => item.topic.id === task.curriculumItem.id,
-		)
+		);
 		if (topicEntry) {
 			topicEntry.tasks.push({
 				task: task.task,
 				status: task.subjectOfferingClassTask.status,
-			})
+			});
 		}
-	})
+	});
 
 	resourcesWithUrls.forEach((resource) => {
-		const coursemapItemId = resource.resourceRelation.curriculumItemId
+		const coursemapItemId = resource.resourceRelation.curriculumItemId;
 		if (coursemapItemId) {
 			const topicEntry = topicsWithTasks.find(
 				(item) => item.topic.id === coursemapItemId,
-			)
+			);
 			if (topicEntry) {
-				topicEntry.resources.push(resource)
+				topicEntry.resources.push(resource);
 			}
 		}
-	})
+	});
 
-	return { user, topicsWithTasks, topics, form }
-}
+	return { user, topicsWithTasks, topics, form };
+};
 
 export const actions = {
 	upload: async ({
@@ -120,32 +113,32 @@ export const actions = {
 		locals: { security },
 		params: { subjectOfferingClassId },
 	}) => {
-		const user = security.isAuthenticated().getUser()
+		const user = security.isAuthenticated().getUser();
 
-		const formData = await request.formData()
-		const form = await superValidate(formData, zod4(uploadSchema))
+		const formData = await request.formData();
+		const form = await superValidate(formData, zod4(uploadSchema));
 
 		if (!form.valid) {
-			return fail(400, { form })
+			return fail(400, { form });
 		}
 
-		const classId = parseInt(subjectOfferingClassId, 10)
+		const classId = parseInt(subjectOfferingClassId, 10);
 		if (isNaN(classId)) {
-			return fail(400, { form, message: 'Invalid class ID' })
+			return fail(400, { form, message: 'Invalid class ID' });
 		}
 
 		try {
-			const file = form.data.file
+			const file = form.data.file;
 
 			// Generate unique filename
-			const uniqueFileName = generateUniqueFileName(file.name)
+			const uniqueFileName = generateUniqueFileName(file.name);
 
 			// Convert file to buffer
-			const buffer = Buffer.from(await file.arrayBuffer())
+			const buffer = Buffer.from(await file.arrayBuffer());
 
 			// Upload file to storage in school bucket
-			const objectKey = `${user.schoolId}/${uniqueFileName}`
-			await uploadBufferHelper(buffer, objectKey, file.type)
+			const objectKey = `${user.schoolId}/${uniqueFileName}`;
+			await uploadBufferHelper(buffer, objectKey, file.type);
 
 			// Create resource in database
 			const resource = await createResource({
@@ -155,7 +148,7 @@ export const actions = {
 				fileSize: file.size,
 				fileType: file.type,
 				uploadedBy: user.id,
-			})
+			});
 
 			// Link resource to subject offering class
 			await createSubjectOfferingClassResource({
@@ -165,12 +158,12 @@ export const actions = {
 				description: form.data.description,
 				curriculumItemId: form.data.topicId,
 				authorId: user.id,
-			})
+			});
 
-			return withFiles({ form })
+			return withFiles({ form });
 		} catch (error) {
-			console.error('Error uploading resource:', error)
-			return fail(500, { form, message: 'Failed to upload resource' })
+			console.error('Error uploading resource:', error);
+			return fail(500, { form, message: 'Failed to upload resource' });
 		}
 	},
 
@@ -179,22 +172,22 @@ export const actions = {
 		locals: { security },
 		params: { subjectOfferingClassId },
 	}) => {
-		security.isAuthenticated()
+		security.isAuthenticated();
 
-		const formData = await request.formData()
-		const resourceId = parseInt(formData.get('resourceId') as string, 10)
-		const classId = parseInt(subjectOfferingClassId, 10)
+		const formData = await request.formData();
+		const resourceId = parseInt(formData.get('resourceId') as string, 10);
+		const classId = parseInt(subjectOfferingClassId, 10);
 
 		if (isNaN(resourceId) || isNaN(classId)) {
-			return fail(400, { message: 'Invalid resource or class ID' })
+			return fail(400, { message: 'Invalid resource or class ID' });
 		}
 
 		try {
-			await removeResourceFromSubjectOfferingClass(classId, resourceId)
-			return { success: true }
+			await removeResourceFromSubjectOfferingClass(classId, resourceId);
+			return { success: true };
 		} catch (error) {
-			console.error('Error deleting resource:', error)
-			return fail(500, { message: 'Failed to delete resource' })
+			console.error('Error deleting resource:', error);
+			return fail(500, { message: 'Failed to delete resource' });
 		}
 	},
-}
+};

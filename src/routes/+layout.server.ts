@@ -2,7 +2,9 @@ import {
 	getCampusesByUserId,
 	getSchoolById,
 	getSubjectsWithClassesByUserId,
-} from '$lib/server/db/service'
+} from '$lib/server/db/service';
+import { getPresignedUrl } from '$lib/server/obj.js';
+import { error } from '@sveltejs/kit';
 
 export const load = async ({ locals: { user } }) => {
 	if (!user) {
@@ -12,12 +14,22 @@ export const load = async ({ locals: { user } }) => {
 			subjects: [],
 			classes: [],
 			hasInterviewSlots: false,
-		}
+		};
 	}
 
-	const subjects = await getSubjectsWithClassesByUserId(user.id)
-	const school = await getSchoolById(user.schoolId)
-	const campuses = await getCampusesByUserId(user.id)
+	const subjects = await getSubjectsWithClassesByUserId(user.id);
+	const school = await getSchoolById(user.schoolId);
 
-	return { user, school, campuses, subjects }
-}
+	if (!school) {
+		throw error(404, 'School not found');
+	}
+
+	let schoolLogoUrl: string | null = null;
+	if (school.logoPath) {
+		schoolLogoUrl = await getPresignedUrl(school.logoPath);
+	}
+
+	const campuses = await getCampusesByUserId(user.id);
+
+	return { user, school, campuses, subjects, schoolLogoUrl };
+};

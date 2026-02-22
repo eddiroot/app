@@ -1,34 +1,34 @@
-import { db } from '$lib/server/db/index'
-import { calculateDurationMinutes } from '$lib/utils'
-import { and, eq, inArray } from 'drizzle-orm'
-import type { StudentStatistic } from '../../../../routes/admin/timetables/[timetableId]/draft/[timetableDraftId]/result/student-columns'
-import * as table from '../../db/schema'
-import { user } from '../../db/schema/user'
+import { db } from '$lib/server/db/index';
+import { calculateDurationMinutes } from '$lib/utils';
+import { and, eq, inArray } from 'drizzle-orm';
+import type { StudentStatistic } from '../../../../routes/admin/timetables/[timetableId]/draft/[timetableDraftId]/result/student-columns';
+import * as table from '../../db/schema';
+import { user } from '../../db/schema/user';
 
 /**
  * Represents a student enrollment with their class allocations
  */
 export type StudentEnrollment = {
-	userId: string
-	userName: string
-	userType: string
-	fetSubjectOfferingClassId: number
-	allocations: ClassAllocation[]
-}
+	userId: string;
+	userName: string;
+	userType: string;
+	fetSubjectOfferingClassId: number;
+	allocations: ClassAllocation[];
+};
 
 /**
  * Represents a single class allocation with timing information
  */
 export type ClassAllocation = {
-	id: number
-	dayId: number
-	dayNumber: number
-	startPeriodId: number
-	endPeriodId: number
-	start: string
-	end: string
-	durationMinutes: number
-}
+	id: number;
+	dayId: number;
+	dayNumber: number;
+	startPeriodId: number;
+	endPeriodId: number;
+	start: string;
+	end: string;
+	durationMinutes: number;
+};
 
 /**
  * Fetches all students enrolled in FET classes for a given timetable draft
@@ -45,13 +45,13 @@ export async function getStudentEnrollmentsWithAllocations(
 				eq(table.fetSubjectOfferingClass.timetableDraftId, timetableDraftId),
 				eq(table.fetSubjectOfferingClass.isArchived, false),
 			),
-		)
+		);
 
 	if (fetClasses.length === 0) {
-		return []
+		return [];
 	}
 
-	const fetClassIds = fetClasses.map((c) => c.id)
+	const fetClassIds = fetClasses.map((c) => c.id);
 
 	// Get all users enrolled in these classes
 	const usersInClasses = await db
@@ -72,7 +72,7 @@ export async function getStudentEnrollmentsWithAllocations(
 				),
 				eq(table.fetSubjectOfferingClass.isArchived, false),
 			),
-		)
+		);
 
 	// Get all allocations for these classes
 	const allocations = await db
@@ -107,23 +107,23 @@ export async function getStudentEnrollmentsWithAllocations(
 				),
 				eq(table.fetSubjectClassAllocation.isArchived, false),
 			),
-		)
+		);
 
 	// Get end times for allocations (since we joined on start period)
-	const endPeriodIds = [...new Set(allocations.map((a) => a.endPeriodId))]
+	const endPeriodIds = [...new Set(allocations.map((a) => a.endPeriodId))];
 	const endPeriods = await db
 		.select({ id: table.timetablePeriod.id, end: table.timetablePeriod.end })
 		.from(table.timetablePeriod)
-		.where(inArray(table.timetablePeriod.id, endPeriodIds))
+		.where(inArray(table.timetablePeriod.id, endPeriodIds));
 
-	const endPeriodMap = new Map(endPeriods.map((p) => [p.id, p.end]))
+	const endPeriodMap = new Map(endPeriods.map((p) => [p.id, p.end]));
 
 	// Build enrollment objects
-	const enrollmentMap = new Map<string, StudentEnrollment>()
+	const enrollmentMap = new Map<string, StudentEnrollment>();
 
 	for (const userClass of usersInClasses) {
-		const key = `${userClass.userId}-${userClass.fetSubOffClassId}`
-		const userName = `${userClass.firstName} ${userClass.lastName}`
+		const key = `${userClass.userId}-${userClass.fetSubOffClassId}`;
+		const userName = `${userClass.firstName} ${userClass.lastName}`;
 
 		if (!enrollmentMap.has(key)) {
 			enrollmentMap.set(key, {
@@ -132,21 +132,21 @@ export async function getStudentEnrollmentsWithAllocations(
 				userType: userClass.userType,
 				fetSubjectOfferingClassId: userClass.fetSubOffClassId,
 				allocations: [],
-			})
+			});
 		}
-		const enrollment = enrollmentMap.get(key)!
+		const enrollment = enrollmentMap.get(key)!;
 
 		// Add allocations for this class
 		const classAllocations = allocations.filter(
 			(a) => a.fetSubOffClassId === userClass.fetSubOffClassId,
-		)
+		);
 
 		for (const alloc of classAllocations) {
-			const actualEndTime = endPeriodMap.get(alloc.endPeriodId) || alloc.end
+			const actualEndTime = endPeriodMap.get(alloc.endPeriodId) || alloc.end;
 			const durationMinutes = calculateDurationMinutes(
 				alloc.start,
 				actualEndTime,
-			)
+			);
 
 			enrollment.allocations.push({
 				id: alloc.allocationId,
@@ -157,11 +157,11 @@ export async function getStudentEnrollmentsWithAllocations(
 				start: alloc.start,
 				end: actualEndTime,
 				durationMinutes,
-			})
+			});
 		}
 	}
 
-	return Array.from(enrollmentMap.values())
+	return Array.from(enrollmentMap.values());
 }
 
 /**
@@ -170,16 +170,16 @@ export async function getStudentEnrollmentsWithAllocations(
 export function aggregateStudentEnrollments(
 	enrollments: StudentEnrollment[],
 ): Map<string, StudentEnrollment[]> {
-	const studentMap = new Map<string, StudentEnrollment[]>()
+	const studentMap = new Map<string, StudentEnrollment[]>();
 
 	for (const enrollment of enrollments) {
 		if (!studentMap.has(enrollment.userId)) {
-			studentMap.set(enrollment.userId, [])
+			studentMap.set(enrollment.userId, []);
 		}
-		studentMap.get(enrollment.userId)!.push(enrollment)
+		studentMap.get(enrollment.userId)!.push(enrollment);
 	}
 
-	return studentMap
+	return studentMap;
 }
 
 /**
@@ -201,56 +201,56 @@ export function calculateStudentStatistic(
 			minHoursPerDay: 0,
 			numberOfFreeDays: 0,
 			dailyHours: {},
-		}
+		};
 	}
 
 	// Get user info from first enrollment
-	const userName = enrollments[0].userName
-	const userType = enrollments[0].userType
-	const numberOfEnrolledClasses = enrollments.length
+	const userName = enrollments[0].userName;
+	const userType = enrollments[0].userType;
+	const numberOfEnrolledClasses = enrollments.length;
 
 	// Collect all allocations across all classes
-	const allAllocations: ClassAllocation[] = []
+	const allAllocations: ClassAllocation[] = [];
 	for (const enrollment of enrollments) {
-		allAllocations.push(...enrollment.allocations)
+		allAllocations.push(...enrollment.allocations);
 	}
 
 	// Calculate daily hours
-	const dailyHours = new Map<number, number>()
-	const dailyMinutes = new Map<number, number>()
+	const dailyHours = new Map<number, number>();
+	const dailyMinutes = new Map<number, number>();
 
 	for (const allocation of allAllocations) {
-		const currentMinutes = dailyMinutes.get(allocation.dayNumber) || 0
+		const currentMinutes = dailyMinutes.get(allocation.dayNumber) || 0;
 		dailyMinutes.set(
 			allocation.dayNumber,
 			currentMinutes + allocation.durationMinutes,
-		)
+		);
 	}
 
 	// Convert minutes to hours
 	for (const [day, minutes] of dailyMinutes.entries()) {
-		dailyHours.set(day, minutes / 60)
+		dailyHours.set(day, minutes / 60);
 	}
 
 	// Get all unique days in the cycle
-	const allDays = new Set(allAllocations.map((a) => a.dayNumber))
-	const uniqueDays = Array.from(allDays).sort((a, b) => a - b)
+	const allDays = new Set(allAllocations.map((a) => a.dayNumber));
+	const uniqueDays = Array.from(allDays).sort((a, b) => a - b);
 
 	// Calculate statistics
-	const hoursPerDay = Array.from(dailyHours.values())
-	const totalHoursPerCycle = hoursPerDay.reduce((sum, hours) => sum + hours, 0)
+	const hoursPerDay = Array.from(dailyHours.values());
+	const totalHoursPerCycle = hoursPerDay.reduce((sum, hours) => sum + hours, 0);
 
 	// Calculate average only for days with classes
-	const daysWithClasses = hoursPerDay.length
+	const daysWithClasses = hoursPerDay.length;
 	const averageHoursPerDay =
-		daysWithClasses > 0 ? totalHoursPerCycle / daysWithClasses : 0
+		daysWithClasses > 0 ? totalHoursPerCycle / daysWithClasses : 0;
 
-	const maxHoursPerDay = hoursPerDay.length > 0 ? Math.max(...hoursPerDay) : 0
-	const minHoursPerDay = hoursPerDay.length > 0 ? Math.min(...hoursPerDay) : 0
+	const maxHoursPerDay = hoursPerDay.length > 0 ? Math.max(...hoursPerDay) : 0;
+	const minHoursPerDay = hoursPerDay.length > 0 ? Math.min(...hoursPerDay) : 0;
 
 	// Determine the total number of days in the cycle based on the highest day number
-	const maxDayInCycle = uniqueDays.length > 0 ? Math.max(...uniqueDays) : 0
-	const numberOfFreeDays = maxDayInCycle - daysWithClasses
+	const maxDayInCycle = uniqueDays.length > 0 ? Math.max(...uniqueDays) : 0;
+	const numberOfFreeDays = maxDayInCycle - daysWithClasses;
 
 	return {
 		userId,
@@ -263,7 +263,7 @@ export function calculateStudentStatistic(
 		minHoursPerDay,
 		numberOfFreeDays: numberOfFreeDays > 0 ? numberOfFreeDays : 0,
 		dailyHours: Object.fromEntries(dailyHours),
-	}
+	};
 }
 
 /**
@@ -274,25 +274,27 @@ export async function generateStudentStatistics(
 ): Promise<StudentStatistic[]> {
 	// Fetch all enrollments with allocations
 	const enrollments =
-		await getStudentEnrollmentsWithAllocations(timetableDraftId)
+		await getStudentEnrollmentsWithAllocations(timetableDraftId);
 
 	// Filter only students (exclude teachers)
-	const studentEnrollments = enrollments.filter((e) => e.userType === 'student')
+	const studentEnrollments = enrollments.filter(
+		(e) => e.userType === 'student',
+	);
 
 	// Aggregate by student
-	const studentMap = aggregateStudentEnrollments(studentEnrollments)
+	const studentMap = aggregateStudentEnrollments(studentEnrollments);
 
 	// Calculate statistics for each student
-	const statistics: StudentStatistic[] = []
+	const statistics: StudentStatistic[] = [];
 	for (const [userId, userEnrollments] of studentMap.entries()) {
-		const statistic = calculateStudentStatistic(userId, userEnrollments)
-		statistics.push(statistic)
+		const statistic = calculateStudentStatistic(userId, userEnrollments);
+		statistics.push(statistic);
 	}
 
 	// Sort by student name
-	statistics.sort((a, b) => a.userName.localeCompare(b.userName))
+	statistics.sort((a, b) => a.userName.localeCompare(b.userName));
 
-	return statistics
+	return statistics;
 }
 
 /**
@@ -302,7 +304,7 @@ export function getStudentScheduleSummary(statistic: StudentStatistic): string {
 	const days = Object.entries(statistic.dailyHours)
 		.sort(([a], [b]) => Number(a) - Number(b))
 		.map(([day, hours]) => `Day ${Number(day)}: ${hours.toFixed(2)}h`)
-		.join(', ')
+		.join(', ');
 
-	return `${statistic.userName} (${statistic.numberOfEnrolledClasses} classes): ${days}`
+	return `${statistic.userName} (${statistic.numberOfEnrolledClasses} classes): ${days}`;
 }

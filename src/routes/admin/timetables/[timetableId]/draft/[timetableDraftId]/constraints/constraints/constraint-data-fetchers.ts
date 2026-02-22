@@ -1,4 +1,4 @@
-import { userTypeEnum } from '$lib/enums'
+import { userTypeEnum } from '$lib/enums';
 import {
 	getBuildingsBySchoolId,
 	getSpacesBySchoolId,
@@ -8,12 +8,12 @@ import {
 	getTimetableDraftPeriodsByTimetableDraftId,
 	getTimetableDraftStudentGroupsWithCountsByTimetableDraftId,
 	getUsersBySchoolIdAndType,
-} from '$lib/server/db/service'
-import type { ConstraintFormData } from './constraint-form-types'
+} from '$lib/server/db/service';
+import type { ConstraintFormData } from './constraint-form-types';
 
 export interface AutocompleteOption {
-	value: string | number
-	label: string
+	value: string | number;
+	label: string;
 }
 
 /**
@@ -22,11 +22,11 @@ export interface AutocompleteOption {
 export async function getTimetableDraftDaysOptions(
 	timetableId: number,
 ): Promise<AutocompleteOption[]> {
-	const days = await getTimetableDraftDaysByTimetableDraftId(timetableId)
+	const days = await getTimetableDraftDaysByTimetableDraftId(timetableId);
 	return days.map((day) => ({
 		value: day.id,
 		label: `Day ${day.day}`, // Assuming day number maps to day name
-	}))
+	}));
 }
 
 /**
@@ -35,11 +35,11 @@ export async function getTimetableDraftDaysOptions(
 export async function getTimetableDraftPeriodsOptions(
 	timetableId: number,
 ): Promise<AutocompleteOption[]> {
-	const periods = await getTimetableDraftPeriodsByTimetableDraftId(timetableId)
+	const periods = await getTimetableDraftPeriodsByTimetableDraftId(timetableId);
 	return periods.map((period) => ({
 		value: period.id,
 		label: `${period.start} - ${period.end}`,
-	}))
+	}));
 }
 
 /**
@@ -48,8 +48,11 @@ export async function getTimetableDraftPeriodsOptions(
 export async function getSubjectsOptions(
 	schoolId: number,
 ): Promise<AutocompleteOption[]> {
-	const subjects = await getSubjectsBySchoolId(schoolId)
-	return subjects.map((subject) => ({ value: subject.id, label: subject.name }))
+	const subjects = await getSubjectsBySchoolId(schoolId);
+	return subjects.map((subject) => ({
+		value: subject.id,
+		label: subject.name,
+	}));
 }
 
 /**
@@ -61,11 +64,11 @@ export async function getTeachersOptions(
 	const teachers = await getUsersBySchoolIdAndType(
 		schoolId,
 		userTypeEnum.teacher,
-	)
+	);
 	return teachers.map((teacher) => ({
 		value: teacher.id,
 		label: `${teacher.firstName} ${teacher.lastName}`,
-	}))
+	}));
 }
 
 /**
@@ -77,11 +80,11 @@ export async function getStudentsOptions(
 	const students = await getUsersBySchoolIdAndType(
 		schoolId,
 		userTypeEnum.student,
-	)
+	);
 	return students.map((student) => ({
 		value: student.id,
 		label: `${student.firstName} ${student.lastName}`,
-	}))
+	}));
 }
 
 /**
@@ -93,11 +96,11 @@ export async function getTimetableDraftGroupsOptions(
 	const groups =
 		await getTimetableDraftStudentGroupsWithCountsByTimetableDraftId(
 			timetableId,
-		)
+		);
 	return groups.map((group) => ({
 		value: group.id,
 		label: `${group.name} (${group.yearLevelCode}) - ${group.count} students`,
-	}))
+	}));
 }
 
 /**
@@ -106,11 +109,11 @@ export async function getTimetableDraftGroupsOptions(
 export async function getBuildingsOptions(
 	schoolId: number,
 ): Promise<AutocompleteOption[]> {
-	const buildings = await getBuildingsBySchoolId(schoolId)
+	const buildings = await getBuildingsBySchoolId(schoolId);
 	return buildings.map((building) => ({
 		value: building.id,
 		label: building.name,
-	}))
+	}));
 }
 
 /**
@@ -119,11 +122,11 @@ export async function getBuildingsOptions(
 export async function getSpacesOptions(
 	schoolId: number,
 ): Promise<AutocompleteOption[]> {
-	const spaces = await getSpacesBySchoolId(schoolId)
+	const spaces = await getSpacesBySchoolId(schoolId);
 	return spaces.map((space) => ({
 		value: space.id,
 		label: `${space.name} (${space.type}) - Capacity: ${space.capacity || 'N/A'}`,
-	}))
+	}));
 }
 
 /**
@@ -133,11 +136,11 @@ export async function getTimetableDraftActivitiesOptions(
 	timetableId: number,
 ): Promise<AutocompleteOption[]> {
 	const activities =
-		await getTimetableDraftActivitiesByTimetableDraftId(timetableId)
+		await getTimetableDraftActivitiesByTimetableDraftId(timetableId);
 	return activities.map((activity) => ({
 		value: activity.id,
 		label: `${activity.id}`,
-	}))
+	}));
 }
 
 /**
@@ -168,7 +171,7 @@ export async function buildConstraintFormData(
 		getTimetableDraftDaysOptions(timetableDraftId),
 		getTimetableDraftPeriodsOptions(timetableDraftId),
 		getTimetableDraftActivitiesOptions(timetableDraftId),
-	])
+	]);
 
 	return {
 		subjects,
@@ -180,5 +183,5 @@ export async function buildConstraintFormData(
 		timetableDays,
 		timetablePeriods,
 		timetableActivities,
-	}
+	};
 }

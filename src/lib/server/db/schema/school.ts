@@ -1,4 +1,4 @@
-import { sql } from 'drizzle-orm'
+import { sql } from 'drizzle-orm';
 import {
 	check,
 	doublePrecision,
@@ -8,15 +8,20 @@ import {
 	text,
 	unique,
 	varchar,
-} from 'drizzle-orm/pg-core'
+} from 'drizzle-orm/pg-core';
 import {
 	gradeScaleEnum,
 	schoolSpaceTypeEnum,
 	yearLevelEnum,
-} from '../../../enums'
-import { enumToPgEnum, essentials, standardTimestamp } from './utils'
+} from '../../../enums';
+import {
+	enumToPgEnum,
+	essentials,
+	essentialsNoIsArchived,
+	standardTimestamp,
+} from './utils';
 
-export const schoolSchema = pgSchema('school')
+export const schoolSchema = pgSchema('school');
 
 export const school = schoolSchema.table('sch', {
 	...essentials,
@@ -24,14 +29,14 @@ export const school = schoolSchema.table('sch', {
 	logoPath: text(),
 	countryCode: varchar({ length: 2 }).notNull(),
 	stateCode: varchar({ length: 3 }).notNull(),
-})
+});
 
-export type School = typeof school.$inferSelect
+export type School = typeof school.$inferSelect;
 
 export const yearLevelEnumPg = schoolSchema.enum(
 	'enum_year_level',
 	enumToPgEnum(yearLevelEnum),
-)
+);
 
 export const schoolYearLevel = schoolSchema.table(
 	'sch_yl',
@@ -46,9 +51,9 @@ export const schoolYearLevel = schoolSchema.table(
 		}),
 	},
 	(self) => [index().on(self.schoolId), index().on(self.gradeScaleId)],
-)
+);
 
-export type SchoolYearLevel = typeof schoolYearLevel.$inferSelect
+export type SchoolYearLevel = typeof schoolYearLevel.$inferSelect;
 
 export const schoolCampus = schoolSchema.table(
 	'sch_cmps',
@@ -62,9 +67,9 @@ export const schoolCampus = schoolSchema.table(
 			.references(() => school.id, { onDelete: 'cascade' }),
 	},
 	(self) => [index().on(self.schoolId)],
-)
+);
 
-export type SchoolCampus = typeof schoolCampus.$inferSelect
+export type SchoolCampus = typeof schoolCampus.$inferSelect;
 
 export const schoolBuilding = schoolSchema.table(
 	'sch_bldng',
@@ -80,14 +85,14 @@ export const schoolBuilding = schoolSchema.table(
 		unique().on(self.schoolCampusId, self.name),
 		index().on(self.schoolCampusId),
 	],
-)
+);
 
-export type SchoolBuilding = typeof schoolBuilding.$inferSelect
+export type SchoolBuilding = typeof schoolBuilding.$inferSelect;
 
 export const schoolSpaceTypeEnumPg = schoolSchema.enum(
 	'enum_sch_space_type',
 	enumToPgEnum(schoolSpaceTypeEnum),
-)
+);
 
 export const schoolSpace = schoolSchema.table(
 	'sch_space',
@@ -105,14 +110,14 @@ export const schoolSpace = schoolSchema.table(
 		unique().on(self.schoolBuildingId, self.name),
 		index().on(self.schoolBuildingId),
 	],
-)
+);
 
-export type SchoolSpace = typeof schoolSpace.$inferSelect
+export type SchoolSpace = typeof schoolSpace.$inferSelect;
 
 export const schoolSemester = schoolSchema.table(
 	'sch_sem',
 	{
-		...essentials,
+		...essentialsNoIsArchived,
 		year: integer().notNull(),
 		number: integer().notNull(),
 		schoolId: integer('sch_id')
@@ -123,14 +128,14 @@ export const schoolSemester = schoolSchema.table(
 		unique().on(self.schoolId, self.number),
 		index().on(self.schoolId),
 	],
-)
+);
 
-export type SchoolSemester = typeof schoolSemester.$inferSelect
+export type SchoolSemester = typeof schoolSemester.$inferSelect;
 
 export const schoolTerm = schoolSchema.table(
 	'sch_term',
 	{
-		...essentials,
+		...essentialsNoIsArchived,
 		number: integer().notNull(),
 		start: standardTimestamp('start').notNull(),
 		end: standardTimestamp('end').notNull(),
@@ -142,9 +147,9 @@ export const schoolTerm = schoolSchema.table(
 		unique().on(self.schoolSemesterId, self.number),
 		index().on(self.schoolSemesterId),
 	],
-)
+);
 
-export type SchoolTerm = typeof schoolTerm.$inferSelect
+export type SchoolTerm = typeof schoolTerm.$inferSelect;
 
 export const schoolBehaviourLevel = schoolSchema.table(
 	'sch_bvr_lvl',
@@ -161,9 +166,9 @@ export const schoolBehaviourLevel = schoolSchema.table(
 		check('valid_level_range', sql`${self.level} >= 0 AND ${self.level} <= 10`),
 		index().on(self.schoolId),
 	],
-)
+);
 
-export type BehaviourLevel = typeof schoolBehaviourLevel.$inferSelect
+export type BehaviourLevel = typeof schoolBehaviourLevel.$inferSelect;
 
 export const schoolBehaviour = schoolSchema.table(
 	'sch_bvr',
@@ -183,22 +188,22 @@ export const schoolBehaviour = schoolSchema.table(
 		index().on(self.schoolId),
 		index().on(self.levelId),
 	],
-)
+);
 
-export type Behaviour = typeof schoolBehaviour.$inferSelect
+export type Behaviour = typeof schoolBehaviour.$inferSelect;
 
 export const gradeScaleEnumPg = schoolSchema.enum(
 	'enum_grade_scale',
 	enumToPgEnum(gradeScaleEnum),
-)
+);
 
 export const gradeScale = schoolSchema.table('grade_scale', {
 	...essentials,
 	name: text().notNull(),
 	gradeScaleType: gradeScaleEnumPg().notNull(),
-})
+});
 
-export type GradeScale = typeof gradeScale.$inferSelect
+export type GradeScale = typeof gradeScale.$inferSelect;
 
 export const gradeScaleLevel = schoolSchema.table(
 	'grade_scale_level',
@@ -214,6 +219,6 @@ export const gradeScaleLevel = schoolSchema.table(
 		gradeValue: doublePrecision(),
 	},
 	(self) => [index().on(self.gradeScaleId)],
-)
+);
 
-export type GradeScaleLevel = typeof gradeScaleLevel.$inferSelect
+export type GradeScaleLevel = typeof gradeScaleLevel.$inferSelect;

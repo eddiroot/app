@@ -4,10 +4,10 @@ import {
 	subjectThreadTypeEnum,
 	taskTypeEnum,
 	userTypeEnum,
-} from '$lib/enums.js'
-import { db } from '$lib/server/db'
-import * as table from '$lib/server/db/schema'
-import { and, asc, desc, eq, gte, inArray, lt, lte, or } from 'drizzle-orm'
+} from '$lib/enums.js';
+import { db } from '$lib/server/db';
+import * as table from '$lib/server/db/schema';
+import { and, asc, desc, eq, gte, inArray, lt, lte, or } from 'drizzle-orm';
 
 export async function getSubjectsByUserId(userId: string) {
 	const subjects = await db
@@ -21,9 +21,9 @@ export async function getSubjectsByUserId(userId: string) {
 			table.subject,
 			eq(table.subjectOffering.subjectId, table.subject.id),
 		)
-		.where(eq(table.userSubjectOffering.userId, userId))
+		.where(eq(table.userSubjectOffering.userId, userId));
 
-	return subjects
+	return subjects;
 }
 
 export async function getSubjectsOfferingsUserSubjectOfferingsByUserId(
@@ -44,9 +44,9 @@ export async function getSubjectsOfferingsUserSubjectOfferingsByUserId(
 			table.subject,
 			eq(table.subject.id, table.subjectOffering.subjectId),
 		)
-		.where(eq(table.userSubjectOffering.userId, userId))
+		.where(eq(table.userSubjectOffering.userId, userId));
 
-	return subjectOfferings
+	return subjectOfferings;
 }
 
 export async function getSubjectOfferingById(subjectOfferingId: number) {
@@ -66,9 +66,9 @@ export async function getSubjectOfferingById(subjectOfferingId: number) {
 			eq(table.subjectGroup.id, table.subject.subjectGroupId),
 		)
 		.where(eq(table.subjectOffering.id, subjectOfferingId))
-		.limit(1)
+		.limit(1);
 
-	return subjectOffering?.length ? subjectOffering[0] : null
+	return subjectOffering?.length ? subjectOffering[0] : null;
 }
 
 export async function getSubjectById(subjectId: number) {
@@ -76,9 +76,9 @@ export async function getSubjectById(subjectId: number) {
 		.select({ subject: table.subject })
 		.from(table.subject)
 		.where(eq(table.subject.id, subjectId))
-		.limit(1)
+		.limit(1);
 
-	return subject[0]?.subject
+	return subject[0]?.subject;
 }
 
 export async function getSubjectBySubjectOfferingId(subjectOfferingId: number) {
@@ -90,9 +90,9 @@ export async function getSubjectBySubjectOfferingId(subjectOfferingId: number) {
 			eq(table.subject.id, table.subjectOffering.subjectId),
 		)
 		.where(eq(table.subjectOffering.id, subjectOfferingId))
-		.limit(1)
+		.limit(1);
 
-	return subject ? subject.subject : null
+	return subject ? subject.subject : null;
 }
 
 export async function getSubjectBySubjectOfferingClassId(
@@ -110,9 +110,9 @@ export async function getSubjectBySubjectOfferingClassId(
 			eq(table.subjectOffering.subjectId, table.subject.id),
 		)
 		.where(eq(table.subjectOfferingClass.id, subjectOfferingClassId))
-		.limit(1)
+		.limit(1);
 
-	return result ? result.subject : null
+	return result ? result.subject : null;
 }
 
 export async function getSubjectOfferingsBySchoolId(schoolId: number) {
@@ -133,9 +133,9 @@ export async function getSubjectOfferingsBySchoolId(schoolId: number) {
 				eq(table.subjectOffering.isArchived, false),
 			),
 		)
-		.orderBy(asc(table.subject.name), asc(table.subjectOffering.year))
+		.orderBy(asc(table.subject.name), asc(table.subjectOffering.year));
 
-	return subjectOfferings
+	return subjectOfferings;
 }
 
 export async function getSubjectOfferingsBySubjectId(subjectId: number) {
@@ -149,9 +149,9 @@ export async function getSubjectOfferingsBySubjectId(subjectId: number) {
 			table.subject,
 			eq(table.subject.id, table.subjectOffering.subjectId),
 		)
-		.where(eq(table.subjectOffering.subjectId, subjectId))
+		.where(eq(table.subjectOffering.subjectId, subjectId));
 
-	return subjectOfferings // Returns both subjectOffering and subject data
+	return subjectOfferings; // Returns both subjectOffering and subject data
 }
 
 export async function getSubjectOfferingsForTimetableByTimetableId(
@@ -165,10 +165,10 @@ export async function getSubjectOfferingsForTimetableByTimetableId(
 		})
 		.from(table.timetable)
 		.where(eq(table.timetable.id, timetableId))
-		.limit(1)
+		.limit(1);
 
 	if (!timetableData) {
-		return []
+		return [];
 	}
 
 	const conditions = [
@@ -176,7 +176,7 @@ export async function getSubjectOfferingsForTimetableByTimetableId(
 		eq(table.subjectOffering.year, timetableData.year),
 		eq(table.subjectOffering.isArchived, false),
 		eq(table.subject.isArchived, false),
-	]
+	];
 
 	const subjectOfferings = await db
 		.select({
@@ -194,9 +194,9 @@ export async function getSubjectOfferingsForTimetableByTimetableId(
 			eq(table.subject.schoolYearLevelId, table.schoolYearLevel.id),
 		)
 		.where(and(...conditions))
-		.orderBy(asc(table.schoolYearLevel.code), asc(table.subject.name))
+		.orderBy(asc(table.schoolYearLevel.code), asc(table.subject.name));
 
-	return subjectOfferings
+	return subjectOfferings;
 }
 
 export async function getSubjectOfferingsByYearLevelIdForTimetableByTimetableId(
@@ -211,10 +211,10 @@ export async function getSubjectOfferingsByYearLevelIdForTimetableByTimetableId(
 		})
 		.from(table.timetable)
 		.where(eq(table.timetable.id, timetableId))
-		.limit(1)
+		.limit(1);
 
 	if (!timetableData) {
-		return []
+		return [];
 	}
 
 	const conditions = [
@@ -223,7 +223,7 @@ export async function getSubjectOfferingsByYearLevelIdForTimetableByTimetableId(
 		eq(table.subjectOffering.year, timetableData.year), // Filter by calendar year
 		eq(table.subjectOffering.isArchived, false),
 		eq(table.subject.isArchived, false),
-	]
+	];
 
 	const subjectOfferings = await db
 		.select({ subjectOffering: table.subjectOffering, subject: table.subject })
@@ -237,9 +237,9 @@ export async function getSubjectOfferingsByYearLevelIdForTimetableByTimetableId(
 			eq(table.subject.schoolYearLevelId, table.schoolYearLevel.id),
 		)
 		.where(and(...conditions))
-		.orderBy(asc(table.subject.name))
+		.orderBy(asc(table.subject.name));
 
-	return subjectOfferings
+	return subjectOfferings;
 }
 
 export async function getSubjectThreadsMinimalBySubjectId(
@@ -266,9 +266,9 @@ export async function getSubjectThreadsMinimalBySubjectId(
 		.from(table.subjectThread)
 		.innerJoin(table.user, eq(table.user.id, table.subjectThread.userId))
 		.where(eq(table.subjectThread.subjectOfferingId, subjectOfferingId))
-		.orderBy(desc(table.subjectThread.createdAt))
+		.orderBy(desc(table.subjectThread.createdAt));
 
-	return threads
+	return threads;
 }
 
 export async function getSubjectThreadById(threadId: number) {
@@ -287,13 +287,13 @@ export async function getSubjectThreadById(threadId: number) {
 		.from(table.subjectThread)
 		.innerJoin(table.user, eq(table.user.id, table.subjectThread.userId))
 		.where(eq(table.subjectThread.id, threadId))
-		.limit(1)
+		.limit(1);
 
 	if (threads.length === 0) {
-		return null
+		return null;
 	}
 
-	return threads[0]
+	return threads[0];
 }
 
 export async function getSubjectThreadResponsesById(threadId: number) {
@@ -315,14 +315,14 @@ export async function getSubjectThreadResponsesById(threadId: number) {
 			eq(table.user.id, table.subjectThreadResponse.userId),
 		)
 		.where(eq(table.subjectThreadResponse.subjectThreadId, threadId))
-		.orderBy(table.subjectThreadResponse.createdAt)
+		.orderBy(table.subjectThreadResponse.createdAt);
 
-	return responses
+	return responses;
 }
 
 export async function getRecentAnnouncementsByUserId(userId: string) {
-	const oneWeekAgo = new Date()
-	oneWeekAgo.setDate(oneWeekAgo.getDate() - 7)
+	const oneWeekAgo = new Date();
+	oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
 
 	const announcements = await db
 		.select({
@@ -354,9 +354,9 @@ export async function getRecentAnnouncementsByUserId(userId: string) {
 		)
 		.innerJoin(table.user, eq(table.user.id, table.subjectThread.userId))
 		.where(eq(table.userSubjectOffering.userId, userId))
-		.orderBy(desc(table.subjectThread.createdAt))
+		.orderBy(desc(table.subjectThread.createdAt));
 
-	return announcements
+	return announcements;
 }
 
 export async function getAnnouncementsBySubjectOfferingClassId(
@@ -382,9 +382,9 @@ export async function getAnnouncementsBySubjectOfferingClassId(
 			),
 		)
 		.where(eq(table.subjectOfferingClass.id, subjectOfferingClassId))
-		.orderBy(desc(table.subjectThread.createdAt))
+		.orderBy(desc(table.subjectThread.createdAt));
 
-	return announcements
+	return announcements;
 }
 
 export async function getTeachersForSubjectOfferingId(
@@ -410,9 +410,9 @@ export async function getTeachersForSubjectOfferingId(
 				eq(table.user.type, userTypeEnum.teacher),
 			),
 		)
-		.orderBy(asc(table.user.lastName), asc(table.user.firstName))
+		.orderBy(asc(table.user.lastName), asc(table.user.firstName));
 
-	return teachers
+	return teachers;
 }
 
 export async function getTeacherBySubjectOfferingIdForUserInClass(
@@ -436,9 +436,9 @@ export async function getTeacherBySubjectOfferingIdForUserInClass(
 				eq(table.subjectOfferingClass.subOfferingId, subjectOfferingId),
 				eq(table.userSubjectOfferingClass.isArchived, false),
 			),
-		)
+		);
 
-	const subjectClassIds = userSubjectClasses.map((usc) => usc.subjectClassId)
+	const subjectClassIds = userSubjectClasses.map((usc) => usc.subjectClassId);
 
 	// Now get all unique teachers from those subject classes
 	const teachers = await db
@@ -463,9 +463,9 @@ export async function getTeacherBySubjectOfferingIdForUserInClass(
 				eq(table.user.type, userTypeEnum.teacher),
 				eq(table.userSubjectOfferingClass.isArchived, false),
 			),
-		)
+		);
 
-	return teachers
+	return teachers;
 }
 
 export async function getSubjectsBySchoolId(
@@ -492,9 +492,9 @@ export async function getSubjectsBySchoolId(
 				includeArchived ? undefined : eq(table.subject.isArchived, false),
 			),
 		)
-		.orderBy(asc(table.schoolYearLevel.code), asc(table.subject.name))
+		.orderBy(asc(table.schoolYearLevel.code), asc(table.subject.name));
 
-	return subjects
+	return subjects;
 }
 
 export async function getClassesByUserId(userId: string) {
@@ -516,9 +516,9 @@ export async function getClassesByUserId(userId: string) {
 			eq(table.subjectOfferingClass.subOfferingId, table.subjectOffering.id),
 		)
 		.where(eq(table.userSubjectOfferingClass.userId, userId))
-		.orderBy(asc(table.subjectOfferingClass.id))
+		.orderBy(asc(table.subjectOfferingClass.id));
 
-	return classes
+	return classes;
 }
 
 export async function getSubjectsWithClassesByUserId(userId: string) {
@@ -534,7 +534,7 @@ export async function getSubjectsWithClassesByUserId(userId: string) {
 			table.subject,
 			eq(table.subjectOffering.subjectId, table.subject.id),
 		)
-		.where(eq(table.userSubjectOffering.userId, userId))
+		.where(eq(table.userSubjectOffering.userId, userId));
 
 	// Get all classes for the user
 	const userClasses = await db
@@ -560,14 +560,14 @@ export async function getSubjectsWithClassesByUserId(userId: string) {
 			eq(table.subjectOffering.subjectId, table.subject.id),
 		)
 		.where(eq(table.userSubjectOfferingClass.userId, userId))
-		.orderBy(asc(table.subjectOfferingClass.id))
+		.orderBy(asc(table.subjectOfferingClass.id));
 
 	// Group classes by subject offering
 	const subjectsWithClasses = userSubjectOfferings.map((subjectOffering) => {
 		const classes = userClasses.filter(
 			(userClass) =>
 				userClass.subjectOffering.id === subjectOffering.subjectOffering.id,
-		)
+		);
 
 		return {
 			subject: subjectOffering.subject,
@@ -577,10 +577,10 @@ export async function getSubjectsWithClassesByUserId(userId: string) {
 				name: cls.subjectOfferingClass.name,
 				subOfferingId: cls.subjectOfferingClass.subOfferingId,
 			})),
-		}
-	})
+		};
+	});
 
-	return subjectsWithClasses
+	return subjectsWithClasses;
 }
 
 export async function getClassById(classId: number) {
@@ -596,9 +596,9 @@ export async function getClassById(classId: number) {
 			eq(table.subject.id, table.subjectOffering.subjectId),
 		)
 		.where(eq(table.subjectOfferingClass.id, classId))
-		.limit(1)
+		.limit(1);
 
-	return classData[0]
+	return classData[0];
 }
 
 export async function getTeachersBySubjectOfferingClassId(
@@ -628,9 +628,9 @@ export async function getTeachersBySubjectOfferingClassId(
 				),
 				eq(table.user.type, userTypeEnum.teacher),
 			),
-		)
+		);
 
-	return teachers
+	return teachers;
 }
 
 export async function getTasksBySubjectOfferingId(subjectOfferingId: number) {
@@ -650,9 +650,9 @@ export async function getTasksBySubjectOfferingId(subjectOfferingId: number) {
 				subjectOfferingId,
 			),
 		)
-		.orderBy(asc(table.subjectOfferingClassTask.index))
+		.orderBy(asc(table.subjectOfferingClassTask.index));
 
-	return offeringTasks
+	return offeringTasks;
 }
 
 export async function getResourcesBySubjectOfferingClassId(
@@ -683,9 +683,9 @@ export async function getResourcesBySubjectOfferingClassId(
 				eq(table.resource.isArchived, false),
 			),
 		)
-		.orderBy(table.subjectOfferingClassResource.createdAt)
+		.orderBy(table.subjectOfferingClassResource.createdAt);
 
-	return resources
+	return resources;
 }
 
 export async function removeResourceFromSubjectOfferingClass(
@@ -703,7 +703,7 @@ export async function removeResourceFromSubjectOfferingClass(
 				),
 				eq(table.subjectOfferingClassResource.resourceId, resourceId),
 			),
-		)
+		);
 }
 
 export async function getAssessmentsBySubjectOfferingClassId(
@@ -731,9 +731,9 @@ export async function getAssessmentsBySubjectOfferingClassId(
 				),
 			),
 		)
-		.orderBy(asc(table.subjectOfferingClassTask.index))
+		.orderBy(asc(table.subjectOfferingClassTask.index));
 
-	return assessments
+	return assessments;
 }
 
 export async function upsertSubjectClassAllocationAttendance(
@@ -753,7 +753,7 @@ export async function upsertSubjectClassAllocationAttendance(
 			})
 			.from(table.subjectClassAllocation)
 			.where(eq(table.subjectClassAllocation.id, subjectClassAllocationId))
-			.limit(1)
+			.limit(1);
 
 		// Check if attendance already exists
 		const [existingAttendance] = await tx
@@ -768,9 +768,9 @@ export async function upsertSubjectClassAllocationAttendance(
 					eq(table.subjectClassAllocationAttendance.userId, userId),
 				),
 			)
-			.limit(1)
+			.limit(1);
 
-		const isNewAttendance = !existingAttendance
+		const isNewAttendance = !existingAttendance;
 
 		const [attendance] = await tx
 			.insert(table.subjectClassAllocationAttendance)
@@ -788,18 +788,18 @@ export async function upsertSubjectClassAllocationAttendance(
 				],
 				set: { status, noteGuardian, noteTeacher },
 			})
-			.returning()
+			.returning();
 
 		// Handle attendance components
 		if (classAllocation) {
 			// Get current time as HH:MM:SS
-			const now = new Date()
+			const now = new Date();
 
 			// Determine component type based on status
 			const componentType =
 				status === subjectClassAllocationAttendanceStatus.present
 					? subjectClassAllocationAttendanceComponentType.present
-					: subjectClassAllocationAttendanceComponentType.absent
+					: subjectClassAllocationAttendanceComponentType.absent;
 
 			if (isNewAttendance) {
 				// Create initial component for entire class duration
@@ -810,7 +810,7 @@ export async function upsertSubjectClassAllocationAttendance(
 						type: componentType,
 						start: classAllocation.start,
 						end: classAllocation.end,
-					})
+					});
 			} else {
 				// Get existing components to check if we need to update them
 				const existingComponents = await tx
@@ -822,10 +822,10 @@ export async function upsertSubjectClassAllocationAttendance(
 							attendance.id,
 						),
 					)
-					.orderBy(table.subjectClassAllocationAttendanceComponent.start)
+					.orderBy(table.subjectClassAllocationAttendanceComponent.start);
 
 				// Check if the last component has a different type than the new status
-				const lastComponent = existingComponents[existingComponents.length - 1]
+				const lastComponent = existingComponents[existingComponents.length - 1];
 
 				if (lastComponent && lastComponent.type !== componentType) {
 					// Adjust the last component's end time to current time
@@ -837,7 +837,7 @@ export async function upsertSubjectClassAllocationAttendance(
 								table.subjectClassAllocationAttendanceComponent.id,
 								lastComponent.id,
 							),
-						)
+						);
 
 					// Create a new component with the new status from current time to end of class
 					await tx
@@ -847,7 +847,7 @@ export async function upsertSubjectClassAllocationAttendance(
 							type: componentType,
 							start: now,
 							end: classAllocation.end,
-						})
+						});
 				}
 				// If type is the same, leave components as-is
 			}
@@ -856,7 +856,7 @@ export async function upsertSubjectClassAllocationAttendance(
 		if (behaviourIds !== undefined) {
 			await tx
 				.delete(table.attendanceBehaviour)
-				.where(eq(table.attendanceBehaviour.attendanceId, attendance.id))
+				.where(eq(table.attendanceBehaviour.attendanceId, attendance.id));
 
 			if (behaviourIds.length > 0) {
 				await tx
@@ -866,12 +866,12 @@ export async function upsertSubjectClassAllocationAttendance(
 							attendanceId: attendance.id,
 							behaviourId,
 						})),
-					)
+					);
 			}
 		}
 
-		return attendance
-	})
+		return attendance;
+	});
 }
 
 export async function startClassPass(
@@ -887,10 +887,10 @@ export async function startClassPass(
 			})
 			.from(table.subjectClassAllocation)
 			.where(eq(table.subjectClassAllocation.id, subjectClassAllocationId))
-			.limit(1)
+			.limit(1);
 
 		if (!classAllocation) {
-			throw new Error('Class allocation not found')
+			throw new Error('Class allocation not found');
 		}
 
 		// Get or create attendance record
@@ -906,9 +906,9 @@ export async function startClassPass(
 					eq(table.subjectClassAllocationAttendance.userId, userId),
 				),
 			)
-			.limit(1)
+			.limit(1);
 
-		let attendanceId: number
+		let attendanceId: number;
 
 		if (!existingAttendance) {
 			// Create new attendance record with present status
@@ -919,9 +919,9 @@ export async function startClassPass(
 					userId,
 					status: subjectClassAllocationAttendanceStatus.present,
 				})
-				.returning()
+				.returning();
 
-			attendanceId = attendance.id
+			attendanceId = attendance.id;
 
 			// Create initial present component for entire duration
 			await tx
@@ -931,13 +931,13 @@ export async function startClassPass(
 					type: subjectClassAllocationAttendanceComponentType.present,
 					start: classAllocation.start,
 					end: classAllocation.end,
-				})
+				});
 		} else {
-			attendanceId = existingAttendance.id
+			attendanceId = existingAttendance.id;
 		}
 
 		// Get current time
-		const now = new Date()
+		const now = new Date();
 
 		// Get existing components
 		const existingComponents = await tx
@@ -949,10 +949,10 @@ export async function startClassPass(
 					attendanceId,
 				),
 			)
-			.orderBy(table.subjectClassAllocationAttendanceComponent.start)
+			.orderBy(table.subjectClassAllocationAttendanceComponent.start);
 
 		if (existingComponents.length > 0) {
-			const lastComponent = existingComponents[existingComponents.length - 1]
+			const lastComponent = existingComponents[existingComponents.length - 1];
 
 			// Update the last component's end time to current time
 			await tx
@@ -963,7 +963,7 @@ export async function startClassPass(
 						table.subjectClassAllocationAttendanceComponent.id,
 						lastComponent.id,
 					),
-				)
+				);
 
 			// Create a new classPass component from current time to end of class
 			await tx
@@ -973,11 +973,11 @@ export async function startClassPass(
 					type: subjectClassAllocationAttendanceComponentType.classPass,
 					start: now,
 					end: classAllocation.end,
-				})
+				});
 		}
 
-		return { success: true }
-	})
+		return { success: true };
+	});
 }
 
 export async function endClassPass(
@@ -992,10 +992,10 @@ export async function endClassPass(
 			})
 			.from(table.subjectClassAllocation)
 			.where(eq(table.subjectClassAllocation.id, subjectClassAllocationId))
-			.limit(1)
+			.limit(1);
 
 		if (!classAllocation) {
-			throw new Error('Class allocation not found')
+			throw new Error('Class allocation not found');
 		}
 
 		const [existingAttendance] = await tx
@@ -1010,14 +1010,14 @@ export async function endClassPass(
 					eq(table.subjectClassAllocationAttendance.userId, userId),
 				),
 			)
-			.limit(1)
+			.limit(1);
 
 		if (!existingAttendance) {
-			throw new Error('Attendance record not found')
+			throw new Error('Attendance record not found');
 		}
 
-		const attendanceId = existingAttendance.id
-		const now = new Date()
+		const attendanceId = existingAttendance.id;
+		const now = new Date();
 
 		// Get existing components
 		const existingComponents = await tx
@@ -1029,10 +1029,10 @@ export async function endClassPass(
 					attendanceId,
 				),
 			)
-			.orderBy(table.subjectClassAllocationAttendanceComponent.start)
+			.orderBy(table.subjectClassAllocationAttendanceComponent.start);
 
 		if (existingComponents.length > 0) {
-			const lastComponent = existingComponents[existingComponents.length - 1]
+			const lastComponent = existingComponents[existingComponents.length - 1];
 
 			// Only proceed if the last component is a class pass
 			if (
@@ -1048,7 +1048,7 @@ export async function endClassPass(
 							table.subjectClassAllocationAttendanceComponent.id,
 							lastComponent.id,
 						),
-					)
+					);
 
 				// Create a new present component from current time to end of class
 				await tx
@@ -1058,12 +1058,12 @@ export async function endClassPass(
 						type: subjectClassAllocationAttendanceComponentType.present,
 						start: now,
 						end: classAllocation.end,
-					})
+					});
 			}
 		}
 
-		return { success: true }
-	})
+		return { success: true };
+	});
 }
 
 export async function getSubjectYearLevelBySubjectOfferingId(
@@ -1081,20 +1081,20 @@ export async function getSubjectYearLevelBySubjectOfferingId(
 			eq(table.subject.schoolYearLevelId, table.schoolYearLevel.id),
 		)
 		.where(eq(table.subjectOffering.id, subjectOfferingId))
-		.limit(1)
+		.limit(1);
 
-	return subjects?.length > 0 ? subjects[0].yearLevel : null
+	return subjects?.length > 0 ? subjects[0].yearLevel : null;
 }
 
 export async function getSubjectClassAllocationsByUserIdForDate(
 	userId: string,
 	date: Date,
 ) {
-	const startOfDay = new Date(date)
-	startOfDay.setHours(0, 0, 0, 0)
+	const startOfDay = new Date(date);
+	startOfDay.setHours(0, 0, 0, 0);
 
-	const endOfDay = new Date(date)
-	endOfDay.setHours(23, 59, 59, 999)
+	const endOfDay = new Date(date);
+	endOfDay.setHours(23, 59, 59, 999);
 
 	const classAllocations = await db
 		.select({
@@ -1145,9 +1145,9 @@ export async function getSubjectClassAllocationsByUserIdForDate(
 				lte(table.subjectClassAllocation.end, endOfDay),
 			),
 		)
-		.orderBy(table.subjectClassAllocation.start)
+		.orderBy(table.subjectClassAllocation.start);
 
-	return classAllocations
+	return classAllocations;
 }
 
 export async function getSubjectClassAllocationsByUserIdForWeek(
@@ -1155,15 +1155,15 @@ export async function getSubjectClassAllocationsByUserIdForWeek(
 	weekStartDate: Date,
 ) {
 	// Calculate start and end of the week (Monday to Sunday)
-	const weekStart = new Date(weekStartDate)
-	const dayOfWeek = weekStart.getDay()
-	const mondayOffset = dayOfWeek === 0 ? -6 : 1 - dayOfWeek // If Sunday (0), go back 6 days; otherwise go to previous Monday
-	weekStart.setDate(weekStart.getDate() + mondayOffset)
-	weekStart.setHours(0, 0, 0, 0)
+	const weekStart = new Date(weekStartDate);
+	const dayOfWeek = weekStart.getDay();
+	const mondayOffset = dayOfWeek === 0 ? -6 : 1 - dayOfWeek; // If Sunday (0), go back 6 days; otherwise go to previous Monday
+	weekStart.setDate(weekStart.getDate() + mondayOffset);
+	weekStart.setHours(0, 0, 0, 0);
 
-	const weekEnd = new Date(weekStart)
-	weekEnd.setDate(weekStart.getDate() + 7) // Next Monday
-	weekEnd.setHours(0, 0, 0, 0)
+	const weekEnd = new Date(weekStart);
+	weekEnd.setDate(weekStart.getDate() + 7); // Next Monday
+	weekEnd.setHours(0, 0, 0, 0);
 
 	const classAllocations = await db
 		.select({
@@ -1214,9 +1214,9 @@ export async function getSubjectClassAllocationsByUserIdForWeek(
 				lt(table.subjectClassAllocation.end, weekEnd),
 			),
 		)
-		.orderBy(table.subjectClassAllocation.start)
+		.orderBy(table.subjectClassAllocation.start);
 
-	return classAllocations
+	return classAllocations;
 }
 
 // ============================================================================
@@ -1249,32 +1249,32 @@ export async function getSubjectSelectionConstraints(
 				eq(table.subjectSelectionConstraint.yearLevel, yearLevelId),
 			),
 		)
-		.orderBy(asc(table.subjectSelectionConstraint.createdAt))
+		.orderBy(asc(table.subjectSelectionConstraint.createdAt));
 
 	// Group subjects by constraint
 	const constraintMap = new Map<
 		number,
 		{
-			constraint: typeof table.subjectSelectionConstraint.$inferSelect
+			constraint: typeof table.subjectSelectionConstraint.$inferSelect;
 			subjects: Array<
 				typeof table.subjectSelectionConstraintSubject.$inferSelect
-			>
+			>;
 		}
-	>()
+	>();
 
 	for (const row of constraints) {
 		if (!constraintMap.has(row.constraint.id)) {
 			constraintMap.set(row.constraint.id, {
 				constraint: row.constraint,
 				subjects: [],
-			})
+			});
 		}
 		if (row.subjects) {
-			constraintMap.get(row.constraint.id)!.subjects.push(row.subjects)
+			constraintMap.get(row.constraint.id)!.subjects.push(row.subjects);
 		}
 	}
 
-	return Array.from(constraintMap.values())
+	return Array.from(constraintMap.values());
 }
 
 /**
@@ -1285,10 +1285,10 @@ export async function getSubjectSelectionConstraintById(constraintId: number) {
 		.select()
 		.from(table.subjectSelectionConstraint)
 		.where(eq(table.subjectSelectionConstraint.id, constraintId))
-		.limit(1)
+		.limit(1);
 
 	if (!constraint) {
-		return null
+		return null;
 	}
 
 	const subjects = await db
@@ -1296,9 +1296,9 @@ export async function getSubjectSelectionConstraintById(constraintId: number) {
 		.from(table.subjectSelectionConstraintSubject)
 		.where(
 			eq(table.subjectSelectionConstraintSubject.constraintId, constraintId),
-		)
+		);
 
-	return { constraint, subjects }
+	return { constraint, subjects };
 }
 
 /**
@@ -1321,14 +1321,14 @@ export async function updateSubjectSelectionConstraint(
 		.update(table.subjectSelectionConstraint)
 		.set({ name, description, min, max, updatedAt: new Date() })
 		.where(eq(table.subjectSelectionConstraint.id, constraintId))
-		.returning()
+		.returning();
 
 	// Delete existing subject associations
 	await db
 		.delete(table.subjectSelectionConstraintSubject)
 		.where(
 			eq(table.subjectSelectionConstraintSubject.constraintId, constraintId),
-		)
+		);
 
 	// Insert new subject associations
 	if (subjectIds.length > 0) {
@@ -1339,10 +1339,10 @@ export async function updateSubjectSelectionConstraint(
 					constraintId: constraint.id,
 					subjectId,
 				})),
-			)
+			);
 	}
 
-	return constraint
+	return constraint;
 }
 
 /**
@@ -1351,7 +1351,7 @@ export async function updateSubjectSelectionConstraint(
 export async function deleteSubjectSelectionConstraint(constraintId: number) {
 	await db
 		.delete(table.subjectSelectionConstraint)
-		.where(eq(table.subjectSelectionConstraint.id, constraintId))
+		.where(eq(table.subjectSelectionConstraint.id, constraintId));
 }
 
 /**
@@ -1377,9 +1377,12 @@ export async function getBehavioursBySchoolId(schoolId: number) {
 		.orderBy(
 			asc(table.schoolBehaviourLevel.level),
 			asc(table.schoolBehaviour.name),
-		)
+		);
 
-	return results.map((row) => ({ ...row.behaviour, level: row.behaviourLevel }))
+	return results.map((row) => ({
+		...row.behaviour,
+		level: row.behaviourLevel,
+	}));
 }
 
 /**
@@ -1390,9 +1393,9 @@ export async function getBehaviourLevelsBySchoolId(schoolId: number) {
 		.select()
 		.from(table.schoolBehaviourLevel)
 		.where(eq(table.schoolBehaviourLevel.schoolId, schoolId))
-		.orderBy(asc(table.schoolBehaviourLevel.level))
+		.orderBy(asc(table.schoolBehaviourLevel.level));
 
-	return levels
+	return levels;
 }
 
 /**
@@ -1416,17 +1419,17 @@ export async function getLevelsWithBehaviours(schoolId: number) {
 		.orderBy(
 			asc(table.schoolBehaviourLevel.level),
 			asc(table.schoolBehaviour.name),
-		)
+		);
 
 	const levelMap = new Map<
 		number,
 		{
-			levelId: number
-			levelName: string
-			levelNumber: number
-			behaviours: Array<{ value: string; label: string }>
+			levelId: number;
+			levelName: string;
+			levelNumber: number;
+			behaviours: Array<{ value: string; label: string }>;
 		}
-	>()
+	>();
 
 	for (const row of results) {
 		if (!levelMap.has(row.level.id)) {
@@ -1435,7 +1438,7 @@ export async function getLevelsWithBehaviours(schoolId: number) {
 				levelName: row.level.name,
 				levelNumber: row.level.level,
 				behaviours: [],
-			})
+			});
 		}
 
 		if (row.behaviour) {
@@ -1444,11 +1447,11 @@ export async function getLevelsWithBehaviours(schoolId: number) {
 				.behaviours.push({
 					value: row.behaviour.id.toString(),
 					label: row.behaviour.name,
-				})
+				});
 		}
 	}
 
-	return Array.from(levelMap.values())
+	return Array.from(levelMap.values());
 }
 
 /**
@@ -1463,9 +1466,9 @@ export async function updateBehaviourLevel(id: number, name: string) {
 		.update(table.schoolBehaviourLevel)
 		.set({ name, updatedAt: new Date() })
 		.where(eq(table.schoolBehaviourLevel.id, id))
-		.returning()
+		.returning();
 
-	return behaviourLevel
+	return behaviourLevel;
 }
 
 /**
@@ -1474,7 +1477,7 @@ export async function updateBehaviourLevel(id: number, name: string) {
 export async function deleteBehaviourLevel(id: number) {
 	await db
 		.delete(table.schoolBehaviourLevel)
-		.where(eq(table.schoolBehaviourLevel.id, id))
+		.where(eq(table.schoolBehaviourLevel.id, id));
 }
 
 /**
@@ -1499,9 +1502,9 @@ export async function updateBehaviour(
 			updatedAt: new Date(),
 		})
 		.where(eq(table.schoolBehaviour.id, id))
-		.returning()
+		.returning();
 
-	return behaviour
+	return behaviour;
 }
 
 /**
@@ -1511,7 +1514,7 @@ export async function deleteBehaviour(id: number) {
 	await db
 		.update(table.schoolBehaviour)
 		.set({ isArchived: true, updatedAt: new Date() })
-		.where(eq(table.schoolBehaviour.id, id))
+		.where(eq(table.schoolBehaviour.id, id));
 }
 
 /**
@@ -1525,9 +1528,9 @@ export async function getBehavioursByAttendanceId(attendanceId: number) {
 			table.schoolBehaviour,
 			eq(table.attendanceBehaviour.behaviourId, table.schoolBehaviour.id),
 		)
-		.where(eq(table.attendanceBehaviour.attendanceId, attendanceId))
+		.where(eq(table.attendanceBehaviour.attendanceId, attendanceId));
 
-	return behaviours.map((row) => row.behaviour)
+	return behaviours.map((row) => row.behaviour);
 }
 
 export async function toggleSubjectThreadLike(
@@ -1543,7 +1546,7 @@ export async function toggleSubjectThreadLike(
 				eq(table.subjectThreadLike.userId, userId),
 			),
 		)
-		.limit(1)
+		.limit(1);
 
 	if (existingLike) {
 		// Unlike - remove the like
@@ -1554,14 +1557,14 @@ export async function toggleSubjectThreadLike(
 					eq(table.subjectThreadLike.subjectThreadId, threadId),
 					eq(table.subjectThreadLike.userId, userId),
 				),
-			)
-		return { liked: false }
+			);
+		return { liked: false };
 	} else {
 		// Like - add the like
 		await db
 			.insert(table.subjectThreadLike)
-			.values({ subjectThreadId: threadId, userId })
-		return { liked: true }
+			.values({ subjectThreadId: threadId, userId });
+		return { liked: true };
 	}
 }
 
@@ -1572,43 +1575,43 @@ export async function getSubjectThreadLikeInfo(
 	const likes = await db
 		.select()
 		.from(table.subjectThreadLike)
-		.where(eq(table.subjectThreadLike.subjectThreadId, threadId))
+		.where(eq(table.subjectThreadLike.subjectThreadId, threadId));
 
-	const userLiked = likes.some((like) => like.userId === userId)
+	const userLiked = likes.some((like) => like.userId === userId);
 
-	return { count: likes.length, userLiked }
+	return { count: likes.length, userLiked };
 }
 
 export async function getSubjectThreadLikeCounts(
 	threadIds: number[],
 	userId: string,
 ) {
-	if (threadIds.length === 0) return []
+	if (threadIds.length === 0) return [];
 
 	const likes = await db
 		.select()
 		.from(table.subjectThreadLike)
-		.where(inArray(table.subjectThreadLike.subjectThreadId, threadIds))
+		.where(inArray(table.subjectThreadLike.subjectThreadId, threadIds));
 
 	// Group by thread ID
-	const likesMap = new Map<number, { count: number; userLiked: boolean }>()
+	const likesMap = new Map<number, { count: number; userLiked: boolean }>();
 
 	for (const threadId of threadIds) {
-		likesMap.set(threadId, { count: 0, userLiked: false })
+		likesMap.set(threadId, { count: 0, userLiked: false });
 	}
 
 	for (const like of likes) {
-		const current = likesMap.get(like.subjectThreadId)!
-		current.count++
+		const current = likesMap.get(like.subjectThreadId)!;
+		current.count++;
 		if (like.userId === userId) {
-			current.userLiked = true
+			current.userLiked = true;
 		}
 	}
 
 	return Array.from(likesMap.entries()).map(([threadId, info]) => ({
 		threadId,
 		...info,
-	}))
+	}));
 }
 
 export async function toggleSubjectThreadResponseLike(
@@ -1624,7 +1627,7 @@ export async function toggleSubjectThreadResponseLike(
 				eq(table.subjectThreadResponseLike.userId, userId),
 			),
 		)
-		.limit(1)
+		.limit(1);
 
 	if (existingLike) {
 		// Unlike - remove the like
@@ -1638,14 +1641,14 @@ export async function toggleSubjectThreadResponseLike(
 					),
 					eq(table.subjectThreadResponseLike.userId, userId),
 				),
-			)
-		return { liked: false }
+			);
+		return { liked: false };
 	} else {
 		// Like - add the like
 		await db
 			.insert(table.subjectThreadResponseLike)
-			.values({ subjectThreadResponseId: responseId, userId })
-		return { liked: true }
+			.values({ subjectThreadResponseId: responseId, userId });
+		return { liked: true };
 	}
 }
 
@@ -1658,18 +1661,18 @@ export async function getSubjectThreadResponseLikeInfo(
 		.from(table.subjectThreadResponseLike)
 		.where(
 			eq(table.subjectThreadResponseLike.subjectThreadResponseId, responseId),
-		)
+		);
 
-	const userLiked = likes.some((like) => like.userId === userId)
+	const userLiked = likes.some((like) => like.userId === userId);
 
-	return { count: likes.length, userLiked }
+	return { count: likes.length, userLiked };
 }
 
 export async function getSubjectThreadResponseLikeCounts(
 	responseIds: number[],
 	userId: string,
 ) {
-	if (responseIds.length === 0) return []
+	if (responseIds.length === 0) return [];
 
 	const likes = await db
 		.select()
@@ -1679,25 +1682,25 @@ export async function getSubjectThreadResponseLikeCounts(
 				table.subjectThreadResponseLike.subjectThreadResponseId,
 				responseIds,
 			),
-		)
+		);
 
 	// Group by response ID
-	const likesMap = new Map<number, { count: number; userLiked: boolean }>()
+	const likesMap = new Map<number, { count: number; userLiked: boolean }>();
 
 	for (const responseId of responseIds) {
-		likesMap.set(responseId, { count: 0, userLiked: false })
+		likesMap.set(responseId, { count: 0, userLiked: false });
 	}
 
 	for (const like of likes) {
-		const current = likesMap.get(like.subjectThreadResponseId)!
-		current.count++
+		const current = likesMap.get(like.subjectThreadResponseId)!;
+		current.count++;
 		if (like.userId === userId) {
-			current.userLiked = true
+			current.userLiked = true;
 		}
 	}
 
 	return Array.from(likesMap.entries()).map(([responseId, info]) => ({
 		responseId,
 		...info,
-	}))
+	}));
 }

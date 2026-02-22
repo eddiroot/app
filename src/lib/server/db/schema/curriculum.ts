@@ -1,10 +1,16 @@
-import { index, integer, pgSchema, primaryKey, text } from 'drizzle-orm/pg-core'
-import { resource } from './resource'
-import { subjectOffering } from './subject'
-import { rubric, task } from './task'
-import { essentials, hexColor } from './utils'
+import {
+	index,
+	integer,
+	pgSchema,
+	primaryKey,
+	text,
+} from 'drizzle-orm/pg-core';
+import { resource } from './resource';
+import { subjectOffering } from './subject';
+import { rubric, task } from './task';
+import { essentials, hexColor } from './utils';
 
-export const curriculumSchema = pgSchema('curriculum')
+export const curriculumSchema = pgSchema('curriculum');
 
 export const curriculumItem = curriculumSchema.table(
 	'crclm_itm',
@@ -20,9 +26,9 @@ export const curriculumItem = curriculumSchema.table(
 			.references(() => subjectOffering.id, { onDelete: 'cascade' }),
 	},
 	(self) => [index().on(self.subjectOfferingId)],
-)
+);
 
-export type CurriculumItem = typeof curriculumItem.$inferSelect
+export type CurriculumItem = typeof curriculumItem.$inferSelect;
 
 export const curriculumItemResource = curriculumSchema.table(
 	'crclm_itm_res',
@@ -39,9 +45,9 @@ export const curriculumItemResource = curriculumSchema.table(
 		index().on(self.curriculumItemId),
 		index().on(self.resourceId),
 	],
-)
+);
 
-export type CurriculumItemResource = typeof curriculumItemResource.$inferInsert
+export type CurriculumItemResource = typeof curriculumItemResource.$inferInsert;
 
 export const curriculumItemTask = curriculumSchema.table(
 	'crclm_itm_tp',
@@ -61,9 +67,9 @@ export const curriculumItemTask = curriculumSchema.table(
 		index().on(self.taskId),
 		index().on(self.rubricId),
 	],
-)
+);
 
-export type CurriculumItemTaskPlan = typeof curriculumItemTask.$inferSelect
+export type CurriculumItemTaskPlan = typeof curriculumItemTask.$inferSelect;
 
 export const curriculumItemTaskResource = curriculumSchema.table(
 	'crclm_itm_tp_res',
@@ -80,7 +86,7 @@ export const curriculumItemTaskResource = curriculumSchema.table(
 		index().on(self.curriculumItemTaskPlanId),
 		index().on(self.resourceId),
 	],
-)
+);
 
 export type CurriculumItemTaskPlanResource =
-	typeof curriculumItemTaskResource.$inferInsert
+	typeof curriculumItemTaskResource.$inferInsert;

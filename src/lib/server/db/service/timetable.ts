@@ -3,10 +3,10 @@ import {
 	queueStatusEnum,
 	userTypeEnum,
 	yearLevelEnum,
-} from '$lib/enums.js'
-import { db } from '$lib/server/db'
-import * as table from '$lib/server/db/schema'
-import { and, asc, count, eq, ilike, inArray, or } from 'drizzle-orm'
+} from '$lib/enums.js';
+import { db } from '$lib/server/db';
+import * as table from '$lib/server/db/schema';
+import { and, asc, count, eq, ilike, inArray, or } from 'drizzle-orm';
 
 // ============================================================================
 // TIMETABLE - Core Operations
@@ -20,9 +20,9 @@ export async function getTimetableByTimetableId(timetableId: number) {
 			eq(table.timetable.schoolSemesterId, table.schoolSemester.id),
 		)
 		.where(eq(table.timetable.id, timetableId))
-		.limit(1)
+		.limit(1);
 
-	return timetable
+	return timetable;
 }
 
 export async function getSchoolTimetablesBySchoolId(
@@ -42,9 +42,9 @@ export async function getSchoolTimetablesBySchoolId(
 				includeArchived ? undefined : eq(table.timetable.isArchived, false),
 			),
 		)
-		.orderBy(asc(table.timetable.name))
+		.orderBy(asc(table.timetable.name));
 
-	return timetablesAndSemesters
+	return timetablesAndSemesters;
 }
 
 export async function getTimetableAndSchoolByTimetableId(timetableId: number) {
@@ -53,9 +53,9 @@ export async function getTimetableAndSchoolByTimetableId(timetableId: number) {
 		.from(table.timetable)
 		.innerJoin(table.school, eq(table.timetable.schoolId, table.school.id))
 		.where(eq(table.timetable.id, timetableId))
-		.limit(1)
+		.limit(1);
 
-	return result
+	return result;
 }
 
 // ============================================================================
@@ -69,9 +69,9 @@ export async function getTimetableDraftDaysByTimetableDraftId(
 		.select()
 		.from(table.timetableDay)
 		.where(eq(table.timetableDay.timetableDraftId, timetableDraftId))
-		.orderBy(asc(table.timetableDay.day))
+		.orderBy(asc(table.timetableDay.day));
 
-	return days
+	return days;
 }
 
 export async function updateTimetableDraftDaysByTimetableDraftId(
@@ -79,21 +79,21 @@ export async function updateTimetableDraftDaysByTimetableDraftId(
 	days: number[],
 ) {
 	if (days.length === 0) {
-		throw new Error('At least one day must be selected')
+		throw new Error('At least one day must be selected');
 	}
 
 	await db
 		.delete(table.timetableDay)
-		.where(eq(table.timetableDay.timetableDraftId, timetableDraftId))
+		.where(eq(table.timetableDay.timetableDraftId, timetableDraftId));
 
 	// Insert new days
 	if (days.length > 0) {
 		await db
 			.insert(table.timetableDay)
-			.values(days.map((day) => ({ timetableDraftId, day })))
+			.values(days.map((day) => ({ timetableDraftId, day })));
 	}
 
-	return await getTimetableDraftDaysByTimetableDraftId(timetableDraftId)
+	return await getTimetableDraftDaysByTimetableDraftId(timetableDraftId);
 }
 
 // ============================================================================
@@ -107,9 +107,9 @@ export async function getTimetableDraftPeriodsByTimetableDraftId(
 		.select()
 		.from(table.timetablePeriod)
 		.where(eq(table.timetablePeriod.timetableDraftId, timetableDraftId))
-		.orderBy(asc(table.timetablePeriod.start))
+		.orderBy(asc(table.timetablePeriod.start));
 
-	return periods
+	return periods;
 }
 
 export async function getTimetableDraftCycleWeekRepeatsByTimetableDraftId(
@@ -119,8 +119,8 @@ export async function getTimetableDraftCycleWeekRepeatsByTimetableDraftId(
 		.select({ cycleWeekRepeats: table.timetableDraft.cycleWeekRepeats })
 		.from(table.timetableDraft)
 		.where(eq(table.timetableDraft.id, timetableDraftId))
-		.limit(1)
-	return cycle.length > 0 ? cycle[0].cycleWeekRepeats : 1
+		.limit(1);
+	return cycle.length > 0 ? cycle[0].cycleWeekRepeats : 1;
 }
 
 export async function updateTimetableDraftCycleWeekRepeatsByTimetableDraftId(
@@ -128,13 +128,13 @@ export async function updateTimetableDraftCycleWeekRepeatsByTimetableDraftId(
 	cycleWeekRepeats: number,
 ) {
 	if (cycleWeekRepeats < 1 || cycleWeekRepeats > 52) {
-		throw new Error('Cycle week repeats must be between 1 and 52')
+		throw new Error('Cycle week repeats must be between 1 and 52');
 	}
 
 	await db
 		.update(table.timetableDraft)
 		.set({ cycleWeekRepeats })
-		.where(eq(table.timetableDraft.id, timetableDraftId))
+		.where(eq(table.timetableDraft.id, timetableDraftId));
 }
 
 export async function addTimetableDraftPeriod(
@@ -146,9 +146,9 @@ export async function addTimetableDraftPeriod(
 	const [newPeriod] = await db
 		.insert(table.timetablePeriod)
 		.values({ timetableDraftId, start, end })
-		.returning()
+		.returning();
 
-	return newPeriod
+	return newPeriod;
 }
 
 export async function deleteTimetableDraftPeriodByPeriodId(
@@ -156,15 +156,15 @@ export async function deleteTimetableDraftPeriodByPeriodId(
 	timetableId: number,
 ) {
 	// Check if this is the last period
-	const periods = await getTimetableDraftPeriodsByTimetableDraftId(timetableId)
+	const periods = await getTimetableDraftPeriodsByTimetableDraftId(timetableId);
 	if (periods.length <= 1) {
-		throw new Error('At least one period must exist')
+		throw new Error('At least one period must exist');
 	}
 
 	// Delete the period
 	await db
 		.delete(table.timetablePeriod)
-		.where(eq(table.timetablePeriod.id, periodId))
+		.where(eq(table.timetablePeriod.id, periodId));
 }
 
 // ============================================================================
@@ -176,8 +176,8 @@ export async function getTimetableDraftById(timetableDraftId: number) {
 		.select()
 		.from(table.timetableDraft)
 		.where(eq(table.timetableDraft.id, timetableDraftId))
-		.limit(1)
-	return timetableDraft
+		.limit(1);
+	return timetableDraft;
 }
 
 export async function getTimetableDraftsByTimetableId(timetableId: number) {
@@ -185,14 +185,14 @@ export async function getTimetableDraftsByTimetableId(timetableId: number) {
 		.select()
 		.from(table.timetableDraft)
 		.where(eq(table.timetableDraft.timetableId, timetableId))
-		.orderBy(asc(table.timetableDraft.createdAt))
+		.orderBy(asc(table.timetableDraft.createdAt));
 
-	return timetableDrafts
+	return timetableDrafts;
 }
 
 export async function createTimetableDraft(data: {
-	timetableId: number
-	name: string
+	timetableId: number;
+	name: string;
 }) {
 	const [draft] = await db
 		.insert(table.timetableDraft)
@@ -201,18 +201,18 @@ export async function createTimetableDraft(data: {
 			timetableId: data.timetableId,
 			cycleWeekRepeats: 1,
 		})
-		.returning()
+		.returning();
 
-	const defaultDays = [0, 1, 2, 3, 4] // Monday to Friday
-	await updateTimetableDraftDaysByTimetableDraftId(draft.id, defaultDays)
+	const defaultDays = [0, 1, 2, 3, 4]; // Monday to Friday
+	await updateTimetableDraftDaysByTimetableDraftId(draft.id, defaultDays);
 
-	return draft
+	return draft;
 }
 
 export async function deleteTimetableDraft(timetableDraftId: number) {
 	await db
 		.delete(table.timetableDraft)
-		.where(eq(table.timetableDraft.id, timetableDraftId))
+		.where(eq(table.timetableDraft.id, timetableDraftId));
 }
 
 export async function deleteTimetableDraftActivityData(
@@ -222,7 +222,9 @@ export async function deleteTimetableDraftActivityData(
 	const existingClasses = await db
 		.select({ id: table.fetSubjectOfferingClass.id })
 		.from(table.fetSubjectOfferingClass)
-		.where(eq(table.fetSubjectOfferingClass.timetableDraftId, timetableDraftId))
+		.where(
+			eq(table.fetSubjectOfferingClass.timetableDraftId, timetableDraftId),
+		);
 
 	for (const existingClass of existingClasses) {
 		// Delete associated allocations
@@ -233,7 +235,7 @@ export async function deleteTimetableDraftActivityData(
 					table.fetSubjectClassAllocation.fetSubjectOfferingClassId,
 					existingClass.id,
 				),
-			)
+			);
 		// Delete associated user-class links
 		await db
 			.delete(table.fetSubjectOfferingClassUser)
@@ -242,13 +244,15 @@ export async function deleteTimetableDraftActivityData(
 					table.fetSubjectOfferingClassUser.fetSubOffClassId,
 					existingClass.id,
 				),
-			)
+			);
 	}
 
 	// Delete the classes themselves
 	await db
 		.delete(table.fetSubjectOfferingClass)
-		.where(eq(table.fetSubjectOfferingClass.timetableDraftId, timetableDraftId))
+		.where(
+			eq(table.fetSubjectOfferingClass.timetableDraftId, timetableDraftId),
+		);
 }
 
 // ============================================================================
@@ -262,9 +266,9 @@ export async function getTimetableDraftGroupsByTimetableDraftId(
 		.select()
 		.from(table.timetableGroup)
 		.where(eq(table.timetableGroup.timetableDraftId, timetableDraftId))
-		.orderBy(asc(table.timetableGroup.name))
+		.orderBy(asc(table.timetableGroup.name));
 
-	return groups
+	return groups;
 }
 
 export async function getTimetableDraftStudentGroupsWithCountsByTimetableDraftId(
@@ -285,19 +289,18 @@ export async function getTimetableDraftStudentGroupsWithCountsByTimetableDraftId
 		)
 		.innerJoin(
 			table.schoolYearLevel,
-			eq(table.timetableGroup.yearLevel, table.schoolYearLevel.id),
+			eq(table.timetableGroup.yearLevelId, table.schoolYearLevel.id),
 		)
 		.where(eq(table.timetableGroup.timetableDraftId, timetableDraftId))
 		.groupBy(
 			table.timetableGroup.id,
 			table.timetableGroup.name,
-			table.timetableGroup.yearLevel,
+			table.timetableGroup.yearLevelId,
+			table.schoolYearLevel.id,
+			table.schoolYearLevel.code,
 		)
-		.orderBy(
-			asc(table.timetableGroup.yearLevel),
-			asc(table.timetableGroup.name),
-		)
-	return groups
+		.orderBy(asc(table.schoolYearLevel.code), asc(table.timetableGroup.name));
+	return groups;
 }
 
 /**
@@ -310,7 +313,7 @@ export async function getAllStudentGroupsByTimetableDraftId(
 		.select({
 			groupId: table.timetableGroup.id,
 			groupName: table.timetableGroup.name,
-			yearLevel: table.timetableGroup.yearLevel,
+			yearLevelId: table.timetableGroup.yearLevelId,
 			userId: table.timetableGroupMember.userId,
 			userFirstName: table.user.firstName,
 			userLastName: table.user.lastName,
@@ -322,13 +325,9 @@ export async function getAllStudentGroupsByTimetableDraftId(
 		)
 		.leftJoin(table.user, eq(table.timetableGroupMember.userId, table.user.id))
 		.where(eq(table.timetableGroup.timetableDraftId, timetableDraftId))
-		.orderBy(
-			asc(table.timetableGroup.yearLevel),
-			asc(table.timetableGroup.name),
-			asc(table.user.firstName),
-		)
+		.orderBy(asc(table.timetableGroup.name), asc(table.user.firstName));
 
-	return groupsWithMembers
+	return groupsWithMembers;
 }
 
 export async function createTimetableDraftStudentGroup(
@@ -338,22 +337,22 @@ export async function createTimetableDraftStudentGroup(
 ) {
 	const [group] = await db
 		.insert(table.timetableGroup)
-		.values({ timetableDraftId, yearLevel: yearLevelId, name })
-		.returning()
+		.values({ timetableDraftId, yearLevelId, name })
+		.returning();
 
-	return group
+	return group;
 }
 
 export async function deleteTimetableDraftStudentGroup(groupId: number) {
 	// First, delete all group members
 	await db
 		.delete(table.timetableGroupMember)
-		.where(eq(table.timetableGroupMember.groupId, groupId))
+		.where(eq(table.timetableGroupMember.groupId, groupId));
 
 	// Then delete the group itself
 	await db
 		.delete(table.timetableGroup)
-		.where(eq(table.timetableGroup.id, groupId))
+		.where(eq(table.timetableGroup.id, groupId));
 }
 
 // ============================================================================
@@ -368,9 +367,9 @@ export async function addStudentToTimetableDraftGroup(
 		.insert(table.timetableGroupMember)
 		.values({ groupId, userId })
 		.onConflictDoNothing()
-		.returning()
+		.returning();
 
-	return member
+	return member;
 }
 
 export async function removeStudentFromTimetableDraftGroup(
@@ -384,7 +383,7 @@ export async function removeStudentFromTimetableDraftGroup(
 				eq(table.timetableGroupMember.groupId, groupId),
 				eq(table.timetableGroupMember.userId, userId),
 			),
-		)
+		);
 }
 
 export async function assignStudentsToGroupsRandomly(
@@ -407,7 +406,7 @@ export async function assignStudentsToGroupsRandomly(
 				eq(table.schoolYearLevel.code, yearLevel),
 				eq(table.user.isArchived, false),
 			),
-		)
+		);
 
 	// Get all groups for this year level and timetable
 	const groups = await db
@@ -415,26 +414,26 @@ export async function assignStudentsToGroupsRandomly(
 		.from(table.timetableGroup)
 		.innerJoin(
 			table.schoolYearLevel,
-			eq(table.timetableGroup.yearLevel, table.schoolYearLevel.id),
+			eq(table.timetableGroup.yearLevelId, table.schoolYearLevel.id),
 		)
 		.where(
 			and(
 				eq(table.timetableGroup.timetableDraftId, timetableDraftId),
 				eq(table.schoolYearLevel.code, yearLevel),
 			),
-		)
+		);
 
 	if (groups.length === 0) {
-		throw new Error('No groups found for this year level')
+		throw new Error('No groups found for this year level');
 	}
 
 	// Remove existing assignments for these students
-	const studentIds = students.map((s) => s.id)
+	const studentIds = students.map((s) => s.id);
 	if (studentIds.length > 0) {
 		const existingGroupIds = await db
 			.select({ id: table.timetableGroup.id })
 			.from(table.timetableGroup)
-			.where(eq(table.timetableGroup.timetableDraftId, timetableDraftId))
+			.where(eq(table.timetableGroup.timetableDraftId, timetableDraftId));
 
 		if (existingGroupIds.length > 0) {
 			await db.delete(table.timetableGroupMember).where(
@@ -445,25 +444,25 @@ export async function assignStudentsToGroupsRandomly(
 						existingGroupIds.map((g) => g.id),
 					),
 				),
-			)
+			);
 		}
 	}
 
 	// Shuffle students array
-	const shuffledStudents = [...students].sort(() => Math.random() - 0.5)
+	const shuffledStudents = [...students].sort(() => Math.random() - 0.5);
 
 	// Assign students to groups in round-robin fashion
 	const assignments = shuffledStudents.map((student, index) => ({
 		userId: student.id,
 		groupId: groups[index % groups.length].tt_group.id,
-	}))
+	}));
 
 	// Insert new assignments
 	if (assignments.length > 0) {
-		await db.insert(table.timetableGroupMember).values(assignments)
+		await db.insert(table.timetableGroupMember).values(assignments);
 	}
 
-	return assignments.length
+	return assignments.length;
 }
 
 // ============================================================================
@@ -483,12 +482,12 @@ export async function getStudentsWithGroupsByTimetableDraftId(
 				eq(table.timetable.schoolId, schoolId),
 			),
 		)
-		.limit(1)
+		.limit(1);
 
 	if (timetable.length === 0) {
 		throw new Error(
 			`Timetable Draft with ID ${timetableDraftId} does not belong to school with ID ${schoolId}`,
-		)
+		);
 	}
 
 	const students = await db
@@ -531,9 +530,9 @@ export async function getStudentsWithGroupsByTimetableDraftId(
 			asc(table.user.lastName),
 			asc(table.user.middleName),
 			asc(table.user.firstName),
-		)
+		);
 
-	return students
+	return students;
 }
 
 export async function getStudentsByGroupId(groupId: number) {
@@ -546,6 +545,7 @@ export async function getStudentsByGroupId(groupId: number) {
 			lastName: table.user.lastName,
 			avatarPath: table.user.avatarPath,
 			yearLevel: table.schoolYearLevel.code,
+			yearLevelId: table.schoolYearLevel.id,
 		})
 		.from(table.timetableGroupMember)
 		.innerJoin(table.user, eq(table.timetableGroupMember.userId, table.user.id))
@@ -554,9 +554,9 @@ export async function getStudentsByGroupId(groupId: number) {
 			eq(table.user.schoolYearLevelId, table.schoolYearLevel.id),
 		)
 		.where(eq(table.timetableGroupMember.groupId, groupId))
-		.orderBy(asc(table.user.lastName), asc(table.user.firstName))
+		.orderBy(asc(table.user.lastName), asc(table.user.firstName));
 
-	return students
+	return students;
 }
 
 export async function getStudentsForTimetable(
@@ -573,12 +573,12 @@ export async function getStudentsForTimetable(
 				eq(table.timetable.schoolId, schoolId),
 			),
 		)
-		.limit(1)
+		.limit(1);
 
 	if (timetable.length === 0) {
 		throw new Error(
 			`Timetable with ID ${timetableId} does not belong to school with ID ${schoolId}`,
-		)
+		);
 	}
 
 	// Get all students for the school
@@ -591,6 +591,7 @@ export async function getStudentsForTimetable(
 			lastName: table.user.lastName,
 			avatarPath: table.user.avatarPath,
 			yearLevel: table.schoolYearLevel.code,
+			yearLevelId: table.schoolYearLevel.id,
 		})
 		.from(table.user)
 		.innerJoin(
@@ -608,9 +609,9 @@ export async function getStudentsForTimetable(
 			asc(table.schoolYearLevel.code),
 			asc(table.user.lastName),
 			asc(table.user.firstName),
-		)
+		);
 
-	return students
+	return students;
 }
 
 // ============================================================================
@@ -624,16 +625,16 @@ export async function getTimetableDraftActivitiesByTimetableDraftId(
 		.select()
 		.from(table.timetableActivity)
 		.where(eq(table.timetableActivity.timetableDraftId, timetableDraftId))
-		.orderBy(asc(table.timetableActivity.subjectOfferingId))
+		.orderBy(asc(table.timetableActivity.subjectOfferingId));
 
-	return activities
+	return activities;
 }
 
 export async function getEnhancedTimetableDraftActivitiesByTimetableDraftId(
 	timetableId: number,
 ) {
 	const baseActivities =
-		await getTimetableDraftActivitiesByTimetableDraftId(timetableId)
+		await getTimetableDraftActivitiesByTimetableDraftId(timetableId);
 
 	const activities = await Promise.all(
 		baseActivities.map(async (activity) => {
@@ -644,7 +645,7 @@ export async function getEnhancedTimetableDraftActivitiesByTimetableDraftId(
 					getActivityStudentsByActivityId(activity.id),
 					getActivityGroupsByActivityId(activity.id),
 					getActivityYearLevelsByActivityId(activity.id),
-				])
+				]);
 
 			return {
 				...activity,
@@ -653,34 +654,34 @@ export async function getEnhancedTimetableDraftActivitiesByTimetableDraftId(
 				studentIds: students.map((s) => s.id),
 				groupIds: groups.map((g) => g.id),
 				yearLevels,
-			}
+			};
 		}),
-	)
+	);
 
-	return activities
+	return activities;
 }
 
 export async function createTimetableDraftActivity(data: {
-	timetableDraftId: number
-	subjectOfferingId: number
-	teacherId: string
-	groupId: number
-	periodsPerInstance: number
-	totalPeriods: number
+	timetableDraftId: number;
+	subjectOfferingId: number;
+	teacherId: string;
+	groupId: number;
+	periodsPerInstance: number;
+	totalPeriods: number;
 }) {
-	await db.insert(table.timetableActivity).values(data).returning()
+	await db.insert(table.timetableActivity).values(data).returning();
 }
 
 export async function createTimetableDraftActivityWithRelations(data: {
-	timetableDraftId: number
-	subjectOfferingId: number
-	teacherIds: string[]
-	yearLevelIds: number[]
-	groupIds: number[]
-	studentIds: string[]
-	preferredSpaceIds: number[]
-	periodsPerInstance: number
-	instancesPerWeek: number
+	timetableDraftId: number;
+	subjectOfferingId: number;
+	teacherIds: string[];
+	yearLevelIds: number[];
+	groupIds: number[];
+	studentIds: string[];
+	preferredSpaceIds: number[];
+	periodsPerInstance: number;
+	instancesPerWeek: number;
 }) {
 	const {
 		timetableDraftId,
@@ -692,17 +693,17 @@ export async function createTimetableDraftActivityWithRelations(data: {
 		preferredSpaceIds,
 		periodsPerInstance,
 		instancesPerWeek,
-	} = data
+	} = data;
 
 	// Calculate total periods (instances per week * periods per instance)
-	const totalPeriods = instancesPerWeek * periodsPerInstance
+	const totalPeriods = instancesPerWeek * periodsPerInstance;
 
 	// If no group is specified, we need to create activities for each assignment level
 	// For now, we'll require at least one group to create the base activity
 	// If year levels or students are specified without groups, we'll handle them separately
 
 	// Create base activities for each group
-	const activityIds: number[] = []
+	const activityIds: number[] = [];
 
 	const [activity] = await db
 		.insert(table.timetableActivity)
@@ -712,12 +713,12 @@ export async function createTimetableDraftActivityWithRelations(data: {
 			periodsPerInstance,
 			totalPeriods,
 		})
-		.returning()
+		.returning();
 
-	activityIds.push(activity.id)
+	activityIds.push(activity.id);
 
 	// Add additional teachers as preferences
-	const otherTeacherIds = teacherIds.slice(1)
+	const otherTeacherIds = teacherIds.slice(1);
 	if (otherTeacherIds.length > 0) {
 		await db
 			.insert(table.timetableActivityTeacherPreference)
@@ -726,11 +727,11 @@ export async function createTimetableDraftActivityWithRelations(data: {
 					timetableActivityId: activity.id,
 					teacherId,
 				})),
-			)
+			);
 	}
 
 	// Add preferred spaces (if none specified, get all spaces for the school)
-	let spaceIds = preferredSpaceIds
+	let spaceIds = preferredSpaceIds;
 	if (spaceIds.length === 0) {
 		// Get school ID from timetable
 
@@ -741,7 +742,7 @@ export async function createTimetableDraftActivityWithRelations(data: {
 				table.timetable,
 				eq(table.timetable.id, table.timetableDraft.timetableId),
 			)
-			.where(eq(table.timetable.id, timetableDraftId))
+			.where(eq(table.timetable.id, timetableDraftId));
 
 		// Get all spaces for this school by joining through campus and building
 		const allSpaces = await db
@@ -755,9 +756,9 @@ export async function createTimetableDraftActivityWithRelations(data: {
 				table.schoolSpace,
 				eq(table.schoolSpace.schoolBuildingId, table.schoolBuilding.id),
 			)
-			.where(eq(table.schoolCampus.schoolId, timetableData.schoolId))
+			.where(eq(table.schoolCampus.schoolId, timetableData.schoolId));
 
-		spaceIds = allSpaces.map((space) => space.id)
+		spaceIds = allSpaces.map((space) => space.id);
 	}
 
 	if (spaceIds.length > 0) {
@@ -768,7 +769,7 @@ export async function createTimetableDraftActivityWithRelations(data: {
 					timetableActivityId: activity.id,
 					schoolSpaceId: spaceId,
 				})),
-			)
+			);
 	}
 
 	if (groupIds.length > 0) {
@@ -779,7 +780,7 @@ export async function createTimetableDraftActivityWithRelations(data: {
 					timetableActivityId: activity.id,
 					timetableGroupId,
 				})),
-			)
+			);
 	}
 
 	// Add assigned students if specified
@@ -791,7 +792,7 @@ export async function createTimetableDraftActivityWithRelations(data: {
 					timetableActivityId: activity.id,
 					userId,
 				})),
-			)
+			);
 	}
 
 	// Add assigned year levels if specified
@@ -803,29 +804,29 @@ export async function createTimetableDraftActivityWithRelations(data: {
 					timetableActivityId: activity.id,
 					yearLevelId,
 				})),
-			)
+			);
 	}
 
-	return activityIds
+	return activityIds;
 }
 
 export async function deleteTimetableDraftActivity(activityId: number) {
 	await db
 		.delete(table.timetableActivity)
-		.where(eq(table.timetableActivity.id, activityId))
+		.where(eq(table.timetableActivity.id, activityId));
 }
 
 export async function updateTimetableDraftActivity(
 	activityId: number,
 	data: {
-		subjectOfferingId?: number
-		periodsPerInstance?: number
-		totalPeriods?: number
-		teacherIds?: string[]
-		yearLevelIds?: number[]
-		groupIds?: number[]
-		studentIds?: string[]
-		preferredSpaceIds?: number[]
+		subjectOfferingId?: number;
+		periodsPerInstance?: number;
+		totalPeriods?: number;
+		teacherIds?: string[];
+		yearLevelIds?: number[];
+		groupIds?: number[];
+		studentIds?: string[];
+		preferredSpaceIds?: number[];
 	},
 ) {
 	const {
@@ -837,26 +838,27 @@ export async function updateTimetableDraftActivity(
 		groupIds,
 		studentIds,
 		preferredSpaceIds,
-	} = data
+	} = data;
 
 	// Update the base activity fields
 	const activityUpdateData: {
-		subjectOfferingId?: number
-		periodsPerInstance?: number
-		totalPeriods?: number
-	} = {}
+		subjectOfferingId?: number;
+		periodsPerInstance?: number;
+		totalPeriods?: number;
+	} = {};
 
 	if (subjectOfferingId !== undefined)
-		activityUpdateData.subjectOfferingId = subjectOfferingId
+		activityUpdateData.subjectOfferingId = subjectOfferingId;
 	if (periodsPerInstance !== undefined)
-		activityUpdateData.periodsPerInstance = periodsPerInstance
-	if (totalPeriods !== undefined) activityUpdateData.totalPeriods = totalPeriods
+		activityUpdateData.periodsPerInstance = periodsPerInstance;
+	if (totalPeriods !== undefined)
+		activityUpdateData.totalPeriods = totalPeriods;
 
 	if (Object.keys(activityUpdateData).length > 0) {
 		await db
 			.update(table.timetableActivity)
 			.set(activityUpdateData)
-			.where(eq(table.timetableActivity.id, activityId))
+			.where(eq(table.timetableActivity.id, activityId));
 	}
 
 	// Update teachers
@@ -868,7 +870,7 @@ export async function updateTimetableDraftActivity(
 					table.timetableActivityTeacherPreference.timetableActivityId,
 					activityId,
 				),
-			)
+			);
 
 		if (teacherIds.length > 0) {
 			await db
@@ -878,7 +880,7 @@ export async function updateTimetableDraftActivity(
 						timetableActivityId: activityId,
 						teacherId,
 					})),
-				)
+				);
 		}
 	}
 
@@ -891,7 +893,7 @@ export async function updateTimetableDraftActivity(
 					table.timetableActivityPreferredSpace.timetableActivityId,
 					activityId,
 				),
-			)
+			);
 
 		if (preferredSpaceIds.length > 0) {
 			await db
@@ -901,7 +903,7 @@ export async function updateTimetableDraftActivity(
 						timetableActivityId: activityId,
 						schoolSpaceId: spaceId,
 					})),
-				)
+				);
 		}
 	}
 
@@ -914,7 +916,7 @@ export async function updateTimetableDraftActivity(
 					table.timetableActivityAssignedGroup.timetableActivityId,
 					activityId,
 				),
-			)
+			);
 
 		if (groupIds.length > 0) {
 			await db
@@ -924,7 +926,7 @@ export async function updateTimetableDraftActivity(
 						timetableActivityId: activityId,
 						timetableGroupId: timetableGroupId,
 					})),
-				)
+				);
 		}
 	}
 
@@ -937,7 +939,7 @@ export async function updateTimetableDraftActivity(
 					table.timetableActivityAssignedStudent.timetableActivityId,
 					activityId,
 				),
-			)
+			);
 
 		if (studentIds.length > 0) {
 			await db
@@ -947,7 +949,7 @@ export async function updateTimetableDraftActivity(
 						timetableActivityId: activityId,
 						userId,
 					})),
-				)
+				);
 		}
 	}
 
@@ -957,7 +959,7 @@ export async function updateTimetableDraftActivity(
 			.delete(table.timetableActivityAssignedYear)
 			.where(
 				eq(table.timetableActivityAssignedYear.timetableActivityId, activityId),
-			)
+			);
 
 		if (yearLevelIds.length > 0) {
 			await db
@@ -967,7 +969,7 @@ export async function updateTimetableDraftActivity(
 						timetableActivityId: activityId,
 						yearLevelId,
 					})),
-				)
+				);
 		}
 	}
 
@@ -976,9 +978,9 @@ export async function updateTimetableDraftActivity(
 		.select()
 		.from(table.timetableActivity)
 		.where(eq(table.timetableActivity.id, activityId))
-		.limit(1)
+		.limit(1);
 
-	return activity
+	return activity;
 }
 
 // ============================================================================
@@ -1006,9 +1008,9 @@ export async function getActivityTeachersByActivityId(activityId: number) {
 				activityId,
 			),
 		)
-		.orderBy(asc(table.user.lastName), asc(table.user.firstName))
+		.orderBy(asc(table.user.lastName), asc(table.user.firstName));
 
-	return teachers
+	return teachers;
 }
 
 export async function getActivitySpacesByActivityId(activityId: number) {
@@ -1032,9 +1034,9 @@ export async function getActivitySpacesByActivityId(activityId: number) {
 		.where(
 			eq(table.timetableActivityPreferredSpace.timetableActivityId, activityId),
 		)
-		.orderBy(asc(table.schoolSpace.name))
+		.orderBy(asc(table.schoolSpace.name));
 
-	return locations
+	return locations;
 }
 
 export async function getActivityStudentsByActivityId(activityId: number) {
@@ -1063,9 +1065,9 @@ export async function getActivityStudentsByActivityId(activityId: number) {
 				activityId,
 			),
 		)
-		.orderBy(asc(table.user.lastName), asc(table.user.firstName))
+		.orderBy(asc(table.user.lastName), asc(table.user.firstName));
 
-	return students
+	return students;
 }
 
 export async function getActivityGroupsByActivityId(activityId: number) {
@@ -1073,7 +1075,7 @@ export async function getActivityGroupsByActivityId(activityId: number) {
 		.select({
 			id: table.timetableGroup.id,
 			timetableDraftId: table.timetableGroup.timetableDraftId,
-			yearLevel: table.timetableGroup.yearLevel,
+			yearLevelId: table.timetableGroup.yearLevelId,
 			name: table.timetableGroup.name,
 		})
 		.from(table.timetableActivityAssignedGroup)
@@ -1088,11 +1090,11 @@ export async function getActivityGroupsByActivityId(activityId: number) {
 			eq(table.timetableActivityAssignedGroup.timetableActivityId, activityId),
 		)
 		.orderBy(
-			asc(table.timetableGroup.yearLevel),
+			asc(table.timetableGroup.yearLevelId),
 			asc(table.timetableGroup.name),
-		)
+		);
 
-	return groups
+	return groups;
 }
 
 export async function getActivityYearLevelsByActivityId(activityId: number) {
@@ -1112,9 +1114,9 @@ export async function getActivityYearLevelsByActivityId(activityId: number) {
 		.where(
 			eq(table.timetableActivityAssignedYear.timetableActivityId, activityId),
 		)
-		.orderBy(asc(table.schoolYearLevel.code))
+		.orderBy(asc(table.schoolYearLevel.code));
 
-	return years
+	return years;
 }
 
 // ============================================================================
@@ -1136,18 +1138,18 @@ export async function createTimetableQueueEntry(
 			timetableDraftId,
 			status: queueStatusEnum.queued,
 		})
-		.returning()
+		.returning();
 
-	return entry
+	return entry;
 }
 
 export async function getInProgressTimetableQueues() {
 	const entries = await db
 		.select()
 		.from(table.timetableQueue)
-		.where(eq(table.timetableQueue.status, queueStatusEnum.inProgress))
+		.where(eq(table.timetableQueue.status, queueStatusEnum.inProgress));
 
-	return entries
+	return entries;
 }
 
 export async function getTimetableQueueByTimetableId(timetableId: number) {
@@ -1159,9 +1161,9 @@ export async function getTimetableQueueByTimetableId(timetableId: number) {
 			eq(table.timetableQueue.timetableDraftId, table.timetableDraft.id),
 		)
 		.where(eq(table.timetableQueue.timetableId, timetableId))
-		.orderBy(asc(table.timetableQueue.createdAt))
+		.orderBy(asc(table.timetableQueue.createdAt));
 
-	return entries
+	return entries;
 }
 
 export async function getCompletedDraftsByTimetableId(timetableId: number) {
@@ -1174,9 +1176,9 @@ export async function getCompletedDraftsByTimetableId(timetableId: number) {
 				eq(table.timetableQueue.status, queueStatusEnum.completed),
 			),
 		)
-		.orderBy(asc(table.timetableQueue.createdAt))
+		.orderBy(asc(table.timetableQueue.createdAt));
 
-	return entries
+	return entries;
 }
 
 export async function getOldestQueuedTimetable() {
@@ -1190,9 +1192,9 @@ export async function getOldestQueuedTimetable() {
 		.innerJoin(table.school, eq(table.timetable.schoolId, table.school.id))
 		.where(eq(table.timetableQueue.status, queueStatusEnum.queued))
 		.orderBy(asc(table.timetableQueue.createdAt))
-		.limit(1)
+		.limit(1);
 
-	return entry
+	return entry;
 }
 
 export async function updateTimetableQueueStatus(
@@ -1200,18 +1202,18 @@ export async function updateTimetableQueueStatus(
 	status: queueStatusEnum,
 	completedAt?: Date,
 ) {
-	const updateData: { status: queueStatusEnum; updatedAt?: Date } = { status }
+	const updateData: { status: queueStatusEnum; updatedAt?: Date } = { status };
 	if (completedAt) {
-		updateData.updatedAt = completedAt
+		updateData.updatedAt = completedAt;
 	}
 
 	const [entry] = await db
 		.update(table.timetableQueue)
 		.set(updateData)
 		.where(eq(table.timetableQueue.id, queueId))
-		.returning()
+		.returning();
 
-	return entry
+	return entry;
 }
 
 // ============================================================================
@@ -1219,12 +1221,12 @@ export async function updateTimetableQueueStatus(
 // ============================================================================
 
 export async function createConstraint(data: {
-	fetName: string
-	friendlyName: string
-	description: string
-	type: constraintTypeEnum
-	optional: boolean
-	repeatable: boolean
+	fetName: string;
+	friendlyName: string;
+	description: string;
+	type: constraintTypeEnum;
+	optional: boolean;
+	repeatable: boolean;
 }) {
 	const [constraint] = await db
 		.insert(table.constraint)
@@ -1236,18 +1238,18 @@ export async function createConstraint(data: {
 			optional: data.optional,
 			repeatable: data.repeatable,
 		})
-		.returning()
+		.returning();
 
-	return constraint
+	return constraint;
 }
 
 export async function getAllConstraints() {
 	const constraints = await db
 		.select()
 		.from(table.constraint)
-		.orderBy(asc(table.constraint.fetName))
+		.orderBy(asc(table.constraint.fetName));
 
-	return constraints
+	return constraints;
 }
 
 export async function getConstraintById(constraintId: number) {
@@ -1255,9 +1257,9 @@ export async function getConstraintById(constraintId: number) {
 		.select()
 		.from(table.constraint)
 		.where(eq(table.constraint.id, constraintId))
-		.limit(1)
+		.limit(1);
 
-	return constraint
+	return constraint;
 }
 
 // ============================================================================
@@ -1265,10 +1267,10 @@ export async function getConstraintById(constraintId: number) {
 // ============================================================================
 
 export async function createTimetableDraftConstraint(data: {
-	timetableDraftId: number
-	constraintId: number
-	active: boolean
-	parameters: Record<string, unknown>
+	timetableDraftId: number;
+	constraintId: number;
+	active: boolean;
+	parameters: Record<string, unknown>;
 }) {
 	const [constraint] = await db
 		.insert(table.timetableDraftConstraint)
@@ -1278,9 +1280,9 @@ export async function createTimetableDraftConstraint(data: {
 			active: data.active,
 			parameters: data.parameters,
 		})
-		.returning()
+		.returning();
 
-	return constraint
+	return constraint;
 }
 
 export async function getAllConstraintsByTimetableDraftId(
@@ -1296,7 +1298,7 @@ export async function getAllConstraintsByTimetableDraftId(
 		.where(
 			eq(table.timetableDraftConstraint.timetableDraftId, timetableDraftId),
 		)
-		.orderBy(asc(table.constraint.fetName))
+		.orderBy(asc(table.constraint.fetName));
 }
 
 export async function getTimeConstraintsByTimetableDraftId(
@@ -1323,7 +1325,7 @@ export async function getTimeConstraintsByTimetableDraftId(
 				eq(table.constraint.type, constraintTypeEnum.time),
 			),
 		)
-		.orderBy(asc(table.constraint.fetName))
+		.orderBy(asc(table.constraint.fetName));
 }
 
 export async function getSpaceConstraintsByTimetableDraftId(
@@ -1342,7 +1344,7 @@ export async function getSpaceConstraintsByTimetableDraftId(
 				eq(table.constraint.type, constraintTypeEnum.space),
 			),
 		)
-		.orderBy(asc(table.constraint.fetName))
+		.orderBy(asc(table.constraint.fetName));
 }
 
 export async function getActiveTimetableDraftConstraintsByTimetableDraftId(
@@ -1369,13 +1371,13 @@ export async function getActiveTimetableDraftConstraintsByTimetableDraftId(
 				eq(table.timetableDraftConstraint.active, true),
 			),
 		)
-		.orderBy(asc(table.constraint.fetName))
+		.orderBy(asc(table.constraint.fetName));
 }
 
 export async function deleteTimetableDraftConstraint(ttConstraintId: number) {
 	await db
 		.delete(table.timetableDraftConstraint)
-		.where(and(eq(table.timetableDraftConstraint.id, ttConstraintId)))
+		.where(and(eq(table.timetableDraftConstraint.id, ttConstraintId)));
 }
 
 export async function updateTimetableDraftConstraintActiveStatus(
@@ -1386,9 +1388,9 @@ export async function updateTimetableDraftConstraintActiveStatus(
 		.update(table.timetableDraftConstraint)
 		.set({ active })
 		.where(and(eq(table.timetableDraftConstraint.id, ttConstraintId)))
-		.returning()
+		.returning();
 
-	return result[0]
+	return result[0];
 }
 
 // ============================================================================
@@ -1400,7 +1402,7 @@ export async function searchUsersBySchoolId(
 	searchTerm: string,
 	limit = 20,
 ) {
-	const searchPattern = `%${searchTerm}%`
+	const searchPattern = `%${searchTerm}%`;
 
 	return db
 		.select({
@@ -1423,7 +1425,7 @@ export async function searchUsersBySchoolId(
 			),
 		)
 		.limit(limit)
-		.orderBy(asc(table.user.lastName), asc(table.user.firstName))
+		.orderBy(asc(table.user.lastName), asc(table.user.firstName));
 }
 
 // ============================================================================
@@ -1458,44 +1460,44 @@ export async function publishTimetableDraft(timetableDraftId: number) {
 			eq(table.timetableDraft.timetableId, table.timetable.id),
 		)
 		.where(eq(table.timetableDraft.id, timetableDraftId))
-		.limit(1)
+		.limit(1);
 
 	if (!timetableData) {
-		throw new Error(`Timetable draft with ID ${timetableDraftId} not found`)
+		throw new Error(`Timetable draft with ID ${timetableDraftId} not found`);
 	}
 
 	if (!timetableData.schoolSemesterId) {
 		throw new Error(
 			`Timetable draft ${timetableDraftId} has no associated semester`,
-		)
+		);
 	}
 
 	const [semester] = await db
 		.select()
 		.from(table.schoolSemester)
 		.where(eq(table.schoolSemester.id, timetableData.schoolSemesterId))
-		.limit(1)
+		.limit(1);
 
 	if (!semester) {
 		throw new Error(
 			`Semester with ID ${timetableData.schoolSemesterId} not found for timetable draft ${timetableDraftId}`,
-		)
+		);
 	}
 
 	const terms = await db
 		.select()
 		.from(table.schoolTerm)
-		.where(and(eq(table.schoolTerm.schoolSemesterId, semester.id)))
+		.where(and(eq(table.schoolTerm.schoolSemesterId, semester.id)));
 
 	const fetSubOfferingClasses =
 		await getFetSubjectOfferingClassesAndSubjectByTimetableDraftId(
 			timetableDraftId,
-		)
+		);
 
 	if (fetSubOfferingClasses.length === 0) {
 		throw new Error(
 			`No FET Subject Offering Classes found for timetable draft ID ${timetableDraftId}`,
-		)
+		);
 	}
 
 	for (const fetClass of fetSubOfferingClasses) {
@@ -1506,14 +1508,14 @@ export async function publishTimetableDraft(timetableDraftId: number) {
 				timetableDraftId: timetableDraftId,
 				subOfferingId: fetClass.subjectOfferingId,
 			})
-			.returning()
+			.returning();
 
 		const users = await db
 			.select({ userId: table.fetSubjectOfferingClassUser.userId })
 			.from(table.fetSubjectOfferingClassUser)
 			.where(
 				eq(table.fetSubjectOfferingClassUser.fetSubOffClassId, fetClass.id),
-			)
+			);
 
 		await db
 			.insert(table.userSubjectOfferingClass)
@@ -1522,18 +1524,18 @@ export async function publishTimetableDraft(timetableDraftId: number) {
 					subOffClassId: newSubOfferingClass.id,
 					userId: user.userId,
 				})),
-			)
+			);
 
 		const allocations = await getFetSubjectOfferingClassAllocationsByFetClassId(
 			fetClass.id,
-		)
+		);
 
 		for (const fetAllocation of allocations) {
 			// Step 5: For each fet subject offering class allocation that belongs to each fet subject offering class
 			// For each term, create allocations based on the cycle weeks repeats
 			for (const term of terms) {
-				const cycleDurationDays = timetableData.cycleWeekRepeats * 7
-				let cycleStartDate = term.start
+				const cycleDurationDays = timetableData.cycleWeekRepeats * 7;
+				let cycleStartDate = term.start;
 
 				// Loop through cycles within the term
 				while (cycleStartDate <= term.end) {
@@ -1543,7 +1545,7 @@ export async function publishTimetableDraft(timetableDraftId: number) {
 						fetAllocation.dayId,
 						fetAllocation.startPeriod,
 						fetAllocation.endPeriod,
-					)
+					);
 
 					await db
 						.insert(table.subjectClassAllocation)
@@ -1552,11 +1554,11 @@ export async function publishTimetableDraft(timetableDraftId: number) {
 							schoolSpaceId: fetAllocation.schoolSpaceId,
 							start,
 							end,
-						})
+						});
 
 					cycleStartDate = new Date(
 						cycleStartDate.getTime() + cycleDurationDays * 24 * 60 * 60 * 1000,
-					)
+					);
 				}
 			}
 		}
@@ -1573,9 +1575,9 @@ export async function findTimeAndDateForAllocation(
 		.select({ day: table.timetableDay.day })
 		.from(table.timetableDay)
 		.where(eq(table.timetableDay.id, dayId))
-		.limit(1)
+		.limit(1);
 
-	let periodTimes: { start: string; end: string }
+	let periodTimes: { start: string; end: string };
 
 	if (startPeriodId == endPeriodId) {
 		const pts = await db
@@ -1585,23 +1587,26 @@ export async function findTimeAndDateForAllocation(
 			})
 			.from(table.timetablePeriod)
 			.where(eq(table.timetablePeriod.id, startPeriodId))
-			.limit(1)
+			.limit(1);
 
-		periodTimes = pts[0]
+		periodTimes = pts[0];
 	} else {
 		const startPeriodTime = await db
 			.select({ start: table.timetablePeriod.start })
 			.from(table.timetablePeriod)
 			.where(eq(table.timetablePeriod.id, startPeriodId))
-			.limit(1)
+			.limit(1);
 
 		const endPeriodTime = await db
 			.select({ end: table.timetablePeriod.end })
 			.from(table.timetablePeriod)
 			.where(eq(table.timetablePeriod.id, endPeriodId))
-			.limit(1)
+			.limit(1);
 
-		periodTimes = { start: startPeriodTime[0].start, end: endPeriodTime[0].end }
+		periodTimes = {
+			start: startPeriodTime[0].start,
+			end: endPeriodTime[0].end,
+		};
 	}
 
 	return {
@@ -1619,7 +1624,7 @@ export async function findTimeAndDateForAllocation(
 				' ' +
 				periodTimes.end,
 		),
-	}
+	};
 }
 
 export async function getFetSubjectOfferingClassesAndSubjectByTimetableDraftId(
@@ -1645,9 +1650,11 @@ export async function getFetSubjectOfferingClassesAndSubjectByTimetableDraftId(
 			table.subject,
 			eq(table.subjectOffering.subjectId, table.subject.id),
 		)
-		.where(eq(table.fetSubjectOfferingClass.timetableDraftId, timetableDraftId))
+		.where(
+			eq(table.fetSubjectOfferingClass.timetableDraftId, timetableDraftId),
+		);
 
-	return fetSubOfferingClasses
+	return fetSubOfferingClasses;
 }
 
 export async function getFetSubjectOfferingClassAllocationsByFetClassId(
@@ -1666,7 +1673,7 @@ export async function getFetSubjectOfferingClassAllocationsByFetClassId(
 		.from(table.fetSubjectClassAllocation)
 		.where(
 			eq(table.fetSubjectClassAllocation.fetSubjectOfferingClassId, fetClassId),
-		)
+		);
 
-	return allocations
+	return allocations;
 }

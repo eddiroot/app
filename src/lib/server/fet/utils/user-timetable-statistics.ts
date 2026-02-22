@@ -1,60 +1,64 @@
-import { db } from '$lib/server/db/index'
-import { and, eq, inArray } from 'drizzle-orm'
-import * as table from '../../db/schema'
-import { subject, subjectOffering, subjectOfferingClass } from '../../db/schema'
+import { db } from '$lib/server/db/index';
+import { and, eq, inArray } from 'drizzle-orm';
+import * as table from '../../db/schema';
+import {
+	subject,
+	subjectOffering,
+	subjectOfferingClass,
+} from '../../db/schema';
 
 /**
  * Represents a single class session in the timetable
  */
 export type ClassSession = {
-	id: number
-	subjectName: string
-	subjectOfferingId: number
-	className: string
-	spaceName: string | null
-	start: string
-	end: string
-	durationMinutes: number
-	dayId: number
-	dayNumber: number
-	startPeriodId: number
-	endPeriodId: number
-}
+	id: number;
+	subjectName: string;
+	subjectOfferingId: number;
+	className: string;
+	spaceName: string | null;
+	start: string;
+	end: string;
+	durationMinutes: number;
+	dayId: number;
+	dayNumber: number;
+	startPeriodId: number;
+	endPeriodId: number;
+};
 
 /**
  * Represents a single day in the timetable with all its sessions
  */
 export type DaySchedule = {
-	dayNumber: number
-	dayName: string
-	sessions: ClassSession[]
-	totalHours: number
-}
+	dayNumber: number;
+	dayName: string;
+	sessions: ClassSession[];
+	totalHours: number;
+};
 
 /**
  * Complete timetable for a user across the cycle
  */
 export type UserTimetable = {
-	userId: string
-	userName: string
-	userType: string
-	cycleWeekRepeats: number
-	days: DaySchedule[]
-	totalHoursPerCycle: number
-	averageHoursPerDay: number
-}
+	userId: string;
+	userName: string;
+	userType: string;
+	cycleWeekRepeats: number;
+	days: DaySchedule[];
+	totalHoursPerCycle: number;
+	averageHoursPerDay: number;
+};
 
 /**
  * Calculate duration in minutes between two time strings
  */
 function calculateDurationMinutes(start: string, end: string): number {
-	const [startHour, startMin] = start.split(':').map(Number)
-	const [endHour, endMin] = end.split(':').map(Number)
+	const [startHour, startMin] = start.split(':').map(Number);
+	const [endHour, endMin] = end.split(':').map(Number);
 
-	const startTotalMin = startHour * 60 + startMin
-	const endTotalMin = endHour * 60 + endMin
+	const startTotalMin = startHour * 60 + startMin;
+	const endTotalMin = endHour * 60 + endMin;
 
-	return endTotalMin - startTotalMin
+	return endTotalMin - startTotalMin;
 }
 
 /**
@@ -80,8 +84,8 @@ async function getUserFetClasses(userId: string, timetableDraftId: number) {
 				eq(table.fetSubjectOfferingClassUser.isArchived, false),
 				eq(table.fetSubjectOfferingClass.isArchived, false),
 			),
-		)
-	return userClasses.map((c) => c.fetSubOffClassId)
+		);
+	return userClasses.map((c) => c.fetSubOffClassId);
 }
 
 /**
@@ -89,7 +93,7 @@ async function getUserFetClasses(userId: string, timetableDraftId: number) {
  */
 async function getClassAllocations(fetClassIds: number[]) {
 	if (fetClassIds.length === 0) {
-		return []
+		return [];
 	}
 
 	const allocations = await db
@@ -124,21 +128,21 @@ async function getClassAllocations(fetClassIds: number[]) {
 				),
 				eq(table.fetSubjectClassAllocation.isArchived, false),
 			),
-		)
+		);
 
 	// Get end times for allocations
-	const endPeriodIds = [...new Set(allocations.map((a) => a.endPeriodId))]
+	const endPeriodIds = [...new Set(allocations.map((a) => a.endPeriodId))];
 	const endPeriods = await db
 		.select({ id: table.timetablePeriod.id, end: table.timetablePeriod.end })
 		.from(table.timetablePeriod)
-		.where(inArray(table.timetablePeriod.id, endPeriodIds))
+		.where(inArray(table.timetablePeriod.id, endPeriodIds));
 
-	const endPeriodMap = new Map(endPeriods.map((p) => [p.id, p.end]))
+	const endPeriodMap = new Map(endPeriods.map((p) => [p.id, p.end]));
 
 	return allocations.map((alloc) => ({
 		...alloc,
 		end: endPeriodMap.get(alloc.endPeriodId) || alloc.start,
-	}))
+	}));
 }
 
 /**
@@ -146,7 +150,7 @@ async function getClassAllocations(fetClassIds: number[]) {
  */
 async function getSubjectOfferingDetails(fetClassIds: number[]) {
 	if (fetClassIds.length === 0) {
-		return []
+		return [];
 	}
 
 	const details = await db
@@ -166,9 +170,9 @@ async function getSubjectOfferingDetails(fetClassIds: number[]) {
 			subjectOfferingClass,
 			eq(subjectOffering.id, subjectOfferingClass.subOfferingId),
 		)
-		.where(inArray(table.fetSubjectOfferingClass.id, fetClassIds))
+		.where(inArray(table.fetSubjectOfferingClass.id, fetClassIds));
 
-	return details
+	return details;
 }
 
 /**
@@ -176,15 +180,15 @@ async function getSubjectOfferingDetails(fetClassIds: number[]) {
  */
 async function getSpaceNames(spaceIds: number[]) {
 	if (spaceIds.length === 0) {
-		return new Map<number, string>()
+		return new Map<number, string>();
 	}
 
 	const spaces = await db
 		.select({ id: table.schoolSpace.id, name: table.schoolSpace.name })
 		.from(table.schoolSpace)
-		.where(inArray(table.schoolSpace.id, spaceIds))
+		.where(inArray(table.schoolSpace.id, spaceIds));
 
-	return new Map(spaces.map((s) => [s.id, s.name]))
+	return new Map(spaces.map((s) => [s.id, s.name]));
 }
 
 /**
@@ -195,9 +199,9 @@ async function getTimetableDays(timetableDraftId: number) {
 		.select()
 		.from(table.timetableDay)
 		.where(eq(table.timetableDay.timetableDraftId, timetableDraftId))
-		.orderBy(table.timetableDay.day)
+		.orderBy(table.timetableDay.day);
 
-	return days
+	return days;
 }
 
 /**
@@ -208,9 +212,9 @@ async function getCycleWeekRepeats(timetableDraftId: number): Promise<number> {
 		.select({ cycleWeekRepeats: table.timetableDraft.cycleWeekRepeats })
 		.from(table.timetableDraft)
 		.where(eq(table.timetableDraft.id, timetableDraftId))
-		.limit(1)
+		.limit(1);
 
-	return draft[0]?.cycleWeekRepeats || 1
+	return draft[0]?.cycleWeekRepeats || 1;
 }
 
 /**
@@ -229,23 +233,23 @@ export async function generateUserTimetable(
 		})
 		.from(table.user)
 		.where(eq(table.user.id, userId))
-		.limit(1)
+		.limit(1);
 
 	if (userDetails.length === 0) {
-		throw new Error(`User with ID ${userId} not found`)
+		throw new Error(`User with ID ${userId} not found`);
 	}
 
-	const userName = `${userDetails[0].firstName} ${userDetails[0].lastName}`
-	const userType = userDetails[0].type
+	const userName = `${userDetails[0].firstName} ${userDetails[0].lastName}`;
+	const userType = userDetails[0].type;
 
 	// Get cycle information and days
 	const [cycleWeekRepeats, timetableDays] = await Promise.all([
 		getCycleWeekRepeats(timetableDraftId),
 		getTimetableDays(timetableDraftId),
-	])
+	]);
 
 	// Get user's FET classes
-	const fetClassIds = await getUserFetClasses(userId, timetableDraftId)
+	const fetClassIds = await getUserFetClasses(userId, timetableDraftId);
 
 	if (fetClassIds.length === 0) {
 		// Return empty timetable with all configured days
@@ -254,7 +258,7 @@ export async function generateUserTimetable(
 			dayName: 'Day ' + day.day,
 			sessions: [],
 			totalHours: 0,
-		}))
+		}));
 
 		return {
 			userId,
@@ -264,28 +268,30 @@ export async function generateUserTimetable(
 			days: emptyDays,
 			totalHoursPerCycle: 0,
 			averageHoursPerDay: 0,
-		}
+		};
 	}
 
 	// Get all allocations, subject details, and space information
 	const [allocations, subjectDetails] = await Promise.all([
 		getClassAllocations(fetClassIds),
 		getSubjectOfferingDetails(fetClassIds),
-	])
+	]);
 
 	// Get space names
 	const spaceIds = allocations
 		.map((a) => a.spaceId)
-		.filter((id): id is number => id !== null && id !== undefined)
-	const spaceMap = await getSpaceNames(spaceIds)
+		.filter((id): id is number => id !== null && id !== undefined);
+	const spaceMap = await getSpaceNames(spaceIds);
 
 	// Create maps for quick lookup
-	const subjectMap = new Map(subjectDetails.map((s) => [s.fetClassId, s]))
+	const subjectMap = new Map(subjectDetails.map((s) => [s.fetClassId, s]));
 
 	// Build sessions
 	const sessions: ClassSession[] = allocations.map((alloc) => {
-		const subject = subjectMap.get(alloc.fetSubOffClassId)
-		const spaceName = alloc.spaceId ? spaceMap.get(alloc.spaceId) || null : null
+		const subject = subjectMap.get(alloc.fetSubOffClassId);
+		const spaceName = alloc.spaceId
+			? spaceMap.get(alloc.spaceId) || null
+			: null;
 
 		return {
 			id: alloc.allocationId,
@@ -300,39 +306,39 @@ export async function generateUserTimetable(
 			dayNumber: alloc.dayNumber,
 			startPeriodId: alloc.startPeriodId,
 			endPeriodId: alloc.endPeriodId,
-		}
-	})
+		};
+	});
 
 	// Group sessions by day and create day schedules for ALL configured days
 	const daySchedules: DaySchedule[] = timetableDays.map((day) => {
 		const daySessions = sessions
 			.filter((s) => s.dayNumber === day.day)
-			.sort((a, b) => a.start.localeCompare(b.start))
+			.sort((a, b) => a.start.localeCompare(b.start));
 
 		const totalMinutes = daySessions.reduce(
 			(sum, s) => sum + s.durationMinutes,
 			0,
-		)
-		const totalHours = totalMinutes / 60
+		);
+		const totalHours = totalMinutes / 60;
 
 		return {
 			dayNumber: day.day,
 			dayName: 'Day ' + day.day,
 			sessions: daySessions,
 			totalHours,
-		}
-	})
+		};
+	});
 
 	// Calculate overall statistics
 	const totalHoursPerCycle = daySchedules.reduce(
 		(sum, day) => sum + day.totalHours,
 		0,
-	)
+	);
 	const daysWithClasses = daySchedules.filter(
 		(day) => day.sessions.length > 0,
-	).length
+	).length;
 	const averageHoursPerDay =
-		daysWithClasses > 0 ? totalHoursPerCycle / daysWithClasses : 0
+		daysWithClasses > 0 ? totalHoursPerCycle / daysWithClasses : 0;
 
 	return {
 		userId,
@@ -342,7 +348,7 @@ export async function generateUserTimetable(
 		days: daySchedules,
 		totalHoursPerCycle,
 		averageHoursPerDay,
-	}
+	};
 }
 
 /**
@@ -354,56 +360,58 @@ export async function generateMultipleUserTimetables(
 ): Promise<UserTimetable[]> {
 	const timetables = await Promise.all(
 		userIds.map((userId) => generateUserTimetable(userId, timetableDraftId)),
-	)
+	);
 
-	return timetables
+	return timetables;
 }
 
 /**
  * Get a summary of free periods for a user
  */
 export function getFreePeriodsSummary(userTimetable: UserTimetable): {
-	totalFreeDays: number
-	daysWithFreePeriods: number
-	longestFreeBlock: { dayName: string; hours: number }
+	totalFreeDays: number;
+	daysWithFreePeriods: number;
+	longestFreeBlock: { dayName: string; hours: number };
 } {
-	const freeDays = userTimetable.days.filter((day) => day.sessions.length === 0)
-	const totalFreeDays = freeDays.length
+	const freeDays = userTimetable.days.filter(
+		(day) => day.sessions.length === 0,
+	);
+	const totalFreeDays = freeDays.length;
 
 	// Count days with gaps (free periods between classes)
-	let daysWithFreePeriods = 0
-	let longestFreeBlock = { dayName: '', hours: 0 }
+	let daysWithFreePeriods = 0;
+	let longestFreeBlock = { dayName: '', hours: 0 };
 
 	for (const day of userTimetable.days) {
 		if (day.sessions.length === 0) {
 			// Entire day is free
 			if (24 > longestFreeBlock.hours) {
-				longestFreeBlock = { dayName: day.dayName, hours: 24 }
+				longestFreeBlock = { dayName: day.dayName, hours: 24 };
 			}
 		} else if (day.sessions.length > 1) {
 			// Check for gaps between sessions
 			const sortedSessions = [...day.sessions].sort((a, b) =>
 				a.start.localeCompare(b.start),
-			)
+			);
 
 			for (let i = 0; i < sortedSessions.length - 1; i++) {
-				const currentEnd = sortedSessions[i].end
-				const nextStart = sortedSessions[i + 1].start
+				const currentEnd = sortedSessions[i].end;
+				const nextStart = sortedSessions[i + 1].start;
 
-				const gapMinutes = calculateDurationMinutes(currentEnd, nextStart)
+				const gapMinutes = calculateDurationMinutes(currentEnd, nextStart);
 				if (gapMinutes > 0) {
-					daysWithFreePeriods++
-					const gapHours = gapMinutes / 60
+					daysWithFreePeriods++;
+					const gapHours = gapMinutes / 60;
 					if (gapHours > longestFreeBlock.hours) {
-						longestFreeBlock = { dayName: day.dayName, hours: gapHours }
+						longestFreeBlock = { dayName: day.dayName, hours: gapHours };
 					}
-					break // Count each day only once
+					break; // Count each day only once
 				}
 			}
 		}
 	}
 
-	return { totalFreeDays, daysWithFreePeriods, longestFreeBlock }
+	return { totalFreeDays, daysWithFreePeriods, longestFreeBlock };
 }
 
 /**
@@ -412,52 +420,52 @@ export function getFreePeriodsSummary(userTimetable: UserTimetable): {
 export function formatUserTimetableForDisplay(
 	userTimetable: UserTimetable,
 ): string {
-	const lines: string[] = []
+	const lines: string[] = [];
 
-	lines.push('='.repeat(80))
+	lines.push('='.repeat(80));
 	lines.push(
 		`TIMETABLE FOR: ${userTimetable.userName} (${userTimetable.userType})`,
-	)
-	lines.push(`Cycle: ${userTimetable.cycleWeekRepeats} week(s)`)
+	);
+	lines.push(`Cycle: ${userTimetable.cycleWeekRepeats} week(s)`);
 	lines.push(
 		`Total Hours/Cycle: ${userTimetable.totalHoursPerCycle.toFixed(2)}h`,
-	)
+	);
 	lines.push(
 		`Average Hours/Day: ${userTimetable.averageHoursPerDay.toFixed(2)}h`,
-	)
-	lines.push('='.repeat(80))
-	lines.push('')
+	);
+	lines.push('='.repeat(80));
+	lines.push('');
 
 	for (const day of userTimetable.days) {
-		lines.push(`${day.dayName.toUpperCase()} - ${day.totalHours.toFixed(2)}h`)
-		lines.push('-'.repeat(80))
+		lines.push(`${day.dayName.toUpperCase()} - ${day.totalHours.toFixed(2)}h`);
+		lines.push('-'.repeat(80));
 
 		if (day.sessions.length === 0) {
-			lines.push('  No classes scheduled')
+			lines.push('  No classes scheduled');
 		} else {
 			for (const session of day.sessions) {
-				const spacePart = session.spaceName ? ` @ ${session.spaceName}` : ''
-				const classPart = session.className ? ` (${session.className})` : ''
+				const spacePart = session.spaceName ? ` @ ${session.spaceName}` : '';
+				const classPart = session.className ? ` (${session.className})` : '';
 				lines.push(
 					`  ${session.start} - ${session.end} | ${session.subjectName}${classPart}${spacePart}`,
-				)
+				);
 			}
 		}
 
-		lines.push('')
+		lines.push('');
 	}
 
-	const freePeriods = getFreePeriodsSummary(userTimetable)
-	lines.push('SUMMARY')
-	lines.push('-'.repeat(80))
-	lines.push(`Free Days: ${freePeriods.totalFreeDays}`)
-	lines.push(`Days with Free Periods: ${freePeriods.daysWithFreePeriods}`)
+	const freePeriods = getFreePeriodsSummary(userTimetable);
+	lines.push('SUMMARY');
+	lines.push('-'.repeat(80));
+	lines.push(`Free Days: ${freePeriods.totalFreeDays}`);
+	lines.push(`Days with Free Periods: ${freePeriods.daysWithFreePeriods}`);
 	if (freePeriods.longestFreeBlock.hours > 0) {
 		lines.push(
 			`Longest Free Block: ${freePeriods.longestFreeBlock.hours.toFixed(2)}h on ${freePeriods.longestFreeBlock.dayName}`,
-		)
+		);
 	}
-	lines.push('='.repeat(80))
+	lines.push('='.repeat(80));
 
-	return lines.join('\n')
+	return lines.join('\n');
 }

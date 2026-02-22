@@ -1,4 +1,4 @@
-import { SQL, sql } from 'drizzle-orm'
+import { SQL, sql } from 'drizzle-orm';
 import {
 	boolean,
 	index,
@@ -8,14 +8,14 @@ import {
 	text,
 	unique,
 	uuid,
-} from 'drizzle-orm/pg-core'
-import { constraintTypeEnum, queueStatusEnum } from '../../../enums'
-import { school, schoolSemester, schoolSpace, schoolYearLevel } from './school'
-import { subjectOffering } from './subject'
-import { user } from './user'
-import { enumToPgEnum, essentials, standardTime } from './utils'
+} from 'drizzle-orm/pg-core';
+import { constraintTypeEnum, queueStatusEnum } from '../../../enums';
+import { school, schoolSemester, schoolSpace, schoolYearLevel } from './school';
+import { subjectOffering } from './subject';
+import { user } from './user';
+import { enumToPgEnum, essentials, standardTime } from './utils';
 
-export const timetableSchema = pgSchema('timetable')
+export const timetableSchema = pgSchema('timetable');
 
 export const timetable = timetableSchema.table(
 	'tt',
@@ -36,9 +36,9 @@ export const timetable = timetableSchema.table(
 		index().on(self.schoolId),
 		index().on(self.schoolSemesterId),
 	],
-)
+);
 
-export type Timetable = typeof timetable.$inferSelect
+export type Timetable = typeof timetable.$inferSelect;
 
 export const timetableDraft = timetableSchema.table(
 	'tt_draft',
@@ -51,14 +51,14 @@ export const timetableDraft = timetableSchema.table(
 			.references(() => timetable.id, { onDelete: 'cascade' }),
 	},
 	(self) => [index().on(self.timetableId)],
-)
+);
 
-export type TimetableDraft = typeof timetableDraft.$inferSelect
+export type TimetableDraft = typeof timetableDraft.$inferSelect;
 
 export const timetableQueueStatusEnumPg = timetableSchema.enum(
 	'enum_tt_queue_status',
 	enumToPgEnum(queueStatusEnum),
-)
+);
 
 export const timetableQueue = timetableSchema.table(
 	'tt_queue',
@@ -83,9 +83,9 @@ export const timetableQueue = timetableSchema.table(
 		index().on(self.timetableDraftId),
 		index().on(self.userId),
 	],
-)
+);
 
-export type TimetableQueue = typeof timetableQueue.$inferSelect
+export type TimetableQueue = typeof timetableQueue.$inferSelect;
 
 export const timetableDay = timetableSchema.table(
 	'tt_day',
@@ -100,9 +100,9 @@ export const timetableDay = timetableSchema.table(
 		unique().on(self.timetableDraftId, self.day),
 		index().on(self.timetableDraftId),
 	],
-)
+);
 
-export type TimetableDay = typeof timetableDay.$inferSelect
+export type TimetableDay = typeof timetableDay.$inferSelect;
 
 export const timetablePeriod = timetableSchema.table(
 	'tt_period',
@@ -121,16 +121,16 @@ export const timetablePeriod = timetableSchema.table(
 		unique().on(self.timetableDraftId, self.start),
 		index().on(self.timetableDraftId),
 	],
-)
+);
 
-export type TimetablePeriod = typeof timetablePeriod.$inferSelect
+export type TimetablePeriod = typeof timetablePeriod.$inferSelect;
 
 export const timetableGroup = timetableSchema.table(
 	'tt_group',
 	{
 		...essentials,
 		name: text('name').notNull(),
-		yearLevel: integer()
+		yearLevelId: integer()
 			.notNull()
 			.references(() => schoolYearLevel.id, { onDelete: 'cascade' }),
 		timetableDraftId: integer('tt_draft_id')
@@ -141,9 +141,9 @@ export const timetableGroup = timetableSchema.table(
 		unique().on(self.timetableDraftId, self.name),
 		index().on(self.timetableDraftId),
 	],
-)
+);
 
-export type TimetableGroup = typeof timetableGroup.$inferSelect
+export type TimetableGroup = typeof timetableGroup.$inferSelect;
 
 export const timetableGroupMember = timetableSchema.table(
 	'tt_group_member',
@@ -157,9 +157,9 @@ export const timetableGroupMember = timetableSchema.table(
 			.references(() => user.id, { onDelete: 'cascade' }),
 	},
 	(self) => [unique().on(self.groupId, self.userId)],
-)
+);
 
-export type TimetableGroupMember = typeof timetableGroupMember.$inferSelect
+export type TimetableGroupMember = typeof timetableGroupMember.$inferSelect;
 
 export const timetableActivity = timetableSchema.table(
 	'tt_activity',
@@ -178,9 +178,9 @@ export const timetableActivity = timetableSchema.table(
 		index().on(self.timetableDraftId),
 		index().on(self.subjectOfferingId),
 	],
-)
+);
 
-export type TimetableActivity = typeof timetableActivity.$inferSelect
+export type TimetableActivity = typeof timetableActivity.$inferSelect;
 
 export const timetableActivityTeacherPreference = timetableSchema.table(
 	'tt_activity_teacher_pref',
@@ -193,10 +193,10 @@ export const timetableActivityTeacherPreference = timetableSchema.table(
 			.references(() => user.id, { onDelete: 'cascade' })
 			.notNull(),
 	},
-)
+);
 
 export type TimetableActivityTeacherPreferences =
-	typeof timetableActivityTeacherPreference.$inferSelect
+	typeof timetableActivityTeacherPreference.$inferSelect;
 
 export const timetableActivityPreferredSpace = timetableSchema.table(
 	'tt_activity_preferred_space',
@@ -209,10 +209,10 @@ export const timetableActivityPreferredSpace = timetableSchema.table(
 			.references(() => schoolSpace.id, { onDelete: 'cascade' })
 			.notNull(),
 	},
-)
+);
 
 export type TimetableActivityPreferredSpaces =
-	typeof timetableActivityPreferredSpace.$inferSelect
+	typeof timetableActivityPreferredSpace.$inferSelect;
 
 export const timetableActivityAssignedStudent = timetableSchema.table(
 	'tt_activity_assign_stu',
@@ -225,10 +225,10 @@ export const timetableActivityAssignedStudent = timetableSchema.table(
 			.references(() => user.id, { onDelete: 'cascade' })
 			.notNull(),
 	},
-)
+);
 
 export type TimetableActivityAssignedStudents =
-	typeof timetableActivityAssignedStudent.$inferSelect
+	typeof timetableActivityAssignedStudent.$inferSelect;
 
 export const timetableActivityAssignedGroup = timetableSchema.table(
 	'tt_activity_assign_grp',
@@ -241,10 +241,10 @@ export const timetableActivityAssignedGroup = timetableSchema.table(
 			.references(() => timetableGroup.id, { onDelete: 'cascade' })
 			.notNull(),
 	},
-)
+);
 
 export type TimetableActivityAssignedGroup =
-	typeof timetableActivityAssignedGroup.$inferSelect
+	typeof timetableActivityAssignedGroup.$inferSelect;
 
 export const timetableActivityAssignedYear = timetableSchema.table(
 	'tt_activity_assign_yr',
@@ -257,10 +257,10 @@ export const timetableActivityAssignedYear = timetableSchema.table(
 			.notNull()
 			.references(() => schoolYearLevel.id, { onDelete: 'cascade' }),
 	},
-)
+);
 
 export type TimetableActivityAssignedYear =
-	typeof timetableActivityAssignedYear.$inferSelect
+	typeof timetableActivityAssignedYear.$inferSelect;
 
 export const timetableDraftConstraint = timetableSchema.table('tt_draft_con', {
 	...essentials,
@@ -273,15 +273,15 @@ export const timetableDraftConstraint = timetableSchema.table('tt_draft_con', {
 	active: boolean().notNull().default(true),
 	// JSON schema to define the structure of parameters for this constraint
 	parameters: jsonb().notNull(),
-})
+});
 
 export type TimetableDraftConstraint =
-	typeof timetableDraftConstraint.$inferSelect
+	typeof timetableDraftConstraint.$inferSelect;
 
 export const constraintTypeEnumPg = timetableSchema.enum(
 	'enum_constraint_type',
 	enumToPgEnum(constraintTypeEnum),
-)
+);
 
 export const constraint = timetableSchema.table('con', {
 	...essentials,
@@ -291,9 +291,9 @@ export const constraint = timetableSchema.table('con', {
 	type: constraintTypeEnumPg().notNull(), // e.g., 'time', 'space'
 	optional: boolean().notNull(), // whether this constraint is optional or mandatory
 	repeatable: boolean().notNull(), // whether this constraint can be added multiple times
-})
+});
 
-export type Constraint = typeof constraint.$inferSelect
+export type Constraint = typeof constraint.$inferSelect;
 
 export const fetSubjectOfferingClass = timetableSchema.table(
 	'fet_sub_off_cls',
@@ -306,10 +306,10 @@ export const fetSubjectOfferingClass = timetableSchema.table(
 			.notNull()
 			.references(() => subjectOffering.id, { onDelete: 'cascade' }),
 	},
-)
+);
 
 export type FetSubjectOfferingClass =
-	typeof fetSubjectOfferingClass.$inferSelect
+	typeof fetSubjectOfferingClass.$inferSelect;
 
 export const fetSubjectClassAllocation = timetableSchema.table(
 	'fet_sub_off_cls_allo',
@@ -335,10 +335,10 @@ export const fetSubjectClassAllocation = timetableSchema.table(
 		index().on(self.fetSubjectOfferingClassId),
 		index().on(self.schoolSpaceId),
 	],
-)
+);
 
 export type FetSubjectClassAllocation =
-	typeof fetSubjectClassAllocation.$inferSelect
+	typeof fetSubjectClassAllocation.$inferSelect;
 
 export const fetSubjectOfferingClassUser = timetableSchema.table(
 	'fet_sub_off_cls_user',
@@ -352,7 +352,7 @@ export const fetSubjectOfferingClassUser = timetableSchema.table(
 			.references(() => fetSubjectOfferingClass.id, { onDelete: 'cascade' }),
 	},
 	(self) => [unique().on(self.userId, self.fetSubOffClassId)],
-)
+);
 
 export type FetUserSubjectOfferingClass =
-	typeof fetSubjectOfferingClassUser.$inferSelect
+	typeof fetSubjectOfferingClassUser.$inferSelect;

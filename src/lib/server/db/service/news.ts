@@ -1,7 +1,8 @@
-import { newsStatusEnum, newsVisibilityEnum } from '$lib/enums.js'
-import { db } from '$lib/server/db'
-import * as table from '$lib/server/db/schema'
-import { and, asc, desc, eq, gte, isNull, lte, or, sql } from 'drizzle-orm'
+import { newsStatusEnum, newsVisibilityEnum } from '$lib/enums.js';
+import { db } from '$lib/server/db';
+import * as table from '$lib/server/db/schema';
+import { getPresignedUrl } from '$lib/server/obj';
+import { and, asc, desc, eq, gte, isNull, lte, or, sql } from 'drizzle-orm';
 
 // News CRUD operations
 
@@ -36,9 +37,9 @@ export async function getNewsById(
 				? eq(table.news.id, newsId)
 				: and(eq(table.news.id, newsId), eq(table.news.isArchived, false)),
 		)
-		.limit(1)
+		.limit(1);
 
-	return newsItems.length > 0 ? newsItems[0] : null
+	return newsItems.length > 0 ? newsItems[0] : null;
 }
 
 // Get user's draft news
@@ -80,37 +81,37 @@ export async function getNewsDraftsByAuthor(
 		)
 		.orderBy(desc(table.news.updatedAt))
 		.limit(limit)
-		.offset(offset)
+		.offset(offset);
 
-	return newsItems
+	return newsItems;
 }
 
 // Get archived news (admin function)
 export async function getArchivedNewsBySchoolId(
 	schoolId: number,
 	options: {
-		campusId?: number
-		categoryId?: number
-		limit?: number
-		offset?: number
+		campusId?: number;
+		categoryId?: number;
+		limit?: number;
+		offset?: number;
 	} = {},
 ) {
-	const { campusId, categoryId, limit = 50, offset = 0 } = options
+	const { campusId, categoryId, limit = 50, offset = 0 } = options;
 
 	const conditions = [
 		eq(table.news.schoolId, schoolId),
 		eq(table.news.isArchived, true),
-	]
+	];
 
 	if (campusId !== undefined) {
-		conditions.push(eq(table.news.schoolCampusId, campusId))
+		conditions.push(eq(table.news.schoolCampusId, campusId));
 	}
 
 	if (categoryId !== undefined) {
-		conditions.push(eq(table.news.categoryId, categoryId))
+		conditions.push(eq(table.news.categoryId, categoryId));
 	}
 
-	const whereConditions = and(...conditions)
+	const whereConditions = and(...conditions);
 
 	const newsItems = await db
 		.select({
@@ -137,9 +138,9 @@ export async function getArchivedNewsBySchoolId(
 		.where(whereConditions)
 		.orderBy(desc(table.news.updatedAt))
 		.limit(limit)
-		.offset(offset)
+		.offset(offset);
 
-	return newsItems
+	return newsItems;
 }
 
 export async function getPublishedNewsBySchoolId(
@@ -149,7 +150,7 @@ export async function getPublishedNewsBySchoolId(
 	limit: number = 20,
 	offset: number = 0,
 ) {
-	const currentDate = new Date()
+	const currentDate = new Date();
 
 	const conditions = [
 		eq(table.news.schoolId, schoolId),
@@ -158,13 +159,13 @@ export async function getPublishedNewsBySchoolId(
 		// Only show news that's published and not expired
 		lte(table.news.publishedAt, currentDate),
 		or(isNull(table.news.expiresAt), gte(table.news.expiresAt, currentDate)),
-	]
+	];
 
 	// Add visibility filtering based on user type
 	if (userType) {
 		const visibilityConditions = [
 			eq(table.news.visibility, newsVisibilityEnum.public), // Everyone can see public news
-		]
+		];
 
 		// Add internal visibility for all school users
 		if (
@@ -174,24 +175,24 @@ export async function getPublishedNewsBySchoolId(
 		) {
 			visibilityConditions.push(
 				eq(table.news.visibility, newsVisibilityEnum.internal),
-			)
+			);
 		}
 
 		// Add staff visibility for staff members
 		if (['teacher', 'principal', 'schoolAdmin'].includes(userType)) {
 			visibilityConditions.push(
 				eq(table.news.visibility, newsVisibilityEnum.staff),
-			)
+			);
 		}
 
 		// Add student visibility for students
 		if (userType === 'student') {
 			visibilityConditions.push(
 				eq(table.news.visibility, newsVisibilityEnum.students),
-			)
+			);
 		}
 
-		conditions.push(or(...visibilityConditions))
+		conditions.push(or(...visibilityConditions));
 	}
 
 	if (campusId !== undefined) {
@@ -200,10 +201,10 @@ export async function getPublishedNewsBySchoolId(
 				eq(table.news.schoolCampusId, campusId),
 				isNull(table.news.schoolCampusId),
 			),
-		)
+		);
 	}
 
-	const whereConditions = and(...conditions)
+	const whereConditions = and(...conditions);
 
 	return await db
 		.select({
@@ -230,37 +231,37 @@ export async function getPublishedNewsBySchoolId(
 		.where(whereConditions)
 		.orderBy(desc(table.news.isPinned), desc(table.news.publishedAt))
 		.limit(limit)
-		.offset(offset)
+		.offset(offset);
 }
 
 export async function updateNews(
 	newsId: number,
 	updates: {
-		title?: string
-		excerpt?: string
-		content?: unknown
-		categoryId?: number | null
-		campusId?: number | null
-		visibility?: newsVisibilityEnum
-		status?: newsStatusEnum
-		tags?: string[] | null
-		isPinned?: boolean
-		publishedAt?: Date | null
-		expiresAt?: Date | null
+		title?: string;
+		excerpt?: string;
+		content?: unknown;
+		categoryId?: number | null;
+		campusId?: number | null;
+		visibility?: newsVisibilityEnum;
+		status?: newsStatusEnum;
+		tags?: string[] | null;
+		isPinned?: boolean;
+		publishedAt?: Date | null;
+		expiresAt?: Date | null;
 	},
 ) {
 	const updateDataWithTags =
 		updates.tags !== undefined
 			? { ...updates, tags: updates.tags ? JSON.stringify(updates.tags) : null }
-			: updates
+			: updates;
 
 	const [updatedNews] = await db
 		.update(table.news)
 		.set(updateDataWithTags)
 		.where(eq(table.news.id, newsId))
-		.returning()
+		.returning();
 
-	return updatedNews
+	return updatedNews;
 }
 
 export async function publishNews(newsId: number, publishedAt?: Date) {
@@ -271,9 +272,9 @@ export async function publishNews(newsId: number, publishedAt?: Date) {
 			publishedAt: publishedAt || new Date(),
 		})
 		.where(eq(table.news.id, newsId))
-		.returning()
+		.returning();
 
-	return publishedNews
+	return publishedNews;
 }
 
 export async function archiveNews(newsId: number) {
@@ -281,9 +282,9 @@ export async function archiveNews(newsId: number) {
 		.update(table.news)
 		.set({ isArchived: true })
 		.where(eq(table.news.id, newsId))
-		.returning()
+		.returning();
 
-	return archivedNews
+	return archivedNews;
 }
 
 export async function unarchiveNews(newsId: number) {
@@ -291,9 +292,9 @@ export async function unarchiveNews(newsId: number) {
 		.update(table.news)
 		.set({ isArchived: false })
 		.where(eq(table.news.id, newsId))
-		.returning()
+		.returning();
 
-	return unarchivedNews
+	return unarchivedNews;
 }
 
 // News Categories
@@ -305,26 +306,26 @@ export async function getNewsCategories(includeArchived: boolean = false) {
 		.where(
 			includeArchived ? undefined : eq(table.newsCategory.isArchived, false),
 		)
-		.orderBy(asc(table.newsCategory.name))
+		.orderBy(asc(table.newsCategory.name));
 
-	return categories
+	return categories;
 }
 
 export async function updateNewsCategory(
 	categoryId: number,
 	updates: {
-		name?: string
-		description?: string | null
-		color?: string | null
+		name?: string;
+		description?: string | null;
+		color?: string | null;
 	},
 ) {
 	const [updatedCategory] = await db
 		.update(table.newsCategory)
 		.set(updates)
 		.where(eq(table.newsCategory.id, categoryId))
-		.returning()
+		.returning();
 
-	return updatedCategory
+	return updatedCategory;
 }
 
 export async function archiveNewsCategory(categoryId: number) {
@@ -332,9 +333,9 @@ export async function archiveNewsCategory(categoryId: number) {
 		.update(table.newsCategory)
 		.set({ isArchived: true })
 		.where(eq(table.newsCategory.id, categoryId))
-		.returning()
+		.returning();
 
-	return archivedCategory
+	return archivedCategory;
 }
 
 // News Resources
@@ -347,9 +348,9 @@ export async function attachResourceToNews(
 	const [attachment] = await db
 		.insert(table.newsResource)
 		.values({ newsId, resourceId, authorId, displayOrder })
-		.returning()
+		.returning();
 
-	return attachment
+	return attachment;
 }
 
 export async function getNewsResources(
@@ -375,44 +376,30 @@ export async function getNewsResources(
 				),
 			),
 		)
-		.orderBy(asc(table.newsResource.displayOrder))
+		.orderBy(asc(table.newsResource.displayOrder));
 
 	// Enhance the resources with actual presigned URLs for direct image access
 	const enhancedResources = await Promise.all(
 		resources.map(async (item) => {
-			let imageUrl = `/api/resources?resourceId=${item.resource.id}&action=download`
+			let imageUrl = `/api/resources?resourceId=${item.resource.id}&action=download`;
 
-			// If schoolId is provided, generate a presigned URL for direct image access
 			if (schoolId) {
 				try {
-					const { getPresignedUrl } = await import('$lib/server/obj')
-					const schoolIdStr = schoolId.toString()
-
-					// Object key format: remove schoolId prefix if it exists
-					const objectName = item.resource.objectKey.startsWith(schoolIdStr)
-						? item.resource.objectKey.substring(schoolIdStr.length + 1)
-						: item.resource.objectKey
-
-					imageUrl = await getPresignedUrl(
-						schoolIdStr,
-						objectName,
-						24 * 60 * 60,
-					) // 24 hour expiry
+					imageUrl = await getPresignedUrl(item.resource.objectKey);
 				} catch (error) {
 					console.error(
 						'Error generating presigned URL for resource:',
 						item.resource.id,
 						error,
-					)
-					// Fallback to API endpoint
+					);
 				}
 			}
 
-			return { ...item, resource: { ...item.resource, imageUrl } }
+			return { ...item, resource: { ...item.resource, imageUrl } };
 		}),
-	)
+	);
 
-	return enhancedResources
+	return enhancedResources;
 }
 
 export async function removeResourceFromNews(
@@ -428,7 +415,7 @@ export async function removeResourceFromNews(
 				eq(table.newsResource.resourceId, resourceId),
 			),
 		)
-		.returning()
+		.returning();
 
-	return archivedResource
+	return archivedResource;
 }
