@@ -39,29 +39,20 @@ export function setupWebSocketServer(
 	});
 
 	io.on('connection', (socket) => {
-		console.log('WebSocket client connected:', socket.id);
-
 		let currentWhiteboardId: number | null = null;
 
 		socket.on('init', async (data: { whiteboardId: number }) => {
 			try {
 				const { whiteboardId } = data;
-				console.log(
-					`Client ${socket.id} initializing whiteboard ${whiteboardId}`,
-				);
 
 				// Leave previous room if any
 				if (currentWhiteboardId) {
 					socket.leave(`whiteboard-${currentWhiteboardId}`);
-					console.log(
-						`Client ${socket.id} left whiteboard-${currentWhiteboardId}`,
-					);
 				}
 
 				// Join new room
 				currentWhiteboardId = whiteboardId;
 				socket.join(`whiteboard-${whiteboardId}`);
-				console.log(`Client ${socket.id} joined whiteboard-${whiteboardId}`);
 
 				// Load and send current whiteboard state
 				const objects = await getWhiteboardObjects(whiteboardId);
@@ -70,9 +61,6 @@ export function setupWebSocketServer(
 					...(obj.objectData as Record<string, unknown>),
 				}));
 
-				console.log(
-					`Sending ${whiteboardObjects.length} objects to client ${socket.id}`,
-				);
 				socket.emit('load', {
 					whiteboardId,
 					whiteboard: { objects: whiteboardObjects },
@@ -86,9 +74,6 @@ export function setupWebSocketServer(
 		socket.on('add', async (data: { whiteboardId: number; object: any }) => {
 			try {
 				const { whiteboardId, object: newObject } = data;
-				console.log(
-					`Adding object ${newObject.id} to whiteboard ${whiteboardId}`,
-				);
 
 				await saveWhiteboardObject({
 					objectId: newObject.id,
@@ -100,7 +85,6 @@ export function setupWebSocketServer(
 				socket.broadcast
 					.to(`whiteboard-${whiteboardId}`)
 					.emit('add', { whiteboardId, object: newObject });
-				console.log(`Broadcasted add event for object ${newObject.id}`);
 			} catch (error) {
 				console.error('Error in add:', error);
 				socket.emit('error', { message: 'Failed to add object' });
@@ -237,15 +221,6 @@ export function setupWebSocketServer(
 				}
 			},
 		);
-
-		socket.on('disconnect', () => {
-			console.log('WebSocket client disconnected:', socket.id);
-			if (currentWhiteboardId) {
-				console.log(
-					`Client ${socket.id} left whiteboard-${currentWhiteboardId}`,
-				);
-			}
-		});
 	});
 
 	return io;
