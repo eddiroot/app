@@ -1,5 +1,6 @@
 import * as fabric from 'fabric';
 import { v4 as uuidv4 } from 'uuid';
+import type { ControlPointManager } from './control-points';
 
 /**
  * Context for canvas action handlers
@@ -8,6 +9,20 @@ export interface CanvasActionContext {
 	canvas: fabric.Canvas;
 	sendCanvasUpdate: (data: Record<string, unknown>) => void;
 	onImageAdded?: (img: fabric.FabricImage) => void;
+	socket?: any;
+	controlPointManager?: ControlPointManager;
+	// Callback for batch clear operations (for history recording)
+	onClearComplete?: (
+		deletedObjects: Array<{ id: string; data: Record<string, unknown> }>,
+	) => void;
+	// Callback to set flag before clearing (to prevent individual history recording)
+	setClearingCanvas?: (value: boolean) => void;
+	// Callback for layer changes (for history recording)
+	onLayerChange?: (
+		objectId: string,
+		previousIndex: number,
+		newIndex: number,
+	) => void;
 }
 
 /**
@@ -50,8 +65,12 @@ export function handleImageUpload(
 
 				// Center the image
 				img.set({
-					left: context.canvas.width! / 2 - (img.width! * scale) / 2,
-					top: context.canvas.height! / 2 - (img.height! * scale) / 2,
+					left: context.canvas.width! / 2,
+					top: context.canvas.height! / 2,
+					originX: 'center',
+					originY: 'center',
+					hasControls: false,
+					hasBorders: false,
 				});
 
 				context.canvas.add(img);
@@ -61,6 +80,12 @@ export function handleImageUpload(
 				const objData = img.toObject();
 				// @ts-expect-error - Custom id property
 				objData.id = img.id;
+				// Mark as recently created to prevent echo
+				const socket = (context as any).socket;
+				if (socket && socket.markAsRecentlyCreated) {
+					// @ts-expect-error - Custom id property
+					socket.markAsRecentlyCreated(img.id);
+				}
 				context.sendCanvasUpdate({ type: 'add', object: objData });
 
 				// Notify that image was added (for switching tool and showing menu)
@@ -82,7 +107,37 @@ export function handleImageUpload(
  * Clears all objects from the canvas
  */
 export function clearCanvas(context: CanvasActionContext): void {
+	// Collect all objects for batch history recording (exclude control points)
+	const allObjects = context.canvas.getObjects();
+	const objectsToDelete: Array<{ id: string; data: Record<string, unknown> }> =
+		[];
+
+	allObjects.forEach((obj) => {
+		// Skip control points
+		if (context.controlPointManager?.isControlPoint(obj)) return;
+		// @ts-expect-error - Custom id property
+		const objectId = obj.id;
+		if (objectId) {
+			const objData = obj.toObject();
+			objData.id = objectId;
+			objectsToDelete.push({ id: objectId, data: objData });
+		}
+	});
+
+	// Set flag to prevent individual history recording
+	context.setClearingCanvas?.(true);
+
+	// Clear the canvas
 	context.canvas.clear();
+
+	// Reset flag
+	context.setClearingCanvas?.(false);
+
+	// Record batch delete for history
+	if (objectsToDelete.length > 0) {
+		context.onClearComplete?.(objectsToDelete);
+	}
+
 	context.sendCanvasUpdate({ type: 'clear' });
 }
 
@@ -132,6 +187,11 @@ export function zoomIn(
 	);
 	context.canvas.zoomToPoint(center, newZoom);
 	setCurrentZoom(newZoom);
+
+	// Update control point sizes to maintain constant visual size
+	if (context.controlPointManager) {
+		context.controlPointManager.updateAllControlPointSizes();
+	}
 }
 
 /**
@@ -152,6 +212,11 @@ export function zoomOut(
 	);
 	context.canvas.zoomToPoint(center, newZoom);
 	setCurrentZoom(newZoom);
+
+	// Update control point sizes to maintain constant visual size
+	if (context.controlPointManager) {
+		context.controlPointManager.updateAllControlPointSizes();
+	}
 }
 
 /**
@@ -168,6 +233,12 @@ export function resetZoom(
 	);
 	context.canvas.zoomToPoint(center, 1);
 	setCurrentZoom(1);
+
+	// Update control point sizes to maintain constant visual size
+	if (context.controlPointManager) {
+		context.controlPointManager.updateAllControlPointSizes();
+	}
+
 	context.canvas.renderAll();
 }
 
@@ -183,4 +254,179 @@ export function recenterView(
 	// Update the zoom state to match the reset zoom level
 	setCurrentZoom(1);
 	context.canvas.renderAll();
+}
+
+/**
+ * Layering actions for canvas objects
+ */
+
+/**
+ * Brings the selected object to the front (top layer)
+ */
+export function bringToFront(context: CanvasActionContext): void {
+	const activeObject = context.canvas.getActiveObject();
+	if (!activeObject) return;
+
+	// Capture the previous index for history
+	const objects = context.canvas.getObjects();
+	const previousIndex = objects.indexOf(activeObject);
+
+	context.canvas.bringObjectToFront(activeObject);
+
+	// Capture the new index
+	const newObjects = context.canvas.getObjects();
+	const newIndex = newObjects.indexOf(activeObject);
+
+	// Record layer change for history
+	// @ts-expect-error - Custom id property
+	context.onLayerChange?.(activeObject.id, previousIndex, newIndex);
+
+	// Ensure control points and borders stay on top of the object
+	if (context.controlPointManager) {
+		context.controlPointManager.bringAllControlPointsToFront();
+	}
+
+	context.canvas.renderAll();
+
+	const objData = activeObject.toObject();
+	// @ts-expect-error - Custom id property
+	objData.id = activeObject.id;
+	context.sendCanvasUpdate({
+		type: 'layer',
+		action: 'bringToFront',
+		object: objData,
+	});
+}
+
+/**
+ * Sends the selected object to the back (bottom layer)
+ */
+export function sendToBack(context: CanvasActionContext): void {
+	const activeObject = context.canvas.getActiveObject();
+	if (!activeObject) return;
+
+	// Capture the previous index for history
+	const objects = context.canvas.getObjects();
+	const previousIndex = objects.indexOf(activeObject);
+
+	context.canvas.sendObjectToBack(activeObject);
+
+	// Capture the new index
+	const newObjects = context.canvas.getObjects();
+	const newIndex = newObjects.indexOf(activeObject);
+
+	// Record layer change for history
+	// @ts-expect-error - Custom id property
+	context.onLayerChange?.(activeObject.id, previousIndex, newIndex);
+
+	// Ensure control points and borders stay on top of the object
+	if (context.controlPointManager) {
+		context.controlPointManager.bringAllControlPointsToFront();
+	}
+
+	context.canvas.renderAll();
+
+	const objData = activeObject.toObject();
+	// @ts-expect-error - Custom id property
+	objData.id = activeObject.id;
+	context.sendCanvasUpdate({
+		type: 'layer',
+		action: 'sendToBack',
+		object: objData,
+	});
+}
+
+/**
+ * Moves the selected object forward one layer
+ */
+export function moveForward(context: CanvasActionContext): void {
+	const activeObject = context.canvas.getActiveObject();
+	if (!activeObject) return;
+
+	// Capture the previous index for history
+	const objects = context.canvas.getObjects();
+	const previousIndex = objects.indexOf(activeObject);
+
+	context.canvas.bringObjectForward(activeObject);
+
+	// Capture the new index
+	const newObjects = context.canvas.getObjects();
+	const newIndex = newObjects.indexOf(activeObject);
+
+	// Record layer change for history
+	// @ts-expect-error - Custom id property
+	context.onLayerChange?.(activeObject.id, previousIndex, newIndex);
+
+	// Ensure control points and borders stay on top of the object
+	if (context.controlPointManager) {
+		context.controlPointManager.bringAllControlPointsToFront();
+	}
+
+	context.canvas.renderAll();
+
+	const objData = activeObject.toObject();
+	// @ts-expect-error - Custom id property
+	objData.id = activeObject.id;
+	context.sendCanvasUpdate({
+		type: 'layer',
+		action: 'moveForward',
+		object: objData,
+	});
+}
+
+/**
+ * Moves the selected object backward one layer
+ */
+export function moveBackward(context: CanvasActionContext): void {
+	const activeObject = context.canvas.getActiveObject();
+	if (!activeObject) return;
+
+	// Capture the previous index for history
+	const objects = context.canvas.getObjects();
+	const previousIndex = objects.indexOf(activeObject);
+
+	context.canvas.sendObjectBackwards(activeObject);
+
+	// Capture the new index
+	const newObjects = context.canvas.getObjects();
+	const newIndex = newObjects.indexOf(activeObject);
+
+	// Record layer change for history
+	// @ts-expect-error - Custom id property
+	context.onLayerChange?.(activeObject.id, previousIndex, newIndex);
+
+	// Ensure control points and borders stay on top of the object
+	if (context.controlPointManager) {
+		context.controlPointManager.bringAllControlPointsToFront();
+	}
+
+	context.canvas.renderAll();
+
+	const objData = activeObject.toObject();
+	// @ts-expect-error - Custom id property
+	objData.id = activeObject.id;
+	context.sendCanvasUpdate({
+		type: 'layer',
+		action: 'moveBackward',
+		object: objData,
+	});
+}
+
+/**
+ * Applies opacity to the selected object
+ */
+export function applyOpacityToSelected(
+	context: CanvasActionContext,
+	opacity: number,
+): void {
+	const activeObject = context.canvas.getActiveObject();
+	if (!activeObject) return;
+
+	activeObject.set({ opacity });
+	context.canvas.renderAll();
+
+	const objData = activeObject.toObject();
+	// @ts-expect-error - Custom id property
+	objData.id = activeObject.id;
+	context.sendCanvasUpdate({ type: 'modify', object: objData });
 }

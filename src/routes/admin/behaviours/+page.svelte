@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Button } from '$lib/components/ui/button/index.js';
+	import { Button, buttonVariants } from '$lib/components/ui/button/index.js';
 	import * as Card from '$lib/components/ui/card/index.js';
 	import * as Dialog from '$lib/components/ui/dialog/index.js';
 	import * as Form from '$lib/components/ui/form/index.js';
@@ -284,6 +284,7 @@
 	{/if}
 </div>
 
+<!-- Behaviour Dialog -->
 <Dialog.Root bind:open={dialogOpen}>
 	<Dialog.Content>
 		<Dialog.Header>

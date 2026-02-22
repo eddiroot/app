@@ -1,3 +1,4 @@
+import { invalidateAll } from '$app/navigation';
 import type { taskBlockTypeEnum } from '$lib/enums';
 
 const API_BASE = '/api/tasks';
@@ -37,6 +38,11 @@ export async function createBlock(request: {
 
 	if (!response.ok) {
 		throw new Error(data.error || 'Failed to create block');
+	}
+
+	// If a whiteboard block was created, invalidate to reload whiteboardMap
+	if (request.type === 'whiteboard') {
+		await invalidateAll();
 	}
 
 	return data;

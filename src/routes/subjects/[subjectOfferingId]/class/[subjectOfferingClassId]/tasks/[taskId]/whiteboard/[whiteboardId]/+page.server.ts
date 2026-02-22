@@ -1,5 +1,10 @@
-import { getWhiteboardWithTask } from '$lib/server/db/service';
-import { error } from '@sveltejs/kit';
+import { userTypeEnum } from '$lib/enums';
+import {
+	getWhiteboardWithTask,
+	toggleWhiteboardLock,
+} from '$lib/server/db/service';
+import { error, fail } from '@sveltejs/kit';
+import type { Actions } from './$types';
 
 export const load = async ({
 	params,
@@ -22,3 +27,32 @@ export const load = async ({
 
 	return whiteboardData;
 };
+
+export const actions = {
+	toggleLock: async ({ params, locals: { security } }) => {
+		const user = security.isAuthenticated().getUser();
+
+		// Only teachers can toggle lock
+		if (user.type !== userTypeEnum.teacher) {
+			return fail(403, { error: 'Only teachers can lock/unlock whiteboards' });
+		}
+
+		const whiteboardId = parseInt(params.whiteboardId, 10);
+
+		if (isNaN(whiteboardId)) {
+			return fail(400, { error: 'Invalid whiteboard ID' });
+		}
+
+		try {
+			const updatedWhiteboard = await toggleWhiteboardLock(whiteboardId);
+
+			return {
+				type: 'success',
+				data: { isLocked: updatedWhiteboard.isLocked },
+			};
+		} catch (err) {
+			console.error('Error toggling whiteboard lock:', err);
+			return fail(500, { error: 'Failed to toggle whiteboard lock' });
+		}
+	},
+} satisfies Actions;

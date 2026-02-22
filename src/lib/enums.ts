@@ -112,14 +112,6 @@ export enum gradeReleaseEnum {
 	manual = 'manual', // Teacher manually releases grades
 }
 
-export enum whiteboardObjectTypeEnum {
-	rect = 'Rect',
-	circle = 'Circle',
-	path = 'Path',
-	textbox = 'Textbox',
-	image = 'Image',
-}
-
 export enum userTypeEnum {
 	none = 'N',
 	student = 'student',

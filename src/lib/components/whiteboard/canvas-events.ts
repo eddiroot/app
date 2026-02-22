@@ -1,10 +1,11 @@
 import * as fabric from 'fabric';
 import { v4 as uuidv4 } from 'uuid';
 import { ZOOM_LIMITS } from './constants';
+import type { ControlPointManager } from './control-points';
 import * as Shapes from './shapes';
 import type {
 	DrawOptions,
-	LineArrowOptions,
+	LineOptions,
 	ShapeOptions,
 	TextOptions,
 	WhiteboardTool,
@@ -19,6 +20,7 @@ export interface CanvasEventContext {
 	setSelectedTool: (tool: WhiteboardTool) => void;
 	getShowFloatingMenu: () => boolean;
 	setShowFloatingMenu: (value: boolean) => void;
+	getIsCropping: () => boolean;
 	getIsMovingImage: () => boolean;
 	setIsMovingImage: (value: boolean) => void;
 	getIsPanMode: () => boolean;
@@ -29,20 +31,20 @@ export interface CanvasEventContext {
 	setCurrentZoom: (zoom: number) => void;
 	getIsDrawingLine: () => boolean;
 	setIsDrawingLine: (value: boolean) => void;
-	getIsDrawingArrow: () => boolean;
-	setIsDrawingArrow: (value: boolean) => void;
 	getIsDrawingShape: () => boolean;
 	setIsDrawingShape: (value: boolean) => void;
 	getIsDrawingText: () => boolean;
 	setIsDrawingText: (value: boolean) => void;
+	// Flag to prevent history recording during drawing (optional for backward compatibility)
+	setIsDrawingObject?: (value: boolean) => void;
 	getCurrentShapeType: () => string;
 	setCurrentShapeType: (type: string) => void;
 	getIsErasing: () => boolean;
 	setIsErasing: (value: boolean) => void;
 	getStartPoint: () => { x: number; y: number };
 	setStartPoint: (point: { x: number; y: number }) => void;
-	getTempLine: () => fabric.Line | fabric.Group | null;
-	setTempLine: (line: fabric.Line | fabric.Group | null) => void;
+	getTempLine: () => fabric.Polyline | fabric.Group | null;
+	setTempLine: (line: fabric.Polyline | fabric.Group | null) => void;
 	getTempShape: () => fabric.Object | null;
 	setTempShape: (shape: fabric.Object | null) => void;
 	getTempText: () => fabric.Textbox | null;
@@ -60,7 +62,7 @@ export interface CanvasEventContext {
 	getCurrentTextOptions: () => TextOptions;
 	getCurrentShapeOptions: () => ShapeOptions;
 	getCurrentDrawOptions: () => DrawOptions;
-	getCurrentLineArrowOptions: () => LineArrowOptions;
+	getCurrentLineOptions: () => LineOptions;
 
 	// Callbacks
 	sendCanvasUpdate: (data: Record<string, unknown>) => void;
@@ -70,33 +72,96 @@ export interface CanvasEventContext {
 		immediate: boolean,
 	) => void;
 	clearEraserState: () => void;
+	// Callback for batch eraser deletions (for history recording)
+	onEraserComplete?: (
+		deletedObjects: Array<{ id: string; data: Record<string, unknown> }>,
+	) => void;
 	floatingMenuRef?: {
 		updateTextOptions?: (options: Partial<TextOptions>) => void;
 		updateShapeOptions?: (options: Partial<ShapeOptions>) => void;
-		updateLineArrowOptions?: (options: Partial<LineArrowOptions>) => void;
+		updateLineOptions?: (options: Partial<LineOptions>) => void;
 		updateDrawOptions?: (options: Partial<DrawOptions>) => void;
 		closeExpandedColors?: () => void;
 		setActiveMenuPanel?: (panel: WhiteboardTool) => void;
 	};
+
+	// Control point manager
+	controlPointManager?: ControlPointManager;
 }
 
 /**
  * Creates object:moving event handler
  */
+// Throttle mechanism for live movement updates
+let moveThrottleTimeout: ReturnType<typeof setTimeout> | null = null;
+let pendingMoveUpdates = new Map<string, any>();
+
 export const createObjectMovingHandler = (ctx: CanvasEventContext) => {
 	return ({ target }: { target: fabric.Object }) => {
-		const objData = target.toObject();
-		// @ts-expect-error - custom id property
-		objData.id = target.id;
+		// Handle control point movement - don't sync the control point itself
+		if (ctx.controlPointManager?.isControlPoint(target)) {
+			// This is a control point circle, update the associated line/shape
+			const center = target.getCenterPoint();
+			ctx.controlPointManager.updateObjectFromControlPoint(
+				(target as any).id,
+				center.x,
+				center.y,
+				true,
+			); // true = isLive
+			return; // Don't proceed to sync - control points are client-side only
+		}
 
-		// Only throttle image movements, send immediate updates for other objects
+		// If moving objects with control points, update them and keep them visible
+		if (
+			(target.type === 'polyline' ||
+				target.type === 'rect' ||
+				target.type === 'ellipse' ||
+				target.type === 'triangle' ||
+				target.type === 'textbox' ||
+				target.type === 'image' ||
+				target.type === 'path') &&
+			ctx.controlPointManager
+		) {
+			// @ts-expect-error - custom id property
+			const objId = target.id;
+			ctx.controlPointManager.updateControlPoints(objId, target);
+			// Ensure control points stay visible during drag
+			ctx.controlPointManager.showControlPoints(objId);
+		}
+
+		// @ts-expect-error - custom id property
+		const objectId = target.id;
+
+		// For images, use lightweight sendImageUpdate to avoid sending massive base64/clipPath data
 		if (target.type === 'image') {
 			ctx.setIsMovingImage(true);
-			// @ts-expect-error - custom id property
-			ctx.sendImageUpdate(target.id, objData, false);
-		} else {
-			// Immediate updates for non-image objects
-			ctx.sendCanvasUpdate({ type: 'modify', object: objData });
+			const objData = target.toObject();
+			objData.id = objectId;
+			ctx.sendImageUpdate(objectId, objData, false);
+			return;
+		}
+
+		// For non-image objects, use unified throttle
+		const objData =
+			target.type === 'textbox' ? target.toObject(['text']) : target.toObject();
+		objData.id = objectId;
+
+		// Remove type property to avoid fabric.js warning
+		delete objData.type;
+
+		// Store the latest state for this object
+		pendingMoveUpdates.set(objectId, objData);
+
+		// Throttle live updates - send every 16ms (60 updates per second)
+		if (moveThrottleTimeout === null) {
+			moveThrottleTimeout = setTimeout(() => {
+				// Send all pending updates
+				pendingMoveUpdates.forEach((data, id) => {
+					ctx.sendCanvasUpdate({ type: 'modify', object: data, live: true });
+				});
+				pendingMoveUpdates.clear();
+				moveThrottleTimeout = null;
+			}, 16);
 		}
 	};
 };
@@ -106,18 +171,31 @@ export const createObjectMovingHandler = (ctx: CanvasEventContext) => {
  */
 export const createObjectScalingHandler = (ctx: CanvasEventContext) => {
 	return ({ target }: { target: fabric.Object }) => {
-		const objData = target.toObject();
+		const objData =
+			target.type === 'textbox' ? target.toObject(['text']) : target.toObject();
 		// @ts-expect-error - custom id property
-		objData.id = target.id;
+		const objectId = target.id;
+		objData.id = objectId;
 
-		// Only throttle image scaling, send immediate updates for other objects
+		// Send live updates during scaling (won't persist, improves performance)
 		if (target.type === 'image') {
 			ctx.setIsMovingImage(true);
-			// @ts-expect-error - custom id property
-			ctx.sendImageUpdate(target.id, objData, false);
+			ctx.sendImageUpdate(objectId, objData, false);
 		} else {
-			// Immediate updates for non-image objects
-			ctx.sendCanvasUpdate({ type: 'modify', object: objData });
+			// Remove type property to avoid fabric.js warning
+			delete objData.type;
+			// Store the latest state
+			pendingMoveUpdates.set(objectId, objData);
+			// Throttle updates - 16ms for 60 FPS
+			if (moveThrottleTimeout === null) {
+				moveThrottleTimeout = setTimeout(() => {
+					pendingMoveUpdates.forEach((data, id) => {
+						ctx.sendCanvasUpdate({ type: 'modify', object: data, live: true });
+					});
+					pendingMoveUpdates.clear();
+					moveThrottleTimeout = null;
+				}, 16);
+			}
 		}
 	};
 };
@@ -127,18 +205,47 @@ export const createObjectScalingHandler = (ctx: CanvasEventContext) => {
  */
 export const createObjectRotatingHandler = (ctx: CanvasEventContext) => {
 	return ({ target }: { target: fabric.Object }) => {
-		const objData = target.toObject();
-		// @ts-expect-error - custom id property
-		objData.id = target.id;
+		// Skip if this is being rotated by control points
+		// Control points handle their own websocket updates
+		if (ctx.controlPointManager) {
+			// @ts-expect-error - custom id property
+			const objId = target.id;
+			const controlPoints = ctx.controlPointManager.getAllControlPoints();
+			const hasControlPoints = controlPoints.some(
+				(cp) => cp.objectId === objId,
+			);
+			if (hasControlPoints) {
+				// This object has control points, so rotation is handled by control point manager
+				// Don't send duplicate updates
+				return;
+			}
+		}
 
-		// Only throttle image rotation, send immediate updates for other objects
+		const objData =
+			target.type === 'textbox' ? target.toObject(['text']) : target.toObject();
+		// @ts-expect-error - custom id property
+		const objectId = target.id;
+		objData.id = objectId;
+
+		// Send live updates during rotation (won't persist, improves performance)
 		if (target.type === 'image') {
 			ctx.setIsMovingImage(true);
-			// @ts-expect-error - custom id property
-			ctx.sendImageUpdate(target.id, objData, false);
+			ctx.sendImageUpdate(objectId, objData, false);
 		} else {
-			// Immediate updates for non-image objects
-			ctx.sendCanvasUpdate({ type: 'modify', object: objData });
+			// Remove type property to avoid fabric.js warning
+			delete objData.type;
+			// Store the latest state
+			pendingMoveUpdates.set(objectId, objData);
+			// Throttle updates - 16ms for 60 FPS
+			if (moveThrottleTimeout === null) {
+				moveThrottleTimeout = setTimeout(() => {
+					pendingMoveUpdates.forEach((data, id) => {
+						ctx.sendCanvasUpdate({ type: 'modify', object: data, live: true });
+					});
+					pendingMoveUpdates.clear();
+					moveThrottleTimeout = null;
+				}, 16);
+			}
 		}
 	};
 };
@@ -148,16 +255,41 @@ export const createObjectRotatingHandler = (ctx: CanvasEventContext) => {
  */
 export const createObjectModifiedHandler = (ctx: CanvasEventContext) => {
 	return ({ target }: { target: fabric.Object }) => {
-		// This handles final modifications - always send immediately for persistence
-		const objData = target.toObject();
-		// @ts-expect-error - custom id property
-		objData.id = target.id;
+		// Handle control point final update (when drag ends)
+		if (ctx.controlPointManager?.isControlPoint(target)) {
+			// Send final update with isLive=false to persist to database
+			const center = target.getCenterPoint();
+			ctx.controlPointManager.updateObjectFromControlPoint(
+				(target as any).id,
+				center.x,
+				center.y,
+				false,
+			); // false = not live, persist to DB
+			return;
+		}
 
+		// This handles final modifications - always send immediately for persistence
 		if (target.type === 'image') {
+			const objData = target.toObject();
+			// @ts-expect-error - custom id property
+			objData.id = target.id;
 			// @ts-expect-error - custom id property
 			ctx.sendImageUpdate(target.id, objData, true);
 			ctx.setIsMovingImage(false);
+		} else if (target.type === 'polyline') {
+			// For polylines, send standard fabric.js data
+			const objData = target.toObject();
+			// @ts-expect-error - custom id property
+			objData.id = target.id;
+			ctx.sendCanvasUpdate({ type: 'modify', object: objData });
 		} else {
+			// For textbox objects, include the 'text' property
+			const objData =
+				target.type === 'textbox'
+					? target.toObject(['text'])
+					: target.toObject();
+			// @ts-expect-error - custom id property
+			objData.id = target.id;
 			// Immediate updates for non-image objects
 			ctx.sendCanvasUpdate({ type: 'modify', object: objData });
 		}
@@ -193,51 +325,7 @@ export const createMouseUpHandler = (
 			}
 		}
 
-		// Handle text completion
-		const tempText = ctx.getTempText();
-		if (ctx.getIsDrawingText() && tempText) {
-			// Finalize the text
-			tempText.set({ selectable: true });
-			canvas.setActiveObject(tempText);
-
-			// Enter edit mode immediately after creation
-			tempText.enterEditing();
-			tempText.selectAll();
-
-			canvas.renderAll();
-
-			// Send the completed text to other users
-			const objData = tempText.toObject();
-			// @ts-expect-error - custom id property
-			objData.id = tempText.id;
-			ctx.sendCanvasUpdate({ type: 'add', object: objData });
-
-			// Auto-switch to selection tool while keeping floating menu open
-			ctx.setSelectedTool('select');
-			canvas.isDrawingMode = false;
-			canvas.selection = true;
-			canvas.defaultCursor = 'default';
-			canvas.hoverCursor = 'move';
-
-			// Show text options in floating menu
-			// Use setTimeout to ensure state updates happen after the object is properly selected
-			setTimeout(() => {
-				ctx.setShowFloatingMenu(true);
-				ctx.floatingMenuRef?.setActiveMenuPanel?.('text');
-				ctx.floatingMenuRef?.updateTextOptions?.({
-					fontSize: tempText.fontSize,
-					fontFamily: tempText.fontFamily,
-					fontWeight: String(tempText.fontWeight || 'normal'),
-					colour: tempText.fill as string,
-					textAlign: tempText.textAlign,
-					opacity: tempText.opacity || 1,
-				});
-			}, 0);
-
-			// Reset text drawing state
-			ctx.setIsDrawingText(false);
-			ctx.setTempText(null);
-		}
+		// Text creation is now handled in mouse:down (single click), no mouse:up handling needed
 
 		// Handle shape completion
 		const tempShape = ctx.getTempShape();
@@ -251,7 +339,20 @@ export const createMouseUpHandler = (
 			const objData = tempShape.toObject();
 			// @ts-expect-error - custom id property
 			objData.id = tempShape.id;
+			// @ts-expect-error - custom markAsRecentlyCreated property added by websocket
+			if (ctx.sendCanvasUpdate.socket?.markAsRecentlyCreated) {
+				// @ts-expect-error - custom markAsRecentlyCreated property
+				ctx.sendCanvasUpdate.socket.markAsRecentlyCreated(tempShape.id);
+			}
 			ctx.sendCanvasUpdate({ type: 'add', object: objData });
+
+			// Re-enable history recording AFTER shape is finalized
+			// The page component will detect this and record the add action
+			ctx.setIsDrawingObject?.(false);
+
+			// Dispatch a custom event to signal that the shape is finalized and should be recorded
+			// @ts-expect-error - custom id property
+			canvas.fire('object:finalized', { target: tempShape });
 
 			// Auto-switch to selection tool while keeping floating menu open
 			ctx.setSelectedTool('select');
@@ -280,22 +381,27 @@ export const createMouseUpHandler = (
 			ctx.setTempShape(null);
 		}
 
-		// Handle line and arrow completion
+		// Handle line completion
 		const tempLine = ctx.getTempLine();
-		if ((ctx.getIsDrawingLine() || ctx.getIsDrawingArrow()) && tempLine) {
-			const wasDrawingArrow = ctx.getIsDrawingArrow();
-
+		if (ctx.getIsDrawingLine() && tempLine) {
 			// Set the object as selectable and finish the drawing
 			tempLine.set({ selectable: true });
 			canvas.setActiveObject(tempLine);
 			canvas.renderAll();
 
-			// Send the completed line/arrow to other users
+			// Send the completed line to other users
 			// @ts-expect-error - toObject method exists on both Line and Group
 			const objData = tempLine.toObject();
 			// @ts-expect-error - custom id property
 			objData.id = tempLine.id;
 			ctx.sendCanvasUpdate({ type: 'add', object: objData });
+
+			// Re-enable history recording AFTER line is finalized
+			ctx.setIsDrawingObject?.(false);
+
+			// Dispatch a custom event to signal that the line is finalized and should be recorded
+			// @ts-expect-error - custom id property
+			canvas.fire('object:finalized', { target: tempLine });
 
 			// Auto-switch to selection tool while keeping floating menu open
 			ctx.setSelectedTool('select');
@@ -304,13 +410,10 @@ export const createMouseUpHandler = (
 			canvas.defaultCursor = 'default';
 			canvas.hoverCursor = 'move';
 
-			// Show line/arrow options in floating menu
-			// Use setTimeout to ensure state updates happen after the object is properly selected
+			// Show line options in floating menu
 			setTimeout(() => {
 				ctx.setShowFloatingMenu(true);
-				ctx.floatingMenuRef?.setActiveMenuPanel?.(
-					wasDrawingArrow ? 'arrow' : 'line',
-				);
+				ctx.floatingMenuRef?.setActiveMenuPanel?.('line');
 
 				// Get stroke properties - for arrow groups, get from the line part
 				let strokeWidth = 2;
@@ -318,7 +421,7 @@ export const createMouseUpHandler = (
 				let strokeDashArray: number[] = [];
 				let opacity = 1;
 
-				if (tempLine.type === 'line') {
+				if (tempLine.type === 'polyline') {
 					strokeWidth = (tempLine.strokeWidth as number) || 2;
 					strokeColour = (tempLine.stroke as string) || '#1E1E1E';
 					strokeDashArray = (tempLine.strokeDashArray as number[]) || [];
@@ -326,7 +429,9 @@ export const createMouseUpHandler = (
 				} else if (tempLine.type === 'group') {
 					// For arrow groups, get properties from the line object
 					const group = tempLine as fabric.Group;
-					const lineObj = group.getObjects().find((obj) => obj.type === 'line');
+					const lineObj = group
+						.getObjects()
+						.find((obj) => obj.type === 'polyline');
 					if (lineObj) {
 						strokeWidth = (lineObj.strokeWidth as number) || 2;
 						strokeColour = (lineObj.stroke as string) || '#1E1E1E';
@@ -335,7 +440,7 @@ export const createMouseUpHandler = (
 					}
 				}
 
-				ctx.floatingMenuRef?.updateLineArrowOptions?.({
+				ctx.floatingMenuRef?.updateLineOptions?.({
 					strokeWidth,
 					strokeColour,
 					strokeDashArray,
@@ -343,9 +448,14 @@ export const createMouseUpHandler = (
 				});
 			}, 0);
 
+			// Add control points for the line (visible since we just created it)
+			if (tempLine.type === 'polyline' && ctx.controlPointManager) {
+				// @ts-expect-error - custom id property
+				ctx.controlPointManager.addControlPoints(tempLine.id, tempLine, true);
+			}
+
 			// Reset drawing state
 			ctx.setIsDrawingLine(false);
-			ctx.setIsDrawingArrow(false);
 			ctx.setTempLine(null);
 		}
 
@@ -353,15 +463,47 @@ export const createMouseUpHandler = (
 		if (ctx.getIsErasing()) {
 			ctx.setIsErasing(false);
 
-			// Delete all objects that were marked for deletion
-			ctx.getHoveredObjectsForDeletion().forEach((obj) => {
+			const objectsToDelete = ctx.getHoveredObjectsForDeletion();
+			const originalOpacities = ctx.getOriginalOpacities();
+
+			// Collect all objects for batch history recording (with original opacity restored)
+			const batchDeletedObjects: Array<{
+				id: string;
+				data: Record<string, unknown>;
+			}> = [];
+
+			// First pass: collect all object data with original opacity restored
+			objectsToDelete.forEach((obj) => {
+				// @ts-expect-error - custom id property
+				const objectId = obj.id;
+				// Get the original opacity before the eraser changed it
+				const originalOpacity = originalOpacities.get(obj) || obj.opacity || 1;
+
+				// Store object data with original opacity restored for history
+				const objData = obj.toObject();
+				objData.id = objectId;
+				objData.opacity = originalOpacity; // Restore original opacity in saved data
+				batchDeletedObjects.push({ id: objectId, data: objData });
+			});
+
+			// Call the batch delete callback BEFORE removing objects
+			// This marks the IDs so object:removed events are skipped
+			if (batchDeletedObjects.length > 0 && ctx.onEraserComplete) {
+				ctx.onEraserComplete(batchDeletedObjects);
+			}
+
+			// Second pass: now remove the objects (object:removed will skip these)
+			objectsToDelete.forEach((obj) => {
+				// @ts-expect-error - custom id property
+				const objectId = obj.id;
+
+				// Remove control points if this is a polyline
+				if (obj.type === 'polyline' && ctx.controlPointManager) {
+					ctx.controlPointManager.removeControlPoints(objectId);
+				}
 				canvas.remove(obj);
 				// Send delete message to other users
-				ctx.sendCanvasUpdate({
-					type: 'delete',
-					// @ts-expect-error - custom id property
-					object: { id: obj.id },
-				});
+				ctx.sendCanvasUpdate({ type: 'delete', object: { id: objectId } });
 			});
 
 			// Clear eraser state
@@ -386,26 +528,86 @@ export const createMouseUpHandler = (
 /**
  * Creates path:created event handler
  */
-export const createPathCreatedHandler = (ctx: CanvasEventContext) => {
+export const createPathCreatedHandler = (
+	canvas: fabric.Canvas,
+	ctx: CanvasEventContext,
+) => {
 	return ({ path }: { path: fabric.Path }) => {
 		// @ts-expect-error - custom id property
 		path.id = uuidv4();
+
+		// Disable default controls and borders - we use custom control points
+		path.set({ hasControls: false, hasBorders: false });
+
 		const objData = path.toObject();
 		// @ts-expect-error - custom id property
 		objData.id = path.id;
 		ctx.sendCanvasUpdate({ type: 'add', object: objData });
+
+		// Fire object:finalized event so history is recorded
+		// @ts-expect-error - custom event
+		canvas.fire('object:finalized', { target: path });
 	};
 };
 
 /**
  * Creates text:changed event handler
+ * Throttled to avoid sending updates on every keystroke
  */
+let textChangeTimeout: ReturnType<typeof setTimeout> | null = null;
 export const createTextChangedHandler = (ctx: CanvasEventContext) => {
 	return ({ target }: { target: fabric.Object }) => {
-		const objData = target.toObject();
+		// Clear any pending text update
+		if (textChangeTimeout !== null) {
+			clearTimeout(textChangeTimeout);
+		}
+
+		// Throttle text updates - send after 150ms of no typing for faster feedback
+		textChangeTimeout = setTimeout(() => {
+			const objData = target.toObject(['text']);
+			// @ts-expect-error - custom id property
+			objData.id = target.id;
+			ctx.sendCanvasUpdate({
+				type: 'modify',
+				object: objData,
+				live: false, // Not live, should persist
+			});
+			textChangeTimeout = null;
+		}, 150);
+
+		// Also send a live update immediately (won't be persisted to DB)
+		const objData = target.toObject(['text']);
 		// @ts-expect-error - custom id property
 		objData.id = target.id;
-		ctx.sendCanvasUpdate({ type: 'modify', object: objData });
+		ctx.sendCanvasUpdate({
+			type: 'modify',
+			object: objData,
+			live: true, // Live update, won't persist to DB
+		});
+	};
+};
+
+/**
+ * Creates text:editing:exited event handler
+ * Ensures final text is sent when user finishes editing
+ */
+export const createTextEditingExitedHandler = (ctx: CanvasEventContext) => {
+	return ({ target }: { target: fabric.Object }) => {
+		// Clear any pending throttled update
+		if (textChangeTimeout !== null) {
+			clearTimeout(textChangeTimeout);
+			textChangeTimeout = null;
+		}
+
+		// Send final text state immediately when editing ends
+		const objData = target.toObject(['text']);
+		// @ts-expect-error - custom id property
+		objData.id = target.id;
+		ctx.sendCanvasUpdate({
+			type: 'modify',
+			object: objData,
+			live: false, // Final update, should persist to DB
+		});
 	};
 };
 
@@ -416,6 +618,53 @@ export const createSelectionCreatedHandler = (ctx: CanvasEventContext) => {
 	return ({ selected }: { selected: fabric.Object[] }) => {
 		if (selected && selected.length === 1) {
 			const obj = selected[0];
+
+			// If we're in cropping mode, don't change menu or control points
+			if (ctx.getIsCropping()) {
+				return;
+			}
+
+			// If a control point is selected, don't change anything - keep existing menu
+			if (ctx.controlPointManager?.isControlPoint(obj)) {
+				return; // Don't update menu, don't hide control points
+			}
+
+			// Only hide/show control points if this is not a control point itself
+			if (ctx.controlPointManager) {
+				// Hide all control points first
+				ctx.controlPointManager.hideAllControlPoints();
+
+				// For supported object types, create control points if they don't exist, or show if they do
+				if (
+					obj.type === 'polyline' ||
+					obj.type === 'rect' ||
+					obj.type === 'ellipse' ||
+					obj.type === 'triangle' ||
+					obj.type === 'textbox' ||
+					obj.type === 'image' ||
+					obj.type === 'path'
+				) {
+					// @ts-expect-error - custom id property
+					const objId = obj.id;
+					// Check if control points already exist for this object
+					const handler =
+						obj.type === 'polyline'
+							? ctx.controlPointManager.getLineHandler()
+							: null;
+					const existingPoints = handler
+						? handler.getControlPointsForObject(objId)
+						: ctx.controlPointManager
+								.getAllControlPoints()
+								.filter((cp) => cp.objectId === objId);
+					if (existingPoints.length === 0) {
+						// Create control points for this object (visible by default)
+						ctx.controlPointManager.addControlPoints(objId, obj, true);
+					} else {
+						// Show existing control points
+						ctx.controlPointManager.showControlPoints(objId);
+					}
+				}
+			}
 
 			// Show floating menu when an object is selected
 			ctx.setShowFloatingMenu(true);
@@ -441,7 +690,8 @@ export const createSelectionCreatedHandler = (ctx: CanvasEventContext) => {
 			} else if (
 				obj.type === 'rect' ||
 				obj.type === 'circle' ||
-				obj.type === 'triangle'
+				obj.type === 'triangle' ||
+				obj.type === 'ellipse'
 			) {
 				// Show shape options panel
 				ctx.floatingMenuRef?.setActiveMenuPanel?.('shapes');
@@ -453,11 +703,11 @@ export const createSelectionCreatedHandler = (ctx: CanvasEventContext) => {
 					strokeDashArray: obj.strokeDashArray || [],
 					opacity: obj.opacity ?? 1,
 				});
-			} else if (obj.type === 'line') {
+			} else if (obj.type === 'polyline') {
 				// Show line options panel
 				ctx.floatingMenuRef?.setActiveMenuPanel?.('line');
 				// Sync line properties to menu
-				ctx.floatingMenuRef?.updateLineArrowOptions?.({
+				ctx.floatingMenuRef?.updateLineOptions?.({
 					strokeWidth: obj.strokeWidth || 2,
 					strokeColour: obj.stroke?.toString() || '#4A5568',
 					strokeDashArray: obj.strokeDashArray || [],
@@ -468,9 +718,11 @@ export const createSelectionCreatedHandler = (ctx: CanvasEventContext) => {
 				ctx.floatingMenuRef?.setActiveMenuPanel?.('arrow');
 				// Sync arrow properties from the line in the group
 				const groupObj = obj as fabric.Group;
-				const lineObj = groupObj.getObjects().find((o) => o.type === 'line');
+				const lineObj = groupObj
+					.getObjects()
+					.find((o) => o.type === 'polyline');
 				if (lineObj) {
-					ctx.floatingMenuRef?.updateLineArrowOptions?.({
+					ctx.floatingMenuRef?.updateLineOptions?.({
 						strokeWidth: lineObj.strokeWidth || 2,
 						strokeColour: lineObj.stroke?.toString() || '#4A5568',
 						strokeDashArray: lineObj.strokeDashArray || [],
@@ -506,6 +758,42 @@ export const createSelectionUpdatedHandler = (ctx: CanvasEventContext) => {
 		if (selected && selected.length === 1) {
 			const obj = selected[0];
 
+			// If we're in cropping mode, don't change menu or control points
+			if (ctx.getIsCropping()) {
+				return;
+			}
+
+			// If a control point is selected, don't change anything - keep existing menu
+			if (ctx.controlPointManager?.isControlPoint(obj)) {
+				return; // Don't update menu, don't hide control points
+			}
+
+			// Only hide/show control points if this is not a control point itself
+			if (ctx.controlPointManager) {
+				// Remove all control points from previously selected objects
+				const allControlPoints = ctx.controlPointManager.getAllControlPoints();
+				const objectIds = new Set(allControlPoints.map((cp) => cp.objectId));
+				objectIds.forEach((objectId) => {
+					ctx.controlPointManager?.removeControlPoints(objectId);
+				});
+
+				// For all supported object types, create control points
+				if (
+					obj.type === 'polyline' ||
+					obj.type === 'rect' ||
+					obj.type === 'ellipse' ||
+					obj.type === 'triangle' ||
+					obj.type === 'textbox' ||
+					obj.type === 'image' ||
+					obj.type === 'path'
+				) {
+					// @ts-expect-error - custom id property
+					const objId = obj.id;
+					// Always create fresh control points for the newly selected object
+					ctx.controlPointManager.addControlPoints(objId, obj, true);
+				}
+			}
+
 			// Show floating menu when an object is selected
 			ctx.setShowFloatingMenu(true);
 
@@ -530,7 +818,8 @@ export const createSelectionUpdatedHandler = (ctx: CanvasEventContext) => {
 			} else if (
 				obj.type === 'rect' ||
 				obj.type === 'circle' ||
-				obj.type === 'triangle'
+				obj.type === 'triangle' ||
+				obj.type === 'ellipse'
 			) {
 				// Show shape options panel
 				ctx.floatingMenuRef?.setActiveMenuPanel?.('shapes');
@@ -542,11 +831,11 @@ export const createSelectionUpdatedHandler = (ctx: CanvasEventContext) => {
 					strokeDashArray: obj.strokeDashArray || [],
 					opacity: obj.opacity ?? 1,
 				});
-			} else if (obj.type === 'line') {
+			} else if (obj.type === 'polyline') {
 				// Show line options panel
 				ctx.floatingMenuRef?.setActiveMenuPanel?.('line');
 				// Sync line properties to menu
-				ctx.floatingMenuRef?.updateLineArrowOptions?.({
+				ctx.floatingMenuRef?.updateLineOptions?.({
 					strokeWidth: obj.strokeWidth || 2,
 					strokeColour: obj.stroke?.toString() || '#4A5568',
 					strokeDashArray: obj.strokeDashArray || [],
@@ -557,9 +846,11 @@ export const createSelectionUpdatedHandler = (ctx: CanvasEventContext) => {
 				ctx.floatingMenuRef?.setActiveMenuPanel?.('arrow');
 				// Sync arrow properties from the line in the group
 				const groupObj = obj as fabric.Group;
-				const lineObj = groupObj.getObjects().find((o) => o.type === 'line');
+				const lineObj = groupObj
+					.getObjects()
+					.find((o) => o.type === 'polyline');
 				if (lineObj) {
-					ctx.floatingMenuRef?.updateLineArrowOptions?.({
+					ctx.floatingMenuRef?.updateLineOptions?.({
 						strokeWidth: lineObj.strokeWidth || 2,
 						strokeColour: lineObj.stroke?.toString() || '#4A5568',
 						strokeDashArray: lineObj.strokeDashArray || [],
@@ -592,6 +883,17 @@ export const createSelectionUpdatedHandler = (ctx: CanvasEventContext) => {
  */
 export const createSelectionClearedHandler = (ctx: CanvasEventContext) => {
 	return () => {
+		// Remove all control points when selection is cleared (not just hide)
+		// This ensures stale control points from deselected objects are cleaned up
+		if (ctx.controlPointManager) {
+			// Get all objects with control points and remove their control points
+			const allControlPoints = ctx.controlPointManager.getAllControlPoints();
+			const objectIds = new Set(allControlPoints.map((cp) => cp.objectId));
+			objectIds.forEach((objectId) => {
+				ctx.controlPointManager?.removeControlPoints(objectId);
+			});
+		}
+
 		// Close floating menu when clicking on empty space in select mode
 		if (ctx.getSelectedTool() === 'select') {
 			ctx.setShowFloatingMenu(false);
@@ -671,6 +973,7 @@ export const createMouseDownHandler = (
 				const pointer = canvas.getScenePoint(opt.e);
 				ctx.setStartPoint({ x: pointer.x, y: pointer.y });
 				ctx.setIsDrawingShape(true);
+				ctx.setIsDrawingObject?.(true); // Prevent history recording during drawing
 
 				// Create initial shape with zero size
 				const tempShape = Shapes.createShapeFromPoints(
@@ -725,64 +1028,124 @@ export const createMouseDownHandler = (
 
 				opt.e.preventDefault();
 				opt.e.stopPropagation();
-			} else if (!ctx.getIsDrawingText()) {
-				// Start drawing a new text box
+			} else {
+				// Create textbox instantly with fixed default size on single click
 				const pointer = canvas.getScenePoint(opt.e);
-				ctx.setStartPoint({ x: pointer.x, y: pointer.y });
-				ctx.setIsDrawingText(true);
+				const DEFAULT_TEXTBOX_WIDTH = 200;
+				const DEFAULT_FONT_SIZE = 16;
 
-				// Create initial text with minimum width
-				const tempText = Shapes.createTextFromPoints(
-					pointer.x,
-					pointer.y,
-					pointer.x + 50,
-					pointer.y,
-					ctx.getCurrentTextOptions(),
-				);
-				if (tempText) {
-					canvas.add(tempText);
+				// Mark that we're creating an object temporarily (will be finalized when user finishes editing)
+				ctx.setIsDrawingObject?.(true);
+
+				// Create textbox with fixed defaults - ignore current text options for size
+				const textbox = new fabric.Textbox('Click to edit text', {
+					id: uuidv4(),
+					left: pointer.x,
+					top: pointer.y,
+					width: DEFAULT_TEXTBOX_WIDTH,
+					fontSize: DEFAULT_FONT_SIZE,
+					fontFamily: ctx.getCurrentTextOptions().fontFamily,
+					fontWeight: ctx.getCurrentTextOptions().fontWeight,
+					fill: ctx.getCurrentTextOptions().colour,
+					opacity: ctx.getCurrentTextOptions().opacity,
+					splitByGrapheme: false, // Break at word boundaries (spaces) first
+					breakWords: true, // But break long words if they don't fit
+					textAlign: ctx.getCurrentTextOptions().textAlign,
+					hasControls: false,
+					hasBorders: false,
+					originX: 'left',
+					originY: 'top',
+					selectable: false, // Start as non-selectable, will be set to true after finalized event
+				});
+
+				// Ensure dimensions are calculated correctly
+				textbox.initDimensions();
+
+				canvas.add(textbox);
+				canvas.setActiveObject(textbox);
+
+				// Add listener to update control points when textbox dimensions change
+				textbox.on('changed', () => {
+					textbox.initDimensions(); // Recalculate height when text changes
+					if (ctx.controlPointManager) {
+						// @ts-expect-error - custom id property
+						ctx.controlPointManager.updateControlPoints(textbox.id, textbox);
+					}
 					canvas.renderAll();
+				});
+
+				// Enter edit mode immediately
+				textbox.enterEditing();
+				textbox.selectAll();
+
+				canvas.renderAll();
+
+				// Send the created textbox to other users
+				const objData = textbox.toObject(['text']);
+				// @ts-expect-error - custom id property
+				objData.id = textbox.id;
+				// @ts-expect-error - custom markAsRecentlyCreated property added by websocket
+				if (ctx.sendCanvasUpdate.socket?.markAsRecentlyCreated) {
+					// @ts-expect-error - custom markAsRecentlyCreated property
+					ctx.sendCanvasUpdate.socket.markAsRecentlyCreated(textbox.id);
 				}
-				ctx.setTempText(tempText);
+				ctx.sendCanvasUpdate({ type: 'add', object: objData });
+
+				// Re-enable history recording after text is created and sent
+				ctx.setIsDrawingObject?.(false);
+
+				// Make textbox selectable before firing finalized event
+				textbox.set({ selectable: true });
+
+				// Fire object:finalized event so history is recorded
+				// @ts-expect-error - custom event
+				canvas.fire('object:finalized', { target: textbox });
+
+				// Auto-switch to selection tool while keeping floating menu open
+				ctx.setSelectedTool('select');
+				canvas.isDrawingMode = false;
+				canvas.selection = true;
+				canvas.defaultCursor = 'default';
+				canvas.hoverCursor = 'move';
+
+				// Show text options in floating menu
+				setTimeout(() => {
+					ctx.setShowFloatingMenu(true);
+					ctx.floatingMenuRef?.setActiveMenuPanel?.('text');
+					ctx.floatingMenuRef?.updateTextOptions?.({
+						fontSize: textbox.fontSize,
+						fontFamily: textbox.fontFamily,
+						fontWeight: String(textbox.fontWeight || 'normal'),
+						colour: textbox.fill as string,
+						textAlign: textbox.textAlign,
+						opacity: textbox.opacity || 1,
+					});
+				}, 0);
 
 				opt.e.preventDefault();
 				opt.e.stopPropagation();
 			}
-		} else if (selectedTool === 'line' || selectedTool === 'arrow') {
+		} else if (selectedTool === 'line') {
 			// Don't start drawing if we're clicking on an existing object
 			const target = canvas.findTarget(opt.e);
-			if (!target && !ctx.getIsDrawingLine() && !ctx.getIsDrawingArrow()) {
+			if (!target && !ctx.getIsDrawingLine()) {
 				const pointer = canvas.getScenePoint(opt.e);
 				const startPoint = { x: pointer.x, y: pointer.y };
 				ctx.setStartPoint(startPoint);
+				ctx.setIsDrawingLine(true);
+				ctx.setIsDrawingObject?.(true); // Prevent history recording during drawing
+				const tempLine = Shapes.createLine(
+					startPoint.x,
+					startPoint.y,
+					startPoint.x,
+					startPoint.y,
+					ctx.getCurrentLineOptions(),
+				);
+				ctx.setTempShape(tempLine);
+				ctx.setTempLine(tempLine);
 
-				if (selectedTool === 'line') {
-					ctx.setIsDrawingLine(true);
-					const tempLine = Shapes.createLine(
-						startPoint.x,
-						startPoint.y,
-						startPoint.x,
-						startPoint.y,
-						ctx.getCurrentLineArrowOptions(),
-					);
-					ctx.setTempLine(tempLine);
-				} else {
-					ctx.setIsDrawingArrow(true);
-					const tempLine = Shapes.createArrow(
-						startPoint.x,
-						startPoint.y,
-						startPoint.x,
-						startPoint.y,
-						ctx.getCurrentLineArrowOptions(),
-					);
-					ctx.setTempLine(tempLine);
-				}
-
-				const tempLine = ctx.getTempLine();
-				if (tempLine) {
-					canvas.add(tempLine);
-					canvas.renderAll();
-				}
+				canvas.add(tempLine);
+				canvas.renderAll();
 
 				opt.e.preventDefault();
 				opt.e.stopPropagation();
@@ -844,15 +1207,12 @@ export const createMouseMoveHandler = (
 		) {
 			// Update the shape being drawn
 			const pointer = canvas.getScenePoint(opt.e);
+			const startPoint = ctx.getStartPoint();
 
-			// Remove the old temp shape
+			// Get the old temp shape
 			const oldTempShape = ctx.getTempShape();
-			if (oldTempShape) {
-				canvas.remove(oldTempShape);
-			}
 
 			// Create new shape with updated dimensions
-			const startPoint = ctx.getStartPoint();
 			const tempShape = Shapes.createShapeFromPoints(
 				ctx.getCurrentShapeType(),
 				startPoint.x,
@@ -861,67 +1221,47 @@ export const createMouseMoveHandler = (
 				pointer.y,
 				ctx.getCurrentShapeOptions(),
 			);
-			if (tempShape) {
+
+			if (tempShape && oldTempShape) {
+				// Replace the old shape with the new one atomically
+				const index = canvas.getObjects().indexOf(oldTempShape);
+				canvas.remove(oldTempShape);
+				if (index >= 0) {
+					canvas.insertAt(index, tempShape);
+				} else {
+					canvas.add(tempShape);
+				}
+				ctx.setTempShape(tempShape);
+				canvas.renderAll();
+			} else if (tempShape) {
+				// First time - just add it
 				canvas.add(tempShape);
+				ctx.setTempShape(tempShape);
 				canvas.renderAll();
 			}
-			ctx.setTempShape(tempShape);
-		} else if (ctx.getIsDrawingText() && ctx.getTempText()) {
-			// Update the text box being drawn (only horizontally)
+		} else if (ctx.getIsDrawingLine() && ctx.getTempLine()) {
+			// Update the temporary line/arrow while dragging
 			const pointer = canvas.getScenePoint(opt.e);
+			const startPoint = ctx.getStartPoint();
 
-			// Remove the old temp text
-			const oldTempText = ctx.getTempText();
-			if (oldTempText) {
-				canvas.remove(oldTempText);
+			// Remove the old temp line/arrow
+			const oldTempLine = ctx.getTempLine();
+			if (oldTempLine) {
+				canvas.remove(oldTempLine);
 			}
 
-			// Create new text with updated width (only expand horizontally)
-			const startPoint = ctx.getStartPoint();
-			const tempText = Shapes.createTextFromPoints(
+			const tempLine = Shapes.createLine(
 				startPoint.x,
 				startPoint.y,
 				pointer.x,
-				startPoint.y,
-				ctx.getCurrentTextOptions(),
+				pointer.y,
+				ctx.getCurrentLineOptions(),
 			);
-			if (tempText) {
-				canvas.add(tempText);
-				canvas.renderAll();
-			}
-			ctx.setTempText(tempText);
-		} else if (
-			(ctx.getIsDrawingLine() || ctx.getIsDrawingArrow()) &&
-			ctx.getTempLine()
-		) {
-			// Update the temporary line/arrow while dragging
-			const pointer = canvas.getScenePoint(opt.e);
 
-			if (ctx.getIsDrawingLine()) {
-				// Update line coordinates
-				const tempLine = ctx.getTempLine();
-				if (tempLine) {
-					tempLine.set({ x2: pointer.x, y2: pointer.y });
-				}
-			} else if (ctx.getIsDrawingArrow()) {
-				// Remove the temp arrow and create a new one
-				const oldTempLine = ctx.getTempLine();
-				if (oldTempLine) {
-					canvas.remove(oldTempLine);
-				}
-				const startPoint = ctx.getStartPoint();
-				const tempLine = Shapes.createArrow(
-					startPoint.x,
-					startPoint.y,
-					pointer.x,
-					pointer.y,
-					ctx.getCurrentLineArrowOptions(),
-				);
-				if (tempLine) {
-					canvas.add(tempLine);
-				}
-				ctx.setTempLine(tempLine);
+			if (tempLine) {
+				canvas.add(tempLine);
 			}
+			ctx.setTempLine(tempLine);
 
 			canvas.renderAll();
 		} else if (ctx.getIsErasing() && ctx.getSelectedTool() === 'eraser') {
@@ -1023,8 +1363,9 @@ export const setupCanvasEvents = (
 	canvas.on('object:rotating', createObjectRotatingHandler(ctx));
 	canvas.on('object:modified', createObjectModifiedHandler(ctx));
 	canvas.on('mouse:up', createMouseUpHandler(canvas, ctx));
-	canvas.on('path:created', createPathCreatedHandler(ctx));
+	canvas.on('path:created', createPathCreatedHandler(canvas, ctx));
 	canvas.on('text:changed', createTextChangedHandler(ctx));
+	canvas.on('text:editing:exited', createTextEditingExitedHandler(ctx));
 	canvas.on('selection:created', createSelectionCreatedHandler(ctx));
 	canvas.on('selection:updated', createSelectionUpdatedHandler(ctx));
 	canvas.on('selection:cleared', createSelectionClearedHandler(ctx));

@@ -7,7 +7,8 @@ export type WhiteboardTool =
 	| 'shapes'
 	| 'text'
 	| 'image'
-	| 'eraser';
+	| 'eraser'
+	| 'crop';
 
 export type ShapeType = 'rectangle' | 'circle' | 'triangle';
 
@@ -37,7 +38,7 @@ export interface DrawOptions {
 	opacity: number;
 }
 
-export interface LineArrowOptions {
+export interface LineOptions {
 	strokeWidth: number;
 	strokeColour: string;
 	strokeDashArray: number[];
@@ -49,10 +50,53 @@ export interface Point {
 	y: number;
 }
 
+export type LayerAction =
+	| 'sendToBack'
+	| 'moveBackward'
+	| 'bringToFront'
+	| 'moveForward';
+
 export interface CanvasUpdateData {
-	type: 'add' | 'modify' | 'delete' | 'clear' | 'load' | 'update' | 'remove';
+	type:
+		| 'add'
+		| 'modify'
+		| 'delete'
+		| 'clear'
+		| 'load'
+		| 'update'
+		| 'remove'
+		| 'layer';
 	whiteboardId?: number;
 	object?: Record<string, unknown>;
 	objects?: Record<string, unknown>[];
 	live?: boolean;
+	action?: LayerAction;
+}
+
+export interface HistoryAction {
+	type: 'add' | 'modify' | 'delete';
+	objectId: string;
+	objectData?: Record<string, unknown>; // Current state for modify, or object data for add
+	previousData?: Record<string, unknown>; // Previous state for modify
+	timestamp: number;
+	userId: string; // Track which user performed this action
+}
+
+export interface CropState {
+	isActive: boolean;
+	imageId: string | null;
+	originalBounds: {
+		left: number;
+		top: number;
+		width: number;
+		height: number;
+		scaleX: number;
+		scaleY: number;
+	} | null;
+	cropBounds: {
+		left: number;
+		top: number;
+		width: number;
+		height: number;
+	} | null;
 }

@@ -1,34 +1,7 @@
 import * as fabric from 'fabric';
 import { v4 as uuidv4 } from 'uuid';
 import { MIN_TEXT_WIDTH } from './constants';
-import type { LineArrowOptions, ShapeOptions, TextOptions } from './types';
-
-/**
- * Calculate arrowhead points for a line
- */
-export const createArrowHead = (
-	x1: number,
-	y1: number,
-	x2: number,
-	y2: number,
-	arrowLength = 15,
-	arrowAngle = Math.PI / 6,
-) => {
-	const angle = Math.atan2(y2 - y1, x2 - x1);
-
-	// Calculate the two points of the arrowhead
-	const arrowPoint1 = {
-		x: x2 - arrowLength * Math.cos(angle - arrowAngle),
-		y: y2 - arrowLength * Math.sin(angle - arrowAngle),
-	};
-
-	const arrowPoint2 = {
-		x: x2 - arrowLength * Math.cos(angle + arrowAngle),
-		y: y2 - arrowLength * Math.sin(angle + arrowAngle),
-	};
-
-	return [arrowPoint1, arrowPoint2];
-};
+import type { LineOptions, ShapeOptions, TextOptions } from './types';
 
 /**
  * Create a line object with the given options
@@ -38,59 +11,27 @@ export const createLine = (
 	y1: number,
 	x2: number,
 	y2: number,
-	options: LineArrowOptions,
+	options: LineOptions,
 ) => {
-	return new fabric.Line([x1, y1, x2, y2], {
-		id: uuidv4(),
-		stroke: options.strokeColour,
-		strokeWidth: options.strokeWidth,
-		strokeDashArray: options.strokeDashArray,
-		opacity: options.opacity,
-		selectable: true,
-	});
-};
-
-/**
- * Create an arrow object (line with arrowhead) with the given options
- */
-export const createArrow = (
-	x1: number,
-	y1: number,
-	x2: number,
-	y2: number,
-	options: LineArrowOptions,
-) => {
-	const line = createLine(x1, y1, x2, y2, options);
-	const arrowHeadPoints = createArrowHead(x1, y1, x2, y2);
-
-	const arrowHead1 = new fabric.Line(
-		[x2, y2, arrowHeadPoints[0].x, arrowHeadPoints[0].y],
+	const line = new fabric.Polyline(
+		[
+			{ x: x1, y: y1 },
+			{ x: x2, y: y2 },
+		],
 		{
+			id: uuidv4(),
 			stroke: options.strokeColour,
 			strokeWidth: options.strokeWidth,
 			strokeDashArray: options.strokeDashArray,
 			opacity: options.opacity,
-			selectable: false,
+			selectable: false, // Start as non-selectable during drawing, set to true when finalized
+			hasControls: false,
+			hasBorders: false,
+			strokeUniform: true,
 		},
 	);
 
-	const arrowHead2 = new fabric.Line(
-		[x2, y2, arrowHeadPoints[1].x, arrowHeadPoints[1].y],
-		{
-			stroke: options.strokeColour,
-			strokeWidth: options.strokeWidth,
-			strokeDashArray: options.strokeDashArray,
-			opacity: options.opacity,
-			selectable: false,
-		},
-	);
-
-	// Group the line and arrowhead together
-	const arrowGroup = new fabric.Group([line, arrowHead1, arrowHead2], {
-		selectable: true,
-	});
-
-	return arrowGroup;
+	return line;
 };
 
 /**
@@ -110,27 +51,31 @@ export const createShapeFromPoints = (
 	const width = Math.abs(x2 - x1);
 	const height = Math.abs(y2 - y1);
 
-	let shape: fabric.Object;
-
 	switch (shapeType) {
 		case 'circle': {
-			// For circles, use the larger dimension as diameter
-			const radius = Math.max(width, height) / 2;
-			shape = new fabric.Circle({
+			// Create ellipse from corner to corner (like rectangle)
+			const ellipse = new fabric.Ellipse({
 				id: uuidv4(),
-				radius: radius,
+				rx: width / 2,
+				ry: height / 2,
 				fill: options.fillColour,
 				stroke: options.strokeColour,
 				strokeWidth: options.strokeWidth,
 				strokeDashArray: options.strokeDashArray,
 				opacity: options.opacity,
-				left: left,
-				top: top,
+				left: left + width / 2,
+				top: top + height / 2,
+				originX: 'center',
+				originY: 'center',
+				selectable: false, // Start as non-selectable during drawing, set to true when finalized
+				hasControls: false,
+				hasBorders: false,
+				strokeUniform: true,
 			});
-			break;
+			return ellipse;
 		}
 		case 'rectangle': {
-			shape = new fabric.Rect({
+			const rect = new fabric.Rect({
 				id: uuidv4(),
 				width: width,
 				height: height,
@@ -139,13 +84,19 @@ export const createShapeFromPoints = (
 				strokeWidth: options.strokeWidth,
 				strokeDashArray: options.strokeDashArray,
 				opacity: options.opacity,
-				left: left,
-				top: top,
+				left: left + width / 2,
+				top: top + height / 2,
+				originX: 'center',
+				originY: 'center',
+				selectable: false, // Start as non-selectable during drawing, set to true when finalized
+				hasControls: false,
+				hasBorders: false,
+				strokeUniform: true,
 			});
-			break;
+			return rect;
 		}
 		case 'triangle': {
-			shape = new fabric.Triangle({
+			const triangle = new fabric.Triangle({
 				id: uuidv4(),
 				width: width,
 				height: height,
@@ -154,16 +105,20 @@ export const createShapeFromPoints = (
 				strokeWidth: options.strokeWidth,
 				strokeDashArray: options.strokeDashArray,
 				opacity: options.opacity,
-				left: left,
-				top: top,
+				left: left + width / 2,
+				top: top + height / 2,
+				originX: 'center',
+				originY: 'center',
+				selectable: false, // Start as non-selectable during drawing, set to true when finalized
+				hasControls: false,
+				hasBorders: false,
+				strokeUniform: true,
 			});
-			break;
+			return triangle;
 		}
 		default:
 			return null;
 	}
-
-	return shape;
 };
 
 /**
@@ -192,10 +147,16 @@ export const createTextFromPoints = (
 		fill: options.colour,
 		opacity: options.opacity,
 		// Text wrapping settings
-		splitByGrapheme: false, // Split by words, not characters
+		splitByGrapheme: false, // Split by words (spaces) first, only break long words if needed
 		// Fixed height behavior - let text wrap and expand vertically naturally
 		// but constrain width
 		textAlign: options.textAlign,
+		selectable: false, // Start as non-selectable during creation, set to true when finalized
+		hasControls: false,
+		hasBorders: false,
+		// Use top-left origin (default for textboxes)
+		originX: 'left',
+		originY: 'top',
 	});
 
 	return text;

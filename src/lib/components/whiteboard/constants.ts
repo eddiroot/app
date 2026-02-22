@@ -1,6 +1,6 @@
 import type {
 	DrawOptions,
-	LineArrowOptions,
+	LineOptions,
 	ShapeOptions,
 	TextOptions,
 } from './types';
@@ -29,7 +29,7 @@ export const DEFAULT_DRAW_OPTIONS: DrawOptions = {
 	opacity: 1,
 };
 
-export const DEFAULT_LINE_ARROW_OPTIONS: LineArrowOptions = {
+export const DEFAULT_LINE_OPTIONS: LineOptions = {
 	strokeWidth: 2,
 	strokeColour: '#4A5568',
 	strokeDashArray: [],
@@ -39,7 +39,5 @@ export const DEFAULT_LINE_ARROW_OPTIONS: LineArrowOptions = {
 export const ZOOM_LIMITS = { min: 0.1, max: 10, step: 1.2 } as const;
 
 export const IMAGE_THROTTLE_MS = 100;
-
-export const ARROW_HEAD_DEFAULTS = { length: 15, angle: Math.PI / 6 } as const;
 
 export const MIN_TEXT_WIDTH = 50;
