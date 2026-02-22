@@ -1,10 +1,10 @@
-import { taskBlockTypeEnum } from '$lib/enums'
+import { taskBlockTypeEnum } from '$lib/enums';
 
 const criteriaItem = {
 	type: 'object',
 	properties: { description: { type: 'string' }, marks: { type: 'number' } },
 	required: ['description', 'marks'],
-}
+};
 
 export const blockHeading = {
 	type: 'object',
@@ -17,9 +17,9 @@ export const blockHeading = {
 		},
 	},
 	required: ['type', 'config'],
-}
+};
 
-export type BlockHeadingConfig = { text: string; size: number }
+export type BlockHeadingConfig = { text: string; size: number };
 
 export const blockRichText = {
 	type: 'object',
@@ -32,9 +32,9 @@ export const blockRichText = {
 		},
 	},
 	required: ['type', 'config'],
-}
+};
 
-export type BlockRichTextConfig = { html: string }
+export type BlockRichTextConfig = { html: string };
 
 export const blockMathInput = {
 	type: 'object',
@@ -53,16 +53,16 @@ export const blockMathInput = {
 		marks: { type: 'number' },
 	},
 	required: ['type', 'config', 'criteria'],
-}
+};
 
 export type BlockMathInputConfig = {
-	text: string
-	question: string
-	answer: string
-	advancedMathSymbols: boolean
-}
+	text: string;
+	question: string;
+	answer: string;
+	advancedMathSymbols: boolean;
+};
 
-export type BlockMathInputResponse = { answer: string }
+export type BlockMathInputResponse = { answer: string };
 
 export const blockChoice = {
 	type: 'object',
@@ -90,14 +90,14 @@ export const blockChoice = {
 		marks: { type: 'number' },
 	},
 	required: ['type', 'config'],
-}
+};
 
 export type BlockChoiceConfig = {
-	question: string
-	options: { text: string; isAnswer: boolean }[]
-}
+	question: string;
+	options: { text: string; isAnswer: boolean }[];
+};
 
-export type BlockChoiceResponse = { answers: string[] }
+export type BlockChoiceResponse = { answers: string[] };
 
 export const blockFillBlank = {
 	type: 'object',
@@ -114,11 +114,11 @@ export const blockFillBlank = {
 		marks: { type: 'number' },
 	},
 	required: ['type', 'config'],
-}
+};
 
-export type BlockFillBlankConfig = { sentence: string; answers: string[] }
+export type BlockFillBlankConfig = { sentence: string; answers: string[] };
 
-export type BlockFillBlankResponse = { answers: string[] }
+export type BlockFillBlankResponse = { answers: string[] };
 
 export const blockMatching = {
 	type: 'object',
@@ -142,16 +142,16 @@ export const blockMatching = {
 		marks: { type: 'number' },
 	},
 	required: ['type', 'config'],
-}
+};
 
 export type BlockMatchingConfig = {
-	instructions: string
-	pairs: { left: string; right: string }[]
-}
+	instructions: string;
+	pairs: { left: string; right: string }[];
+};
 
 export type BlockMatchingResponse = {
-	matches: { left: string; right: string }[]
-}
+	matches: { left: string; right: string }[];
+};
 
 export const blockShortAnswer = {
 	type: 'object',
@@ -166,11 +166,11 @@ export const blockShortAnswer = {
 		marks: { type: 'number' },
 	},
 	required: ['type', 'config', 'criteria'],
-}
+};
 
-export type BlockShortAnswerConfig = { question: string }
+export type BlockShortAnswerConfig = { question: string };
 
-export type BlockShortAnswerResponse = { answer: string }
+export type BlockShortAnswerResponse = { answer: string };
 
 export const blockClose = {
 	type: 'object',
@@ -185,11 +185,11 @@ export const blockClose = {
 		marks: { type: 'number' },
 	},
 	required: ['type', 'config', 'criteria'],
-}
+};
 
-export type BlockCloseConfig = { text: string }
+export type BlockCloseConfig = { text: string };
 
-export type BlockCloseResponse = { answers: string[] }
+export type BlockCloseResponse = { answers: string[] };
 
 export const blockHighlightText = {
 	type: 'object',
@@ -206,11 +206,11 @@ export const blockHighlightText = {
 		marks: { type: 'number' },
 	},
 	required: ['type', 'config'],
-}
+};
 
-export type BlockHighlightTextConfig = { text: string; instructions: string }
+export type BlockHighlightTextConfig = { text: string; instructions: string };
 
-export type BlockHighlightTextResponse = { selectedText: string[] }
+export type BlockHighlightTextResponse = { selectedText: string[] };
 
 export const blockTable = {
 	type: 'object',
@@ -231,14 +231,14 @@ export const blockTable = {
 		},
 	},
 	required: ['type', 'config'],
-}
+};
 
 export type BlockTableConfig = {
-	title: string
-	rows: number
-	columns: number
-	data: string[][]
-}
+	title: string;
+	rows: number;
+	columns: number;
+	data: string[][];
+};
 
 export const blockWhiteboard = {
 	type: 'object',
@@ -255,12 +255,12 @@ export const blockWhiteboard = {
 		marks: { type: 'number' },
 	},
 	required: ['type', 'config'],
-}
+};
 
 export type BlockWhiteboardConfig = {
-	title: string
-	whiteboardId: number | null
-}
+	title: string;
+	whiteboardId: number | null;
+};
 
 export const blockGraph = {
 	type: 'object',
@@ -307,20 +307,25 @@ export const blockGraph = {
 		},
 	},
 	required: ['type', 'config'],
-}
+};
 
 export type BlockGraphConfig = {
-	title: string
-	xAxisLabel: string
-	yAxisLabel: string
-	xRange: { min: number; max: number }
-	yRange: { min: number; max: number }
-	staticPlots: { id: string; equation: string; color: string; label: string }[]
-}
+	title: string;
+	xAxisLabel: string;
+	yAxisLabel: string;
+	xRange: { min: number; max: number };
+	yRange: { min: number; max: number };
+	staticPlots: { id: string; equation: string; color: string; label: string }[];
+};
 
 export type BlockGraphResponse = {
-	studentPlots: { id: string; equation: string; color: string; label: string }[]
-}
+	studentPlots: {
+		id: string;
+		equation: string;
+		color: string;
+		label: string;
+	}[];
+};
 
 export const blockBalancingEquations = {
 	type: 'object',
@@ -359,17 +364,17 @@ export const blockBalancingEquations = {
 		marks: { type: 'number' },
 	},
 	required: ['type', 'config'],
-}
+};
 
 export type BlockBalancingEquationsConfig = {
-	question?: string
-	reactants: Array<{ formula: string; coefficient: number; given: boolean }>
-	products: Array<{ formula: string; coefficient: number; given: boolean }>
-}
+	question?: string;
+	reactants: Array<{ formula: string; coefficient: number; given: boolean }>;
+	products: Array<{ formula: string; coefficient: number; given: boolean }>;
+};
 
 export type BlockBalancingEquationsResponse = {
-	coefficients: { reactants: number[]; products: number[] }
-}
+	coefficients: { reactants: number[]; products: number[] };
+};
 
 export const blockImage = {
 	type: 'object',
@@ -382,9 +387,9 @@ export const blockImage = {
 		},
 	},
 	required: ['type', 'config'],
-}
+};
 
-export type BlockImageConfig = { path: string; altText: string }
+export type BlockImageConfig = { path: string; altText: string };
 
 export const blockVideo = {
 	type: 'object',
@@ -397,9 +402,9 @@ export const blockVideo = {
 		},
 	},
 	required: ['type', 'config'],
-}
+};
 
-export type BlockVideoConfig = { url: string; altText: string }
+export type BlockVideoConfig = { url: string; altText: string };
 
 export const blockAudio = {
 	type: 'object',
@@ -412,9 +417,9 @@ export const blockAudio = {
 		},
 	},
 	required: ['type', 'config'],
-}
+};
 
-export type BlockAudioConfig = { path: string; altText: string }
+export type BlockAudioConfig = { path: string; altText: string };
 
 export const blockSubmission = {
 	type: 'object',
@@ -427,11 +432,11 @@ export const blockSubmission = {
 		},
 	},
 	required: ['type', 'config'],
-}
+};
 
-export type BlockSubmissionConfig = { instructions: string }
+export type BlockSubmissionConfig = { instructions: string };
 
-export type BlockSubmissionResponse = { path: string }
+export type BlockSubmissionResponse = { path: string };
 
 export const taskBlocks = [
 	blockHeading,
@@ -450,13 +455,13 @@ export const taskBlocks = [
 	blockVideo,
 	blockAudio,
 	blockSubmission,
-]
+];
 
 export const taskSchema = {
 	type: 'object',
 	properties: { blocks: { type: 'array', items: { anyOf: taskBlocks } } },
 	required: ['task'],
-}
+};
 
 // Union type for all possible block configs
 export type BlockConfig =
@@ -476,7 +481,7 @@ export type BlockConfig =
 	| BlockImageConfig
 	| BlockVideoConfig
 	| BlockAudioConfig
-	| BlockSubmissionConfig
+	| BlockSubmissionConfig;
 
 export type BlockResponse =
 	| BlockChoiceResponse
@@ -488,81 +493,79 @@ export type BlockResponse =
 	| BlockCloseResponse
 	| BlockHighlightTextResponse
 	| BlockGraphResponse
-	| BlockSubmissionResponse
+	| BlockSubmissionResponse;
 
 export type BlockProps<
 	T extends BlockConfig = BlockConfig,
 	Q extends BlockResponse = never,
 > = {
-	config: T
-	onConfigUpdate: (config: T) => Promise<void>
-	viewMode: ViewMode
+	config: T;
+	onConfigUpdate: (config: T) => Promise<void>;
+	viewMode: ViewMode;
 } & ([Q] extends [never]
 	? object
-	: { response: Q; onResponseUpdate: (response: Q) => Promise<void> })
+	: { response: Q; onResponseUpdate: (response: Q) => Promise<void> });
 
 // Specific prop types for each block type
-export type HeadingBlockProps = BlockProps<BlockHeadingConfig>
-export type RichTextBlockProps = BlockProps<BlockRichTextConfig>
+export type HeadingBlockProps = BlockProps<BlockHeadingConfig>;
+export type RichTextBlockProps = BlockProps<BlockRichTextConfig>;
 export type MathInputBlockProps = BlockProps<
 	BlockMathInputConfig,
 	BlockMathInputResponse
->
+>;
 export type ChoiceBlockProps = BlockProps<
 	BlockChoiceConfig,
 	BlockChoiceResponse
->
+>;
 export type FillBlankBlockProps = BlockProps<
 	BlockFillBlankConfig,
 	BlockFillBlankResponse
->
+>;
 export type BalancingEquationsBlockProps = BlockProps<
 	BlockBalancingEquationsConfig,
 	BlockBalancingEquationsResponse
->
+>;
 export type MatchingBlockProps = BlockProps<
 	BlockMatchingConfig,
 	BlockMatchingResponse
->
+>;
 export type ShortAnswerBlockProps = BlockProps<
 	BlockShortAnswerConfig,
 	BlockShortAnswerResponse
->
-export type WhiteboardBlockProps = BlockProps<BlockWhiteboardConfig> & {
-	blockId: number
-}
-export type CloseBlockProps = BlockProps<BlockCloseConfig, BlockCloseResponse>
+>;
+export type WhiteboardBlockProps = BlockProps<BlockWhiteboardConfig>;
+export type CloseBlockProps = BlockProps<BlockCloseConfig, BlockCloseResponse>;
 export type HighlightTextBlockProps = BlockProps<
 	BlockHighlightTextConfig,
 	BlockHighlightTextResponse
->
-export type ImageBlockProps = BlockProps<BlockImageConfig>
-export type TableBlockProps = BlockProps<BlockTableConfig>
-export type GraphBlockProps = BlockProps<BlockGraphConfig, BlockGraphResponse>
-export type VideoBlockProps = BlockProps<BlockVideoConfig>
-export type AudioBlockProps = BlockProps<BlockAudioConfig>
+>;
+export type ImageBlockProps = BlockProps<BlockImageConfig>;
+export type TableBlockProps = BlockProps<BlockTableConfig>;
+export type GraphBlockProps = BlockProps<BlockGraphConfig, BlockGraphResponse>;
+export type VideoBlockProps = BlockProps<BlockVideoConfig>;
+export type AudioBlockProps = BlockProps<BlockAudioConfig>;
 export type SubmissionBlockProps = BlockProps<
 	BlockSubmissionConfig,
 	BlockSubmissionResponse
->
+>;
 
-import { type Icon } from '@lucide/svelte'
-import AudioIcon from '@lucide/svelte/icons/audio-lines'
-import FlaskConicalIcon from '@lucide/svelte/icons/flask-conical'
-import HeadingIcon from '@lucide/svelte/icons/heading'
-import HighlighterIcon from '@lucide/svelte/icons/highlighter'
-import ImageIcon from '@lucide/svelte/icons/image'
-import LinkIcon from '@lucide/svelte/icons/link'
-import List from '@lucide/svelte/icons/list'
-import MessageSquareTextIcon from '@lucide/svelte/icons/message-square-text'
-import PenToolIcon from '@lucide/svelte/icons/pen-tool'
-import PilcrowIcon from '@lucide/svelte/icons/pilcrow'
-import PresentationIcon from '@lucide/svelte/icons/presentation'
-import MathIcon from '@lucide/svelte/icons/sigma'
-import TableIcon from '@lucide/svelte/icons/table'
-import TrendingUpIcon from '@lucide/svelte/icons/trending-up'
-import UploadIcon from '@lucide/svelte/icons/upload'
-import VideoIcon from '@lucide/svelte/icons/video'
+import { type Icon } from '@lucide/svelte';
+import AudioIcon from '@lucide/svelte/icons/audio-lines';
+import FlaskConicalIcon from '@lucide/svelte/icons/flask-conical';
+import HeadingIcon from '@lucide/svelte/icons/heading';
+import HighlighterIcon from '@lucide/svelte/icons/highlighter';
+import ImageIcon from '@lucide/svelte/icons/image';
+import LinkIcon from '@lucide/svelte/icons/link';
+import List from '@lucide/svelte/icons/list';
+import MessageSquareTextIcon from '@lucide/svelte/icons/message-square-text';
+import PenToolIcon from '@lucide/svelte/icons/pen-tool';
+import PilcrowIcon from '@lucide/svelte/icons/pilcrow';
+import PresentationIcon from '@lucide/svelte/icons/presentation';
+import MathIcon from '@lucide/svelte/icons/sigma';
+import TableIcon from '@lucide/svelte/icons/table';
+import TrendingUpIcon from '@lucide/svelte/icons/trending-up';
+import UploadIcon from '@lucide/svelte/icons/upload';
+import VideoIcon from '@lucide/svelte/icons/video';
 
 export enum ViewMode {
 	CONFIGURE = 'configure',
@@ -572,10 +575,10 @@ export enum ViewMode {
 }
 
 export const blockTypes: {
-	type: string
-	name: string
-	initialConfig: Record<string, unknown>
-	icon: typeof Icon
+	type: string;
+	name: string;
+	initialConfig: Record<string, unknown>;
+	icon: typeof Icon;
 }[] = [
 	{
 		type: taskBlockTypeEnum.heading,
@@ -730,4 +733,4 @@ export const blockTypes: {
 		},
 		icon: UploadIcon,
 	},
-]
+];
