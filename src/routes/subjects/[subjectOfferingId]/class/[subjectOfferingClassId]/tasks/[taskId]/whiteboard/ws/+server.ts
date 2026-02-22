@@ -5,10 +5,10 @@ import {
 	getWhiteboardObjects,
 	saveWhiteboardObject,
 	updateWhiteboardObject,
-} from '$lib/server/db/service'
+} from '$lib/server/db/service';
 
 // Store peer subscriptions with their whiteboardId
-const peerWhiteboards = new Map<any, number>()
+const peerWhiteboards = new Map<any, number>();
 
 export const socket = {
 	async open(peer: any) {
@@ -17,8 +17,9 @@ export const socket = {
 	},
 
 	async message(peer: any, message: any) {
-		const parsedMessage = JSON.parse(String(message))
-		const whiteboardId = parsedMessage.whiteboardId || peerWhiteboards.get(peer)
+		const parsedMessage = JSON.parse(String(message));
+		const whiteboardId =
+			parsedMessage.whiteboardId || peerWhiteboards.get(peer);
 
 		if (!whiteboardId) {
 			peer.send(
@@ -26,8 +27,8 @@ export const socket = {
 					type: 'error',
 					message: 'No whiteboard ID specified',
 				}),
-			)
-			return
+			);
+			return;
 		}
 
 		// Update the peer's whiteboard if a new one is specified
@@ -36,22 +37,22 @@ export const socket = {
 			parsedMessage.whiteboardId !== peerWhiteboards.get(peer)
 		) {
 			// Unsubscribe from old whiteboard
-			const oldWhiteboardId = peerWhiteboards.get(peer)
+			const oldWhiteboardId = peerWhiteboards.get(peer);
 			if (oldWhiteboardId) {
-				peer.unsubscribe(`whiteboard-${oldWhiteboardId}`)
+				peer.unsubscribe(`whiteboard-${oldWhiteboardId}`);
 			}
 
 			// Subscribe to new whiteboard
-			peerWhiteboards.set(peer, whiteboardId)
-			peer.subscribe(`whiteboard-${whiteboardId}`)
+			peerWhiteboards.set(peer, whiteboardId);
+			peer.subscribe(`whiteboard-${whiteboardId}`);
 
 			// Send current state of new whiteboard
 			try {
-				const objects = await getWhiteboardObjects(whiteboardId)
+				const objects = await getWhiteboardObjects(whiteboardId);
 				const whiteboardObjects = objects.map((obj) => ({
 					id: obj.objectId,
 					...(obj.objectData as Record<string, unknown>),
-				}))
+				}));
 
 				peer.send(
 					JSON.stringify({
@@ -59,34 +60,34 @@ export const socket = {
 						whiteboardId,
 						whiteboard: { objects: whiteboardObjects },
 					}),
-				)
+				);
 			} catch (error) {
-				console.error('Failed to load whiteboard from database:', error)
+				console.error('Failed to load whiteboard from database:', error);
 			}
 		}
 
 		try {
 			if (parsedMessage.type === 'init') {
 				// Handle whiteboard initialization with specific ID
-				const newWhiteboardId = parsedMessage.whiteboardId
+				const newWhiteboardId = parsedMessage.whiteboardId;
 				if (newWhiteboardId && newWhiteboardId !== peerWhiteboards.get(peer)) {
 					// Unsubscribe from old whiteboard
-					const oldWhiteboardId = peerWhiteboards.get(peer)
+					const oldWhiteboardId = peerWhiteboards.get(peer);
 					if (oldWhiteboardId) {
-						peer.unsubscribe(`whiteboard-${oldWhiteboardId}`)
+						peer.unsubscribe(`whiteboard-${oldWhiteboardId}`);
 					}
 
 					// Subscribe to new whiteboard
-					peerWhiteboards.set(peer, newWhiteboardId)
-					peer.subscribe(`whiteboard-${newWhiteboardId}`)
+					peerWhiteboards.set(peer, newWhiteboardId);
+					peer.subscribe(`whiteboard-${newWhiteboardId}`);
 
 					// Send current state of new whiteboard
 					try {
-						const objects = await getWhiteboardObjects(newWhiteboardId)
+						const objects = await getWhiteboardObjects(newWhiteboardId);
 						const whiteboardObjects = objects.map((obj) => ({
 							id: obj.objectId,
 							...(obj.objectData as Record<string, unknown>),
-						}))
+						}));
 
 						peer.send(
 							JSON.stringify({
@@ -94,43 +95,45 @@ export const socket = {
 								whiteboardId: newWhiteboardId,
 								whiteboard: { objects: whiteboardObjects },
 							}),
-						)
+						);
 					} catch (error) {
-						console.error('Failed to load whiteboard from database:', error)
+						console.error('Failed to load whiteboard from database:', error);
 					}
 				}
-				return
+				return;
 			} else if (parsedMessage.type === 'clear') {
-				await clearWhiteboard(whiteboardId)
+				await clearWhiteboard(whiteboardId);
 				peer.publish(
 					`whiteboard-${whiteboardId}`,
 					JSON.stringify({ type: 'clear', whiteboardId }),
-				)
+				);
 			} else if (
 				parsedMessage.type === 'add' ||
 				parsedMessage.type === 'create'
 			) {
-				const newObject = parsedMessage.object
+				const newObject = parsedMessage.object;
 
 				await saveWhiteboardObject({
 					objectId: newObject.id,
 					objectData: newObject,
 					whiteboardId,
-				})
+				});
 
 				peer.publish(
 					`whiteboard-${whiteboardId}`,
 					JSON.stringify({ type: 'add', object: newObject, whiteboardId }),
-				)
+				);
 			} else if (
 				parsedMessage.type === 'remove' ||
 				parsedMessage.type === 'delete'
 			) {
 				if (parsedMessage.objects) {
-					const objectsToRemove = parsedMessage.objects
-					const objectIds = objectsToRemove.map((obj: { id: string }) => obj.id)
+					const objectsToRemove = parsedMessage.objects;
+					const objectIds = objectsToRemove.map(
+						(obj: { id: string }) => obj.id,
+					);
 
-					await deleteWhiteboardObjects(objectIds, whiteboardId)
+					await deleteWhiteboardObjects(objectIds, whiteboardId);
 
 					peer.publish(
 						`whiteboard-${whiteboardId}`,
@@ -139,11 +142,11 @@ export const socket = {
 							objects: objectsToRemove,
 							whiteboardId,
 						}),
-					)
+					);
 				} else if (parsedMessage.object) {
-					const objectToRemove = parsedMessage.object
+					const objectToRemove = parsedMessage.object;
 
-					await deleteWhiteboardObject(objectToRemove.id, whiteboardId)
+					await deleteWhiteboardObject(objectToRemove.id, whiteboardId);
 
 					peer.publish(
 						`whiteboard-${whiteboardId}`,
@@ -152,14 +155,14 @@ export const socket = {
 							objects: [objectToRemove],
 							whiteboardId,
 						}),
-					)
+					);
 				}
 			} else if (
 				parsedMessage.type === 'update' ||
 				parsedMessage.type === 'modify'
 			) {
-				const updatedObject = parsedMessage.object
-				const isLiveUpdate = parsedMessage.live || false // Flag for live vs final updates
+				const updatedObject = parsedMessage.object;
+				const isLiveUpdate = parsedMessage.live || false; // Flag for live vs final updates
 
 				// For live updates, skip database writes to improve performance
 				if (!isLiveUpdate) {
@@ -167,7 +170,7 @@ export const socket = {
 						updatedObject.id,
 						updatedObject,
 						whiteboardId,
-					)
+					);
 				}
 
 				// Always broadcast the update to other connected clients
@@ -178,18 +181,18 @@ export const socket = {
 						object: updatedObject,
 						whiteboardId,
 					}),
-				)
+				);
 			} else if (parsedMessage.type === 'layer') {
 				// Handle layering changes
-				const layeredObject = parsedMessage.object
-				const action = parsedMessage.action
+				const layeredObject = parsedMessage.object;
+				const action = parsedMessage.action;
 
 				// Update the object in the database to reflect the new z-index
 				await updateWhiteboardObject(
 					layeredObject.id,
 					layeredObject,
 					whiteboardId,
-				)
+				);
 
 				// Broadcast the layering change to other clients
 				peer.publish(
@@ -200,7 +203,7 @@ export const socket = {
 						action: action,
 						whiteboardId,
 					}),
-				)
+				);
 			} else if (
 				parsedMessage.type === 'lock' ||
 				parsedMessage.type === 'unlock'
@@ -214,25 +217,25 @@ export const socket = {
 						isLocked: parsedMessage.isLocked,
 						whiteboardId,
 					}),
-				)
+				);
 			}
 		} catch (error) {
-			console.error('Database operation failed:', error)
+			console.error('Database operation failed:', error);
 			peer.send(
 				JSON.stringify({
 					type: 'error',
 					message: 'Failed to persist changes',
 					whiteboardId,
 				}),
-			)
+			);
 		}
 	},
 
 	close(peer: any) {
-		const whiteboardId = peerWhiteboards.get(peer)
+		const whiteboardId = peerWhiteboards.get(peer);
 		if (whiteboardId) {
-			peer.unsubscribe(`whiteboard-${whiteboardId}`)
-			peerWhiteboards.delete(peer)
+			peer.unsubscribe(`whiteboard-${whiteboardId}`);
+			peerWhiteboards.delete(peer);
 		}
 	},
-}
+};

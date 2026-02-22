@@ -1,18 +1,18 @@
-import { env } from '$env/dynamic/private'
-import { fail, superValidate } from 'sveltekit-superforms'
-import { zod4 } from 'sveltekit-superforms/adapters'
-import { formSchema } from './schema'
+import { env } from '$env/dynamic/private';
+import { fail, superValidate } from 'sveltekit-superforms';
+import { zod4 } from 'sveltekit-superforms/adapters';
+import { formSchema } from './schema';
 
 export const load = async () => {
-	return { form: await superValidate(zod4(formSchema)) }
-}
+	return { form: await superValidate(zod4(formSchema)) };
+};
 
 export const actions = {
 	default: async ({ request }) => {
-		const form = await superValidate(request, zod4(formSchema))
+		const form = await superValidate(request, zod4(formSchema));
 
 		if (!form.valid) {
-			return fail(400, { form })
+			return fail(400, { form });
 		}
 
 		const embed = {
@@ -33,7 +33,7 @@ export const actions = {
 			],
 			color: 0xef4444,
 			timestamp: new Date().toISOString(),
-		}
+		};
 
 		try {
 			if (env.WEBHOOK_NOTIFICATIONS_SUPPORT) {
@@ -41,12 +41,12 @@ export const actions = {
 					method: 'POST',
 					headers: { 'Content-Type': 'application/json' },
 					body: JSON.stringify({ embeds: [embed] }),
-				})
+				});
 			}
 		} catch (webhookError) {
-			console.error('Failed to send webhook:', webhookError)
+			console.error('Failed to send webhook:', webhookError);
 		}
 
-		return { form }
+		return { form };
 	},
-}
+};

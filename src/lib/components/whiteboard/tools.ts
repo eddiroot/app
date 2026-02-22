@@ -1,21 +1,21 @@
-import * as fabric from 'fabric'
-import type { WhiteboardTool } from './types'
+import * as fabric from 'fabric';
+import type { WhiteboardTool } from './types';
 
 /**
  * Interface for tool state that needs to be modified
  */
 export interface ToolState {
-	selectedTool: WhiteboardTool
-	showFloatingMenu: boolean
-	isDrawingShape: boolean
-	isDrawingText: boolean
-	currentShapeType: string
-	eraserTrail: fabric.Object[]
-	lastEraserPoint: { x: number; y: number } | null
-	hoveredObjectsForDeletion: fabric.Object[]
-	originalOpacities: Map<fabric.Object, number>
-	tempShape: fabric.Object | null
-	tempText: fabric.Textbox | null
+	selectedTool: WhiteboardTool;
+	showFloatingMenu: boolean;
+	isDrawingShape: boolean;
+	isDrawingText: boolean;
+	currentShapeType: string;
+	eraserTrail: fabric.Object[];
+	lastEraserPoint: { x: number; y: number } | null;
+	hoveredObjectsForDeletion: fabric.Object[];
+	originalOpacities: Map<fabric.Object, number>;
+	tempShape: fabric.Object | null;
+	tempText: fabric.Textbox | null;
 }
 
 /**
@@ -28,26 +28,26 @@ export function setSelectTool(
 	clearShapeDrawingState: () => void,
 	clearTextDrawingState: () => void,
 ): void {
-	state.selectedTool = 'select'
-	state.showFloatingMenu = false
-	clearEraserState()
-	clearShapeDrawingState()
-	clearTextDrawingState()
-	if (!canvas) return
-	canvas.isDrawingMode = false
-	canvas.selection = true
-	canvas.defaultCursor = 'default'
-	canvas.hoverCursor = 'move'
-	state.selectedTool = 'select'
-	state.showFloatingMenu = false
-	clearEraserState()
-	clearShapeDrawingState()
-	clearTextDrawingState()
-	if (!canvas) return
-	canvas.isDrawingMode = false
-	canvas.selection = true
-	canvas.defaultCursor = 'default'
-	canvas.hoverCursor = 'move'
+	state.selectedTool = 'select';
+	state.showFloatingMenu = false;
+	clearEraserState();
+	clearShapeDrawingState();
+	clearTextDrawingState();
+	if (!canvas) return;
+	canvas.isDrawingMode = false;
+	canvas.selection = true;
+	canvas.defaultCursor = 'default';
+	canvas.hoverCursor = 'move';
+	state.selectedTool = 'select';
+	state.showFloatingMenu = false;
+	clearEraserState();
+	clearShapeDrawingState();
+	clearTextDrawingState();
+	if (!canvas) return;
+	canvas.isDrawingMode = false;
+	canvas.selection = true;
+	canvas.defaultCursor = 'default';
+	canvas.hoverCursor = 'move';
 }
 
 /**
@@ -60,28 +60,28 @@ export function setPanTool(
 	clearShapeDrawingState: () => void,
 	clearTextDrawingState: () => void,
 ): void {
-	state.selectedTool = 'pan'
-	state.showFloatingMenu = false
-	clearEraserState()
-	clearShapeDrawingState()
-	clearTextDrawingState()
-	if (!canvas) return
-	canvas.isDrawingMode = false
-	canvas.selection = false
-	canvas.discardActiveObject()
-	canvas.defaultCursor = 'grab'
-	canvas.hoverCursor = 'grab'
-	state.selectedTool = 'pan'
-	state.showFloatingMenu = false
-	clearEraserState()
-	clearShapeDrawingState()
-	clearTextDrawingState()
-	if (!canvas) return
-	canvas.isDrawingMode = false
-	canvas.selection = false
-	canvas.discardActiveObject()
-	canvas.defaultCursor = 'grab'
-	canvas.hoverCursor = 'grab'
+	state.selectedTool = 'pan';
+	state.showFloatingMenu = false;
+	clearEraserState();
+	clearShapeDrawingState();
+	clearTextDrawingState();
+	if (!canvas) return;
+	canvas.isDrawingMode = false;
+	canvas.selection = false;
+	canvas.discardActiveObject();
+	canvas.defaultCursor = 'grab';
+	canvas.hoverCursor = 'grab';
+	state.selectedTool = 'pan';
+	state.showFloatingMenu = false;
+	clearEraserState();
+	clearShapeDrawingState();
+	clearTextDrawingState();
+	if (!canvas) return;
+	canvas.isDrawingMode = false;
+	canvas.selection = false;
+	canvas.discardActiveObject();
+	canvas.defaultCursor = 'grab';
+	canvas.hoverCursor = 'grab';
 }
 
 /**
@@ -94,31 +94,31 @@ export function setDrawTool(
 	clearShapeDrawingState: () => void,
 	clearTextDrawingState: () => void,
 ): void {
-	state.selectedTool = 'draw'
-	state.showFloatingMenu = true
-	clearEraserState()
-	clearShapeDrawingState()
-	clearTextDrawingState()
-	if (!canvas) return
-	canvas.isDrawingMode = true
-	canvas.selection = false
-	canvas.defaultCursor = 'crosshair'
-	state.selectedTool = 'draw'
-	state.showFloatingMenu = true
-	clearEraserState()
-	clearShapeDrawingState()
-	clearTextDrawingState()
-	if (!canvas) return
-	canvas.isDrawingMode = true
-	canvas.selection = false
-	canvas.defaultCursor = 'crosshair'
+	state.selectedTool = 'draw';
+	state.showFloatingMenu = true;
+	clearEraserState();
+	clearShapeDrawingState();
+	clearTextDrawingState();
+	if (!canvas) return;
+	canvas.isDrawingMode = true;
+	canvas.selection = false;
+	canvas.defaultCursor = 'crosshair';
+	state.selectedTool = 'draw';
+	state.showFloatingMenu = true;
+	clearEraserState();
+	clearShapeDrawingState();
+	clearTextDrawingState();
+	if (!canvas) return;
+	canvas.isDrawingMode = true;
+	canvas.selection = false;
+	canvas.defaultCursor = 'crosshair';
 
-	canvas.freeDrawingBrush = new fabric.PencilBrush(canvas)
-	canvas.freeDrawingBrush.width = 2
-	canvas.freeDrawingBrush.color = '#000000'
-	canvas.freeDrawingBrush = new fabric.PencilBrush(canvas)
-	canvas.freeDrawingBrush.width = 2
-	canvas.freeDrawingBrush.color = '#000000'
+	canvas.freeDrawingBrush = new fabric.PencilBrush(canvas);
+	canvas.freeDrawingBrush.width = 2;
+	canvas.freeDrawingBrush.color = '#000000';
+	canvas.freeDrawingBrush = new fabric.PencilBrush(canvas);
+	canvas.freeDrawingBrush.width = 2;
+	canvas.freeDrawingBrush.color = '#000000';
 }
 
 /**
@@ -131,27 +131,27 @@ export function setEraserTool(
 	clearTextDrawingState: () => void,
 	clearEraserState: () => void,
 ): void {
-	state.selectedTool = 'eraser'
-	state.showFloatingMenu = true
-	clearShapeDrawingState()
-	clearTextDrawingState()
-	if (!canvas) return
-	canvas.isDrawingMode = false
-	canvas.selection = false
-	canvas.defaultCursor = 'crosshair'
-	state.selectedTool = 'eraser'
-	state.showFloatingMenu = true
-	clearShapeDrawingState()
-	clearTextDrawingState()
-	if (!canvas) return
-	canvas.isDrawingMode = false
-	canvas.selection = false
-	canvas.defaultCursor = 'crosshair'
+	state.selectedTool = 'eraser';
+	state.showFloatingMenu = true;
+	clearShapeDrawingState();
+	clearTextDrawingState();
+	if (!canvas) return;
+	canvas.isDrawingMode = false;
+	canvas.selection = false;
+	canvas.defaultCursor = 'crosshair';
+	state.selectedTool = 'eraser';
+	state.showFloatingMenu = true;
+	clearShapeDrawingState();
+	clearTextDrawingState();
+	if (!canvas) return;
+	canvas.isDrawingMode = false;
+	canvas.selection = false;
+	canvas.defaultCursor = 'crosshair';
 
 	// Clear any existing eraser state
-	clearEraserState()
+	clearEraserState();
 	// Clear any existing eraser state
-	clearEraserState()
+	clearEraserState();
 }
 
 /**
@@ -164,26 +164,26 @@ export function setLineTool(
 	clearShapeDrawingState: () => void,
 	clearTextDrawingState: () => void,
 ): void {
-	state.selectedTool = 'line'
-	state.showFloatingMenu = true
-	clearEraserState()
-	clearShapeDrawingState()
-	clearTextDrawingState()
-	if (!canvas) return
-	canvas.isDrawingMode = false
-	canvas.selection = false
-	canvas.defaultCursor = 'crosshair'
-	canvas.hoverCursor = 'crosshair'
-	state.selectedTool = 'line'
-	state.showFloatingMenu = true
-	clearEraserState()
-	clearShapeDrawingState()
-	clearTextDrawingState()
-	if (!canvas) return
-	canvas.isDrawingMode = false
-	canvas.selection = false
-	canvas.defaultCursor = 'crosshair'
-	canvas.hoverCursor = 'crosshair'
+	state.selectedTool = 'line';
+	state.showFloatingMenu = true;
+	clearEraserState();
+	clearShapeDrawingState();
+	clearTextDrawingState();
+	if (!canvas) return;
+	canvas.isDrawingMode = false;
+	canvas.selection = false;
+	canvas.defaultCursor = 'crosshair';
+	canvas.hoverCursor = 'crosshair';
+	state.selectedTool = 'line';
+	state.showFloatingMenu = true;
+	clearEraserState();
+	clearShapeDrawingState();
+	clearTextDrawingState();
+	if (!canvas) return;
+	canvas.isDrawingMode = false;
+	canvas.selection = false;
+	canvas.defaultCursor = 'crosshair';
+	canvas.hoverCursor = 'crosshair';
 }
 
 /**
@@ -194,31 +194,31 @@ export function clearEraserState(
 	state: ToolState,
 ): void {
 	// Remove eraser trail
-	state.eraserTrail.forEach((trail) => canvas?.remove(trail))
-	state.eraserTrail = []
-	state.lastEraserPoint = null
+	state.eraserTrail.forEach((trail) => canvas?.remove(trail));
+	state.eraserTrail = [];
+	state.lastEraserPoint = null;
 
 	// Restore original opacities of hovered objects
 	state.hoveredObjectsForDeletion.forEach((obj) => {
-		const originalOpacity = state.originalOpacities.get(obj)
+		const originalOpacity = state.originalOpacities.get(obj);
 		if (originalOpacity !== undefined) {
-			obj.set({ opacity: originalOpacity })
+			obj.set({ opacity: originalOpacity });
 		}
-	})
-	state.hoveredObjectsForDeletion = []
-	state.originalOpacities.clear()
+	});
+	state.hoveredObjectsForDeletion = [];
+	state.originalOpacities.clear();
 	// Restore original opacities of hovered objects
 	state.hoveredObjectsForDeletion.forEach((obj) => {
-		const originalOpacity = state.originalOpacities.get(obj)
+		const originalOpacity = state.originalOpacities.get(obj);
 		if (originalOpacity !== undefined) {
-			obj.set({ opacity: originalOpacity })
+			obj.set({ opacity: originalOpacity });
 		}
-	})
-	state.hoveredObjectsForDeletion = []
-	state.originalOpacities.clear()
+	});
+	state.hoveredObjectsForDeletion = [];
+	state.originalOpacities.clear();
 
-	canvas?.renderAll()
-	canvas?.renderAll()
+	canvas?.renderAll();
+	canvas?.renderAll();
 }
 
 /**
@@ -229,11 +229,11 @@ export function clearShapeDrawingState(
 	state: ToolState,
 ): void {
 	if (state.tempShape) {
-		canvas?.remove(state.tempShape)
-		state.tempShape = null
+		canvas?.remove(state.tempShape);
+		state.tempShape = null;
 	}
-	state.isDrawingShape = false
-	state.currentShapeType = ''
+	state.isDrawingShape = false;
+	state.currentShapeType = '';
 }
 
 /**
@@ -244,10 +244,10 @@ export function clearTextDrawingState(
 	state: ToolState,
 ): void {
 	if (state.tempText) {
-		canvas?.remove(state.tempText)
-		state.tempText = null
+		canvas?.remove(state.tempText);
+		state.tempText = null;
 	}
-	state.isDrawingText = false
+	state.isDrawingText = false;
 }
 
 /**
@@ -259,28 +259,28 @@ export function addShape(
 	state: ToolState,
 	clearEraserState: () => void,
 ): void {
-	if (!canvas) return
-	if (!canvas) return
+	if (!canvas) return;
+	if (!canvas) return;
 
 	// Set up interactive shape drawing mode
-	state.selectedTool = 'shapes'
-	state.currentShapeType = shapeType
-	state.showFloatingMenu = true
-	clearEraserState()
+	state.selectedTool = 'shapes';
+	state.currentShapeType = shapeType;
+	state.showFloatingMenu = true;
+	clearEraserState();
 	// Set up interactive shape drawing mode
-	state.selectedTool = 'shapes'
-	state.currentShapeType = shapeType
-	state.showFloatingMenu = true
-	clearEraserState()
+	state.selectedTool = 'shapes';
+	state.currentShapeType = shapeType;
+	state.showFloatingMenu = true;
+	clearEraserState();
 
-	canvas.isDrawingMode = false
-	canvas.selection = false
-	canvas.defaultCursor = 'crosshair'
-	canvas.hoverCursor = 'crosshair'
-	canvas.isDrawingMode = false
-	canvas.selection = false
-	canvas.defaultCursor = 'crosshair'
-	canvas.hoverCursor = 'crosshair'
+	canvas.isDrawingMode = false;
+	canvas.selection = false;
+	canvas.defaultCursor = 'crosshair';
+	canvas.hoverCursor = 'crosshair';
+	canvas.isDrawingMode = false;
+	canvas.selection = false;
+	canvas.defaultCursor = 'crosshair';
+	canvas.hoverCursor = 'crosshair';
 }
 
 /**
@@ -292,28 +292,28 @@ export function addText(
 	clearEraserState: () => void,
 	clearShapeDrawingState: () => void,
 ): void {
-	if (!canvas) return
-	if (!canvas) return
+	if (!canvas) return;
+	if (!canvas) return;
 
 	// Set up interactive text creation mode
-	state.selectedTool = 'text'
-	state.showFloatingMenu = true
-	clearEraserState()
-	clearShapeDrawingState()
+	state.selectedTool = 'text';
+	state.showFloatingMenu = true;
+	clearEraserState();
+	clearShapeDrawingState();
 	// Set up interactive text creation mode
-	state.selectedTool = 'text'
-	state.showFloatingMenu = true
-	clearEraserState()
-	clearShapeDrawingState()
+	state.selectedTool = 'text';
+	state.showFloatingMenu = true;
+	clearEraserState();
+	clearShapeDrawingState();
 
-	canvas.isDrawingMode = false
-	canvas.selection = false
-	canvas.defaultCursor = 'crosshair'
-	canvas.hoverCursor = 'crosshair'
-	canvas.isDrawingMode = false
-	canvas.selection = false
-	canvas.defaultCursor = 'crosshair'
-	canvas.hoverCursor = 'crosshair'
+	canvas.isDrawingMode = false;
+	canvas.selection = false;
+	canvas.defaultCursor = 'crosshair';
+	canvas.hoverCursor = 'crosshair';
+	canvas.isDrawingMode = false;
+	canvas.selection = false;
+	canvas.defaultCursor = 'crosshair';
+	canvas.hoverCursor = 'crosshair';
 }
 
 /**
@@ -326,38 +326,38 @@ export function setImageTool(
 	clearShapeDrawingState: () => void,
 	clearTextDrawingState: () => void,
 ): void {
-	if (!canvas) return
-	if (!canvas) return
+	if (!canvas) return;
+	if (!canvas) return;
 
 	// Set image tool mode
-	state.selectedTool = 'image'
-	state.showFloatingMenu = true
-	clearEraserState()
-	clearShapeDrawingState()
-	clearTextDrawingState()
+	state.selectedTool = 'image';
+	state.showFloatingMenu = true;
+	clearEraserState();
+	clearShapeDrawingState();
+	clearTextDrawingState();
 	// Set image tool mode
-	state.selectedTool = 'image'
-	state.showFloatingMenu = true
-	clearEraserState()
-	clearShapeDrawingState()
-	clearTextDrawingState()
+	state.selectedTool = 'image';
+	state.showFloatingMenu = true;
+	clearEraserState();
+	clearShapeDrawingState();
+	clearTextDrawingState();
 
-	canvas.isDrawingMode = false
-	canvas.selection = false
-	canvas.defaultCursor = 'default'
-	canvas.hoverCursor = 'move'
-	canvas.isDrawingMode = false
-	canvas.selection = false
-	canvas.defaultCursor = 'default'
-	canvas.hoverCursor = 'move'
+	canvas.isDrawingMode = false;
+	canvas.selection = false;
+	canvas.defaultCursor = 'default';
+	canvas.hoverCursor = 'move';
+	canvas.isDrawingMode = false;
+	canvas.selection = false;
+	canvas.defaultCursor = 'default';
+	canvas.hoverCursor = 'move';
 }
 
 /**
  * Trigger image upload
  */
 export function addImage(imageInput: HTMLInputElement | undefined): void {
-	if (!imageInput) return
-	imageInput.click()
-	if (!imageInput) return
-	imageInput.click()
+	if (!imageInput) return;
+	imageInput.click();
+	if (!imageInput) return;
+	imageInput.click();
 }

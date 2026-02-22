@@ -3,7 +3,7 @@ import {
 	quizModeEnum,
 	taskStatusEnum,
 	userTypeEnum,
-} from '$lib/enums'
+} from '$lib/enums';
 import {
 	getClassTaskBlockResponsesByAuthorId,
 	getClassTaskBlockResponsesByClassTaskId,
@@ -17,43 +17,43 @@ import {
 	updateSubjectOfferingClassTaskQuizSettings,
 	updateSubjectOfferingClassTaskStatus,
 	upsertClassTaskResponse,
-} from '$lib/server/db/service'
-import { generateUniqueFileName, uploadBufferHelper } from '$lib/server/obj'
-import { fail, redirect } from '@sveltejs/kit'
-import { superValidate } from 'sveltekit-superforms'
-import { zod4 } from 'sveltekit-superforms/adapters'
+} from '$lib/server/db/service';
+import { generateUniqueFileName, uploadBufferHelper } from '$lib/server/obj';
+import { fail, redirect } from '@sveltejs/kit';
+import { superValidate } from 'sveltekit-superforms';
+import { zod4 } from 'sveltekit-superforms/adapters';
 import {
 	quizSettingsFormSchema,
 	startQuizFormSchema,
 	statusFormSchema,
-} from './schema'
+} from './schema';
 
 export const load = async ({
 	locals: { security },
 	params: { taskId, subjectOfferingId, subjectOfferingClassId },
 }) => {
-	const user = security.isAuthenticated().getUser()
+	const user = security.isAuthenticated().getUser();
 
-	const taskIdInt = parseInt(taskId, 10)
+	const taskIdInt = parseInt(taskId, 10);
 	if (isNaN(taskIdInt)) {
-		throw redirect(302, '/dashboard')
+		throw redirect(302, '/dashboard');
 	}
 
-	const classIdInt = parseInt(subjectOfferingClassId, 10)
+	const classIdInt = parseInt(subjectOfferingClassId, 10);
 	if (isNaN(classIdInt)) {
-		throw redirect(302, '/dashboard')
+		throw redirect(302, '/dashboard');
 	}
 
-	const task = await getTaskById(taskIdInt)
-	if (!task) throw redirect(302, '/dashboard')
+	const task = await getTaskById(taskIdInt);
+	if (!task) throw redirect(302, '/dashboard');
 
 	const classTask = await getSubjectOfferingClassTaskByTaskId(
 		taskIdInt,
 		classIdInt,
-	)
-	if (!classTask) throw redirect(302, '/dashboard')
+	);
+	if (!classTask) throw redirect(302, '/dashboard');
 
-	const isQuizStarted = classTask.quizStart && classTask.quizStart < new Date()
+	const isQuizStarted = classTask.quizStart && classTask.quizStart < new Date();
 
 	if (
 		user.type === userTypeEnum.student &&
@@ -63,14 +63,14 @@ export const load = async ({
 			const quizEnd = new Date(
 				classTask.quizStart.getTime() +
 					classTask.quizDurationMinutes * 60 * 1000,
-			)
-			const currentTime = new Date()
+			);
+			const currentTime = new Date();
 
 			if (currentTime > quizEnd) {
 				throw redirect(
 					302,
 					`/subjects/${subjectOfferingId}/class/${subjectOfferingClassId}/tasks`,
-				)
+				);
 			}
 		}
 	}
@@ -82,20 +82,20 @@ export const load = async ({
 		throw redirect(
 			302,
 			`/subjects/${subjectOfferingId}/class/${subjectOfferingClassId}/tasks`,
-		)
+		);
 	}
 
-	const blocks = await getTaskBlocksByTaskId(taskIdInt)
+	const blocks = await getTaskBlocksByTaskId(taskIdInt);
 
 	// Load whiteboards for all whiteboard blocks
-	const whiteboardMap = new Map<number, number>() // blockId -> whiteboardId
-	const whiteboardLockStates = new Map<number, boolean>() // whiteboardId -> isLocked
+	const whiteboardMap = new Map<number, number>(); // blockId -> whiteboardId
+	const whiteboardLockStates = new Map<number, boolean>(); // whiteboardId -> isLocked
 	for (const block of blocks) {
 		if (block.type === 'whiteboard') {
-			const whiteboard = await getWhiteboardByTaskBlockId(block.id)
+			const whiteboard = await getWhiteboardByTaskBlockId(block.id);
 			if (whiteboard) {
-				whiteboardMap.set(block.id, whiteboard.id)
-				whiteboardLockStates.set(whiteboard.id, whiteboard.isLocked)
+				whiteboardMap.set(block.id, whiteboard.id);
+				whiteboardLockStates.set(whiteboard.id, whiteboard.isLocked);
 			}
 		}
 	}
@@ -117,15 +117,15 @@ export const load = async ({
 			zod4(quizSettingsFormSchema),
 		),
 		superValidate(zod4(startQuizFormSchema)),
-	])
+	]);
 
 	if (user.type === userTypeEnum.student) {
-		await upsertClassTaskResponse(classTask.id, user.id)
+		await upsertClassTaskResponse(classTask.id, user.id);
 
 		const blockResponses = await getClassTaskBlockResponsesByAuthorId(
 			classTask.id,
 			user.id,
-		)
+		);
 
 		return {
 			task,
@@ -141,13 +141,13 @@ export const load = async ({
 			statusForm,
 			quizSettingsForm,
 			startQuizForm,
-		}
+		};
 	}
 
-	const responses = await getClassTaskResponsesWithStudents(classTask.id)
+	const responses = await getClassTaskResponsesWithStudents(classTask.id);
 	const groupedBlockResponses = await getClassTaskBlockResponsesByClassTaskId(
 		classTask.id,
-	)
+	);
 
 	return {
 		task,
@@ -164,8 +164,8 @@ export const load = async ({
 		statusForm,
 		quizSettingsForm,
 		startQuizForm,
-	}
-}
+	};
+};
 
 export const actions = {
 	status: async ({
@@ -173,25 +173,25 @@ export const actions = {
 		locals: { security },
 		params: { taskId, subjectOfferingClassId },
 	}) => {
-		const user = security.isAuthenticated().getUser()
+		const user = security.isAuthenticated().getUser();
 
 		if (user.type === userTypeEnum.student) {
 			return fail(403, {
 				message: 'Students are not allowed to change task status',
-			})
+			});
 		}
 
-		const taskIdInt = parseInt(taskId, 10)
-		const classIdInt = parseInt(subjectOfferingClassId, 10)
+		const taskIdInt = parseInt(taskId, 10);
+		const classIdInt = parseInt(subjectOfferingClassId, 10);
 
 		if (isNaN(taskIdInt) || isNaN(classIdInt)) {
-			return fail(400, { message: 'Invalid task or class ID' })
+			return fail(400, { message: 'Invalid task or class ID' });
 		}
 
-		const form = await superValidate(request, zod4(statusFormSchema))
+		const form = await superValidate(request, zod4(statusFormSchema));
 
 		if (!form.valid) {
-			return fail(400, { form })
+			return fail(400, { form });
 		}
 
 		try {
@@ -199,11 +199,11 @@ export const actions = {
 				taskIdInt,
 				classIdInt,
 				form.data.status,
-			)
-			return { form }
+			);
+			return { form };
 		} catch (error) {
-			console.error('Error changing task status:', error)
-			return fail(500, { form, message: 'Failed to change task status' })
+			console.error('Error changing task status:', error);
+			return fail(500, { form, message: 'Failed to change task status' });
 		}
 	},
 
@@ -212,34 +212,34 @@ export const actions = {
 		locals: { security },
 		params: { taskId, subjectOfferingClassId },
 	}) => {
-		const user = security.isAuthenticated().getUser()
+		const user = security.isAuthenticated().getUser();
 
 		if (user.type === userTypeEnum.student) {
 			return fail(403, {
 				message: 'Students are not allowed to update quiz settings',
-			})
+			});
 		}
 
-		const taskIdInt = parseInt(taskId, 10)
-		const classIdInt = parseInt(subjectOfferingClassId, 10)
+		const taskIdInt = parseInt(taskId, 10);
+		const classIdInt = parseInt(subjectOfferingClassId, 10);
 
 		if (isNaN(taskIdInt) || isNaN(classIdInt)) {
-			return fail(400, { message: 'Invalid task or class ID' })
+			return fail(400, { message: 'Invalid task or class ID' });
 		}
 
-		const form = await superValidate(request, zod4(quizSettingsFormSchema))
+		const form = await superValidate(request, zod4(quizSettingsFormSchema));
 
 		if (!form.valid) {
-			return fail(400, { form })
+			return fail(400, { form });
 		}
 
 		try {
 			const quizSettings: {
-				quizMode?: quizModeEnum
-				quizStart?: Date | null
-				quizDurationMinutes?: number | null
-				gradeRelease?: gradeReleaseEnum
-				gradeReleaseTime?: Date | null
+				quizMode?: quizModeEnum;
+				quizStart?: Date | null;
+				quizDurationMinutes?: number | null;
+				gradeRelease?: gradeReleaseEnum;
+				gradeReleaseTime?: Date | null;
 			} = {
 				quizMode: form.data.quizMode,
 				quizStart: form.data.quizStart ? new Date(form.data.quizStart) : null,
@@ -248,18 +248,18 @@ export const actions = {
 				gradeReleaseTime: form.data.gradeReleaseTime
 					? new Date(form.data.gradeReleaseTime)
 					: null,
-			}
+			};
 
 			await updateSubjectOfferingClassTaskQuizSettings(
 				taskIdInt,
 				classIdInt,
 				quizSettings,
-			)
+			);
 
-			return { form }
+			return { form };
 		} catch (error) {
-			console.error('Error updating quiz settings:', error)
-			return fail(500, { form, message: 'Failed to update quiz settings' })
+			console.error('Error updating quiz settings:', error);
+			return fail(500, { form, message: 'Failed to update quiz settings' });
 		}
 	},
 
@@ -268,102 +268,104 @@ export const actions = {
 		locals: { security },
 		params: { taskId, subjectOfferingClassId },
 	}) => {
-		const user = security.isAuthenticated().getUser()
+		const user = security.isAuthenticated().getUser();
 
-		const taskIdInt = parseInt(taskId, 10)
-		const classIdInt = parseInt(subjectOfferingClassId, 10)
+		const taskIdInt = parseInt(taskId, 10);
+		const classIdInt = parseInt(subjectOfferingClassId, 10);
 
 		if (isNaN(taskIdInt) || isNaN(classIdInt)) {
-			return fail(400, { message: 'Invalid task or class ID' })
+			return fail(400, { message: 'Invalid task or class ID' });
 		}
 
-		const form = await superValidate(request, zod4(startQuizFormSchema))
+		const form = await superValidate(request, zod4(startQuizFormSchema));
 
 		if (!form.valid) {
-			return fail(400, { form })
+			return fail(400, { form });
 		}
 
 		if (user.type !== userTypeEnum.teacher) {
-			return fail(403, { form, message: 'Only teachers can start quizzes' })
+			return fail(403, { form, message: 'Only teachers can start quizzes' });
 		}
 
 		const classTask = await getSubjectOfferingClassTaskByTaskId(
 			taskIdInt,
 			classIdInt,
-		)
+		);
 		if (!classTask) {
-			return fail(404, { form, message: 'Class task not found' })
+			return fail(404, { form, message: 'Class task not found' });
 		}
 
 		try {
-			await startQuizSession(classTask.id)
-			return { form, success: true }
+			await startQuizSession(classTask.id);
+			return { form, success: true };
 		} catch (error) {
-			console.error('Error starting quiz session:', error)
-			return fail(500, { form, message: 'Failed to start quiz session' })
+			console.error('Error starting quiz session:', error);
+			return fail(500, { form, message: 'Failed to start quiz session' });
 		}
 	},
 
 	toggleWhiteboardLock: async ({ request, locals: { security } }) => {
-		const user = security.isAuthenticated().getUser()
+		const user = security.isAuthenticated().getUser();
 
 		if (user.type !== userTypeEnum.teacher) {
-			return fail(403, { message: 'Only teachers can lock/unlock whiteboards' })
+			return fail(403, {
+				message: 'Only teachers can lock/unlock whiteboards',
+			});
 		}
 
-		const formData = await request.formData()
-		const whiteboardIdStr = formData.get('whiteboardId')
+		const formData = await request.formData();
+		const whiteboardIdStr = formData.get('whiteboardId');
 
 		if (!whiteboardIdStr) {
-			return fail(400, { message: 'Whiteboard ID is required' })
+			return fail(400, { message: 'Whiteboard ID is required' });
 		}
 
-		const whiteboardId = parseInt(whiteboardIdStr.toString(), 10)
+		const whiteboardId = parseInt(whiteboardIdStr.toString(), 10);
 		if (isNaN(whiteboardId)) {
-			return fail(400, { message: 'Invalid whiteboard ID' })
+			return fail(400, { message: 'Invalid whiteboard ID' });
 		}
 
 		try {
-			const whiteboard = await toggleWhiteboardLock(whiteboardId)
-			return { type: 'success', data: { isLocked: whiteboard.isLocked } }
+			const whiteboard = await toggleWhiteboardLock(whiteboardId);
+			return { type: 'success', data: { isLocked: whiteboard.isLocked } };
 		} catch (error) {
-			console.error('Error toggling whiteboard lock:', error)
-			return fail(500, { message: 'Failed to toggle whiteboard lock' })
+			console.error('Error toggling whiteboard lock:', error);
+			return fail(500, { message: 'Failed to toggle whiteboard lock' });
 		}
 	},
 
 	uploadFile: async ({ request, locals: { security } }) => {
-		const user = security.isAuthenticated().getUser()
+		const user = security.isAuthenticated().getUser();
 
 		try {
-			const formData = await request.formData()
-			const file = formData.get('file') as File
+			const formData = await request.formData();
+			const file = formData.get('file') as File;
 
 			if (!file) {
-				return fail(400, { error: 'No file provided' })
+				return fail(400, { error: 'No file provided' });
 			}
 
 			// Validate file size (max 10MB)
-			const maxSize = 10 * 1024 * 1024 // 10MB
+			const maxSize = 10 * 1024 * 1024; // 10MB
 			if (file.size > maxSize) {
-				return fail(400, { error: 'File size must be less than 10MB' })
+				return fail(400, { error: 'File size must be less than 10MB' });
 			}
 
 			// Generate unique filename
-			const uniqueFileName = generateUniqueFileName(file.name)
-			const objectName = `${user.schoolId}/tasks/${uniqueFileName}`
+			const uniqueFileName = generateUniqueFileName(file.name);
+			const objectName = `${user.schoolId}/tasks/${uniqueFileName}`;
 
 			// Convert file to buffer
-			const arrayBuffer = await file.arrayBuffer()
-			const buffer = Buffer.from(arrayBuffer)
+			const arrayBuffer = await file.arrayBuffer();
+			const buffer = Buffer.from(arrayBuffer);
 
 			// Upload to object storage
-			const url = await uploadBufferHelper(buffer, objectName, file.type)
+			const url = await uploadBufferHelper(buffer, objectName, file.type);
 
-			return { success: true, url, fileName: file.name, objectName }
+			return { success: true, url, fileName: file.name, objectName };
 		} catch (error) {
-			console.error('Upload error:', error)
-			return fail(500, { error: 'Failed to upload file. Please try again.' })
+			console.error('Upload error:', error);
+			return fail(500, { error: 'Failed to upload file. Please try again.' });
 		}
 	},
-}
+};

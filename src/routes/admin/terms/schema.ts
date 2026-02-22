@@ -1,8 +1,8 @@
-import { z } from 'zod'
+import { z } from 'zod';
 
 export const changeYearSchema = z.object({
 	year: z.coerce.number().int().positive(),
-})
+});
 
 export const createTermSchema = z
 	.object({
@@ -15,7 +15,7 @@ export const createTermSchema = z
 	.refine((data) => data.end > data.start, {
 		message: 'End date must be after start date',
 		path: ['endDate'],
-	})
+	});
 
 export const updateTermSchema = z
 	.object({
@@ -27,14 +27,14 @@ export const updateTermSchema = z
 	.refine((data) => data.end > data.start, {
 		message: 'End date must be after start date',
 		path: ['endDate'],
-	})
+	});
 
 export const archiveTermSchema = z.object({
 	termId: z.coerce.number().int().positive(),
 	currentYear: z.coerce.number().int().positive(),
-})
+});
 
-export type ChangeYearSchema = typeof changeYearSchema
-export type CreateTermSchema = typeof createTermSchema
-export type UpdateTermSchema = typeof updateTermSchema
-export type ArchiveTermSchema = typeof archiveTermSchema
+export type ChangeYearSchema = typeof changeYearSchema;
+export type CreateTermSchema = typeof createTermSchema;
+export type UpdateTermSchema = typeof updateTermSchema;
+export type ArchiveTermSchema = typeof archiveTermSchema;

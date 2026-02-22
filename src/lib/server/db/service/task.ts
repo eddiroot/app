@@ -5,11 +5,11 @@ import {
 	taskStatusEnum,
 	taskTypeEnum,
 	userTypeEnum,
-} from '$lib/enums.js'
-import { db } from '$lib/server/db'
-import * as table from '$lib/server/db/schema'
-import { and, asc, desc, eq, inArray, or } from 'drizzle-orm'
-import { verifyUserAccessToClass } from './user'
+} from '$lib/enums.js';
+import { db } from '$lib/server/db';
+import * as table from '$lib/server/db/schema';
+import { and, asc, desc, eq, inArray, or } from 'drizzle-orm';
+import { verifyUserAccessToClass } from './user';
 
 export async function addTasksToClass(
 	taskIds: number[],
@@ -18,7 +18,7 @@ export async function addTasksToClass(
 	week: number | null = null,
 ) {
 	if (taskIds.length === 0) {
-		return []
+		return [];
 	}
 
 	// get the next available index for the class tasks
@@ -32,8 +32,8 @@ export async function addTasksToClass(
 			),
 		)
 		.orderBy(desc(table.subjectOfferingClassTask.index))
-		.limit(1)
-	let nextIndex = (maxIndexResult[0]?.maxIndex ?? -1) + 1
+		.limit(1);
+	let nextIndex = (maxIndexResult[0]?.maxIndex ?? -1) + 1;
 
 	const classTasks = await db
 		.insert(table.subjectOfferingClassTask)
@@ -47,9 +47,9 @@ export async function addTasksToClass(
 			})),
 		)
 		.onConflictDoNothing()
-		.returning()
+		.returning();
 
-	return classTasks
+	return classTasks;
 }
 
 // Remove a task from a class
@@ -68,9 +68,9 @@ export async function removeTaskFromClass(
 				),
 			),
 		)
-		.returning()
+		.returning();
 
-	return deletedClassTask
+	return deletedClassTask;
 }
 
 // Get all tasks assigned to a specific class
@@ -81,10 +81,10 @@ export async function getTasksBySubjectOfferingClassId(
 	const userAccess = await verifyUserAccessToClass(
 		userId,
 		subjectOfferingClassId,
-	)
+	);
 
 	if (!userAccess) {
-		return []
+		return [];
 	}
 
 	const classTasks = await db
@@ -111,9 +111,9 @@ export async function getTasksBySubjectOfferingClassId(
 				subjectOfferingClassId,
 			),
 		)
-		.orderBy(asc(table.task.id))
+		.orderBy(asc(table.task.id));
 
-	return classTasks?.length == 0 ? [] : classTasks
+	return classTasks?.length == 0 ? [] : classTasks;
 }
 
 export async function getLessonsAndHomeworkBySubjectOfferingClassId(
@@ -123,10 +123,10 @@ export async function getLessonsAndHomeworkBySubjectOfferingClassId(
 	const userAccess = await verifyUserAccessToClass(
 		userId,
 		subjectOfferingClassId,
-	)
+	);
 
 	if (!userAccess) {
-		return []
+		return [];
 	}
 
 	const lessonsAndHomework = await db
@@ -151,9 +151,9 @@ export async function getLessonsAndHomeworkBySubjectOfferingClassId(
 				),
 			),
 		)
-		.orderBy(asc(table.task.createdAt))
+		.orderBy(asc(table.task.createdAt));
 
-	return lessonsAndHomework?.length == 0 ? [] : lessonsAndHomework
+	return lessonsAndHomework?.length == 0 ? [] : lessonsAndHomework;
 }
 
 export async function getTopics(subjectOfferingId: number) {
@@ -165,9 +165,9 @@ export async function getTopics(subjectOfferingId: number) {
 			eq(table.curriculumItem.subjectOfferingId, table.subjectOffering.id),
 		)
 		.where(eq(table.subjectOffering.id, subjectOfferingId))
-		.orderBy(asc(table.curriculumItem.startWeek))
+		.orderBy(asc(table.curriculumItem.startWeek));
 
-	return topics
+	return topics;
 }
 
 export async function getClassTasksByTopicId(
@@ -186,9 +186,9 @@ export async function getClassTasksByTopicId(
 				eq(table.curriculumItem.id, topicId),
 			),
 		)
-		.orderBy(asc(table.subjectOfferingClassTask.index))
+		.orderBy(asc(table.subjectOfferingClassTask.index));
 
-	return tasks.map((row) => row.task)
+	return tasks.map((row) => row.task);
 }
 
 export async function getTaskById(taskId: number) {
@@ -196,9 +196,9 @@ export async function getTaskById(taskId: number) {
 		.select({ task: table.task })
 		.from(table.task)
 		.where(eq(table.task.id, taskId))
-		.limit(1)
+		.limit(1);
 
-	return task?.length ? task[0].task : null
+	return task?.length ? task[0].task : null;
 }
 
 export async function getTaskBlocksByTaskId(taskId: number) {
@@ -206,9 +206,9 @@ export async function getTaskBlocksByTaskId(taskId: number) {
 		.select({ block: table.taskBlock })
 		.from(table.taskBlock)
 		.where(eq(table.taskBlock.taskId, taskId))
-		.orderBy(table.taskBlock.index)
+		.orderBy(table.taskBlock.index);
 
-	return taskBlocks.map((row) => row.block)
+	return taskBlocks.map((row) => row.block);
 }
 
 export async function updateTaskTitle(taskId: number, title: string) {
@@ -216,9 +216,9 @@ export async function updateTaskTitle(taskId: number, title: string) {
 		.update(table.task)
 		.set({ title })
 		.where(eq(table.task.id, taskId))
-		.returning()
+		.returning();
 
-	return task
+	return task;
 }
 
 export async function updateTaskBlock(
@@ -229,13 +229,13 @@ export async function updateTaskBlock(
 		.update(table.taskBlock)
 		.set({ ...updates })
 		.where(eq(table.taskBlock.id, blockId))
-		.returning()
+		.returning();
 
-	return taskBlock
+	return taskBlock;
 }
 
 export async function deleteTaskBlock(blockId: number) {
-	await db.delete(table.taskBlock).where(eq(table.taskBlock.id, blockId))
+	await db.delete(table.taskBlock).where(eq(table.taskBlock.id, blockId));
 }
 
 // Whiteboard functions
@@ -244,9 +244,9 @@ export async function getWhiteboardByTaskBlockId(taskBlockId: number) {
 		.select()
 		.from(table.whiteboard)
 		.where(eq(table.whiteboard.taskBlockId, taskBlockId))
-		.limit(1)
+		.limit(1);
 
-	return whiteboards[0] || null
+	return whiteboards[0] || null;
 }
 
 export async function getWhiteboardById(whiteboardId: number) {
@@ -254,9 +254,9 @@ export async function getWhiteboardById(whiteboardId: number) {
 		.select()
 		.from(table.whiteboard)
 		.where(eq(table.whiteboard.id, whiteboardId))
-		.limit(1)
+		.limit(1);
 
-	return whiteboards[0] || null
+	return whiteboards[0] || null;
 }
 
 export async function getWhiteboardWithTask(
@@ -276,17 +276,17 @@ export async function getWhiteboardWithTask(
 		)
 		.innerJoin(table.task, eq(table.taskBlock.taskId, table.task.id))
 		.where(eq(table.whiteboard.id, whiteboardId))
-		.limit(1)
+		.limit(1);
 
 	if (!whiteboardData.length || whiteboardData[0].task.id !== taskId) {
-		return null
+		return null;
 	}
 
 	return {
 		whiteboard: whiteboardData[0].whiteboard,
 		taskBlock: whiteboardData[0].taskBlock,
 		task: whiteboardData[0].task,
-	}
+	};
 }
 
 export async function getWhiteboardObjects(whiteboardId: number = 1) {
@@ -294,15 +294,15 @@ export async function getWhiteboardObjects(whiteboardId: number = 1) {
 		.select()
 		.from(table.whiteboardObject)
 		.where(eq(table.whiteboardObject.whiteboardId, whiteboardId))
-		.orderBy(table.whiteboardObject.createdAt)
+		.orderBy(table.whiteboardObject.createdAt);
 
-	return objects
+	return objects;
 }
 
 export async function saveWhiteboardObject(data: {
-	objectId: string
-	objectData: Record<string, unknown>
-	whiteboardId?: number
+	objectId: string;
+	objectData: Record<string, unknown>;
+	whiteboardId?: number;
 }) {
 	const [savedObject] = await db
 		.insert(table.whiteboardObject)
@@ -310,9 +310,9 @@ export async function saveWhiteboardObject(data: {
 			...data,
 			whiteboardId: data.whiteboardId ?? 1, // Default to whiteboard ID 1
 		})
-		.returning()
+		.returning();
 
-	return savedObject
+	return savedObject;
 }
 
 export async function updateWhiteboardObject(
@@ -329,9 +329,9 @@ export async function updateWhiteboardObject(
 				eq(table.whiteboardObject.whiteboardId, whiteboardId),
 			),
 		)
-		.returning()
+		.returning();
 
-	return updatedObject
+	return updatedObject;
 }
 
 export async function deleteWhiteboardObject(
@@ -345,14 +345,14 @@ export async function deleteWhiteboardObject(
 				eq(table.whiteboardObject.objectId, objectId),
 				eq(table.whiteboardObject.whiteboardId, whiteboardId),
 			),
-		)
+		);
 }
 
 export async function deleteWhiteboardObjects(
 	objectIds: string[],
 	whiteboardId: number = 1,
 ) {
-	if (objectIds.length === 0) return
+	if (objectIds.length === 0) return;
 
 	await db
 		.delete(table.whiteboardObject)
@@ -361,13 +361,13 @@ export async function deleteWhiteboardObjects(
 				eq(table.whiteboardObject.whiteboardId, whiteboardId),
 				inArray(table.whiteboardObject.objectId, objectIds),
 			),
-		)
+		);
 }
 
 export async function clearWhiteboard(whiteboardId: number = 1) {
 	await db
 		.delete(table.whiteboardObject)
-		.where(eq(table.whiteboardObject.whiteboardId, whiteboardId))
+		.where(eq(table.whiteboardObject.whiteboardId, whiteboardId));
 }
 
 export async function toggleWhiteboardLock(whiteboardId: number) {
@@ -375,19 +375,19 @@ export async function toggleWhiteboardLock(whiteboardId: number) {
 		.select()
 		.from(table.whiteboard)
 		.where(eq(table.whiteboard.id, whiteboardId))
-		.limit(1)
+		.limit(1);
 
 	if (!whiteboard) {
-		throw new Error('Whiteboard not found')
+		throw new Error('Whiteboard not found');
 	}
 
 	const [updated] = await db
 		.update(table.whiteboard)
 		.set({ isLocked: !whiteboard.isLocked })
 		.where(eq(table.whiteboard.id, whiteboardId))
-		.returning()
+		.returning();
 
-	return updated
+	return updated;
 }
 
 export async function getWhiteboardLockStatus(whiteboardId: number) {
@@ -395,9 +395,9 @@ export async function getWhiteboardLockStatus(whiteboardId: number) {
 		.select({ isLocked: table.whiteboard.isLocked })
 		.from(table.whiteboard)
 		.where(eq(table.whiteboard.id, whiteboardId))
-		.limit(1)
+		.limit(1);
 
-	return whiteboard?.isLocked ?? false
+	return whiteboard?.isLocked ?? false;
 }
 
 export async function updateTaskBlocksOrder(
@@ -408,9 +408,9 @@ export async function updateTaskBlocksOrder(
 			await tx
 				.update(table.taskBlock)
 				.set({ index: update.index })
-				.where(eq(table.taskBlock.id, update.id))
+				.where(eq(table.taskBlock.id, update.id));
 		}
-	})
+	});
 }
 
 export async function updateTaskOrder(
@@ -421,9 +421,9 @@ export async function updateTaskOrder(
 			await tx
 				.update(table.subjectOfferingClassTask)
 				.set({ index: task.index })
-				.where(eq(table.task.id, task.id))
+				.where(eq(table.task.id, task.id));
 		}
-	})
+	});
 }
 
 export async function updateRubric(
@@ -434,9 +434,9 @@ export async function updateRubric(
 		.update(table.rubric)
 		.set({ ...updates })
 		.where(eq(table.rubric.id, rubricId))
-		.returning()
+		.returning();
 
-	return rubric
+	return rubric;
 }
 
 export async function getAssessmenPlanRubric(assessmentPlanId: number) {
@@ -448,9 +448,9 @@ export async function getAssessmenPlanRubric(assessmentPlanId: number) {
 			eq(table.curriculumItemTask.rubricId, table.rubric.id),
 		)
 		.where(eq(table.curriculumItemTask.id, assessmentPlanId))
-		.limit(1)
+		.limit(1);
 
-	return rubric.length > 0 ? rubric[0].rubric : null
+	return rubric.length > 0 ? rubric[0].rubric : null;
 }
 
 export async function updateRubricRow(
@@ -461,34 +461,34 @@ export async function updateRubricRow(
 		.update(table.rubricRow)
 		.set({ ...updates })
 		.where(eq(table.rubricRow.id, rowId))
-		.returning()
+		.returning();
 
-	return row
+	return row;
 }
 
 export async function deleteRubricRow(rowId: number) {
-	await db.delete(table.rubricRow).where(eq(table.rubricRow.id, rowId))
+	await db.delete(table.rubricRow).where(eq(table.rubricRow.id, rowId));
 }
 
 export async function updateRubricCell(
 	cellId: number,
 	updates: {
-		level?: table.RubricCell['level']
-		description?: string
-		marks?: number
+		level?: table.RubricCell['level'];
+		description?: string;
+		marks?: number;
 	},
 ) {
 	const [cell] = await db
 		.update(table.rubricCell)
 		.set({ ...updates })
 		.where(eq(table.rubricCell.id, cellId))
-		.returning()
+		.returning();
 
-	return cell
+	return cell;
 }
 
 export async function deleteRubricCell(cellId: number) {
-	await db.delete(table.rubricCell).where(eq(table.rubricCell.id, cellId))
+	await db.delete(table.rubricCell).where(eq(table.rubricCell.id, cellId));
 }
 
 export async function getRubricById(rubricId: number) {
@@ -496,9 +496,9 @@ export async function getRubricById(rubricId: number) {
 		.select()
 		.from(table.rubric)
 		.where(eq(table.rubric.id, rubricId))
-		.limit(1)
+		.limit(1);
 
-	return rubrics[0] || null
+	return rubrics[0] || null;
 }
 
 export async function getRubricWithRowsAndCells(rubricId: number) {
@@ -512,30 +512,30 @@ export async function getRubricWithRowsAndCells(rubricId: number) {
 		.leftJoin(table.rubricRow, eq(table.rubric.id, table.rubricRow.rubricId))
 		.leftJoin(table.rubricCell, eq(table.rubricRow.id, table.rubricCell.rowId))
 		.where(eq(table.rubric.id, rubricId))
-		.orderBy(asc(table.rubricRow.id), asc(table.rubricCell.level))
+		.orderBy(asc(table.rubricRow.id), asc(table.rubricCell.level));
 
 	if (rows.length === 0) {
-		return null
+		return null;
 	}
 
-	const rubric = rows[0].rubric
+	const rubric = rows[0].rubric;
 	const rowsMap = new Map<
 		number,
 		{ row: table.RubricRow; cells: table.RubricCell[] }
-	>()
+	>();
 
 	for (const row of rows) {
 		if (row.rubricRow) {
 			if (!rowsMap.has(row.rubricRow.id)) {
-				rowsMap.set(row.rubricRow.id, { row: row.rubricRow, cells: [] })
+				rowsMap.set(row.rubricRow.id, { row: row.rubricRow, cells: [] });
 			}
 			if (row.rubricCell) {
-				rowsMap.get(row.rubricRow.id)!.cells.push(row.rubricCell)
+				rowsMap.get(row.rubricRow.id)!.cells.push(row.rubricCell);
 			}
 		}
 	}
 
-	return { rubric, rows: Array.from(rowsMap.values()) }
+	return { rubric, rows: Array.from(rowsMap.values()) };
 }
 
 export async function getRubricRowsByRubricId(rubricId: number) {
@@ -543,9 +543,9 @@ export async function getRubricRowsByRubricId(rubricId: number) {
 		.select()
 		.from(table.rubricRow)
 		.where(eq(table.rubricRow.rubricId, rubricId))
-		.orderBy(asc(table.rubricRow.id))
+		.orderBy(asc(table.rubricRow.id));
 
-	return rows
+	return rows;
 }
 
 export async function getRubricCellsByRowId(rowId: number) {
@@ -553,14 +553,14 @@ export async function getRubricCellsByRowId(rowId: number) {
 		.select()
 		.from(table.rubricCell)
 		.where(eq(table.rubricCell.rowId, rowId))
-		.orderBy(asc(table.rubricCell.level))
+		.orderBy(asc(table.rubricCell.level));
 
-	return cells
+	return cells;
 }
 
 export async function deleteRubric(rubricId: number) {
 	// Cascade delete will handle rubricRow and rubricCell deletion
-	await db.delete(table.rubric).where(eq(table.rubric.id, rubricId))
+	await db.delete(table.rubric).where(eq(table.rubric.id, rubricId));
 }
 
 export async function getSubjectOfferingClassTaskByTaskId(
@@ -579,9 +579,9 @@ export async function getSubjectOfferingClassTaskByTaskId(
 				),
 			),
 		)
-		.limit(1)
+		.limit(1);
 
-	return classTask || null
+	return classTask || null;
 }
 
 export async function updateSubjectOfferingClassTaskStatus(
@@ -600,18 +600,18 @@ export async function updateSubjectOfferingClassTaskStatus(
 					subjectOfferingClassId,
 				),
 			),
-		)
+		);
 }
 
 export async function updateSubjectOfferingClassTaskQuizSettings(
 	taskId: number,
 	subjectOfferingClassId: number,
 	quizSettings: {
-		quizMode?: quizModeEnum
-		quizStart?: Date | null
-		quizDurationMinutes?: number | null
-		gradeRelease?: gradeReleaseEnum
-		gradeReleaseTime?: Date | null
+		quizMode?: quizModeEnum;
+		quizStart?: Date | null;
+		quizDurationMinutes?: number | null;
+		gradeRelease?: gradeReleaseEnum;
+		gradeReleaseTime?: Date | null;
 	},
 ) {
 	await db
@@ -625,14 +625,14 @@ export async function updateSubjectOfferingClassTaskQuizSettings(
 					subjectOfferingClassId,
 				),
 			),
-		)
+		);
 }
 
 export async function startQuizSession(classTaskId: number) {
 	await db
 		.update(table.subjectOfferingClassTask)
 		.set({ quizStart: new Date() })
-		.where(eq(table.subjectOfferingClassTask.id, classTaskId))
+		.where(eq(table.subjectOfferingClassTask.id, classTaskId));
 }
 
 // Task Block Response functions
@@ -654,9 +654,9 @@ export async function upsertClassTaskBlockResponse(
 			],
 			set: { response },
 		})
-		.returning()
+		.returning();
 
-	return upsertedResponse
+	return upsertedResponse;
 }
 
 export async function getClassTaskBlockResponsesByClassTaskId(
@@ -673,20 +673,20 @@ export async function getClassTaskBlockResponsesByClassTaskId(
 		.orderBy(
 			asc(table.classTaskBlockResponse.authorId),
 			asc(table.taskBlock.index),
-		)
+		);
 
 	const groupedResponses: {
-		[authorId: string]: { [blockId: number]: table.ClassTaskBlockResponse }
-	} = {}
+		[authorId: string]: { [blockId: number]: table.ClassTaskBlockResponse };
+	} = {};
 	for (const item of responses) {
-		const authorId = item.response.authorId
+		const authorId = item.response.authorId;
 		if (!groupedResponses[authorId]) {
-			groupedResponses[authorId] = {}
+			groupedResponses[authorId] = {};
 		}
-		groupedResponses[authorId][item.block.id] = item.response
+		groupedResponses[authorId][item.block.id] = item.response;
 	}
 
-	return groupedResponses
+	return groupedResponses;
 }
 
 export async function getClassTaskBlockResponsesByAuthorId(
@@ -705,15 +705,15 @@ export async function getClassTaskBlockResponsesByAuthorId(
 				eq(table.classTaskBlockResponse.authorId, authorId),
 				eq(table.classTaskBlockResponse.classTaskId, classTaskId),
 			),
-		)
+		);
 
 	return responses.reduce(
 		(acc, curr) => {
-			acc[curr.block.id] = curr.response
-			return acc
+			acc[curr.block.id] = curr.response;
+			return acc;
 		},
 		{} as { [blockId: number]: table.ClassTaskBlockResponse },
-	)
+	);
 }
 
 // Helper function to get teacher from class
@@ -735,9 +735,9 @@ export async function getClassTeacher(subjectOfferingClassId: number) {
 				eq(table.userSubjectOfferingClass.isArchived, false),
 			),
 		)
-		.limit(1)
+		.limit(1);
 
-	return teacher[0]?.userId || null
+	return teacher[0]?.userId || null;
 }
 
 // Class Task Response functions
@@ -755,9 +755,9 @@ export async function upsertClassTaskResponse(
 				table.classTaskResponse.authorId,
 			],
 		})
-		.returning()
+		.returning();
 
-	return response
+	return response;
 }
 
 export async function getClassTaskResponse(
@@ -773,9 +773,9 @@ export async function getClassTaskResponse(
 				eq(table.classTaskResponse.authorId, authorId),
 			),
 		)
-		.limit(1)
+		.limit(1);
 
-	return response[0] || null
+	return response[0] || null;
 }
 
 export async function getClassTaskResponseResources(
@@ -800,9 +800,9 @@ export async function getClassTaskResponseResources(
 				eq(table.classTaskResponseResource.isArchived, false),
 				eq(table.resource.isArchived, false),
 			),
-		)
+		);
 
-	return resources
+	return resources;
 }
 
 export async function getClassTaskResponsesWithStudents(classTaskId: number) {
@@ -824,9 +824,9 @@ export async function getClassTaskResponsesWithStudents(classTaskId: number) {
 				eq(table.classTaskResponse.isArchived, false),
 			),
 		)
-		.orderBy(asc(table.user.lastName), asc(table.user.firstName))
+		.orderBy(asc(table.user.lastName), asc(table.user.firstName));
 
-	return responses
+	return responses;
 }
 
 export async function updateClassTaskResponseComment(
@@ -837,9 +837,9 @@ export async function updateClassTaskResponseComment(
 		.update(table.classTaskResponse)
 		.set({ comment })
 		.where(eq(table.classTaskResponse.id, classTaskResponseId))
-		.returning()
+		.returning();
 
-	return response
+	return response;
 }
 
 export async function archiveAllResourcesFromClassTaskResponse(
@@ -853,7 +853,7 @@ export async function archiveAllResourcesFromClassTaskResponse(
 				table.classTaskResponseResource.classTaskResponseId,
 				classTaskResponseId,
 			),
-		)
+		);
 }
 
 export async function deleteResourcesFromClassTaskResponse(
@@ -875,7 +875,7 @@ export async function deleteResourcesFromClassTaskResponse(
 				eq(table.classTaskResponseResource.isArchived, false),
 				eq(table.resource.isArchived, false),
 			),
-		)
+		);
 
 	await db
 		.delete(table.classTaskResponseResource)
@@ -884,9 +884,9 @@ export async function deleteResourcesFromClassTaskResponse(
 				table.classTaskResponseResource.classTaskResponseId,
 				classTaskResponseId,
 			),
-		)
+		);
 
-	return resources.map((r) => r.resource)
+	return resources.map((r) => r.resource);
 }
 
 export async function deleteResourceFromClassTaskResponse(
@@ -919,10 +919,10 @@ export async function deleteResourceFromClassTaskResponse(
 				eq(table.classTaskResponseResource.isArchived, false),
 				eq(table.resource.isArchived, false),
 			),
-		)
+		);
 
 	if (!resourceData) {
-		throw new Error('Resource not found or access denied')
+		throw new Error('Resource not found or access denied');
 	}
 
 	await db
@@ -935,9 +935,9 @@ export async function deleteResourceFromClassTaskResponse(
 				),
 				eq(table.classTaskResponseResource.resourceId, resourceId),
 			),
-		)
+		);
 
-	return resourceData.resource
+	return resourceData.resource;
 }
 
 export async function addResourceToClassTaskResponse(
@@ -951,9 +951,9 @@ export async function addResourceToClassTaskResponse(
 			resourceId,
 			authorId: '', // This will be set by the calling function
 		})
-		.returning()
+		.returning();
 
-	return relationship
+	return relationship;
 }
 
 export async function addResourcesToClassTaskResponse(
@@ -962,7 +962,7 @@ export async function addResourcesToClassTaskResponse(
 	authorId: string,
 ) {
 	if (resourceIds.length === 0) {
-		return []
+		return [];
 	}
 
 	const newRelationships = await db
@@ -975,7 +975,7 @@ export async function addResourcesToClassTaskResponse(
 			})),
 		)
 		.onConflictDoNothing()
-		.returning()
+		.returning();
 
-	return newRelationships
+	return newRelationships;
 }
