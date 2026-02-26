@@ -70,7 +70,6 @@ export const news = newsSchema.table(
 		expiresAt: standardTimestamp('expires_at'),
 		tags: jsonb(),
 		isPinned: boolean().notNull().default(false),
-		viewCount: integer().notNull().default(0),
 		schoolId: integer()
 			.notNull()
 			.references(() => school.id, { onDelete: 'cascade' }),
@@ -119,3 +118,25 @@ export const newsResource = newsSchema.table(
 );
 
 export type NewsResource = typeof newsResource.$inferSelect;
+
+// Junction table to track which users have viewed which news posts, and when
+export const newsPostView = newsSchema.table(
+	'news_post_view',
+	{
+		...essentialsNoId,
+		newsId: integer()
+			.notNull()
+			.references(() => news.id, { onDelete: 'cascade' }),
+		userId: uuid()
+			.notNull()
+			.references(() => user.id, { onDelete: 'cascade' }),
+		viewedAt: standardTimestamp('viewed_at').notNull(),
+	},
+	(self) => [
+		primaryKey({ columns: [self.newsId, self.userId] }),
+		index().on(self.newsId),
+		index().on(self.userId),
+	],
+);
+
+export type NewsPostView = typeof newsPostView.$inferSelect;
