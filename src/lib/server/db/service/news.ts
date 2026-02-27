@@ -432,3 +432,28 @@ export async function removeResourceFromNews(
 
 	return archivedResource;
 }
+
+export async function recordNewsPostView(newsId: number, userId: string) {
+	await db
+		.insert(table.newsPostView)
+		.values({ newsId, userId, viewedAt: new Date() })
+		.onConflictDoNothing();
+}
+
+export async function getNewsPostViewCount(
+	newsId: number,
+	requestingUserId: string,
+): Promise<number | null> {
+	const [{ viewCount }] = await db
+		.select({ viewCount: count() })
+		.from(table.newsPostView)
+		.innerJoin(table.news, eq(table.newsPostView.newsId, table.news.id))
+		.where(
+			and(
+				eq(table.newsPostView.newsId, newsId),
+				eq(table.news.authorId, requestingUserId),
+			),
+		);
+
+	return viewCount ?? null;
+}
