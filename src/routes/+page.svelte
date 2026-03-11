@@ -43,7 +43,6 @@
 			teachers
 		</h3>
 		<div class="mt-12 flex justify-center gap-x-3">
-			<Button size="lg" variant="secondary">Watch the video</Button>
 			<Button href="/demo" size="lg" class="sm:hidden">Book a demo</Button>
 		</div>
 	</div>
@@ -116,7 +115,7 @@
 
 {@render section(
 	'Tasks',
-	'Engage students with interactive and collaborative lessons and assessments.',
+	'Create wonderful learning experiences',
 	'right',
 	{
 		lightSrc: LightTasks,
@@ -124,15 +123,81 @@
 		caption: 'Lesson creation interface',
 	},
 	[
-		{ icon: TargetIcon, text: 'Auto-generate learning objectives' },
-		{ icon: FileTextIcon, text: 'Content suggestions and templates' },
-		{ icon: RefreshCwIcon, text: 'Instant content refinement' },
+		{ icon: TargetIcon, text: 'Drag-and-drop task builder' },
+		{ icon: FileTextIcon, text: 'Utilise general or subject-specific blocks' },
+		{ icon: RefreshCwIcon, text: 'Easily mark student attempts' },
+	],
+)}
+
+{@render section(
+	'Discussions',
+	'Facilitate engaging discussions',
+	'left',
+	{
+		lightSrc: LightDiscussions,
+		darkSrc: DarkDiscussions,
+		caption: 'Discussion interface',
+	},
+	[
+		{
+			icon: MessageCircleIcon,
+			text: 'Ask a question, post an announcement, or host a Q&A',
+		},
+		{ icon: ThumbsUpIcon, text: 'Encourage student collaboration' },
+		{ icon: TagIcon, text: 'Global search with topic tagging' },
+	],
+)}
+
+{@render section(
+	'Calendar',
+	'See your classes and events in one place',
+	'right',
+	{
+		lightSrc: '/screenshots/calendar.png',
+		darkSrc: '/screenshots/calendar.png',
+		caption: 'Calendar interface',
+	},
+	[
+		{ icon: PlusIcon, text: 'Assess RSVPs and attendance' },
+		{ icon: LinkIcon, text: 'Sync with external calendars' },
+		{ icon: CheckIcon, text: 'Direct integration with our timetabling system' },
+	],
+)}
+
+{@render section(
+	'Attendance',
+	'Track attendance effortlessly',
+	'left',
+	{
+		lightSrc: '/screenshots/attendance.png',
+		darkSrc: '/screenshots/attendance.png',
+		caption: 'Attendance interface',
+	},
+	[
+		{ icon: ClockIcon, text: 'Gain minute-level insights' },
+		{ icon: LinkIcon, text: 'Easily record behavioural incidents' },
+		{
+			icon: MegaphoneIcon,
+			text: 'Customisable notification and action system',
+		},
+	],
+)}
+
+{@render section(
+	'News',
+	'Keep your school community informed',
+	'right',
+	{ lightSrc: LightNews, darkSrc: DarkNews, caption: 'News interface' },
+	[
+		{ icon: CalendarIcon, text: 'Schedule announcements' },
+		{ icon: MegaphoneIcon, text: 'Instant push notifications' },
+		{ icon: TargetIcon, text: 'Target specific groups' },
 	],
 )}
 
 {@render section(
 	'Curriculum',
-	'Plan and organise your school curriculum with ease.',
+	'Organise your whole curriculum',
 	'left',
 	{
 		lightSrc: '/screenshots/curriculum.png',
@@ -140,69 +205,9 @@
 		caption: 'Curriculum planning interface',
 	},
 	[
-		{ icon: UsersIcon, text: 'Collaborative curriculum design' },
+		{ icon: UsersIcon, text: 'Collaborate in real-time' },
 		{ icon: ZapIcon, text: 'Align with standards and outcomes' },
-		{ icon: CalendarIcon, text: 'Integrate with timetables and calendars' },
-	],
-)}
-
-{@render section(
-	'Discussions',
-	'Create a collaborative learning environment with a structured discussion system.',
-	'right',
-	{
-		lightSrc: LightDiscussions,
-		darkSrc: DarkDiscussions,
-		caption: 'Discussion interface',
-	},
-	[
-		{ icon: MessageCircleIcon, text: 'Threaded discussion format' },
-		{ icon: ThumbsUpIcon, text: 'Upvoting and answer validation' },
-		{ icon: TagIcon, text: 'Topic tagging and search' },
-	],
-)}
-
-{@render section(
-	'Calendars',
-	'Integrated calendar for classes and events to keep everyone organised.',
-	'left',
-	{
-		lightSrc: '/screenshots/calendar.png',
-		darkSrc: '/screenshots/calendar.png',
-		caption: 'Calendar interface',
-	},
-	[
-		{ icon: CheckIcon, text: 'Automatic class scheduling' },
-		{ icon: PlusIcon, text: 'Event creation for classes and schools' },
-		{ icon: LinkIcon, text: 'Sync with external calendars' },
-	],
-)}
-
-{@render section(
-	'Attendance',
-	'Track attendance effortlessly with tools to mark the roll and manage absences.',
-	'right',
-	{
-		lightSrc: '/screenshots/attendance.png',
-		darkSrc: '/screenshots/attendance.png',
-		caption: 'Attendance interface',
-	},
-	[
-		{ icon: LinkIcon, text: 'Syncs with guardian-submitted absences' },
-		{ icon: ClockIcon, text: 'Behaviour and attendance records' },
-		{ icon: MegaphoneIcon, text: 'Notifications for unexplained absences' },
-	],
-)}
-
-{@render section(
-	'News',
-	'Keep everyone informed with instant updates and announcements.',
-	'left',
-	{ lightSrc: LightNews, darkSrc: DarkNews, caption: 'News interface' },
-	[
-		{ icon: MegaphoneIcon, text: 'Instant push notifications' },
-		{ icon: CalendarIcon, text: 'Schedule announcements' },
-		{ icon: TargetIcon, text: 'Target specific groups' },
+		{ icon: FileTextIcon, text: 'Create task guidelines and templates' },
 	],
 )}
 
