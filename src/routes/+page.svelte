@@ -57,7 +57,6 @@
 )}
 	{@const imageBaseClass = 'h-auto w-full rounded-lg object-cover shadow-xl'}
 	<section
-		id={title.replaceAll(' ', '-').toLowerCase()}
 		class="{imageSide == 'right' ? 'bg-muted/50' : ''} py-16 md:py-24 lg:py-32"
 	>
 		<div class="container mx-auto px-4 lg:px-8">
@@ -79,7 +78,10 @@
 					</div>
 				{/if}
 				<div class="space-y-6">
-					<h2 class="scroll-m-20 text-3xl font-bold tracking-tight lg:text-4xl">
+					<h2
+						id={title.replaceAll(' ', '-').toLowerCase()}
+						class="scroll-m-20 text-3xl font-bold tracking-tight lg:text-4xl"
+					>
 						{title}
 					</h2>
 					<p class="text-muted-foreground text-xl">

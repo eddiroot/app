@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
 	import Button, {
 		buttonVariants,
@@ -29,11 +30,6 @@
 						'Engage students with interactive and collaborative lessons and assessments.',
 				},
 				{
-					name: 'Curriculum',
-					href: '/#curriculum',
-					description: 'Plan and organise your school curriculum with ease.',
-				},
-				{
 					name: 'Discussions',
 					href: '/#discussions',
 					description:
@@ -41,7 +37,7 @@
 				},
 				{
 					name: 'Calendar',
-					href: '/#calendars',
+					href: '/#calendar',
 					description:
 						'Integrated calendar for classes and events to keep everyone organised.',
 				},
@@ -56,6 +52,11 @@
 					href: '/#news',
 					description:
 						'Keep everyone informed with instant updates and announcements.',
+				},
+				{
+					name: 'Curriculum',
+					href: '/#curriculum',
+					description: 'Plan and organise your school curriculum with ease.',
 				},
 				{
 					name: 'Timetables',
@@ -191,13 +192,28 @@
 									<h2 class="mb-2 text-xl font-bold">{navItem.name}</h2>
 									<div class="grid grid-cols-2 gap-2">
 										{#each navItem.subItems as subItem (subItem.name)}
-											<a
-												href={subItem.href}
-												onclick={() => (drawerOpen = false)}
+											<button
+												onclick={() => {
+													drawerOpen = false;
+													setTimeout(() => {
+														if (
+															page.url.pathname === '/' &&
+															subItem.href.startsWith('/#')
+														) {
+															const element = document.getElementById(
+																subItem.href.replace('/#', ''),
+															);
+															element?.scrollIntoView({ behavior: 'smooth' });
+															return;
+														} else {
+															goto(subItem.href);
+														}
+													}, 200);
+												}}
 												class="flex h-16 items-center justify-center rounded-md border text-center text-sm font-semibold"
 											>
 												{subItem.name}
-											</a>
+											</button>
 										{/each}
 									</div>
 								</div>
