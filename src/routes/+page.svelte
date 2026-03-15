@@ -234,10 +234,15 @@
 				Pricing
 			</h2>
 			<div class="flex items-baseline justify-center gap-2">
-				<span class="font-mono text-7xl font-bold">$15</span>
-				<span class="text-muted-foreground text-lg">per user / year</span>
+				<span class="font-mono text-7xl font-bold">$25</span>
+				<span class="text-muted-foreground text-lg"
+					>per <strong>student</strong> / year</span
+				>
 			</div>
-			<p class="text-muted-foreground text-lg">All features included.</p>
+			<p class="text-muted-foreground text-lg">
+				All features included.<br />
+				Staff, teacher, and guardian accounts are free.
+			</p>
 			<Button size="lg" href="/demo">Book a Demo</Button>
 		</div>
 	</div>

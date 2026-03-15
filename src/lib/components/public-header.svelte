@@ -15,10 +15,12 @@
 
 	const navItems: Array<{
 		name: string;
+		singleColumn: boolean;
 		subItems: { name: string; href: string; description: string }[];
 	}> = [
 		{
 			name: 'Features',
+			singleColumn: false,
 			subItems: [
 				{
 					name: 'Tasks',
@@ -65,27 +67,28 @@
 		},
 		{
 			name: 'Support',
+			singleColumn: true,
 			subItems: [
 				{
 					name: 'Book Call',
-					description:
-						'Request a call with our engineering team for personalised assistance.',
+					description: 'Request a call with our engineering team.',
 					href: '/support/one-on-one',
 				},
 				{
 					name: 'Feature Request',
-					description: 'Suggest new features to help us improve eddi.',
+					description: 'Suggest new features that could help us improve.',
 					href: '/support/feature-request',
 				},
 				{
 					name: 'Report Issue',
-					description: 'Report bugs or issues you encounter while using eddi.',
+					description: 'Report issues you encounter while using eddi.',
 					href: '/support/report-an-issue',
 				},
 			],
 		},
 		{
 			name: 'Pricing',
+			singleColumn: true,
 			subItems: [
 				{
 					name: 'Our Ethos',
@@ -94,8 +97,7 @@
 				},
 				{
 					name: 'Cost',
-					description:
-						'View our simple, affordable pricing plan that has schools raving.',
+					description: 'View the simple pricing plan that has schools raving.',
 					href: '/#pricing',
 				},
 			],
@@ -152,7 +154,9 @@
 						<NavigationMenu.Trigger>{navItem.name}</NavigationMenu.Trigger>
 						<NavigationMenu.Content>
 							<ul
-								class="grid w-75 gap-2 p-2 sm:w-100 md:w-125 md:grid-cols-2 lg:w-150"
+								class="grid gap-2 p-2 {navItem.singleColumn
+									? 'w-56 sm:w-56 md:w-60 lg:w-64'
+									: 'w-75 sm:w-100 md:w-125 md:grid-cols-2 lg:w-150'}"
 							>
 								{#each navItem.subItems as subItem (subItem.name)}
 									{@render ListItem({
