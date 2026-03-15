@@ -8,6 +8,7 @@
 	import { Input } from '$lib/components/ui/input';
 	import { Label } from '$lib/components/ui/label';
 	import { Textarea } from '$lib/components/ui/textarea';
+	import type { SchoolCampus } from '$lib/server/db/schema/school.js';
 	import BuildingIcon from '@lucide/svelte/icons/building';
 	import MapPinIcon from '@lucide/svelte/icons/map-pin';
 	import MoreHorizontalIcon from '@lucide/svelte/icons/more-horizontal';
@@ -15,7 +16,7 @@
 	const { data } = $props();
 
 	let editDialogOpen = $state(false);
-	let selectedCampus = $state<any>(null);
+	let selectedCampus = $state<SchoolCampus | null>(null);
 	let archiveDialogOpen = $state(false);
 	let createDialogOpen = $state(false);
 	let unarchiveDialogOpen = $state(false);
@@ -29,7 +30,7 @@
 
 	let createFormData = $state({ name: '', address: '', description: '' });
 
-	function openEditDialog(campus: any) {
+	function openEditDialog(campus: SchoolCampus) {
 		selectedCampus = campus;
 		editFormData = {
 			campusId: campus.id,
@@ -40,12 +41,12 @@
 		editDialogOpen = true;
 	}
 
-	function openArchiveDialog(campus: any) {
+	function openArchiveDialog(campus: SchoolCampus) {
 		selectedCampus = campus;
 		archiveDialogOpen = true;
 	}
 
-	function openUnarchiveDialog(campus: any) {
+	function openUnarchiveDialog(campus: SchoolCampus) {
 		selectedCampus = campus;
 		unarchiveDialogOpen = true;
 	}
@@ -66,7 +67,7 @@
 	</div>
 
 	<div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-		{#each data.campuses as campus}
+		{#each data.campuses as campus (campus.id)}
 			{#if !campus.isArchived}
 				<Card.Root class="h-48">
 					<Card.Header class="gap-4">
@@ -93,7 +94,7 @@
 										</Button>
 									{/snippet}
 								</DropdownMenu.Trigger>
-								<DropdownMenu.Content align="end" class="w-[160px]">
+								<DropdownMenu.Content align="end" class="w-40">
 									<DropdownMenu.Item onclick={() => openEditDialog(campus)}
 										>Edit</DropdownMenu.Item
 									>
@@ -145,7 +146,7 @@
 										</Button>
 									{/snippet}
 								</DropdownMenu.Trigger>
-								<DropdownMenu.Content align="end" class="w-[160px]">
+								<DropdownMenu.Content align="end" class="w-40">
 									<DropdownMenu.Item
 										onclick={() => openUnarchiveDialog(campus)}
 									>
@@ -190,11 +191,13 @@
 
 <!-- Create Campus Modal -->
 <Dialog.Root bind:open={createDialogOpen}>
-	<Dialog.Content class="sm:max-w-[425px]">
+	<Dialog.Content class="sm:max-w-106.25">
 		<Dialog.Header>
 			<Dialog.Title>Create New Campus</Dialog.Title>
 			<Dialog.Description>
-				Add a new campus to your school. Fill in the required information below.
+				Campuses allow you to group students and staff and limit their access to
+				resources specific to that campus. Staff can be assigned to multiple
+				campuses.
 			</Dialog.Description>
 		</Dialog.Header>
 		<form
@@ -210,7 +213,7 @@
 				};
 			}}
 		>
-			<div class="grid gap-4 py-4">
+			<div class="grid gap-4 pb-4">
 				<div class="grid gap-2">
 					<Label for="create-name">Campus Name</Label>
 					<Input
@@ -256,13 +259,9 @@
 
 <!-- Edit Campus Modal -->
 <Dialog.Root bind:open={editDialogOpen}>
-	<Dialog.Content class="sm:max-w-[425px]">
+	<Dialog.Content class="sm:max-w-106.25">
 		<Dialog.Header>
 			<Dialog.Title>Edit Campus</Dialog.Title>
-			<Dialog.Description>
-				Make changes to the campus information here. Click save when you're
-				done.
-			</Dialog.Description>
 		</Dialog.Header>
 		<form
 			method="POST"
@@ -276,7 +275,7 @@
 				};
 			}}
 		>
-			<div class="grid gap-4 py-4">
+			<div class="grid gap-4 pb-4">
 				<input
 					type="hidden"
 					name="campusId"
@@ -328,7 +327,7 @@
 
 <!-- Archive Campus Modal -->
 <Dialog.Root bind:open={archiveDialogOpen}>
-	<Dialog.Content class="sm:max-w-[425px]">
+	<Dialog.Content class="sm:max-w-106.25">
 		<Dialog.Header>
 			<Dialog.Title>Archive Campus</Dialog.Title>
 			<Dialog.Description>
@@ -340,7 +339,7 @@
 			method="POST"
 			action="?/archiveCampus"
 			use:enhance={({ formData }) => {
-				formData.set('campusId', selectedCampus?.id.toString());
+				formData.set('campusId', selectedCampus!.id.toString());
 				return async ({ result }) => {
 					if (result.type === 'success') {
 						archiveDialogOpen = false;
@@ -365,7 +364,7 @@
 
 <!-- Unarchive Campus Modal -->
 <Dialog.Root bind:open={unarchiveDialogOpen}>
-	<Dialog.Content class="sm:max-w-[425px]">
+	<Dialog.Content class="sm:max-w-106.25">
 		<Dialog.Header>
 			<Dialog.Title>Unarchive Campus</Dialog.Title>
 			<Dialog.Description>
@@ -377,7 +376,7 @@
 			method="POST"
 			action="?/unarchiveCampus"
 			use:enhance={({ formData }) => {
-				formData.set('campusId', selectedCampus?.id.toString());
+				formData.set('campusId', selectedCampus!.id.toString());
 				return async ({ result }) => {
 					if (result.type === 'success') {
 						unarchiveDialogOpen = false;

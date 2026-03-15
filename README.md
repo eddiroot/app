@@ -105,14 +105,12 @@ The all-in-one teaching, learning, and admin software suite for schools.
 
 # Pricing
 
-While eddi isn't out yet, we do have some ideas on pricing and will welcome any suggestions from the public.
+While eddi isn't out yet, we do have some ideas on pricing and will welcome any suggestions.
 
-1. eddi has only one pricing tier. There will only ever be one pricing tier. Every customer of eddi's gets the same advanced functionality, forever.
-2. The pricing is at a set rate so that the school can accurately estimate costs.
-3. AI usage costs will not be bundled in with the pricing, and instead billed on top of the yearly amount.
-4. You may utilise shared accounts if you wish, though we advise having one account per person to fully utilise eddi's capabilities.
-
-Pricing will initially be set at $20 per user per year exclusive of AI usage. A user may be a student, teacher, or someone else in the school's staff.
+1. eddi has only one pricing tier. There will only ever be one pricing tier.
+2. Every customer of eddi's gets the same advanced functionality, forever.
+3. The pricing is at a set rate so that the school can accurately estimate costs.
+4. It is billed _per student_, **not** per user. This means accounts belonging to teachers, staff, and guardians are free.
 
 # Contributing
 

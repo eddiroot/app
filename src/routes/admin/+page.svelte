@@ -10,7 +10,6 @@
 	import GraduationCapIcon from '@lucide/svelte/icons/graduation-cap';
 	import LecternIcon from '@lucide/svelte/icons/lectern';
 	import MapPinIcon from '@lucide/svelte/icons/map-pin';
-	import MessageSquareIcon from '@lucide/svelte/icons/message-square';
 	import SchoolIcon from '@lucide/svelte/icons/school';
 	import UserRoundCogIcon from '@lucide/svelte/icons/user-round-cog';
 	import UsersIcon from '@lucide/svelte/icons/users';
@@ -84,12 +83,12 @@
 			icon: BusIcon,
 			href: '/admin/events',
 		},
-		{
-			title: 'Interviews',
-			description: 'Configure and manage parent-teacher interview sessions',
-			icon: MessageSquareIcon,
-			href: '/admin/interviews',
-		},
+		// {
+		// 	title: 'Interviews',
+		// 	description: 'Configure and manage parent-teacher interview sessions',
+		// 	icon: MessageSquareIcon,
+		// 	href: '/admin/interviews',
+		// },
 		{
 			title: 'Behaviours',
 			description: 'Configure student behaviours that teachers can quickly log',
@@ -117,7 +116,7 @@
 	<div class="space-y-4">
 		<h2 class="text-2xl font-semibold tracking-tight">Functions</h2>
 		<div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-			{#each adminSections as section}
+			{#each adminSections as section (section.title)}
 				<a href={section.href} class="block">
 					<Card.Root class="h-40">
 						<Card.Header class="gap-4">
@@ -143,7 +142,7 @@
 	<div class="space-y-4">
 		<h2 class="text-2xl font-semibold tracking-tight">Stats</h2>
 		<div class="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-			{#each stats() as stat}
+			{#each stats() as stat (stat.title)}
 				<Card.Root>
 					<Card.Header class="flex items-center justify-between">
 						<Card.Title class="text-primary">{stat.title}</Card.Title>

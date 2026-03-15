@@ -31,7 +31,7 @@
 				campuses={data?.campuses ?? []}
 			/>
 		{/if}
-		<Sidebar.Inset>
+		<Sidebar.Inset class="h-[calc(100vh-1rem)]">
 			{@render children()}
 		</Sidebar.Inset>
 	</div>

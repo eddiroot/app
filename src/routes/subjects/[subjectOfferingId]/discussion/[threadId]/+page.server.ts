@@ -3,7 +3,6 @@ import {
 	subjectThreadTypeEnum,
 	userTypeEnum,
 } from '$lib/enums.js';
-import { geminiCompletion } from '$lib/server/ai';
 import {
 	createSubjectThreadResponse,
 	getSubjectThreadById,
@@ -109,52 +108,6 @@ export const actions = {
 		}
 
 		return { form };
-	},
-	generateSummary: async ({ locals: { security }, params: { threadId } }) => {
-		const user = security.isAuthenticated().getUser();
-
-		const threadIdInt = parseInt(threadId, 10);
-		if (isNaN(threadIdInt)) {
-			return fail(400, { message: 'Invalid thread id' });
-		}
-
-		const thread = await getSubjectThreadById(threadIdInt)!;
-		if (!thread) {
-			return fail(404, { message: 'Thread not found' });
-		}
-
-		const responses = await getSubjectThreadResponsesById(threadIdInt);
-		const answers = responses.filter(
-			(r) => r.response.type === 'answer' && !r.response.parentResponseId,
-		);
-		const comments = responses.filter(
-			(r) => r.response.type === 'comment' && !r.response.parentResponseId,
-		);
-
-		const prompt = `
-			Please provide a concise summary of this discussion thread:
-
-			ORIGINAL POST:
-			Title: ${thread.thread.title}
-			Type: ${thread.thread.type}
-			Content: ${thread.thread.content}
-			Author: ${thread.user.firstName} ${thread.user.lastName}
-			User Requesting Summary: ${user.firstName} ${user.lastName}
-
-			MAIN ANSWERS:
-			${answers.map((a) => `- ${a.response.content} (by ${a.user.firstName} ${a.user.lastName})`).join('\n')}
-
-			MAIN COMMENTS:
-			${comments.map((c) => `- ${c.response.content} (by ${c.user.firstName} ${c.user.lastName})`).join('\n')}
-
-			Please summarise the thread, touching on all the key points and ensuring that it is easily understandable for school students.
-			`;
-
-		const systemInstruction =
-			'You are a helpful assistant that creates concise, well-structured summaries of academic discussions and Q&A threads for school students who are looking to get all the necessary information. The summaries should be in plain text format (not markdown).';
-
-		const summary = await geminiCompletion(prompt, systemInstruction);
-		return { summary };
 	},
 	toggleThreadLike: async ({ locals: { security }, params: { threadId } }) => {
 		const user = security.isAuthenticated().getUser();

@@ -48,6 +48,7 @@
 <div
 	class="grid h-full grid-cols-1 gap-6 overflow-y-auto p-8 xl:grid-cols-[1fr_1fr_1fr]"
 >
+	<!-- Your Day -->
 	<Card.Root class="h-full overflow-hidden shadow-none">
 		<Card.Header>
 			<Card.Title class="text-xl">Your Day</Card.Title>

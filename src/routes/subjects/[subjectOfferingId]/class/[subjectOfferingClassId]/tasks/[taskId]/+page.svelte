@@ -65,6 +65,7 @@
 		type BlockBalancingEquationsConfig,
 		type BlockChoiceConfig,
 		type BlockCloseConfig,
+		type BlockConfig,
 		type BlockFillBlankConfig,
 		type BlockGraphConfig,
 		type BlockHeadingConfig,
@@ -96,6 +97,7 @@
 
 	let dataBlocks = () => data.blocks;
 	let blocks = $state(dataBlocks());
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	let responses = $state<Record<number, any>>({});
 
 	let mouseOverElement = $state<string>('');
@@ -243,7 +245,7 @@
 		return responses[blockId] || initialResponse;
 	}
 
-	async function handleConfigUpdate(block: TaskBlock, config: any) {
+	async function handleConfigUpdate(block: TaskBlock, config: BlockConfig) {
 		await updateBlock({ block, config });
 		const blockIndex = blocks.findIndex((b) => b.id === block.id);
 		if (blockIndex !== -1) {
@@ -251,7 +253,10 @@
 		}
 	}
 
-	async function handleResponseUpdate(blockId: number, response: any) {
+	async function handleResponseUpdate(
+		blockId: number,
+		response: BlockResponse,
+	) {
 		responses[blockId] = response;
 
 		if (data.user.type !== userTypeEnum.student) return;
@@ -430,7 +435,7 @@
 </script>
 
 <div
-	class="grid h-[calc(100vh-1rem)] gap-4 p-4 {viewMode === ViewMode.CONFIGURE
+	class="grid h-full gap-4 p-4 {viewMode === ViewMode.CONFIGURE
 		? 'grid-cols-[200px_1fr_300px]'
 		: 'grid-cols-[200px_1fr]'}"
 >
@@ -449,7 +454,7 @@
 								bind:value={$statusFormData.status}
 								onValueChange={(value) => {
 									if (value) {
-										$statusFormData.status = value as any;
+										$statusFormData.status = value as taskStatusEnum;
 										// Auto-submit the form when value changes
 										setTimeout(() => {
 											const form = document.querySelector(
@@ -527,7 +532,7 @@
 			</Card.Header>
 			<Card.Content class="space-y-1">
 				{#if viewMode === ViewMode.REVIEW}
-					{#each data.responses! as response}
+					{#each data.responses! as response (response.classTaskResponse.id)}
 						<Button
 							onclick={() => (selectedStudent = response.student.id)}
 							size="lg"
@@ -540,7 +545,7 @@
 						</Button>
 					{/each}
 				{:else}
-					{#each blocks.filter((block) => block.type === taskBlockTypeEnum.heading) as block}
+					{#each blocks.filter((block) => block.type === taskBlockTypeEnum.heading) as block (block.id)}
 						{#if block.type === taskBlockTypeEnum.heading}
 							<p class="text-muted-foreground">
 								{'-'.repeat((block.config as BlockHeadingConfig).size - 2 || 0)}
@@ -558,7 +563,7 @@
 	<!-- Task Blocks -->
 	<Card.Root class="h-full overflow-y-auto">
 		<Card.Content class="h-full space-y-4">
-			<div class={viewMode === ViewMode.CONFIGURE ? 'ml-[38px]' : ''}>
+			<div class={viewMode === ViewMode.CONFIGURE ? 'ml-9.5' : ''}>
 				<div class="flex items-center gap-4">
 					<BlockHeading
 						config={{ text: data.task.title, size: 1 }}
@@ -647,9 +652,9 @@
 					</div>
 				{:else}
 					<!-- Normal Content Rendering -->
-					{#each blocks as block}
+					{#each blocks as block (block.id)}
 						<div
-							class="ml-[38px] min-h-4 rounded-md {dndState.targetContainer ===
+							class="ml-9.5 min-h-4 rounded-md {dndState.targetContainer ===
 							`task-${block.id}`
 								? 'border-accent-foreground my-2 h-8 border border-dashed'
 								: ''}"
@@ -841,7 +846,7 @@
 								container: `task-bottom`,
 								callbacks: { onDrop: handleDrop },
 							}}
-							class="my-4 ml-[38px] flex min-h-24 items-center justify-center rounded-lg border border-dashed transition-colors {dndState.targetContainer ===
+							class="my-4 ml-9.5 flex min-h-24 items-center justify-center rounded-lg border border-dashed transition-colors {dndState.targetContainer ===
 							'task-bottom'
 								? draggedOverClasses
 								: notDraggedOverClasses}"
@@ -882,19 +887,25 @@
 								callbacks: { onDrop: handleDrop },
 							}}
 						>
-							{#each blockTypes as { type, name, initialConfig, icon }}
-								{@const Icon = icon}
+							{#each blockTypes as blockType (blockType.name)}
+								{@const Icon = blockType.icon}
 								<div
 									class="flex flex-col items-center justify-center gap-1 {buttonVariants(
 										{ variant: 'outline' },
 									)} aspect-square h-18 w-full"
 									use:draggable={{
 										container: 'blockPalette',
-										dragData: { type, config: initialConfig, id: 0 },
+										dragData: {
+											type: blockType.type,
+											config: blockType.initialConfig,
+											id: 0,
+										},
 									}}
 								>
 									<Icon class="size-8" />
-									<span class="text-center text-xs leading-tight">{name}</span>
+									<span class="text-center text-xs leading-tight"
+										>{blockType.name}</span
+									>
 								</div>
 							{/each}
 						</div>

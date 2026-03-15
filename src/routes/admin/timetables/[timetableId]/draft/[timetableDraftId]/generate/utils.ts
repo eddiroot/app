@@ -1,4 +1,4 @@
-import { XMLBuilder } from 'fast-xml-parser';
+import XMLBuilder from 'fast-xml-builder';
 
 import {
 	getActiveTimetableDraftConstraintsByTimetableDraftId,
