@@ -6,6 +6,7 @@
 		"pomdtr.excalidraw-editor",
 		"mhutchie.git-graph",
 		"maattdd.gitless",
-		"svelte.svelte-vscode"
+		"svelte.svelte-vscode",
+		"formulahendry.auto-rename-tag"
 	]
 }
