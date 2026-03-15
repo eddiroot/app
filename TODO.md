@@ -1,0 +1,121 @@
+- **General**
+  - [ ] Handling of multiple campuses
+  - [ ] Dashboard
+    - [ ] Show events as well as classes for the day
+  - [ ] Subject offerings full year
+    - Currently, subject offerings are broken up into semester. The offering should instead run for a full year, and semester logic one level lower
+    - Course map items need to be adjusted to specify how long they run for
+- **Admin**
+  - [x] Admin dashboard
+  - [ ] Class building/space shifts
+  - [ ] Add more user roles with set access to things
+- **Attendance & Behaviours**
+  - [x] Roll call / attendance
+  - [x] Sick/not coming to school/absence with notifications
+  - [x] Behavioural reporting (visible to parents) with incident levels
+  - [x] Parents and teachers can view past attendance
+  - [ ] Mark absence for select periods of the day rather than whole day
+- **Curriculum & Coursemap**
+  - [ ] Coursemap flow
+  - [ ] Select Curriculum and assign Grades
+    - On a subject level teacher / subject department team can chose what standards they want to follow e.g. Australian or VCAA for now
+    - Standards can have tags / a way to link to course map items
+    - They can create grading scales e.g percentage vs grade point scale GPA
+    - Standards are displayed by code then description
+- **Discussions & Chat**
+  - [x] Class announcements / Q&As
+  - [ ] Delete posts if teacher/school staff or post author
+  - [ ] Edit posts if post author
+  - [ ] Teacher to parent chats
+  - [ ] Premade math symbols to insert in rich text editor
+    - Option in RTE toolbar brings up a modal
+    - Clicking on a formula in the modal inserts it into the editor
+- **Grades and Profiles**
+  - [ ] Live, up-to-date profile page with student information visible to them and parents
+- **News**
+  - [x] Create news for the school
+  - [x] View news on a feed
+  - [ ] Enforce "pin until" on all pinned posts and setup notifications to author when pinned posts are close to being removed
+  - [ ] Dashboard filtering logic should be entirely server side (show all pinned posts sorted by recency at the top), and then 5 non-pinned most recent (use db for both queries)
+  - [ ] Analytics on who in the school has seen/read it
+- **Tasks & Resources**
+  - [x] Create tasks with drag and drop blocks
+    - [x] Interactive components such as matching, highlighting
+    - [x] Specialised math blocks e.g. math input and graphing
+    - [ ] Unique x/y axis line colour on graph block
+    - [ ] Table block optionally editable for students
+  - [ ] Create tasks based on textbooks, slides, PDFs, images, etc
+    - [x] Align lesson generation with learning areas and content
+  - [x] Class tests / quizzes
+  - [ ] Criteria / marks / rubric
+    - Part 1 - Questions:
+      - For quiz/assessment figure out how to seperate a section of blocks into a questions / whether that is multi part question 1:a,b or just singular.
+      - When a teacher uploads a document of a task (task sheet) make a call that extracts the questions (in theory we just want this to directly convert to a task within eddi. --> for future make a printable worksheet option shouldn't be too hard
+      - question number
+      - question character
+      - isInteractive
+      - subjectGroup
+    - Part 2 - Criteria and answers:
+      - Based on the subjects grading system do the following
+        - A question has a total number of marks.
+        - If criteria the teacher can manually create the criteria with description and number of marks subset of total marks
+        - If definitive answer (non-ambiguous) we can auto mark.
+        - If criteria then we can do a mark suggestion and reason.
+  - [ ] See teacher's feedback
+  - [ ] Presentation mode
+  - [ ] Live and collaborative whiteboards
+    - Object and control points - cp crossing over, textbox borders while typing
+    - Arrows
+    - Undo/redo - double click undo after creating
+    - Refactor floating menu - colour palette empty space
+    - Fix bugs with text rotation + brush control points
+  - text adding mechanics
+  - [x] Rich text editor
+  - [x] Order topics and tasks
+  - [x] Review students' work and/or submissions
+
+- **Timetables & Events**
+  - [ ] Generate timetables
+  - [x] View classes in calendar
+  - [x] View events in calendar
+  - [ ] Subject selection
+    - [ ] Experience the subject async e.g. up week
+  - [ ] Parent/teacher interviews
+  - [ ] Exam timetabling
+  - [ ] RSVPs / permission for children to go to events
+  - [ ] Advanced timetabling
+    - [ ] Timetable constraint handling (e.g. preferred lab space for science subject)
+    - [ ] When transitioning from grouped by classes to grouped by preferences, we need to create groups for all of the students with the same preferences for efficiency and to ensure their classes are scheduled at the same time.
+    - [ ] Checkbox to add a recess and lunchtime period post timetable generation in first and second gap respectively (or allow them to set specific time)
+- **Analytics**
+  - You should be able to view your attendance for your whole class or individual students
+  - You should be able to view your class' results for tasks, or individual student's results
+- **Other**
+  - [x] Google/Microsoft Auth
+    - [ ] Consider using their auth sessions rather than managing our own
+  - [x] Object storage for school logo, user avatars, resource assets
+  - [x] Basic security research and compliance documentation
+  - [ ] Security review e.g. prompt injection
+  - [ ] Review breadcrumbs on all pages (e.g. attendance history)
+  - [ ] Content security policy in `svelte.config.js`
+  - [ ] Check uniqueness rules + indexes on tables
+  - [ ] Home pages and feature pages
+  - [ ] Shift away from static school id for OAuth (search TODO)
+- **Endgame**
+  - [ ] Export all data for a given school
+  - [ ] eddi AI
+    - [ ] Option for teachers to disable the tutor for specific tasks
+    - [ ] Analytics on chatbot usage with the lessons/subjects they were created in
+    - [ ] A what to do button to generate study ideas
+    - [ ] Summarising capability for discussion threads
+    - [ ] Help teachers with common functionality or action it for them
+  - [ ] Check-in check-out system for students entering school late or leaving school early
+  - [ ] Student note writing with teacher access
+  - [ ] Lesson / class plan marketplace
+  - [ ] App-wide search
+  - [ ] Whole school metrics
+  - [ ] Fees / breakdowns
+  - [ ] Keyboard shortcuts
+  - [ ] Contractors signing in with working with childrens checks (eg school photographers)
+  - [ ] Interactive map of locations in the school with directions
+  - [ ] Per-school theming [with this](https://github.com/huntabyte/shadcn-svelte/discussions/1124)
