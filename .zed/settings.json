@@ -1,0 +1,13 @@
+{
+	"format_on_save": "on",
+	"code_actions_on_format": {
+		"source.fixAll": true,
+		"source.organizeImports": true,
+	},
+	"formatter": "prettier",
+	"lsp": {
+		"vscode-html-language-server": {
+			"settings": { "html": { "tagAutoclosing": false } },
+		},
+	},
+}

@@ -1,7 +1,0 @@
-{
-  "editor.codeActionsOnSave": {
-    "source.organizeImports": "never",
-    "source.fixAll": "never"
-  },
-  "editor.formatOnSave": false
-}

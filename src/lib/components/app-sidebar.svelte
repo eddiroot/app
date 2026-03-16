@@ -453,7 +453,7 @@
 					>
 						<DropdownMenu.Item
 							class="cursor-pointer"
-							onclick={() => goto(`/profile/${user?.id}`)}
+							onclick={() => goto(`/profile`)}
 						>
 							<UserIcon />
 							Profile

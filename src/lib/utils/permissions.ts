@@ -1,5 +1,25 @@
 import { userPermissions, userTypeEnum } from '$lib/enums';
 
+export function getRoleBadgeVariant(
+	type: string,
+): 'default' | 'secondary' | 'destructive' | 'outline' {
+	switch (type) {
+		case 'student':
+			return 'default';
+		case 'teacher':
+			return 'secondary';
+		case 'schoolAdmin':
+		case 'principal':
+			return 'destructive';
+		default:
+			return 'outline';
+	}
+}
+
+export function formatUserType(type: string): string {
+	return type.charAt(0).toUpperCase() + type.slice(1);
+}
+
 export function getPermissions(userType: userTypeEnum | undefined): string[] {
 	if (!userType) {
 		return [];
