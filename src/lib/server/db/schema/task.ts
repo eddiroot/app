@@ -1,4 +1,5 @@
 import {
+	boolean,
 	doublePrecision,
 	integer,
 	jsonb,
@@ -14,13 +15,17 @@ import {
 	taskBlockTypeEnum,
 	taskStatusEnum,
 	taskTypeEnum,
-	whiteboardObjectTypeEnum,
 } from '../../../enums';
 import { curriculumItem } from './curriculum';
 import { resource } from './resource';
 import { subjectOffering, subjectOfferingClass } from './subject';
 import { user } from './user';
-import { enumToPgEnum, essentials, standardTimestamp } from './utils';
+import {
+	enumToPgEnum,
+	essentials,
+	standardTimestamp,
+	timestamps,
+} from './utils';
 
 export const taskSchema = pgSchema('task');
 
@@ -222,29 +227,27 @@ export const rubricCellFeedback = taskSchema.table('rubric_cell_feedback', {
 
 export type RubricCellFeedback = typeof rubricCellFeedback.$inferSelect;
 
-export const whiteboard = taskSchema.table('wb', {
-	...essentials,
-	title: text(),
-	taskId: integer()
+export const whiteboard = taskSchema.table('whiteboard', {
+	id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
+	taskBlockId: integer('task_block_id')
 		.notNull()
-		.references(() => task.id, { onDelete: 'cascade' }),
+		.unique()
+		.references(() => taskBlock.id, { onDelete: 'cascade' }),
+	title: text('title'),
+	isLocked: boolean('is_locked').notNull().default(false),
+	...timestamps,
 });
 
 export type Whiteboard = typeof whiteboard.$inferSelect;
 
-export const whiteboardObjectTypeEnumPg = taskSchema.enum(
-	'enum_whiteboard_object_type',
-	enumToPgEnum(whiteboardObjectTypeEnum),
-);
-
-export const whiteboardObject = taskSchema.table('wb_obj', {
-	...essentials,
-	whiteboardId: integer()
+export const whiteboardObject = taskSchema.table('whiteboard_object', {
+	id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
+	whiteboardId: integer('whiteboard_id')
 		.notNull()
 		.references(() => whiteboard.id, { onDelete: 'cascade' }),
-	objectId: text().notNull().unique(),
-	objectType: whiteboardObjectTypeEnumPg().notNull(),
-	objectData: jsonb().notNull(),
+	objectId: text('object_id').notNull().unique(),
+	objectData: jsonb('object_data').notNull(),
+	...timestamps,
 });
 
 export type WhiteboardObject = typeof whiteboardObject.$inferSelect;
