@@ -10,6 +10,7 @@
 	import * as Select from '$lib/components/ui/select/index.js';
 	import { yearLevelEnum } from '$lib/enums.js';
 	import { convertToFullName } from '$lib/utils';
+	import InfoIcon from '@lucide/svelte/icons/info';
 	import PencilIcon from '@lucide/svelte/icons/pencil';
 	import PlusIcon from '@lucide/svelte/icons/plus';
 	import Trash2Icon from '@lucide/svelte/icons/trash-2';
@@ -79,7 +80,7 @@
 	);
 
 	function updateActivitiesForYearLevel(yearLevel: string) {
-		selectedYearLevel = yearLevel as any;
+		selectedYearLevel = yearLevel as yearLevelEnum;
 	}
 
 	function handleEditActivity(id: number) {
@@ -129,10 +130,15 @@
 	}
 
 	const yearLevelOptions = $derived(
-		data.yearLevels.map((yearLevel) => ({
-			value: yearLevel.id.toString(),
-			label: yearLevel.code,
-		})),
+		data.yearLevels
+			.map((yearLevel) => ({
+				value: yearLevel.id.toString(),
+				label: yearLevel.code,
+			}))
+			.filter(
+				(option, index, self) =>
+					index === self.findIndex((o) => o.value === option.value),
+			),
 	);
 
 	const groupOptions = $derived(
@@ -157,42 +163,45 @@
 	);
 </script>
 
-<div class="mb-4 flex items-start justify-between">
-	<Dialog.Root>
-		<Dialog.Trigger>Info Dialog</Dialog.Trigger>
-		<Dialog.Content class="sm:max-h-[1000px] sm:max-w-[1000px]">
-			<Dialog.Header>
-				<Dialog.Title>Page Information</Dialog.Title>
-				<Dialog.Description>
-					Important information about managing students and groups in this
-					timetable:
-				</Dialog.Description>
-			</Dialog.Header>
-			<div class="grid gap-4 py-4">
-				<div class="grid gap-2">
-					<Label for="page-info">Information</Label>
-					<p
-						class="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring min-h-[200px] w-full rounded-md border px-3 py-2 text-sm focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
-						placeholder="Type important information about this page here..."
-					>
-						Important NOTE: When you assign an activity to a Year or Group, FET
-						automatically assigns it to ALL subgroups within that Year or Group.
-						Assign to YEAR when: ✅ All students in the year attend (assembly,
-						exams, grade-level events) ✅ No student differentiation needed
-						Assign to GROUP when: ✅ This is a specific class/course that
-						particular students enrolled in ✅ Most common use case for subject
-						classes ✅ Examples: homeroom classes, elective courses Assign to
-						SUBGROUP when: ✅ You need to split a group further (lab sections,
-						tutoring groups) ✅ Individual student tracking (when each student
-						is a subgroup) ✅ Most granular level of control Subgroups with too
-						few hours (less than 20/week) = probably missing activities
-					</p>
+<div class="flex justify-between">
+	<h1 class="mb-4 text-3xl font-bold">Timetable Activities</h1>
+	<div class="mb-4 flex items-start justify-between">
+		<Dialog.Root>
+			<Dialog.Trigger><InfoIcon /></Dialog.Trigger>
+			<Dialog.Content class="sm:max-h-[1000px] sm:max-w-[1000px]">
+				<Dialog.Header>
+					<Dialog.Title>Page Information</Dialog.Title>
+					<Dialog.Description>
+						Important information about managing students and groups in this
+						timetable:
+					</Dialog.Description>
+				</Dialog.Header>
+				<div class="grid gap-4 py-4">
+					<div class="grid gap-2">
+						<Label for="page-info">Information</Label>
+						<p
+							class="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring min-h-[200px] w-full rounded-md border px-3 py-2 text-sm focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+							placeholder="Type important information about this page here..."
+						>
+							Important NOTE: When you assign an activity to a Year or Group,
+							FET automatically assigns it to ALL subgroups within that Year or
+							Group. Assign to YEAR when: ✅ All students in the year attend
+							(assembly, exams, grade-level events) ✅ No student
+							differentiation needed Assign to GROUP when: ✅ This is a specific
+							class/course that particular students enrolled in ✅ Most common
+							use case for subject classes ✅ Examples: homeroom classes,
+							elective courses Assign to SUBGROUP when: ✅ You need to split a
+							group further (lab sections, tutoring groups) ✅ Individual
+							student tracking (when each student is a subgroup) ✅ Most
+							granular level of control Subgroups with too few hours (less than
+							20/week) = probably missing activities
+						</p>
+					</div>
 				</div>
-			</div>
-		</Dialog.Content>
-	</Dialog.Root>
+			</Dialog.Content>
+		</Dialog.Root>
+	</div>
 </div>
-<h1 class="mb-4 text-3xl font-bold">Timetable Activities</h1>
 <h2 class="mb-4 text-2xl font-bold">Subject Activities</h2>
 
 <!-- Year Level Navigator -->
@@ -205,9 +214,9 @@
 		{selectedYearLevel ?? 'Select year level...'}
 	</Select.Trigger>
 	<Select.Content>
-		{#each data.yearLevels as yearLevel}
-			<Select.Item value={yearLevel.code}>
-				{yearLevel.code}
+		{#each yearLevelOptions as yearLevel (yearLevel.value)}
+			<Select.Item value={yearLevel.label}>
+				{yearLevel.label}
 			</Select.Item>
 		{/each}
 	</Select.Content>
@@ -227,7 +236,7 @@
 	<input type="hidden" name="yearLevel" value={selectedYearLevel} />
 	<div class="mb-8 space-y-4">
 		<Accordion.Root type="single" class="w-full">
-			{#each currentSubjectOfferings as subjectAndOffering}
+			{#each currentSubjectOfferings as subjectAndOffering (subjectAndOffering.subjectOffering.id)}
 				<Accordion.Item value="subject-{subjectAndOffering.subjectOffering.id}">
 					<Accordion.Trigger class="w-full">
 						<div class="flex w-full items-center justify-between">
@@ -251,7 +260,7 @@
 							<div class="mb-4">
 								<h4 class="mb-3 font-medium">Existing Activities</h4>
 								<div class="grid gap-3">
-									{#each data.activitiesBySubjectOfferingId[subjectAndOffering.subjectOffering.id] as activity}
+									{#each data.activitiesBySubjectOfferingId[subjectAndOffering.subjectOffering.id] as activity (activity.id)}
 										<div class="bg-background rounded-lg border p-4">
 											<div class="mb-3 flex items-start justify-between">
 												<div class="flex-1">
@@ -276,7 +285,7 @@
 																Teachers:
 															</span>
 															<div class="flex flex-wrap gap-1">
-																{#each activity.teacherIds as teacherId}
+																{#each activity.teacherIds as teacherId (teacherId)}
 																	{@const teacher = data.teachers.find(
 																		(t) => t.id === teacherId,
 																	)}
@@ -303,7 +312,7 @@
 																Year Levels:
 															</span>
 															<div class="flex flex-wrap gap-1">
-																{#each activity.yearLevels as yearLevel}
+																{#each activity.yearLevels as yearLevel (yearLevel.yearLevelId)}
 																	<Badge variant="outline" class="text-xs">
 																		{yearLevel}
 																	</Badge>
@@ -321,7 +330,7 @@
 																Groups:
 															</span>
 															<div class="flex flex-wrap gap-1">
-																{#each activity.groupIds as groupId}
+																{#each activity.groupIds as groupId (groupId)}
 																	{@const group = data.groups.find(
 																		(g) => g.id.toString() === groupId,
 																	)}
@@ -344,7 +353,7 @@
 																Students:
 															</span>
 															<div class="flex flex-wrap gap-1">
-																{#each activity.studentIds as studentId}
+																{#each activity.studentIds as studentId (studentId)}
 																	{@const student = data.students.find(
 																		(s) => s.id === studentId,
 																	)}
@@ -371,7 +380,7 @@
 																Preferred Rooms:
 															</span>
 															<div class="flex flex-wrap gap-1">
-																{#each activity.spaceIds as locationId}
+																{#each activity.spaceIds as locationId (locationId)}
 																	{@const space = data.spaces.find(
 																		(s) => s.id.toString() === locationId,
 																	)}
@@ -483,14 +492,14 @@
 							{/if}
 						</Select.Trigger>
 						<Select.Content>
-							{#each teacherOptions as option}
+							{#each teacherOptions as option (option.value)}
 								<Select.Item value={option.value}>
 									{option.label}
 								</Select.Item>
 							{/each}
 						</Select.Content>
 					</Select.Root>
-					{#each $createFormData.teacherIds || [] as teacherId}
+					{#each $createFormData.teacherIds || [] as teacherId (teacherId)}
 						<input type="hidden" name="teacherIds" value={teacherId} />
 					{/each}
 					<p class="text-muted-foreground text-sm">
@@ -556,14 +565,14 @@
 							{/if}
 						</Select.Trigger>
 						<Select.Content>
-							{#each yearLevelOptions as option}
+							{#each yearLevelOptions as option (option.value)}
 								<Select.Item value={option.value.toString()}>
 									{option.label}
 								</Select.Item>
 							{/each}
 						</Select.Content>
 					</Select.Root>
-					{#each $createFormData.yearLevelIds || [] as yearLevel}
+					{#each $createFormData.yearLevelIds || [] as yearLevel (yearLevel)}
 						<input type="hidden" name="yearLevelIds" value={yearLevel} />
 					{/each}
 					<p class="text-muted-foreground text-sm">
@@ -591,14 +600,14 @@
 							{/if}
 						</Select.Trigger>
 						<Select.Content>
-							{#each groupOptions as option}
+							{#each groupOptions as option (option.value)}
 								<Select.Item value={option.value}>
 									{option.label}
 								</Select.Item>
 							{/each}
 						</Select.Content>
 					</Select.Root>
-					{#each $createFormData.groupIds || [] as groupId}
+					{#each $createFormData.groupIds || [] as groupId (groupId)}
 						<input type="hidden" name="groupIds" value={groupId} />
 					{/each}
 					<p class="text-muted-foreground text-sm">
@@ -626,14 +635,14 @@
 							{/if}
 						</Select.Trigger>
 						<Select.Content>
-							{#each studentOptions as option}
+							{#each studentOptions as option (option.value)}
 								<Select.Item value={option.value}>
 									{option.label}
 								</Select.Item>
 							{/each}
 						</Select.Content>
 					</Select.Root>
-					{#each $createFormData.studentIds || [] as studentId}
+					{#each $createFormData.studentIds || [] as studentId (studentId)}
 						<input type="hidden" name="studentIds" value={studentId} />
 					{/each}
 					<p class="text-muted-foreground text-sm">
@@ -660,14 +669,14 @@
 							{/if}
 						</Select.Trigger>
 						<Select.Content>
-							{#each spaceOptions as option}
+							{#each spaceOptions as option (option.value)}
 								<Select.Item value={option.value}>
 									{option.label}
 								</Select.Item>
 							{/each}
 						</Select.Content>
 					</Select.Root>
-					{#each $createFormData.spaceIds || [] as locationId}
+					{#each $createFormData.spaceIds || [] as locationId (locationId)}
 						<input type="hidden" name="spaceIds" value={locationId} />
 					{/each}
 					<p class="text-muted-foreground text-sm">
@@ -727,14 +736,14 @@
 							{/if}
 						</Select.Trigger>
 						<Select.Content>
-							{#each teacherOptions as option}
+							{#each teacherOptions as option (option.value)}
 								<Select.Item value={option.value}>
 									{option.label}
 								</Select.Item>
 							{/each}
 						</Select.Content>
 					</Select.Root>
-					{#each $editFormData.teacherIds || [] as teacherId}
+					{#each $editFormData.teacherIds || [] as teacherId (teacherId)}
 						<input type="hidden" name="teacherIds" value={teacherId} />
 					{/each}
 					<p class="text-muted-foreground text-sm">
@@ -797,14 +806,14 @@
 							{/if}
 						</Select.Trigger>
 						<Select.Content>
-							{#each yearLevelOptions as option}
+							{#each yearLevelOptions as option (option.value)}
 								<Select.Item value={option.value.toString()}>
 									{option.label}
 								</Select.Item>
 							{/each}
 						</Select.Content>
 					</Select.Root>
-					{#each $editFormData.yearLevelIds || [] as yearLevel}
+					{#each $editFormData.yearLevelIds || [] as yearLevel (yearLevel)}
 						<input type="hidden" name="yearLevelIds" value={yearLevel} />
 					{/each}
 					<p class="text-muted-foreground text-sm">
@@ -831,14 +840,14 @@
 							{/if}
 						</Select.Trigger>
 						<Select.Content>
-							{#each groupOptions as option}
+							{#each groupOptions as option (option.value)}
 								<Select.Item value={option.value}>
 									{option.label}
 								</Select.Item>
 							{/each}
 						</Select.Content>
 					</Select.Root>
-					{#each $editFormData.groupIds || [] as groupId}
+					{#each $editFormData.groupIds || [] as groupId (groupId)}
 						<input type="hidden" name="groupIds" value={groupId} />
 					{/each}
 					<p class="text-muted-foreground text-sm">
@@ -867,14 +876,14 @@
 							{/if}
 						</Select.Trigger>
 						<Select.Content>
-							{#each studentOptions as option}
+							{#each studentOptions as option (option.value)}
 								<Select.Item value={option.value}>
 									{option.label}
 								</Select.Item>
 							{/each}
 						</Select.Content>
 					</Select.Root>
-					{#each $editFormData.studentIds || [] as studentId}
+					{#each $editFormData.studentIds || [] as studentId (studentId)}
 						<input type="hidden" name="studentIds" value={studentId} />
 					{/each}
 					<p class="text-muted-foreground text-sm">
@@ -901,14 +910,14 @@
 							{/if}
 						</Select.Trigger>
 						<Select.Content>
-							{#each spaceOptions as option}
+							{#each spaceOptions as option (option.value)}
 								<Select.Item value={option.value}>
 									{option.label}
 								</Select.Item>
 							{/each}
 						</Select.Content>
 					</Select.Root>
-					{#each $editFormData.spaceIds || [] as locationId}
+					{#each $editFormData.spaceIds || [] as locationId (locationId)}
 						<input type="hidden" name="spaceIds" value={locationId} />
 					{/each}
 					<p class="text-muted-foreground text-sm">

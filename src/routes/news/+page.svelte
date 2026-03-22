@@ -516,7 +516,7 @@
 							</Select.Trigger>
 							<Select.Content>
 								<Select.Item value="all">All categories</Select.Item>
-								{#each availableCategories as category}
+								{#each availableCategories as category (category.id)}
 									<Select.Item value={category.id.toString()}>
 										<div class="flex items-center gap-2">
 											{#if category.color}
@@ -601,7 +601,6 @@
 				<div class="grid gap-4">
 					{#each pinnedNews as newsItem (newsItem.news.id)}
 						{@const tags = parseTags(newsItem.news.tags)}
-						{@const contentText = getContentText(newsItem.news.content)}
 						{@const contentHTML = renderContentHTML(newsItem.news.content)}
 						<Card
 							class="relative transition-all duration-200 hover:shadow-md"

@@ -1,6 +1,7 @@
 import { subjectThreadTypeEnum, userTypeEnum } from '$lib/enums';
 import { createSubjectThread } from '$lib/server/db/service';
 import { redirect } from '@sveltejs/kit';
+import DOMPurify from 'dompurify';
 import { fail, superValidate } from 'sveltekit-superforms';
 import { zod4 } from 'sveltekit-superforms/adapters';
 import { formSchema } from './schema';
@@ -47,12 +48,13 @@ export const actions = {
 
 		let newThread;
 		try {
+			const sanitisedContent = DOMPurify.sanitize(form.data.content);
 			newThread = await createSubjectThread({
 				subjectOfferingId: subjectOfferingIdInt,
 				userId: user.id,
 				title: form.data.title,
 				type: form.data.type,
-				content: form.data.content,
+				content: sanitisedContent,
 				isAnonymous: form.data.isAnonymous,
 			});
 		} catch (error) {

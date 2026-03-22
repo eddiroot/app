@@ -48,6 +48,7 @@
 <div
 	class="grid h-full grid-cols-1 gap-6 overflow-y-auto p-8 xl:grid-cols-[1fr_1fr_1fr]"
 >
+	<!-- Your Day -->
 	<Card.Root class="h-full overflow-hidden shadow-none">
 		<Card.Header>
 			<Card.Title class="text-xl">Your Day</Card.Title>
@@ -143,7 +144,7 @@
 								href="/news#{newsItem.news.id}"
 								class="hover:bg-muted/50 block rounded-lg transition-colors"
 							>
-								<div class="border-border relative rounded-lg border-2 p-4">
+								<div class="border-border relative rounded-lg border p-4">
 									{#if newsItem.news.isPinned}
 										<div class="absolute top-2 right-2">
 											<Pin class="text-primary fill-primary/20 h-3 w-3" />
@@ -158,12 +159,7 @@
 
 											<div class="mt-1 flex flex-wrap items-center gap-2">
 												{#if newsItem.category}
-													<Badge
-														variant="secondary"
-														class="text-xs"
-														style="background-color: {newsItem.category.color ||
-															'var(--secondary)'}; color: var(--secondary-foreground);"
-													>
+													<Badge variant="secondary" class="text-xs">
 														{newsItem.category.name}
 													</Badge>
 												{/if}

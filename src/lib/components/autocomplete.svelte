@@ -19,6 +19,7 @@
 		emptyText?: string;
 		onselect?: (option: Option) => void;
 		disabled?: boolean;
+		closeOnSelect?: boolean;
 		class?: string;
 	}
 
@@ -30,6 +31,7 @@
 		emptyText = 'No results found.',
 		onselect,
 		disabled = false,
+		closeOnSelect = true,
 		class: className = '',
 	}: Props = $props();
 
@@ -53,7 +55,9 @@
 	function handleSelect(selectedOption: Option) {
 		value = selectedOption.value;
 		onselect?.(selectedOption);
-		open = false;
+		if (closeOnSelect) {
+			open = false;
+		}
 		searchValue = '';
 	}
 

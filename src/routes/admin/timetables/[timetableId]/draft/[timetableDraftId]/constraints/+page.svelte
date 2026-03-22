@@ -193,11 +193,6 @@
 		<div class="text-muted-foreground text-sm">
 			Timetable ID: {timetableId}
 		</div>
-		<div>
-			<Button href="/admin/constraintinfo" variant="outline"
-				>Info & Recommendations</Button
-			>
-		</div>
 	</div>
 
 	<!-- 2x2 Grid Layout -->
@@ -220,7 +215,7 @@
 						</p>
 					{:else}
 						<div class="space-y-3">
-							{#each currentTimeConstraints as constraint}
+							{#each currentTimeConstraints as constraint (constraint.tt_draft_con.id)}
 								<div
 									class="flex items-center justify-between rounded-lg border p-3"
 								>
@@ -292,7 +287,7 @@
 						</p>
 					{:else}
 						<div class="space-y-3">
-							{#each currentSpaceConstraints as constraint}
+							{#each currentSpaceConstraints as constraint (constraint.tt_draft_con.id)}
 								<div
 									class="flex items-center justify-between rounded-lg border p-3"
 								>
@@ -366,7 +361,7 @@
 						</p>
 					{:else}
 						<div class="space-y-3">
-							{#each availableTimeConstraints as constraint}
+							{#each availableTimeConstraints as constraint (constraint.id)}
 								<div class="space-y-3 rounded-lg border p-4">
 									<div>
 										<div class="flex items-center justify-between">
@@ -417,7 +412,7 @@
 						</p>
 					{:else}
 						<div class="space-y-3">
-							{#each availableSpaceConstraints as constraint}
+							{#each availableSpaceConstraints as constraint (constraint.id)}
 								<div class="space-y-3 rounded-lg border p-4">
 									<div>
 										<div class="flex items-center justify-between">

@@ -1,4 +1,4 @@
-import { SQL, sql } from 'drizzle-orm';
+import { sql } from 'drizzle-orm';
 import {
 	boolean,
 	index,
@@ -111,7 +111,7 @@ export const timetablePeriod = timetableSchema.table(
 		start: standardTime('start').notNull(),
 		end: standardTime('end').notNull(),
 		duration: integer('duration').generatedAlwaysAs(
-			(): SQL => sql`EXTRACT(EPOCH FROM ("end" - "start")) / 60`,
+			() => sql`EXTRACT(EPOCH FROM ("end" - "start")) / 60`,
 		),
 		timetableDraftId: integer('tt_draft_id')
 			.notNull()

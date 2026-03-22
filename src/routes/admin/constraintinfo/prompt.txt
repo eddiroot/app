@@ -1,5 +1,0 @@
-Problem:
-
-For the timetable generation for schools there are many constraints that need to be handled
-
-https://www.timetabling.de/manual/FET-manual.en.html#id_23

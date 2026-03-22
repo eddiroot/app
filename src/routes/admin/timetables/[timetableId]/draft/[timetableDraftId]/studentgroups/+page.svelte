@@ -8,6 +8,7 @@
 	import * as Card from '$lib/components/ui/card/index.js';
 	import * as Dialog from '$lib/components/ui/dialog/index.js';
 	import { Input } from '$lib/components/ui/input';
+	import * as Item from '$lib/components/ui/item';
 	import { Label } from '$lib/components/ui/label';
 	import * as Select from '$lib/components/ui/select/index.js';
 	import { convertToFullName } from '$lib/utils';
@@ -200,7 +201,7 @@
 					{yearLevel ? yearLevel.value : 'Select a year level'}
 				</Select.Trigger>
 				<Select.Content>
-					{#each yearLevels() as yl}
+					{#each yearLevels() as yl (yl.id)}
 						<Select.Item value={yl.id.toString()} label={yl.value}>
 							{yl.value}
 						</Select.Item>
@@ -221,7 +222,7 @@
 				/>
 				<Button type="submit" variant="secondary" disabled={!yearLevel}>
 					<WandSparkles />
-					Auto Create Groups
+					Create Subject Groups
 				</Button>
 			</form>
 			<Button
@@ -237,17 +238,69 @@
 	{#if yearLevel}
 		{#if filteredGroups().length > 0}
 			<Accordion.Root type="single" class="w-full">
-				{#each filteredGroups() as group}
+				{#each filteredGroups() as group (group.id)}
 					{@const groupStudents = data.studentsByGroupId[group.id] || []}
 					<Accordion.Item value="group-{group.id}">
 						<Accordion.Trigger class="w-full hover:no-underline">
-							<div class="flex w-full items-center justify-between pr-4">
-								<div class="flex items-center gap-4">
-									<h3 class="text-lg font-semibold">{group.name}</h3>
-									<Badge variant="outline" class="text-xs">
-										{groupStudents.length} students
-									</Badge>
+							<div class="flex items-center gap-4">
+								<h3 class="text-lg font-semibold">{group.name}</h3>
+								<Badge variant="outline" class="text-xs">
+									{groupStudents.length} students
+								</Badge>
+							</div>
+						</Accordion.Trigger>
+						<Accordion.Content class="space-y-2">
+							<!-- Add Student Section -->
+							<div class="flex-1">
+								{#key group.id}
+									<Autocomplete
+										options={getStudentOptionsForGroup(group.id)}
+										placeholder="Add student to group..."
+										searchPlaceholder="Search students..."
+										emptyText="No available students found."
+										onselect={(option) =>
+											addStudentToGroup(group.id, option.value as string)}
+										closeOnSelect={false}
+									/>
+								{/key}
+							</div>
+
+							<!-- Students List -->
+							{#if groupStudents.length > 0}
+								<div class="space-y-2">
+									{#each groupStudents as student (student.id)}
+										<Item.Root variant="outline">
+											<Item.Content>
+												<Item.Title
+													>{convertToFullName(
+														student.firstName,
+														student.middleName,
+														student.lastName,
+													)}</Item.Title
+												>
+												<Item.Description>{student.email}</Item.Description>
+											</Item.Content>
+											<Item.Actions>
+												<Button
+													variant="destructive"
+													size="sm"
+													onclick={() =>
+														removeStudentFromGroup(group.id, student.id)}
+												>
+													<Trash2Icon class="h-4 w-4" />
+												</Button>
+											</Item.Actions>
+										</Item.Root>
+									{/each}
 								</div>
+							{:else}
+								<div class="text-muted-foreground text-center text-sm">
+									No students in this group yet.
+								</div>
+							{/if}
+
+							<!-- Delete Group Button -->
+							<div class="flex justify-end">
 								<Button
 									variant="destructive"
 									size="sm"
@@ -256,58 +309,9 @@
 										deleteGroup(group.id);
 									}}
 								>
-									<Trash2Icon />
+									Delete Group
 								</Button>
 							</div>
-						</Accordion.Trigger>
-
-						<Accordion.Content>
-							<!-- Add Student Section -->
-							<div class="mb-4 flex gap-2">
-								<div class="flex-1">
-									{#key group.id}
-										<Autocomplete
-											options={getStudentOptionsForGroup(group.id)}
-											placeholder="Add student to group..."
-											searchPlaceholder="Search students..."
-											emptyText="No available students found."
-											onselect={(option) =>
-												addStudentToGroup(group.id, option.value as string)}
-										/>
-									{/key}
-								</div>
-							</div>
-
-							<!-- Students List -->
-							{#if groupStudents.length > 0}
-								<div class="space-y-2">
-									{#each groupStudents as student}
-										<div
-											class="bg-background flex items-center justify-between rounded-lg border p-3"
-										>
-											<span class="font-medium">
-												{convertToFullName(
-													student.firstName,
-													student.middleName,
-													student.lastName,
-												)}
-											</span>
-											<Button
-												variant="ghost"
-												size="sm"
-												onclick={() =>
-													removeStudentFromGroup(group.id, student.id)}
-											>
-												<Trash2Icon class="h-4 w-4" />
-											</Button>
-										</div>
-									{/each}
-								</div>
-							{:else}
-								<div class="text-muted-foreground text-center text-sm">
-									No students in this group yet.
-								</div>
-							{/if}
 						</Accordion.Content>
 					</Accordion.Item>
 				{/each}

@@ -8,13 +8,7 @@ import { error } from '@sveltejs/kit';
 
 export const load = async ({ locals: { user } }) => {
 	if (!user) {
-		return {
-			user: null,
-			school: null,
-			subjects: [],
-			classes: [],
-			hasInterviewSlots: false,
-		};
+		return { user: null, school: null, subjects: [], classes: [] };
 	}
 
 	const subjects = await getSubjectsWithClassesByUserId(user.id);
