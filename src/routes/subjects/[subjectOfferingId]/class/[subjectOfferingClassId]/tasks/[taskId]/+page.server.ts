@@ -11,7 +11,9 @@ import {
 	getSubjectOfferingClassTaskByTaskId,
 	getTaskBlocksByTaskId,
 	getTaskById,
+	getWhiteboardByTaskBlockId,
 	startQuizSession,
+	toggleWhiteboardLock,
 	updateSubjectOfferingClassTaskQuizSettings,
 	updateSubjectOfferingClassTaskStatus,
 	upsertClassTaskResponse,
@@ -85,6 +87,19 @@ export const load = async ({
 
 	const blocks = await getTaskBlocksByTaskId(taskIdInt);
 
+	// Load whiteboards for all whiteboard blocks
+	const whiteboardMap = new Map<number, number>(); // blockId -> whiteboardId
+	const whiteboardLockStates = new Map<number, boolean>(); // whiteboardId -> isLocked
+	for (const block of blocks) {
+		if (block.type === 'whiteboard') {
+			const whiteboard = await getWhiteboardByTaskBlockId(block.id);
+			if (whiteboard) {
+				whiteboardMap.set(block.id, whiteboard.id);
+				whiteboardLockStates.set(whiteboard.id, whiteboard.isLocked);
+			}
+		}
+	}
+
 	const [statusForm, quizSettingsForm, startQuizForm] = await Promise.all([
 		superValidate({ status: classTask.status }, zod4(statusFormSchema)),
 		superValidate(
@@ -118,6 +133,8 @@ export const load = async ({
 			classTask,
 			blocks,
 			blockResponses,
+			whiteboardMap: Object.fromEntries(whiteboardMap),
+			whiteboardLockStates: Object.fromEntries(whiteboardLockStates),
 			subjectOfferingId,
 			subjectOfferingClassId,
 			user,
@@ -139,6 +156,8 @@ export const load = async ({
 		blocks,
 		responses,
 		groupedBlockResponses,
+		whiteboardMap: Object.fromEntries(whiteboardMap),
+		whiteboardLockStates: Object.fromEntries(whiteboardLockStates),
 		subjectOfferingId,
 		subjectOfferingClassId,
 		user,
@@ -282,6 +301,36 @@ export const actions = {
 		} catch (error) {
 			console.error('Error starting quiz session:', error);
 			return fail(500, { form, message: 'Failed to start quiz session' });
+		}
+	},
+
+	toggleWhiteboardLock: async ({ request, locals: { security } }) => {
+		const user = security.isAuthenticated().getUser();
+
+		if (user.type !== userTypeEnum.teacher) {
+			return fail(403, {
+				message: 'Only teachers can lock/unlock whiteboards',
+			});
+		}
+
+		const formData = await request.formData();
+		const whiteboardIdStr = formData.get('whiteboardId');
+
+		if (!whiteboardIdStr) {
+			return fail(400, { message: 'Whiteboard ID is required' });
+		}
+
+		const whiteboardId = parseInt(whiteboardIdStr.toString(), 10);
+		if (isNaN(whiteboardId)) {
+			return fail(400, { message: 'Invalid whiteboard ID' });
+		}
+
+		try {
+			const whiteboard = await toggleWhiteboardLock(whiteboardId);
+			return { type: 'success', data: { isLocked: whiteboard.isLocked } };
+		} catch (error) {
+			console.error('Error toggling whiteboard lock:', error);
+			return fail(500, { message: 'Failed to toggle whiteboard lock' });
 		}
 	},
 

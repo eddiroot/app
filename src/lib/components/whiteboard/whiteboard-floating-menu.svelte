@@ -5,14 +5,23 @@
 	import * as Select from '$lib/components/ui/select/index.js';
 	import { Separator } from '$lib/components/ui/separator/index.js';
 	import { Slider } from '$lib/components/ui/slider/index.js';
+	import ArrowDownIcon from '@lucide/svelte/icons/arrow-down';
+	import ArrowDownToLineIcon from '@lucide/svelte/icons/arrow-down-to-line';
+	import ArrowUpIcon from '@lucide/svelte/icons/arrow-up';
+	import ArrowUpToLineIcon from '@lucide/svelte/icons/arrow-up-to-line';
+	import CheckIcon from '@lucide/svelte/icons/check';
+	import CropIcon from '@lucide/svelte/icons/crop';
 	import Heading1Icon from '@lucide/svelte/icons/heading-1';
 	import Heading2Icon from '@lucide/svelte/icons/heading-2';
 	import Heading3Icon from '@lucide/svelte/icons/heading-3';
 	import Heading4Icon from '@lucide/svelte/icons/heading-4';
+	import LayersIcon from '@lucide/svelte/icons/layers';
 	import MinusIcon from '@lucide/svelte/icons/minus';
 	import PaletteIcon from '@lucide/svelte/icons/palette';
 	import SlidersIcon from '@lucide/svelte/icons/sliders';
 	import TypeIcon from '@lucide/svelte/icons/type';
+	import XIcon from '@lucide/svelte/icons/x';
+	import WhiteboardLayeringControls from './whiteboard-layering-controls.svelte';
 
 	interface Props {
 		selectedTool: string;
@@ -20,8 +29,16 @@
 		onTextOptionsChange?: (options: TextOptions) => void;
 		onShapeOptionsChange?: (options: ShapeOptions) => void;
 		onDrawOptionsChange?: (options: DrawOptions) => void;
-		onLineArrowOptionsChange?: (options: LineArrowOptions) => void;
+		onLineOptionsChange?: (options: LineOptions) => void;
 		onCanvasInteraction?: () => void;
+		onBringToFront?: () => void;
+		onSendToBack?: () => void;
+		onMoveForward?: () => void;
+		onMoveBackward?: () => void;
+		onStartCrop?: () => void;
+		onApplyCrop?: () => void;
+		onCancelCrop?: () => void;
+		isCropping?: boolean;
 	}
 
 	interface TextOptions {
@@ -49,7 +66,7 @@
 		opacity: number;
 	}
 
-	interface LineArrowOptions {
+	interface LineOptions {
 		strokeWidth: number;
 		strokeColour: string;
 		strokeDashArray: number[];
@@ -62,8 +79,16 @@
 		onTextOptionsChange,
 		onShapeOptionsChange,
 		onDrawOptionsChange,
-		onLineArrowOptionsChange,
+		onLineOptionsChange,
 		onCanvasInteraction,
+		onBringToFront,
+		onSendToBack,
+		onMoveForward,
+		onMoveBackward,
+		onStartCrop,
+		onApplyCrop,
+		onCancelCrop,
+		isCropping = false,
 	}: Props = $props();
 
 	// Track which menu panel to show (independent of selectedTool for editing existing objects)
@@ -100,7 +125,7 @@
 		opacity: 1,
 	});
 
-	let lineArrowOptions = $state<LineArrowOptions>({
+	let lineArrowOptions = $state<LineOptions>({
 		strokeWidth: 2,
 		strokeColour: '#1E1E1E',
 		strokeDashArray: [],
@@ -287,7 +312,7 @@
 		setTimeout(() => (isSyncingFromObject = false), 0);
 	}
 
-	export function updateLineArrowOptions(options: Partial<LineArrowOptions>) {
+	export function updateLineOptions(options: Partial<LineOptions>) {
 		isSyncingFromObject = true;
 		lineArrowOptions = { ...lineArrowOptions, ...options };
 		if (options.strokeWidth !== undefined)
@@ -344,9 +369,19 @@
 		if (
 			!isSyncingFromObject &&
 			(activeMenuPanel === 'line' || activeMenuPanel === 'arrow') &&
-			onLineArrowOptionsChange
+			onLineOptionsChange
 		) {
-			onLineArrowOptionsChange(lineArrowOptions);
+			onLineOptionsChange(lineArrowOptions);
+		}
+	});
+
+	$effect(() => {
+		if (
+			!isSyncingFromObject &&
+			activeMenuPanel === 'image' &&
+			onShapeOptionsChange
+		) {
+			onShapeOptionsChange(shapeOptions);
 		}
 	});
 
@@ -358,7 +393,7 @@
 				activeMenuPanel === 'draw' ||
 				activeMenuPanel === 'eraser' ||
 				activeMenuPanel === 'line' ||
-				activeMenuPanel === 'arrow' ||
+				activeMenuPanel === 'select' ||
 				activeMenuPanel === 'image'),
 	);
 </script>
@@ -368,60 +403,60 @@
 		class="absolute top-1/2 left-8 z-20 flex -translate-y-1/2 transform gap-2"
 	>
 		<Card.Root
-			class="bg-background/20 border-border/50 max-w-80 min-w-64 backdrop-blur-sm"
+			class="bg-background/20 border-border/50 max-w-64 min-w-56 backdrop-blur-sm"
 		>
 			{#if activeMenuPanel === 'text'}
-				<Card.Header class="pb-3">
-					<Card.Title class="flex items-center gap-2 text-sm">
-						<TypeIcon />
+				<Card.Header class="pb-0">
+					<Card.Title class="flex items-center gap-1.5 text-xs">
+						<TypeIcon class="h-3.5 w-3.5" />
 						Text Options
 					</Card.Title>
 				</Card.Header>
-				<Card.Content class="space-y-4">
+				<Card.Content class="space-y-3 pt-2 pb-3">
 					<!-- Font Size -->
-					<div class="space-y-2">
+					<div class="space-y-1.5">
 						<Label class="text-xs font-medium">Font Size</Label>
-						<div class="flex gap-2">
+						<div class="flex gap-1.5">
 							<Button
 								variant={fontSizeValue === 32 ? 'default' : 'outline'}
 								size="sm"
 								onclick={() => (fontSizeValue = 32)}
-								class="flex h-8 flex-1 items-center justify-center"
+								class="flex h-7 flex-1 items-center justify-center"
 							>
-								<Heading1Icon />
+								<Heading1Icon class="h-4 w-4" />
 							</Button>
 							<Button
 								variant={fontSizeValue === 24 ? 'default' : 'outline'}
 								size="sm"
 								onclick={() => (fontSizeValue = 24)}
-								class="flex h-8 flex-1 items-center justify-center"
+								class="flex h-7 flex-1 items-center justify-center"
 							>
-								<Heading2Icon />
+								<Heading2Icon class="h-4 w-4" />
 							</Button>
 							<Button
 								variant={fontSizeValue === 16 ? 'default' : 'outline'}
 								size="sm"
 								onclick={() => (fontSizeValue = 16)}
-								class="flex h-8 flex-1 items-center justify-center"
+								class="flex h-7 flex-1 items-center justify-center"
 							>
-								<Heading3Icon />
+								<Heading3Icon class="h-4 w-4" />
 							</Button>
 							<Button
 								variant={fontSizeValue === 12 ? 'default' : 'outline'}
 								size="sm"
 								onclick={() => (fontSizeValue = 12)}
-								class="flex h-8 flex-1 items-center justify-center"
+								class="flex h-7 flex-1 items-center justify-center"
 							>
-								<Heading4Icon />
+								<Heading4Icon class="h-4 w-4" />
 							</Button>
 						</div>
 					</div>
 
 					<!-- Font Family -->
-					<div class="space-y-2">
+					<div class="space-y-1.5">
 						<Label class="text-xs font-medium">Font Family</Label>
 						<Select.Root type="single" bind:value={textOptions.fontFamily}>
-							<Select.Trigger class="h-8">
+							<Select.Trigger class="h-7 text-xs">
 								{textOptions.fontFamily}
 							</Select.Trigger>
 							<Select.Content>
@@ -433,10 +468,10 @@
 					</div>
 
 					<!-- Font Weight -->
-					<div class="space-y-2">
+					<div class="space-y-1.5">
 						<Label class="text-xs font-medium">Font Weight</Label>
 						<Select.Root type="single" bind:value={textOptions.fontWeight}>
-							<Select.Trigger class="h-8">
+							<Select.Trigger class="h-7 text-xs">
 								{fontWeights.find((w) => w.value === textOptions.fontWeight)
 									?.label || 'Normal'}
 							</Select.Trigger>
@@ -451,12 +486,12 @@
 					<Separator />
 
 					<!-- Text Colour -->
-					<div class="space-y-2">
+					<div class="space-y-1.5">
 						<Label class="text-xs font-medium">Text Colour</Label>
 						<div class="mb-2 flex flex-wrap items-center gap-1">
 							{#each commonColours as colour}
 								<button
-									class="h-10 w-10 rounded-md border-2 p-0.5 transition-colors hover:scale-105 {textOptions.colour ===
+									class="h-8 w-8 rounded-md border-2 p-0.5 transition-colors hover:scale-105 {textOptions.colour ===
 									colour
 										? 'border-primary ring-primary/20 ring-2'
 										: 'border-border hover:border-primary/50'}"
@@ -475,7 +510,7 @@
 
 							<!-- Expanded colours toggle button -->
 							<button
-								class="h-10 w-10 rounded-md border-2 p-0.5 transition-colors hover:scale-105 {showExpandedColours &&
+								class="h-8 w-8 rounded-md border-2 p-0.5 transition-colors hover:scale-105 {showExpandedColours &&
 								expandedColoursFor === 'text'
 									? 'border-primary ring-primary/20 ring-2'
 									: 'border-border hover:border-primary/50'}"
@@ -501,7 +536,7 @@
 					<Separator />
 
 					<!-- Opacity -->
-					<div class="space-y-2">
+					<div class="space-y-1.5">
 						<Label class="text-xs font-medium">Opacity</Label>
 						<div class="flex items-center gap-3">
 							<Slider
@@ -517,24 +552,34 @@
 							>
 						</div>
 					</div>
+
+					<Separator />
+
+					<!-- Layering Controls -->
+					<WhiteboardLayeringControls
+						{onBringToFront}
+						{onSendToBack}
+						{onMoveForward}
+						{onMoveBackward}
+					/>
 				</Card.Content>
 			{:else if activeMenuPanel === 'shapes'}
-				<Card.Header class="pb-3">
-					<Card.Title class="flex items-center gap-2 text-sm">
-						<SlidersIcon />
+				<Card.Header class="pb-0">
+					<Card.Title class="flex items-center gap-1.5 text-xs">
+						<SlidersIcon class="h-3.5 w-3.5" />
 						Shape Options
 					</Card.Title>
 				</Card.Header>
-				<Card.Content class="space-y-4">
+				<Card.Content class="space-y-3 pt-2 pb-3">
 					<!-- Stroke Width -->
-					<div class="space-y-2">
+					<div class="space-y-1.5">
 						<Label class="text-xs font-medium">Stroke Width</Label>
-						<div class="flex gap-2">
+						<div class="flex gap-1.5">
 							<Button
 								variant={strokeWidthValue === 1 ? 'default' : 'outline'}
 								size="sm"
 								onclick={() => (strokeWidthValue = 1)}
-								class="flex h-10 w-10 items-center justify-center"
+								class="flex h-8 w-8 items-center justify-center"
 							>
 								<MinusIcon class="h-3 w-3" strokeWidth={1} />
 							</Button>
@@ -542,7 +587,7 @@
 								variant={strokeWidthValue === 2 ? 'default' : 'outline'}
 								size="sm"
 								onclick={() => (strokeWidthValue = 2)}
-								class="flex h-10 w-10 items-center justify-center"
+								class="flex h-8 w-8 items-center justify-center"
 							>
 								<MinusIcon strokeWidth={4} />
 							</Button>
@@ -550,17 +595,17 @@
 								variant={strokeWidthValue === 3 ? 'default' : 'outline'}
 								size="sm"
 								onclick={() => (strokeWidthValue = 3)}
-								class="flex h-10 w-10 items-center justify-center"
+								class="flex h-8 w-8 items-center justify-center"
 							>
-								<MinusIcon class="h-5 w-5" strokeWidth={7} />
+								<MinusIcon class="h-4 w-4" strokeWidth={7} />
 							</Button>
 						</div>
 					</div>
 
 					<!-- Border Style -->
-					<div class="space-y-2">
+					<div class="space-y-1.5">
 						<Label class="text-xs font-medium">Border Style</Label>
-						<div class="flex gap-2">
+						<div class="flex gap-1.5">
 							<Button
 								variant={JSON.stringify(shapeOptions.strokeDashArray) ===
 								JSON.stringify([])
@@ -568,9 +613,9 @@
 									: 'outline'}
 								size="sm"
 								onclick={() => (shapeOptions.strokeDashArray = [])}
-								class="flex h-10 w-10 items-center justify-center"
+								class="flex h-8 w-8 items-center justify-center"
 							>
-								<MinusIcon />
+								<MinusIcon class="h-4 w-4" />
 							</Button>
 							<Button
 								variant={JSON.stringify(shapeOptions.strokeDashArray) ===
@@ -579,7 +624,7 @@
 									: 'outline'}
 								size="sm"
 								onclick={() => (shapeOptions.strokeDashArray = [5, 5])}
-								class="flex h-10 w-10 items-center justify-center"
+								class="flex h-8 w-8 items-center justify-center"
 							>
 								<svg width="16" height="16" viewBox="0 0 16 16">
 									<line
@@ -600,7 +645,7 @@
 									: 'outline'}
 								size="sm"
 								onclick={() => (shapeOptions.strokeDashArray = [2, 2])}
-								class="flex h-10 w-10 items-center justify-center"
+								class="flex h-8 w-8 items-center justify-center"
 							>
 								<svg width="16" height="16" viewBox="0 0 16 16">
 									<line
@@ -620,12 +665,12 @@
 					<Separator />
 
 					<!-- Stroke Colour -->
-					<div class="space-y-2">
+					<div class="space-y-1.5">
 						<Label class="text-xs font-medium">Stroke Colour</Label>
 						<div class="mb-2 flex flex-wrap items-center gap-1">
 							{#each commonColours as colour}
 								<button
-									class="h-10 w-10 rounded-md border-2 p-0.5 transition-colors hover:scale-105 {shapeOptions.strokeColour ===
+									class="h-8 w-8 rounded-md border-2 p-0.5 transition-colors hover:scale-105 {shapeOptions.strokeColour ===
 									colour
 										? 'border-primary ring-primary/20 ring-2'
 										: 'border-border hover:border-primary/50'}"
@@ -644,7 +689,7 @@
 
 							<!-- Expanded colours toggle button -->
 							<button
-								class="h-10 w-10 rounded-md border-2 p-0.5 transition-colors hover:scale-105 {showExpandedColours &&
+								class="h-8 w-8 rounded-md border-2 p-0.5 transition-colors hover:scale-105 {showExpandedColours &&
 								expandedColoursFor === 'stroke'
 									? 'border-primary ring-primary/20 ring-2'
 									: 'border-border hover:border-primary/50'}"
@@ -670,9 +715,9 @@
 					<Separator />
 
 					<!-- Fill Colour -->
-					<div class="space-y-2">
+					<div class="space-y-1.5">
 						<Label class="text-xs font-medium">Fill Colour</Label>
-						<div class="mb-2 flex gap-2">
+						<div class="mb-2 flex gap-1.5">
 							<Button
 								variant={shapeOptions.fillColour === 'transparent'
 									? 'default'
@@ -687,7 +732,7 @@
 						<div class="mb-2 flex flex-wrap items-center gap-1">
 							{#each commonColours as colour}
 								<button
-									class="h-10 w-10 rounded-md border-2 p-0.5 transition-colors hover:scale-105 {shapeOptions.fillColour ===
+									class="h-8 w-8 rounded-md border-2 p-0.5 transition-colors hover:scale-105 {shapeOptions.fillColour ===
 									colour
 										? 'border-primary ring-primary/20 ring-2'
 										: 'border-border hover:border-primary/50'}"
@@ -706,7 +751,7 @@
 
 							<!-- Expanded colours toggle button -->
 							<button
-								class="h-10 w-10 rounded-md border-2 p-0.5 transition-colors hover:scale-105 {showExpandedColours &&
+								class="h-8 w-8 rounded-md border-2 p-0.5 transition-colors hover:scale-105 {showExpandedColours &&
 								expandedColoursFor === 'fill'
 									? 'border-primary ring-primary/20 ring-2'
 									: 'border-border hover:border-primary/50'}"
@@ -732,7 +777,7 @@
 					<Separator />
 
 					<!-- Opacity -->
-					<div class="space-y-2">
+					<div class="space-y-1.5">
 						<Label class="text-xs font-medium">Opacity</Label>
 						<div class="flex items-center gap-3">
 							<Slider
@@ -748,24 +793,34 @@
 							>
 						</div>
 					</div>
+
+					<Separator />
+
+					<!-- Layering Controls -->
+					<WhiteboardLayeringControls
+						{onBringToFront}
+						{onSendToBack}
+						{onMoveForward}
+						{onMoveBackward}
+					/>
 				</Card.Content>
 			{:else if activeMenuPanel === 'draw' || activeMenuPanel === 'eraser'}
-				<Card.Header class="pb-3">
-					<Card.Title class="flex items-center gap-2 text-sm">
-						<PaletteIcon />
+				<Card.Header class="pb-0">
+					<Card.Title class="flex items-center gap-1.5 text-xs">
+						<PaletteIcon class="h-3.5 w-3.5" />
 						Draw Options
 					</Card.Title>
 				</Card.Header>
-				<Card.Content class="space-y-4">
+				<Card.Content class="space-y-3 pt-2 pb-3">
 					<!-- Brush Size -->
-					<div class="space-y-2">
+					<div class="space-y-1.5">
 						<Label class="text-xs font-medium">Brush Size</Label>
-						<div class="flex gap-2">
+						<div class="flex gap-1.5">
 							<Button
 								variant={brushSizeValue === 2 ? 'default' : 'outline'}
 								size="sm"
 								onclick={() => (brushSizeValue = 2)}
-								class="flex h-10 w-10 items-center justify-center"
+								class="flex h-8 w-8 items-center justify-center"
 							>
 								<MinusIcon class="h-3 w-3" strokeWidth={1} />
 							</Button>
@@ -773,7 +828,7 @@
 								variant={brushSizeValue === 6 ? 'default' : 'outline'}
 								size="sm"
 								onclick={() => (brushSizeValue = 6)}
-								class="flex h-10 w-10 items-center justify-center"
+								class="flex h-8 w-8 items-center justify-center"
 							>
 								<MinusIcon strokeWidth={4} />
 							</Button>
@@ -781,9 +836,9 @@
 								variant={brushSizeValue === 12 ? 'default' : 'outline'}
 								size="sm"
 								onclick={() => (brushSizeValue = 12)}
-								class="flex h-10 w-10 items-center justify-center"
+								class="flex h-8 w-8 items-center justify-center"
 							>
-								<MinusIcon class="h-5 w-5" strokeWidth={7} />
+								<MinusIcon class="h-4 w-4" strokeWidth={7} />
 							</Button>
 						</div>
 					</div>
@@ -791,12 +846,12 @@
 					<Separator />
 
 					<!-- Brush Colour -->
-					<div class="space-y-2">
+					<div class="space-y-1.5">
 						<Label class="text-xs font-medium">Brush Colour</Label>
 						<div class="mb-2 flex flex-wrap items-center gap-1">
 							{#each commonColours as colour}
 								<button
-									class="h-10 w-10 rounded-md border-2 p-0.5 transition-colors hover:scale-105 {drawOptions.brushColour ===
+									class="h-8 w-8 rounded-md border-2 p-0.5 transition-colors hover:scale-105 {drawOptions.brushColour ===
 									colour
 										? 'border-primary ring-primary/20 ring-2'
 										: 'border-border hover:border-primary/50'}"
@@ -815,7 +870,7 @@
 
 							<!-- Expanded colours toggle button -->
 							<button
-								class="h-10 w-10 rounded-md border-2 p-0.5 transition-colors hover:scale-105 {showExpandedColours &&
+								class="h-8 w-8 rounded-md border-2 p-0.5 transition-colors hover:scale-105 {showExpandedColours &&
 								expandedColoursFor === 'brush'
 									? 'border-primary ring-primary/20 ring-2'
 									: 'border-border hover:border-primary/50'}"
@@ -841,7 +896,7 @@
 					<Separator />
 
 					<!-- Opacity -->
-					<div class="space-y-2">
+					<div class="space-y-1.5">
 						<Label class="text-xs font-medium">Opacity</Label>
 						<div class="flex items-center gap-3">
 							<Slider
@@ -857,18 +912,28 @@
 							>
 						</div>
 					</div>
+
+					<Separator />
+
+					<!-- Layering Controls -->
+					<WhiteboardLayeringControls
+						{onBringToFront}
+						{onSendToBack}
+						{onMoveForward}
+						{onMoveBackward}
+					/>
 				</Card.Content>
 			{:else if activeMenuPanel === 'line' || activeMenuPanel === 'arrow'}
-				<Card.Header class="pb-3">
-					<Card.Title class="flex items-center gap-2 text-sm">
+				<Card.Header class="pb-0">
+					<Card.Title class="flex items-center gap-1.5 text-xs">
 						{#if activeMenuPanel === 'line'}
-							<MinusIcon />
+							<MinusIcon class="h-3.5 w-3.5" />
 							Line Options
 						{:else}
 							<!-- Using arrow right icon for arrow tool -->
 							<svg
-								width="24"
-								height="24"
+								width="14"
+								height="14"
 								fill="none"
 								stroke="currentColor"
 								viewBox="0 0 24 24"
@@ -885,18 +950,18 @@
 						{/if}
 					</Card.Title>
 				</Card.Header>
-				<Card.Content class="space-y-4">
+				<Card.Content class="space-y-3 pt-2 pb-3">
 					<!-- Stroke Width -->
-					<div class="space-y-2">
+					<div class="space-y-1.5">
 						<Label class="text-xs font-medium">Stroke Width</Label>
-						<div class="flex gap-2">
+						<div class="flex gap-1.5">
 							<Button
 								variant={lineArrowStrokeWidthValue === 1
 									? 'default'
 									: 'outline'}
 								size="sm"
 								onclick={() => (lineArrowStrokeWidthValue = 1)}
-								class="flex h-10 w-10 items-center justify-center"
+								class="flex h-8 w-8 items-center justify-center"
 							>
 								<MinusIcon class="h-3 w-3" strokeWidth={1} />
 							</Button>
@@ -906,7 +971,7 @@
 									: 'outline'}
 								size="sm"
 								onclick={() => (lineArrowStrokeWidthValue = 3)}
-								class="flex h-10 w-10 items-center justify-center"
+								class="flex h-8 w-8 items-center justify-center"
 							>
 								<MinusIcon strokeWidth={3} />
 							</Button>
@@ -916,9 +981,9 @@
 									: 'outline'}
 								size="sm"
 								onclick={() => (lineArrowStrokeWidthValue = 6)}
-								class="flex h-10 w-10 items-center justify-center"
+								class="flex h-8 w-8 items-center justify-center"
 							>
-								<MinusIcon class="h-5 w-5" strokeWidth={6} />
+								<MinusIcon class="h-4 w-4" strokeWidth={6} />
 							</Button>
 						</div>
 					</div>
@@ -926,12 +991,12 @@
 					<Separator />
 
 					<!-- Stroke Colour -->
-					<div class="space-y-2">
+					<div class="space-y-1.5">
 						<Label class="text-xs font-medium">Colour</Label>
 						<div class="mb-2 flex flex-wrap items-center gap-1">
 							{#each commonColours as colour}
 								<button
-									class="h-10 w-10 rounded-md border-2 p-0.5 transition-colors hover:scale-105 {lineArrowOptions.strokeColour ===
+									class="h-8 w-8 rounded-md border-2 p-0.5 transition-colors hover:scale-105 {lineArrowOptions.strokeColour ===
 									colour
 										? 'border-primary ring-primary/20 ring-2'
 										: 'border-border hover:border-primary/50'}"
@@ -950,7 +1015,7 @@
 
 							<!-- Expanded colours toggle button -->
 							<button
-								class="h-10 w-10 rounded-md border-2 p-0.5 transition-colors hover:scale-105 {showExpandedColours &&
+								class="h-8 w-8 rounded-md border-2 p-0.5 transition-colors hover:scale-105 {showExpandedColours &&
 								expandedColoursFor === 'line'
 									? 'border-primary ring-primary/20 ring-2'
 									: 'border-border hover:border-primary/50'}"
@@ -976,7 +1041,7 @@
 					<Separator />
 
 					<!-- Line Style -->
-					<div class="space-y-2">
+					<div class="space-y-1.5">
 						<Label class="text-xs font-medium">Line Style</Label>
 						<div class="flex gap-2">
 							<Button
@@ -1005,7 +1070,7 @@
 					<Separator />
 
 					<!-- Opacity -->
-					<div class="space-y-2">
+					<div class="space-y-1.5">
 						<Label class="text-xs font-medium">Opacity</Label>
 						<div class="flex items-center gap-3">
 							<Slider
@@ -1021,17 +1086,74 @@
 							>
 						</div>
 					</div>
+
+					<Separator />
+
+					<!-- Layering Controls -->
+					<WhiteboardLayeringControls
+						{onBringToFront}
+						{onSendToBack}
+						{onMoveForward}
+						{onMoveBackward}
+					/>
 				</Card.Content>
 			{:else if activeMenuPanel === 'image'}
-				<Card.Header class="pb-3">
-					<Card.Title class="flex items-center gap-2 text-sm">
-						<SlidersIcon />
+				<Card.Header class="pb-0">
+					<Card.Title class="flex items-center gap-1.5 text-xs">
+						<SlidersIcon class="h-3.5 w-3.5" />
 						Image Options
 					</Card.Title>
 				</Card.Header>
-				<Card.Content class="space-y-4">
+				<Card.Content class="space-y-3 pt-2 pb-3">
+					<!-- Crop Controls -->
+					{#if isCropping}
+						<div class="space-y-1.5">
+							<Label class="text-xs font-medium">Crop Mode</Label>
+							<p class="text-muted-foreground text-xs">
+								Drag the handles to adjust the crop area.
+							</p>
+							<div class="flex gap-2">
+								<Button
+									variant="default"
+									size="sm"
+									onclick={onApplyCrop}
+									class="flex flex-1 items-center justify-center gap-2"
+								>
+									<CheckIcon class="h-4 w-4" />
+									<span>Apply</span>
+								</Button>
+								<Button
+									variant="outline"
+									size="sm"
+									onclick={onCancelCrop}
+									class="flex flex-1 items-center justify-center gap-2"
+								>
+									<XIcon class="h-4 w-4" />
+									<span>Cancel</span>
+								</Button>
+							</div>
+						</div>
+					{:else}
+						<!-- Crop Button -->
+						<div class="space-y-1.5">
+							<Label class="text-xs font-medium">Crop</Label>
+							<Button
+								variant="outline"
+								size="sm"
+								onclick={onStartCrop}
+								class="flex w-full items-center justify-center gap-2"
+								disabled={!onStartCrop}
+							>
+								<CropIcon class="h-4 w-4" />
+								<span>Crop Image</span>
+							</Button>
+						</div>
+					{/if}
+
+					<Separator />
+
 					<!-- Opacity -->
-					<div class="space-y-2">
+					<div class="space-y-1.5">
 						<Label class="text-xs font-medium">Opacity</Label>
 						<div class="flex items-center gap-3">
 							<Slider
@@ -1047,6 +1169,71 @@
 							>
 						</div>
 					</div>
+
+					<Separator />
+
+					<!-- Layering Controls -->
+					<WhiteboardLayeringControls
+						{onBringToFront}
+						{onSendToBack}
+						{onMoveForward}
+						{onMoveBackward}
+					/>
+				</Card.Content>
+			{:else if activeMenuPanel === 'select'}
+				<Card.Header class="pb-0">
+					<Card.Title class="flex items-center gap-1.5 text-xs">
+						<LayersIcon class="h-3.5 w-3.5" />
+						Object Options
+					</Card.Title>
+				</Card.Header>
+				<Card.Content class="space-y-3 pt-2 pb-3">
+					<!-- Layering Controls -->
+					<div class="space-y-1.5">
+						<Label class="text-xs font-medium">Layering</Label>
+						<div class="grid grid-cols-2 gap-2">
+							<Button
+								variant="outline"
+								size="sm"
+								onclick={onBringToFront}
+								class="flex items-center justify-center gap-2"
+								disabled={!onBringToFront}
+							>
+								<ArrowUpToLineIcon class="h-4 w-4" />
+								<span>To Front</span>
+							</Button>
+							<Button
+								variant="outline"
+								size="sm"
+								onclick={onSendToBack}
+								class="flex items-center justify-center gap-2"
+								disabled={!onSendToBack}
+							>
+								<ArrowDownToLineIcon class="h-4 w-4" />
+								<span>To Back</span>
+							</Button>
+							<Button
+								variant="outline"
+								size="sm"
+								onclick={onMoveForward}
+								class="flex items-center justify-center gap-2"
+								disabled={!onMoveForward}
+							>
+								<ArrowUpIcon class="h-4 w-4" />
+								<span>Forward</span>
+							</Button>
+							<Button
+								variant="outline"
+								size="sm"
+								onclick={onMoveBackward}
+								class="flex items-center justify-center gap-2"
+								disabled={!onMoveBackward}
+							>
+								<ArrowDownIcon class="h-4 w-4" />
+								<span>Backward</span>
+							</Button>
+						</div>
+					</div>
 				</Card.Content>
 			{/if}
 		</Card.Root>
@@ -1054,24 +1241,24 @@
 		<!-- Side Panel for Expanded Colours -->
 		{#if showExpandedColours}
 			<Card.Root
-				class="bg-background/20 border-border/50 w-64 backdrop-blur-sm"
+				class="bg-background/20 border-border/50 w-56 backdrop-blur-sm"
 			>
-				<Card.Header class="pb-3">
-					<Card.Title class="flex items-center gap-2 text-sm">
-						<PaletteIcon />
+				<Card.Header class="pb-0">
+					<Card.Title class="flex items-center gap-1.5 text-xs">
+						<PaletteIcon class="h-3.5 w-3.5" />
 						Colour Palette
 					</Card.Title>
 				</Card.Header>
-				<Card.Content class="space-y-4">
+				<Card.Content class="space-y-3 pt-2 pb-0">
 					<!-- Colour Grid -->
-					<div class="space-y-2">
+					<div class="space-y-1.5">
 						<Label class="text-xs font-medium">Colours</Label>
 						<div class="space-y-1">
 							{#each colourPalette as row}
 								<div class="flex gap-1">
 									{#each row as colour}
 										<button
-											class="h-10 w-10 rounded-md border-2 p-0.5 transition-colors hover:scale-105 {selectedColourFamily ===
+											class="h-8 w-8 rounded-md border-2 p-0.5 transition-colors hover:scale-105 {selectedColourFamily ===
 											colour
 												? 'border-primary ring-primary/20 ring-2'
 												: 'border-border hover:border-primary/50'}"
@@ -1104,7 +1291,7 @@
 					</div>
 
 					<!-- Shades -->
-					<div class="space-y-2">
+					<div class="space-y-1.5">
 						<Label class="text-muted-foreground text-xs font-medium"
 							>Shades</Label
 						>
@@ -1116,7 +1303,7 @@
 							<div class="flex gap-1">
 								{#each colourShades[selectedColourFamily] as shade}
 									<button
-										class="h-10 w-10 rounded-md border-2 p-0.5 transition-colors hover:scale-105 {(expandedColoursFor ===
+										class="h-8 w-8 rounded-md border-2 p-0.5 transition-colors hover:scale-105 {(expandedColoursFor ===
 											'text' &&
 											textOptions.colour === shade) ||
 										(expandedColoursFor === 'stroke' &&

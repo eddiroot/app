@@ -68,6 +68,7 @@ export const actions = {
 					taskId: task.id,
 					subjectOfferingClassId: subjectOfferingClassIdInt,
 					authorId: user.id,
+					curriculumItemId: parseInt(form.data.taskTopicId, 10),
 					week: form.data.week ?? null,
 					due: form.data.dueDate ?? null,
 				});
