@@ -1,3 +1,4 @@
+import { building, dev } from '$app/environment';
 import * as auth from '$lib/server/auth';
 import { db } from '$lib/server/db';
 import * as table from '$lib/server/db/schema';
@@ -8,19 +9,25 @@ import { redirect, type Handle, type ServerInit } from '@sveltejs/kit';
 
 export const init: ServerInit = async () => {
 	// cron.schedule('* * * * *', () => {
-	// 	processTimetableQueue();
+	// processTimetableQueue();
 	// });
 
 	db.select()
 		.from(table.school)
 		.limit(1)
-		.catch((error) => {
-			console.error(
-				'There was a problem querying the database:',
-				error.message,
-			);
+		.catch(() => {
+			console.error('Database appears to be offline. Exiting...');
+			process.exit(1);
 		});
 };
+
+// Initialize Socket.IO in production (dev mode is handled by Vite plugin)
+if (!building && !dev) {
+	// In production, we need to get the HTTP server from the adapter
+	// This will be set up when the server starts
+	// The adapter will need to expose the HTTP server for Socket.IO to attach
+	console.log('Production mode: Socket.IO will be initialized by the adapter');
+}
 
 const handleAuth: Handle = async ({ event, resolve }) => {
 	const sessionToken = event.cookies.get(auth.sessionCookieName);
