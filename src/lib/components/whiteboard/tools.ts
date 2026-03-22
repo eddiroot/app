@@ -134,28 +134,6 @@ export function setLineTool(
 }
 
 /**
- * Set the arrow tool
- */
-export function setArrowTool(
-	canvas: fabric.Canvas | undefined,
-	state: ToolState,
-	clearEraserState: () => void,
-	clearShapeDrawingState: () => void,
-	clearTextDrawingState: () => void,
-): void {
-	state.selectedTool = 'arrow';
-	state.showFloatingMenu = true;
-	clearEraserState();
-	clearShapeDrawingState();
-	clearTextDrawingState();
-	if (!canvas) return;
-	canvas.isDrawingMode = false;
-	canvas.selection = false;
-	canvas.defaultCursor = 'crosshair';
-	canvas.hoverCursor = 'crosshair';
-}
-
-/**
  * Clear eraser state (trail and hovered objects)
  */
 export function clearEraserState(
