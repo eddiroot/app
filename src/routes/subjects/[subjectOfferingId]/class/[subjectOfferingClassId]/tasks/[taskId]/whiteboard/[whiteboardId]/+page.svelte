@@ -1,41 +1,56 @@
 <script lang="ts">
+	import { browser } from '$app/environment';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
+	import * as Alert from '$lib/components/ui/alert';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import * as Tooltip from '$lib/components/ui/tooltip/index.js';
-	import * as CanvasActions from '$lib/components/whiteboard/canvas-actions';
 	import type { CanvasEventContext } from '$lib/components/whiteboard/canvas-events';
-	import * as CanvasEvents from '$lib/components/whiteboard/canvas-events';
 	import {
 		DEFAULT_DRAW_OPTIONS,
-		DEFAULT_LINE_ARROW_OPTIONS,
+		DEFAULT_LINE_OPTIONS,
 		DEFAULT_SHAPE_OPTIONS,
 		DEFAULT_TEXT_OPTIONS,
 		IMAGE_THROTTLE_MS,
 		ZOOM_LIMITS,
 	} from '$lib/components/whiteboard/constants';
 	import type { ToolState } from '$lib/components/whiteboard/tools';
-	import * as Tools from '$lib/components/whiteboard/tools';
 	import type {
 		DrawOptions,
-		LineArrowOptions,
+		LineOptions,
 		ShapeOptions,
 		TextOptions,
 		WhiteboardTool,
 	} from '$lib/components/whiteboard/types';
 	import { hexToRgba } from '$lib/components/whiteboard/utils';
-	import * as WebSocketHandler from '$lib/components/whiteboard/websocket';
+	import WhiteboardZoomControls from '$lib/components/whiteboard/whiteboard-controls.svelte';
 	import WhiteboardFloatingMenu from '$lib/components/whiteboard/whiteboard-floating-menu.svelte';
 	import WhiteboardToolbar from '$lib/components/whiteboard/whiteboard-toolbar.svelte';
-	import WhiteboardZoomControls from '$lib/components/whiteboard/whiteboard-zoom-controls.svelte';
+	import { userTypeEnum } from '$lib/enums';
 	import ArrowLeftIcon from '@lucide/svelte/icons/arrow-left';
-	import * as fabric from 'fabric';
 	import { onDestroy, onMount } from 'svelte';
+	import { toast } from 'svelte-sonner';
+
+	// Dynamic imports for browser-only modules
+	let fabric: typeof import('fabric');
+	let CanvasActions: typeof import('$lib/components/whiteboard/canvas-actions');
+	let CanvasEvents: typeof import('$lib/components/whiteboard/canvas-events');
+	let CanvasHistory: typeof import('$lib/components/whiteboard/canvas-history').CanvasHistory;
+	let applyRedo: typeof import('$lib/components/whiteboard/canvas-history').applyRedo;
+	let applyUndo: typeof import('$lib/components/whiteboard/canvas-history').applyUndo;
+	let Tools: typeof import('$lib/components/whiteboard/tools');
+	let WebSocketHandler: typeof import('$lib/components/whiteboard/websocket-socketio');
+	let ControlPointManager: typeof import('$lib/components/whiteboard/control-points').ControlPointManager;
+	let KeyboardShortcuts: typeof import('$lib/components/whiteboard/keyboard-shortcuts');
+	let CropOverlayClass: typeof import('$lib/components/whiteboard/control-points').CropOverlay;
 
 	let { data } = $props();
 
-	let socket = $state() as WebSocket;
-	let canvas: fabric.Canvas;
+	let isLocked = $state(data.whiteboard.isLocked);
+	const isTeacher = $derived(data.user?.type === userTypeEnum.teacher);
+
+	let socket = $state() as any; // Will be Socket.IO Socket once loaded
+	let canvas: any; // Will be fabric.Canvas once loaded
 	let selectedTool = $state<WhiteboardTool>('select');
 	let whiteboardCanvas = $state<HTMLCanvasElement>();
 	let isPanMode = false;
@@ -44,28 +59,71 @@
 	let showFloatingMenu = $state(false);
 	let imageInput = $state<HTMLInputElement>();
 	let isDrawingLine = $state(false);
-	let isDrawingArrow = $state(false);
 	let isDrawingShape = $state(false);
 	let isDrawingText = $state(false);
 	let currentShapeType = $state<string>('');
 	let isErasing = $state(false);
-	let eraserTrail = $state<fabric.Object[]>([]);
+	let eraserTrail = $state<any[]>([]);
 	let lastEraserPoint = $state<{ x: number; y: number } | null>(null);
-	let hoveredObjectsForDeletion = $state<fabric.Object[]>([]);
-	let originalOpacities = $state<Map<fabric.Object, number>>(new Map());
+	let hoveredObjectsForDeletion = $state<any[]>([]);
+	let originalOpacities = $state<Map<any, number>>(new Map());
 	let startPoint = $state({ x: 0, y: 0 });
-	let tempLine: fabric.Line | null = null;
-	let tempShape: fabric.Object | null = null;
-	let tempText: fabric.Textbox | null = null;
+	let tempLine: any = null;
+	let tempShape: any = null;
+	let tempText: any = null;
 	let floatingMenuRef: WhiteboardFloatingMenu;
+
+	// Track mouse position for paste operations
+	let lastMousePosition = { x: 0, y: 0 };
+
+	// Control point manager instance
+	let controlPointManager: any; // Will be ControlPointManager once loaded
+
+	// Crop overlay instance
+	let cropOverlay: any; // Will be CropOverlay once loaded
+	let isCropping = $state(false);
+
+	// History management for undo/redo
+	let history: any; // Will be CanvasHistory instance once loaded
+	let canUndo = $state(false);
+	let canRedo = $state(false);
+	let isApplyingHistory = false; // Flag to prevent recording history during undo/redo
+	let isLoadingFromServer = false; // Flag to prevent recording history during initial load or remote updates
+	let isDrawingObject = false; // Flag to prevent recording temporary objects during drawing
+	let isControlPointModifying = false; // Flag to prevent history recording during control point modifications
+
+	// Track temporary object IDs to prevent history recording
+	let temporaryObjectIds = new Set<string>();
+	// Track remote object modifications to prevent duplicate history recording
+	let remoteModificationIds = new Set<string>();
+	// Track objects that were finalized via object:finalized to prevent double recording
+	let finalizedObjectIds = new Set<string>();
+	// Flag to track if eraser is actively deleting (to batch deletions)
+	let isEraserDeleting = false;
+	// Set of object IDs being deleted by eraser (to prevent individual history recording)
+	let eraserDeletedObjectIds = new Set<string>();
+	// Flag to track if clear all is happening (to batch deletions)
+	let isClearingCanvas = false;
+	// Batch storage for clear all deletions
+	let clearAllDeletedObjects: Array<{
+		id: string;
+		data: Record<string, unknown>;
+	}> = [];
+
+	// Helper function to mark objects as remotely modified (prevents history recording)
+	const markRemoteModification = (objectId: string) => {
+		remoteModificationIds.add(objectId);
+		// Clear after a short timeout to avoid permanent blocking
+		setTimeout(() => {
+			remoteModificationIds.delete(objectId);
+		}, 500);
+	};
 
 	// Current tool options - updated when menu changes
 	let currentTextOptions = $state<TextOptions>({ ...DEFAULT_TEXT_OPTIONS });
 	let currentShapeOptions = $state<ShapeOptions>({ ...DEFAULT_SHAPE_OPTIONS });
 	let currentDrawOptions = $state<DrawOptions>({ ...DEFAULT_DRAW_OPTIONS });
-	let currentLineArrowOptions = $state<LineArrowOptions>({
-		...DEFAULT_LINE_ARROW_OPTIONS,
-	});
+	let currentLineOptions = $state<LineOptions>({ ...DEFAULT_LINE_OPTIONS });
 
 	const { whiteboardId, taskId, subjectOfferingId, subjectOfferingClassId } =
 		$derived(page.params);
@@ -76,9 +134,10 @@
 	let imageThrottleTimeout: ReturnType<typeof setTimeout> | null = null;
 	let isMovingImage = false;
 
-	const sendCanvasUpdate = (data: Object) => {
-		if (socket && socket.readyState === WebSocket.OPEN) {
-			socket.send(JSON.stringify({ ...data, whiteboardId: whiteboardIdNum }));
+	const sendCanvasUpdate = (data: any) => {
+		if (socket && socket.connected) {
+			const { type, ...rest } = data;
+			socket.emit(type, { ...rest, whiteboardId: whiteboardIdNum });
 		}
 	};
 
@@ -98,9 +157,9 @@
 			return;
 		}
 
-		// Throttle live image updates to reduce network traffic
+		// Throttle live image updates (true throttle, not debounce - fires during drag, not just after)
 		if (imageThrottleTimeout !== null) {
-			clearTimeout(imageThrottleTimeout);
+			return; // Already have a pending send, just queue the latest data
 		}
 
 		imageThrottleTimeout = setTimeout(() => {
@@ -233,18 +292,6 @@
 		applyToolState(state);
 	};
 
-	const setArrowTool = () => {
-		const state = getToolState();
-		Tools.setArrowTool(
-			canvas,
-			state,
-			clearEraserState,
-			clearShapeDrawingState,
-			clearTextDrawingState,
-		);
-		applyToolState(state);
-	};
-
 	const addShape = (shapeType: string) => {
 		const state = getToolState();
 		Tools.addShape(canvas, shapeType, state, clearEraserState);
@@ -276,16 +323,18 @@
 		CanvasActions.handleImageUpload(event, {
 			canvas,
 			sendCanvasUpdate,
+			socket,
 			onImageAdded: (img) => {
 				// Auto-switch to selection tool and show image options menu
-				// Use setTimeout to ensure state updates happen after the object is properly selected
-				setTimeout(() => {
-					selectedTool = 'select';
-					canvas.isDrawingMode = false;
-					canvas.selection = true;
-					showFloatingMenu = true;
+				// The selection:created handler will automatically create control points
+				selectedTool = 'select';
+				canvas.isDrawingMode = false;
+				canvas.selection = true;
+				showFloatingMenu = true;
 
-					// Show image options in floating menu
+				// Show image options in floating menu
+				// Use setTimeout to ensure the selection:created handler runs first
+				setTimeout(() => {
 					floatingMenuRef?.setActiveMenuPanel?.('image');
 					floatingMenuRef?.updateShapeOptions?.({
 						strokeWidth: 0,
@@ -294,14 +343,28 @@
 						strokeDashArray: [],
 						opacity: img.opacity || 1,
 					});
-				}, 0);
+				}, 100); // Small delay to ensure selection:created runs first
 			},
 		});
 	};
 
 	const clearCanvas = () => {
-		if (!canvas) return;
-		CanvasActions.clearCanvas({ canvas, sendCanvasUpdate });
+		if (!canvas || !history || !data.user?.id) return;
+		CanvasActions.clearCanvas({
+			canvas,
+			sendCanvasUpdate,
+			controlPointManager,
+			setClearingCanvas: (value) => {
+				isClearingCanvas = value;
+			},
+			onClearComplete: (deletedObjects) => {
+				if (deletedObjects.length > 0) {
+					history.recordBatchDelete(deletedObjects, data.user!.id);
+					canUndo = history.canUndo();
+					canRedo = history.canRedo();
+				}
+			},
+		});
 	};
 
 	const deleteSelected = () => {
@@ -311,23 +374,34 @@
 
 	const zoomIn = () => {
 		if (!canvas) return;
-		CanvasActions.zoomIn({ canvas, sendCanvasUpdate }, ZOOM_LIMITS, (zoom) => {
-			currentZoom = zoom;
-		});
+		CanvasActions.zoomIn(
+			{ canvas, sendCanvasUpdate, controlPointManager },
+			ZOOM_LIMITS,
+			(zoom) => {
+				currentZoom = zoom;
+			},
+		);
 	};
 
 	const zoomOut = () => {
 		if (!canvas) return;
-		CanvasActions.zoomOut({ canvas, sendCanvasUpdate }, ZOOM_LIMITS, (zoom) => {
-			currentZoom = zoom;
-		});
+		CanvasActions.zoomOut(
+			{ canvas, sendCanvasUpdate, controlPointManager },
+			ZOOM_LIMITS,
+			(zoom) => {
+				currentZoom = zoom;
+			},
+		);
 	};
 
 	const resetZoom = () => {
 		if (!canvas) return;
-		CanvasActions.resetZoom({ canvas, sendCanvasUpdate }, (zoom) => {
-			currentZoom = zoom;
-		});
+		CanvasActions.resetZoom(
+			{ canvas, sendCanvasUpdate, controlPointManager },
+			(zoom) => {
+				currentZoom = zoom;
+			},
+		);
 	};
 
 	const recenterView = () => {
@@ -343,14 +417,46 @@
 		);
 	};
 
+	// Apply lock state to canvas
+	const applyCanvasLockState = (locked: boolean) => {
+		if (!canvas) return;
+
+		if (locked && !isTeacher) {
+			// Student in locked mode - view only (pan only)
+			canvas.isDrawingMode = false;
+			canvas.selection = false;
+			canvas.forEachObject((obj: any) => {
+				obj.selectable = false;
+				obj.evented = false;
+			});
+			canvas.discardActiveObject();
+			canvas.renderAll();
+			// Force pan tool for students when locked
+			setPanTool();
+		} else {
+			// Teacher or unlocked - allow editing
+			canvas.isDrawingMode = false;
+			canvas.selection = true;
+			canvas.forEachObject((obj: any) => {
+				obj.selectable = true;
+				obj.evented = true;
+			});
+			canvas.renderAll();
+		}
+	};
+
 	// Handle floating menu option changes
 	const handleTextOptionsChange = (options: any) => {
 		// Update current options for new objects
 		currentTextOptions = { ...options };
 
-		if (!canvas) return;
+		if (!canvas || !history) return;
 		const activeObject = canvas.getActiveObject();
-		if (activeObject && activeObject.type === 'textbox') {
+		if (activeObject && activeObject.type === 'textbox' && data.user?.id) {
+			// Store previous state for history
+			const previousData = activeObject.toObject();
+			previousData.id = (activeObject as any).id;
+
 			activeObject.set({
 				fontSize: options.fontSize,
 				fontFamily: options.fontFamily,
@@ -359,31 +465,78 @@
 				textAlign: options.textAlign,
 				opacity: options.opacity,
 			});
+
+			// Recalculate textbox dimensions to fit the text with new font size
+			activeObject.initDimensions();
+			activeObject.setCoords();
+
+			// Update control points if they exist
+			if (controlPointManager) {
+				controlPointManager.updateControlPoints(
+					(activeObject as any).id,
+					activeObject,
+				);
+			}
+
 			canvas.renderAll();
 			const objData = activeObject.toObject();
-			// @ts-expect-error
-			objData.id = activeObject.id;
+			(objData as any).id = (activeObject as any).id;
+
+			// Record history for option change (only if not loading)
+			if (!isLoadingFromServer && !isApplyingHistory) {
+				history.recordModify(
+					(activeObject as any).id,
+					previousData,
+					objData,
+					data.user.id,
+				);
+				canUndo = history.canUndo();
+				canRedo = history.canRedo();
+			}
+
 			sendCanvasUpdate({ type: 'modify', object: objData });
 		}
 	};
-
 	const handleShapeOptionsChange = (options: any) => {
 		// Update current options for new objects
 		currentShapeOptions = { ...options };
 
-		if (!canvas) return;
-		const activeObject = canvas.getActiveObject();
+		if (!canvas || !history) return;
+		let activeObject = canvas.getActiveObject();
+
+		// If a control point is selected, find its linked object
+		if (activeObject && controlPointManager?.isControlPoint(activeObject)) {
+			const linkedObjectId = (activeObject as any).linkedObjectId;
+			if (linkedObjectId) {
+				const linkedObj = canvas
+					.getObjects()
+					.find((o: any) => o.id === linkedObjectId);
+				if (linkedObj) {
+					activeObject = linkedObj;
+				}
+			}
+		}
+
 		if (
 			activeObject &&
 			(activeObject.type === 'rect' ||
-				activeObject.type === 'circle' ||
+				activeObject.type === 'ellipse' ||
 				activeObject.type === 'triangle' ||
-				activeObject.type === 'image')
+				activeObject.type === 'image') &&
+			data.user?.id
 		) {
+			// Store previous state for history
+			const previousData = activeObject.toObject();
+			previousData.id = (activeObject as any).id;
+
 			// For images, only apply opacity (other properties don't make sense for images)
 			if (activeObject.type === 'image') {
 				activeObject.set({ opacity: options.opacity });
 			} else {
+				// Get the center point before changing stroke width
+				const centerBefore = activeObject.getCenterPoint();
+
+				// Apply the new properties
 				activeObject.set({
 					strokeWidth: options.strokeWidth,
 					stroke: options.strokeColour,
@@ -393,12 +546,40 @@
 							: options.fillColour,
 					strokeDashArray: options.strokeDashArray,
 					opacity: options.opacity,
+					strokeUniform: true, // This makes stroke not scale with object
 				});
+
+				// Get the center point after changing stroke width
+				const centerAfter = activeObject.getCenterPoint();
+
+				// Adjust position to maintain the same visual center
+				if (
+					Math.abs(centerBefore.x - centerAfter.x) > 0.01 ||
+					Math.abs(centerBefore.y - centerAfter.y) > 0.01
+				) {
+					activeObject.set({
+						left: activeObject.left! + (centerBefore.x - centerAfter.x),
+						top: activeObject.top! + (centerBefore.y - centerAfter.y),
+					});
+					activeObject.setCoords();
+				}
 			}
 			canvas.renderAll();
 			const objData = activeObject.toObject();
-			// @ts-expect-error
 			objData.id = activeObject.id;
+
+			// Record history for option change (only if not loading)
+			if (!isLoadingFromServer && !isApplyingHistory) {
+				history.recordModify(
+					(activeObject as any).id,
+					previousData,
+					objData,
+					data.user.id,
+				);
+				canUndo = history.canUndo();
+				canRedo = history.canRedo();
+			}
+
 			sendCanvasUpdate({ type: 'modify', object: objData });
 		}
 	};
@@ -407,11 +588,15 @@
 		// Update current options for new objects
 		currentDrawOptions = { ...options };
 
-		if (!canvas) return;
+		if (!canvas || !history) return;
 
 		// First, check if there's an active path object selected and update it
 		const activeObject = canvas.getActiveObject();
-		if (activeObject && activeObject.type === 'path') {
+		if (activeObject && activeObject.type === 'path' && data.user?.id) {
+			// Store previous state for history
+			const previousData = activeObject.toObject();
+			previousData.id = (activeObject as any).id;
+
 			activeObject.set({
 				strokeWidth: options.brushSize,
 				stroke: options.brushColour,
@@ -419,8 +604,20 @@
 			});
 			canvas.renderAll();
 			const objData = activeObject.toObject();
-			// @ts-expect-error
 			objData.id = activeObject.id;
+
+			// Record history for option change (only if not loading)
+			if (!isLoadingFromServer && !isApplyingHistory) {
+				history.recordModify(
+					(activeObject as any).id,
+					previousData,
+					objData,
+					data.user.id,
+				);
+				canUndo = history.canUndo();
+				canRedo = history.canRedo();
+			}
+
 			sendCanvasUpdate({ type: 'modify', object: objData });
 		}
 
@@ -447,72 +644,446 @@
 		}
 	};
 
-	const handleLineArrowOptionsChange = (options: any) => {
+	const handleLineOptionsChange = (options: any) => {
 		// Update current options for new objects
-		currentLineArrowOptions = { ...options };
+		currentLineOptions = { ...options };
 
-		if (!canvas) return;
-		const activeObject = canvas.getActiveObject();
+		if (!canvas || !history) return;
+		let activeObject = canvas.getActiveObject();
+
+		// If a control point is selected, find its linked line
+		if (activeObject && controlPointManager?.isControlPoint(activeObject)) {
+			const linkedObjectId = (activeObject as any).linkedObjectId;
+			if (linkedObjectId) {
+				const linkedObj = canvas
+					.getObjects()
+					.find((o: any) => o.id === linkedObjectId);
+				if (linkedObj) {
+					activeObject = linkedObj;
+				}
+			}
+		}
+
 		if (
 			activeObject &&
-			(activeObject.type === 'line' || activeObject.type === 'group')
+			(activeObject.type === 'polyline' ||
+				activeObject.type === 'line' ||
+				activeObject.type === 'group') &&
+			data.user?.id
 		) {
-			if (activeObject.type === 'line') {
+			// Store previous state for history
+			const previousData = activeObject.toObject();
+			previousData.id = (activeObject as any).id;
+
+			if (activeObject.type === 'polyline' || activeObject.type === 'line') {
+				// Get the center point before changing stroke width
+				const centerBefore = activeObject.getCenterPoint();
+
+				// Apply the new properties with strokeUniform
 				activeObject.set({
 					strokeWidth: options.strokeWidth,
 					stroke: options.strokeColour,
 					strokeDashArray: options.strokeDashArray,
 					opacity: options.opacity,
+					strokeUniform: true, // This makes stroke not scale with object
 				});
+
+				// Get the center point after changing stroke width
+				const centerAfter = activeObject.getCenterPoint();
+
+				// Adjust position to maintain the same visual center
+				if (
+					Math.abs(centerBefore.x - centerAfter.x) > 0.01 ||
+					Math.abs(centerBefore.y - centerAfter.y) > 0.01
+				) {
+					activeObject.set({
+						left: activeObject.left! + (centerBefore.x - centerAfter.x),
+						top: activeObject.top! + (centerBefore.y - centerAfter.y),
+					});
+					activeObject.setCoords();
+				}
+
+				// Update control points if they exist
+				if (controlPointManager) {
+					controlPointManager.updateControlPoints(
+						activeObject.id,
+						activeObject,
+					);
+				}
 			} else if (activeObject.type === 'group') {
 				// Handle arrow group - update all objects in the group
-				(activeObject as fabric.Group).forEachObject((obj: any) => {
-					if (obj.type === 'line') {
+				(activeObject as any).forEachObject((obj: any) => {
+					if (obj.type === 'polyline' || obj.type === 'line') {
 						obj.set({
 							strokeWidth: options.strokeWidth,
 							stroke: options.strokeColour,
 							strokeDashArray: options.strokeDashArray,
 							opacity: options.opacity,
+							strokeUniform: true,
 						});
 					}
 				});
 			}
 			canvas.renderAll();
 			const objData = activeObject.toObject();
-			// @ts-expect-error
 			objData.id = activeObject.id;
+
+			// Record history for option change (only if not loading)
+			if (!isLoadingFromServer && !isApplyingHistory) {
+				history.recordModify(
+					(activeObject as any).id,
+					previousData,
+					objData,
+					data.user.id,
+				);
+				canUndo = history.canUndo();
+				canRedo = history.canRedo();
+			}
+
 			sendCanvasUpdate({ type: 'modify', object: objData });
 		}
 	};
 
-	const handleKeyDown = (event: KeyboardEvent) => {
+	// Layering handlers with history tracking
+	const layerChangeCallback = (
+		objectId: string,
+		previousIndex: number,
+		newIndex: number,
+	) => {
+		if (!history || !data.user?.id) return;
+		if (previousIndex !== newIndex) {
+			history.recordLayer(objectId, previousIndex, newIndex, data.user.id);
+			canUndo = history.canUndo();
+			canRedo = history.canRedo();
+		}
+	};
+
+	const handleBringToFront = () => {
 		if (!canvas) return;
+		CanvasActions.bringToFront({
+			canvas,
+			sendCanvasUpdate,
+			controlPointManager,
+			onLayerChange: layerChangeCallback,
+		});
+	};
+
+	const handleSendToBack = () => {
+		if (!canvas) return;
+		CanvasActions.sendToBack({
+			canvas,
+			sendCanvasUpdate,
+			controlPointManager,
+			onLayerChange: layerChangeCallback,
+		});
+	};
+
+	const handleMoveForward = () => {
+		if (!canvas) return;
+		CanvasActions.moveForward({
+			canvas,
+			sendCanvasUpdate,
+			controlPointManager,
+			onLayerChange: layerChangeCallback,
+		});
+	};
+
+	const handleMoveBackward = () => {
+		if (!canvas) return;
+		CanvasActions.moveBackward({
+			canvas,
+			sendCanvasUpdate,
+			controlPointManager,
+			onLayerChange: layerChangeCallback,
+		});
+	};
+
+	// Crop handlers
+	const handleStartCrop = () => {
+		if (!canvas || !CropOverlayClass) return;
+		const activeObject = canvas.getActiveObject();
+		if (!activeObject || activeObject.type !== 'image') return;
+
+		// Hide regular control points during crop
+		const imageId = (activeObject as any).id;
+		if (controlPointManager) {
+			controlPointManager.hideControlPoints(imageId);
+		}
+
+		// Create crop overlay
+		cropOverlay = new CropOverlayClass(canvas);
+		cropOverlay.startCrop(activeObject as any);
+		isCropping = true;
+		canvas.discardActiveObject();
+		canvas.renderAll();
+
+		// Keep the floating menu visible and on image panel
+		showFloatingMenu = true;
+	};
+
+	const handleApplyCrop = () => {
+		if (!cropOverlay || !canvas) return;
+
+		const result = cropOverlay.applyCrop();
+		isCropping = false;
+
+		if (result.success && result.imageId) {
+			// Use the new image if canvas-based crop succeeded, otherwise find the existing one
+			const image =
+				result.newImage ||
+				canvas.getObjects().find((o: any) => o.id === result.imageId);
+
+			if (image) {
+				// Remove old control points and create new ones for cropped size
+				if (controlPointManager) {
+					controlPointManager.removeControlPoints(result.imageId);
+					controlPointManager.addControlPoints(result.imageId, image, true);
+					canvas.setActiveObject(image);
+				}
+
+				// Sync crop to other users
+				if (result.newImage) {
+					// Canvas-based crop: send full object data (new image with cropped pixels)
+					const objData = image.toObject();
+					(objData as any).id = result.imageId;
+					sendCanvasUpdate({ type: 'modify', object: objData });
+				} else if (result.cropData) {
+					// Fallback clipPath crop: send crop data
+					sendCanvasUpdate({
+						type: 'modify',
+						object: { id: result.imageId, ...result.cropData },
+					});
+				}
+			}
+		}
+		canvas.renderAll();
+		cropOverlay = null;
+	};
+
+	const handleCancelCrop = () => {
+		if (!cropOverlay || !canvas) return;
+
+		const imageId = cropOverlay.getImageId();
+		cropOverlay.cancelCrop();
+		isCropping = false;
+
+		// Show control points again
+		if (controlPointManager && imageId) {
+			const image = canvas.getObjects().find((o: any) => o.id === imageId);
+			if (image) {
+				controlPointManager.showControlPoints(imageId);
+				canvas.setActiveObject(image);
+			}
+		}
+		canvas.renderAll();
+		cropOverlay = null;
+	};
+
+	// Undo/Redo handlers
+	const handleUndo = async () => {
+		if (!canvas || !history || !history.canUndo()) return;
+
+		isApplyingHistory = true;
+		const action = history.undo();
+		if (action) {
+			await applyUndo(canvas, action, sendCanvasUpdate, controlPointManager);
+		}
+
+		// Update button states
+		canUndo = history.canUndo();
+		canRedo = history.canRedo();
+		isApplyingHistory = false;
+	};
+
+	const handleRedo = async () => {
+		if (!canvas || !history || !history.canRedo()) return;
+
+		isApplyingHistory = true;
+		const action = history.redo();
+		if (action) {
+			await applyRedo(canvas, action, sendCanvasUpdate, controlPointManager);
+		}
+
+		// Update button states
+		canUndo = history.canUndo();
+		canRedo = history.canRedo();
+		isApplyingHistory = false;
+	};
+
+	const handleKeyDown = async (event: KeyboardEvent) => {
+		if (!canvas) return;
+
+		// Check if we're in a locked state for students
+		const isEditingDisabled = isLocked && !isTeacher;
+
+		// Get modifier key (Cmd on Mac, Ctrl on Windows/Linux)
+		const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
+		const modifierKey = isMac ? event.metaKey : event.ctrlKey;
+
+		// Check if currently editing text
+		const activeObject = canvas.getActiveObject();
+		const isEditingText =
+			activeObject?.isType('textbox') && (activeObject as any).isEditing;
 
 		// Escape key switches to select mode
 		if (event.key === 'Escape') {
-			const activeObject = canvas.getActiveObject();
 			// Don't switch to select if editing text
-
-			if (
-				!activeObject ||
-				!activeObject.isType('textbox') ||
-				// @ts-expect-error
-				!activeObject.isEditing
-			) {
+			if (!isEditingText) {
 				event.preventDefault();
 				setSelectTool();
 			}
+			return;
 		}
 
+		// Delete/Backspace - delete selected objects
 		if (event.key === 'Backspace' || event.key === 'Delete') {
-			const activeObject = canvas.getActiveObject();
-			if (
-				activeObject &&
-				// @ts-expect-error
-				(!activeObject.isType('textbox') || !activeObject.isEditing)
-			) {
+			if (!isEditingDisabled && activeObject && !isEditingText) {
 				event.preventDefault();
 				deleteSelected();
+			}
+			return;
+		}
+
+		// Skip keyboard shortcuts if editing text (except for Escape and modifier combos)
+		if (isEditingText && !modifierKey) return;
+
+		// Create keyboard shortcut context
+		const shortcutContext = {
+			canvas,
+			sendCanvasUpdate,
+			controlPointManager,
+			history,
+			userId: data.user?.id,
+			updateHistoryState: () => {
+				canUndo = history?.canUndo() || false;
+				canRedo = history?.canRedo() || false;
+			},
+			mousePosition: lastMousePosition,
+		};
+
+		// Ctrl/Cmd + Z - Undo
+		if (modifierKey && event.key === 'z' && !event.shiftKey) {
+			if (!isEditingDisabled) {
+				event.preventDefault();
+				await handleUndo();
+			}
+			return;
+		}
+
+		// Ctrl/Cmd + Shift + Z or Ctrl/Cmd + Y - Redo
+		if (
+			(modifierKey && event.key === 'z' && event.shiftKey) ||
+			(modifierKey && event.key === 'y')
+		) {
+			if (!isEditingDisabled) {
+				event.preventDefault();
+				await handleRedo();
+			}
+			return;
+		}
+
+		// Ctrl/Cmd + C - Copy
+		if (modifierKey && event.key === 'c') {
+			if (!isEditingText && KeyboardShortcuts) {
+				event.preventDefault();
+				KeyboardShortcuts.copySelected(shortcutContext);
+			}
+			return;
+		}
+
+		// Ctrl/Cmd + V - Paste
+		if (modifierKey && event.key === 'v') {
+			if (!isEditingDisabled && KeyboardShortcuts) {
+				event.preventDefault();
+				await KeyboardShortcuts.pasteFromClipboard(shortcutContext);
+			}
+			return;
+		}
+
+		// Ctrl/Cmd + X - Cut
+		if (modifierKey && event.key === 'x') {
+			if (!isEditingDisabled && !isEditingText && KeyboardShortcuts) {
+				event.preventDefault();
+				await KeyboardShortcuts.cutSelected(shortcutContext);
+			}
+			return;
+		}
+
+		// Ctrl/Cmd + D - Duplicate
+		if (modifierKey && event.key === 'd') {
+			if (!isEditingDisabled && !isEditingText && KeyboardShortcuts) {
+				event.preventDefault();
+				await KeyboardShortcuts.duplicateSelected(shortcutContext);
+			}
+			return;
+		}
+
+		// Ctrl/Cmd + A - Select All
+		if (modifierKey && event.key === 'a') {
+			if (!isEditingText && KeyboardShortcuts) {
+				event.preventDefault();
+				KeyboardShortcuts.selectAll(shortcutContext);
+			}
+			return;
+		}
+
+		// Ctrl/Cmd + + or Ctrl/Cmd + = - Zoom In
+		if (modifierKey && (event.key === '+' || event.key === '=')) {
+			event.preventDefault();
+			zoomIn();
+			return;
+		}
+
+		// Ctrl/Cmd + - - Zoom Out
+		if (modifierKey && event.key === '-') {
+			event.preventDefault();
+			zoomOut();
+			return;
+		}
+
+		// Ctrl/Cmd + 0 - Reset Zoom
+		if (modifierKey && event.key === '0') {
+			event.preventDefault();
+			resetZoom();
+			return;
+		}
+
+		// Single key shortcuts (only when not editing text and not using modifier)
+		if (!modifierKey && !isEditingText && !isEditingDisabled) {
+			switch (event.key.toLowerCase()) {
+				case 'v':
+					event.preventDefault();
+					setSelectTool();
+					break;
+				case 'h':
+					event.preventDefault();
+					setPanTool();
+					break;
+				case 'p':
+				case 'b':
+					event.preventDefault();
+					setDrawTool();
+					break;
+				case 'l':
+					event.preventDefault();
+					setLineTool();
+					break;
+				case 't':
+					event.preventDefault();
+					addText();
+					break;
+				case 'e':
+					event.preventDefault();
+					setEraserTool();
+					break;
+				case 'r':
+					event.preventDefault();
+					addShape('rectangle');
+					break;
+				case 'o':
+					event.preventDefault();
+					addShape('circle');
+					break;
 			}
 		}
 	};
@@ -520,222 +1091,619 @@
 	onMount(() => {
 		if (!whiteboardCanvas) return;
 
-		document.body.style.overflow = 'hidden';
+		let resizeCanvas: (() => void) | undefined;
+		let handleMouseMove: ((e: MouseEvent) => void) | undefined;
 
-		canvas = new fabric.Canvas(whiteboardCanvas);
+		// Async initialization
+		(async () => {
+			// Dynamically import browser-only modules
+			fabric = await import('fabric');
+			CanvasActions = await import('$lib/components/whiteboard/canvas-actions');
+			CanvasEvents = await import('$lib/components/whiteboard/canvas-events');
+			const HistoryModule =
+				await import('$lib/components/whiteboard/canvas-history');
+			CanvasHistory = HistoryModule.CanvasHistory;
+			applyRedo = HistoryModule.applyRedo;
+			applyUndo = HistoryModule.applyUndo;
+			Tools = await import('$lib/components/whiteboard/tools');
+			WebSocketHandler =
+				await import('$lib/components/whiteboard/websocket-socketio');
+			const ControlPointsModule =
+				await import('$lib/components/whiteboard/control-points');
+			ControlPointManager = ControlPointsModule.ControlPointManager;
+			CropOverlayClass = ControlPointsModule.CropOverlay;
+			KeyboardShortcuts =
+				await import('$lib/components/whiteboard/keyboard-shortcuts');
 
-		const resizeCanvas = () => {
-			if (!whiteboardCanvas || !canvas) return;
-			const whiteContainer = whiteboardCanvas.closest(
-				'.rounded-lg.border-2.bg-white',
+			// Initialize history
+			history = new CanvasHistory();
+			// Set the current user ID for filtering history operations
+			if (data.user?.id) {
+				history.setCurrentUserId(data.user.id);
+			}
+			// Update initial button states
+			canUndo = history.canUndo();
+			canRedo = history.canRedo();
+			console.log('History initialized for user:', data.user?.id);
+
+			document.body.style.overflow = 'hidden';
+
+			canvas = new fabric.Canvas(whiteboardCanvas, {
+				preserveObjectStacking: true,
+				perPixelTargetFind: true,
+				targetFindTolerance: 5,
+			});
+
+			resizeCanvas = () => {
+				if (!whiteboardCanvas || !canvas) return;
+				const whiteContainer = whiteboardCanvas.closest(
+					'.rounded-lg.border-2.bg-white',
+				);
+				if (whiteContainer) {
+					const rect = whiteContainer.getBoundingClientRect();
+					const width = rect.width - 4;
+					const height = rect.height - 4;
+
+					whiteboardCanvas.width = width;
+					whiteboardCanvas.height = height;
+
+					canvas.setDimensions({ width: width, height: height });
+					canvas.renderAll();
+				}
+			};
+
+			resizeCanvas();
+			window.addEventListener('resize', resizeCanvas);
+
+			canvas.freeDrawingBrush = new fabric.PencilBrush(canvas);
+			canvas.freeDrawingBrush.width = 2;
+			canvas.freeDrawingBrush.color = '#000000';
+
+			setSelectTool();
+
+			// Initialize control point manager
+			controlPointManager = new ControlPointManager(canvas, sendCanvasUpdate);
+
+			// Setup WebSocket connection for real-time collaboration
+			socket = WebSocketHandler.setupWebSocket(
+				'', // Empty URL - Socket.IO will connect to the same origin
+				canvas,
+				whiteboardIdNum,
+				{
+					controlPointManager,
+					onLoadStart: () => {
+						// Set flag to prevent history recording during load
+						isLoadingFromServer = true;
+						console.log(
+							'Loading objects from server - history recording disabled',
+						);
+					},
+					onLoadEnd: (objects) => {
+						// Reset flag after load completes
+						isLoadingFromServer = false;
+						console.log(
+							'Finished loading',
+							objects.length,
+							'objects - history recording enabled',
+						);
+					},
+					onRemoteActionStart: () => {
+						// Set flag to prevent history recording during remote actions from other users
+						isLoadingFromServer = true;
+					},
+					onRemoteActionEnd: () => {
+						// Reset flag after remote action completes
+						isLoadingFromServer = false;
+					},
+				},
 			);
-			if (whiteContainer) {
-				const rect = whiteContainer.getBoundingClientRect();
-				const width = rect.width - 4;
-				const height = rect.height - 4;
 
-				whiteboardCanvas.width = width;
-				whiteboardCanvas.height = height;
+			// Expose socket on sendCanvasUpdate for access by event handlers (after socket is created)
+			(sendCanvasUpdate as any).socket = socket;
 
-				canvas.setDimensions({ width: width, height: height });
-				canvas.renderAll();
-			}
-		};
+			// Add lock/unlock message handlers for Socket.IO
+			socket.on('lock', (data: any) => {
+				if (data.whiteboardId === whiteboardIdNum) {
+					isLocked = data.isLocked;
+					applyCanvasLockState(isLocked);
+				}
+			});
 
-		resizeCanvas();
-		window.addEventListener('resize', resizeCanvas);
+			socket.on('unlock', (data: any) => {
+				if (data.whiteboardId === whiteboardIdNum) {
+					isLocked = data.isLocked;
+					applyCanvasLockState(isLocked);
+				}
+			});
 
-		canvas.freeDrawingBrush = new fabric.PencilBrush(canvas);
-		canvas.freeDrawingBrush.width = 2;
-		canvas.freeDrawingBrush.color = '#000000';
+			// Apply initial lock state
+			applyCanvasLockState(isLocked);
 
-		setSelectTool();
+			// Setup all canvas event handlers using the extracted module
+			const canvasEventContext: CanvasEventContext = {
+				// State getters
+				getSelectedTool: () => selectedTool,
+				getShowFloatingMenu: () => showFloatingMenu,
+				getIsCropping: () => isCropping,
+				getIsPanMode: () => isPanMode,
+				getIsDrawingText: () => isDrawingText,
+				getIsDrawingShape: () => isDrawingShape,
+				getIsDrawingLine: () => isDrawingLine,
+				getIsErasing: () => isErasing,
+				getIsMovingImage: () => isMovingImage,
+				getTempText: () => tempText,
+				getTempShape: () => tempShape,
+				getTempLine: () => tempLine,
+				getStartPoint: () => startPoint,
+				getPanStartPos: () => panStartPos,
+				getLastEraserPoint: () => lastEraserPoint,
+				getHoveredObjectsForDeletion: () => hoveredObjectsForDeletion,
+				getEraserTrail: () => eraserTrail,
+				getOriginalOpacities: () => originalOpacities,
+				getCurrentShapeType: () => currentShapeType,
+				getCurrentZoom: () => currentZoom,
 
-		// Setup WebSocket connection for real-time collaboration
-		socket = WebSocketHandler.setupWebSocket(
-			`/subjects/${subjectOfferingId}/class/${subjectOfferingClassId}/tasks/${taskId}/whiteboard/ws`,
-			canvas,
-			whiteboardIdNum,
-		);
+				// State setters
+				setSelectedTool: (value) => {
+					selectedTool = value;
+				},
+				setShowFloatingMenu: (value) => {
+					showFloatingMenu = value;
+				},
+				setIsPanMode: (value) => {
+					isPanMode = value;
+				},
+				setIsDrawingText: (value) => {
+					isDrawingText = value;
+				},
+				setIsDrawingShape: (value) => {
+					isDrawingShape = value;
+				},
+				setIsDrawingLine: (value) => {
+					isDrawingLine = value;
+				},
+				setIsErasing: (value) => {
+					isErasing = value;
+				},
+				setIsMovingImage: (value) => {
+					isMovingImage = value;
+				},
+				setTempText: (value) => {
+					tempText = value;
+				},
+				setTempShape: (value) => {
+					tempShape = value;
+				},
+				setTempLine: (value) => {
+					tempLine = value;
+				},
+				setStartPoint: (value) => {
+					startPoint = value;
+				},
+				setPanStartPos: (value) => {
+					panStartPos = value;
+				},
+				setLastEraserPoint: (value) => {
+					lastEraserPoint = value;
+				},
+				setHoveredObjectsForDeletion: (value) => {
+					hoveredObjectsForDeletion = value;
+				},
+				setEraserTrail: (value) => {
+					eraserTrail = value;
+				},
+				setOriginalOpacities: (value) => {
+					originalOpacities = value;
+				},
+				setCurrentShapeType: (value) => {
+					currentShapeType = value;
+				},
+				setCurrentZoom: (value) => {
+					currentZoom = value;
+				},
+				setIsDrawingObject: (value) => {
+					isDrawingObject = value;
+				},
 
-		// Setup all canvas event handlers using the extracted module
-		const canvasEventContext: CanvasEventContext = {
-			// State getters
-			getSelectedTool: () => selectedTool,
-			getShowFloatingMenu: () => showFloatingMenu,
-			getIsPanMode: () => isPanMode,
-			getIsDrawingText: () => isDrawingText,
-			getIsDrawingShape: () => isDrawingShape,
-			getIsDrawingLine: () => isDrawingLine,
-			getIsDrawingArrow: () => isDrawingArrow,
-			getIsErasing: () => isErasing,
-			getIsMovingImage: () => isMovingImage,
-			getTempText: () => tempText,
-			getTempShape: () => tempShape,
-			getTempLine: () => tempLine,
-			getStartPoint: () => startPoint,
-			getPanStartPos: () => panStartPos,
-			getLastEraserPoint: () => lastEraserPoint,
-			getHoveredObjectsForDeletion: () => hoveredObjectsForDeletion,
-			getEraserTrail: () => eraserTrail,
-			getOriginalOpacities: () => originalOpacities,
-			getCurrentShapeType: () => currentShapeType,
-			getCurrentZoom: () => currentZoom,
+				// Options getters
+				getCurrentTextOptions: () => currentTextOptions,
+				getCurrentShapeOptions: () => currentShapeOptions,
+				getCurrentDrawOptions: () => currentDrawOptions,
+				getCurrentLineOptions: () => currentLineOptions,
 
-			// State setters
-			setSelectedTool: (value) => {
-				selectedTool = value;
-			},
-			setShowFloatingMenu: (value) => {
-				showFloatingMenu = value;
-			},
-			setIsPanMode: (value) => {
-				isPanMode = value;
-			},
-			setIsDrawingText: (value) => {
-				isDrawingText = value;
-			},
-			setIsDrawingShape: (value) => {
-				isDrawingShape = value;
-			},
-			setIsDrawingLine: (value) => {
-				isDrawingLine = value;
-			},
-			setIsDrawingArrow: (value) => {
-				isDrawingArrow = value;
-			},
-			setIsErasing: (value) => {
-				isErasing = value;
-			},
-			setIsMovingImage: (value) => {
-				isMovingImage = value;
-			},
-			setTempText: (value) => {
-				tempText = value;
-			},
-			setTempShape: (value) => {
-				tempShape = value;
-			},
-			setTempLine: (value) => {
-				tempLine = value as fabric.Line | null;
-			},
-			setStartPoint: (value) => {
-				startPoint = value;
-			},
-			setPanStartPos: (value) => {
-				panStartPos = value;
-			},
-			setLastEraserPoint: (value) => {
-				lastEraserPoint = value;
-			},
-			setHoveredObjectsForDeletion: (value) => {
-				hoveredObjectsForDeletion = value;
-			},
-			setEraserTrail: (value) => {
-				eraserTrail = value;
-			},
-			setOriginalOpacities: (value) => {
-				originalOpacities = value;
-			},
-			setCurrentShapeType: (value) => {
-				currentShapeType = value;
-			},
-			setCurrentZoom: (value) => {
-				currentZoom = value;
-			},
+				// Callbacks
+				sendCanvasUpdate,
+				sendImageUpdate,
+				clearEraserState,
 
-			// Options getters
-			getCurrentTextOptions: () => currentTextOptions,
-			getCurrentShapeOptions: () => currentShapeOptions,
-			getCurrentDrawOptions: () => currentDrawOptions,
-			getCurrentLineArrowOptions: () => currentLineArrowOptions,
+				// Eraser batch delete callback
+				onEraserComplete: (
+					deletedObjects: Array<{ id: string; data: Record<string, unknown> }>,
+				) => {
+					if (!history || !data.user?.id || deletedObjects.length === 0) return;
+					// Mark all deleted object IDs so object:removed doesn't double-record them
+					deletedObjects.forEach((obj) => eraserDeletedObjectIds.add(obj.id));
+					// Record as batch delete
+					history.recordBatchDelete(deletedObjects, data.user.id);
+					canUndo = history.canUndo();
+					canRedo = history.canRedo();
+					// Clear after a short delay
+					setTimeout(() => {
+						deletedObjects.forEach((obj) =>
+							eraserDeletedObjectIds.delete(obj.id),
+						);
+					}, 100);
+				},
 
-			// Callbacks
-			sendCanvasUpdate,
-			sendImageUpdate,
-			clearEraserState,
+				// Refs
+				floatingMenuRef: floatingMenuRef || undefined,
 
-			// Refs
-			floatingMenuRef: floatingMenuRef || undefined,
-		};
+				// Control point manager
+				controlPointManager,
+			};
 
-		CanvasEvents.setupCanvasEvents(canvas, canvasEventContext);
+			CanvasEvents.setupCanvasEvents(canvas, canvasEventContext);
 
-		window.addEventListener('keydown', handleKeyDown);
+			// Setup history tracking
+			// Track object additions
+			canvas.on('object:added', (e: any) => {
+				// Skip if applying history, loading from server, actively drawing, control point modifying, or missing data
+				if (
+					isApplyingHistory ||
+					isLoadingFromServer ||
+					isDrawingObject ||
+					isControlPointModifying ||
+					!e.target ||
+					!history
+				)
+					return;
 
-		// Add pinch-to-zoom for touch devices
-		let initialPinchDistance = 0;
-		let initialZoom = 1;
-
-		whiteboardCanvas.addEventListener('touchstart', (e) => {
-			if (e.touches.length === 2) {
-				// Two finger touch - setup for pinch zoom
-				const touch1 = e.touches[0];
-				const touch2 = e.touches[1];
-
-				const dx = touch1.clientX - touch2.clientX;
-				const dy = touch1.clientY - touch2.clientY;
-				initialPinchDistance = Math.sqrt(dx * dx + dy * dy);
-				initialZoom = canvas.getZoom();
-
-				e.preventDefault();
-			}
-		});
-
-		whiteboardCanvas.addEventListener('touchmove', (e) => {
-			if (e.touches.length === 2 && initialPinchDistance > 0) {
-				// Two finger move - pinch to zoom
-				const touch1 = e.touches[0];
-				const touch2 = e.touches[1];
-
-				const dx = touch1.clientX - touch2.clientX;
-				const dy = touch1.clientY - touch2.clientY;
-				const currentDistance = Math.sqrt(dx * dx + dy * dy);
-
-				const scale = currentDistance / initialPinchDistance;
-				const newZoom = initialZoom * scale;
-				const constrainedZoom = Math.max(0.1, Math.min(10, newZoom));
-
-				// Zoom at center of pinch gesture
-				const centerX = (touch1.clientX + touch2.clientX) / 2;
-				const centerY = (touch1.clientY + touch2.clientY) / 2;
-
-				if (whiteboardCanvas) {
-					const rect = whiteboardCanvas.getBoundingClientRect();
-					const point = new fabric.Point(
-						centerX - rect.left,
-						centerY - rect.top,
-					);
-					canvas.zoomToPoint(point, constrainedZoom);
-					currentZoom = constrainedZoom; // Update zoom state
+				// Skip control points entirely - they are client-side only
+				if (controlPointManager.isControlPoint(e.target)) {
+					return;
 				}
 
-				e.preventDefault();
-			}
-		});
+				// Skip edge lines (bounding box lines for control points) - they are client-side only
+				if (
+					(e.target as any).linkedObjectId &&
+					e.target.id?.includes('-edge-')
+				) {
+					return;
+				}
 
-		whiteboardCanvas.addEventListener('touchend', (e) => {
-			if (e.touches.length < 2) {
-				initialPinchDistance = 0;
-			}
-		});
+				// Skip objects marked as excludeFromExport (like edge lines) - they are client-side only
+				if ((e.target as any).excludeFromExport === true) {
+					return;
+				}
 
+				// Skip temporary objects that are being drawn (they have selectable: false until finalized)
+				// Only record when selectable is true, meaning the object has been finalized
+				if (e.target.selectable === false) {
+					return;
+				}
+
+				const objectId = e.target.id;
+				if (!objectId) return;
+
+				// Skip if this object was already recorded via object:finalized (prevents double recording)
+				if (finalizedObjectIds.has(objectId)) {
+					// Still bring control points to front
+					controlPointManager.bringAllControlPointsToFront();
+					return;
+				}
+
+				// Bring control points to front when any non-control-point object is added
+				controlPointManager.bringAllControlPointsToFront();
+
+				if (data.user?.id) {
+					const objectData = e.target.toObject();
+					objectData.id = objectId;
+					history.recordAdd(objectId, objectData, data.user.id);
+					canUndo = history.canUndo();
+					canRedo = history.canRedo();
+				}
+			});
+
+			// Track object modifications (store previous state before modification)
+			const objectStates = new Map<string, Record<string, unknown>>();
+			canvas.on('object:modified', (e: any) => {
+				if (isApplyingHistory || isLoadingFromServer || !e.target || !history)
+					return;
+				const objectId = e.target.id;
+				if (objectId && data.user?.id) {
+					const previousData = objectStates.get(objectId);
+					const newData = e.target.toObject();
+					newData.id = objectId;
+
+					if (previousData) {
+						history.recordModify(objectId, previousData, newData, data.user.id);
+						objectStates.delete(objectId);
+					}
+					canUndo = history.canUndo();
+					canRedo = history.canRedo();
+				}
+			});
+
+			// Store state before modification starts
+			canvas.on('object:moving', (e: any) => {
+				if (isApplyingHistory || !e.target) return;
+				// If this is a control point being moved, set the flag to prevent history recording
+				// for the object that will be modified by the control point
+				if (controlPointManager.isControlPoint(e.target)) {
+					isControlPointModifying = true;
+					// Capture the linked object's state before modification
+					const linkedObjectId = (e.target as any).linkedObjectId;
+					if (linkedObjectId && !objectStates.has(linkedObjectId)) {
+						const linkedObj = canvas
+							.getObjects()
+							.find((o: any) => o.id === linkedObjectId);
+						if (linkedObj) {
+							const state = linkedObj.toObject();
+							state.id = linkedObjectId;
+							objectStates.set(linkedObjectId, state);
+						}
+					}
+					return;
+				}
+				const objectId = e.target.id;
+				if (objectId && !objectStates.has(objectId)) {
+					const state = e.target.toObject();
+					state.id = objectId;
+					objectStates.set(objectId, state);
+				}
+			});
+
+			canvas.on('object:scaling', (e: any) => {
+				if (isApplyingHistory || !e.target) return;
+				// Skip control points - they are client-side only
+				if (controlPointManager.isControlPoint(e.target)) return;
+				const objectId = e.target.id;
+				if (objectId && !objectStates.has(objectId)) {
+					const state = e.target.toObject();
+					state.id = objectId;
+					objectStates.set(objectId, state);
+				}
+			});
+
+			canvas.on('object:rotating', (e: any) => {
+				if (isApplyingHistory || !e.target) return;
+				// Skip control points - they are client-side only
+				if (controlPointManager.isControlPoint(e.target)) return;
+				const objectId = e.target.id;
+				if (objectId && !objectStates.has(objectId)) {
+					const state = e.target.toObject();
+					state.id = objectId;
+					objectStates.set(objectId, state);
+				}
+			});
+
+			// Handle crop handle dragging
+			canvas.on('object:moving', (e: any) => {
+				if (cropOverlay && e.target && cropOverlay.isCropHandle(e.target)) {
+					const handleIndex = cropOverlay.getHandleIndex(e.target);
+					if (handleIndex >= 0) {
+						cropOverlay.updateFromHandle(
+							handleIndex,
+							e.target.left,
+							e.target.top,
+						);
+					}
+				}
+			});
+
+			// Track when control point modifications complete (on mouse up)
+			canvas.on('mouse:up', (e: any) => {
+				// If we were modifying via control points, reset the flag
+				// and record the modification for the linked object
+				if (isControlPointModifying && history && data.user?.id) {
+					isControlPointModifying = false;
+
+					// Check if the target is a control point and record the linked object's modification
+					if (e.target && controlPointManager.isControlPoint(e.target)) {
+						const linkedObjectId = (e.target as any).linkedObjectId;
+						if (linkedObjectId) {
+							const previousData = objectStates.get(linkedObjectId);
+							const linkedObj = canvas
+								.getObjects()
+								.find((o: any) => o.id === linkedObjectId);
+							if (linkedObj && previousData) {
+								const newData = linkedObj.toObject();
+								newData.id = linkedObjectId;
+								history.recordModify(
+									linkedObjectId,
+									previousData,
+									newData,
+									data.user.id,
+								);
+								objectStates.delete(linkedObjectId);
+								canUndo = history.canUndo();
+								canRedo = history.canRedo();
+							}
+						}
+					}
+				}
+			});
+
+			// Track finalized objects (shapes/lines that were being drawn and are now complete)
+			canvas.on('object:finalized', (e: any) => {
+				if (isApplyingHistory || isLoadingFromServer || !e.target || !history)
+					return;
+				// Skip control points
+				if (controlPointManager.isControlPoint(e.target)) return;
+				const objectId = e.target.id;
+				if (objectId && data.user?.id) {
+					// Mark this object as finalized so object:added doesn't double-record it
+					finalizedObjectIds.add(objectId);
+					// Clear after a short delay
+					setTimeout(() => {
+						finalizedObjectIds.delete(objectId);
+					}, 100);
+
+					const objectData = e.target.toObject();
+					objectData.id = objectId;
+					history.recordAdd(objectId, objectData, data.user.id);
+					canUndo = history.canUndo();
+					canRedo = history.canRedo();
+				}
+			});
+
+			// Track object removals
+			canvas.on('object:removed', (e: any) => {
+				// Skip if applying history, loading from server, actively drawing, control point modifying, or missing data
+				if (
+					isApplyingHistory ||
+					isLoadingFromServer ||
+					isDrawingObject ||
+					isControlPointModifying ||
+					!e.target ||
+					!history
+				)
+					return;
+				// Skip control points - they are client-side only
+				if (controlPointManager.isControlPoint(e.target)) return;
+				// Skip edge lines (bounding box lines for control points) - they are client-side only
+				if ((e.target as any).linkedObjectId && e.target.id?.includes('-edge-'))
+					return;
+				// Skip objects marked as excludeFromExport (like edge lines) - they are client-side only
+				if ((e.target as any).excludeFromExport === true) return;
+				// Skip temporary objects (selectable: false) - these are being removed during drawing
+				if (e.target.selectable === false) return;
+				const objectId = e.target.id;
+				// Skip if this object is being deleted by the eraser (batch delete handles this)
+				if (eraserDeletedObjectIds.has(objectId)) return;
+				// Skip if this is part of a clear all operation (batch delete handles this)
+				if (isClearingCanvas) return;
+				if (objectId && data.user?.id) {
+					const objectData = e.target.toObject();
+					objectData.id = objectId;
+					history.recordDelete(objectId, objectData, data.user.id);
+					canUndo = history.canUndo();
+					canRedo = history.canRedo();
+				}
+			});
+
+			window.addEventListener('keydown', handleKeyDown);
+
+			// Track mouse position for paste operations
+			handleMouseMove = (e: MouseEvent) => {
+				lastMousePosition = { x: e.clientX, y: e.clientY };
+			};
+			window.addEventListener('mousemove', handleMouseMove);
+
+			// Add pinch-to-zoom for touch devices
+			let initialPinchDistance = 0;
+			let initialZoom = 1;
+
+			whiteboardCanvas.addEventListener('touchstart', (e) => {
+				if (e.touches.length === 2) {
+					// Two finger touch - setup for pinch zoom
+					const touch1 = e.touches[0];
+					const touch2 = e.touches[1];
+
+					const dx = touch1.clientX - touch2.clientX;
+					const dy = touch1.clientY - touch2.clientY;
+					initialPinchDistance = Math.sqrt(dx * dx + dy * dy);
+					initialZoom = canvas.getZoom();
+
+					e.preventDefault();
+				}
+			});
+
+			whiteboardCanvas.addEventListener('touchmove', (e) => {
+				if (e.touches.length === 2 && initialPinchDistance > 0) {
+					// Two finger move - pinch to zoom
+					const touch1 = e.touches[0];
+					const touch2 = e.touches[1];
+
+					const dx = touch1.clientX - touch2.clientX;
+					const dy = touch1.clientY - touch2.clientY;
+					const currentDistance = Math.sqrt(dx * dx + dy * dy);
+
+					const scale = currentDistance / initialPinchDistance;
+					const newZoom = initialZoom * scale;
+					const constrainedZoom = Math.max(0.1, Math.min(10, newZoom));
+
+					// Zoom at center of pinch gesture
+					const centerX = (touch1.clientX + touch2.clientX) / 2;
+					const centerY = (touch1.clientY + touch2.clientY) / 2;
+
+					if (whiteboardCanvas) {
+						const rect = whiteboardCanvas.getBoundingClientRect();
+						const point = new fabric.Point(
+							centerX - rect.left,
+							centerY - rect.top,
+						);
+						canvas.zoomToPoint(point, constrainedZoom);
+						currentZoom = constrainedZoom; // Update zoom state
+
+						// Update control point sizes to maintain constant visual size
+						if (controlPointManager) {
+							controlPointManager.updateAllControlPointSizes();
+						}
+					}
+
+					e.preventDefault();
+				}
+			});
+
+			whiteboardCanvas.addEventListener('touchend', (e) => {
+				if (e.touches.length < 2) {
+					initialPinchDistance = 0;
+				}
+			});
+
+			// Add mouse wheel zoom support
+			canvas.on('mouse:wheel', (opt: any) => {
+				const delta = opt.e.deltaY;
+				let zoom = canvas.getZoom();
+				zoom *= 0.999 ** delta;
+
+				// Constrain zoom level
+				if (zoom > ZOOM_LIMITS.max) zoom = ZOOM_LIMITS.max;
+				if (zoom < ZOOM_LIMITS.min) zoom = ZOOM_LIMITS.min;
+
+				// Zoom at pointer position
+				canvas.zoomToPoint({ x: opt.e.offsetX, y: opt.e.offsetY }, zoom);
+				currentZoom = zoom;
+
+				// Update control point sizes to maintain constant visual size
+				if (controlPointManager) {
+					controlPointManager.updateAllControlPointSizes();
+				}
+
+				opt.e.preventDefault();
+				opt.e.stopPropagation();
+			});
+		})(); // Close async IIFE
+
+		// Cleanup function
 		return () => {
+			if (resizeCanvas) {
+				window.removeEventListener('resize', resizeCanvas);
+			}
 			window.removeEventListener('keydown', handleKeyDown);
-			window.removeEventListener('resize', resizeCanvas);
+			if (handleMouseMove) {
+				window.removeEventListener('mousemove', handleMouseMove);
+			}
 		};
 	});
 
 	onDestroy(() => {
+		if (!browser) return;
+
 		// Restore body scrolling when leaving whiteboard
-		document.body.style.overflow = '';
+		if (document?.body) {
+			document.body.style.overflow = '';
+		}
 
 		// Clear any pending image throttle timeouts
 		if (imageThrottleTimeout !== null) {
 			clearTimeout(imageThrottleTimeout);
 		}
 
-		WebSocketHandler.closeWebSocket(socket);
+		if (WebSocketHandler && socket) {
+			WebSocketHandler.closeWebSocket(socket);
+		}
 		if (canvas) {
 			canvas.dispose();
 		}
@@ -753,6 +1721,7 @@
 					<ArrowLeftIcon class="mr-2 h-4 w-4" />
 					Back to Task
 				</Button>
+
 				<div class="flex-1">
 					<h1 class="text-lg font-semibold">
 						{data.whiteboard.title || 'Interactive Whiteboard'}
@@ -761,6 +1730,122 @@
 						{data.task.title}
 					</p>
 				</div>
+
+				{#if isTeacher}
+					<form
+						method="POST"
+						action="?/toggleLock"
+						onsubmit={async (e) => {
+							e.preventDefault();
+							const formData = new FormData(e.currentTarget);
+							try {
+								const res = await fetch(e.currentTarget.action, {
+									method: 'POST',
+									body: formData,
+								});
+								const result = await res.json();
+
+								// Handle SvelteKit's devalue serialization format
+								if (result.type === 'success' && result.data) {
+									let actionData =
+										typeof result.data === 'string'
+											? JSON.parse(result.data)
+											: result.data;
+
+									// If actionData is an array (devalue format), reconstruct the object
+									if (Array.isArray(actionData)) {
+										// devalue format: [schema, values...]
+										// Index 0: schema object, Index 1: "success", Index 2: {isLocked: ref}, Index 3: actual boolean
+										const reconstructed = {
+											type: actionData[1], // "success"
+											data: {
+												isLocked: actionData[3], // the actual boolean value
+											},
+										};
+										actionData = reconstructed;
+									}
+
+									if (
+										actionData.type === 'success' &&
+										actionData.data?.isLocked !== undefined
+									) {
+										const newLockState = actionData.data.isLocked;
+										isLocked = newLockState;
+										applyCanvasLockState(newLockState);
+
+										// Show toast notification
+										if (toast) {
+											if (newLockState) {
+												toast.success('Whiteboard locked', {
+													description:
+														'Students can now only view and pan the whiteboard',
+												});
+											} else {
+												toast.success('Whiteboard unlocked', {
+													description: 'Students can now edit the whiteboard',
+												});
+											}
+										}
+
+										if (socket && socket.connected) {
+											const lockMessage = newLockState ? 'lock' : 'unlock';
+											socket.emit(lockMessage, {
+												isLocked: newLockState,
+												whiteboardId: whiteboardIdNum,
+											});
+										}
+									}
+								}
+							} catch (err) {
+								console.error('Lock toggle failed:', err);
+							}
+						}}
+					>
+						<Button type="submit" variant="ghost" size="icon">
+							{#if isLocked}
+								<svg
+									xmlns="http://www.w3.org/2000/svg"
+									width="20"
+									height="20"
+									viewBox="0 0 24 24"
+									fill="none"
+									stroke="currentColor"
+									stroke-width="2"
+									stroke-linecap="round"
+									stroke-linejoin="round"
+									><rect
+										width="18"
+										height="11"
+										x="3"
+										y="11"
+										rx="2"
+										ry="2"
+									/><path d="M7 11V7a5 5 0 0 1 10 0v4" /></svg
+								>
+							{:else}
+								<svg
+									xmlns="http://www.w3.org/2000/svg"
+									width="20"
+									height="20"
+									viewBox="0 0 24 24"
+									fill="none"
+									stroke="currentColor"
+									stroke-width="2"
+									stroke-linecap="round"
+									stroke-linejoin="round"
+									><rect
+										width="18"
+										height="11"
+										x="3"
+										y="11"
+										rx="2"
+										ry="2"
+									/><path d="M7 11V7a5 5 0 0 1 9.9-1" /></svg
+								>
+							{/if}
+						</Button>
+					</form>
+				{/if}
 			</div>
 		</header>
 
@@ -768,20 +1853,54 @@
 		<main
 			class="relative flex flex-1 items-center justify-center overflow-hidden p-4"
 		>
-			<!-- Floating Toolbar -->
-			<WhiteboardToolbar
-				{selectedTool}
-				onSelectTool={setSelectTool}
-				onPanTool={setPanTool}
-				onDrawTool={setDrawTool}
-				onLineTool={setLineTool}
-				onArrowTool={setArrowTool}
-				onAddShape={addShape}
-				onAddText={addText}
-				onAddImage={addImage}
-				onEraserTool={setEraserTool}
-				onClearCanvas={clearCanvas}
-			/>
+			{#if isLocked && !isTeacher}
+				<div
+					class="absolute top-8 left-1/2 z-50 w-auto max-w-2xl -translate-x-1/2"
+				>
+					<Alert.Root
+						variant="default"
+						class="border-border/50 bg-background/20 backdrop-blur-sm"
+					>
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							width="16"
+							height="16"
+							viewBox="0 0 24 24"
+							fill="none"
+							stroke="currentColor"
+							stroke-width="2"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							class="h-4 w-4"
+						>
+							<rect width="18" height="11" x="3" y="11" rx="2" ry="2" />
+							<path d="M7 11V7a5 5 0 0 1 10 0v4" />
+						</svg>
+						<Alert.Title>View Only Mode</Alert.Title>
+						<Alert.Description>
+							This whiteboard is locked by your teacher. You can pan and zoom to
+							view content.
+						</Alert.Description>
+					</Alert.Root>
+				</div>
+			{/if}
+
+			<!-- Floating Toolbar - Hidden for students when locked -->
+			{#if !(isLocked && !isTeacher)}
+				<WhiteboardToolbar
+					{selectedTool}
+					{currentShapeType}
+					onSelectTool={setSelectTool}
+					onPanTool={setPanTool}
+					onDrawTool={setDrawTool}
+					onLineTool={setLineTool}
+					onAddShape={addShape}
+					onAddText={addText}
+					onAddImage={addImage}
+					onEraserTool={setEraserTool}
+					onClearCanvas={clearCanvas}
+				/>
+			{/if}
 
 			<div
 				class="flex h-full w-full rounded-lg border-2 bg-white shadow-lg dark:bg-neutral-700"
@@ -806,16 +1925,28 @@
 				onTextOptionsChange={handleTextOptionsChange}
 				onShapeOptionsChange={handleShapeOptionsChange}
 				onDrawOptionsChange={handleDrawOptionsChange}
-				onLineArrowOptionsChange={handleLineArrowOptionsChange}
+				onLineOptionsChange={handleLineOptionsChange}
+				onBringToFront={handleBringToFront}
+				onSendToBack={handleSendToBack}
+				onMoveForward={handleMoveForward}
+				onMoveBackward={handleMoveBackward}
+				onStartCrop={handleStartCrop}
+				onApplyCrop={handleApplyCrop}
+				onCancelCrop={handleCancelCrop}
+				{isCropping}
 			/>
 
-			<!-- Zoom Controls -->
+			<!-- Zoom Controls - Disable undo/redo for locked students -->
 			<WhiteboardZoomControls
 				{currentZoom}
 				onZoomIn={zoomIn}
 				onZoomOut={zoomOut}
 				onResetZoom={resetZoom}
 				onRecenterView={recenterView}
+				onUndo={isLocked && !isTeacher ? () => {} : handleUndo}
+				onRedo={isLocked && !isTeacher ? () => {} : handleRedo}
+				canUndo={isLocked && !isTeacher ? false : canUndo}
+				canRedo={isLocked && !isTeacher ? false : canRedo}
 			/>
 		</main>
 	</div>

@@ -1,8 +1,6 @@
 <script lang="ts">
 	import Button from '$lib/components/ui/button/button.svelte';
-	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
 	import * as Tooltip from '$lib/components/ui/tooltip/index.js';
-	import ArrowRightIcon from '@lucide/svelte/icons/arrow-right';
 	import CircleIcon from '@lucide/svelte/icons/circle';
 	import EraseIcon from '@lucide/svelte/icons/eraser';
 	import HandIcon from '@lucide/svelte/icons/hand';
@@ -17,11 +15,11 @@
 
 	interface Props {
 		selectedTool: string;
+		currentShapeType?: string;
 		onSelectTool: () => void;
 		onPanTool: () => void;
 		onDrawTool: () => void;
 		onLineTool: () => void;
-		onArrowTool: () => void;
 		onAddShape: (shapeType: string) => void;
 		onAddText: () => void;
 		onAddImage: () => void;
@@ -31,11 +29,11 @@
 
 	let {
 		selectedTool,
+		currentShapeType = '',
 		onSelectTool,
 		onPanTool,
 		onDrawTool,
 		onLineTool,
-		onArrowTool,
 		onAddShape,
 		onAddText,
 		onAddImage,
@@ -111,54 +109,57 @@
 				<Tooltip.Content>Draw Line</Tooltip.Content>
 			</Tooltip.Root>
 
-			<!-- Arrow Tool -->
+			<!-- Rectangle Tool -->
 			<Tooltip.Root>
 				<Tooltip.Trigger>
 					<Button
-						variant={selectedTool === 'arrow' ? 'default' : 'ghost'}
+						variant={selectedTool === 'shapes' &&
+						currentShapeType === 'rectangle'
+							? 'default'
+							: 'ghost'}
 						size="icon"
-						onclick={onArrowTool}
+						onclick={() => onAddShape('rectangle')}
 						class="h-9 w-9"
 					>
-						<ArrowRightIcon />
+						<SquareIcon />
 					</Button>
 				</Tooltip.Trigger>
-				<Tooltip.Content>Draw Arrow</Tooltip.Content>
+				<Tooltip.Content>Rectangle</Tooltip.Content>
 			</Tooltip.Root>
 
-			<!-- Shapes Dropdown -->
+			<!-- Circle Tool -->
 			<Tooltip.Root>
 				<Tooltip.Trigger>
-					<DropdownMenu.Root>
-						<DropdownMenu.Trigger>
-							{#snippet child({ props })}
-								<Button
-									{...props}
-									variant={selectedTool === 'shapes' ? 'default' : 'ghost'}
-									size="icon"
-									class="h-9 w-9"
-								>
-									<SquareIcon />
-								</Button>
-							{/snippet}
-						</DropdownMenu.Trigger>
-						<DropdownMenu.Content>
-							<DropdownMenu.Item onclick={() => onAddShape('rectangle')}>
-								<SquareIcon />
-								Rectangle
-							</DropdownMenu.Item>
-							<DropdownMenu.Item onclick={() => onAddShape('circle')}>
-								<CircleIcon />
-								Circle
-							</DropdownMenu.Item>
-							<DropdownMenu.Item onclick={() => onAddShape('triangle')}>
-								<TriangleIcon />
-								Triangle
-							</DropdownMenu.Item>
-						</DropdownMenu.Content>
-					</DropdownMenu.Root>
+					<Button
+						variant={selectedTool === 'shapes' && currentShapeType === 'circle'
+							? 'default'
+							: 'ghost'}
+						size="icon"
+						onclick={() => onAddShape('circle')}
+						class="h-9 w-9"
+					>
+						<CircleIcon />
+					</Button>
 				</Tooltip.Trigger>
-				<Tooltip.Content>Add Shapes</Tooltip.Content>
+				<Tooltip.Content>Circle</Tooltip.Content>
+			</Tooltip.Root>
+
+			<!-- Triangle Tool -->
+			<Tooltip.Root>
+				<Tooltip.Trigger>
+					<Button
+						variant={selectedTool === 'shapes' &&
+						currentShapeType === 'triangle'
+							? 'default'
+							: 'ghost'}
+						size="icon"
+						onclick={() => onAddShape('triangle')}
+						class="h-9 w-9"
+					>
+						<TriangleIcon />
+					</Button>
+				</Tooltip.Trigger>
+				<Tooltip.Content>Triangle</Tooltip.Content>
 			</Tooltip.Root>
 
 			<!-- Text Tool -->
