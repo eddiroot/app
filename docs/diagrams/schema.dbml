@@ -171,14 +171,6 @@ enum enum_user_type {
   admin
 }
 
-enum enum_whiteboard_object_type {
-  Rect
-  Circle
-  Path
-  Textbox
-  Image
-}
-
 enum enum_year_level {
   N
   F
@@ -1221,24 +1213,22 @@ table user.sub_off_cls_user {
   }
 }
 
-table task.wb {
+table task.whiteboard {
   id integer [pk, not null]
-  isArchived boolean [not null, default: false]
+  task_block_id integer [not null, unique]
+  title text
+  is_locked boolean [not null, default: false]
   created_at "timestamp (3)" [not null, default: `now()`]
   updated_at "timestamp (3)" [not null, default: `now()`]
-  title text
-  taskId integer [not null]
 }
 
-table task.wb_obj {
+table task.whiteboard_object {
   id integer [pk, not null]
-  isArchived boolean [not null, default: false]
+  whiteboard_id integer [not null]
+  object_id text [not null, unique]
+  object_data jsonb [not null]
   created_at "timestamp (3)" [not null, default: `now()`]
   updated_at "timestamp (3)" [not null, default: `now()`]
-  whiteboardId integer [not null]
-  objectId text [not null, unique]
-  objectType enum_whiteboard_object_type [not null]
-  objectData jsonb [not null]
 }
 
 ref att_behaviour_att_id_sub_off_cls_allo_att_id_fk: subject.att_behaviour.att_id > subject.sub_off_cls_allo_att.id [delete: cascade, update: no action]
@@ -1513,6 +1503,6 @@ ref sub_off_cls_user_userId_user_id_fk: user.sub_off_cls_user.userId > user.user
 
 ref sub_off_cls_user_sub_off_class_id_sub_off_cls_id_fk: user.sub_off_cls_user.sub_off_class_id > subject.sub_off_cls.id [delete: cascade, update: no action]
 
-ref wb_taskId_task_id_fk: task.wb.taskId > task.task.id [delete: cascade, update: no action]
+ref whiteboard_task_block_id_task_block_id_fk: task.whiteboard.task_block_id > task.task_block.id [delete: cascade, update: no action]
 
-ref wb_obj_whiteboardId_wb_id_fk: task.wb_obj.whiteboardId > task.wb.id [delete: cascade, update: no action]
+ref whiteboard_object_whiteboard_id_whiteboard_id_fk: task.whiteboard_object.whiteboard_id > task.whiteboard.id [delete: cascade, update: no action]
