@@ -13,92 +13,91 @@
 
 	let { config, onConfigUpdate, viewMode }: RichTextBlockProps = $props();
 
-	let element: HTMLDivElement;
-	let editorBox = $state.raw<{ current: Editor }>();
-	let isEditable = $derived(viewMode == ViewMode.CONFIGURE);
+	let element = $state<HTMLDivElement>();
+	let editor = $state.raw<Editor>();
+
+	// Doesn't affect the UI therefore not reactive
+	let debounceTimer: ReturnType<typeof setTimeout>;
 
 	onMount(() => {
-		editorBox = {
-			current: new Editor({
-				element,
-				extensions: [StarterKit],
-				content: config.html,
-				editable: isEditable,
-				onTransaction: () => {
-					editorBox = { current: editorBox!.current };
+		editor = new Editor({
+			element,
+			extensions: [StarterKit],
+			content: config.html,
+			editable: viewMode === ViewMode.CONFIGURE,
+			onUpdate: ({ editor }) => {
+				clearTimeout(debounceTimer);
+
+				debounceTimer = setTimeout(() => {
+					const newHtml = editor.getHTML();
+					if (newHtml !== config.html) {
+						onConfigUpdate({ html: newHtml });
+					}
+				}, 750);
+			},
+			editorProps: {
+				attributes: {
+					class:
+						'p-6 prose dark:prose-invert focus:outline-none min-h-32 max-w-none break-words',
 				},
-				onUpdate: ({ editor }) => {
-					onConfigUpdate({ html: editor.getHTML() });
-				},
-				editorProps: {
-					attributes: {
-						class:
-							'p-6 prose dark:prose-invert focus:outline-none min-h-32 max-w-none break-words',
-					},
-				},
-			}),
-		};
+			},
+		});
 	});
 
 	onDestroy(() => {
-		if (editorBox?.current) {
-			editorBox.current.destroy();
+		clearTimeout(debounceTimer);
+		if (editor) {
+			editor.destroy();
 		}
 	});
 
 	// DO NOT REMOVE: This is necessary to ensure that the editor is editable when the viewMode changes
 	$effect(() => {
-		isEditable = viewMode == ViewMode.CONFIGURE;
-		if (isEditable && editorBox?.current) {
-			editorBox.current.setEditable(true);
-		} else if (editorBox?.current) {
-			editorBox.current.setEditable(false);
+		if (editor) {
+			const shouldBeEditable = viewMode === ViewMode.CONFIGURE;
+			if (editor.isEditable !== shouldBeEditable) {
+				editor.setEditable(shouldBeEditable);
+			}
 		}
 	});
 </script>
 
 <div class="w-full rounded-md border">
-	{#if editorBox?.current && isEditable}
+	{#if editor && viewMode == ViewMode.CONFIGURE}
 		<div class="flex items-center gap-x-1 border-b px-6 py-4">
 			<Button
-				onclick={() => editorBox?.current.chain().focus().toggleBold().run()}
-				variant={editorBox.current.isActive('bold') ? 'default' : 'ghost'}
+				onclick={() => editor?.chain().focus().toggleBold().run()}
+				variant={editor.isActive('bold') ? 'default' : 'ghost'}
 			>
 				<BoldIcon />
 			</Button>
 			<Button
-				onclick={() => editorBox?.current.chain().focus().toggleItalic().run()}
-				variant={editorBox.current.isActive('italic') ? 'default' : 'ghost'}
+				onclick={() => editor?.chain().focus().toggleItalic().run()}
+				variant={editor.isActive('italic') ? 'default' : 'ghost'}
 			>
 				<ItalicIcon />
 			</Button>
 			<Button
-				onclick={() =>
-					editorBox?.current.chain().focus().toggleCodeBlock().run()}
-				variant={editorBox.current.isActive('codeBlock') ? 'default' : 'ghost'}
+				onclick={() => editor?.chain().focus().toggleCodeBlock().run()}
+				variant={editor.isActive('codeBlock') ? 'default' : 'ghost'}
 			>
 				<CodeIcon />
 			</Button>
 			<Button
-				onclick={() =>
-					editorBox?.current.chain().focus().toggleBlockquote().run()}
-				variant={editorBox.current.isActive('blockquote') ? 'default' : 'ghost'}
+				onclick={() => editor?.chain().focus().toggleBlockquote().run()}
+				variant={editor.isActive('blockquote') ? 'default' : 'ghost'}
 			>
 				<QuoteIcon />
 			</Button>
 			<Button
-				onclick={() =>
-					editorBox?.current.chain().focus().toggleBulletList().run()}
-				variant={editorBox.current.isActive('bulletList') ? 'default' : 'ghost'}
+				onclick={() => editor?.chain().focus().toggleBulletList().run()}
+				variant={editor.isActive('bulletList') ? 'default' : 'ghost'}
 			>
 				<ListIcon />
 			</Button>
 			<Button
-				onclick={() =>
-					editorBox?.current.chain().focus().toggleOrderedList().run()}
-				variant={editorBox.current.isActive('orderedList')
-					? 'default'
-					: 'ghost'}
+				onclick={() => editor?.chain().focus().toggleOrderedList().run()}
+				variant={editor.isActive('orderedList') ? 'default' : 'ghost'}
 			>
 				<ListOrderedIcon />
 			</Button>
