@@ -6,7 +6,6 @@
 	import { Textarea } from '$lib/components/ui/textarea';
 	import { ViewMode, type MatchingBlockProps } from '$lib/schema/task';
 	import ArrowRightIcon from '@lucide/svelte/icons/arrow-right';
-	import GripVerticalIcon from '@lucide/svelte/icons/grip-vertical';
 	import PlusIcon from '@lucide/svelte/icons/plus';
 	import TrashIcon from '@lucide/svelte/icons/trash-2';
 	import {
@@ -90,7 +89,7 @@
 </script>
 
 {#if viewMode === ViewMode.CONFIGURE}
-	<Card.Root class="p-4">
+	<Card.Root>
 		<Card.Header>
 			<Card.Title class="text-lg font-semibold">Matching Exercise</Card.Title>
 		</Card.Header>
@@ -140,8 +139,6 @@
 							/>
 						</div>
 
-						<div class="text-muted-foreground">↔</div>
-
 						<div class="flex-1">
 							<Label class="text-muted-foreground text-xs">Right Item</Label>
 							<Input
@@ -160,9 +157,8 @@
 						{#if config.pairs.length > 1}
 							<Button
 								variant="outline"
-								size="sm"
 								onclick={() => removePair(index)}
-								class="text-destructive hover:text-destructive"
+								class="text-destructive hover:text-destructive self-end"
 							>
 								<TrashIcon />
 							</Button>
@@ -174,98 +170,60 @@
 	</Card.Root>
 {:else if viewMode === ViewMode.ANSWER}
 	<!-- Answer Mode -->
-	<Card.Root class="p-6">
+	<Card.Root>
 		<Card.Header>
 			<Card.Title class="text-lg font-semibold">Matching Exercise</Card.Title>
 			{#if config.instructions}
-				<Card.Description
-					class="text-muted-foreground text-sm whitespace-pre-wrap"
-					>{config.instructions}</Card.Description
-				>
+				<Card.Description>{config.instructions}</Card.Description>
 			{/if}
 		</Card.Header>
-		<Card.Content class="space-y-6">
+		<Card.Content class="space-y-2">
 			{#if response.matches.length > 0 && response.matches.some( (pair) => pair.left.trim(), )}
-				<div class="space-y-4">
-					{#each response.matches.filter( (pair) => pair.left.trim(), ) as pair, pairIndex}
-						<div class="border-muted rounded-lg border-2 p-3">
-							<div
-								class="grid grid-cols-1 items-center gap-4 md:grid-cols-[1fr_auto_1fr] md:gap-8"
-							>
-								<!-- Left Item -->
-								<div
-									class="bg-muted/20 flex min-h-12 items-center rounded-lg border p-3"
-								>
-									<div class="flex items-center gap-3">
-										<span class="text-muted-foreground w-6 text-sm font-medium"
-											>{pairIndex + 1}.</span
-										>
-										<span class="font-medium">{pair.left}</span>
-									</div>
-								</div>
-
-								<!-- Arrow -->
-								<div class="flex items-center justify-center">
-									<ArrowRightIcon class="text-muted-foreground h-5 w-5" />
-								</div>
-
-								<!-- Right Item -->
-								{#if response?.matches?.[pairIndex]?.right}
-									<div
-										class="rounded-md p-1 transition-colors {dndState.targetContainer ===
-											`matching-${pairIndex}` && draggedItemIndex !== pairIndex
-											? 'border-accent-foreground bg-accent/10 border-2 border-dashed'
-											: 'border-2 border-transparent'}"
-										use:droppable={{
-											container: `matching-${pairIndex}`,
-											callbacks: { onDrop: handleDrop },
-										}}
-									>
-										<!-- Show drag handle -->
-										<div class="flex items-center gap-2">
-											<div
-												use:draggable={{
-													container: 'matching-items',
-													dragData: response.matches[pairIndex].right,
-													callbacks: {
-														onDragStart: () => {
-															draggedItemIndex = pairIndex;
-														},
-														onDragEnd: () => {
-															draggedItemIndex = null;
-														},
-													},
-												}}
-												class="hover:bg-muted flex h-6 w-6 cursor-grab items-center justify-center rounded transition-colors active:cursor-grabbing"
-											>
-												<GripVerticalIcon
-													class="text-muted-foreground h-4 w-4"
-												/>
-											</div>
-											<div
-												class="bg-secondary/50 flex min-h-12 flex-1 items-center rounded-lg border p-3"
-											>
-												<div class="flex items-center gap-3">
-													<span
-														class="text-muted-foreground w-6 text-sm font-medium"
-														>{pairIndex + 1}.</span
-													>
-													<span class="font-medium"
-														>{response.matches[pairIndex].right}</span
-													>
-												</div>
-											</div>
-										</div>
-									</div>
-								{/if}
-							</div>
+				{#each response.matches.filter( (pair) => pair.left.trim(), ) as pair, pairIndex (pairIndex)}
+					<div
+						class="grid grid-cols-[1fr_auto_1fr] items-center gap-4 md:gap-8"
+					>
+						<!-- Left Item -->
+						<div class="bg-input/50 min-h-12 rounded-lg border p-3">
+							<span class="font-medium">{pair.left}</span>
 						</div>
-					{/each}
-				</div>
+
+						<!-- Arrow -->
+						<ArrowRightIcon class="text-muted-foreground" />
+
+						<!-- Right Item -->
+						{#if response?.matches?.[pairIndex]?.right}
+							<div
+								class="bg-muted flex min-h-12 flex-1 items-center rounded-lg border p-3 {dndState.targetContainer ===
+									`matching-${pairIndex}` && draggedItemIndex !== pairIndex
+									? 'border-accent-foreground border-dashed'
+									: 'cursor-grab'}"
+								use:droppable={{
+									container: `matching-${pairIndex}`,
+									callbacks: { onDrop: handleDrop },
+								}}
+								use:draggable={{
+									container: 'matching-items',
+									dragData: response.matches[pairIndex].right,
+									callbacks: {
+										onDragStart: () => {
+											draggedItemIndex = pairIndex;
+										},
+										onDragEnd: () => {
+											draggedItemIndex = null;
+										},
+									},
+								}}
+							>
+								<span class="font-medium"
+									>{response.matches[pairIndex].right}</span
+								>
+							</div>
+						{/if}
+					</div>
+				{/each}
 			{:else}
-				<p class="text-muted-foreground">
-					No matching pairs configured. Switch to edit mode to add pairs.
-				</p>
+				<p class="text-muted-foreground">No matching pairs configured.</p>
 			{/if}
 		</Card.Content>
 	</Card.Root>

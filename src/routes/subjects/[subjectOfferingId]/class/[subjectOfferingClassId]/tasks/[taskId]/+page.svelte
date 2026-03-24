@@ -656,7 +656,7 @@
 						<div
 							class="ml-9.5 min-h-4 rounded-md {dndState.targetContainer ===
 							`task-${block.id}`
-								? 'border-accent-foreground my-2 h-8 border border-dashed'
+								? 'border-accent-foreground my-2 min-h-8 border border-dashed'
 								: ''}"
 							use:droppable={{
 								container: `task-${block.id}`,
