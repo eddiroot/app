@@ -9,6 +9,7 @@
   - [x] Admin dashboard
   - [ ] Class building/space shifts
   - [ ] Add more user roles with set access to things
+  - [ ] In timetables teachers page, once role changes are done, sort and group by their topmost role in the hierarchy (e.g. if someone is teacher + principal they will be in principal group)
 - **Attendance & Behaviours**
   - [x] Roll call / attendance
   - [x] Sick/not coming to school/absence with notifications
@@ -73,7 +74,6 @@
   - [x] Rich text editor
   - [x] Order topics and tasks
   - [x] Review students' work and/or submissions
-
 - **Timetables & Events**
   - [ ] Generate timetables
   - [x] View classes in calendar
@@ -96,10 +96,8 @@
   - [x] Object storage for school logo, user avatars, resource assets
   - [x] Basic security research and compliance documentation
   - [ ] Security review e.g. prompt injection
-  - [ ] Review breadcrumbs on all pages (e.g. attendance history)
   - [ ] Content security policy in `svelte.config.js`
   - [ ] Check uniqueness rules + indexes on tables
-  - [ ] Home pages and feature pages
   - [ ] Shift away from static school id for OAuth (search TODO)
 - **Endgame**
   - [ ] Export all data for a given school

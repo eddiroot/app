@@ -368,12 +368,23 @@ export const blockBalancingEquations = {
 
 export type BlockBalancingEquationsConfig = {
 	question?: string;
-	reactants: Array<{ formula: string; coefficient: number; given: boolean }>;
-	products: Array<{ formula: string; coefficient: number; given: boolean }>;
+	reactants: Array<{
+		formula: string;
+		coefficient: number | undefined;
+		given: boolean;
+	}>;
+	products: Array<{
+		formula: string;
+		coefficient: number | undefined;
+		given: boolean;
+	}>;
 };
 
 export type BlockBalancingEquationsResponse = {
-	coefficients: { reactants: number[]; products: number[] };
+	coefficients: {
+		reactants: Array<number | undefined>;
+		products: Array<number | undefined>;
+	};
 };
 
 export const blockImage = {
@@ -647,7 +658,7 @@ export const blockTypes: {
 		name: 'Matching Pairs',
 		initialConfig: {
 			instructions:
-				'Match the items on the left with the correct answers on the right.',
+				'Reorder the answers on the right so they match the items on the left.',
 			pairs: [
 				{ left: 'Item 1', right: 'Answer 1' },
 				{ left: 'Item 2', right: 'Answer 2' },

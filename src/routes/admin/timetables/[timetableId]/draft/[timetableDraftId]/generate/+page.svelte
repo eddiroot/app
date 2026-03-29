@@ -391,17 +391,17 @@
 <!-- Loading Overlay -->
 {#if isGenerating}
 	<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-		<div class="mx-4 w-full max-w-sm rounded-lg bg-white p-8 shadow-xl">
+		<div class="bg-background mx-4 w-full max-w-sm rounded-lg p-8 shadow-xl">
 			<div class="space-y-4 text-center">
 				<div
 					class="bg-primary/10 mx-auto flex h-16 w-16 items-center justify-center rounded-full"
 				>
-					<Loader class="text-primary h-8 w-8 animate-spin" />
+					<Loader class="text-primary size-8 animate-spin" />
 				</div>
 				<div class="space-y-2">
 					<h3 class="text-lg font-semibold">Generating Timetable</h3>
 					<p class="text-muted-foreground text-sm">
-						Please wait while we create your optimized timetable...
+						Please wait while we create your timetable...
 					</p>
 				</div>
 			</div>

@@ -167,8 +167,10 @@
 	<h1 class="mb-4 text-3xl font-bold">Timetable Activities</h1>
 	<div class="mb-4 flex items-start justify-between">
 		<Dialog.Root>
-			<Dialog.Trigger><InfoIcon /></Dialog.Trigger>
-			<Dialog.Content class="sm:max-h-[1000px] sm:max-w-[1000px]">
+			<Dialog.Trigger>
+				<InfoIcon />
+			</Dialog.Trigger>
+			<Dialog.Content class="sm:max-h-250 sm:max-w-250">
 				<Dialog.Header>
 					<Dialog.Title>Page Information</Dialog.Title>
 					<Dialog.Description>
@@ -180,7 +182,7 @@
 					<div class="grid gap-2">
 						<Label for="page-info">Information</Label>
 						<p
-							class="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring min-h-[200px] w-full rounded-md border px-3 py-2 text-sm focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+							class="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring min-h-50 w-full rounded-md border px-3 py-2 text-sm focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
 							placeholder="Type important information about this page here..."
 						>
 							Important NOTE: When you assign an activity to a Year or Group,
@@ -459,7 +461,7 @@
 
 <!-- Create Activity Dialog -->
 <Dialog.Root bind:open={createActivityDialogOpen}>
-	<Dialog.Content class="overflow-y-auto sm:max-h-[90vh] sm:max-w-[800px]">
+	<Dialog.Content class="overflow-y-auto sm:max-h-[90vh] sm:max-w-200">
 		<Dialog.Header>
 			<Dialog.Title>Create New Activity</Dialog.Title>
 			<Dialog.Description
@@ -700,7 +702,7 @@
 
 <!-- Edit Activity Dialog -->
 <Dialog.Root bind:open={editActivityDialogOpen}>
-	<Dialog.Content class="overflow-y-auto sm:max-h-[90vh] sm:max-w-[800px]">
+	<Dialog.Content class="overflow-y-auto sm:max-h-[90vh] sm:max-w-200">
 		<Dialog.Header>
 			<Dialog.Title>Edit Activity</Dialog.Title>
 			<Dialog.Description>Update the activity details.</Dialog.Description>

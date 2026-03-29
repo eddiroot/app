@@ -21,7 +21,7 @@
 		</TableRow>
 	</TableHeader>
 	<TableBody>
-		{#each data.teachers as teacher}
+		{#each data.teachers as teacher (teacher.id)}
 			<TableRow>
 				<TableCell><Checkbox disabled checked /></TableCell>
 				<TableCell>
