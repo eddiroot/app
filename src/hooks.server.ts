@@ -8,17 +8,15 @@ import { redirect, type Handle, type ServerInit } from '@sveltejs/kit';
 
 export const init: ServerInit = async () => {
 	// cron.schedule('* * * * *', () => {
-	// 	processTimetableQueue();
+	// processTimetableQueue();
 	// });
 
 	db.select()
 		.from(table.school)
 		.limit(1)
-		.catch((error) => {
-			console.error(
-				'There was a problem querying the database:',
-				error.message,
-			);
+		.catch(() => {
+			console.error('Database appears to be offline. Exiting...');
+			process.exit(1);
 		});
 };
 
