@@ -21,10 +21,11 @@ import { resource } from './resource';
 import { subjectOffering, subjectOfferingClass } from './subject';
 import { user } from './user';
 import {
-	enumToPgEnum,
-	essentials,
-	standardTimestamp,
-	timestamps,
+enumToPgEnum,
+essentials,
+idINT,
+standardTimestamp,
+timestamps,
 } from './utils';
 
 export const taskSchema = pgSchema('task');
@@ -228,8 +229,8 @@ export const rubricCellFeedback = taskSchema.table('rubric_cell_feedback', {
 export type RubricCellFeedback = typeof rubricCellFeedback.$inferSelect;
 
 export const whiteboard = taskSchema.table('whiteboard', {
-	id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
-	taskBlockId: integer('task_block_id')
+id: idINT,
+taskBlockId: integer('task_block_id')
 		.notNull()
 		.unique()
 		.references(() => taskBlock.id, { onDelete: 'cascade' }),
@@ -241,8 +242,8 @@ export const whiteboard = taskSchema.table('whiteboard', {
 export type Whiteboard = typeof whiteboard.$inferSelect;
 
 export const whiteboardObject = taskSchema.table('whiteboard_object', {
-	id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
-	whiteboardId: integer('whiteboard_id')
+id: idINT,
+whiteboardId: integer('whiteboard_id')
 		.notNull()
 		.references(() => whiteboard.id, { onDelete: 'cascade' }),
 	objectId: text('object_id').notNull().unique(),
