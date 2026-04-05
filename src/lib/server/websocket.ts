@@ -1,3 +1,4 @@
+import { dev } from '$app/environment';
 import type { Server as HTTPServer } from 'http';
 import type { Http2SecureServer } from 'http2';
 import { Server as SocketIOServer } from 'socket.io';
@@ -19,10 +20,14 @@ function parseCookieValue(cookieHeader: string, name: string): string | null {
 export function setupWebSocketServer(
 	httpServer: HTTPServer | Http2SecureServer,
 ) {
-	const io = new SocketIOServer(httpServer, {
-		cors: { origin: '*', methods: ['GET', 'POST'] },
-		path: '/socket.io/',
-	});
+const allowedOrigins = dev
+	? '*'
+	: ['https://eddi.com.au', 'https://www.eddi.com.au'];
+
+const io = new SocketIOServer(httpServer, {
+	cors: { origin: allowedOrigins, methods: ['GET', 'POST'] },
+	path: '/socket.io/',
+});
 
 	io.use(async (socket, next) => {
 		const cookieHeader = socket.handshake.headers.cookie ?? '';
