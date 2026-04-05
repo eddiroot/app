@@ -5,7 +5,6 @@ import {
 	taskStatusEnum,
 	taskTypeEnum,
 	userTypeEnum,
-	whiteboardObjectTypeEnum,
 } from '$lib/enums.js';
 import { db } from '$lib/server/db';
 import * as table from '$lib/server/db/schema';
@@ -240,6 +239,15 @@ export async function deleteTaskBlock(blockId: number) {
 }
 
 // Whiteboard functions
+export async function getWhiteboardByTaskBlockId(taskBlockId: number) {
+	const whiteboards = await db
+		.select()
+		.from(table.whiteboard)
+		.where(eq(table.whiteboard.taskBlockId, taskBlockId))
+		.limit(1);
+
+	return whiteboards[0] || null;
+}
 
 export async function getWhiteboardById(whiteboardId: number) {
 	const whiteboards = await db
@@ -258,10 +266,15 @@ export async function getWhiteboardWithTask(
 	const whiteboardData = await db
 		.select({
 			whiteboard: table.whiteboard,
+			taskBlock: table.taskBlock,
 			task: { id: table.task.id, title: table.task.title },
 		})
 		.from(table.whiteboard)
-		.innerJoin(table.task, eq(table.whiteboard.taskId, table.task.id))
+		.innerJoin(
+			table.taskBlock,
+			eq(table.whiteboard.taskBlockId, table.taskBlock.id),
+		)
+		.innerJoin(table.task, eq(table.taskBlock.taskId, table.task.id))
 		.where(eq(table.whiteboard.id, whiteboardId))
 		.limit(1);
 
@@ -271,6 +284,7 @@ export async function getWhiteboardWithTask(
 
 	return {
 		whiteboard: whiteboardData[0].whiteboard,
+		taskBlock: whiteboardData[0].taskBlock,
 		task: whiteboardData[0].task,
 	};
 }
@@ -287,7 +301,6 @@ export async function getWhiteboardObjects(whiteboardId: number = 1) {
 
 export async function saveWhiteboardObject(data: {
 	objectId: string;
-	objectType: whiteboardObjectTypeEnum;
 	objectData: Record<string, unknown>;
 	whiteboardId?: number;
 }) {
@@ -355,6 +368,36 @@ export async function clearWhiteboard(whiteboardId: number = 1) {
 	await db
 		.delete(table.whiteboardObject)
 		.where(eq(table.whiteboardObject.whiteboardId, whiteboardId));
+}
+
+export async function toggleWhiteboardLock(whiteboardId: number) {
+	const [whiteboard] = await db
+		.select()
+		.from(table.whiteboard)
+		.where(eq(table.whiteboard.id, whiteboardId))
+		.limit(1);
+
+	if (!whiteboard) {
+		throw new Error('Whiteboard not found');
+	}
+
+	const [updated] = await db
+		.update(table.whiteboard)
+		.set({ isLocked: !whiteboard.isLocked })
+		.where(eq(table.whiteboard.id, whiteboardId))
+		.returning();
+
+	return updated;
+}
+
+export async function getWhiteboardLockStatus(whiteboardId: number) {
+	const [whiteboard] = await db
+		.select({ isLocked: table.whiteboard.isLocked })
+		.from(table.whiteboard)
+		.where(eq(table.whiteboard.id, whiteboardId))
+		.limit(1);
+
+	return whiteboard?.isLocked ?? false;
 }
 
 export async function updateTaskBlocksOrder(
