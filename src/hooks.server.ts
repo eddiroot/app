@@ -1,3 +1,4 @@
+import { env } from '$env/dynamic/private';
 import * as auth from '$lib/server/auth';
 import { db } from '$lib/server/db';
 import * as table from '$lib/server/db/schema';
@@ -8,8 +9,19 @@ import { redirect, type Handle, type ServerInit } from '@sveltejs/kit';
 
 export const init: ServerInit = async () => {
 	// cron.schedule('* * * * *', () => {
-	// 	processTimetableQueue();
+	// processTimetableQueue();
 	// });
+
+	const requiredEnvVars = [
+		'WEBHOOK_NOTIFICATIONS_DEMO',
+		'WEBHOOK_NOTIFICATIONS_SUPPORT',
+	];
+
+	for (const name of requiredEnvVars) {
+		if (!env[name]) {
+			console.warn(`Warning: environment variable ${name} is not set`);
+		}
+	}
 
 	db.select()
 		.from(table.school)
