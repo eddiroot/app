@@ -274,7 +274,7 @@
 															{activity.periodsPerInstance} periods/instance
 														</Badge>
 														<Badge variant="secondary" class="text-xs">
-															{activity.totalPeriods} total periods
+															{activity.totalPeriods} periods per week
 														</Badge>
 													</div>
 
@@ -656,7 +656,7 @@
 				<div class="grid gap-2">
 					<Label for="activity-rooms">Preferred Rooms (Optional)</Label>
 					<Select.Root type="multiple" bind:value={$createFormData.spaceIds}>
-						<Select.Trigger class="w-full">
+						<Select.Trigger class="w-full truncate">
 							{#if ($createFormData.spaceIds ?? []).length > 0}
 								{($createFormData.spaceIds ?? [])
 									.map((locationId) => {
@@ -897,7 +897,7 @@
 				<div class="grid gap-2">
 					<Label for="edit-activity-rooms">Preferred Rooms (Optional)</Label>
 					<Select.Root type="multiple" bind:value={$editFormData.spaceIds}>
-						<Select.Trigger class="w-full">
+						<Select.Trigger class="w-full truncate">
 							{#if ($editFormData.spaceIds ?? []).length > 0}
 								{($editFormData.spaceIds ?? [])
 									.map((locationId) => {
