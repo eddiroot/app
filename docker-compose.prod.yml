@@ -64,6 +64,7 @@ services:
     build:
       context: .
       dockerfile: fet.Dockerfile
+    platform: linux/amd64
     restart: unless-stopped
     networks:
       - default
