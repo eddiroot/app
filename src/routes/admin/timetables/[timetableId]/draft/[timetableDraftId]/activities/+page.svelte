@@ -26,6 +26,7 @@
 
 	let createActivityDialogOpen = $state(false);
 	let editActivityDialogOpen = $state(false);
+	let infoDialogOpen = $state(false);
 	let getYearLevelZeroIndexCode = () =>
 		data.yearLevels[0]?.code || yearLevelEnum.year7;
 	let selectedYearLevel = $state(getYearLevelZeroIndexCode());
@@ -165,43 +166,15 @@
 
 <div class="flex justify-between">
 	<h1 class="mb-4 text-3xl font-bold">Timetable Activities</h1>
-	<div class="mb-4 flex items-start justify-between">
-		<Dialog.Root>
-			<Dialog.Trigger>
-				<InfoIcon />
-			</Dialog.Trigger>
-			<Dialog.Content class="sm:max-h-250 sm:max-w-250">
-				<Dialog.Header>
-					<Dialog.Title>Page Information</Dialog.Title>
-					<Dialog.Description>
-						Important information about managing students and groups in this
-						timetable:
-					</Dialog.Description>
-				</Dialog.Header>
-				<div class="grid gap-4 py-4">
-					<div class="grid gap-2">
-						<Label for="page-info">Information</Label>
-						<p
-							class="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring min-h-50 w-full rounded-md border px-3 py-2 text-sm focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
-							placeholder="Type important information about this page here..."
-						>
-							Important NOTE: When you assign an activity to a Year or Group,
-							FET automatically assigns it to ALL subgroups within that Year or
-							Group. Assign to YEAR when: ✅ All students in the year attend
-							(assembly, exams, grade-level events) ✅ No student
-							differentiation needed Assign to GROUP when: ✅ This is a specific
-							class/course that particular students enrolled in ✅ Most common
-							use case for subject classes ✅ Examples: homeroom classes,
-							elective courses Assign to SUBGROUP when: ✅ You need to split a
-							group further (lab sections, tutoring groups) ✅ Individual
-							student tracking (when each student is a subgroup) ✅ Most
-							granular level of control Subgroups with too few hours (less than
-							20/week) = probably missing activities
-						</p>
-					</div>
-				</div>
-			</Dialog.Content>
-		</Dialog.Root>
+	<div class="mb-4 flex items-start">
+		<Button
+			type="button"
+			variant="outline"
+			size="icon"
+			onclick={() => (infoDialogOpen = true)}
+		>
+			<InfoIcon />
+		</Button>
 	</div>
 </div>
 <h2 class="mb-4 text-2xl font-bold">Subject Activities</h2>
@@ -697,6 +670,44 @@
 				<Button type="submit">Create Activity</Button>
 			</Dialog.Footer>
 		</form>
+	</Dialog.Content>
+</Dialog.Root>
+
+<!-- Page Information Dialog -->
+<Dialog.Root bind:open={infoDialogOpen}>
+	<Dialog.Content class="md:max-w-3xl">
+		<Dialog.Header>
+			<Dialog.Title>Page Information</Dialog.Title>
+			<Dialog.Description>
+				Important information about managing activities in this timetable:
+			</Dialog.Description>
+		</Dialog.Header>
+		<ol
+			class="list-inside list-decimal space-y-2 rounded-md border p-3 text-sm"
+		>
+			<li>
+				When you assign an activity to a <strong>Year Level</strong>, FET
+				automatically assigns it to all subgroups within that year. Use this for
+				whole-year events such as assemblies, exams, or grade-level sessions
+				where no student differentiation is needed.
+			</li>
+			<li>
+				Assign to a <strong>Group</strong> for specific classes or courses that particular
+				students are enrolled in. This is the most common use case — for example,
+				homeroom classes and elective courses.
+			</li>
+			<li>
+				Assign to a <strong>Subgroup</strong> when you need to split a group further,
+				such as lab sections or tutoring groups. This is the most granular level of
+				control and is also used for individual student tracking when each student
+				is their own subgroup.
+			</li>
+			<li>
+				If a subgroup has fewer than 20 periods per week, it likely has missing
+				activities. Check that all required activities have been created and
+				assigned correctly.
+			</li>
+		</ol>
 	</Dialog.Content>
 </Dialog.Root>
 
