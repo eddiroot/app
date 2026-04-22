@@ -96,7 +96,14 @@
 
 	// Simple markdown-to-HTML converter
 	function markdownToHtml(text: string): string {
-		return text
+		// Escape raw HTML first to prevent XSS
+		const escaped = text
+			.replace(/&/g, '&amp;')
+			.replace(/</g, '&lt;')
+			.replace(/>/g, '&gt;')
+			.replace(/"/g, '&quot;');
+
+		return escaped
 			.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
 			.replace(/\*(.*?)\*/g, '<em>$1</em>')
 			.replace(/`(.*?)`/g, '<code class="bg-blue-100 px-1 rounded">$1</code>')
@@ -144,12 +151,12 @@
 				throw new Error('Failed to translate error message');
 			}
 
-			const data = await response.json();
+			const result = await response.json();
 
 			// Update the selected error with the translated message
 			selectedError = {
 				...selectedError,
-				translatedMessage: data.translatedMessage,
+				translatedMessage: result.translatedMessage,
 			};
 
 			// Refresh the queue data to get the updated translated message from the database
@@ -162,20 +169,6 @@
 		} finally {
 			isTranslating = false;
 		}
-	}
-
-	async function handleGenerate(event: SubmitEvent) {
-		event.preventDefault();
-
-		isGenerating = true;
-
-		// Simulate loading for 3 seconds
-		setTimeout(async () => {
-			isGenerating = false;
-
-			// After loading, submit the form
-			(event.target as HTMLFormElement).submit();
-		}, 3000);
 	}
 
 	// Poll for updates when there are active entries
@@ -267,7 +260,13 @@
 					method="POST"
 					action="?/generateTimetable"
 					class="flex justify-center"
-					onsubmit={handleGenerate}
+					use:enhance={() => {
+						isGenerating = true;
+						return async ({ update }) => {
+							await update();
+							isGenerating = false;
+						};
+					}}
 				>
 					<Button
 						type="submit"
@@ -326,7 +325,7 @@
 			<Card.Content class="space-y-4">
 				{#if data.queueEntries && data.queueEntries.length > 0}
 					<div class="max-h-[600px] space-y-3 overflow-y-auto">
-						{#each data.queueEntries as entry}
+						{#each data.queueEntries as entry (entry.tt_queue.id)}
 							<div class="border-muted rounded-lg border p-4">
 								<div class="mb-2 flex items-center justify-between">
 									<span class="text-sm font-medium"
