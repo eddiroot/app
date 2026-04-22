@@ -90,8 +90,8 @@ export async function processTimetableQueue() {
 				`🔄 [TIMETABLE PROCESSOR] FET execution completed. Success: ${fetResult.success}, Time: ${(fetResult.executionTime / 1000).toFixed(2)}s`,
 			);
 
-			if (!fetResult.success && fetResult.error) {
-				throw new Error(`FET processing failed: ${fetResult.stdout}`);
+			if (!fetResult.success) {
+				throw new Error(`FET processing failed: ${fetResult.stdout || fetResult.error}`);
 			}
 
 			// List output files in container
@@ -168,10 +168,11 @@ export async function processTimetableQueue() {
 							stack: dbError instanceof Error ? dbError.stack : undefined,
 							timetableId: timetableId,
 						});
+						throw dbError;
 					}
 				} else {
 					throw new Error(
-						'FET processing completed but no output files were generated',
+						'FET processing completed but expected timetable CSV was not found in output',
 					);
 				}
 			} else {
@@ -180,23 +181,16 @@ export async function processTimetableQueue() {
 				);
 			}
 		} catch (processingError) {
-			// Capture and store the error message in the draft
 			const errorMessage =
 				processingError instanceof Error
 					? processingError.message
 					: 'Unknown error';
 
-			// Store error message in draft if not already stored
-			await updateTimetableQueueStatus(
-				queueEntry.tt_queue.id,
-				queueStatusEnum.failed,
-			);
 			console.error(
 				'❌ [TIMETABLE PROCESSOR] Error during timetable processing:',
 				processingError,
 			);
 
-			// Extract error details from the error object
 			const errorDetails =
 				processingError &&
 				typeof processingError === 'object' &&
@@ -206,7 +200,6 @@ export async function processTimetableQueue() {
 
 			console.error('❌ [TIMETABLE PROCESSOR] Error details:', errorDetails);
 
-			// Mark task as failed
 			await updateTimetableQueueStatus(
 				queueEntry.tt_queue.id,
 				queueStatusEnum.failed,
@@ -215,7 +208,6 @@ export async function processTimetableQueue() {
 		} finally {
 			// Always attempt cleanup of the specific working directory
 			try {
-				const workingDir = `/app/timetables/${queueEntry.tt_queue.id}`;
 				await fetService.removeDirectory(workingDir);
 				console.log(
 					`🧹 [TIMETABLE PROCESSOR] Cleaned up working directory: ${workingDir}`,
