@@ -717,13 +717,12 @@ export async function createTimetableDraftActivityWithRelations(data: {
 
 	activityIds.push(activity.id);
 
-	// Add additional teachers as preferences
-	const otherTeacherIds = teacherIds.slice(1);
-	if (otherTeacherIds.length > 0) {
+	// Add all teachers as preferences
+	if (teacherIds.length > 0) {
 		await db
 			.insert(table.timetableActivityTeacherPreference)
 			.values(
-				otherTeacherIds.map((teacherId) => ({
+				teacherIds.map((teacherId) => ({
 					timetableActivityId: activity.id,
 					teacherId,
 				})),
@@ -742,7 +741,7 @@ export async function createTimetableDraftActivityWithRelations(data: {
 				table.timetable,
 				eq(table.timetable.id, table.timetableDraft.timetableId),
 			)
-			.where(eq(table.timetable.id, timetableDraftId));
+			.where(eq(table.timetableDraft.id, timetableDraftId));
 
 		// Get all spaces for this school by joining through campus and building
 		const allSpaces = await db
