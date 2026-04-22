@@ -14,6 +14,7 @@ import {
 	getTimetableQueueByTimetableId,
 	getUsersBySchoolIdAndType,
 } from '$lib/server/db/service';
+import { dev } from '$app/environment';
 import { fail } from '@sveltejs/kit';
 import { processTimetableQueue } from '../../../../../../../scripts/process/timetable.js';
 import { buildFETInput } from './utils.js';
@@ -122,6 +123,61 @@ export const actions = {
 				error:
 					'Failed to generate timetable. Please ensure all required data is configured.',
 			});
+		}
+	},
+	downloadFetFile: async ({ params, locals: { security } }) => {
+		if (!dev) return fail(403, { error: 'Only available in development' });
+
+		security.isAuthenticated().isAdmin();
+
+		const user = security.getUser();
+		const draft = await getTimetableDraftById(parseInt(params.timetableDraftId, 10));
+
+		try {
+			const [
+				timetableDays,
+				timetablePeriods,
+				studentGroups,
+				studentsByYear,
+				activities,
+				buildings,
+				spaces,
+				teachers,
+				subjects,
+				school,
+				activeConstraints,
+			] = await Promise.all([
+				getTimetableDraftDaysByTimetableDraftId(draft.id),
+				getTimetableDraftPeriodsByTimetableDraftId(draft.id),
+				getAllStudentGroupsByTimetableDraftId(draft.id),
+				getAllStudentsGroupedByYearLevelsBySchoolId(user.schoolId),
+				getEnhancedTimetableDraftActivitiesByTimetableDraftId(draft.id),
+				getBuildingsBySchoolId(user.schoolId),
+				getSpacesBySchoolId(user.schoolId),
+				getUsersBySchoolIdAndType(user.schoolId, userTypeEnum.teacher),
+				getSubjectsBySchoolId(user.schoolId),
+				getSchoolById(user.schoolId),
+				getActiveTimetableDraftConstraintsByTimetableDraftId(draft.id),
+			]);
+
+			const xmlContent = await buildFETInput({
+				timetableDays,
+				timetablePeriods,
+				studentGroups,
+				studentsByYear,
+				activities,
+				buildings,
+				spaces,
+				teachers,
+				subjects,
+				school,
+				activeConstraints,
+			});
+
+			return { success: true, xmlContent, filename: `draft-${draft.id}.fet` };
+		} catch (error) {
+			console.error('Error building FET file:', error);
+			return fail(500, { error: 'Failed to build FET file.' });
 		}
 	},
 	processQueue: async ({ locals: { security } }) => {

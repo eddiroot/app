@@ -282,6 +282,35 @@
 						{/if}
 					</Button>
 				</form>
+
+				{#if import.meta.env.DEV}
+					<form
+						method="POST"
+						action="?/downloadFetFile"
+						class="flex justify-center"
+						use:enhance={() => {
+							return async ({ result }) => {
+								if (result.type === 'success' && result.data?.xmlContent) {
+									const blob = new Blob([result.data.xmlContent as string], {
+										type: 'application/xml',
+									});
+									const url = URL.createObjectURL(blob);
+									const a = document.createElement('a');
+									a.href = url;
+									a.download = result.data.filename as string;
+									document.body.appendChild(a);
+									a.click();
+									document.body.removeChild(a);
+									URL.revokeObjectURL(url);
+								}
+							};
+						}}
+					>
+						<Button type="submit" variant="outline" size="sm" class="border-dashed border-orange-400 text-orange-600 hover:bg-orange-50">
+							[Dev] Download FET File
+						</Button>
+					</form>
+				{/if}
 			</Card.Content>
 		</Card.Root>
 	</div>
