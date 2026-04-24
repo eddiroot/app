@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import { invalidate } from '$app/navigation';
+	import { browser } from '$app/environment';
+	import DOMPurify from 'dompurify';
 	import Badge from '$lib/components/ui/badge/badge.svelte';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import * as Card from '$lib/components/ui/card';
@@ -94,16 +96,8 @@
 		isTranslating = false;
 	}
 
-	// Simple markdown-to-HTML converter
 	function markdownToHtml(text: string): string {
-		// Escape raw HTML first to prevent XSS
-		const escaped = text
-			.replace(/&/g, '&amp;')
-			.replace(/</g, '&lt;')
-			.replace(/>/g, '&gt;')
-			.replace(/"/g, '&quot;');
-
-		return escaped
+		const html = text
 			.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
 			.replace(/\*(.*?)\*/g, '<em>$1</em>')
 			.replace(/`(.*?)`/g, '<code class="bg-blue-100 px-1 rounded">$1</code>')
@@ -123,6 +117,7 @@
 			.replace(/^\d+\. (.*$)/gim, '<li class="ml-6 mb-1 list-decimal">$1</li>')
 			.replace(/\n\n/g, '<br/>')
 			.replace(/\n/g, '<br/>');
+		return browser ? DOMPurify.sanitize(html) : html;
 	}
 
 	async function handleTranslateError(forceRetranslate = false) {
