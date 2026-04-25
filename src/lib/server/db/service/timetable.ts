@@ -1196,6 +1196,44 @@ export async function getOldestQueuedTimetable() {
 	return entry;
 }
 
+export async function claimOldestQueuedTimetable() {
+	const [claimedQueue] = await db
+		.update(table.timetableQueue)
+		.set({ status: queueStatusEnum.inProgress, updatedAt: new Date() })
+		.where(
+			and(
+				eq(table.timetableQueue.status, queueStatusEnum.queued),
+				inArray(
+					table.timetableQueue.id,
+					db
+						.select({ id: table.timetableQueue.id })
+						.from(table.timetableQueue)
+						.where(eq(table.timetableQueue.status, queueStatusEnum.queued))
+						.orderBy(asc(table.timetableQueue.createdAt))
+						.limit(1),
+				),
+			),
+		)
+		.returning({ id: table.timetableQueue.id });
+
+	if (!claimedQueue) {
+		return undefined;
+	}
+
+	const [entry] = await db
+		.select()
+		.from(table.timetableQueue)
+		.innerJoin(
+			table.timetable,
+			eq(table.timetableQueue.timetableId, table.timetable.id),
+		)
+		.innerJoin(table.school, eq(table.timetable.schoolId, table.school.id))
+		.where(eq(table.timetableQueue.id, claimedQueue.id))
+		.limit(1);
+
+	return entry;
+}
+
 export async function updateTimetableQueueStatus(
 	queueId: number,
 	status: queueStatusEnum,
