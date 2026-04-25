@@ -28,7 +28,7 @@ export const subjectPreferredRooms: ConstraintMeta = {
 	description:
 		'Assigns multiple preferred rooms for a specific subject. Provides flexibility while maintaining specialization.',
 	type: constraintTypeEnum.space,
-	optional: false,
+	optional: true,
 	repeatable: true,
 	paramsSchema: subjectPreferredRoomsSchema,
 	requiresFormData: ['subjects', 'spaces'],
