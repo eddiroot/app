@@ -1,7 +1,7 @@
 <script lang="ts">
-	import { untrack } from 'svelte';
 	import PlusIcon from '@lucide/svelte/icons/plus';
 	import TrashIcon from '@lucide/svelte/icons/trash';
+	import { untrack } from 'svelte';
 
 	import Autocomplete from '$lib/components/autocomplete.svelte';
 	import Button from '$lib/components/ui/button/button.svelte';
@@ -26,19 +26,19 @@
 	let selectedRoomId = $state<string | number>(
 		untrack(() => (initialValues.Room as string | number) ?? ''),
 	);
-	let notAvailableTimes = $state<Array<{ Day: number; Period: number }>>(
+	let notAvailableTimes = $state<Array<{ Day: number; Hour: number }>>(
 		untrack(
 			() =>
 				(initialValues.Not_Available_Time as Array<{
 					Day: number;
-					Period: number;
+					Hour: number;
 				}>) ?? [{ Day: 0, Period: 0 }],
 		),
 	);
 	let comments = $state(untrack(() => (initialValues.Comments as string) ?? ''));
 
 	function addNotAvailableTime() {
-		notAvailableTimes = [...notAvailableTimes, { Day: 0, Period: 0 }];
+		notAvailableTimes = [...notAvailableTimes, { Day: 0, Hour: 0 }];
 	}
 
 	function removeNotAvailableTime(index: number) {
@@ -131,7 +131,7 @@
 							<Autocomplete
 								options={formData?.timetablePeriods || []}
 								placeholder="Select a period..."
-								bind:value={notAvailableTimes[index].Period}
+								bind:value={notAvailableTimes[index].Hour}
 							/>
 						</div>
 
