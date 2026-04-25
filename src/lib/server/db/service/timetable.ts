@@ -1261,6 +1261,16 @@ export async function getConstraintById(constraintId: number) {
 	return constraint;
 }
 
+export async function getConstraintByFetName(fetName: string) {
+	const [constraint] = await db
+		.select()
+		.from(table.constraint)
+		.where(eq(table.constraint.fetName, fetName))
+		.limit(1);
+
+	return constraint;
+}
+
 // ============================================================================
 // TIMETABLE DRAFT CONSTRAINTS - Operations
 // ============================================================================
@@ -1390,6 +1400,35 @@ export async function updateTimetableDraftConstraintActiveStatus(
 		.returning();
 
 	return result[0];
+}
+
+export async function updateTimetableDraftConstraintParameters(
+	ttConstraintId: number,
+	parameters: Record<string, unknown>,
+) {
+	const result = await db
+		.update(table.timetableDraftConstraint)
+		.set({ parameters })
+		.where(and(eq(table.timetableDraftConstraint.id, ttConstraintId)))
+		.returning();
+
+	return result[0];
+}
+
+export async function getTimetableDraftConstraintWithDef(
+	ttConstraintId: number,
+) {
+	const [row] = await db
+		.select()
+		.from(table.timetableDraftConstraint)
+		.innerJoin(
+			table.constraint,
+			eq(table.timetableDraftConstraint.constraintId, table.constraint.id),
+		)
+		.where(eq(table.timetableDraftConstraint.id, ttConstraintId))
+		.limit(1);
+
+	return row;
 }
 
 // ============================================================================
