@@ -1,34 +1,44 @@
 <script lang="ts">
+	import { untrack } from 'svelte';
+	import TrashIcon from '@lucide/svelte/icons/trash';
+
 	import Autocomplete from '$lib/components/autocomplete.svelte';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import Checkbox from '$lib/components/ui/checkbox/checkbox.svelte';
 	import Input from '$lib/components/ui/input/input.svelte';
 	import Label from '$lib/components/ui/label/label.svelte';
 	import Textarea from '$lib/components/ui/textarea/textarea.svelte';
-	import TrashIcon from '@lucide/svelte/icons/trash';
-	import type { AutocompleteOption } from '../constraints/constraint-data-fetchers';
-	import type { EnhancedConstraintFormProps } from '../constraints/constraint-form-types';
-	import { minDaysBetweenActivitiesSchema } from '../constraints/constraints';
+
+	import type { AutocompleteOption, ConstraintFormComponentProps } from '../types';
+	import { minDaysBetweenActivitiesSchema } from './index';
 
 	let {
 		onSubmit,
 		onCancel,
 		initialValues = {},
 		formData,
-	}: EnhancedConstraintFormProps = $props();
+		submitLabel = 'Add Constraint',
+	}: ConstraintFormComponentProps = $props();
 
-	// Form state
-	let weightPercentage = $derived(
-		(initialValues.Weight_Percentage as number) || 95,
+	let weightPercentage = $state(
+		untrack(() => (initialValues.Weight_Percentage as number) ?? 95),
 	);
-	let consecutiveIfSameDay = $derived(
-		(initialValues.Consecutive_If_Same_Day as boolean) ?? true,
+	let consecutiveIfSameDay = $state(
+		untrack(() => (initialValues.Consecutive_If_Same_Day as boolean) ?? true),
 	);
-	let minDays = $derived((initialValues.MinDays as number) || 1);
-	let comments = $derived((initialValues.Comments as string) || '');
+	let minDays = $state(untrack(() => (initialValues.MinDays as number) ?? 1));
+	let comments = $state(untrack(() => (initialValues.Comments as string) ?? ''));
 
-	// Activity selection state
-	let selectedActivities = $state<AutocompleteOption[]>([]);
+	let selectedActivities = $state<AutocompleteOption[]>(
+		untrack(() => {
+			const ids = (initialValues.Activity_Id as (string | number)[]) ?? [];
+			return ids
+				.map((id) =>
+					formData?.timetableActivities.find((a) => a.value === id),
+				)
+				.filter((a): a is AutocompleteOption => a !== undefined);
+		}),
+	);
 	let selectedActivity = $state<string>('');
 
 	function addActivity(option: AutocompleteOption) {
@@ -42,28 +52,8 @@
 		selectedActivities = selectedActivities.filter((_, i) => i !== index);
 	}
 
-	function handleSubmit() {
-		const activityIds = selectedActivities.map((activity) => activity.value);
-		const values = {
-			Weight_Percentage: weightPercentage,
-			Consecutive_If_Same_Day: consecutiveIfSameDay,
-			MinDays: minDays,
-			Number_of_Activities: activityIds.length,
-			Activity_Id: activityIds,
-			Active: true,
-			Comments: comments || null,
-		};
-
-		// Validate with Zod
-		const result = minDaysBetweenActivitiesSchema.safeParse(values);
-		if (result.success) {
-			onSubmit(result.data);
-		}
-	}
-
-	// Validation with Zod
 	let validationErrors = $derived.by(() => {
-		const activityIds = selectedActivities.map((activity) => activity.value);
+		const activityIds = selectedActivities.map((a) => a.value);
 		const result = minDaysBetweenActivitiesSchema.safeParse({
 			Weight_Percentage: weightPercentage,
 			Consecutive_If_Same_Day: consecutiveIfSameDay,
@@ -77,11 +67,26 @@
 	});
 
 	let isValid = $derived(validationErrors === null);
+
+	function handleSubmit() {
+		const activityIds = selectedActivities.map((a) => a.value);
+		const result = minDaysBetweenActivitiesSchema.safeParse({
+			Weight_Percentage: weightPercentage,
+			Consecutive_If_Same_Day: consecutiveIfSameDay,
+			MinDays: minDays,
+			Number_of_Activities: activityIds.length,
+			Activity_Id: activityIds,
+			Active: true,
+			Comments: comments || null,
+		});
+		if (result.success) {
+			onSubmit(result.data);
+		}
+	}
 </script>
 
 <div class="space-y-6">
 	<div class="space-y-4">
-		<!-- Weight Percentage -->
 		<div class="space-y-2">
 			<Label for="weight">Weight Percentage (1-100)</Label>
 			<Input
@@ -99,7 +104,6 @@
 			{/if}
 		</div>
 
-		<!-- Minimum Days -->
 		<div class="space-y-2">
 			<Label for="minDays">Minimum Days Between Activities (1-6)</Label>
 			<Input
@@ -118,13 +122,9 @@
 			</p>
 		</div>
 
-		<!-- Consecutive If Same Day -->
 		<div class="flex items-center space-x-2">
 			<Checkbox id="consecutive" bind:checked={consecutiveIfSameDay} />
-			<Label
-				for="consecutive"
-				class="text-sm leading-none font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-			>
+			<Label for="consecutive" class="text-sm leading-none font-medium">
 				Consecutive if same day
 			</Label>
 		</div>
@@ -133,14 +133,12 @@
 			periods.
 		</p>
 
-		<!-- Activities -->
 		<div class="space-y-2">
 			<Label>Activities * (minimum 2 required)</Label>
 			<div class="space-y-3">
-				<!-- Existing Activities -->
 				{#if selectedActivities.length > 0}
 					<div class="space-y-2">
-						{#each selectedActivities as activity, index}
+						{#each selectedActivities as activity, index (activity.value)}
 							<div class="flex items-center gap-2">
 								<Input value={activity.label} readonly class="flex-1" />
 								<Button
@@ -156,7 +154,6 @@
 					</div>
 				{/if}
 
-				<!-- Add new Activity -->
 				<div class="space-y-2">
 					<Autocomplete
 						options={formData?.timetableActivities || []}
@@ -177,7 +174,6 @@
 			</p>
 		</div>
 
-		<!-- Comments -->
 		<div class="space-y-2">
 			<Label for="comments">Comments (Optional)</Label>
 			<Textarea
@@ -189,9 +185,8 @@
 		</div>
 	</div>
 
-	<!-- Form Actions -->
 	<div class="flex justify-end gap-3">
 		<Button variant="outline" onclick={onCancel}>Cancel</Button>
-		<Button onclick={handleSubmit} disabled={!isValid}>Add Constraint</Button>
+		<Button onclick={handleSubmit} disabled={!isValid}>{submitLabel}</Button>
 	</div>
 </div>
