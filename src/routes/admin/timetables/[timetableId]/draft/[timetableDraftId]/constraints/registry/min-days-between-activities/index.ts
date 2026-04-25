@@ -20,7 +20,7 @@ export const minDaysBetweenActivities: ConstraintMeta = {
 	description:
 		'Ensures activities are spread across multiple days. Prevents clustering all lessons of a subject on consecutive days. Automatically added for split activities.',
 	type: constraintTypeEnum.time,
-	optional: false,
+	optional: true,
 	repeatable: true,
 	paramsSchema: minDaysBetweenActivitiesSchema,
 	requiresFormData: ['timetableActivities'],
