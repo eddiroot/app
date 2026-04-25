@@ -1,16 +1,14 @@
 <script lang="ts">
+	import EditIcon from '@lucide/svelte/icons/edit';
+	import PlusIcon from '@lucide/svelte/icons/plus';
+	import TrashIcon from '@lucide/svelte/icons/trash';
+
 	import Button from '$lib/components/ui/button/button.svelte';
 	import * as Card from '$lib/components/ui/card';
 	import Checkbox from '$lib/components/ui/checkbox/checkbox.svelte';
 	import * as Dialog from '$lib/components/ui/dialog';
-	import type { Constraint } from '$lib/server/db/schema';
-	import EditIcon from '@lucide/svelte/icons/edit';
-	import PlusIcon from '@lucide/svelte/icons/plus';
-	import TrashIcon from '@lucide/svelte/icons/trash';
-	import {
-		getConstraintFormComponent,
-		requiresEnhancedProps,
-	} from './constraints/constraint-form-mapping.js';
+
+	import { getFormComponent } from './registry';
 
 	let { data } = $props();
 	let {
@@ -23,10 +21,16 @@
 		formData,
 	} = $derived(data);
 
+	const endpoint = $derived(
+		`/admin/timetables/${timetableId}/draft/${timetableDraftId}/constraints`,
+	);
+
+	type AvailableConstraint = (typeof availableTimeConstraints)[number];
+	type AssignedConstraint = (typeof currentTimeConstraints)[number];
+
 	let constraintStates = $state(new Map());
 
 	$effect(() => {
-		// Initialize states for current constraints
 		[...currentTimeConstraints, ...currentSpaceConstraints].forEach(
 			(constraint) => {
 				constraintStates.set(constraint.tt_draft_con.id, {
@@ -38,97 +42,110 @@
 		);
 	});
 
-	// Modal state
-	let addConstraintModalOpen = $state(false);
-	let constraintToAdd = $state<Constraint | null>(null);
+	// Modal state — used for both Add and Edit.
+	let modalOpen = $state(false);
+	let modalMode = $state<'add' | 'edit'>('add');
+	let modalFetName = $state<string | null>(null);
+	let modalTitle = $state('');
+	let modalInitialValues = $state<Record<string, unknown>>({});
+	let modalTtConstraintId = $state<number | null>(null);
 
-	// Form handlers
-	function openAddConstraintModal(constraint: Constraint) {
-		constraintToAdd = constraint;
-		addConstraintModalOpen = true;
+	function openAddModal(constraint: AvailableConstraint) {
+		modalMode = 'add';
+		modalFetName = constraint.fetName;
+		modalTitle = `Add Constraint: ${constraint.friendlyName}`;
+		modalInitialValues = {};
+		modalTtConstraintId = null;
+		modalOpen = true;
 	}
 
-	function closeAddConstraintModal() {
-		addConstraintModalOpen = false;
-		constraintToAdd = null;
+	function openEditModal(constraint: AssignedConstraint) {
+		modalMode = 'edit';
+		modalFetName = constraint.con.fetName;
+		modalTitle = `Edit Constraint: ${constraint.con.friendlyName}`;
+		modalInitialValues =
+			(constraint.tt_draft_con.parameters as Record<string, unknown>) ?? {};
+		modalTtConstraintId = constraint.tt_draft_con.id;
+		modalOpen = true;
 	}
 
-	// Handle adding a constraint to the timetable
-	async function handleAddConstraint(formData: Record<string, unknown>) {
-		if (!constraintToAdd) return;
+	function closeModal() {
+		modalOpen = false;
+		modalFetName = null;
+		modalTtConstraintId = null;
+		modalInitialValues = {};
+	}
+
+	async function handleModalSubmit(values: Record<string, unknown>) {
+		if (!modalFetName) return;
+
+		const request =
+			modalMode === 'add'
+				? {
+						method: 'POST',
+						body: JSON.stringify({
+							fetName: modalFetName,
+							parameters: values,
+						}),
+					}
+				: {
+						method: 'PATCH',
+						body: JSON.stringify({
+							ttConstraintId: modalTtConstraintId,
+							parameters: values,
+						}),
+					};
 
 		try {
-			const response = await fetch(
-				`/admin/timetables/${timetableId}/${timetableDraftId}/constraints`,
-				{
-					method: 'POST',
-					headers: { 'Content-Type': 'application/json' },
-					body: JSON.stringify({
-						constraintId: constraintToAdd.id,
-						parameters: formData,
-					}),
-				},
-			);
-
+			const response = await fetch(endpoint, {
+				...request,
+				headers: { 'Content-Type': 'application/json' },
+			});
 			const result = await response.json();
-
 			if (result.success) {
-				// Refresh the page to show the updated constraints
 				window.location.reload();
 			} else {
-				console.error('Failed to add constraint:', result.error);
-				// You might want to show a toast notification here
+				console.error('Failed to save constraint:', result.error);
 			}
 		} catch (error) {
-			console.error('Error adding constraint:', error);
-			// You might want to show a toast notification here
+			console.error('Error saving constraint:', error);
 		} finally {
-			closeAddConstraintModal();
+			closeModal();
 		}
 	}
 
-	// Handle toggling constraint active status
 	async function handleToggleConstraintActive(
-		constraintId: number,
+		ttConstraintId: number,
 		newActiveState: boolean,
 	) {
-		const stateKey = `${constraintId}`;
-		const currentState = constraintStates.get(stateKey);
-
+		const currentState = constraintStates.get(ttConstraintId);
 		if (!currentState || currentState.isUpdating) return;
 
-		// Optimistic update
-		constraintStates.set(stateKey, {
+		constraintStates.set(ttConstraintId, {
 			...currentState,
 			active: newActiveState,
 			isUpdating: true,
 		});
 
 		try {
-			const response = await fetch(
-				`/admin/timetables/${timetableId}/${timetableDraftId}/constraints`,
-				{
-					method: 'PATCH',
-					headers: { 'Content-Type': 'application/json' },
-					body: JSON.stringify({
-						constraintId: constraintId,
-						active: newActiveState,
-					}),
-				},
-			);
-
+			const response = await fetch(endpoint, {
+				method: 'PATCH',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({
+					ttConstraintId,
+					active: newActiveState,
+				}),
+			});
 			const result = await response.json();
 
 			if (result.success) {
-				// Update successful - finalize the state
-				constraintStates.set(stateKey, {
+				constraintStates.set(ttConstraintId, {
 					active: newActiveState,
 					isUpdating: false,
 					originalActive: newActiveState,
 				});
 			} else {
-				// Rollback optimistic update
-				constraintStates.set(stateKey, {
+				constraintStates.set(ttConstraintId, {
 					...currentState,
 					active: currentState.originalActive,
 					isUpdating: false,
@@ -136,8 +153,7 @@
 				console.error('Failed to update constraint:', result.error);
 			}
 		} catch (error) {
-			// Rollback optimistic update
-			constraintStates.set(stateKey, {
+			constraintStates.set(ttConstraintId, {
 				...currentState,
 				active: currentState.originalActive,
 				isUpdating: false,
@@ -146,7 +162,6 @@
 		}
 	}
 
-	// Handle deleting a constraint from the timetable
 	async function handleDeleteConstraint(ttConstraintId: number) {
 		if (
 			!confirm(
@@ -157,19 +172,14 @@
 		}
 
 		try {
-			const response = await fetch(
-				`/admin/timetables/${timetableId}/${timetableDraftId}/constraints`,
-				{
-					method: 'DELETE',
-					headers: { 'Content-Type': 'application/json' },
-					body: JSON.stringify({ ttConstraintId: ttConstraintId }),
-				},
-			);
-
+			const response = await fetch(endpoint, {
+				method: 'DELETE',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ ttConstraintId }),
+			});
 			const result = await response.json();
 
 			if (result.success) {
-				// Refresh the page to show the updated constraints
 				window.location.reload();
 			} else {
 				console.error('Failed to delete constraint:', result.error);
@@ -181,10 +191,7 @@
 		}
 	}
 
-	// Get the appropriate form component for a constraint using the mapping
-	function getFormComponent(constraint: Constraint) {
-		return getConstraintFormComponent(constraint.fetName);
-	}
+	const ModalForm = $derived(modalFetName ? getFormComponent(modalFetName) : null);
 </script>
 
 <div class="space-y-8">
@@ -195,10 +202,7 @@
 		</div>
 	</div>
 
-	<!-- 2x2 Grid Layout -->
 	<div class="grid gap-6 lg:grid-cols-2">
-		<!-- Top Row: Active Constraints -->
-
 		<!-- Active Time Constraints -->
 		<div class="space-y-4">
 			<div class="flex items-center justify-between">
@@ -241,12 +245,16 @@
 													)}
 											/>
 										{:else}
-											<span class="text-muted-foreground text-xs"
-												>Mandatory</span
-											>
+											<span class="text-muted-foreground text-xs">
+												Mandatory
+											</span>
 										{/if}
 										<div class="flex gap-1">
-											<Button variant="ghost" size="sm" onclick={() => {}}>
+											<Button
+												variant="ghost"
+												size="sm"
+												onclick={() => openEditModal(constraint)}
+											>
 												<EditIcon class="h-4 w-4" />
 											</Button>
 											{#if constraint.con.optional}
@@ -313,12 +321,16 @@
 													)}
 											/>
 										{:else}
-											<span class="text-muted-foreground text-xs"
-												>Mandatory</span
-											>
+											<span class="text-muted-foreground text-xs">
+												Mandatory
+											</span>
 										{/if}
 										<div class="flex gap-1">
-											<Button variant="ghost" size="sm" onclick={() => {}}>
+											<Button
+												variant="ghost"
+												size="sm"
+												onclick={() => openEditModal(constraint)}
+											>
 												<EditIcon class="h-4 w-4" />
 											</Button>
 											{#if constraint.con.optional}
@@ -326,7 +338,7 @@
 													variant="ghost"
 													size="sm"
 													onclick={() =>
-														handleDeleteConstraint(constraint.con.id)}
+														handleDeleteConstraint(constraint.tt_draft_con.id)}
 												>
 													<TrashIcon class="h-4 w-4" />
 												</Button>
@@ -340,8 +352,6 @@
 				</Card.Content>
 			</Card.Root>
 		</div>
-
-		<!-- Bottom Row: Available Constraints -->
 
 		<!-- Available Time Constraints -->
 		<div class="space-y-4">
@@ -361,7 +371,7 @@
 						</p>
 					{:else}
 						<div class="space-y-3">
-							{#each availableTimeConstraints as constraint (constraint.id)}
+							{#each availableTimeConstraints as constraint (constraint.fetName)}
 								<div class="space-y-3 rounded-lg border p-4">
 									<div>
 										<div class="flex items-center justify-between">
@@ -381,7 +391,7 @@
 									<Button
 										size="sm"
 										class="w-full"
-										onclick={() => openAddConstraintModal(constraint)}
+										onclick={() => openAddModal(constraint)}
 									>
 										<PlusIcon class="mr-2 h-4 w-4" />
 										Add Constraint
@@ -412,7 +422,7 @@
 						</p>
 					{:else}
 						<div class="space-y-3">
-							{#each availableSpaceConstraints as constraint (constraint.id)}
+							{#each availableSpaceConstraints as constraint (constraint.fetName)}
 								<div class="space-y-3 rounded-lg border p-4">
 									<div>
 										<div class="flex items-center justify-between">
@@ -432,7 +442,7 @@
 									<Button
 										size="sm"
 										class="w-full"
-										onclick={() => openAddConstraintModal(constraint)}
+										onclick={() => openAddModal(constraint)}
 									>
 										<PlusIcon class="mr-2 h-4 w-4" />
 										Add Constraint
@@ -447,32 +457,23 @@
 	</div>
 </div>
 
-<!-- Add Constraint Modal -->
-<Dialog.Root bind:open={addConstraintModalOpen}>
+<!-- Add / Edit Constraint Modal -->
+<Dialog.Root bind:open={modalOpen}>
 	<Dialog.Content class="max-h-[80vh] max-w-2xl overflow-y-auto">
 		<Dialog.Header>
-			<Dialog.Title
-				>Add Constraint: {constraintToAdd?.friendlyName}</Dialog.Title
-			>
+			<Dialog.Title>{modalTitle}</Dialog.Title>
 			<Dialog.Description>
-				Configure the parameters for this constraint and add it to your
-				timetable.
+				Configure the parameters for this constraint.
 			</Dialog.Description>
 		</Dialog.Header>
-		{#if constraintToAdd}
-			{@const FormComponent = getFormComponent(constraintToAdd)}
-			{#if requiresEnhancedProps(constraintToAdd.fetName)}
-				<FormComponent
-					onSubmit={handleAddConstraint}
-					onCancel={closeAddConstraintModal}
-					{formData}
-				/>
-			{:else}
-				<FormComponent
-					onSubmit={handleAddConstraint}
-					onCancel={closeAddConstraintModal}
-				/>
-			{/if}
+		{#if ModalForm}
+			<ModalForm
+				onSubmit={handleModalSubmit}
+				onCancel={closeModal}
+				initialValues={modalInitialValues}
+				{formData}
+				submitLabel={modalMode === 'edit' ? 'Save Changes' : 'Add Constraint'}
+			/>
 		{/if}
 	</Dialog.Content>
 </Dialog.Root>
