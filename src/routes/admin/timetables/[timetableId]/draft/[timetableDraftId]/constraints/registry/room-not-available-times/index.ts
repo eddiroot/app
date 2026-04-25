@@ -14,7 +14,7 @@ export const roomNotAvailableTimesSchema = z.object({
 		.array(
 			z.object({
 				Day: z.number().min(1, { message: 'Day is required' }),
-				Period: z.number().min(1, { message: 'Period is required' }),
+				Hour: z.number().min(1, { message: 'Period is required' }),
 			}),
 		)
 		.min(1, { message: 'At least one time slot is required' })
@@ -22,7 +22,7 @@ export const roomNotAvailableTimesSchema = z.object({
 			(times) => {
 				const seen = new Set<string>();
 				return times.every((time) => {
-					const key = `${time.Day}-${time.Period}`;
+					const key = `${time.Day}-${time.Hour}`;
 					if (seen.has(key)) return false;
 					seen.add(key);
 					return true;

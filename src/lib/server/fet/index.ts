@@ -129,7 +129,7 @@ export class FETDockerService {
 			.map(([key, value]) => `--${key}=${value}`)
 			.join(' ');
 
-		const command = `docker exec ${this.containerName} fet-cl --inputfile="${inputFilePath}" --outputdir="${outputDir}" ${cmdStr}`;
+		const command = `docker exec -e LANG=C.UTF-8 -e LC_ALL=C.UTF-8 ${this.containerName} fet-cl --inputfile="${inputFilePath}" --outputdir="${outputDir}" ${cmdStr}`;
 
 		try {
 			const { stdout } = await execAsync(command, {
@@ -138,6 +138,7 @@ export class FETDockerService {
 
 			return { success: true, stdout, executionTime: Date.now() - start };
 		} catch (error) {
+			console.log(`⛔ FET execution error:`, error);
 			const execError = error as {
 				stdout?: string;
 				stderr?: string;

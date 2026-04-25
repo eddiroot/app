@@ -85,7 +85,9 @@ export async function processTimetableQueue() {
 			);
 
 			if (!fetResult.success) {
-				throw new Error(`FET processing failed: ${fetResult.stdout || fetResult.error}`);
+				throw new Error(
+					`FET processing failed: ${fetResult.stdout || fetResult.error}`,
+				);
 			}
 
 			// List output files in container
