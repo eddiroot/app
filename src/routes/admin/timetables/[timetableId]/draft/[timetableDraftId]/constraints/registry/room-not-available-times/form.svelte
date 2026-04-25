@@ -1,33 +1,41 @@
 <script lang="ts">
+	import { untrack } from 'svelte';
+	import PlusIcon from '@lucide/svelte/icons/plus';
+	import TrashIcon from '@lucide/svelte/icons/trash';
+
 	import Autocomplete from '$lib/components/autocomplete.svelte';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import Input from '$lib/components/ui/input/input.svelte';
 	import Label from '$lib/components/ui/label/label.svelte';
 	import Textarea from '$lib/components/ui/textarea/textarea.svelte';
-	import PlusIcon from '@lucide/svelte/icons/plus';
-	import TrashIcon from '@lucide/svelte/icons/trash';
-	import type { EnhancedConstraintFormProps } from '../constraints/constraint-form-types';
-	import { roomNotAvailableTimesSchema } from '../constraints/constraints';
+
+	import type { ConstraintFormComponentProps } from '../types';
+	import { roomNotAvailableTimesSchema } from './index';
 
 	let {
 		onSubmit,
 		onCancel,
 		initialValues = {},
 		formData,
-	}: EnhancedConstraintFormProps = $props();
+		submitLabel = 'Add Constraint',
+	}: ConstraintFormComponentProps = $props();
 
-	// Form state
-	let weightPercentage = $derived(
-		(initialValues.Weight_Percentage as number) || 100,
+	let weightPercentage = $state(
+		untrack(() => (initialValues.Weight_Percentage as number) ?? 100),
 	);
-	let selectedRoomId = $derived((initialValues.Room as number | string) || '');
-	let notAvailableTimes = $derived<Array<{ Day: number; Period: number }>>(
-		(initialValues.Not_Available_Time as Array<{
-			Day: number;
-			Period: number;
-		}>) || [{ Day: 0, Period: 0 }],
+	let selectedRoomId = $state<string | number>(
+		untrack(() => (initialValues.Room as string | number) ?? ''),
 	);
-	let comments = $derived((initialValues.Comments as string) || '');
+	let notAvailableTimes = $state<Array<{ Day: number; Period: number }>>(
+		untrack(
+			() =>
+				(initialValues.Not_Available_Time as Array<{
+					Day: number;
+					Period: number;
+				}>) ?? [{ Day: 0, Period: 0 }],
+		),
+	);
+	let comments = $state(untrack(() => (initialValues.Comments as string) ?? ''));
 
 	function addNotAvailableTime() {
 		notAvailableTimes = [...notAvailableTimes, { Day: 0, Period: 0 }];
@@ -37,24 +45,6 @@
 		notAvailableTimes = notAvailableTimes.filter((_, i) => i !== index);
 	}
 
-	function handleSubmit() {
-		const values = {
-			Weight_Percentage: weightPercentage,
-			Room: selectedRoomId,
-			Number_of_Not_Available_Times: notAvailableTimes.length,
-			Not_Available_Time: notAvailableTimes,
-			Active: true,
-			Comments: comments || null,
-		};
-
-		// Validate with Zod
-		const result = roomNotAvailableTimesSchema.safeParse(values);
-		if (result.success) {
-			onSubmit(result.data);
-		}
-	}
-
-	// Validation with Zod
 	let validationErrors = $derived.by(() => {
 		const result = roomNotAvailableTimesSchema.safeParse({
 			Weight_Percentage: weightPercentage,
@@ -68,11 +58,24 @@
 	});
 
 	let isValid = $derived(validationErrors === null);
+
+	function handleSubmit() {
+		const result = roomNotAvailableTimesSchema.safeParse({
+			Weight_Percentage: weightPercentage,
+			Room: selectedRoomId,
+			Number_of_Not_Available_Times: notAvailableTimes.length,
+			Not_Available_Time: notAvailableTimes,
+			Active: true,
+			Comments: comments || null,
+		});
+		if (result.success) {
+			onSubmit(result.data);
+		}
+	}
 </script>
 
 <div class="space-y-6">
 	<div class="space-y-4">
-		<!-- Weight Percentage -->
 		<div class="space-y-2">
 			<Label for="weight">Weight Percentage (1-100)</Label>
 			<Input
@@ -90,7 +93,6 @@
 			{/if}
 		</div>
 
-		<!-- Room -->
 		<div class="space-y-2">
 			<Label for="room">Room *</Label>
 			<Autocomplete
@@ -101,14 +103,8 @@
 			{#if validationErrors?.Room}
 				<p class="text-destructive text-sm">{validationErrors.Room[0]}</p>
 			{/if}
-			{#if formData?.spaces.length === 0}
-				<p class="text-destructive text-sm">
-					All rooms already have this constraint applied.
-				</p>
-			{/if}
 		</div>
 
-		<!-- Not Available Times -->
 		<div class="space-y-2">
 			<Label>Not Available Times *</Label>
 			{#if validationErrors?.Not_Available_Time}
@@ -121,13 +117,13 @@
 					<Label class="flex-1 text-xs">Day</Label>
 					<Label class="flex-1 text-xs">Period</Label>
 				</div>
-				{#each notAvailableTimes as time, index}
+				{#each notAvailableTimes as _, index (index)}
 					<div class="flex items-end gap-2">
 						<div class="flex-1 space-y-1">
 							<Autocomplete
 								options={formData?.timetableDays || []}
 								placeholder="Select a day..."
-								bind:value={time.Day}
+								bind:value={notAvailableTimes[index].Day}
 							/>
 						</div>
 
@@ -135,7 +131,7 @@
 							<Autocomplete
 								options={formData?.timetablePeriods || []}
 								placeholder="Select a period..."
-								bind:value={time.Period}
+								bind:value={notAvailableTimes[index].Period}
 							/>
 						</div>
 
@@ -169,7 +165,6 @@
 			</p>
 		</div>
 
-		<!-- Comments -->
 		<div class="space-y-2">
 			<Label for="comments">Comments (Optional)</Label>
 			<Textarea
@@ -181,9 +176,8 @@
 		</div>
 	</div>
 
-	<!-- Form Actions -->
 	<div class="flex justify-end gap-3">
 		<Button variant="outline" onclick={onCancel}>Cancel</Button>
-		<Button onclick={handleSubmit} disabled={!isValid}>Add Constraint</Button>
+		<Button onclick={handleSubmit} disabled={!isValid}>{submitLabel}</Button>
 	</div>
 </div>
