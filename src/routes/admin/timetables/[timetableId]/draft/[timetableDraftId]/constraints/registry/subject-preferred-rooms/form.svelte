@@ -1,80 +1,53 @@
 <script lang="ts">
+	import { untrack } from 'svelte';
+	import PlusIcon from '@lucide/svelte/icons/plus';
+	import TrashIcon from '@lucide/svelte/icons/trash';
+
 	import Autocomplete from '$lib/components/autocomplete.svelte';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import Input from '$lib/components/ui/input/input.svelte';
 	import Label from '$lib/components/ui/label/label.svelte';
 	import Textarea from '$lib/components/ui/textarea/textarea.svelte';
-	import PlusIcon from '@lucide/svelte/icons/plus';
-	import TrashIcon from '@lucide/svelte/icons/trash';
-	import type { EnhancedConstraintFormProps } from '../constraints/constraint-form-types';
-	import { subjectPreferredRoomsSchema } from '../constraints/constraints';
+
+	import type { ConstraintFormComponentProps } from '../types';
+	import { subjectPreferredRoomsSchema } from './index';
 
 	let {
 		onSubmit,
 		onCancel,
 		initialValues = {},
 		formData,
-	}: EnhancedConstraintFormProps = $props();
+		submitLabel = 'Add Constraint',
+	}: ConstraintFormComponentProps = $props();
 
-	// Form state - use IDs instead of names
-	let weightPercentage = $derived(
-		(initialValues.Weight_Percentage as number) || 100,
+	let weightPercentage = $state(
+		untrack(() => (initialValues.Weight_Percentage as number) ?? 100),
 	);
-	let subjectId = $derived((initialValues.Subject as string) || '');
-	let numberOfRooms = $derived(
-		(initialValues.Number_of_Preferred_Rooms as number) || 1,
+	let subjectId = $state<string | number>(
+		untrack(() => (initialValues.Subject as string | number) ?? ''),
 	);
-	let preferredRoomIds = $derived<(string | number)[]>(
-		(initialValues.Preferred_Room as (string | number)[]) || [''],
+	let preferredRoomIds = $state<(string | number)[]>(
+		untrack(
+			() => (initialValues.Preferred_Room as (string | number)[]) ?? [''],
+		),
 	);
-	let comments = $derived((initialValues.Comments as string) || '');
-
-	// Update rooms array when numberOfRooms changes
-	$effect(() => {
-		if (numberOfRooms > preferredRoomIds.length) {
-			// Add more rooms
-			const diff = numberOfRooms - preferredRoomIds.length;
-			preferredRoomIds = [...preferredRoomIds, ...Array(diff).fill('')];
-		} else if (numberOfRooms < preferredRoomIds.length) {
-			// Remove excess rooms
-			preferredRoomIds = preferredRoomIds.slice(0, numberOfRooms);
-		}
-	});
+	let comments = $state(untrack(() => (initialValues.Comments as string) ?? ''));
 
 	function addRoom() {
 		preferredRoomIds = [...preferredRoomIds, ''];
-		numberOfRooms = preferredRoomIds.length;
 	}
 
 	function removeRoom(index: number) {
 		preferredRoomIds = preferredRoomIds.filter((_, i) => i !== index);
-		numberOfRooms = preferredRoomIds.length;
 	}
 
-	function handleSubmit() {
-		const values = {
-			Weight_Percentage: weightPercentage,
-			Subject: subjectId, // Now using subject ID
-			Number_of_Preferred_Rooms: numberOfRooms,
-			Preferred_Room: preferredRoomIds.filter((roomId) => roomId !== ''),
-			Active: true,
-			Comments: comments || null,
-		};
-
-		// Validate with Zod
-		const result = subjectPreferredRoomsSchema.safeParse(values);
-		if (result.success) {
-			onSubmit(result.data);
-		}
-	}
-
-	// Validation with Zod
 	let validationErrors = $derived.by(() => {
+		const rooms = preferredRoomIds.filter((r) => r !== '');
 		const result = subjectPreferredRoomsSchema.safeParse({
 			Weight_Percentage: weightPercentage,
 			Subject: subjectId,
-			Number_of_Preferred_Rooms: numberOfRooms,
-			Preferred_Room: preferredRoomIds.filter((roomId) => roomId !== ''),
+			Number_of_Preferred_Rooms: rooms.length,
+			Preferred_Room: rooms,
 			Active: true,
 			Comments: comments || null,
 		});
@@ -82,11 +55,25 @@
 	});
 
 	let isValid = $derived(validationErrors === null);
+
+	function handleSubmit() {
+		const rooms = preferredRoomIds.filter((r) => r !== '');
+		const result = subjectPreferredRoomsSchema.safeParse({
+			Weight_Percentage: weightPercentage,
+			Subject: subjectId,
+			Number_of_Preferred_Rooms: rooms.length,
+			Preferred_Room: rooms,
+			Active: true,
+			Comments: comments || null,
+		});
+		if (result.success) {
+			onSubmit(result.data);
+		}
+	}
 </script>
 
 <div class="space-y-6">
 	<div class="space-y-4">
-		<!-- Weight Percentage -->
 		<div class="space-y-2">
 			<Label for="weight">Weight Percentage (1-100)</Label>
 			<Input
@@ -104,7 +91,6 @@
 			{/if}
 		</div>
 
-		<!-- Subject -->
 		<div class="space-y-2">
 			<Label for="subject">Subject *</Label>
 			<Autocomplete
@@ -119,11 +105,10 @@
 			{/if}
 		</div>
 
-		<!-- Preferred Rooms -->
 		<div class="space-y-2">
 			<Label>Preferred Rooms *</Label>
 			<div class="space-y-3">
-				{#each preferredRoomIds as roomId, index}
+				{#each preferredRoomIds as _, index (index)}
 					<div class="flex gap-2">
 						<Autocomplete
 							options={formData?.spaces || []}
@@ -168,7 +153,6 @@
 			</p>
 		</div>
 
-		<!-- Comments -->
 		<div class="space-y-2">
 			<Label for="comments">Comments (Optional)</Label>
 			<Textarea
@@ -180,9 +164,8 @@
 		</div>
 	</div>
 
-	<!-- Form Actions -->
 	<div class="flex justify-end gap-3">
 		<Button variant="outline" onclick={onCancel}>Cancel</Button>
-		<Button onclick={handleSubmit} disabled={!isValid}>Add Constraint</Button>
+		<Button onclick={handleSubmit} disabled={!isValid}>{submitLabel}</Button>
 	</div>
 </div>
