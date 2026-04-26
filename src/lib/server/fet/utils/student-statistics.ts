@@ -65,12 +65,9 @@ export async function getStudentEnrollmentsWithAllocations(
 		.from(table.fetSubjectOfferingClassUser)
 		.innerJoin(user, eq(table.fetSubjectOfferingClassUser.userId, user.id))
 		.where(
-			and(
-				inArray(
-					table.fetSubjectOfferingClassUser.fetSubOffClassId,
-					fetClassIds,
-				),
-				eq(table.fetSubjectOfferingClass.isArchived, false),
+			inArray(
+				table.fetSubjectOfferingClassUser.fetSubOffClassId,
+				fetClassIds,
 			),
 		);
 
