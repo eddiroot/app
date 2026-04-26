@@ -65,7 +65,6 @@ export function validateParams(
 	return { success: false, errors: result.error };
 }
 
-export { buildConstraintFormData } from './form-data';
 export type { ConstraintMeta, FormDataKey } from './types';
 export type {
 	AutocompleteOption,

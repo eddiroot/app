@@ -1,12 +1,8 @@
 import { constraintTypeEnum } from '$lib/enums';
 import { getAllConstraintsByTimetableDraftId } from '$lib/server/db/service';
 
-import {
-	ALL_ENTRIES,
-	buildConstraintFormData,
-	hasEntry,
-	requiredFormDataKeys,
-} from './registry/server';
+import { ALL_ENTRIES, hasEntry, requiredFormDataKeys } from './registry/server';
+import { buildConstraintFormData } from './registry/form-data';
 
 export const load = async ({ locals: { security }, params }) => {
 	const user = security.isAuthenticated().isAdmin().getUser();
