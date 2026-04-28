@@ -1,6 +1,7 @@
 import { drizzle } from 'drizzle-orm/node-postgres';
 import pg from 'pg';
 import * as schema from '../schema';
+import { syncConstraintsFromRegistry } from './constraints';
 import { seedDemo } from './demo';
 import { seedEddi } from './eddi';
 import type { SeedContext } from './types';
@@ -21,6 +22,7 @@ async function seed(): Promise<void> {
 	const context: SeedContext = { db, pool };
 
 	try {
+		await syncConstraintsFromRegistry(db);
 		const { eddi } = await seedEddi(context);
 		await seedDemo(context, eddi);
 	} catch (error) {

@@ -1,39 +1,27 @@
 <script lang="ts">
+	import { untrack } from 'svelte';
+
 	import Button from '$lib/components/ui/button/button.svelte';
 	import Input from '$lib/components/ui/input/input.svelte';
 	import Label from '$lib/components/ui/label/label.svelte';
 	import Textarea from '$lib/components/ui/textarea/textarea.svelte';
-	import { teachersMaxGapsSchema } from '../constraints/constraints';
 
-	interface Props {
-		onSubmit: (values: Record<string, any>) => void;
-		onCancel: () => void;
-		initialValues?: Record<string, any>;
-	}
+	import type { ConstraintFormComponentProps } from '../types';
+	import { teachersMaxGapsSchema } from './index';
 
-	let { onSubmit, onCancel, initialValues = {} }: Props = $props();
+	let {
+		onSubmit,
+		onCancel,
+		initialValues = {},
+		submitLabel = 'Add Constraint',
+	}: ConstraintFormComponentProps = $props();
 
-	// Form state
-	let weightPercentage = $derived(initialValues.Weight_Percentage || 100);
-	let maxGaps = $derived(initialValues.Max_Gaps || 3);
-	let comments = $derived(initialValues.Comments || '');
+	let weightPercentage = $state(
+		untrack(() => (initialValues.Weight_Percentage as number) ?? 100),
+	);
+	let maxGaps = $state(untrack(() => (initialValues.Max_Gaps as number) ?? 3));
+	let comments = $state(untrack(() => (initialValues.Comments as string) ?? ''));
 
-	function handleSubmit() {
-		const values = {
-			Weight_Percentage: weightPercentage,
-			Max_Gaps: maxGaps,
-			Active: true,
-			Comments: comments || null,
-		};
-
-		// Validate with Zod
-		const result = teachersMaxGapsSchema.safeParse(values);
-		if (result.success) {
-			onSubmit(result.data);
-		}
-	}
-
-	// Validation with Zod
 	let validationErrors = $derived.by(() => {
 		const result = teachersMaxGapsSchema.safeParse({
 			Weight_Percentage: weightPercentage,
@@ -45,11 +33,22 @@
 	});
 
 	let isValid = $derived(validationErrors === null);
+
+	function handleSubmit() {
+		const result = teachersMaxGapsSchema.safeParse({
+			Weight_Percentage: weightPercentage,
+			Max_Gaps: maxGaps,
+			Active: true,
+			Comments: comments || null,
+		});
+		if (result.success) {
+			onSubmit(result.data);
+		}
+	}
 </script>
 
 <div class="space-y-6">
 	<div class="space-y-4">
-		<!-- Weight Percentage -->
 		<div class="space-y-2">
 			<Label for="weight">Weight Percentage (1-100)</Label>
 			<Input
@@ -67,7 +66,6 @@
 			{/if}
 		</div>
 
-		<!-- Max Gaps -->
 		<div class="space-y-2">
 			<Label for="maxGaps">Maximum Gaps Per Week (0-20)</Label>
 			<Input
@@ -87,7 +85,6 @@
 			</p>
 		</div>
 
-		<!-- Comments -->
 		<div class="space-y-2">
 			<Label for="comments">Comments (Optional)</Label>
 			<Textarea
@@ -99,9 +96,8 @@
 		</div>
 	</div>
 
-	<!-- Form Actions -->
 	<div class="flex justify-end gap-3">
 		<Button variant="outline" onclick={onCancel}>Cancel</Button>
-		<Button onclick={handleSubmit} disabled={!isValid}>Add Constraint</Button>
+		<Button onclick={handleSubmit} disabled={!isValid}>{submitLabel}</Button>
 	</div>
 </div>

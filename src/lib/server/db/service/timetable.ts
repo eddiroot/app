@@ -1196,6 +1196,44 @@ export async function getOldestQueuedTimetable() {
 	return entry;
 }
 
+export async function claimOldestQueuedTimetable() {
+	const [claimedQueue] = await db
+		.update(table.timetableQueue)
+		.set({ status: queueStatusEnum.inProgress, updatedAt: new Date() })
+		.where(
+			and(
+				eq(table.timetableQueue.status, queueStatusEnum.queued),
+				inArray(
+					table.timetableQueue.id,
+					db
+						.select({ id: table.timetableQueue.id })
+						.from(table.timetableQueue)
+						.where(eq(table.timetableQueue.status, queueStatusEnum.queued))
+						.orderBy(asc(table.timetableQueue.createdAt))
+						.limit(1),
+				),
+			),
+		)
+		.returning({ id: table.timetableQueue.id });
+
+	if (!claimedQueue) {
+		return undefined;
+	}
+
+	const [entry] = await db
+		.select()
+		.from(table.timetableQueue)
+		.innerJoin(
+			table.timetable,
+			eq(table.timetableQueue.timetableId, table.timetable.id),
+		)
+		.innerJoin(table.school, eq(table.timetable.schoolId, table.school.id))
+		.where(eq(table.timetableQueue.id, claimedQueue.id))
+		.limit(1);
+
+	return entry;
+}
+
 export async function updateTimetableQueueStatus(
 	queueId: number,
 	status: queueStatusEnum,
@@ -1256,6 +1294,16 @@ export async function getConstraintById(constraintId: number) {
 		.select()
 		.from(table.constraint)
 		.where(eq(table.constraint.id, constraintId))
+		.limit(1);
+
+	return constraint;
+}
+
+export async function getConstraintByFetName(fetName: string) {
+	const [constraint] = await db
+		.select()
+		.from(table.constraint)
+		.where(eq(table.constraint.fetName, fetName))
 		.limit(1);
 
 	return constraint;
@@ -1390,6 +1438,35 @@ export async function updateTimetableDraftConstraintActiveStatus(
 		.returning();
 
 	return result[0];
+}
+
+export async function updateTimetableDraftConstraintParameters(
+	ttConstraintId: number,
+	parameters: Record<string, unknown>,
+) {
+	const result = await db
+		.update(table.timetableDraftConstraint)
+		.set({ parameters })
+		.where(and(eq(table.timetableDraftConstraint.id, ttConstraintId)))
+		.returning();
+
+	return result[0];
+}
+
+export async function getTimetableDraftConstraintWithDef(
+	ttConstraintId: number,
+) {
+	const [row] = await db
+		.select()
+		.from(table.timetableDraftConstraint)
+		.innerJoin(
+			table.constraint,
+			eq(table.timetableDraftConstraint.constraintId, table.constraint.id),
+		)
+		.where(eq(table.timetableDraftConstraint.id, ttConstraintId))
+		.limit(1);
+
+	return row;
 }
 
 // ============================================================================

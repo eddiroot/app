@@ -256,51 +256,50 @@ function buildRoomsList(
 	});
 }
 
+// fast-xml-builder renders an array value as N sibling elements with the same
+// tag. This is what FET wants for repeatable constraints (e.g. multiple
+// ConstraintRoomNotAvailableTimes entries), so we always accumulate into an
+// array per fetName — even for singletons — and unwrap single-element arrays
+// to stay compact in the common case.
+function appendConstraint(
+	bucket: Record<string, unknown[]>,
+	fetName: string,
+	params: unknown,
+) {
+	if (!bucket[fetName]) bucket[fetName] = [];
+	bucket[fetName].push(params);
+}
+
+function finaliseBucket(bucket: Record<string, unknown[]>) {
+	const out: Record<string, unknown> = {};
+	for (const [fetName, entries] of Object.entries(bucket)) {
+		out[fetName] = entries.length === 1 ? entries[0] : entries;
+	}
+	return out;
+}
+
 function buildConstraintsXML(constraints: TimetableData['activeConstraints']) {
-	const timeConstraints = constraints.filter((c) => c.type === 'time');
-	const spaceConstraints = constraints.filter((c) => c.type === 'space');
+	const timeBucket: Record<string, unknown[]> = {};
+	const spaceBucket: Record<string, unknown[]> = {};
 
-	// Build Time_Constraints_List
-	const timeConstraintsXML: Record<string, unknown> = {};
-	timeConstraints.forEach((constraint) => {
+	for (const constraint of constraints) {
 		try {
-			// Parse the JSON parameters
 			const parsedParams =
 				typeof constraint.parameters === 'string'
 					? JSON.parse(constraint.parameters)
 					: constraint.parameters;
 
-			// Add to constraints using FET name
-			timeConstraintsXML[constraint.fetName] = parsedParams;
+			const bucket = constraint.type === 'time' ? timeBucket : spaceBucket;
+			appendConstraint(bucket, constraint.fetName, parsedParams);
 		} catch (error) {
 			console.error(
-				`Error parsing time constraint ${constraint.fetName}:`,
+				`Error parsing ${constraint.type} constraint ${constraint.fetName}:`,
 				error,
 			);
 		}
-	});
+	}
 
-	// Build Space_Constraints_List
-	const spaceConstraintsXML: Record<string, unknown> = {};
-	spaceConstraints.forEach((constraint) => {
-		try {
-			// Parse the JSON parameters
-			const parsedParams =
-				typeof constraint.parameters === 'string'
-					? JSON.parse(constraint.parameters)
-					: constraint.parameters;
-
-			// Add to constraints using FET name
-			spaceConstraintsXML[constraint.fetName] = parsedParams;
-		} catch (error) {
-			console.error(
-				`Error parsing space constraint ${constraint.fetName}:`,
-				error,
-			);
-		}
-	});
-
-	return { timeConstraintsXML, spaceConstraintsXML };
+	return { timeBucket, spaceBucket };
 }
 
 function buildPreferredRoomsConstraints(
@@ -370,19 +369,21 @@ export async function buildFETInput({
 
 	const roomsList = buildRoomsList(spaces, buildings);
 
-	const { timeConstraintsXML, spaceConstraintsXML } =
-		buildConstraintsXML(activeConstraints);
+	const { timeBucket, spaceBucket } = buildConstraintsXML(activeConstraints);
 
+	// Auto-synthesised ConstraintActivityPreferredRooms entries derived from
+	// each activity's location preferences. Merged into the bucket so they
+	// coexist with any user-added entries of the same fetName.
 	const preferredRoomsConstraints = buildPreferredRoomsConstraints(
 		activities,
 		activitiesList,
 	);
-
-	// Add the preferred rooms constraints to the space constraints
-	if (preferredRoomsConstraints.length > 0) {
-		spaceConstraintsXML['ConstraintActivityPreferredRooms'] =
-			preferredRoomsConstraints;
+	for (const entry of preferredRoomsConstraints) {
+		appendConstraint(spaceBucket, 'ConstraintActivityPreferredRooms', entry);
 	}
+
+	const timeConstraintsXML = finaliseBucket(timeBucket);
+	const spaceConstraintsXML = finaliseBucket(spaceBucket);
 
 	const xmlData = {
 		'?xml': { '@_version': '1.0', '@_encoding': 'UTF-8' },

@@ -1,7 +1,7 @@
 import { queueStatusEnum } from '$lib/enums.js';
 import {
+	claimOldestQueuedTimetable,
 	getInProgressTimetableQueues,
-	getOldestQueuedTimetable,
 	updateTimetableQueueStatus,
 } from '$lib/server/db/service/index.js';
 import { FETDockerService } from '$lib/server/fet';
@@ -20,20 +20,14 @@ export async function processTimetableQueue() {
 			return;
 		}
 
-		// Get the oldest queued task
-		const queueEntry = await getOldestQueuedTimetable();
+		// Atomically claim the oldest queued task to avoid multi-worker races.
+		const queueEntry = await claimOldestQueuedTimetable();
 		if (!queueEntry) {
 			console.error(
 				'📭 [TIMETABLE PROCESSOR] No queued timetables found. Nothing to process.',
 			);
 			return;
 		}
-
-		// Mark task as in progress
-		await updateTimetableQueueStatus(
-			queueEntry.tt_queue.id,
-			queueStatusEnum.inProgress,
-		);
 
 		// Docker container paths - use a dedicated working directory
 		const workingDir = `/app/timetables/${queueEntry.tt_queue.id}`;
@@ -91,7 +85,9 @@ export async function processTimetableQueue() {
 			);
 
 			if (!fetResult.success) {
-				throw new Error(`FET processing failed: ${fetResult.stdout || fetResult.error}`);
+				throw new Error(
+					`FET processing failed: ${fetResult.stdout || fetResult.error}`,
+				);
 			}
 
 			// List output files in container
