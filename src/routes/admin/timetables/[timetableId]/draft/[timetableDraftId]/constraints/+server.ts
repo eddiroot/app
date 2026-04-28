@@ -9,7 +9,7 @@ import {
 	updateTimetableDraftConstraintParameters,
 } from '$lib/server/db/service';
 
-import { validateParams } from './registry/server';
+import { validateParams } from './registry/utils';
 
 // Add a constraint to a timetable draft.
 // Payload: { fetName, parameters }
@@ -128,7 +128,8 @@ export const PATCH = async ({ request, locals: { security } }) => {
 		return json(
 			{
 				success: false,
-				error: 'Payload must include either `active: boolean` or `parameters: object`',
+				error:
+					'Payload must include either `active: boolean` or `parameters: object`',
 			},
 			{ status: 400 },
 		);

@@ -2,7 +2,7 @@ import { eq, notInArray } from 'drizzle-orm';
 
 import * as table from '$lib/server/db/schema';
 
-import { ALL_ENTRIES } from '../../../../routes/admin/timetables/[timetableId]/draft/[timetableDraftId]/constraints/registry/server';
+import { ALL_ENTRIES } from '../../../../routes/admin/timetables/[timetableId]/draft/[timetableDraftId]/constraints/registry/utils';
 import type { Database } from './types';
 
 /**
