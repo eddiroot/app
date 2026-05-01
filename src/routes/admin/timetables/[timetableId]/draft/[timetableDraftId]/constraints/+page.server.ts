@@ -1,63 +1,51 @@
 import { constraintTypeEnum } from '$lib/enums';
-import {
-	getAllConstraints,
-	getAllConstraintsByTimetableDraftId,
-} from '$lib/server/db/service';
-import { buildConstraintFormData } from './constraints/constraint-data-fetchers.js';
-import { hasCustomForm } from './constraints/constraint-form-mapping.js';
+import { getAllConstraintsByTimetableDraftId } from '$lib/server/db/service';
+
+import { buildConstraintFormData } from './registry/form-data';
+import { ALL_ENTRIES, hasEntry, requiredFormDataKeys } from './registry/utils';
 
 export const load = async ({ locals: { security }, params }) => {
 	const user = security.isAuthenticated().isAdmin().getUser();
 	const timetableId = parseInt(params.timetableId, 10);
 	const timetableDraftId = parseInt(params.timetableDraftId, 10);
 
-	// Get all constraints from the database
-	const allConstraints = await getAllConstraints();
-
-	// Get constraints currently assigned to this timetable
 	const assignedConstraints =
 		await getAllConstraintsByTimetableDraftId(timetableDraftId);
 
-	// Filter to only show constraints that have custom forms
-	const constraintsWithForms = allConstraints.filter((constraint) =>
-		hasCustomForm(constraint.fetName),
+	// Defensively ignore assigned rows whose fetName isn't in the registry.
+	// Happens if a constraint was removed from code but still sits in the DB.
+	const knownAssigned = assignedConstraints.filter(({ con }) =>
+		hasEntry(con.fetName),
 	);
 
-	// Get the constraint IDs that are already assigned to this timetable
-	const assignedConstraintIds = new Set(
-		assignedConstraints.map(({ tt_draft_con }) => tt_draft_con.id),
+	const assignedFetNames = new Set(knownAssigned.map(({ con }) => con.fetName));
+
+	const availableEntries = ALL_ENTRIES.filter(
+		(entry) => entry.repeatable || !assignedFetNames.has(entry.fetName),
 	);
 
-	// Filter available constraints based on repeatability rules
-	const availableConstraints = constraintsWithForms.filter((constraint) => {
-		// If the constraint is repeatable, always show it
-		if (constraint.repeatable) {
-			return true;
-		}
-		// If the constraint is not repeatable, only show it if it hasn't been used yet
-		return !assignedConstraintIds.has(constraint.id);
-	});
-
-	// Separate current constraints by type
-	const currentTimeConstraints = assignedConstraints.filter(
+	const currentTimeConstraints = knownAssigned.filter(
 		({ con }) => con.type === constraintTypeEnum.time,
 	);
-	const currentSpaceConstraints = assignedConstraints.filter(
+	const currentSpaceConstraints = knownAssigned.filter(
 		({ con }) => con.type === constraintTypeEnum.space,
 	);
 
-	// Separate available constraints by type
-	const availableTimeConstraints = availableConstraints.filter(
-		(con) => con.type === constraintTypeEnum.time,
-	);
-	const availableSpaceConstraints = availableConstraints.filter(
-		(con) => con.type === constraintTypeEnum.space,
-	);
+	const availableTimeConstraints = availableEntries
+		.filter((e) => e.type === constraintTypeEnum.time)
+		.map(toAvailable);
+	const availableSpaceConstraints = availableEntries
+		.filter((e) => e.type === constraintTypeEnum.space)
+		.map(toAvailable);
 
-	// Build form data for autocomplete components
+	// Only fetch autocomplete option sets actually needed by forms in play.
+	const visibleFetNames = [
+		...knownAssigned.map(({ con }) => con.fetName),
+		...availableEntries.map((e) => e.fetName),
+	];
 	const formData = await buildConstraintFormData(
-		timetableDraftId,
-		user.schoolId,
+		{ timetableDraftId, schoolId: user.schoolId },
+		requiredFormDataKeys(visibleFetNames),
 	);
 
 	return {
@@ -71,3 +59,14 @@ export const load = async ({ locals: { security }, params }) => {
 		formData,
 	};
 };
+
+function toAvailable(entry: (typeof ALL_ENTRIES)[number]) {
+	return {
+		fetName: entry.fetName,
+		friendlyName: entry.friendlyName,
+		description: entry.description,
+		type: entry.type,
+		optional: entry.optional,
+		repeatable: entry.repeatable,
+	};
+}

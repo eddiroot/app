@@ -1,39 +1,28 @@
 <script lang="ts">
+	import { untrack } from 'svelte';
+
 	import Button from '$lib/components/ui/button/button.svelte';
 	import Input from '$lib/components/ui/input/input.svelte';
 	import Label from '$lib/components/ui/label/label.svelte';
 	import Textarea from '$lib/components/ui/textarea/textarea.svelte';
-	import { basicCompulsorySpaceSchema } from '../constraints/constraints';
 
-	interface Props {
-		onSubmit: (values: Record<string, any>) => void;
-		onCancel: () => void;
-		initialValues?: Record<string, any>;
-	}
+	import type { ConstraintFormComponentProps } from '../types';
+	import { basicCompulsoryTimeSchema } from './index';
 
-	let { onSubmit, onCancel, initialValues = {} }: Props = $props();
+	let {
+		onSubmit,
+		onCancel,
+		initialValues = {},
+		submitLabel = 'Add Constraint',
+	}: ConstraintFormComponentProps = $props();
 
-	// Form state
-	let weightPercentage = $derived(initialValues.Weight_Percentage || 100);
-	let comments = $derived(initialValues.Comments || '');
+	let weightPercentage = $state(
+		untrack(() => (initialValues.Weight_Percentage as number) ?? 100),
+	);
+	let comments = $state(untrack(() => (initialValues.Comments as string) ?? ''));
 
-	function handleSubmit() {
-		const values = {
-			Weight_Percentage: weightPercentage,
-			Active: true,
-			Comments: comments || null,
-		};
-
-		// Validate with Zod
-		const result = basicCompulsorySpaceSchema.safeParse(values);
-		if (result.success) {
-			onSubmit(result.data);
-		}
-	}
-
-	// Validation with Zod
 	let validationErrors = $derived.by(() => {
-		const result = basicCompulsorySpaceSchema.safeParse({
+		const result = basicCompulsoryTimeSchema.safeParse({
 			Weight_Percentage: weightPercentage,
 			Active: true,
 			Comments: comments || null,
@@ -42,6 +31,17 @@
 	});
 
 	let isValid = $derived(validationErrors === null);
+
+	function handleSubmit() {
+		const result = basicCompulsoryTimeSchema.safeParse({
+			Weight_Percentage: weightPercentage,
+			Active: true,
+			Comments: comments || null,
+		});
+		if (result.success) {
+			onSubmit(result.data);
+		}
+	}
 </script>
 
 <div class="space-y-6">
@@ -49,12 +49,12 @@
 		<div class="rounded-lg border border-blue-200 bg-blue-50 p-4">
 			<h3 class="mb-2 font-semibold text-blue-900">Mandatory Constraint</h3>
 			<p class="text-sm text-blue-800">
-				This constraint ensures all activities are assigned to appropriate
-				spaces. It is required for the timetabling system to function properly.
+				This constraint ensures all activities are scheduled within the defined
+				time periods. It is required for the timetabling system to function
+				properly.
 			</p>
 		</div>
 
-		<!-- Weight Percentage -->
 		<div class="space-y-2">
 			<Label for="weight">Weight Percentage (1-100)</Label>
 			<Input
@@ -75,7 +75,6 @@
 			</p>
 		</div>
 
-		<!-- Comments -->
 		<div class="space-y-2">
 			<Label for="comments">Comments (Optional)</Label>
 			<Textarea
@@ -87,9 +86,8 @@
 		</div>
 	</div>
 
-	<!-- Form Actions -->
 	<div class="flex justify-end gap-3">
 		<Button variant="outline" onclick={onCancel}>Cancel</Button>
-		<Button onclick={handleSubmit} disabled={!isValid}>Add Constraint</Button>
+		<Button onclick={handleSubmit} disabled={!isValid}>{submitLabel}</Button>
 	</div>
 </div>

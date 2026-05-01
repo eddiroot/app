@@ -161,12 +161,10 @@ export const timetableGroupMember = timetableSchema.table(
 
 export type TimetableGroupMember = typeof timetableGroupMember.$inferSelect;
 
-export const timetableActivity = timetableSchema.table(
-	'tt_activity',
+export const timetableClass = timetableSchema.table(
+	'tt_class',
 	{
 		...essentials,
-		periodsPerInstance: integer('periods_per_instance').notNull().default(1),
-		totalPeriods: integer('total_periods').notNull(),
 		timetableDraftId: integer('tt_draft_id')
 			.notNull()
 			.references(() => timetableDraft.id, { onDelete: 'cascade' }),
@@ -180,14 +178,28 @@ export const timetableActivity = timetableSchema.table(
 	],
 );
 
-export type TimetableActivity = typeof timetableActivity.$inferSelect;
+export type TimetableClass = typeof timetableClass.$inferSelect;
 
-export const timetableActivityTeacherPreference = timetableSchema.table(
-	'tt_activity_teacher_pref',
+export const timetableActivity = timetableSchema.table(
+	'tt_activity',
 	{
 		...essentials,
-		timetableActivityId: integer('tt_activity_id')
-			.references(() => timetableActivity.id, { onDelete: 'cascade' })
+		timetableClassId: integer('tt_class_id')
+			.notNull()
+			.references(() => timetableClass.id, { onDelete: 'cascade' }),
+		duration: integer().notNull(),
+	},
+	(self) => [index().on(self.timetableClassId)],
+);
+
+export type TimetableActivity = typeof timetableActivity.$inferSelect;
+
+export const timetableClassTeacherPreference = timetableSchema.table(
+	'tt_class_teacher_pref',
+	{
+		...essentials,
+		timetableClassId: integer('tt_class_id')
+			.references(() => timetableClass.id, { onDelete: 'cascade' })
 			.notNull(),
 		teacherId: uuid('teacher_id')
 			.references(() => user.id, { onDelete: 'cascade' })
@@ -195,15 +207,15 @@ export const timetableActivityTeacherPreference = timetableSchema.table(
 	},
 );
 
-export type TimetableActivityTeacherPreferences =
-	typeof timetableActivityTeacherPreference.$inferSelect;
+export type TimetableClassTeacherPreferences =
+	typeof timetableClassTeacherPreference.$inferSelect;
 
-export const timetableActivityPreferredSpace = timetableSchema.table(
-	'tt_activity_preferred_space',
+export const timetableClassPreferredSpace = timetableSchema.table(
+	'tt_class_preferred_space',
 	{
 		...essentials,
-		timetableActivityId: integer('tt_activity_id')
-			.references(() => timetableActivity.id, { onDelete: 'cascade' })
+		timetableClassId: integer('tt_class_id')
+			.references(() => timetableClass.id, { onDelete: 'cascade' })
 			.notNull(),
 		schoolSpaceId: integer('sch_space_id')
 			.references(() => schoolSpace.id, { onDelete: 'cascade' })
@@ -211,15 +223,15 @@ export const timetableActivityPreferredSpace = timetableSchema.table(
 	},
 );
 
-export type TimetableActivityPreferredSpaces =
-	typeof timetableActivityPreferredSpace.$inferSelect;
+export type TimetableClassPreferredSpaces =
+	typeof timetableClassPreferredSpace.$inferSelect;
 
-export const timetableActivityAssignedStudent = timetableSchema.table(
-	'tt_activity_assign_stu',
+export const timetableClassAssignedStudent = timetableSchema.table(
+	'tt_class_assign_stu',
 	{
 		...essentials,
-		timetableActivityId: integer('tt_activity_id')
-			.references(() => timetableActivity.id, { onDelete: 'cascade' })
+		timetableClassId: integer('tt_class_id')
+			.references(() => timetableClass.id, { onDelete: 'cascade' })
 			.notNull(),
 		userId: uuid()
 			.references(() => user.id, { onDelete: 'cascade' })
@@ -227,15 +239,15 @@ export const timetableActivityAssignedStudent = timetableSchema.table(
 	},
 );
 
-export type TimetableActivityAssignedStudents =
-	typeof timetableActivityAssignedStudent.$inferSelect;
+export type TimetableClassAssignedStudents =
+	typeof timetableClassAssignedStudent.$inferSelect;
 
-export const timetableActivityAssignedGroup = timetableSchema.table(
-	'tt_activity_assign_grp',
+export const timetableClassAssignedGroup = timetableSchema.table(
+	'tt_class_assign_grp',
 	{
 		...essentials,
-		timetableActivityId: integer('tt_activity_id')
-			.references(() => timetableActivity.id, { onDelete: 'cascade' })
+		timetableClassId: integer('tt_class_id')
+			.references(() => timetableClass.id, { onDelete: 'cascade' })
 			.notNull(),
 		timetableGroupId: integer('tt_group_id')
 			.references(() => timetableGroup.id, { onDelete: 'cascade' })
@@ -243,15 +255,15 @@ export const timetableActivityAssignedGroup = timetableSchema.table(
 	},
 );
 
-export type TimetableActivityAssignedGroup =
-	typeof timetableActivityAssignedGroup.$inferSelect;
+export type TimetableClassAssignedGroup =
+	typeof timetableClassAssignedGroup.$inferSelect;
 
-export const timetableActivityAssignedYear = timetableSchema.table(
-	'tt_activity_assign_yr',
+export const timetableClassAssignedYear = timetableSchema.table(
+	'tt_class_assign_yr',
 	{
 		...essentials,
-		timetableActivityId: integer('tt_activity_id')
-			.references(() => timetableActivity.id, { onDelete: 'cascade' })
+		timetableClassId: integer('tt_class_id')
+			.references(() => timetableClass.id, { onDelete: 'cascade' })
 			.notNull(),
 		yearLevelId: integer()
 			.notNull()
@@ -259,8 +271,8 @@ export const timetableActivityAssignedYear = timetableSchema.table(
 	},
 );
 
-export type TimetableActivityAssignedYear =
-	typeof timetableActivityAssignedYear.$inferSelect;
+export type TimetableClassAssignedYear =
+	typeof timetableClassAssignedYear.$inferSelect;
 
 export const timetableDraftConstraint = timetableSchema.table('tt_draft_con', {
 	...essentials,
