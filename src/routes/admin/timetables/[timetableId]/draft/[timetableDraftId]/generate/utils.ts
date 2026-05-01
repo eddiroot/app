@@ -5,7 +5,7 @@ import {
 	getAllStudentGroupsByTimetableDraftId,
 	getAllStudentsGroupedByYearLevelsBySchoolId,
 	getBuildingsBySchoolId,
-	getEnhancedTimetableDraftActivitiesByTimetableDraftId,
+	getEnhancedTimetableDraftClassesByTimetableDraftId,
 	getSchoolById,
 	getSpacesBySchoolId,
 	getSubjectsBySchoolId,
@@ -28,8 +28,8 @@ export type TimetableData = {
 	studentsByYear: Awaited<
 		ReturnType<typeof getAllStudentsGroupedByYearLevelsBySchoolId>
 	>;
-	activities: Awaited<
-		ReturnType<typeof getEnhancedTimetableDraftActivitiesByTimetableDraftId>
+	classes: Awaited<
+		ReturnType<typeof getEnhancedTimetableDraftClassesByTimetableDraftId>
 	>;
 	buildings: Awaited<ReturnType<typeof getBuildingsBySchoolId>>;
 	spaces: Awaited<ReturnType<typeof getSpacesBySchoolId>>;
@@ -170,74 +170,124 @@ function buildStudentsList(
 	return studentsList;
 }
 
-function buildActivitiesList(activities: TimetableData['activities']) {
-	const activitiesList = activities.flatMap((activity) => {
-		// Collect all teacher IDs
-		const teacherIds = activity.teacherIds;
+type FETActivity = {
+	Teacher: string[];
+	Subject: string;
+	Students: string[];
+	Duration: number;
+	Total_Duration: number;
+	Activity_Group_Id: number;
+	Active: boolean;
+	Comments: string;
+	Id: number;
+	dbActivityId: number;
+	dbClassId: number;
+};
 
-		// Collect all student identifiers (groups, year levels, and individual students)
+function buildActivitiesList(classes: TimetableData['classes']): FETActivity[] {
+	const activitiesList: FETActivity[] = [];
+
+	for (const cls of classes) {
+		const teacherIds = cls.teacherIds;
+
 		const studentIdentifiers: string[] = [];
-
-		// Add group IDs
-		if (activity.groupIds.length > 0) {
+		if (cls.groupIds.length > 0) {
+			studentIdentifiers.push(...cls.groupIds.map((id) => 'G' + id.toString()));
+		}
+		if (cls.yearLevels.length > 0) {
 			studentIdentifiers.push(
-				...activity.groupIds.map((id) => 'G' + id.toString()),
+				...cls.yearLevels.map((yl) => 'Y' + yl.yearLevelId.toString()),
+			);
+		}
+		if (cls.studentIds.length > 0) {
+			studentIdentifiers.push(
+				...cls.studentIds.map((id) => 'S' + id.toString()),
 			);
 		}
 
-		// Add year levels
-		if (activity.yearLevels.length > 0) {
-			studentIdentifiers.push(
-				...activity.yearLevels.map((yl) => 'Y' + yl.toString()),
-			);
+		if (cls.activities.length === 0) {
+			console.warn(`Class ${cls.id} skipped: no activities defined`);
+			continue;
 		}
 
-		// Add individual student IDs
-		if (activity.studentIds.length > 0) {
-			studentIdentifiers.push(
-				...activity.studentIds.map((id) => 'S' + id.toString()),
-			);
-		}
-
-		// If no teachers or students assigned, skip this activity
 		if (teacherIds.length === 0 || studentIdentifiers.length === 0) {
 			console.warn(
-				`Activity ${activity.id} skipped: missing teachers or students`,
+				`Class ${cls.id} skipped: missing teachers or students`,
 			);
-			return [];
+			continue;
 		}
 
-		// Calculate how many split activities we need
-		// If totalPeriods > periodsPerInstance, we create multiple activities (splits)
-		const numberOfSplits = Math.ceil(
-			activity.totalPeriods / activity.periodsPerInstance,
+		// FET requires a Total_Duration on every <Activity>, identical across all
+		// activities sharing an Activity_Group_Id. We derive it as the sum of
+		// child durations rather than storing it on the row.
+		const classTotalDuration = cls.activities.reduce(
+			(s, a) => s + a.duration,
+			0,
 		);
 
-		// Create split activities
-		const splitActivities = [];
-		for (let i = 0; i < numberOfSplits; i++) {
-			splitActivities.push({
-				Teacher: teacherIds, // Array of teacher IDs - XML builder will create multiple <Teacher> tags
-				Subject: activity.subjectOfferingId.toString(),
-				Students: studentIdentifiers, // Array of student identifiers - XML builder will create multiple <Students> tags
-				Duration: activity.periodsPerInstance, // Duration of this split
-				Total_Duration: activity.totalPeriods, // Total duration across all splits
-				Activity_Group_Id: activity.id, // Links all splits together by the same unique activity ID
+		for (const activity of cls.activities) {
+			activitiesList.push({
+				Teacher: teacherIds,
+				Subject: cls.subjectOfferingId.toString(),
+				Students: studentIdentifiers,
+				Duration: activity.duration,
+				Total_Duration: classTotalDuration,
+				Activity_Group_Id: cls.id,
 				Active: true,
-				Comments: activity.id,
-				Id: 0, // Placeholder - will be assigned later
+				Comments: String(activity.id),
+				Id: 0,
+				dbActivityId: activity.id,
+				dbClassId: cls.id,
 			});
 		}
+	}
 
-		return splitActivities;
-	});
-
-	// Assign unique IDs to each activity
-	activitiesList.forEach((activity, index) => {
-		activity.Id = index + 1; // FET IDs typically start at 1
+	activitiesList.forEach((a, index) => {
+		a.Id = index + 1;
 	});
 
 	return activitiesList;
+}
+
+/** Map prefixed (`c-`/`a-`) IDs to FET sequential `Id`s for use in constraints. */
+function buildIdMaps(activitiesList: FETActivity[]) {
+	const activityDbIdToFetId = new Map<number, number>();
+	const classDbIdToFetIds = new Map<number, number[]>();
+	for (const a of activitiesList) {
+		activityDbIdToFetId.set(a.dbActivityId, a.Id);
+		const arr = classDbIdToFetIds.get(a.dbClassId) ?? [];
+		arr.push(a.Id);
+		classDbIdToFetIds.set(a.dbClassId, arr);
+	}
+	return { activityDbIdToFetId, classDbIdToFetIds };
+}
+
+function resolveActivityRefs(
+	refs: unknown,
+	activityDbIdToFetId: Map<number, number>,
+	classDbIdToFetIds: Map<number, number[]>,
+): number[] {
+	if (!Array.isArray(refs)) return [];
+	const out: number[] = [];
+	for (const raw of refs) {
+		const ref = String(raw);
+		const m = /^([ca])-(\d+)$/.exec(ref);
+		if (!m) {
+			// Legacy or malformed entries: ignore.
+			console.warn(`Skipping unrecognised Activity_Id ref: ${ref}`);
+			continue;
+		}
+		const [, kind, idStr] = m;
+		const id = parseInt(idStr, 10);
+		if (kind === 'a') {
+			const fetId = activityDbIdToFetId.get(id);
+			if (fetId !== undefined) out.push(fetId);
+		} else {
+			const fetIds = classDbIdToFetIds.get(id) ?? [];
+			out.push(...fetIds);
+		}
+	}
+	return out;
 }
 
 function buildRoomsList(
@@ -278,7 +328,11 @@ function finaliseBucket(bucket: Record<string, unknown[]>) {
 	return out;
 }
 
-function buildConstraintsXML(constraints: TimetableData['activeConstraints']) {
+function buildConstraintsXML(
+	constraints: TimetableData['activeConstraints'],
+	activityDbIdToFetId: Map<number, number>,
+	classDbIdToFetIds: Map<number, number[]>,
+) {
 	const timeBucket: Record<string, unknown[]> = {};
 	const spaceBucket: Record<string, unknown[]> = {};
 
@@ -288,6 +342,24 @@ function buildConstraintsXML(constraints: TimetableData['activeConstraints']) {
 				typeof constraint.parameters === 'string'
 					? JSON.parse(constraint.parameters)
 					: constraint.parameters;
+
+			// Resolve any Activity_Id refs from `c-{id}`/`a-{id}` to FET sequential IDs.
+			if (
+				parsedParams &&
+				typeof parsedParams === 'object' &&
+				'Activity_Id' in parsedParams
+			) {
+				const resolved = resolveActivityRefs(
+					(parsedParams as { Activity_Id: unknown }).Activity_Id,
+					activityDbIdToFetId,
+					classDbIdToFetIds,
+				);
+				(parsedParams as Record<string, unknown>).Activity_Id = resolved;
+				if ('Number_of_Activities' in parsedParams) {
+					(parsedParams as Record<string, unknown>).Number_of_Activities =
+						resolved.length;
+				}
+			}
 
 			const bucket = constraint.type === 'time' ? timeBucket : spaceBucket;
 			appendConstraint(bucket, constraint.fetName, parsedParams);
@@ -303,8 +375,8 @@ function buildConstraintsXML(constraints: TimetableData['activeConstraints']) {
 }
 
 function buildPreferredRoomsConstraints(
-	activities: TimetableData['activities'],
-	activitiesList: ReturnType<typeof buildActivitiesList>,
+	classes: TimetableData['classes'],
+	activitiesList: FETActivity[],
 ) {
 	const preferredRoomsConstraints: Array<{
 		Weight_Percentage: number;
@@ -315,29 +387,26 @@ function buildPreferredRoomsConstraints(
 		Comments: string;
 	}> = [];
 
-	// Group activities by their location preferences
-	const activitiesWithLocations = activities.filter(
-		(activity) => activity.locationIds.length > 0,
+	const classesWithLocations = classes.filter(
+		(cls) => cls.locationIds.length > 0,
 	);
 
-	activitiesWithLocations.forEach((activity) => {
-		// Find all activity instances for this activity in the activitiesList
+	for (const cls of classesWithLocations) {
 		const activityInstances = activitiesList.filter(
-			(act) => act.Subject === activity.subjectOfferingId.toString(),
+			(act) => act.dbClassId === cls.id,
 		);
 
-		// For each instance, add a constraint with the preferred rooms
-		activityInstances.forEach((activityInstance) => {
+		for (const activityInstance of activityInstances) {
 			preferredRoomsConstraints.push({
 				Weight_Percentage: 95,
 				Activity_Id: activityInstance.Id,
-				Number_of_Preferred_Rooms: activity.locationIds.length,
-				Preferred_Room: activity.locationIds.map((id) => id.toString()),
+				Number_of_Preferred_Rooms: cls.locationIds.length,
+				Preferred_Room: cls.locationIds.map((id) => id.toString()),
 				Active: true,
-				Comments: `Preferred rooms for activity ${activity.id}`,
+				Comments: `Preferred rooms for class ${cls.id}`,
 			});
-		});
-	});
+		}
+	}
 
 	return preferredRoomsConstraints;
 }
@@ -347,7 +416,7 @@ export async function buildFETInput({
 	timetablePeriods,
 	studentGroups,
 	studentsByYear,
-	activities,
+	classes,
 	buildings,
 	spaces,
 	teachers,
@@ -363,19 +432,24 @@ export async function buildFETInput({
 
 	const teachersList = await buildTeachersList(teachers);
 	const studentsList = buildStudentsList(studentGroups, studentsByYear);
-	const activitiesList = buildActivitiesList(activities);
+	const activitiesList = buildActivitiesList(classes);
+	const { activityDbIdToFetId, classDbIdToFetIds } = buildIdMaps(activitiesList);
 
 	const buildingsList = buildings.map((building) => ({ Name: building.id }));
 
 	const roomsList = buildRoomsList(spaces, buildings);
 
-	const { timeBucket, spaceBucket } = buildConstraintsXML(activeConstraints);
+	const { timeBucket, spaceBucket } = buildConstraintsXML(
+		activeConstraints,
+		activityDbIdToFetId,
+		classDbIdToFetIds,
+	);
 
 	// Auto-synthesised ConstraintActivityPreferredRooms entries derived from
-	// each activity's location preferences. Merged into the bucket so they
+	// each class's location preferences. Merged into the bucket so they
 	// coexist with any user-added entries of the same fetName.
 	const preferredRoomsConstraints = buildPreferredRoomsConstraints(
-		activities,
+		classes,
 		activitiesList,
 	);
 	for (const entry of preferredRoomsConstraints) {
@@ -384,6 +458,11 @@ export async function buildFETInput({
 
 	const timeConstraintsXML = finaliseBucket(timeBucket);
 	const spaceConstraintsXML = finaliseBucket(spaceBucket);
+
+	// Strip internal-only fields from activities before serialization.
+	const xmlActivities = activitiesList.map(
+		({ dbActivityId: _a, dbClassId: _c, ...rest }) => rest,
+	);
 
 	const xmlData = {
 		'?xml': { '@_version': '1.0', '@_encoding': 'UTF-8' },
@@ -398,7 +477,7 @@ export async function buildFETInput({
 			Activity_Tags_List: {},
 			Teachers_List: { Teacher: teachersList },
 			Students_List: { Year: studentsList },
-			Activities_List: { Activity: activitiesList },
+			Activities_List: { Activity: xmlActivities },
 			Buildings_List: { Building: buildingsList },
 			Rooms_List: { Room: roomsList },
 			Time_Constraints_List: timeConstraintsXML,
