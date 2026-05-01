@@ -1,5 +1,5 @@
 <script lang="ts">
-	import Checkbox from '$lib/components/ui/checkbox/checkbox.svelte';
+	import { Checkbox } from '$lib/components/ui/checkbox';
 	import {
 		Table,
 		TableBody,
@@ -8,8 +8,9 @@
 		TableHeader,
 		TableRow,
 	} from '$lib/components/ui/table';
+	import type { PageData } from './$types';
 
-	let { data } = $props();
+	let { data }: { data: PageData } = $props();
 	let allYearLevelCodes = $derived(
 		Array.from(
 			new Set(
@@ -30,7 +31,7 @@
 <div class="space-y-4">
 	<h1 class="text-2xl leading-tight font-bold">Subjects</h1>
 	<div class="grid grid-cols-1 md:grid-cols-2">
-		{#each allYearLevelCodes as code}
+		{#each allYearLevelCodes as code (code)}
 			<div class="mb-4 space-y-4">
 				<h2 class="text-xl leading-tight font-bold">Year {code}</h2>
 				<Table>
@@ -38,7 +39,6 @@
 						<TableRow>
 							<TableHead
 								><Checkbox
-									disabled
 									checked={data.subjectsAndOfferingsWithYearLevel
 										.filter(
 											(subjectAndOffering) =>
@@ -91,11 +91,10 @@
 						</TableRow>
 					</TableHeader>
 					<TableBody>
-						{#each data.subjectsAndOfferingsWithYearLevel.filter((subjectAndOffering) => subjectAndOffering.yearLevel.code === code) as subjectAndOffering}
+						{#each data.subjectsAndOfferingsWithYearLevel.filter((subjectAndOffering) => subjectAndOffering.yearLevel.code === code) as subjectAndOffering (subjectAndOffering.subjectOffering.id)}
 							<TableRow>
 								<TableCell
 									><Checkbox
-										disabled
 										checked={selectedSubjectOfferingIds.includes(
 											subjectAndOffering.subjectOffering.id,
 										)}
