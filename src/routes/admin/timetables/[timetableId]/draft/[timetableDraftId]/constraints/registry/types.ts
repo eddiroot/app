@@ -10,8 +10,11 @@ import type { constraintTypeEnum } from '$lib/enums';
  *
  * Entities in FET:
  *   FET `Name` = DB `id` for teachers / subjects / rooms (`space.id`) / buildings.
- *   Activities use the auto-assigned FET `Id` (int) — reference those via the
- *   `timetableActivities` options, whose `value` is the activity's DB id.
+ *   Classes (`timetableClasses`) and Activities (`timetableActivities`) are both
+ *   exposed: a class is the user-facing concept (subject + teachers + students),
+ *   activities are its child FET `<Activity>` instances. Constraint values are
+ *   discriminated with a `c-{id}` or `a-{id}` prefix; the FET XML builder
+ *   expands `c-{id}` to all child activity IDs at build time.
  *   Students use prefixed identifiers in XML (`Y{yearLevelId}`, `G{groupId}`,
  *   `S{studentId}`); those prefixes are applied during XML generation, not here.
  */
@@ -24,6 +27,7 @@ export type FormDataKey =
 	| 'spaces'
 	| 'timetableDays'
 	| 'timetablePeriods'
+	| 'timetableClasses'
 	| 'timetableActivities';
 
 export interface ConstraintEntry {
@@ -64,6 +68,7 @@ export interface ConstraintFormData {
 	spaces: AutocompleteOption[];
 	timetableDays: AutocompleteOption[];
 	timetablePeriods: AutocompleteOption[];
+	timetableClasses: AutocompleteOption[];
 	timetableActivities: AutocompleteOption[];
 }
 

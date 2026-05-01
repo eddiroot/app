@@ -688,12 +688,14 @@ export async function createTimetableDraftClassWithRelations(data: {
 		.returning();
 
 	if (teacherIds.length > 0) {
-		await db.insert(table.timetableClassTeacherPreference).values(
-			teacherIds.map((teacherId) => ({
-				timetableClassId: cls.id,
-				teacherId,
-			})),
-		);
+		await db
+			.insert(table.timetableClassTeacherPreference)
+			.values(
+				teacherIds.map((teacherId) => ({
+					timetableClassId: cls.id,
+					teacherId,
+				})),
+			);
 	}
 
 	let spaceIds = preferredSpaceIds;
@@ -724,39 +726,44 @@ export async function createTimetableDraftClassWithRelations(data: {
 	}
 
 	if (spaceIds.length > 0) {
-		await db.insert(table.timetableClassPreferredSpace).values(
-			spaceIds.map((spaceId) => ({
-				timetableClassId: cls.id,
-				schoolSpaceId: spaceId,
-			})),
-		);
+		await db
+			.insert(table.timetableClassPreferredSpace)
+			.values(
+				spaceIds.map((spaceId) => ({
+					timetableClassId: cls.id,
+					schoolSpaceId: spaceId,
+				})),
+			);
 	}
 
 	if (groupIds.length > 0) {
-		await db.insert(table.timetableClassAssignedGroup).values(
-			groupIds.map((timetableGroupId) => ({
-				timetableClassId: cls.id,
-				timetableGroupId,
-			})),
-		);
+		await db
+			.insert(table.timetableClassAssignedGroup)
+			.values(
+				groupIds.map((timetableGroupId) => ({
+					timetableClassId: cls.id,
+					timetableGroupId,
+				})),
+			);
 	}
 
 	if (studentIds.length > 0) {
-		await db.insert(table.timetableClassAssignedStudent).values(
-			studentIds.map((userId) => ({
-				timetableClassId: cls.id,
-				userId,
-			})),
-		);
+		await db
+			.insert(table.timetableClassAssignedStudent)
+			.values(
+				studentIds.map((userId) => ({ timetableClassId: cls.id, userId })),
+			);
 	}
 
 	if (yearLevelIds.length > 0) {
-		await db.insert(table.timetableClassAssignedYear).values(
-			yearLevelIds.map((yearLevelId) => ({
-				timetableClassId: cls.id,
-				yearLevelId,
-			})),
-		);
+		await db
+			.insert(table.timetableClassAssignedYear)
+			.values(
+				yearLevelIds.map((yearLevelId) => ({
+					timetableClassId: cls.id,
+					yearLevelId,
+				})),
+			);
 	}
 
 	return cls.id;
@@ -798,15 +805,19 @@ export async function updateTimetableDraftClass(
 	if (teacherIds !== undefined) {
 		await db
 			.delete(table.timetableClassTeacherPreference)
-			.where(eq(table.timetableClassTeacherPreference.timetableClassId, classId));
+			.where(
+				eq(table.timetableClassTeacherPreference.timetableClassId, classId),
+			);
 
 		if (teacherIds.length > 0) {
-			await db.insert(table.timetableClassTeacherPreference).values(
-				teacherIds.map((teacherId) => ({
-					timetableClassId: classId,
-					teacherId,
-				})),
-			);
+			await db
+				.insert(table.timetableClassTeacherPreference)
+				.values(
+					teacherIds.map((teacherId) => ({
+						timetableClassId: classId,
+						teacherId,
+					})),
+				);
 		}
 	}
 
@@ -816,12 +827,14 @@ export async function updateTimetableDraftClass(
 			.where(eq(table.timetableClassPreferredSpace.timetableClassId, classId));
 
 		if (preferredSpaceIds.length > 0) {
-			await db.insert(table.timetableClassPreferredSpace).values(
-				preferredSpaceIds.map((spaceId) => ({
-					timetableClassId: classId,
-					schoolSpaceId: spaceId,
-				})),
-			);
+			await db
+				.insert(table.timetableClassPreferredSpace)
+				.values(
+					preferredSpaceIds.map((spaceId) => ({
+						timetableClassId: classId,
+						schoolSpaceId: spaceId,
+					})),
+				);
 		}
 	}
 
@@ -831,12 +844,14 @@ export async function updateTimetableDraftClass(
 			.where(eq(table.timetableClassAssignedGroup.timetableClassId, classId));
 
 		if (groupIds.length > 0) {
-			await db.insert(table.timetableClassAssignedGroup).values(
-				groupIds.map((timetableGroupId) => ({
-					timetableClassId: classId,
-					timetableGroupId,
-				})),
-			);
+			await db
+				.insert(table.timetableClassAssignedGroup)
+				.values(
+					groupIds.map((timetableGroupId) => ({
+						timetableClassId: classId,
+						timetableGroupId,
+					})),
+				);
 		}
 	}
 
@@ -846,12 +861,11 @@ export async function updateTimetableDraftClass(
 			.where(eq(table.timetableClassAssignedStudent.timetableClassId, classId));
 
 		if (studentIds.length > 0) {
-			await db.insert(table.timetableClassAssignedStudent).values(
-				studentIds.map((userId) => ({
-					timetableClassId: classId,
-					userId,
-				})),
-			);
+			await db
+				.insert(table.timetableClassAssignedStudent)
+				.values(
+					studentIds.map((userId) => ({ timetableClassId: classId, userId })),
+				);
 		}
 	}
 
@@ -861,12 +875,14 @@ export async function updateTimetableDraftClass(
 			.where(eq(table.timetableClassAssignedYear.timetableClassId, classId));
 
 		if (yearLevelIds.length > 0) {
-			await db.insert(table.timetableClassAssignedYear).values(
-				yearLevelIds.map((yearLevelId) => ({
-					timetableClassId: classId,
-					yearLevelId,
-				})),
-			);
+			await db
+				.insert(table.timetableClassAssignedYear)
+				.values(
+					yearLevelIds.map((yearLevelId) => ({
+						timetableClassId: classId,
+						yearLevelId,
+					})),
+				);
 		}
 	}
 

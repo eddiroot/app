@@ -9,7 +9,11 @@ export const minDaysBetweenActivitiesSchema = z.object({
 	Consecutive_If_Same_Day: z.boolean().default(true),
 	MinDays: z.number().min(1).max(6),
 	Number_of_Activities: z.number().min(2),
-	Activity_Id: z.array(z.union([z.string(), z.number()])).min(2),
+	// Prefixed identifiers: `c-{classId}` (expanded to all child activities at
+	// FET-build time) or `a-{activityId}` (referenced directly).
+	Activity_Id: z
+		.array(z.string().regex(/^[ca]-\d+$/))
+		.min(2),
 	Active: z.boolean().default(true),
 	Comments: z.string().nullable().optional(),
 });
@@ -23,5 +27,5 @@ export const minDaysBetweenActivities: ConstraintMeta = {
 	optional: true,
 	repeatable: true,
 	paramsSchema: minDaysBetweenActivitiesSchema,
-	requiresFormData: ['timetableActivities'],
+	requiresFormData: ['timetableClasses', 'timetableActivities'],
 };
