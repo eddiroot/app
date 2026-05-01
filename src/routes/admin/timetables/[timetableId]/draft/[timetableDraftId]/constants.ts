@@ -32,12 +32,12 @@ export const steps = {
 		url: 'locations',
 		label: 'Locations',
 		previous: 'studentgroups',
-		next: 'activities',
+		next: 'classes',
 	},
-	activities: {
+	classes: {
 		percentage: 66,
-		url: 'activities',
-		label: 'Activities',
+		url: 'classes',
+		label: 'Classes',
 		previous: 'locations',
 		next: 'constraints',
 	},
@@ -45,7 +45,7 @@ export const steps = {
 		percentage: 77,
 		url: 'constraints',
 		label: 'Constraints',
-		previous: 'activities',
+		previous: 'classes',
 		next: 'generate',
 	},
 	generate: {
