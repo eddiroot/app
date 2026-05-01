@@ -12,6 +12,8 @@
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
 		"format": "prettier --write .",
 		"lint": "prettier --check . && eslint .",
+		"db:up": "docker compose -f docker-compose.dev.yml up --detach",
+		"db:down": "docker compose -f docker-compose.dev.yml down --volumes",
 		"db:generate": "drizzle-kit generate",
 		"db:migrate": "drizzle-kit migrate",
 		"db:push": "drizzle-kit push",
