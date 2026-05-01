@@ -29,13 +29,20 @@
 	let minDays = $state(untrack(() => (initialValues.MinDays as number) ?? 1));
 	let comments = $state(untrack(() => (initialValues.Comments as string) ?? ''));
 
+	const combinedOptions = $derived<AutocompleteOption[]>([
+		...(formData?.timetableClasses ?? []),
+		...(formData?.timetableActivities ?? []),
+	]);
+
 	let selectedActivities = $state<AutocompleteOption[]>(
 		untrack(() => {
 			const ids = (initialValues.Activity_Id as (string | number)[]) ?? [];
+			const all = [
+				...(formData?.timetableClasses ?? []),
+				...(formData?.timetableActivities ?? []),
+			];
 			return ids
-				.map((id) =>
-					formData?.timetableActivities.find((a) => a.value === id),
-				)
+				.map((id) => all.find((a) => a.value === id))
 				.filter((a): a is AutocompleteOption => a !== undefined);
 		}),
 	);
@@ -156,8 +163,8 @@
 
 				<div class="space-y-2">
 					<Autocomplete
-						options={formData?.timetableActivities || []}
-						placeholder="Select an activity..."
+						options={combinedOptions}
+						placeholder="Select a class or activity..."
 						bind:value={selectedActivity}
 						onselect={(option) => addActivity(option)}
 					/>
