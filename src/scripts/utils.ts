@@ -1,25 +1,28 @@
 import { userTypeEnum } from '$lib/enums';
 import { db } from '$lib/server/db';
 import * as table from '$lib/server/db/schema';
-import { deleteTimetableDraftActivityData } from '$lib/server/db/service';
-import { and, eq } from 'drizzle-orm';
+import { deleteTimetableDraftFETOutputData } from '$lib/server/db/service';
+import { and, eq, inArray } from 'drizzle-orm';
 
 /**
  * Parse CSV timetable output and populate fetSubjectOfferingClass, fetSubjectClassAllocation,
- * and fetUserSubjectOfferingClass tables
+ * and fetUserSubjectOfferingClass tables.
+ *
+ * Each CSV row corresponds to one FET <Activity>, which is now 1:1 with a
+ * `tt_activity` DB row. The Comments column carries that row's
+ * `tt_activity.id`, which we resolve to its parent `tt_class.id` to group
+ * allocations into one `fet_sub_off_cls` per class.
  */
 export async function parseTimetableCSVAndPopulateClasses(
 	csvContent: string,
 	timetableId: number,
 	timetableDraftId: number,
 ) {
-	// Parse CSV content
 	const lines = csvContent.trim().split('\n');
 	if (lines.length < 2) {
 		throw new Error('CSV file is empty or invalid');
 	}
 
-	// Parse header to get column indices
 	const header = lines[0].split(',').map((col) => col.replace(/"/g, '').trim());
 	const activityIdIdx = header.indexOf('Activity Id');
 	const dayIdx = header.indexOf('Day');
@@ -28,7 +31,7 @@ export async function parseTimetableCSVAndPopulateClasses(
 	const subjectIdx = header.indexOf('Subject');
 	const teachersIdx = header.indexOf('Teachers');
 	const roomIdx = header.indexOf('Room');
-	const classIdx = header.indexOf('Comments');
+	const commentsIdx = header.indexOf('Comments');
 
 	if (
 		activityIdIdx === -1 ||
@@ -38,12 +41,11 @@ export async function parseTimetableCSVAndPopulateClasses(
 		subjectIdx === -1 ||
 		teachersIdx === -1 ||
 		roomIdx === -1 ||
-		classIdx === -1
+		commentsIdx === -1
 	) {
 		throw new Error('CSV file is missing required columns');
 	}
 
-	// Data structures to track classes and activities
 	interface ClassData {
 		classId: number;
 		subjectOfferingId: number;
@@ -51,23 +53,30 @@ export async function parseTimetableCSVAndPopulateClasses(
 		teachers: string[];
 	}
 
-	interface ActivityData {
-		activityId: string;
+	interface AllocationRow {
+		ttActivityId: number;
 		classId: number;
 		roomId: number;
 		dayId: number;
-		periods: number[]; // Array of period IDs for this activity
+		periods: number[];
 	}
 
-	const classMap = new Map<number, ClassData>();
-	const activityMap = new Map<string, ActivityData>();
+	const allocationsByActivity = new Map<number, AllocationRow>();
+	const ttActivityIdsInCsv = new Set<number>();
+	const csvRowSeed: Array<{
+		ttActivityId: number;
+		subjectOfferingId: number;
+		students: string;
+		teachers: string[];
+		roomId: number;
+		dayId: number;
+		periodId: number;
+	}> = [];
 
-	// Parse data rows (skip header)
 	for (let i = 1; i < lines.length; i++) {
 		const line = lines[i].trim();
 		if (!line) continue;
 
-		// Parse CSV line (handle quoted values)
 		const values: string[] = [];
 		let current = '';
 		let inQuotes = false;
@@ -85,8 +94,7 @@ export async function parseTimetableCSVAndPopulateClasses(
 		}
 		values.push(current.trim());
 
-		const activityId = values[activityIdIdx];
-		const classId = parseInt(values[classIdx], 10);
+		const ttActivityId = parseInt(values[commentsIdx], 10);
 		const subjectOfferingId = parseInt(values[subjectIdx], 10);
 		const students = values[studentsIdx];
 		const teachers = values[teachersIdx]
@@ -97,24 +105,66 @@ export async function parseTimetableCSVAndPopulateClasses(
 		const dayId = parseInt(values[dayIdx], 10);
 		const periodId = parseInt(values[hourIdx], 10);
 
-		if (!activityId || !classId || !subjectOfferingId) continue;
+		if (Number.isNaN(ttActivityId) || Number.isNaN(subjectOfferingId)) continue;
 
-		// Track unique classes by classId
-		if (!classMap.has(classId)) {
-			classMap.set(classId, { classId, subjectOfferingId, students, teachers });
+		ttActivityIdsInCsv.add(ttActivityId);
+		csvRowSeed.push({
+			ttActivityId,
+			subjectOfferingId,
+			students,
+			teachers,
+			roomId,
+			dayId,
+			periodId,
+		});
+	}
+
+	// Resolve each tt_activity row in the CSV to its parent tt_class.
+	const activityRows = ttActivityIdsInCsv.size
+		? await db
+				.select({
+					id: table.timetableActivity.id,
+					classId: table.timetableActivity.timetableClassId,
+				})
+				.from(table.timetableActivity)
+				.where(
+					inArray(table.timetableActivity.id, [...ttActivityIdsInCsv]),
+				)
+		: [];
+	const activityIdToClassId = new Map<number, number>(
+		activityRows.map((r) => [r.id, r.classId]),
+	);
+
+	const classMap = new Map<number, ClassData>();
+	for (const row of csvRowSeed) {
+		const classId = activityIdToClassId.get(row.ttActivityId);
+		if (classId === undefined) {
+			console.warn(
+				`CSV row references tt_activity ${row.ttActivityId} which no longer exists in the DB; skipping.`,
+			);
+			continue;
 		}
 
-		// Track activities and their periods
-		if (!activityMap.has(activityId)) {
-			activityMap.set(activityId, {
-				activityId,
+		if (!classMap.has(classId)) {
+			classMap.set(classId, {
 				classId,
-				roomId,
-				dayId,
-				periods: [periodId],
+				subjectOfferingId: row.subjectOfferingId,
+				students: row.students,
+				teachers: row.teachers,
 			});
+		}
+
+		const existing = allocationsByActivity.get(row.ttActivityId);
+		if (existing) {
+			existing.periods.push(row.periodId);
 		} else {
-			activityMap.get(activityId)!.periods.push(periodId);
+			allocationsByActivity.set(row.ttActivityId, {
+				ttActivityId: row.ttActivityId,
+				classId,
+				roomId: row.roomId,
+				dayId: row.dayId,
+				periods: [row.periodId],
+			});
 		}
 	}
 
@@ -200,9 +250,9 @@ export async function parseTimetableCSVAndPopulateClasses(
 		return userIds;
 	}
 
-	// Remove all existing FET class data for this timetable draft
+	// Remove all existing FET output data for this timetable draft
 	try {
-		await deleteTimetableDraftActivityData(timetableDraftId);
+		await deleteTimetableDraftFETOutputData(timetableDraftId);
 	} catch (err) {
 		console.error('Error removing existing FET data for timetable draft:', err);
 		throw err;
@@ -245,24 +295,23 @@ export async function parseTimetableCSVAndPopulateClasses(
 		classIndex++;
 	}
 
-	// Step 2: Create fetSubjectClassAllocation records
+	// Step 2: Create fetSubjectClassAllocation records (one per tt_activity)
 	const fetSubjectClassAllocationsToInsert: Array<
 		typeof table.fetSubjectClassAllocation.$inferInsert
 	> = [];
 
-	for (const [, activityData] of activityMap.entries()) {
-		const dbClassId = classIdMapping.get(activityData.classId);
+	for (const allocation of allocationsByActivity.values()) {
+		const dbClassId = classIdMapping.get(allocation.classId);
 		if (!dbClassId) continue;
 
-		// Sort periods to get start and end
-		const sortedPeriods = activityData.periods.sort((a, b) => a - b);
+		const sortedPeriods = allocation.periods.sort((a, b) => a - b);
 		const startPeriodId = sortedPeriods[0];
 		const endPeriodId = sortedPeriods[sortedPeriods.length - 1];
 
 		fetSubjectClassAllocationsToInsert.push({
 			fetSubjectOfferingClassId: dbClassId,
-			schoolSpaceId: activityData.roomId,
-			dayId: activityData.dayId,
+			schoolSpaceId: allocation.roomId,
+			dayId: allocation.dayId,
 			startPeriodId,
 			endPeriodId,
 			isArchived: false,
