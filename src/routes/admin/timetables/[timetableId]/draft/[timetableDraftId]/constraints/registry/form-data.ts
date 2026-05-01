@@ -3,7 +3,8 @@ import {
 	getBuildingsBySchoolId,
 	getSpacesBySchoolId,
 	getSubjectsBySchoolId,
-	getTimetableDraftActivitiesByTimetableDraftId,
+	getTimetableActivitiesByTimetableDraftId,
+	getTimetableDraftClassesByTimetableDraftId,
 	getTimetableDraftDaysByTimetableDraftId,
 	getTimetableDraftPeriodsByTimetableDraftId,
 	getTimetableDraftStudentGroupsWithCountsByTimetableDraftId,
@@ -79,10 +80,21 @@ const fetchers: Record<FormDataKey, Fetcher> = {
 			label: `${p.start} - ${p.end}`,
 		}));
 	},
+	timetableClasses: async ({ timetableDraftId }) => {
+		const classes =
+			await getTimetableDraftClassesByTimetableDraftId(timetableDraftId);
+		return classes.map((c) => ({
+			value: `c-${c.id}`,
+			label: `Class #${c.id} (Offering ${c.subjectOfferingId})`,
+		}));
+	},
 	timetableActivities: async ({ timetableDraftId }) => {
 		const activities =
-			await getTimetableDraftActivitiesByTimetableDraftId(timetableDraftId);
-		return activities.map((a) => ({ value: a.id, label: `${a.id}` }));
+			await getTimetableActivitiesByTimetableDraftId(timetableDraftId);
+		return activities.map((a) => ({
+			value: `a-${a.id}`,
+			label: `Activity #${a.id} (Class #${a.timetableClassId}, ${a.duration}p)`,
+		}));
 	},
 };
 
@@ -109,6 +121,7 @@ export async function buildConstraintFormData(
 		spaces: EMPTY_OPTIONS,
 		timetableDays: EMPTY_OPTIONS,
 		timetablePeriods: EMPTY_OPTIONS,
+		timetableClasses: EMPTY_OPTIONS,
 		timetableActivities: EMPTY_OPTIONS,
 	};
 	unique.forEach((key, i) => {
