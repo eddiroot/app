@@ -6,11 +6,6 @@ export const createActivitySchema = z.object({
 		.int()
 		.min(1, 'Duration must be at least 1 period')
 		.max(20, 'Duration must be at most 20 periods'),
-	totalDuration: z
-		.number()
-		.int()
-		.min(1, 'Total duration must be at least 1 period')
-		.max(40, 'Total duration must be at most 40 periods'),
 });
 
 export const editActivitySchema = z.object({
@@ -20,11 +15,6 @@ export const editActivitySchema = z.object({
 		.int()
 		.min(1, 'Duration must be at least 1 period')
 		.max(20, 'Duration must be at most 20 periods'),
-	totalDuration: z
-		.number()
-		.int()
-		.min(1, 'Total duration must be at least 1 period')
-		.max(40, 'Total duration must be at most 40 periods'),
 });
 
 export const deleteActivitySchema = z.object({
