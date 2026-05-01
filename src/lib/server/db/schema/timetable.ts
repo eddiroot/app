@@ -188,7 +188,6 @@ export const timetableActivity = timetableSchema.table(
 			.notNull()
 			.references(() => timetableClass.id, { onDelete: 'cascade' }),
 		duration: integer().notNull(),
-		totalDuration: integer('total_duration').notNull(),
 	},
 	(self) => [index().on(self.timetableClassId)],
 );

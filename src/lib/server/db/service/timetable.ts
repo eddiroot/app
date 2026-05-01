@@ -1037,7 +1037,6 @@ export async function getTimetableActivitiesByTimetableDraftId(
 			id: table.timetableActivity.id,
 			timetableClassId: table.timetableActivity.timetableClassId,
 			duration: table.timetableActivity.duration,
-			totalDuration: table.timetableActivity.totalDuration,
 			subjectOfferingId: table.timetableClass.subjectOfferingId,
 		})
 		.from(table.timetableActivity)
@@ -1057,7 +1056,6 @@ export async function getTimetableActivitiesByTimetableDraftId(
 export async function createTimetableActivity(data: {
 	timetableClassId: number;
 	duration: number;
-	totalDuration: number;
 }) {
 	const [activity] = await db
 		.insert(table.timetableActivity)
@@ -1069,18 +1067,13 @@ export async function createTimetableActivity(data: {
 
 export async function updateTimetableActivity(
 	activityId: number,
-	data: { duration?: number; totalDuration?: number },
+	data: { duration?: number },
 ) {
-	const updateData: { duration?: number; totalDuration?: number } = {};
-	if (data.duration !== undefined) updateData.duration = data.duration;
-	if (data.totalDuration !== undefined)
-		updateData.totalDuration = data.totalDuration;
-
-	if (Object.keys(updateData).length === 0) return;
+	if (data.duration === undefined) return;
 
 	const [activity] = await db
 		.update(table.timetableActivity)
-		.set(updateData)
+		.set({ duration: data.duration })
 		.where(eq(table.timetableActivity.id, activityId))
 		.returning();
 

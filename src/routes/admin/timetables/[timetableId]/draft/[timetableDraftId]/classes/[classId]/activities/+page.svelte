@@ -59,9 +59,7 @@
 	const { form: deleteFormData, enhance: deleteEnhance } = deleteForm;
 
 	function openCreateDialog() {
-		const totalSoFar = data.activities.reduce((s, a) => s + a.duration, 0);
 		$createFormData.duration = 1;
-		$createFormData.totalDuration = Math.max(totalSoFar + 1, 1);
 		createDialogOpen = true;
 	}
 
@@ -70,7 +68,6 @@
 		if (!activity) return;
 		$editFormData.activityId = activity.id;
 		$editFormData.duration = activity.duration;
-		$editFormData.totalDuration = activity.totalDuration;
 		editDialogOpen = true;
 	}
 
@@ -87,10 +84,6 @@
 	const totalDurationSum = $derived(
 		data.activities.reduce((s, a) => s + a.duration, 0),
 	);
-	const expectedTotal = $derived(data.activities[0]?.totalDuration ?? 0);
-	const totalsMatch = $derived(
-		data.activities.length === 0 || totalDurationSum === expectedTotal,
-	);
 </script>
 
 <div class="mb-4 flex items-center gap-3">
@@ -102,21 +95,15 @@
 
 <p class="text-muted-foreground mb-6 text-sm">
 	Each activity becomes one FET <code>&lt;Activity&gt;</code>. Set the
-	<strong>Duration</strong> for that single appearance, and the
-	<strong>Total Duration</strong> for the sum across all activities of this
-	class. All activities of a class must share the same Total Duration.
+	<strong>Duration</strong> (consecutive periods for that single appearance).
+	The class's Total Duration — the sum of all activity durations — is computed
+	automatically at FET-build time.
 </p>
 
-{#if !totalsMatch}
-	<Card class="border-destructive bg-destructive/5 mb-4 p-4">
-		<p class="text-destructive text-sm">
-			Sum of activity durations ({totalDurationSum}) does not match Total
-			Duration ({expectedTotal}). FET will reject the input.
-		</p>
-	</Card>
-{/if}
-
-<div class="mb-4 flex justify-end">
+<div class="mb-4 flex items-center justify-between">
+	<Badge variant="outline">
+		Total: {totalDurationSum} period{totalDurationSum === 1 ? '' : 's'}/week
+	</Badge>
 	<Button onclick={openCreateDialog}>
 		<PlusIcon class="mr-2 h-4 w-4" />
 		Add Activity
@@ -143,9 +130,6 @@
 								Duration: {activity.duration} period{activity.duration === 1
 									? ''
 									: 's'}
-							</Badge>
-							<Badge variant="outline" class="text-xs">
-								Total: {activity.totalDuration} periods/week
 							</Badge>
 						</div>
 					</div>
@@ -209,21 +193,6 @@
 						Consecutive periods for this single appearance.
 					</p>
 				</div>
-				<div class="grid gap-2">
-					<Label for="create-total-duration">Total Duration (periods/week) *</Label>
-					<Input
-						id="create-total-duration"
-						name="totalDuration"
-						type="number"
-						min="1"
-						max="40"
-						bind:value={$createFormData.totalDuration}
-					/>
-					<p class="text-muted-foreground text-sm">
-						Sum of all activity durations in this class. Must match across all
-						activities of the same class.
-					</p>
-				</div>
 			</div>
 			<Dialog.Footer>
 				<Button
@@ -260,17 +229,6 @@
 						min="1"
 						max="20"
 						bind:value={$editFormData.duration}
-					/>
-				</div>
-				<div class="grid gap-2">
-					<Label for="edit-total-duration">Total Duration (periods/week) *</Label>
-					<Input
-						id="edit-total-duration"
-						name="totalDuration"
-						type="number"
-						min="1"
-						max="40"
-						bind:value={$editFormData.totalDuration}
 					/>
 				</div>
 			</div>

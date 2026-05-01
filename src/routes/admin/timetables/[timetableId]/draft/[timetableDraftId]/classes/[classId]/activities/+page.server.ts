@@ -49,7 +49,6 @@ export const actions = {
 			await createTimetableActivity({
 				timetableClassId: classId,
 				duration: form.data.duration,
-				totalDuration: form.data.totalDuration,
 			});
 
 			return message(form, 'Activity created successfully!');
@@ -75,7 +74,6 @@ export const actions = {
 		try {
 			await updateTimetableActivity(form.data.activityId, {
 				duration: form.data.duration,
-				totalDuration: form.data.totalDuration,
 			});
 
 			return message(form, 'Activity updated successfully!');
