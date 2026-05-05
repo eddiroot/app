@@ -131,7 +131,9 @@ export const actions = {
 		security.isAuthenticated().isAdmin();
 
 		const user = security.getUser();
-		const draft = await getTimetableDraftById(parseInt(params.timetableDraftId, 10));
+		const draft = await getTimetableDraftById(
+			parseInt(params.timetableDraftId, 10),
+		);
 
 		try {
 			const [

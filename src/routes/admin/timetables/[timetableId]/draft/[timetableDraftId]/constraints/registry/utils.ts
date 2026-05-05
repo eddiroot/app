@@ -44,9 +44,7 @@ export function requiredFormDataKeys(
 export function validateParams(
 	fetName: string,
 	parameters: unknown,
-):
-	| { success: true; data: unknown }
-	| { success: false; errors: z.ZodError } {
+): { success: true; data: unknown } | { success: false; errors: z.ZodError } {
 	const entry = BY_FET_NAME[fetName];
 	if (!entry) {
 		return {

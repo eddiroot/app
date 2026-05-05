@@ -478,7 +478,8 @@
 
 				<!-- Year Levels Selection -->
 				<div class="grid gap-2">
-					<Label for="class-year-levels">Assign to Year Levels (Optional)</Label>
+					<Label for="class-year-levels">Assign to Year Levels (Optional)</Label
+					>
 					<Select.Root
 						type="multiple"
 						bind:value={$createFormData.yearLevelIds}
@@ -646,30 +647,29 @@
 			<li>
 				A <strong>Class</strong> represents a group of students taught a subject
 				by one or more teachers. After creating a class, open it and add the
-				individual <strong>Activities</strong> that determine how it appears in
-				the schedule (e.g. one 2-period block + one 1-period single).
+				individual <strong>Activities</strong> that determine how it appears in the
+				schedule (e.g. one 2-period block + one 1-period single).
 			</li>
 			<li>
 				Each Activity has a <strong>Duration</strong> (number of consecutive
-				periods for that single appearance) and a <strong>Total Duration</strong
-				> (sum of durations across all activities of the same class). FET uses
-				these to schedule the class consistently.
+				periods for that single appearance) and a
+				<strong>Total Duration</strong> (sum of durations across all activities of
+				the same class). FET uses these to schedule the class consistently.
 			</li>
 			<li>
 				When you assign a class to a <strong>Year Level</strong>, FET
-				automatically assigns it to all subgroups within that year. Use this
-				for whole-year events such as assemblies, exams, or grade-level
-				sessions where no student differentiation is needed.
+				automatically assigns it to all subgroups within that year. Use this for
+				whole-year events such as assemblies, exams, or grade-level sessions
+				where no student differentiation is needed.
 			</li>
 			<li>
-				Assign to a <strong>Group</strong> for specific cohorts that particular
-				students are enrolled in. This is the most common use case — for
-				example, homeroom classes and elective courses.
+				Assign to a <strong>Group</strong> for specific cohorts that particular students
+				are enrolled in. This is the most common use case — for example, homeroom
+				classes and elective courses.
 			</li>
 			<li>
-				Assign to individual <strong>Students</strong> for the most granular
-				level of control, used for individual tracking when each student is
-				their own subgroup.
+				Assign to individual <strong>Students</strong> for the most granular level
+				of control, used for individual tracking when each student is their own subgroup.
 			</li>
 		</ol>
 	</Dialog.Content>
@@ -683,11 +683,7 @@
 			<Dialog.Description>Update the class details.</Dialog.Description>
 		</Dialog.Header>
 		<form method="POST" action="?/editClass" use:editEnhance>
-			<input
-				type="hidden"
-				name="classId"
-				bind:value={$editFormData.classId}
-			/>
+			<input type="hidden" name="classId" bind:value={$editFormData.classId} />
 			<input
 				type="hidden"
 				name="subjectOfferingId"

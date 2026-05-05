@@ -127,9 +127,7 @@ export async function parseTimetableCSVAndPopulateClasses(
 					classId: table.timetableActivity.timetableClassId,
 				})
 				.from(table.timetableActivity)
-				.where(
-					inArray(table.timetableActivity.id, [...ttActivityIdsInCsv]),
-				)
+				.where(inArray(table.timetableActivity.id, [...ttActivityIdsInCsv]))
 		: [];
 	const activityIdToClassId = new Map<number, number>(
 		activityRows.map((r) => [r.id, r.classId]),

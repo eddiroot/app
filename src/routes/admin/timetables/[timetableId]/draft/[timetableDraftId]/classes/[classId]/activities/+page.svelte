@@ -95,9 +95,9 @@
 
 <p class="text-muted-foreground mb-6 text-sm">
 	Each activity becomes one FET <code>&lt;Activity&gt;</code>. Set the
-	<strong>Duration</strong> (consecutive periods for that single appearance).
-	The class's Total Duration — the sum of all activity durations — is computed
-	automatically at FET-build time.
+	<strong>Duration</strong> (consecutive periods for that single appearance). The
+	class's Total Duration — the sum of all activity durations — is computed automatically
+	at FET-build time.
 </p>
 
 <div class="mb-4 flex items-center justify-between">

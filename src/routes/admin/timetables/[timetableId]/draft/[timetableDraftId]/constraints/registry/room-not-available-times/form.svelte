@@ -35,7 +35,9 @@
 				}>) ?? [{ Day: 0, Period: 0 }],
 		),
 	);
-	let comments = $state(untrack(() => (initialValues.Comments as string) ?? ''));
+	let comments = $state(
+		untrack(() => (initialValues.Comments as string) ?? ''),
+	);
 
 	function addNotAvailableTime() {
 		notAvailableTimes = [...notAvailableTimes, { Day: 0, Hour: 0 }];

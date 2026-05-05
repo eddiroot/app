@@ -83,10 +83,7 @@
 			modalMode === 'add'
 				? {
 						method: 'POST',
-						body: JSON.stringify({
-							fetName: modalFetName,
-							parameters: values,
-						}),
+						body: JSON.stringify({ fetName: modalFetName, parameters: values }),
 					}
 				: {
 						method: 'PATCH',
@@ -131,10 +128,7 @@
 			const response = await fetch(endpoint, {
 				method: 'PATCH',
 				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({
-					ttConstraintId,
-					active: newActiveState,
-				}),
+				body: JSON.stringify({ ttConstraintId, active: newActiveState }),
 			});
 			const result = await response.json();
 
@@ -191,7 +185,9 @@
 		}
 	}
 
-	const ModalForm = $derived(modalFetName ? getFormComponent(modalFetName) : null);
+	const ModalForm = $derived(
+		modalFetName ? getFormComponent(modalFetName) : null,
+	);
 </script>
 
 <div class="space-y-8">

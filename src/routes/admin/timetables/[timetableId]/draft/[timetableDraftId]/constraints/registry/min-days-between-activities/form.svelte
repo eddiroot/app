@@ -9,7 +9,10 @@
 	import Label from '$lib/components/ui/label/label.svelte';
 	import Textarea from '$lib/components/ui/textarea/textarea.svelte';
 
-	import type { AutocompleteOption, ConstraintFormComponentProps } from '../types';
+	import type {
+		AutocompleteOption,
+		ConstraintFormComponentProps,
+	} from '../types';
 	import { minDaysBetweenActivitiesSchema } from './index';
 
 	let {
@@ -27,7 +30,9 @@
 		untrack(() => (initialValues.Consecutive_If_Same_Day as boolean) ?? true),
 	);
 	let minDays = $state(untrack(() => (initialValues.MinDays as number) ?? 1));
-	let comments = $state(untrack(() => (initialValues.Comments as string) ?? ''));
+	let comments = $state(
+		untrack(() => (initialValues.Comments as string) ?? ''),
+	);
 
 	const combinedOptions = $derived<AutocompleteOption[]>([
 		...(formData?.timetableClasses ?? []),
