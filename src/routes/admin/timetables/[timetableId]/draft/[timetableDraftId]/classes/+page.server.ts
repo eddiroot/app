@@ -39,7 +39,9 @@ export const load = async ({ locals: { security }, params }) => {
 	const students = await getStudentsForTimetable(timetableId, user.schoolId);
 
 	const [groups, allSubjectOfferings] = await Promise.all([
-		getTimetableDraftStudentGroupsWithCountsByTimetableDraftId(timetableDraftId),
+		getTimetableDraftStudentGroupsWithCountsByTimetableDraftId(
+			timetableDraftId,
+		),
 		getSubjectOfferingsForTimetableByTimetableId(timetableId),
 	]);
 

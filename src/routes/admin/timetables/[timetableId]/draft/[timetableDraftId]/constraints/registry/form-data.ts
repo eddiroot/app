@@ -69,7 +69,8 @@ const fetchers: Record<FormDataKey, Fetcher> = {
 		}));
 	},
 	timetableDays: async ({ timetableDraftId }) => {
-		const days = await getTimetableDraftDaysByTimetableDraftId(timetableDraftId);
+		const days =
+			await getTimetableDraftDaysByTimetableDraftId(timetableDraftId);
 		return days.map((d) => ({ value: d.id, label: `Day ${d.day}` }));
 	},
 	timetablePeriods: async ({ timetableDraftId }) => {

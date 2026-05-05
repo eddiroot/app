@@ -42,23 +42,23 @@ Constraints use two complementary types (see `registry/types.ts`):
 
 ```ts
 type ConstraintMeta = {
-  fetName: string;                  // FET XML tag, e.g. 'ConstraintTeachersMaxGapsPerWeek'
-  friendlyName: string;
-  description: string;
-  type: constraintTypeEnum;         // 'time' | 'space'
-  optional: boolean;                // if false, cannot be toggled/deleted
-  repeatable: boolean;              // if true, can have many instances per draft
+	fetName: string; // FET XML tag, e.g. 'ConstraintTeachersMaxGapsPerWeek'
+	friendlyName: string;
+	description: string;
+	type: constraintTypeEnum; // 'time' | 'space'
+	optional: boolean; // if false, cannot be toggled/deleted
+	repeatable: boolean; // if true, can have many instances per draft
 
-  paramsSchema: z.ZodSchema;        // validates the JSON stored on tt_draft_con.parameters
-  requiresFormData: readonly FormDataKey[]; // autocomplete option sets this form needs
-}
+	paramsSchema: z.ZodSchema; // validates the JSON stored on tt_draft_con.parameters
+	requiresFormData: readonly FormDataKey[]; // autocomplete option sets this form needs
+};
 ```
 
 **`ConstraintEntry`** — Full definition (adds form component, client-only):
 
 ```ts
 interface ConstraintEntry extends ConstraintMeta {
-  formComponent: Component;         // Svelte form used in the add/edit modal
+	formComponent: Component; // Svelte form used in the add/edit modal
 }
 ```
 
@@ -121,14 +121,14 @@ insert rather than `ON CONFLICT`.
 
 FET identifies entities by `Name`. In this codebase:
 
-| Entity     | FET `Name` value                                  |
-|------------|---------------------------------------------------|
-| Teacher    | `teachers.id` (integer)                           |
-| Subject    | `subjects.id`                                     |
-| Room       | `spaces.id`                                       |
-| Building   | `buildings.id`                                    |
-| Activity   | FET auto-assigned `Id` (see `buildActivitiesList`) |
-| Student    | Prefixed: `Y{yearLevelId}`, `G{groupId}`, `S{studentId}` |
+| Entity   | FET `Name` value                                         |
+| -------- | -------------------------------------------------------- |
+| Teacher  | `teachers.id` (integer)                                  |
+| Subject  | `subjects.id`                                            |
+| Room     | `spaces.id`                                              |
+| Building | `buildings.id`                                           |
+| Activity | FET auto-assigned `Id` (see `buildActivitiesList`)       |
+| Student  | Prefixed: `Y{yearLevelId}`, `G{groupId}`, `S{studentId}` |
 
 Constraint form fields that reference entities store the DB `id` directly. No
 translation step is needed during XML generation — IDs are FET `Name` values
@@ -144,21 +144,21 @@ by convention.
    import type { ConstraintMeta } from '../types';
 
    export const mySchema = z.object({
-     Weight_Percentage: z.number().min(1).max(100),
-     // … FET-shaped fields
-     Active: z.boolean().default(true),
-     Comments: z.string().nullable().optional(),
+   	Weight_Percentage: z.number().min(1).max(100),
+   	// … FET-shaped fields
+   	Active: z.boolean().default(true),
+   	Comments: z.string().nullable().optional(),
    });
 
    export const myConstraint: ConstraintMeta = {
-     fetName: 'ConstraintFooBar',
-     friendlyName: 'Foo Bar',
-     description: '…',
-     type: constraintTypeEnum.time,
-     optional: true,
-     repeatable: true,
-     paramsSchema: mySchema,
-     requiresFormData: ['teachers'],
+   	fetName: 'ConstraintFooBar',
+   	friendlyName: 'Foo Bar',
+   	description: '…',
+   	type: constraintTypeEnum.time,
+   	optional: true,
+   	repeatable: true,
+   	paramsSchema: mySchema,
+   	requiresFormData: ['teachers'],
    };
    ```
 

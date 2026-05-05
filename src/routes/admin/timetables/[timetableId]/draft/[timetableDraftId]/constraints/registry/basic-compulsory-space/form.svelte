@@ -19,7 +19,9 @@
 	let weightPercentage = $state(
 		untrack(() => (initialValues.Weight_Percentage as number) ?? 100),
 	);
-	let comments = $state(untrack(() => (initialValues.Comments as string) ?? ''));
+	let comments = $state(
+		untrack(() => (initialValues.Comments as string) ?? ''),
+	);
 
 	let validationErrors = $derived.by(() => {
 		const result = basicCompulsorySpaceSchema.safeParse({

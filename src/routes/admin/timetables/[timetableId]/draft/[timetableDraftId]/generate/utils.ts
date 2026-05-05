@@ -211,9 +211,7 @@ function buildActivitiesList(classes: TimetableData['classes']): FETActivity[] {
 		}
 
 		if (teacherIds.length === 0 || studentIdentifiers.length === 0) {
-			console.warn(
-				`Class ${cls.id} skipped: missing teachers or students`,
-			);
+			console.warn(`Class ${cls.id} skipped: missing teachers or students`);
 			continue;
 		}
 
@@ -433,7 +431,8 @@ export async function buildFETInput({
 	const teachersList = await buildTeachersList(teachers);
 	const studentsList = buildStudentsList(studentGroups, studentsByYear);
 	const activitiesList = buildActivitiesList(classes);
-	const { activityDbIdToFetId, classDbIdToFetIds } = buildIdMaps(activitiesList);
+	const { activityDbIdToFetId, classDbIdToFetIds } =
+		buildIdMaps(activitiesList);
 
 	const buildingsList = buildings.map((building) => ({ Name: building.id }));
 

@@ -11,9 +11,7 @@ export const minDaysBetweenActivitiesSchema = z.object({
 	Number_of_Activities: z.number().min(2),
 	// Prefixed identifiers: `c-{classId}` (expanded to all child activities at
 	// FET-build time) or `a-{activityId}` (referenced directly).
-	Activity_Id: z
-		.array(z.string().regex(/^[ca]-\d+$/))
-		.min(2),
+	Activity_Id: z.array(z.string().regex(/^[ca]-\d+$/)).min(2),
 	Active: z.boolean().default(true),
 	Comments: z.string().nullable().optional(),
 });

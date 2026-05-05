@@ -17,9 +17,7 @@ export const editActivitySchema = z.object({
 		.max(20, 'Duration must be at most 20 periods'),
 });
 
-export const deleteActivitySchema = z.object({
-	activityId: z.coerce.number(),
-});
+export const deleteActivitySchema = z.object({ activityId: z.coerce.number() });
 
 export type CreateActivitySchema = typeof createActivitySchema;
 export type EditActivitySchema = typeof editActivitySchema;

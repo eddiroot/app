@@ -20,7 +20,9 @@
 		untrack(() => (initialValues.Weight_Percentage as number) ?? 100),
 	);
 	let maxGaps = $state(untrack(() => (initialValues.Max_Gaps as number) ?? 3));
-	let comments = $state(untrack(() => (initialValues.Comments as string) ?? ''));
+	let comments = $state(
+		untrack(() => (initialValues.Comments as string) ?? ''),
+	);
 
 	let validationErrors = $derived.by(() => {
 		const result = teachersMaxGapsSchema.safeParse({
