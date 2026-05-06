@@ -1,20 +1,27 @@
 <script lang="ts">
+	import { enhance as kitEnhance } from '$app/forms';
 	import { invalidateAll } from '$app/navigation';
-	import { page } from '$app/state';
 	import * as Accordion from '$lib/components/ui/accordion/index.js';
 	import { Badge } from '$lib/components/ui/badge';
 	import { Button } from '$lib/components/ui/button';
-	import { Card } from '$lib/components/ui/card';
+	import * as Card from '$lib/components/ui/card/index.js';
 	import * as Dialog from '$lib/components/ui/dialog/index.js';
+	import { Input } from '$lib/components/ui/input';
 	import { Label } from '$lib/components/ui/label';
 	import * as Select from '$lib/components/ui/select/index.js';
 	import { yearLevelEnum } from '$lib/enums.js';
 	import { convertToFullName } from '$lib/utils';
+	import BookOpenIcon from '@lucide/svelte/icons/book-open';
+	import CalendarClockIcon from '@lucide/svelte/icons/calendar-clock';
+	import ClockIcon from '@lucide/svelte/icons/clock';
+	import DoorOpenIcon from '@lucide/svelte/icons/door-open';
+	import GraduationCapIcon from '@lucide/svelte/icons/graduation-cap';
 	import InfoIcon from '@lucide/svelte/icons/info';
-	import ListIcon from '@lucide/svelte/icons/list';
+	import LayersIcon from '@lucide/svelte/icons/layers';
 	import PencilIcon from '@lucide/svelte/icons/pencil';
 	import PlusIcon from '@lucide/svelte/icons/plus';
 	import Trash2Icon from '@lucide/svelte/icons/trash-2';
+	import UsersIcon from '@lucide/svelte/icons/users';
 	import { superForm } from 'sveltekit-superforms';
 	import { zod4 } from 'sveltekit-superforms/adapters';
 	import {
@@ -27,12 +34,15 @@
 
 	let createClassDialogOpen = $state(false);
 	let editClassDialogOpen = $state(false);
+	let activityDialogOpen = $state(false);
 	let infoDialogOpen = $state(false);
+	let selectedActivityClassId = $state<number | null>(null);
+	let editingActivityId = $state<number | null>(null);
+	let createActivityDuration = $state(1);
+	let editActivityDuration = $state(1);
 	let getYearLevelZeroIndexCode = () =>
 		data.yearLevels[0]?.code || yearLevelEnum.year7;
 	let selectedYearLevel = $state(getYearLevelZeroIndexCode());
-
-	const baseHref = `/admin/timetables/${page.params.timetableId}/draft/${page.params.timetableDraftId}/classes`;
 
 	let dataCreateClassForm = () => data.createClassForm;
 	const createForm = superForm(dataCreateClassForm(), {
@@ -128,6 +138,42 @@
 		createClassDialogOpen = true;
 	}
 
+	function openActivityDialog(classId: number) {
+		selectedActivityClassId = classId;
+		editingActivityId = null;
+		createActivityDuration = 1;
+		activityDialogOpen = true;
+	}
+
+	function openEditActivity(activityId: number, duration: number) {
+		editingActivityId = activityId;
+		editActivityDuration = duration;
+	}
+
+	function handleDeleteActivity(activityId: number) {
+		setTimeout(() => {
+			const form = document.getElementById(
+				`delete-activity-form-${activityId}`,
+			) as HTMLFormElement;
+			form?.requestSubmit();
+		}, 0);
+	}
+
+	function activityEnhanceDone(resetCreateDuration = false) {
+		return async ({
+			update,
+		}: {
+			update: (options?: { reset?: boolean }) => Promise<void>;
+		}) => {
+			await update({ reset: false });
+			if (resetCreateDuration) {
+				createActivityDuration = 1;
+			}
+			editingActivityId = null;
+			await invalidateAll();
+		};
+	}
+
 	const yearLevelOptions = $derived(
 		data.yearLevels
 			.map((yearLevel) => ({
@@ -160,230 +206,425 @@
 			label: space.name,
 		})),
 	);
+
+	const allClasses = $derived(
+		Object.values(data.classesBySubjectOfferingId).flat(),
+	);
+
+	const currentClasses = $derived(
+		currentSubjectOfferings.flatMap(
+			(subjectAndOffering) =>
+				data.classesBySubjectOfferingId[
+					subjectAndOffering.subjectOffering.id
+				] ?? [],
+		),
+	);
+
+	const totalActivities = $derived(
+		allClasses.reduce((total, cls) => total + cls.activities.length, 0),
+	);
+
+	const selectedActivityClass = $derived(
+		allClasses.find((cls) => cls.id === selectedActivityClassId) ?? null,
+	);
+
+	function getTeacherName(teacherId: string) {
+		const teacher = data.teachers.find((t) => t.id === teacherId);
+		if (!teacher) return null;
+
+		return convertToFullName(
+			teacher.firstName,
+			teacher.middleName,
+			teacher.lastName,
+		);
+	}
+
+	function getGroupName(groupId: string) {
+		return data.groups.find((group) => group.id.toString() === groupId)?.name;
+	}
+
+	function getStudentName(studentId: string) {
+		const student = data.students.find((s) => s.id === studentId);
+		if (!student) return null;
+
+		return convertToFullName(
+			student.firstName,
+			student.middleName,
+			student.lastName,
+		);
+	}
+
+	function getSpaceName(spaceId: string) {
+		return data.spaces.find((space) => space.id.toString() === spaceId)?.name;
+	}
+
+	function getActivityCount(cls: { activities: { duration: number }[] }) {
+		return cls.activities.length;
+	}
+
+	function getTotalActivityDuration(cls: {
+		activities: { duration: number }[];
+	}) {
+		return cls.activities.reduce(
+			(total, activity) => total + activity.duration,
+			0,
+		);
+	}
+
+	function getLongestActivityDuration(cls: {
+		activities: { duration: number }[];
+	}) {
+		return cls.activities.reduce(
+			(longest, activity) => Math.max(longest, activity.duration),
+			0,
+		);
+	}
+
+	function getAverageActivityDuration(cls: {
+		activities: { duration: number }[];
+	}) {
+		if (cls.activities.length === 0) return 0;
+		return getTotalActivityDuration(cls) / cls.activities.length;
+	}
+
+	function getPeriodLabel(count: number) {
+		return `${count} period${count === 1 ? '' : 's'}`;
+	}
 </script>
 
-<div class="flex justify-between">
-	<h1 class="mb-4 text-3xl font-bold">Timetable Classes</h1>
-	<div class="mb-4 flex items-start">
-		<Button
-			type="button"
-			variant="outline"
-			size="icon"
-			onclick={() => (infoDialogOpen = true)}
-		>
-			<InfoIcon />
-		</Button>
+<div class="space-y-6 p-6">
+	<div class="flex flex-wrap items-start justify-between gap-4">
+		<div class="space-y-1">
+			<h1 class="text-3xl font-bold tracking-tight">Classes</h1>
+			<p class="text-muted-foreground text-sm">
+				Build subject classes, assign cohorts, and manage their timetable
+				activities.
+			</p>
+		</div>
+		<div class="flex items-end gap-2">
+			<div class="grid gap-1.5">
+				<Label for="year-level-filter" class="text-xs">Year level</Label>
+				<Select.Root
+					type="single"
+					onValueChange={updateClassesForYearLevel}
+					bind:value={selectedYearLevel}
+				>
+					<Select.Trigger id="year-level-filter" class="w-36">
+						{selectedYearLevel ?? 'Select...'}
+					</Select.Trigger>
+					<Select.Content>
+						{#each yearLevelOptions as yearLevel (yearLevel.value)}
+							<Select.Item value={yearLevel.label}>
+								{yearLevel.label}
+							</Select.Item>
+						{/each}
+					</Select.Content>
+				</Select.Root>
+			</div>
+			<Button
+				type="button"
+				variant="outline"
+				size="icon"
+				onclick={() => (infoDialogOpen = true)}
+				aria-label="About classes"
+			>
+				<InfoIcon />
+			</Button>
+		</div>
 	</div>
-</div>
-<h2 class="mb-4 text-2xl font-bold">Subject Classes</h2>
 
-<!-- Year Level Navigator -->
-<Select.Root
-	type="single"
-	onValueChange={updateClassesForYearLevel}
-	bind:value={selectedYearLevel}
->
-	<Select.Trigger class="w-full">
-		{selectedYearLevel ?? 'Select year level...'}
-	</Select.Trigger>
-	<Select.Content>
-		{#each yearLevelOptions as yearLevel (yearLevel.value)}
-			<Select.Item value={yearLevel.label}>
-				{yearLevel.label}
-			</Select.Item>
-		{/each}
-	</Select.Content>
-</Select.Root>
+	<div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+		<Card.Root>
+			<Card.Header
+				class="flex flex-row items-center justify-between space-y-0 pb-2"
+			>
+				<Card.Title class="text-sm font-medium">Classes</Card.Title>
+				<div class="bg-primary/10 rounded-lg p-2">
+					<BookOpenIcon class="text-primary h-4 w-4" />
+				</div>
+			</Card.Header>
+			<Card.Content>
+				<div class="text-2xl font-bold">{allClasses.length}</div>
+				<p class="text-muted-foreground text-xs">Configured in this draft</p>
+			</Card.Content>
+		</Card.Root>
 
-<div class="h-4"></div>
+		<Card.Root>
+			<Card.Header
+				class="flex flex-row items-center justify-between space-y-0 pb-2"
+			>
+				<Card.Title class="text-sm font-medium">Activities</Card.Title>
+				<div class="bg-primary/10 rounded-lg p-2">
+					<CalendarClockIcon class="text-primary h-4 w-4" />
+				</div>
+			</Card.Header>
+			<Card.Content>
+				<div class="text-2xl font-bold">{totalActivities}</div>
+				<p class="text-muted-foreground text-xs">Scheduled appearances</p>
+			</Card.Content>
+		</Card.Root>
 
-{#if currentSubjectOfferings.length === 0}
-	<Card class="p-8 text-center">
-		<h3 class="mb-2 text-lg font-semibold">No Subjects Found</h3>
-		<p class="text-muted-foreground">
-			No subjects are available for {selectedYearLevel}. Please add subjects for
-			this year level before creating classes.
-		</p>
-	</Card>
-{:else}
-	<input type="hidden" name="yearLevel" value={selectedYearLevel} />
-	<div class="mb-8 space-y-4">
-		<Accordion.Root type="single" class="w-full">
-			{#each currentSubjectOfferings as subjectAndOffering (subjectAndOffering.subjectOffering.id)}
-				<Accordion.Item value="subject-{subjectAndOffering.subjectOffering.id}">
-					<Accordion.Trigger class="w-full">
-						<div class="flex w-full items-center justify-between">
-							<div class="flex items-center gap-4">
-								<h3 class="text-lg font-semibold">
-									{subjectAndOffering.subject.name}
-								</h3>
-								{#if data.classesBySubjectOfferingId[subjectAndOffering.subjectOffering.id]?.length > 0}
-									<Badge variant="outline" class="text-xs">
-										{data.classesBySubjectOfferingId[
-											subjectAndOffering.subjectOffering.id
-										]?.length} classes
-									</Badge>
-								{/if}
+		<Card.Root>
+			<Card.Header
+				class="flex flex-row items-center justify-between space-y-0 pb-2"
+			>
+				<Card.Title class="text-sm font-medium">Subjects</Card.Title>
+				<div class="bg-primary/10 rounded-lg p-2">
+					<GraduationCapIcon class="text-primary h-4 w-4" />
+				</div>
+			</Card.Header>
+			<Card.Content>
+				<div class="text-2xl font-bold">{currentSubjectOfferings.length}</div>
+				<p class="text-muted-foreground text-xs">For {selectedYearLevel}</p>
+			</Card.Content>
+		</Card.Root>
+
+		<Card.Root>
+			<Card.Header
+				class="flex flex-row items-center justify-between space-y-0 pb-2"
+			>
+				<Card.Title class="text-sm font-medium">Current level</Card.Title>
+				<div class="bg-primary/10 rounded-lg p-2">
+					<UsersIcon class="text-primary h-4 w-4" />
+				</div>
+			</Card.Header>
+			<Card.Content>
+				<div class="text-2xl font-bold">{currentClasses.length}</div>
+				<p class="text-muted-foreground text-xs">
+					Classes assigned to {selectedYearLevel}
+				</p>
+			</Card.Content>
+		</Card.Root>
+	</div>
+
+	{#if currentSubjectOfferings.length === 0}
+		<Card.Root class="border-dashed">
+			<Card.Content class="flex flex-col items-center gap-3 py-12 text-center">
+				<div
+					class="bg-muted flex h-14 w-14 items-center justify-center rounded-full"
+				>
+					<BookOpenIcon class="text-muted-foreground h-6 w-6" />
+				</div>
+				<div class="space-y-1">
+					<p class="text-lg font-semibold">No subjects found</p>
+					<p class="text-muted-foreground max-w-md text-sm">
+						No subjects are available for {selectedYearLevel}. Add subjects for
+						this year level before creating classes.
+					</p>
+				</div>
+			</Card.Content>
+		</Card.Root>
+	{:else}
+		<input type="hidden" name="yearLevel" value={selectedYearLevel} />
+		<div class="space-y-4">
+			<Accordion.Root type="single" class="w-full space-y-3">
+				{#each currentSubjectOfferings as subjectAndOffering (subjectAndOffering.subjectOffering.id)}
+					{@const subjectClasses =
+						data.classesBySubjectOfferingId[
+							subjectAndOffering.subjectOffering.id
+						] ?? []}
+					<Accordion.Item
+						value="subject-{subjectAndOffering.subjectOffering.id}"
+						class="bg-card rounded-lg border px-4"
+					>
+						<Accordion.Trigger class="w-full py-4 hover:no-underline">
+							<div
+								class="flex w-full min-w-0 items-center justify-between gap-3 pr-2"
+							>
+								<div class="min-w-0 text-left">
+									<p class="truncate text-lg font-semibold">
+										{subjectAndOffering.subject.name}
+									</p>
+									<p class="text-muted-foreground text-xs">
+										{selectedYearLevel}
+									</p>
+								</div>
+								<Badge
+									variant={subjectClasses.length > 0 ? 'secondary' : 'outline'}
+								>
+									{subjectClasses.length}
+									{subjectClasses.length === 1 ? 'class' : 'classes'}
+								</Badge>
 							</div>
-						</div>
-					</Accordion.Trigger>
+						</Accordion.Trigger>
 
-					<Accordion.Content>
-						{#if data.classesBySubjectOfferingId[subjectAndOffering.subjectOffering.id]?.length > 0}
-							<div class="mb-4">
-								<h4 class="mb-3 font-medium">Existing Classes</h4>
+						<Accordion.Content class="pb-4">
+							{#if subjectClasses.length > 0}
 								<div class="grid gap-3">
-									{#each data.classesBySubjectOfferingId[subjectAndOffering.subjectOffering.id] as cls (cls.id)}
-										<div class="bg-background rounded-lg border p-4">
-											<div class="mb-3 flex items-start justify-between">
-												<div class="flex-1">
-													<div class="mb-2 flex items-center gap-3">
-														<span class="font-medium">Class #{cls.id}</span>
+									{#each subjectClasses as cls (cls.id)}
+										<div class="rounded-md border p-4">
+											<div
+												class="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between"
+											>
+												<div class="min-w-0 flex-1 space-y-3">
+													<div class="flex flex-wrap items-center gap-2">
+														<p class="font-medium">Class #{cls.id}</p>
 														<Badge variant="secondary" class="text-xs">
-															{cls.activities.length} activities
+															{getActivityCount(cls)}
+															{getActivityCount(cls) === 1
+																? 'activity'
+																: 'activities'}
 														</Badge>
 													</div>
 
-													<!-- Teachers -->
-													{#if cls.teacherIds.length > 0}
-														<div class="mb-2 flex items-start gap-2">
-															<span
-																class="text-muted-foreground text-sm font-medium"
+													<div class="grid gap-2 sm:grid-cols-4">
+														<div class="bg-muted/40 rounded-md border p-3">
+															<p
+																class="text-muted-foreground text-xs font-medium"
 															>
-																Teachers:
-															</span>
+																Activities
+															</p>
+															<p class="mt-1 text-lg font-semibold">
+																{getActivityCount(cls)}
+															</p>
+														</div>
+														<div class="bg-muted/40 rounded-md border p-3">
+															<p
+																class="text-muted-foreground text-xs font-medium"
+															>
+																Total
+															</p>
+															<p class="mt-1 text-lg font-semibold">
+																{getPeriodLabel(getTotalActivityDuration(cls))}
+															</p>
+														</div>
+														<div class="bg-muted/40 rounded-md border p-3">
+															<p
+																class="text-muted-foreground text-xs font-medium"
+															>
+																Longest
+															</p>
+															<p class="mt-1 text-lg font-semibold">
+																{getPeriodLabel(
+																	getLongestActivityDuration(cls),
+																)}
+															</p>
+														</div>
+														<div class="bg-muted/40 rounded-md border p-3">
+															<p
+																class="text-muted-foreground text-xs font-medium"
+															>
+																Average
+															</p>
+															<p class="mt-1 text-lg font-semibold">
+																{getAverageActivityDuration(cls).toFixed(1)}
+															</p>
+														</div>
+													</div>
+
+													<div class="grid gap-3 text-sm md:grid-cols-2">
+														<div class="space-y-1">
+															<p
+																class="text-muted-foreground text-xs font-medium"
+															>
+																Teachers
+															</p>
 															<div class="flex flex-wrap gap-1">
 																{#each cls.teacherIds as teacherId (teacherId)}
-																	{@const teacher = data.teachers.find(
-																		(t) => t.id === teacherId,
-																	)}
-																	{#if teacher}
-																		<Badge variant="outline" class="text-xs">
-																			{convertToFullName(
-																				teacher.firstName,
-																				teacher.middleName,
-																				teacher.lastName,
-																			)}
-																		</Badge>
+																	{@const teacherName =
+																		getTeacherName(teacherId)}
+																	{#if teacherName}
+																		<Badge variant="outline"
+																			>{teacherName}</Badge
+																		>
 																	{/if}
 																{/each}
 															</div>
 														</div>
-													{/if}
 
-													<!-- Assigned Year Levels -->
-													{#if cls.yearLevels.length > 0}
-														<div class="mb-2 flex items-start gap-2">
-															<span
-																class="text-muted-foreground text-sm font-medium"
+														<div class="space-y-1">
+															<p
+																class="text-muted-foreground text-xs font-medium"
 															>
-																Year Levels:
-															</span>
+																Cohorts
+															</p>
 															<div class="flex flex-wrap gap-1">
 																{#each cls.yearLevels as yearLevel (yearLevel.yearLevelId)}
-																	<Badge variant="outline" class="text-xs">
+																	<Badge variant="outline">
 																		{yearLevel.yearLevelCode}
 																	</Badge>
 																{/each}
-															</div>
-														</div>
-													{/if}
-
-													<!-- Assigned Groups -->
-													{#if cls.groupIds.length > 0}
-														<div class="mb-2 flex items-start gap-2">
-															<span
-																class="text-muted-foreground text-sm font-medium"
-															>
-																Groups:
-															</span>
-															<div class="flex flex-wrap gap-1">
 																{#each cls.groupIds as groupId (groupId)}
-																	{@const group = data.groups.find(
-																		(g) => g.id.toString() === groupId,
-																	)}
-																	{#if group}
-																		<Badge variant="outline" class="text-xs">
-																			{group.name}
-																		</Badge>
+																	{@const groupName = getGroupName(groupId)}
+																	{#if groupName}
+																		<Badge variant="outline">{groupName}</Badge>
 																	{/if}
 																{/each}
+																{#if cls.yearLevels.length === 0 && cls.groupIds.length === 0}
+																	<span class="text-muted-foreground text-sm">
+																		No cohorts assigned
+																	</span>
+																{/if}
 															</div>
 														</div>
-													{/if}
 
-													<!-- Assigned Students -->
-													{#if cls.studentIds.length > 0}
-														<div class="mb-2 flex items-start gap-2">
-															<span
-																class="text-muted-foreground text-sm font-medium"
-															>
-																Students:
-															</span>
-															<div class="flex flex-wrap gap-1">
-																{#each cls.studentIds as studentId (studentId)}
-																	{@const student = data.students.find(
-																		(s) => s.id === studentId,
-																	)}
-																	{#if student}
-																		<Badge variant="outline" class="text-xs">
-																			{convertToFullName(
-																				student.firstName,
-																				student.middleName,
-																				student.lastName,
-																			)}
-																		</Badge>
-																	{/if}
-																{/each}
+														{#if cls.studentIds.length > 0}
+															<div class="space-y-1">
+																<p
+																	class="text-muted-foreground text-xs font-medium"
+																>
+																	Students
+																</p>
+																<div class="flex flex-wrap gap-1">
+																	{#each cls.studentIds as studentId (studentId)}
+																		{@const studentName =
+																			getStudentName(studentId)}
+																		{#if studentName}
+																			<Badge variant="outline">
+																				{studentName}
+																			</Badge>
+																		{/if}
+																	{/each}
+																</div>
 															</div>
-														</div>
-													{/if}
+														{/if}
 
-													<!-- Preferred Locations -->
-													{#if cls.spaceIds.length > 0}
-														<div class="flex items-start gap-2">
-															<span
-																class="text-muted-foreground text-sm font-medium"
-															>
-																Preferred Rooms:
-															</span>
-															<div class="flex flex-wrap gap-1">
-																{#each cls.spaceIds as locationId (locationId)}
-																	{@const space = data.spaces.find(
-																		(s) => s.id.toString() === locationId,
-																	)}
-																	{#if space}
-																		<Badge variant="outline" class="text-xs">
-																			{space.name}
-																		</Badge>
-																	{/if}
-																{/each}
+														{#if cls.spaceIds.length > 0}
+															<div class="space-y-1">
+																<p
+																	class="text-muted-foreground text-xs font-medium"
+																>
+																	Preferred rooms
+																</p>
+																<div class="flex flex-wrap gap-1">
+																	{#each cls.spaceIds as spaceId (spaceId)}
+																		{@const spaceName = getSpaceName(spaceId)}
+																		{#if spaceName}
+																			<Badge variant="outline">
+																				<DoorOpenIcon class="h-3 w-3" />
+																				{spaceName}
+																			</Badge>
+																		{/if}
+																	{/each}
+																</div>
 															</div>
-														</div>
-													{/if}
+														{/if}
+													</div>
 												</div>
 
-												<!-- Action Buttons -->
-												<div class="flex gap-1">
+												<div class="flex shrink-0 gap-1">
 													<Button
 														variant="ghost"
-														size="sm"
-														href="{baseHref}/{cls.id}/activities"
+														size="icon-sm"
 														title="Manage activities"
+														onclick={() => openActivityDialog(cls.id)}
+														aria-label="Manage activities"
 													>
-														<ListIcon class="h-4 w-4" />
+														<CalendarClockIcon class="h-4 w-4" />
 													</Button>
 													<Button
 														variant="ghost"
-														size="sm"
+														size="icon-sm"
 														onclick={() => handleEditClass(cls.id)}
+														aria-label="Edit class"
 													>
 														<PencilIcon class="h-4 w-4" />
 													</Button>
 													<Button
 														variant="ghost"
-														size="sm"
+														size="icon-sm"
 														onclick={() => handleDeleteClass(cls.id)}
+														aria-label="Delete class"
 													>
 														<Trash2Icon class="h-4 w-4" />
 													</Button>
@@ -392,26 +633,36 @@
 										</div>
 									{/each}
 								</div>
-							</div>
-						{/if}
+							{:else}
+								<div class="rounded-md border border-dashed p-4 text-sm">
+									<p class="font-medium">No classes for this subject</p>
+									<p class="text-muted-foreground mt-1">
+										Create a class to assign teachers, cohorts, students, and
+										preferred rooms.
+									</p>
+								</div>
+							{/if}
 
-						<!-- Create Class Button -->
-						<div class="mt-4">
-							<Button
-								type="button"
-								onclick={() =>
-									openCreateClassDialog(subjectAndOffering.subjectOffering.id)}
-							>
-								<PlusIcon class="mr-2 h-4 w-4" />
-								Create Class
-							</Button>
-						</div>
-					</Accordion.Content>
-				</Accordion.Item>
-			{/each}
-		</Accordion.Root>
-	</div>
-{/if}
+							<div class="mt-4">
+								<Button
+									type="button"
+									size="sm"
+									onclick={() =>
+										openCreateClassDialog(
+											subjectAndOffering.subjectOffering.id,
+										)}
+								>
+									<PlusIcon class="h-4 w-4" />
+									Create Class
+								</Button>
+							</div>
+						</Accordion.Content>
+					</Accordion.Item>
+				{/each}
+			</Accordion.Root>
+		</div>
+	{/if}
+</div>
 
 <!-- Hidden Delete Form -->
 <form
@@ -423,6 +674,200 @@
 >
 	<input type="hidden" name="classId" bind:value={$deleteFormData.classId} />
 </form>
+
+<Dialog.Root bind:open={activityDialogOpen}>
+	<Dialog.Content class="overflow-y-auto sm:max-h-[90vh] sm:max-w-3xl">
+		<Dialog.Header>
+			<Dialog.Title>
+				{#if selectedActivityClass}
+					Class #{selectedActivityClass.id} Activities
+				{:else}
+					Class Activities
+				{/if}
+			</Dialog.Title>
+			<Dialog.Description>
+				Set the duration for each scheduled appearance of this class.
+			</Dialog.Description>
+		</Dialog.Header>
+
+		{#if selectedActivityClass}
+			<div class="space-y-4">
+				<div class="grid gap-3 sm:grid-cols-4">
+					<div class="rounded-md border p-3">
+						<div class="flex items-center justify-between gap-2">
+							<p class="text-muted-foreground text-xs font-medium">
+								Activities
+							</p>
+							<LayersIcon class="text-primary h-4 w-4" />
+						</div>
+						<p class="mt-1 text-lg font-semibold">
+							{getActivityCount(selectedActivityClass)}
+						</p>
+					</div>
+					<div class="rounded-md border p-3">
+						<div class="flex items-center justify-between gap-2">
+							<p class="text-muted-foreground text-xs font-medium">Total</p>
+							<CalendarClockIcon class="text-primary h-4 w-4" />
+						</div>
+						<p class="mt-1 text-lg font-semibold">
+							{getPeriodLabel(getTotalActivityDuration(selectedActivityClass))}
+						</p>
+					</div>
+					<div class="rounded-md border p-3">
+						<div class="flex items-center justify-between gap-2">
+							<p class="text-muted-foreground text-xs font-medium">Longest</p>
+							<ClockIcon class="text-primary h-4 w-4" />
+						</div>
+						<p class="mt-1 text-lg font-semibold">
+							{getPeriodLabel(
+								getLongestActivityDuration(selectedActivityClass),
+							)}
+						</p>
+					</div>
+					<div class="rounded-md border p-3">
+						<div class="flex items-center justify-between gap-2">
+							<p class="text-muted-foreground text-xs font-medium">Average</p>
+							<CalendarClockIcon class="text-primary h-4 w-4" />
+						</div>
+						<p class="mt-1 text-lg font-semibold">
+							{getAverageActivityDuration(selectedActivityClass).toFixed(1)}
+						</p>
+					</div>
+				</div>
+
+				<form
+					method="POST"
+					action="?/createActivity"
+					use:kitEnhance={() => activityEnhanceDone(true)}
+					class="rounded-md border p-4"
+				>
+					<input
+						type="hidden"
+						name="classId"
+						value={selectedActivityClass.id}
+					/>
+					<div class="flex flex-col gap-3 sm:flex-row sm:items-end">
+						<div class="grid flex-1 gap-2">
+							<Label for="create-activity-duration">Add activity duration</Label
+							>
+							<Input
+								id="create-activity-duration"
+								name="duration"
+								type="number"
+								min="1"
+								max="20"
+								bind:value={createActivityDuration}
+							/>
+						</div>
+						<Button type="submit">
+							<PlusIcon class="h-4 w-4" />
+							Add Activity
+						</Button>
+					</div>
+				</form>
+
+				{#if selectedActivityClass.activities.length === 0}
+					<div class="rounded-md border border-dashed p-6 text-center">
+						<p class="font-medium">No activities yet</p>
+						<p class="text-muted-foreground mt-1 text-sm">
+							Add at least one duration to split this class across the week.
+						</p>
+					</div>
+				{:else}
+					<div class="grid gap-2">
+						{#each selectedActivityClass.activities as activity, index (activity.id)}
+							{#if editingActivityId === activity.id}
+								<form
+									method="POST"
+									action="?/editActivity"
+									use:kitEnhance={() => activityEnhanceDone()}
+									class="rounded-md border p-3"
+								>
+									<input type="hidden" name="activityId" value={activity.id} />
+									<div class="flex flex-col gap-3 sm:flex-row sm:items-end">
+										<div class="grid flex-1 gap-2">
+											<Label for="edit-activity-duration-{activity.id}">
+												Activity {index + 1} duration
+											</Label>
+											<Input
+												id="edit-activity-duration-{activity.id}"
+												name="duration"
+												type="number"
+												min="1"
+												max="20"
+												bind:value={editActivityDuration}
+											/>
+										</div>
+										<div class="flex gap-2">
+											<Button type="submit" size="sm">Save</Button>
+											<Button
+												type="button"
+												variant="outline"
+												size="sm"
+												onclick={() => (editingActivityId = null)}
+											>
+												Cancel
+											</Button>
+										</div>
+									</div>
+								</form>
+							{:else}
+								<div
+									class="flex items-center justify-between gap-4 rounded-md border p-3"
+								>
+									<div class="min-w-0">
+										<div class="flex flex-wrap items-center gap-2">
+											<p class="font-medium">Activity {index + 1}</p>
+											<Badge variant="outline">ID #{activity.id}</Badge>
+										</div>
+										<p class="text-muted-foreground text-sm">
+											{getPeriodLabel(activity.duration)} consecutive
+										</p>
+									</div>
+									<div class="flex shrink-0 items-center gap-2">
+										<Badge variant="secondary">
+											{getPeriodLabel(activity.duration)}
+										</Badge>
+										<Button
+											variant="ghost"
+											size="icon-sm"
+											onclick={() =>
+												openEditActivity(activity.id, activity.duration)}
+											aria-label="Edit activity"
+										>
+											<PencilIcon class="h-4 w-4" />
+										</Button>
+										<Button
+											variant="ghost"
+											size="icon-sm"
+											onclick={() => handleDeleteActivity(activity.id)}
+											aria-label="Delete activity"
+										>
+											<Trash2Icon class="h-4 w-4" />
+										</Button>
+										<form
+											id="delete-activity-form-{activity.id}"
+											method="POST"
+											action="?/deleteActivity"
+											use:kitEnhance={() => activityEnhanceDone()}
+											class="hidden"
+										>
+											<input
+												type="hidden"
+												name="activityId"
+												value={activity.id}
+											/>
+										</form>
+									</div>
+								</div>
+							{/if}
+						{/each}
+					</div>
+				{/if}
+			</div>
+		{/if}
+	</Dialog.Content>
+</Dialog.Root>
 
 <!-- Create Class Dialog -->
 <Dialog.Root bind:open={createClassDialogOpen}>

@@ -1,6 +1,8 @@
 import { userTypeEnum } from '$lib/enums.js';
 import {
+	createTimetableActivity,
 	createTimetableDraftClassWithRelations,
+	deleteTimetableActivity,
 	deleteTimetableDraftClass,
 	getClassGroupsByClassId,
 	getClassSpacesByClassId,
@@ -14,13 +16,17 @@ import {
 	getTimetableDraftClassesByTimetableDraftId,
 	getTimetableDraftStudentGroupsWithCountsByTimetableDraftId,
 	getUsersBySchoolIdAndType,
+	updateTimetableActivity,
 	updateTimetableDraftClass,
 } from '$lib/server/db/service';
 import { message, superValidate } from 'sveltekit-superforms';
 import { zod4 } from 'sveltekit-superforms/adapters';
 import {
+	createActivitySchema,
 	createClassSchema,
+	deleteActivitySchema,
 	deleteClassSchema,
+	editActivitySchema,
 	editClassSchema,
 } from './schema.js';
 
@@ -205,6 +211,80 @@ export const actions = {
 		} catch (error) {
 			console.error('Error deleting class:', error);
 			return message(form, 'Failed to delete class. Please try again.', {
+				status: 500,
+			});
+		}
+	},
+
+	createActivity: async ({ request, locals: { security } }) => {
+		security.isAuthenticated().isAdmin();
+
+		const form = await superValidate(request, zod4(createActivitySchema));
+
+		if (!form.valid) {
+			return message(form, 'Please check your inputs and try again.', {
+				status: 400,
+			});
+		}
+
+		try {
+			await createTimetableActivity({
+				timetableClassId: form.data.classId,
+				duration: form.data.duration,
+			});
+
+			return message(form, 'Activity created successfully!');
+		} catch (error) {
+			console.error('Error creating activity:', error);
+			return message(form, 'Failed to create activity. Please try again.', {
+				status: 500,
+			});
+		}
+	},
+
+	editActivity: async ({ request, locals: { security } }) => {
+		security.isAuthenticated().isAdmin();
+
+		const form = await superValidate(request, zod4(editActivitySchema));
+
+		if (!form.valid) {
+			return message(form, 'Please check your inputs and try again.', {
+				status: 400,
+			});
+		}
+
+		try {
+			await updateTimetableActivity(form.data.activityId, {
+				duration: form.data.duration,
+			});
+
+			return message(form, 'Activity updated successfully!');
+		} catch (error) {
+			console.error('Error editing activity:', error);
+			return message(form, 'Failed to edit activity. Please try again.', {
+				status: 500,
+			});
+		}
+	},
+
+	deleteActivity: async ({ request, locals: { security } }) => {
+		security.isAuthenticated().isAdmin();
+
+		const form = await superValidate(request, zod4(deleteActivitySchema));
+
+		if (!form.valid) {
+			return message(form, 'Please check your inputs and try again.', {
+				status: 400,
+			});
+		}
+
+		try {
+			await deleteTimetableActivity(form.data.activityId);
+
+			return message(form, 'Activity deleted successfully!');
+		} catch (error) {
+			console.error('Error deleting activity:', error);
+			return message(form, 'Failed to delete activity. Please try again.', {
 				status: 500,
 			});
 		}
