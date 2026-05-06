@@ -332,16 +332,16 @@ export const fetSubjectClassAllocation = timetableSchema.table(
 			.references(() => fetSubjectOfferingClass.id, { onDelete: 'cascade' }),
 		schoolSpaceId: integer('sch_space_id')
 			.notNull()
-			.references(() => schoolSpace.id, { onDelete: 'set null' }),
+			.references(() => schoolSpace.id, { onDelete: 'cascade' }),
 		dayId: integer()
 			.notNull()
-			.references(() => timetableDay.id, { onDelete: 'set null' }),
+			.references(() => timetableDay.id, { onDelete: 'cascade' }),
 		startPeriodId: integer('start_period_id')
 			.notNull()
-			.references(() => timetablePeriod.id, { onDelete: 'set null' }),
+			.references(() => timetablePeriod.id, { onDelete: 'cascade' }),
 		endPeriodId: integer('end_period_id')
 			.notNull()
-			.references(() => timetablePeriod.id, { onDelete: 'set null' }),
+			.references(() => timetablePeriod.id, { onDelete: 'cascade' }),
 	},
 	(self) => [
 		index().on(self.fetSubjectOfferingClassId),
