@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import { invalidateAll } from '$app/navigation';
+	import { page } from '$app/state';
 	import Autocomplete from '$lib/components/autocomplete.svelte';
 	import * as Accordion from '$lib/components/ui/accordion/index.js';
 	import { Badge } from '$lib/components/ui/badge';
@@ -47,7 +48,16 @@
 			});
 	});
 
-	let yearLevel = $derived(yearLevels().length > 0 ? yearLevels()[0] : null);
+	function getInitialYearLevel() {
+		const yearLevelParam = page.url.searchParams.get('yearLevel');
+		const levels = yearLevels();
+		return (
+			levels.find((level) => level.value === yearLevelParam) ??
+			(levels.length > 0 ? levels[0] : null)
+		);
+	}
+
+	let yearLevel = $state(getInitialYearLevel());
 	let createDialogOpen = $state(false);
 	let infoDialogOpen = $state(false);
 	let deleteGroupTarget = $state<{ id: number; name: string } | null>(null);
@@ -115,6 +125,25 @@
 	function openCreateDialog() {
 		groupName = '';
 		createDialogOpen = true;
+	}
+
+	function updateYearLevel(yearLevelId: string) {
+		if (!yearLevelId) {
+			yearLevel = null;
+			return;
+		}
+
+		const newYearLevel = yearLevels().find(
+			(yl) => yl.id.toString() === yearLevelId,
+		);
+		if (!newYearLevel) return;
+
+		yearLevel = newYearLevel;
+		groupFilter = '';
+
+		const url = new URL(page.url);
+		url.searchParams.set('yearLevel', newYearLevel.value);
+		history.replaceState(history.state, '', url);
 	}
 
 	async function createGroup() {
@@ -233,18 +262,7 @@
 				<Select.Root
 					type="single"
 					name="yearLevel"
-					onValueChange={(id) => {
-						if (!id) {
-							yearLevel = null;
-						} else {
-							const newYearLevel = yearLevels().find(
-								(yl) => yl.id.toString() === id,
-							);
-							if (newYearLevel) {
-								yearLevel = newYearLevel;
-							}
-						}
-					}}
+					onValueChange={updateYearLevel}
 					value={yearLevel ? yearLevel.id.toString() : ''}
 				>
 					<Select.Trigger id="year-level" class="w-[180px]">

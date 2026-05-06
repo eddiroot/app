@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { enhance as kitEnhance } from '$app/forms';
 	import { invalidateAll } from '$app/navigation';
+	import { page } from '$app/state';
 	import * as Accordion from '$lib/components/ui/accordion/index.js';
 	import { Badge } from '$lib/components/ui/badge';
 	import { Button } from '$lib/components/ui/button';
@@ -42,7 +43,13 @@
 	let editActivityDuration = $state(1);
 	let getYearLevelZeroIndexCode = () =>
 		data.yearLevels[0]?.code || yearLevelEnum.year7;
-	let selectedYearLevel = $state(getYearLevelZeroIndexCode());
+	let getInitialYearLevelCode = () => {
+		const yearLevelParam = page.url.searchParams.get('yearLevel');
+		return data.yearLevels.some((yearLevel) => yearLevel.code === yearLevelParam)
+			? yearLevelParam!
+			: getYearLevelZeroIndexCode();
+	};
+	let selectedYearLevel = $state(getInitialYearLevelCode());
 
 	let dataCreateClassForm = () => data.createClassForm;
 	const createForm = superForm(dataCreateClassForm(), {
@@ -95,6 +102,10 @@
 
 	function updateClassesForYearLevel(yearLevel: string) {
 		selectedYearLevel = yearLevel as yearLevelEnum;
+
+		const url = new URL(page.url);
+		url.searchParams.set('yearLevel', yearLevel);
+		history.replaceState(history.state, '', url);
 	}
 
 	function handleEditClass(id: number) {
