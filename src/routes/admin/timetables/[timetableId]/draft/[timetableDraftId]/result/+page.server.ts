@@ -1,21 +1,28 @@
 import { db } from '$lib/server/db';
 import { user } from '$lib/server/db/schema/user';
+import { getSpacesBySchoolId } from '$lib/server/db/service/school';
+import { generateRoomTimetable } from '$lib/server/fet/utils/room-timetable';
 import { generateTimetableStatistics } from '$lib/server/fet/utils/timetable-statistics';
 import { generateUserTimetable } from '$lib/server/fet/utils/user-timetable-statistics';
 import { fail } from '@sveltejs/kit';
 import { and, eq, ilike, or } from 'drizzle-orm';
 
 export const load = async ({ params, locals: { security } }) => {
-	security.isAuthenticated().isAdmin();
+	const currentUser = security.isAuthenticated().isAdmin().getUser();
+	const schoolId = currentUser.schoolId;
 
 	const timetableDraftId = parseInt(params.timetableDraftId);
-	const statistics = await generateTimetableStatistics(timetableDraftId);
+	const [statistics, spaces] = await Promise.all([
+		generateTimetableStatistics(timetableDraftId),
+		getSpacesBySchoolId(schoolId),
+	]);
 	const dayUtilization = Object.fromEntries(statistics.summary.dayUtilization);
 
 	return {
 		students: statistics.students,
 		teachers: statistics.teachers,
 		summary: { ...statistics.summary, dayUtilization },
+		spaces,
 	};
 };
 
@@ -89,6 +96,30 @@ export const actions = {
 		} catch (error) {
 			console.error('Error loading user timetable:', error);
 			return fail(500, { error: 'Failed to load timetable' });
+		}
+	},
+
+	loadRoomTimetable: async ({ request, params, locals: { security } }) => {
+		security.isAuthenticated().isAdmin();
+
+		const formData = await request.formData();
+		const spaceIdRaw = formData.get('spaceId')?.toString();
+		const spaceId = spaceIdRaw ? parseInt(spaceIdRaw) : NaN;
+
+		if (!spaceId || isNaN(spaceId)) {
+			return fail(400, { error: 'Space ID is required' });
+		}
+
+		try {
+			const roomTimetable = await generateRoomTimetable(
+				spaceId,
+				parseInt(params.timetableDraftId),
+			);
+
+			return { roomTimetable };
+		} catch (error) {
+			console.error('Error loading room timetable:', error);
+			return fail(500, { error: 'Failed to load room timetable' });
 		}
 	},
 };
