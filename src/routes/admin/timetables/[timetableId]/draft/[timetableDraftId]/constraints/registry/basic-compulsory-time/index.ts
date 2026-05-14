@@ -20,4 +20,9 @@ export const basicCompulsoryTime: ConstraintMeta = {
 	repeatable: false,
 	paramsSchema: basicCompulsoryTimeSchema,
 	requiresFormData: [],
+	summarize: (parameters) => {
+		const parsed = basicCompulsoryTimeSchema.safeParse(parameters);
+		const weight = parsed.success ? parsed.data.Weight_Percentage : 100;
+		return `Always on · weight ${weight}%`;
+	},
 };

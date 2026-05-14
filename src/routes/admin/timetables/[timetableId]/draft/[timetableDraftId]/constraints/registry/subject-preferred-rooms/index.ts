@@ -32,4 +32,23 @@ export const subjectPreferredRooms: ConstraintMeta = {
 	repeatable: true,
 	paramsSchema: subjectPreferredRoomsSchema,
 	requiresFormData: ['subjects', 'spaces'],
+	summarize: (parameters, formData) => {
+		const parsed = subjectPreferredRoomsSchema.safeParse(parameters);
+		if (!parsed.success) return 'Subject preferred rooms';
+		const { Subject, Preferred_Room } = parsed.data;
+		const subjectLabel =
+			formData?.subjects.find((opt) => String(opt.value) === String(Subject))
+				?.label ?? `Subject #${Subject}`;
+		const roomLabels = Preferred_Room.map((id) => {
+			const label = formData?.spaces.find(
+				(opt) => String(opt.value) === String(id),
+			)?.label;
+			// Spaces labels include "(type) - Capacity:" — trim to just the name.
+			return label?.split(' (')[0] ?? `#${id}`;
+		});
+		const head = roomLabels.slice(0, 3).join(', ');
+		const more =
+			roomLabels.length > 3 ? ` (+${roomLabels.length - 3} more)` : '';
+		return `${subjectLabel} → ${head}${more}`;
+	},
 };

@@ -49,6 +49,13 @@ export interface ConstraintEntry {
 
 	/** Autocomplete option sets this form consumes. Empty when none. */
 	requiresFormData: readonly FormDataKey[];
+
+	/**
+	 * Compact one-line parameter summary for the active list. Receives the
+	 * autocomplete option sets so identifiers can be resolved to human labels.
+	 * Optional: rows fall back to the constraint description when omitted.
+	 */
+	summarize?: (parameters: unknown, formData?: ConstraintFormData) => string;
 }
 
 /** Server-safe metadata: ConstraintEntry without formComponent. Used by server, seed, and XML generation. */

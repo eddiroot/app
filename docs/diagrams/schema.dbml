@@ -1302,13 +1302,13 @@ ref evt_rsvp_userId_user_id_fk: event.evt_rsvp.userId > user.user.id [delete: ca
 
 ref fet_sub_off_cls_allo_fet_sub_off_cls_id_fet_sub_off_cls_id_fk: timetable.fet_sub_off_cls_allo.fet_sub_off_cls_id > timetable.fet_sub_off_cls.id [delete: cascade, update: no action]
 
-ref fet_sub_off_cls_allo_sch_space_id_sch_space_id_fk: timetable.fet_sub_off_cls_allo.sch_space_id > school.sch_space.id [delete: set null, update: no action]
+ref fet_sub_off_cls_allo_sch_space_id_sch_space_id_fk: timetable.fet_sub_off_cls_allo.sch_space_id > school.sch_space.id [delete: cascade, update: no action]
 
-ref fet_sub_off_cls_allo_dayId_tt_day_id_fk: timetable.fet_sub_off_cls_allo.dayId > timetable.tt_day.id [delete: set null, update: no action]
+ref fet_sub_off_cls_allo_dayId_tt_day_id_fk: timetable.fet_sub_off_cls_allo.dayId > timetable.tt_day.id [delete: cascade, update: no action]
 
-ref fet_sub_off_cls_allo_start_period_id_tt_period_id_fk: timetable.fet_sub_off_cls_allo.start_period_id > timetable.tt_period.id [delete: set null, update: no action]
+ref fet_sub_off_cls_allo_start_period_id_tt_period_id_fk: timetable.fet_sub_off_cls_allo.start_period_id > timetable.tt_period.id [delete: cascade, update: no action]
 
-ref fet_sub_off_cls_allo_end_period_id_tt_period_id_fk: timetable.fet_sub_off_cls_allo.end_period_id > timetable.tt_period.id [delete: set null, update: no action]
+ref fet_sub_off_cls_allo_end_period_id_tt_period_id_fk: timetable.fet_sub_off_cls_allo.end_period_id > timetable.tt_period.id [delete: cascade, update: no action]
 
 ref fet_sub_off_cls_tt_draft_id_tt_draft_id_fk: timetable.fet_sub_off_cls.tt_draft_id > timetable.tt_draft.id [delete: cascade, update: no action]
 

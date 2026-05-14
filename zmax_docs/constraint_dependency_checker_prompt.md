@@ -26,7 +26,7 @@ draft, only 6 implemented constraint types). Revisit if coverage grows past
 ~30 constraint types or constraint instances per draft hit five figures.
 
 The plan below uses a registry-driven scan: the registry already knows the
-shape of each constraint's parameters; we extend it to declare *which* fields
+shape of each constraint's parameters; we extend it to declare _which_ fields
 are entity references, and a single utility walks active constraints to find
 orphans.
 
@@ -61,43 +61,43 @@ Defer (not in this pass):
 
 ```ts
 export type EntityKind =
-  | 'activity'
-  | 'teacher'
-  | 'subject'
-  | 'space'
-  | 'building'
-  | 'studentGroup'
-  | 'day'        // timetable_draft_day.id
-  | 'period';    // timetable_draft_period.id
+	| 'activity'
+	| 'teacher'
+	| 'subject'
+	| 'space'
+	| 'building'
+	| 'studentGroup'
+	| 'day' // timetable_draft_day.id
+	| 'period'; // timetable_draft_period.id
 
 export interface ParamReference {
-  /**
-   * Path expression into the params object.
-   *  - 'Subject'                         single value
-   *  - 'Preferred_Room[]'                array of scalars
-   *  - 'Not_Available_Time[].Day'        nested field inside an array
-   *  - 'Activity_Id[]'                   array of scalars
-   */
-  path: string;
-  entity: EntityKind;
+	/**
+	 * Path expression into the params object.
+	 *  - 'Subject'                         single value
+	 *  - 'Preferred_Room[]'                array of scalars
+	 *  - 'Not_Available_Time[].Day'        nested field inside an array
+	 *  - 'Activity_Id[]'                   array of scalars
+	 */
+	path: string;
+	entity: EntityKind;
 }
 
 export interface ConstraintEntry {
-  // …existing fields…
-  references?: ReadonlyArray<ParamReference>;
+	// …existing fields…
+	references?: ReadonlyArray<ParamReference>;
 }
 ```
 
 ### 2. Add `references` to each existing registry entry
 
-| Entry                          | references                                                                                          |
-|--------------------------------|------------------------------------------------------------------------------------------------------|
-| `basicCompulsoryTime`          | `[]` (no entity refs)                                                                                |
-| `basicCompulsorySpace`         | `[]`                                                                                                 |
-| `teachersMaxGapsPerWeek`       | `[]` (applies to all teachers globally — no IDs in params)                                           |
-| `minDaysBetweenActivities`     | `[{ path: 'Activity_Id[]', entity: 'activity' }]`                                                    |
-| `subjectPreferredRooms`        | `[{ path: 'Subject', entity: 'subject' }, { path: 'Preferred_Room[]', entity: 'space' }]`            |
-| `roomNotAvailableTimes`        | `[{ path: 'Room', entity: 'space' }, { path: 'Not_Available_Time[].Day', entity: 'day' }, { path: 'Not_Available_Time[].Period', entity: 'period' }]` |
+| Entry                      | references                                                                                                                                            |
+| -------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `basicCompulsoryTime`      | `[]` (no entity refs)                                                                                                                                 |
+| `basicCompulsorySpace`     | `[]`                                                                                                                                                  |
+| `teachersMaxGapsPerWeek`   | `[]` (applies to all teachers globally — no IDs in params)                                                                                            |
+| `minDaysBetweenActivities` | `[{ path: 'Activity_Id[]', entity: 'activity' }]`                                                                                                     |
+| `subjectPreferredRooms`    | `[{ path: 'Subject', entity: 'subject' }, { path: 'Preferred_Room[]', entity: 'space' }]`                                                             |
+| `roomNotAvailableTimes`    | `[{ path: 'Room', entity: 'space' }, { path: 'Not_Available_Time[].Day', entity: 'day' }, { path: 'Not_Available_Time[].Period', entity: 'period' }]` |
 
 ### 3. `extractRefs` utility
 
@@ -105,22 +105,22 @@ Co-locate with the registry: `registry/extract-refs.ts`.
 
 ```ts
 export function extractRefs(
-  entry: ConstraintEntry,
-  parameters: unknown,
+	entry: ConstraintEntry,
+	parameters: unknown,
 ): Array<{ entity: EntityKind; ids: Array<string | number> }> {
-  if (!entry.references || !parameters || typeof parameters !== 'object') {
-    return [];
-  }
-  const grouped = new Map<EntityKind, Array<string | number>>();
+	if (!entry.references || !parameters || typeof parameters !== 'object') {
+		return [];
+	}
+	const grouped = new Map<EntityKind, Array<string | number>>();
 
-  for (const ref of entry.references) {
-    const values = walkPath(parameters as Record<string, unknown>, ref.path);
-    if (values.length === 0) continue;
-    const bucket = grouped.get(ref.entity) ?? [];
-    bucket.push(...values);
-    grouped.set(ref.entity, bucket);
-  }
-  return [...grouped.entries()].map(([entity, ids]) => ({ entity, ids }));
+	for (const ref of entry.references) {
+		const values = walkPath(parameters as Record<string, unknown>, ref.path);
+		if (values.length === 0) continue;
+		const bucket = grouped.get(ref.entity) ?? [];
+		bucket.push(...values);
+		grouped.set(ref.entity, bucket);
+	}
+	return [...grouped.entries()].map(([entity, ids]) => ({ entity, ids }));
 }
 ```
 
@@ -134,15 +134,15 @@ Place under `src/lib/server/db/service/constraint-refs.ts` (new file).
 
 ```ts
 export interface StaleRef {
-  ttConstraintId: number;
-  fetName: string;
-  friendlyName: string;
-  entity: EntityKind;
-  missingIds: Array<string | number>;
+	ttConstraintId: number;
+	fetName: string;
+	friendlyName: string;
+	entity: EntityKind;
+	missingIds: Array<string | number>;
 }
 
 export async function findStaleConstraintRefs(
-  timetableDraftId: number,
+	timetableDraftId: number,
 ): Promise<StaleRef[]>;
 ```
 
@@ -157,16 +157,8 @@ Algorithm:
    - Aggregate all referenced IDs across all constraints into a
      `Map<EntityKind, Set<id>>`.
    - For each kind with a non-empty set, run **one** `SELECT id FROM <table>
-     WHERE id IN (...)`. The existing schema column names per `EntityKind`:
-     - `activity` → `timetable_activity` (whatever the real table is — confirm
-       in `schema/timetable.ts`)
-     - `teacher` / `student` → `users` filtered by `userType`
-     - `subject` → `subject`
-     - `space` → `space`
-     - `building` → `building`
-     - `studentGroup` → `tt_draft_student_group` (confirm)
-     - `day` → `tt_draft_day`
-     - `period` → `tt_draft_period`
+WHERE id IN (...)`. The existing schema column names per `EntityKind`: - `activity` → `timetable_activity` (whatever the real table is — confirm
+     in `schema/timetable.ts`) - `teacher` / `student` → `users` filtered by `userType` - `subject` → `subject` - `space` → `space` - `building` → `building` - `studentGroup` → `tt_draft_student_group` (confirm) - `day` → `tt_draft_day` - `period` → `tt_draft_period`
    - Build `Set<id>` of existing IDs per kind.
 5. Walk the per-constraint refs again; any ID not in the existing set is
    stale → emit a `StaleRef` row.
@@ -233,7 +225,7 @@ Modify:
 5. Re-stale the constraint, then try to generate a timetable. Confirm
    generation aborts with the stale-ref error and no `.fet` upload happens.
 6. Manually orphan a constraint by `UPDATE tt_draft_con SET parameters = ...
-   WHERE id = ...` referencing a fake ID; confirm both UI and generation
+WHERE id = ...` referencing a fake ID; confirm both UI and generation
    surface it.
 
 ## Notes for the implementer

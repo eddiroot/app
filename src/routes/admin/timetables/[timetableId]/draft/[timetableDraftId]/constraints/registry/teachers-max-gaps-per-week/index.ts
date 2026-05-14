@@ -21,4 +21,10 @@ export const teachersMaxGapsPerWeek: ConstraintMeta = {
 	repeatable: false,
 	paramsSchema: teachersMaxGapsSchema,
 	requiresFormData: [],
+	summarize: (parameters) => {
+		const parsed = teachersMaxGapsSchema.safeParse(parameters);
+		if (!parsed.success) return 'Max gaps per week';
+		const { Max_Gaps, Weight_Percentage } = parsed.data;
+		return `Max ${Max_Gaps} gaps/week · weight ${Weight_Percentage}%`;
+	},
 };
