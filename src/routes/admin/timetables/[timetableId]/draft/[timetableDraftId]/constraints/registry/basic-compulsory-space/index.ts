@@ -20,4 +20,9 @@ export const basicCompulsorySpace: ConstraintMeta = {
 	repeatable: false,
 	paramsSchema: basicCompulsorySpaceSchema,
 	requiresFormData: [],
+	summarize: (parameters) => {
+		const parsed = basicCompulsorySpaceSchema.safeParse(parameters);
+		const weight = parsed.success ? parsed.data.Weight_Percentage : 100;
+		return `Always on · weight ${weight}%`;
+	},
 };

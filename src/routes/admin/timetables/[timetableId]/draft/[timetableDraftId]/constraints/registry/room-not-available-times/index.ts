@@ -44,4 +44,15 @@ export const roomNotAvailableTimes: ConstraintMeta = {
 	repeatable: true,
 	paramsSchema: roomNotAvailableTimesSchema,
 	requiresFormData: ['spaces', 'timetableDays', 'timetablePeriods'],
+	summarize: (parameters, formData) => {
+		const parsed = roomNotAvailableTimesSchema.safeParse(parameters);
+		if (!parsed.success) return 'Room not available times';
+		const { Room, Not_Available_Time } = parsed.data;
+		const roomLabel =
+			formData?.spaces
+				.find((opt) => String(opt.value) === String(Room))
+				?.label.split(' (')[0] ?? `Room #${Room}`;
+		const count = Not_Available_Time.length;
+		return `${roomLabel} · ${count} time slot${count === 1 ? '' : 's'} blocked`;
+	},
 };

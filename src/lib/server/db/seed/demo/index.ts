@@ -17,7 +17,7 @@ export async function seedDemo(
 	const schoolData = await seedDemoSchool(db, eddiSchool);
 	const userData = await seedDemoUsers(db, schoolData);
 	const subjectData = await seedDemoSubjects(db, schoolData, userData);
-	await seedDemoTimetable(db, schoolData);
+	await seedDemoTimetable(db, schoolData, userData, subjectData);
 	await seedDemoNews(db, schoolData, userData);
 	await seedDemoEvents(db, schoolData, subjectData);
 	await seedDemoThreads(db, schoolData, userData, subjectData);

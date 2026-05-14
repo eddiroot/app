@@ -26,4 +26,18 @@ export const minDaysBetweenActivities: ConstraintMeta = {
 	repeatable: true,
 	paramsSchema: minDaysBetweenActivitiesSchema,
 	requiresFormData: ['timetableClasses', 'timetableActivities'],
+	summarize: (parameters, formData) => {
+		const parsed = minDaysBetweenActivitiesSchema.safeParse(parameters);
+		if (!parsed.success) return 'Minimum days between activities';
+		const { Activity_Id, MinDays, Number_of_Activities } = parsed.data;
+		const labels = Activity_Id.map((id) => {
+			const set = id.startsWith('c-')
+				? formData?.timetableClasses
+				: formData?.timetableActivities;
+			return set?.find((opt) => String(opt.value) === id)?.label ?? id;
+		});
+		const head = labels.slice(0, 2).join(', ');
+		const more = labels.length > 2 ? ` (+${labels.length - 2} more)` : '';
+		return `${Number_of_Activities} activities · min ${MinDays} day${MinDays === 1 ? '' : 's'} apart · ${head}${more}`;
+	},
 };
