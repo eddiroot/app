@@ -45,7 +45,9 @@
 		data.yearLevels[0]?.code || yearLevelEnum.year7;
 	let getInitialYearLevelCode = () => {
 		const yearLevelParam = page.url.searchParams.get('yearLevel');
-		return data.yearLevels.some((yearLevel) => yearLevel.code === yearLevelParam)
+		return data.yearLevels.some(
+			(yearLevel) => yearLevel.code === yearLevelParam,
+		)
 			? yearLevelParam!
 			: getYearLevelZeroIndexCode();
 	};

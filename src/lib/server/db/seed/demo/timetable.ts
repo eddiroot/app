@@ -279,7 +279,7 @@ async function seedTimetableConstraints(
 		{
 			constraint: byFetName.get('ConstraintTeachersMaxGapsPerWeek'),
 			parameters: {
-				Weight_Percentage: 80,
+				Weight_Percentage: 100,
 				Max_Gaps: 4,
 				Active: true,
 				Comments: 'Seeded workload quality constraint.',
